@@ -306,16 +306,17 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
         //续租不让重算
-        ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderDO.getId());
-        if (reletOrderDO != null) {
-            result.setErrorCode(ErrorCode.RELET_ORDER_NOT_ALLOW_RE_STATEMENT);
-            return result;
-        }
+//        ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderDO.getId());
+//        if (reletOrderDO != null) {
+//            result.setErrorCode(ErrorCode.RELET_ORDER_NOT_ALLOW_RE_STATEMENT);
+//            return result;
+//        }
         //目前仅允许未支付和支付失败订单重新结算
 //        if (!(PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_FAILED.equals(orderDO.getPayStatus()))) {
 //            result.setErrorCode(ErrorCode.ORDER_PAY_STATUS_CAN_NOT_RESETTLE);
 //            return result;
 //        }
+
 
         // 客户为确认结算单状态时，不允许重算客户的订单
         CustomerDO customerDO = customerMapper.findByNo(orderDO.getBuyerCustomerNo());
@@ -346,6 +347,21 @@ public class StatementServiceImpl implements StatementService {
         //创建失败回滚
         if (!ErrorCode.SUCCESS.equals(createResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return createResult;
+        }
+        //处理续租单重算
+        List<ReletOrderDO> reletOrderDOList = reletOrderMapper.findReletedOrdersByOrderId(orderDO.getId());
+        if (CollectionUtil.isNotEmpty(reletOrderDOList)) {
+            for (ReletOrderDO reletOrderDO : reletOrderDOList) {
+                //从订单同步更新续租单的结算类型和支付类型
+                syncReletOrderStatementByOrder(orderDO, reletOrderDO);
+                ServiceResult<String, BigDecimal> reletService = reCreateReletOrderStatement(reletOrderDO.getReletOrderNo());
+                if (!ErrorCode.SUCCESS.equals(reletService.getErrorCode())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    result.setErrorCode(ErrorCode.RELET_ORDER_RE_STATEMENT_FAIL, reletOrderDO.getReletOrderNo());
+                    return reletService;
+                }
+            }
         }
         //更新订单首次需支付金额
         orderDO.setFirstNeedPayAmount(createResult.getResult());
@@ -353,6 +369,43 @@ public class StatementServiceImpl implements StatementService {
         orderDO.setUpdateTime(new Date());
         orderMapper.update(orderDO);
         return createResult;
+    }
+
+    /**
+     * 仅同步订单：结算类型，支付类型
+     * @param orderDO
+     * @param reletOrderDO
+     */
+    private void syncReletOrderStatementByOrder(OrderDO orderDO, ReletOrderDO reletOrderDO) {
+        //同步订单结算类型
+        if(!orderDO.getStatementDate().equals(reletOrderDO.getStatementDate())){
+            reletOrderDO.setStatementDate(orderDO.getStatementDate());
+            reletOrderMapper.update(reletOrderDO);
+        }
+        //同步订单项支付方式（商品项）
+        Map<Integer,OrderProductDO> orderProductCatch=new HashMap<>();
+        for(OrderProductDO productDO:orderDO.getOrderProductDOList()){
+            orderProductCatch.put(productDO.getId(),productDO);
+        }
+        for (ReletOrderProductDO productDO:reletOrderDO.getReletOrderProductDOList()){
+            OrderProductDO orderProductDO=orderProductCatch.get(productDO.getOrderProductId());
+            if(orderProductDO==null)continue;
+            if(orderProductDO.getPayMode().equals(productDO.getPayMode()))continue;
+            productDO.setPayMode(orderProductDO.getPayMode());
+            reletOrderProductMapper.update(productDO);
+        }
+        //同步订单项支付方式（物料项）
+        Map<Integer,OrderMaterialDO> orderMaterialCatch=new HashMap<>();
+        for(OrderMaterialDO materialDO:orderDO.getOrderMaterialDOList()){
+            orderMaterialCatch.put(materialDO.getId(),materialDO);
+        }
+        for (ReletOrderMaterialDO materialDO:reletOrderDO.getReletOrderMaterialDOList()){
+            OrderMaterialDO orderMaterialDO=orderMaterialCatch.get(materialDO.getOrderMaterialId());
+            if(orderMaterialDO==null)continue;
+            if(orderMaterialDO.getPayMode().equals(materialDO.getPayMode()))continue;
+            materialDO.setPayMode(orderMaterialDO.getPayMode());
+            reletOrderMaterialMapper.update(materialDO);
+        }
     }
 
     @Override
@@ -3713,31 +3766,36 @@ public class StatementServiceImpl implements StatementService {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createReletOrderStatement(ReletOrderDO reletOrderDO) {
+        return reletOrderStatement(reletOrderDO, false);
+    }
+
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, BigDecimal> reletOrderStatement(ReletOrderDO reletOrderDO, boolean allowUnpay) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         if (reletOrderDO == null) {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
-
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         Date rentStartTime = reletOrderDO.getRentStartTime();
-
-        List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(reletOrderDO.getOrderId());
-        if (CollectionUtil.isNotEmpty(dbStatementOrderDetailDOList)) {
-            for (StatementOrderDetailDO statementOrderDetailDO : dbStatementOrderDetailDOList) {
-                Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(statementOrderDetailDO.getStatementExpectPayTime(), currentTime);
-                if (CommonConstant.NO == statementOrderDetailDO.getStatementDetailStatus() && dayCount > 0) {
-                    result.setErrorCode(ErrorCode.RELET_ORDER_EXISTS_UNPAID_STATEMENT);
-                    return result;
-                }
-            }
-        }
 
         CustomerDO customerDO = customerMapper.findById(reletOrderDO.getBuyerCustomerId());
         if (customerDO == null) {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
+        }
+        if (!allowUnpay) {
+            List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(reletOrderDO.getOrderId());
+            if (CollectionUtil.isNotEmpty(dbStatementOrderDetailDOList)) {
+                for (StatementOrderDetailDO statementOrderDetailDO : dbStatementOrderDetailDOList) {
+                    Integer dayCount = DateUtil.daysBetween(statementOrderDetailDO.getStatementExpectPayTime(), new Date());
+                    if (CommonConstant.NO == statementOrderDetailDO.getStatementDetailStatus() && dayCount > 0) {
+                        result.setErrorCode(ErrorCode.RELET_ORDER_EXISTS_UNPAID_STATEMENT);
+                        return result;
+                    }
+                }
+            }
         }
         //统一拿订单结算日
         Integer statementDays = statementOrderSupport.getCustomerStatementDate(reletOrderDO.getStatementDate(), rentStartTime);
@@ -3930,23 +3988,27 @@ public class StatementServiceImpl implements StatementService {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> reCreateReletOrderStatement(String reletOrderNo) {
-        ServiceResult<String, BigDecimal> serviceResult=new ServiceResult<>();
+        ServiceResult<String, BigDecimal> serviceResult = new ServiceResult<>();
 
         ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrderNo);
-        if(reletOrderDO==null){
+        if (reletOrderDO == null) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             serviceResult.setErrorCode(ErrorCode.RELET_ORDER_NOT_EXISTS);
             return serviceResult;
         }
 
-        ServiceResult<String, String> result=clearReletOrderStatement(reletOrderDO);
+        ServiceResult<String, String> result = clearReletOrderStatement(reletOrderDO);
         if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             serviceResult.setErrorCode(result.getErrorCode());
             return serviceResult;
         }
 
-        serviceResult= createReletOrderStatement(reletOrderDO);
+        serviceResult = reletOrderStatement(reletOrderDO,true);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return serviceResult;
+        }
         return serviceResult;
     }
 
@@ -3957,9 +4019,9 @@ public class StatementServiceImpl implements StatementService {
      */
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, String> clearReletOrderStatement(String reletOrderNo) {
-        ServiceResult<String, String> serviceResult=new ServiceResult<>();
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
         ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrderNo);
-        if(reletOrderDO==null){
+        if (reletOrderDO == null) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             serviceResult.setErrorCode(ErrorCode.RELET_ORDER_NOT_EXISTS);
             return serviceResult;
@@ -3981,7 +4043,9 @@ public class StatementServiceImpl implements StatementService {
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByReletOrderItemReferIds(ids);
 
         //处理已支付订单
-        boolean paid = PayStatus.PAY_STATUS_PAID_PART.equals(reletOrderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(reletOrderDO.getPayStatus());
+        //boolean paid = PayStatus.PAY_STATUS_PAID_PART.equals(reletOrderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(reletOrderDO.getPayStatus());
+        //续租单默认已支付（考虑到脏数据，交了钱状态为未支付）
+        boolean paid = true;
         //清除结算信息
         ServiceResult<String, String> result = clearStatement(paid, reletOrderDO.getBuyerCustomerNo(), statementOrderDetailDOList);
         //创建失败回滚
@@ -4001,28 +4065,28 @@ public class StatementServiceImpl implements StatementService {
 
     @Override
     public ServiceResult<String, BigDecimal> batchReCreateReletOrderStatement(List<String> reletOrderNos) {
-        ServiceResult<String, BigDecimal> serviceResult=new ServiceResult<>();
-        if(CollectionUtil.isNotEmpty(reletOrderNos)){
-            BigDecimal needPay=BigDecimal.ZERO;
-            for(String reletOrderNo:reletOrderNos){
+        ServiceResult<String, BigDecimal> serviceResult = new ServiceResult<>();
+        if (CollectionUtil.isNotEmpty(reletOrderNos)) {
+            BigDecimal needPay = BigDecimal.ZERO;
+            for (String reletOrderNo : reletOrderNos) {
                 ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrderNo);
-                if(reletOrderDO==null){
+                if (reletOrderDO == null) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     serviceResult.setErrorCode(ErrorCode.RELET_ORDER_NOT_EXISTS);
                     return serviceResult;
                 }
-                if( PayStatus.PAY_STATUS_PAID_PART.equals(reletOrderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(reletOrderDO.getPayStatus())){
+                if (PayStatus.PAY_STATUS_PAID_PART.equals(reletOrderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(reletOrderDO.getPayStatus())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     serviceResult.setErrorCode(ErrorCode.RELET_ORDER_HAS_PAID);
                     return serviceResult;
                 }
-                ServiceResult<String, BigDecimal> result =reCreateReletOrderStatement(reletOrderNo);
-                if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
+                ServiceResult<String, BigDecimal> result = reCreateReletOrderStatement(reletOrderNo);
+                if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     serviceResult.setErrorCode(result.getErrorCode());
                     return serviceResult;
                 }
-                needPay=needPay.add(result.getResult());
+                needPay = needPay.add(result.getResult());
             }
             serviceResult.setResult(needPay);
         }
