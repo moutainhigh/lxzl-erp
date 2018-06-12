@@ -3616,7 +3616,10 @@ public class StatementServiceImpl implements StatementService {
         Integer currentUserType = 0;
         if(userSupport.isSuperUser()){
             currentUserType = 1;
+        }else if(userSupport.isHeadUser()){
+            currentUserType = 2;
         }
+
         PageQuery pageQuery = new PageQuery(statementOrderDetailQueryParam.getPageNo(), statementOrderDetailQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
