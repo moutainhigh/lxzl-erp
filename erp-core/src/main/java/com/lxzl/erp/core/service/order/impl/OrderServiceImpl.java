@@ -971,7 +971,9 @@ public class OrderServiceImpl implements OrderService {
         orderConfirmChangeToK3Param.setOrderNo(orderDO.getOrderNo());
         // TODO: 2018\5\23 0023 按天计算的单子押金退还需要单独一个逻辑来进行退还
         StringBuffer sb = new StringBuffer();
-        sb.append("租赁订单-").append(orderDO.getOrderNo()).append("用户已经确认收货，有部分退货情况，退货信息如下：\n");
+        sb.append("您的客户[").append(orderDO.getBuyerCustomerName()).append("]所下租赁订单（订单号：").append(orderDO.getOrderNo()).append("）已经部分确认收货，内容如下：\n");
+        StringBuffer confirmsb = new StringBuffer();
+        StringBuffer returnsb = new StringBuffer();
         Integer count = 0;
         for (OrderItemParam orderItemParam:orderItemParamList) {
             count+=orderItemParam.getItemCount();
@@ -1009,7 +1011,14 @@ public class OrderServiceImpl implements OrderService {
                             orderConfirmChangeLogDetailDO.setCreateTime(date);
                             orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
                             orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
-                            sb.append("商品-").append(orderProductDO.getProductName()).append("退").append(orderProductDO.getProductCount()-orderItemParam.getItemCount()).append("台\n");
+                            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
+                                confirmsb.append(orderProductDO.getProductName()).append("(").append(orderItemParam.getItemCount()).append("台)(全新)\n");
+                                returnsb.append(orderProductDO.getProductName()).append("(").append(orderProductDO.getProductCount()-orderItemParam.getItemCount()).append("台)(全新)\n");
+                            }else {
+                                confirmsb.append(orderProductDO.getProductName()).append("(").append(orderItemParam.getItemCount()).append("台)(次新)\n");
+                                returnsb.append(orderProductDO.getProductName()).append("(").append(orderProductDO.getProductCount()-orderItemParam.getItemCount()).append("台)(次新)\n");
+
+                            }
                             //按天租的设置押金
                             if (orderDO.getRentType() == 1) {
                                 BigDecimal one = BigDecimalUtil.div(orderProductDO.getDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),3);
@@ -1018,6 +1027,12 @@ public class OrderServiceImpl implements OrderService {
                             //将订单商品项中的商品总数、商品在租数进行更新
                             orderProductDO.setProductCount(orderItemParam.getItemCount());
                             orderProductDO.setRentingProductCount(orderItemParam.getItemCount());
+                        }else {
+                            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
+                                confirmsb.append(orderProductDO.getProductName()).append("(").append(orderProductDO.getProductCount()).append("台)(全新)\n");
+                            }else {
+                                confirmsb.append(orderProductDO.getProductName()).append("(").append(orderProductDO.getProductCount()).append("台)(次新)\n");
+                            }
                         }
                     }
                 }
@@ -1056,7 +1071,13 @@ public class OrderServiceImpl implements OrderService {
                             orderConfirmChangeLogDetailDO.setCreateTime(date);
                             orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
                             orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
-                            sb.append("配件-").append(orderMaterialDO.getMaterialName()).append("退").append(orderMaterialDO.getMaterialCount()-orderItemParam.getItemCount()).append("台\n");
+                            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
+                                confirmsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderItemParam.getItemCount()).append("台)(全新)\n");
+                                returnsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderMaterialDO.getMaterialCount()-orderItemParam.getItemCount()).append("台)(全新)\n");
+                            }else {
+                                confirmsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderItemParam.getItemCount()).append("台)(次新)\n");
+                                returnsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderMaterialDO.getMaterialCount()-orderItemParam.getItemCount()).append("台)(次新)\n");
+                            }
                             //按天租的设置押金
                             if (orderDO.getRentType() == 1) {
                                 BigDecimal one = BigDecimalUtil.div(orderMaterialDO.getDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),3);
@@ -1065,6 +1086,12 @@ public class OrderServiceImpl implements OrderService {
                             //将订单商品项中的商品总数、商品在租数进行更新
                             orderMaterialDO.setMaterialCount(orderItemParam.getItemCount());
                             orderMaterialDO.setRentingMaterialCount(orderItemParam.getItemCount());
+                        }else {
+                            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
+                                confirmsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderMaterialDO.getMaterialCount()).append("台)(全新)\n");
+                            }else {
+                                confirmsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderMaterialDO.getMaterialCount()).append("台)(次新)\n");
+                            }
                         }
                     }
                 }
@@ -1098,7 +1125,9 @@ public class OrderServiceImpl implements OrderService {
             // 记录订单时间轴
             orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId());
             sb = new StringBuffer();
-            sb.append("租赁订单-").append(orderDO.getOrderNo()).append("用户已经确认收货，没有退货情况。");
+            sb.append("您的客户[").append(orderDO.getBuyerCustomerName()).append("]所下租赁订单（订单号：").append(orderDO.getOrderNo()).append("）已经正常确认收货。收货内容如下：\n");
+            sb.append(confirmsb.toString());
+            //给「业务员」发送消息
             if (orderDO.getOrderSellerId()!= null) {
                 MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
                 messageThirdChannel.setMessageContent(sb.toString());
@@ -1223,9 +1252,13 @@ public class OrderServiceImpl implements OrderService {
         if (flag) {//有退货
             if (orderDO.getOrderStatus()==OrderStatus.ORDER_STATUS_COLSE) {//订单状态为关闭，全部退货
                 sb = new StringBuffer();
-                sb.append("租赁订单-").append(orderDO.getOrderNo()).append("用户没有收货，订单中商品全部退回");
+                sb.append("您的客户[").append(orderDO.getBuyerCustomerName()).append("]所下租赁订单（订单号：").append(orderDO.getOrderNo()).append("）已全部退货,退回内容如下：\n");
+                sb.append(returnsb.toString());
+            }else {
+                sb.append(confirmsb.toString()).append("\n").append("下列商品、配件退回：\n").append(returnsb.toString());
             }
         }
+        //给「业务员」发送消息
         if (orderDO.getOrderSellerId()!= null) {
             MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
             messageThirdChannel.setMessageContent(sb.toString());
