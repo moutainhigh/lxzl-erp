@@ -854,7 +854,7 @@
         eo.order_no AS orderNo,
         ec.customer_no AS customerNo,
         esc_order.sub_company_name AS  orderCompany,
-        escd_owner.sub_company_name AS  customerCompany,
+        escd_customer.sub_company_name AS  customerCompany,
         escd_delivery.sub_company_name AS  deliveryCompany,
         ek3mc.k3_customer_code AS k3CustomerCode FROM (
                 SELECT
@@ -882,7 +882,7 @@
         LEFT JOIN erp_customer ec on ec.id = eo.buyer_customer_id and ec.data_status = 1
         LEFT JOIN erp_sub_company esc_order on esc_order.id = eo.order_sub_company_id and esc_order.data_status = 1
         LEFT JOIN erp_sub_company escd_delivery on escd_delivery.id = eo.delivery_sub_company_id and escd_delivery.data_status = 1
-        LEFT JOIN erp_sub_company escd_owner on escd_owner.id = ec.owner_sub_company_id and escd_owner.data_status = 1
+        LEFT JOIN erp_sub_company escd_customer on escd_customer.id = ec.owner_sub_company_id and escd_customer.data_status = 1
         LEFT JOIN erp_k3_mapping_customer ek3mc on ek3mc.erp_customer_code = ec.customer_no
         <where>
             <if test="maps.subCompanyId != null &amp;&amp; maps.currentUserType != 1 &amp;&amp; maps.currentUserType != 2">
