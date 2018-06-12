@@ -14,7 +14,7 @@ import com.lxzl.erp.common.domain.statistics.StatisticsSalesmanPageParam;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesman;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
-import com.lxzl.erp.core.service.DynamicSqlService;
+import com.lxzl.erp.core.service.dynamicSql.DynamicSqlService;
 import com.lxzl.erp.core.service.bank.BankSlipService;
 import com.lxzl.erp.core.service.export.ExcelExportConfigGroup;
 import com.lxzl.erp.core.service.export.ExcelExportService;

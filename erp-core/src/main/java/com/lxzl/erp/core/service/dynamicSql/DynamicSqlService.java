@@ -1,4 +1,4 @@
-package com.lxzl.erp.core.service;
+package com.lxzl.erp.core.service.dynamicSql;
 
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSql;

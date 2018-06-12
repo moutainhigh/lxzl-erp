@@ -675,38 +675,37 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void confirmChangeOrder() throws Exception {
         OrderConfirmChangeParam orderConfirmChangeParam = new OrderConfirmChangeParam();
-//        OrderItemParam orderItemParam1 = new OrderItemParam();
-//        orderItemParam1.setItemId(2902);
-//        orderItemParam1.setItemCount(3);
-//        orderItemParam1.setItemType(1);
+        OrderItemParam orderItemParam1 = new OrderItemParam();
+        orderItemParam1.setItemId(3467);
+        orderItemParam1.setItemCount(0);
+        orderItemParam1.setItemType(1);
         OrderItemParam orderItemParam2 = new OrderItemParam();
-        orderItemParam2.setItemId(2971);
-        orderItemParam2.setItemCount(2);
+        orderItemParam2.setItemId(3468);
+        orderItemParam2.setItemCount(0);
         orderItemParam2.setItemType(1);
-//        OrderItemParam orderItemParam3 = new OrderItemParam();
-//        orderItemParam3.setItemId(5029);
-//        orderItemParam3.setItemCount(0);
-//        orderItemParam3.setItemType(2);
-//        OrderItemParam orderItemParam4 = new OrderItemParam();
-//        orderItemParam4.setItemId(5030);
-//        orderItemParam4.setItemCount(0);
-//        orderItemParam4.setItemType(2);
+        OrderItemParam orderItemParam3 = new OrderItemParam();
+        orderItemParam3.setItemId(5864);
+        orderItemParam3.setItemCount(0);
+        orderItemParam3.setItemType(2);
+        OrderItemParam orderItemParam4 = new OrderItemParam();
+        orderItemParam4.setItemId(5865);
+        orderItemParam4.setItemCount(0);
+        orderItemParam4.setItemType(2);
         List<OrderItemParam> orderItemParamList = new ArrayList<>();
-//        orderItemParamList.add(orderItemParam1);
+        orderItemParamList.add(orderItemParam1);
         orderItemParamList.add(orderItemParam2);
-//        orderItemParamList.add(orderItemParam3);
-//        orderItemParamList.add(orderItemParam4);
+        orderItemParamList.add(orderItemParam3);
+        orderItemParamList.add(orderItemParam4);
         orderConfirmChangeParam.setOrderItemParamList(orderItemParamList);
-        orderConfirmChangeParam.setOrderNo("LXO-20180528-027-00155");
+        orderConfirmChangeParam.setOrderNo("LXO-20180612-027-00082");
         orderConfirmChangeParam.setChangeReasonType(1);
         orderConfirmChangeParam.setChangeReason("杀口接沙客sahksjdkaksjdakjshdkjas");
         Image image = new Image();
         image.setImgId(3133);
         orderConfirmChangeParam.setDeliveryNoteCustomerSignImg(image);
 
-
-
         TestResult testResult = getJsonTestResult("/order/confirmChangeOrder", orderConfirmChangeParam);
+        Thread.sleep(Integer.MAX_VALUE);
     }
     @Test
     public void supperUserChangeOrder() throws Exception {

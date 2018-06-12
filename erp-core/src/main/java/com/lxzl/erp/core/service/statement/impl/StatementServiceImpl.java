@@ -3613,11 +3613,20 @@ public class StatementServiceImpl implements StatementService {
     @Override
     public ServiceResult<String, Page<FinanceStatementOrderPayDetail>> queryFinanceStatementOrderPayDetail(StatementOrderDetailQueryParam statementOrderDetailQueryParam) {
         ServiceResult<String, Page<FinanceStatementOrderPayDetail>> serviceResult = new ServiceResult<>();
+        Integer currentUserType = 0;
+        if(userSupport.isSuperUser()){
+            currentUserType = 1;
+        }else if(userSupport.isHeadUser()){
+            currentUserType = 2;
+        }
+
         PageQuery pageQuery = new PageQuery(statementOrderDetailQueryParam.getPageNo(), statementOrderDetailQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("statementOrderDetailQueryParam", statementOrderDetailQueryParam);
+        maps.put("subCompanyId", userSupport.getCurrentUserCompanyId());
+        maps.put("currentUserType", currentUserType);
         Integer totalCount = statementOrderDetailMapper.queryStatementOrderDetailCountByParam(maps);
         List<FinanceStatementOrderPayDetail> financeStatementOrderPayDetailList = statementOrderDetailMapper.queryStatementOrderDetailByParam(maps);
         Page<FinanceStatementOrderPayDetail> page = new Page<>(financeStatementOrderPayDetailList, totalCount, statementOrderDetailQueryParam.getPageNo(), statementOrderDetailQueryParam.getPageSize());

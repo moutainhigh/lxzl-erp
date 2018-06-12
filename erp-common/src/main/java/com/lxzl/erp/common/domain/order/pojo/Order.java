@@ -107,7 +107,9 @@ public class Order extends BasePO {
 
     private List<Coupon> couponList;//该订单使用的设备优惠券
 
-    private Integer canReletOrder;                  //是否可续租     0不可以续租  1可以
+    private Integer canReletOrder;                              //是否可续租     0不可以续租  1可以  2存在待处理的续租单  3存在未开始的续租单
+    private Integer reletOrderId;                               //续租单ID
+    private Integer isReletOrder;                               //是否为续租单    0否  1是
 
     private String changeReason;//确认收货变更原因
     private Image deliveryNoteCustomerSignImg;//交货单客户签字
@@ -695,6 +697,17 @@ public class Order extends BasePO {
         this.orderJointProductList = orderJointProductList;
     }
 
+    public Integer getReletOrderId() { return reletOrderId; }
+
+    public void setReletOrderId(Integer reletOrderId) { this.reletOrderId = reletOrderId; }
+
+    public Integer getIsReletOrder() {
+        return isReletOrder;
+    }
+
+    public void setIsReletOrder(Integer isReletOrder) {
+        this.isReletOrder = isReletOrder;
+    }
 
     public Integer getCanReletOrder() {
         return canReletOrder;
