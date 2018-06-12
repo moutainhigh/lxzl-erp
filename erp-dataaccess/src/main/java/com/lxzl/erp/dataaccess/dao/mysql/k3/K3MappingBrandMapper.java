@@ -5,6 +5,7 @@ import com.lxzl.erp.dataaccess.domain.k3.K3MappingBrandDO;import org.apache.ibat
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public interface K3MappingBrandMapper extends BaseMysqlDAO<K3MappingBrandDO> {
@@ -16,4 +17,6 @@ public interface K3MappingBrandMapper extends BaseMysqlDAO<K3MappingBrandDO> {
 	K3MappingBrandDO findByErpCode(@Param("erpCode") String erpCode);
 
 	K3MappingBrandDO findByK3Code(@Param("k3Code") String k3Code);
+
+    List<K3MappingBrandDO> findByErpCodeList(@Param("productDOBrandIdSet") Set<String> productDOBrandIdSet);
 }

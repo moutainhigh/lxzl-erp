@@ -11,6 +11,9 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -202,29 +205,29 @@ public class ExcelExportSupport<T> {
      */
     public static <T> ServiceResult<String, String> export(List<List<T>> list,String fileName, String sheetName, HttpServletResponse response,Integer width) throws Exception {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
-        HSSFSheet hssSheet = hssfWorkbook.createSheet(sheetName);
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
+        XSSFSheet xssSheet = xssfWorkbook.createSheet(sheetName);
 
         if (CollectionUtil.isNotEmpty(list)) {
             for (int i = 0; i < list.size(); i++) {
                 List<T> rowList = list.get(i);
-                HSSFRow newXssfRow = hssSheet.createRow(i);
+                XSSFRow newXssfRow = xssSheet.createRow(i);
                 for (int j = 0; j < rowList.size(); j++) {
-                    hssSheet.setColumnWidth(j, width);
+                    xssSheet.setColumnWidth(j, width);
                     Cell cell = newXssfRow.createCell(j);
                     cell.setCellValue(String.valueOf(rowList.get(j)));
                 }
             }
         }
         response.reset();
-        response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xls");
+        response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xlsx");
         response.setContentType("application/json;charset=utf-8");
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        hssfWorkbook.write(outputStream);
+        xssfWorkbook.write(outputStream);
         OutputStream stream = response.getOutputStream();
         outputStream.flush();
         outputStream.close();
-        hssfWorkbook.write(stream);
+        xssfWorkbook.write(stream);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
