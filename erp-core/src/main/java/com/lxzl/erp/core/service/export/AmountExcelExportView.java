@@ -1,7 +1,6 @@
 package com.lxzl.erp.core.service.export;
 
 
-import com.lxzl.erp.common.util.BigDecimalUtil;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -32,7 +31,7 @@ public class AmountExcelExportView implements ExcelExportView {
     private Object formatBigDecimal(Object o) {
         if(o != null){
             BigDecimal receive = new BigDecimal(o.toString());
-            receive = BigDecimalUtil.round(receive,BigDecimalUtil.STANDARD_SCALE);
+            receive = receive.setScale(2,BigDecimal.ROUND_UP );
             return receive;
         }
         return "0.00";
