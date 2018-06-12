@@ -3617,6 +3617,10 @@ public class StatementServiceImpl implements StatementService {
         if(userSupport.isSuperUser()){
             currentUserType = 1;
         }
+        Integer headUser = 0;
+        if(userSupport.isHeadUser()){
+            headUser = 1;
+        }
         PageQuery pageQuery = new PageQuery(statementOrderDetailQueryParam.getPageNo(), statementOrderDetailQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
@@ -3624,6 +3628,7 @@ public class StatementServiceImpl implements StatementService {
         maps.put("statementOrderDetailQueryParam", statementOrderDetailQueryParam);
         maps.put("subCompanyId", userSupport.getCurrentUserCompanyId());
         maps.put("currentUserType", currentUserType);
+        maps.put("headUser", headUser);
         Integer totalCount = statementOrderDetailMapper.queryStatementOrderDetailCountByParam(maps);
         List<FinanceStatementOrderPayDetail> financeStatementOrderPayDetailList = statementOrderDetailMapper.queryStatementOrderDetailByParam(maps);
         Page<FinanceStatementOrderPayDetail> page = new Page<>(financeStatementOrderPayDetailList, totalCount, statementOrderDetailQueryParam.getPageNo(), statementOrderDetailQueryParam.getPageSize());

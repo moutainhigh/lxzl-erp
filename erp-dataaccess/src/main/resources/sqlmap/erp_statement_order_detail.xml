@@ -842,7 +842,7 @@
         LEFT JOIN erp_sub_company escd on escd.id = eo.delivery_sub_company_id and escd.data_status = 1
         LEFT JOIN erp_sub_company escd1 on escd1.id = ec.owner_sub_company_id and escd1.data_status = 1
         <where>
-            <if test="maps.subCompanyId != null &amp;&amp; maps.currentUserType != 1">
+            <if test="maps.subCompanyId != null &amp;&amp; maps.currentUserType != 1 &amp;&amp; maps.headUser != 1">
                 esc.id = #{maps.subCompanyId,jdbcType=INTEGER} OR (CASE WHEN esc.id = 10 THEN (escd.id = #{maps.subCompanyId,jdbcType=INTEGER}) END )
             </if>
         </where>
@@ -885,7 +885,7 @@
         LEFT JOIN erp_sub_company escd1 on escd1.id = ec.owner_sub_company_id and escd1.data_status = 1
         LEFT JOIN erp_k3_mapping_customer ek3mc on ek3mc.erp_customer_code = ec.customer_no
         <where>
-            <if test="maps.subCompanyId != null &amp;&amp; maps.currentUserType != 1">
+            <if test="maps.subCompanyId != null &amp;&amp; maps.currentUserType != 1 &amp;&amp; maps.headUser != 1">
                 esc.id = #{maps.subCompanyId,jdbcType=INTEGER} OR (CASE WHEN (esc.id = 10 OR esc.id = 11)THEN (escd.id = #{maps.subCompanyId,jdbcType=INTEGER}) END )
             </if>
         </where>
