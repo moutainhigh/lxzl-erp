@@ -1185,6 +1185,10 @@ public class StatementServiceImpl implements StatementService {
 
         Integer totalCount = statementOrderMapper.listSaleCount(maps);
         List<StatementOrderDO> statementOrderDOList = statementOrderMapper.listSalePage(maps);
+        for (StatementOrderDO statementOrderDO : statementOrderDOList) {
+            statementOrderDO.setStatementPaidAmount(BigDecimalUtil.round(statementOrderDO.getStatementPaidAmount() == null ? new BigDecimal(0) : statementOrderDO.getStatementPaidAmount(),BigDecimalUtil.STANDARD_SCALE));
+        }
+
         List<StatementOrder> statementOrderList = ConverterUtil.convertList(statementOrderDOList, StatementOrder.class);
         Page<StatementOrder> page = new Page<>(statementOrderList, totalCount, statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -1356,6 +1360,18 @@ public class StatementServiceImpl implements StatementService {
                     hashMap.put(key, statementOrderDetail);
                 }
             }
+
+            statementOrder.setStatementDepositPaidAmount(BigDecimalUtil.round(statementOrder.getStatementDepositPaidAmount() == null ? new BigDecimal(0) : statementOrder.getStatementDepositPaidAmount(),BigDecimalUtil.STANDARD_SCALE));
+            statementOrder.setStatementRentPaidAmount(BigDecimalUtil.round(statementOrder.getStatementRentPaidAmount() == null ? new BigDecimal(0) : statementOrder.getStatementRentPaidAmount(),BigDecimalUtil.STANDARD_SCALE));
+            statementOrder.setStatementPaidAmount(BigDecimalUtil.round(statementOrder.getStatementPaidAmount() == null ? new BigDecimal(0) : statementOrder.getStatementPaidAmount(),BigDecimalUtil.STANDARD_SCALE));
+
+            for (Integer statementOrderDetailId : statementOrderDetailMap.keySet()) {
+                StatementOrderDetail statementOrderDetail = statementOrderDetailMap.get(statementOrderDetailId);
+                statementOrderDetail.setStatementDetailRentPaidAmount( BigDecimalUtil.round(statementOrderDetail.getStatementDetailRentPaidAmount() == null ? new BigDecimal(0) : statementOrderDetail.getStatementDetailRentPaidAmount(),BigDecimalUtil.STANDARD_SCALE));  //已付租金
+                statementOrderDetail.setStatementDetailDepositPaidAmount( BigDecimalUtil.round(statementOrderDetail.getStatementDetailDepositPaidAmount() == null ? new BigDecimal(0) : statementOrderDetail.getStatementDetailDepositPaidAmount(),BigDecimalUtil.STANDARD_SCALE));  //已付押金
+                statementOrderDetail.setStatementDetailRentDepositPaidAmount( BigDecimalUtil.round(statementOrderDetail.getStatementDetailRentDepositPaidAmount() == null ? new BigDecimal(0) : statementOrderDetail.getStatementDetailRentDepositPaidAmount(),BigDecimalUtil.STANDARD_SCALE));  //已付租金押金
+            }
+
         }
 
         for (StatementOrderDetail statementOrderDetail : hashMap.values()) {
@@ -3629,6 +3645,11 @@ public class StatementServiceImpl implements StatementService {
         maps.put("currentUserType", currentUserType);
         Integer totalCount = statementOrderDetailMapper.queryStatementOrderDetailCountByParam(maps);
         List<FinanceStatementOrderPayDetail> financeStatementOrderPayDetailList = statementOrderDetailMapper.queryStatementOrderDetailByParam(maps);
+        for (FinanceStatementOrderPayDetail financeStatementOrderPayDetail : financeStatementOrderPayDetailList) {
+            financeStatementOrderPayDetail.setRentPaidAmount( BigDecimalUtil.round(financeStatementOrderPayDetail.getRentPaidAmount() == null ? new BigDecimal(0) : financeStatementOrderPayDetail.getRentPaidAmount(),BigDecimalUtil.STANDARD_SCALE));  //已付租金
+            financeStatementOrderPayDetail.setDepositPaidAmount( BigDecimalUtil.round(financeStatementOrderPayDetail.getDepositPaidAmount()== null ? new BigDecimal(0) : financeStatementOrderPayDetail.getDepositPaidAmount(),BigDecimalUtil.STANDARD_SCALE));  //已付押金
+            financeStatementOrderPayDetail.setTotalPaidAmount( BigDecimalUtil.round(financeStatementOrderPayDetail.getTotalPaidAmount()== null ? new BigDecimal(0) : financeStatementOrderPayDetail.getTotalPaidAmount(),BigDecimalUtil.STANDARD_SCALE));  //已付租金押金
+        }
         Page<FinanceStatementOrderPayDetail> page = new Page<>(financeStatementOrderPayDetailList, totalCount, statementOrderDetailQueryParam.getPageNo(), statementOrderDetailQueryParam.getPageSize());
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(page);
