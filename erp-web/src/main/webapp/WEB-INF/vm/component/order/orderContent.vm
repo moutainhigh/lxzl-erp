@@ -25,7 +25,7 @@
                     <label class="col-md-3 control-label">税率</label>
                     <div class="col-md-3">
                         <div class="input-group">
-                            <span class="input-group-addon">17%</span>
+                            <span class="input-group-addon">16%</span>
                             <input class="form-control required taxRate2" type="text" name="highTaxRate" id="highTaxRate"  placeholder="请输入0-100的值" />
                             <span class="input-group-addon">%</span>
                         </div>
