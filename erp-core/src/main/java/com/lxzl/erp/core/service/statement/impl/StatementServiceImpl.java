@@ -1008,6 +1008,7 @@ public class StatementServiceImpl implements StatementService {
         statementOrderDO.setUpdateUser(loginUserId.toString());
         statementOrderMapper.update(statementOrderDO);
         Map<Integer, BigDecimal> orderPaidMap = new HashMap<>();
+        Map<Integer, BigDecimal> reletOrderPaidMap = new HashMap<>();
 
         BigDecimal totalPaidAmount = statementOrderDO.getStatementPaidAmount();
 
@@ -1129,7 +1130,22 @@ public class StatementServiceImpl implements StatementService {
                 statementOrderDetailMapper.update(statementOrderDetailDO);
 
                 // 已支付的租金
-                orderPaidMap.put(statementOrderDetailDO.getOrderId(), BigDecimalUtil.add(orderPaidMap.get(statementOrderDetailDO.getOrderId()), needStatementDetailRentPayAmount));
+//                orderPaidMap.put(statementOrderDetailDO.getOrderId(), BigDecimalUtil.add(orderPaidMap.get(statementOrderDetailDO.getOrderId()), needStatementDetailRentPayAmount));
+
+                if (statementOrderDetailDO.getReletOrderItemReferId() == null){
+                    orderPaidMap.put(statementOrderDetailDO.getOrderId(), BigDecimalUtil.add(orderPaidMap.get(statementOrderDetailDO.getOrderId()), needStatementDetailRentPayAmount));
+                }
+                else {
+                    if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetailDO.getOrderItemType())){
+                        ReletOrderProductDO reletOrderProductDO = reletOrderProductMapper.findById(statementOrderDetailDO.getReletOrderItemReferId());
+                        reletOrderPaidMap.put(reletOrderProductDO.getReletOrderId(), BigDecimalUtil.add(reletOrderPaidMap.get(reletOrderProductDO.getReletOrderId()), needStatementDetailRentPayAmount));
+
+                    }
+                    if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetailDO.getOrderItemType())){
+                        ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialMapper.findById(statementOrderDetailDO.getReletOrderItemReferId());
+                        reletOrderPaidMap.put(reletOrderMaterialDO.getReletOrderId(), BigDecimalUtil.add(reletOrderPaidMap.get(reletOrderMaterialDO.getReletOrderId()), needStatementDetailRentPayAmount));
+                    }
+                }
             }
         }
 
@@ -1148,6 +1164,22 @@ public class StatementServiceImpl implements StatementService {
             orderDO.setPayTime(currentTime);
             orderMapper.update(orderDO);
             orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_PAID, null, currentTime, loginUserId);
+        }
+        //更新续租单 支付状态和已付款金额
+        for (Map.Entry<Integer, BigDecimal> entry : reletOrderPaidMap.entrySet()) {
+            Integer reletOrderId = entry.getKey();
+            BigDecimal paidAmount = entry.getValue();
+            ReletOrderDO reletOrderDO = reletOrderMapper.findById(reletOrderId);
+            if (reletOrderDO == null) {
+                continue;
+            }
+            if (!PayStatus.PAY_STATUS_PAID.equals(reletOrderDO.getPayStatus())) {
+                reletOrderDO.setPayStatus(PayStatus.PAY_STATUS_PAID);
+            }
+
+            reletOrderDO.setTotalPaidOrderAmount(BigDecimalUtil.add(reletOrderDO.getTotalPaidOrderAmount(), paidAmount));
+            reletOrderDO.setPayTime(currentTime);
+            reletOrderMapper.update(reletOrderDO);
         }
     }
 
