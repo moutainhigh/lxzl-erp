@@ -379,6 +379,11 @@ public class PageController extends BaseController {
         return "/businessCustomerManage/businessCustomerEditAfterPass";
     }
 
+    @RequestMapping("/customer-manage/confirm-statement")
+    public String customerManageConfirmStatement() {
+        return "/component/customer/confirmStatementModal";
+    }
+
     @RequestMapping(value = "customer-common-manage/detail", method = RequestMethod.GET)
     public String detailCustomer(String no) {
         CustomerQueryParam customerQueryParam = new CustomerQueryParam();
