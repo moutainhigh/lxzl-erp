@@ -81,6 +81,10 @@ public class BankSlipSupport {
         //判断导入的数据是不是今天的  是就跟新 不是就新增
         BankSlipDO dbBankSlipDO = bankSlipMapper.findBySubCompanyIdAndDayAndBankType(bankSlipDO.getSubCompanyId(), bankSlipDO.getBankType(), bankSlipDO.getSlipDay());
         if (dbBankSlipDO != null) {
+            //跟新状态
+            if (loanSignTypeAmount > 0 && SlipStatus.ALL_CLAIM.equals(dbBankSlipDO.getSlipStatus())) {
+                dbBankSlipDO.setSlipStatus(SlipStatus.ALREADY_PUSH_DOWN);
+            }
             //跟新
             dbBankSlipDO.setInCount(dbBankSlipDO.getInCount() + loanSignTypeAmount);
             dbBankSlipDO.setNeedClaimCount(dbBankSlipDO.getNeedClaimCount() + loanSignTypeAmount);
