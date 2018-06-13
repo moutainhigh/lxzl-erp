@@ -80,7 +80,7 @@ public class K3Controller extends BaseController {
     @RequestMapping(value = "createReturnOrderFromERP", method = RequestMethod.POST)
     public Result createReturnOrderFromERP(@RequestBody @Validated(AddGroup.class) K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = k3ReturnOrderService.createReturnOrderFromERP(k3ReturnOrder);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        return resultGenerator.generate(serviceResult);
     }
     /**
      * 修改退货单时从ERP获取订单数据
