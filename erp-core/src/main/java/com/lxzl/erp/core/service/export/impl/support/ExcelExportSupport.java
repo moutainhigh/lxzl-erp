@@ -74,12 +74,10 @@ public class ExcelExportSupport<T> {
         response.reset();
         response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xls");
         response.setContentType("application/json;charset=utf-8");
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        hssfWorkbook.write(outputStream);
         OutputStream stream = response.getOutputStream();
-        outputStream.flush();
-        outputStream.close();
         hssfWorkbook.write(stream);
+        stream.flush();
+        stream.close();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -158,12 +156,10 @@ public class ExcelExportSupport<T> {
         response.reset();
         response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xls");
         response.setContentType("application/json;charset=utf-8");
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        hssfWorkbook.write(outputStream);
         OutputStream stream = response.getOutputStream();
-        outputStream.flush();
-        outputStream.close();
         hssfWorkbook.write(stream);
+        stream.flush();
+        stream.close();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -222,12 +218,10 @@ public class ExcelExportSupport<T> {
         response.reset();
         response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xlsx");
         response.setContentType("application/json;charset=utf-8");
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        xssfWorkbook.write(outputStream);
         OutputStream stream = response.getOutputStream();
-        outputStream.flush();
-        outputStream.close();
         xssfWorkbook.write(stream);
+        stream.flush();
+        stream.close();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
