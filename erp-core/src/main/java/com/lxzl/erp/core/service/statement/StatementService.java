@@ -209,4 +209,13 @@ public interface StatementService extends BaseService {
      * @return
      */
     ServiceResult<String, BigDecimal> batchReCreateReletOrderStatement(List<String> reletOrderNos);
+
+    /**
+     * 仅重算退货单租金
+     *
+     * @param returnOrderNo
+     * @return
+     */
+    ServiceResult<String, String> reStatementK3ReturnOrderRentOnly(String returnOrderNo);
+
 }
