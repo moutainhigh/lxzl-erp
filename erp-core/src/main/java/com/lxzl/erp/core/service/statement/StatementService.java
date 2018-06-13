@@ -195,4 +195,18 @@ public interface StatementService extends BaseService {
      * @return
      */
     ServiceResult<String, Page<FinanceStatementOrderPayDetail>> queryFinanceStatementOrderPayDetail(StatementOrderDetailQueryParam statementOrderDetailQueryParam);
+
+    /**
+     * 重算续租单
+     * @param reletOrderNo
+     * @return
+     */
+    ServiceResult<String, BigDecimal> reCreateReletOrderStatement(String reletOrderNo);
+
+    /**
+     * 批量重算续租单（仅未支付允许批量重算）
+     * @param reletOrderNos
+     * @return
+     */
+    ServiceResult<String, BigDecimal> batchReCreateReletOrderStatement(List<String> reletOrderNos);
 }

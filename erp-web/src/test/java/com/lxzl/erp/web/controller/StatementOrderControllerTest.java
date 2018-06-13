@@ -6,6 +6,7 @@ import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.StatementOrderPayType;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
@@ -152,5 +153,12 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
         Order param = new Order();
         param.setOrderNo("LXSE2017121565");
         TestResult testResult = getJsonTestResult("/statementOrder/reCreateOrderStatement", param);
+    }
+
+    @Test
+    public void reCreateReletOrderStatement() throws Exception {
+        ReletOrder param = new ReletOrder();
+        param.setReletOrderNo("LXR-20180606-027-00041");
+        TestResult testResult = getJsonTestResult("/statementOrder/reCreateReletOrderStatement", param);
     }
 }

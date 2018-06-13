@@ -52,4 +52,11 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
     Integer queryStatementOrderDetailCountByParam(@Param("maps") Map<String, Object> maps);
 
     List<FinanceStatementOrderPayDetail> queryStatementOrderDetailByParam(@Param("maps") Map<String, Object> maps);
+
+    /**
+     * 查找续租单项关联结算
+     * @param ids
+     * @return
+     */
+    List<StatementOrderDetailDO> findByReletOrderItemReferIds(@Param("ids")List<Integer> ids);
 }

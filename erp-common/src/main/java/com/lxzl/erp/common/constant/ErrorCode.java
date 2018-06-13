@@ -920,6 +920,8 @@ public class ErrorCode {
     public static final String RELET_ORDER_EXISTS_UNPAID_STATEMENT = "J21000013";
     public static final String RELET_ORDER_NOT_ALLOWED_MORE_THAN_ONE_SUCCESS_RECORD = "J21000014";
     public static final String RELET_ORDER_STATUS_CAN_NOT_CANCEL = "J21000015";
+    public static final String RELET_ORDER_HAS_PAID = "J21000016";
+    public static final String RELET_ORDER_RE_STATEMENT_FAIL = "J21000017";
 
 
     public static final String PRINT_LOG_REFER_NO_NOT_NULL = "J220000001";
@@ -1863,6 +1865,8 @@ public class ErrorCode {
         MAP.put(RELET_ORDER_EXISTS_UNPAID_STATEMENT, "此订单尚有未支付的结算单，无法续租");
         MAP.put(RELET_ORDER_NOT_ALLOWED_MORE_THAN_ONE_SUCCESS_RECORD, "此订单已存在续租成功记录，但尚未开始执行，无法再次续租");
         MAP.put(RELET_ORDER_STATUS_CAN_NOT_CANCEL, "只有待处理的续租单可以取消");
+        MAP.put(RELET_ORDER_HAS_PAID, "已支付的续租单不允许批量重算");
+        MAP.put(RELET_ORDER_RE_STATEMENT_FAIL, "续租单号【%s 】的续租单重新结算失败");
 
         MAP.put(PRINT_LOG_REFER_NO_NOT_NULL, "关联编号不能为空");
         MAP.put(PRINT_LOG_REFER_TYPE_NOT_NULL, "关联类型不能为空");
