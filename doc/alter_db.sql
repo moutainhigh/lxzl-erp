@@ -870,11 +870,23 @@ CREATE TABLE `erp_order_confirm_change_log_detail` (
 ALTER TABLE `erp_k3_mapping_customer` ADD INDEX `index_erp_customer_code`(`erp_customer_code`);
 ALTER TABLE `erp_bank_slip_claim` ADD INDEX `index_customer_no`(`customer_no`);
 
--------------------------------未执行-----------------------------
-
 ALTER TABLE erp_customer ADD COLUMN `confirm_statement_status` INT(11) NOT NULL DEFAULT '0' COMMENT '结算单是否确认，0否1是';
 ALTER TABLE erp_customer ADD COLUMN `confirm_statement_user` INT(20) COMMENT '结算单确认人';
 ALTER TABLE erp_customer ADD COLUMN `confirm_statement_time` DATETIME COMMENT '结算单确认时间';
 ALTER TABLE erp_statement_order_detail add `relet_order_item_refer_id` int(20) DEFAULT NULL COMMENT '续租订单项ID';
 ALTER TABLE erp_order ADD `relet_order_id`  INT(20)  DEFAULT NULL COMMENT '续租单ID';
+-------------------------------未执行-----------------------------
 
+DROP TABLE if exists `erp_dynamic_sql`;
+CREATE TABLE `erp_dynamic_sql` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+	`sql_title` varchar(100) NOT NULL COMMENT 'sql语句标题',
+	`sql_content` text NOT NULL COMMENT 'sql语句内容',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+	`remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+	`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+	`create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+	`update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='动态sql表';

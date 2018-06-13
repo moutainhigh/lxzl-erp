@@ -148,4 +148,11 @@ public class StatementController extends BaseController {
         ServiceResult<String, BigDecimal> serviceResult = statementService.batchReCreateReletOrderStatement(param.getReletOrderNoList());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    @RequestMapping(value = "reStatementK3ReturnOrderRentOnly", method = RequestMethod.POST)
+    public Result reStatementK3ReturnOrderRentOnly(@RequestBody K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
+        ServiceResult<String, String> result = statementService.reStatementK3ReturnOrderRentOnly(k3ReturnOrder.getReturnOrderNo());
+        return resultGenerator.generate(result);
+    }
+
 }
