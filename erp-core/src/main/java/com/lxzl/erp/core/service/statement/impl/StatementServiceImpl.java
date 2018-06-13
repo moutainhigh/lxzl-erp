@@ -3735,19 +3735,19 @@ public class StatementServiceImpl implements StatementService {
         boolean paid = PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus());
         //清除结算信息
         ServiceResult<String, String> result = clearStatement(paid, orderDO.getBuyerCustomerNo(), statementOrderDetailDOList);
-//        //创建失败回滚
-//        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
-//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//            return result;
-//        }
-//        if (paid) {
-//            //此处逻辑与强制取消订单不同，强制取消订单留存支付记录，不修改订单，重算修改订单支付状态
-//            orderDO.setPayStatus(PayStatus.PAY_STATUS_INIT);
-//            orderDO.setTotalPaidOrderAmount(BigDecimal.ZERO);
-//            orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-//            orderDO.setUpdateTime(new Date());
-//            orderMapper.update(orderDO);
-//        }
+        //创建失败回滚
+        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
+        if (paid) {
+            //此处逻辑与强制取消订单不同，强制取消订单留存支付记录，不修改订单，重算修改订单支付状态
+            orderDO.setPayStatus(PayStatus.PAY_STATUS_INIT);
+            orderDO.setTotalPaidOrderAmount(BigDecimal.ZERO);
+            orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            orderDO.setUpdateTime(new Date());
+            orderMapper.update(orderDO);
+        }
         return result;
     }
 
@@ -3770,12 +3770,12 @@ public class StatementServiceImpl implements StatementService {
             BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
             for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
                 //计算所有已支付金额,由于付款是在冲正后做的，所以此时无需考虑冲正金额
-                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount, statementOrderDetailDO.getStatementDetailDepositPaidAmount());
+                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount,BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(),statementOrderDetailDO.getStatementDetailDepositReturnAmount()));
                 otherPaidAmount = BigDecimalUtil.add(otherPaidAmount, statementOrderDetailDO.getStatementDetailOtherPaidAmount());
-                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount, statementOrderDetailDO.getStatementDetailRentPaidAmount());
+                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount,statementOrderDetailDO.getStatementDetailRentPaidAmount());
                 overduePaidAmount = BigDecimalUtil.add(overduePaidAmount, statementOrderDetailDO.getStatementDetailOverduePaidAmount());
                 penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount, statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
-                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount, statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
+                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount,BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount()));
             }
             //处理结算单总状态及已支付金额
             statementOrderSupport.reStatementPaid(statementOrderDOMap, statementOrderDetailDOList);
@@ -4154,6 +4154,10 @@ public class StatementServiceImpl implements StatementService {
             //只处理租金
             if (!StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT.equals(statementOrderDetailDO.getStatementDetailType()))
                 continue;
+            //结算了的跳过
+            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
+                continue;
+            }
             Date dateKey = com.lxzl.se.common.util.date.DateUtil.getBeginOfDay(statementOrderDetailDO.getStatementExpectPayTime());
             if (!statementOrderCatch.containsKey(dateKey)) {
                 StatementOrderDO statementOrderDO = statementOrderMapper.findByCustomerAndPayTime(statementOrderDetailDO.getCustomerId(), dateKey);
