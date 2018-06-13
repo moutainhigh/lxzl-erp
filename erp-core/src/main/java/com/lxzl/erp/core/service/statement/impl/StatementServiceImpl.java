@@ -3770,12 +3770,12 @@ public class StatementServiceImpl implements StatementService {
             BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
             for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
                 //计算所有已支付金额,由于付款是在冲正后做的，所以此时无需考虑冲正金额
-                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount, statementOrderDetailDO.getStatementDetailDepositPaidAmount());
+                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount,BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(),statementOrderDetailDO.getStatementDetailDepositReturnAmount()));
                 otherPaidAmount = BigDecimalUtil.add(otherPaidAmount, statementOrderDetailDO.getStatementDetailOtherPaidAmount());
-                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount, statementOrderDetailDO.getStatementDetailRentPaidAmount());
+                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount,statementOrderDetailDO.getStatementDetailRentPaidAmount());
                 overduePaidAmount = BigDecimalUtil.add(overduePaidAmount, statementOrderDetailDO.getStatementDetailOverduePaidAmount());
                 penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount, statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
-                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount, statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
+                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount,BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount()));
             }
             //处理结算单总状态及已支付金额
             statementOrderSupport.reStatementPaid(statementOrderDOMap, statementOrderDetailDOList);
