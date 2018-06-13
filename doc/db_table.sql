@@ -3618,6 +3618,7 @@ CREATE TABLE `erp_k3_order_statement_config` (
   INDEX index_order_no ( `order_no` )
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='k3订单结算配置表';
 
+DROP TABLE if exists `erp_message_third_channel`;
 CREATE TABLE `erp_message_third_channel` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
 	`message_title` varchar(63) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '发送的信息主题',
@@ -3637,7 +3638,18 @@ CREATE TABLE `erp_message_third_channel` (
   PRIMARY KEY (`id`),
 	KEY `index_receiver_user_id` (`receiver_user_id`),
 	KEY `index_sender_user_id` (`sender_user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='第三方渠道消息表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='第三方渠道消息表';
 
-
-
+DROP TABLE if exists `erp_dynamic_sql`;
+CREATE TABLE `erp_dynamic_sql` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+	`sql_title` varchar(100) NOT NULL COMMENT 'sql语句标题',
+	`sql_content` text NOT NULL COMMENT 'sql语句内容',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+	`remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+	`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+	`create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+	`update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='动态sql表';
