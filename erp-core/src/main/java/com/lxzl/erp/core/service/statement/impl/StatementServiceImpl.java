@@ -4154,10 +4154,6 @@ public class StatementServiceImpl implements StatementService {
             //只处理租金
             if (!StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT.equals(statementOrderDetailDO.getStatementDetailType()))
                 continue;
-            //结算了的跳过
-            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
-                continue;
-            }
             Date dateKey = com.lxzl.se.common.util.date.DateUtil.getBeginOfDay(statementOrderDetailDO.getStatementExpectPayTime());
             if (!statementOrderCatch.containsKey(dateKey)) {
                 StatementOrderDO statementOrderDO = statementOrderMapper.findByCustomerAndPayTime(statementOrderDetailDO.getCustomerId(), dateKey);
@@ -4165,6 +4161,9 @@ public class StatementServiceImpl implements StatementService {
             }
             StatementOrderDO statementOrderDO = statementOrderCatch.get(dateKey);
             if (statementOrderDO == null) continue;
+            //结算了的跳过
+            if(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus()))continue;
+
             statementOrderDO.setStatementRentAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementRentAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.STANDARD_SCALE)));
             statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.STANDARD_SCALE)));
             //已结算将改为部分结算（当退货结算金额正常为负时)
@@ -4175,7 +4174,7 @@ public class StatementServiceImpl implements StatementService {
             needDeleteList.add(statementOrderDetailDO);
         }
         //删除结算详情
-        statementOrderDetailMapper.deleteStatementOrderDetailList(needDeleteList);
+        if(CollectionUtil.isNotEmpty(needDeleteList)) statementOrderDetailMapper.deleteStatementOrderDetailList(needDeleteList);
     }
 
     /**
