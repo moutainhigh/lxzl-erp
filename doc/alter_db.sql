@@ -876,4 +876,5 @@ ALTER TABLE erp_customer ADD COLUMN `confirm_statement_status` INT(11) NOT NULL 
 ALTER TABLE erp_customer ADD COLUMN `confirm_statement_user` INT(20) COMMENT '结算单确认人';
 ALTER TABLE erp_customer ADD COLUMN `confirm_statement_time` DATETIME COMMENT '结算单确认时间';
 ALTER TABLE erp_statement_order_detail add `relet_order_item_refer_id` int(20) DEFAULT NULL COMMENT '续租订单项ID';
+ALTER TABLE erp_order ADD `relet_order_id`  INT(20)  DEFAULT NULL COMMENT '续租单ID';
 
