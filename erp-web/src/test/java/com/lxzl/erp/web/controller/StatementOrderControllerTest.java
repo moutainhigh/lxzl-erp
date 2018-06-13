@@ -151,7 +151,7 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void reCreateOrderStatement() throws Exception {
         Order param = new Order();
-        param.setOrderNo("LXSE2017121565");
+        param.setOrderNo("LXO-20180530-027-00179");
         TestResult testResult = getJsonTestResult("/statementOrder/reCreateOrderStatement", param);
     }
 
@@ -161,4 +161,12 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
         param.setReletOrderNo("LXR-20180606-027-00041");
         TestResult testResult = getJsonTestResult("/statementOrder/reCreateReletOrderStatement", param);
     }
+
+    @Test
+    public void reStatementK3ReturnOrderRentOnly() throws Exception {
+        K3ReturnOrder param = new K3ReturnOrder();
+        param.setReturnOrderNo("LXK3RO20180530171217169");
+        TestResult testResult = getJsonTestResult("/statementOrder/reStatementK3ReturnOrderRentOnly", param);
+    }
+
 }

@@ -268,4 +268,11 @@
         </if>
     </select>
 
+    <select id="findReturnOrderById" resultMap="K3ReturnOrderDO" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="column_List"/>
+        from erp_k3_return_order ekro WHERE
+        ekro.id = #{id,jdbcType=VARCHAR} AND ekro.data_status = 1
+    </select>
+
 </mapper>

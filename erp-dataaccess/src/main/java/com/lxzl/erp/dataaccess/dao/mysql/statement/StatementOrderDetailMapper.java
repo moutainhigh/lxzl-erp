@@ -59,4 +59,18 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
      * @return
      */
     List<StatementOrderDetailDO> findByReletOrderItemReferIds(@Param("ids")List<Integer> ids);
+
+    /**
+     * 删除结算详情
+     * @param statementOrderDetailDOList
+     */
+    void deleteStatementOrderDetailList(List<StatementOrderDetailDO> statementOrderDetailDOList);
+
+    /**
+     * 查询退货结算详情
+     * @param orderItemType
+     * @param orderItemId
+     * @return
+     */
+    List<StatementOrderDetailDO> findReturnByOrderItemTypeAndId(@Param("orderItemType") Integer orderItemType, @Param("orderItemId") Integer orderItemId);
 }
