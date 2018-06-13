@@ -154,6 +154,7 @@
                                                            data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
                                                            data-ownerSubCompanyId="{{ownerSubCompanyId}}"
                                                            data-customertype="{{customerType}}"
+                                                           data-customername="{{customerName}}"
                                                             class="{{class}}">{{text}}</a>
                                                     </li>
                                                 {{/rowActionButtons}}
@@ -202,6 +203,7 @@
     #parse("layout/footer.vm")
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
+                'manage.customer.confirm.statement.js',
                 'manage.customer.handle.mixin.js',
                 'manage.customer.js',
                 'manage.customer.risk.js',
