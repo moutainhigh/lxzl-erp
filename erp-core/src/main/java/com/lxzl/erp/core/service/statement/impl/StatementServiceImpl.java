@@ -1061,6 +1061,7 @@ public class StatementServiceImpl implements StatementService {
         statementOrderDO.setUpdateUser(loginUserId.toString());
         statementOrderMapper.update(statementOrderDO);
         Map<Integer, BigDecimal> orderPaidMap = new HashMap<>();
+        Map<Integer, BigDecimal> reletOrderPaidMap = new HashMap<>();
 
         BigDecimal totalPaidAmount = statementOrderDO.getStatementPaidAmount();
 
@@ -1182,7 +1183,22 @@ public class StatementServiceImpl implements StatementService {
                 statementOrderDetailMapper.update(statementOrderDetailDO);
 
                 // 已支付的租金
-                orderPaidMap.put(statementOrderDetailDO.getOrderId(), BigDecimalUtil.add(orderPaidMap.get(statementOrderDetailDO.getOrderId()), needStatementDetailRentPayAmount));
+//                orderPaidMap.put(statementOrderDetailDO.getOrderId(), BigDecimalUtil.add(orderPaidMap.get(statementOrderDetailDO.getOrderId()), needStatementDetailRentPayAmount));
+
+                if (statementOrderDetailDO.getReletOrderItemReferId() == null){
+                    orderPaidMap.put(statementOrderDetailDO.getOrderId(), BigDecimalUtil.add(orderPaidMap.get(statementOrderDetailDO.getOrderId()), needStatementDetailRentPayAmount));
+                }
+                else {
+                    if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetailDO.getOrderItemType())){
+                        ReletOrderProductDO reletOrderProductDO = reletOrderProductMapper.findById(statementOrderDetailDO.getReletOrderItemReferId());
+                        reletOrderPaidMap.put(reletOrderProductDO.getReletOrderId(), BigDecimalUtil.add(reletOrderPaidMap.get(reletOrderProductDO.getReletOrderId()), needStatementDetailRentPayAmount));
+
+                    }
+                    if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetailDO.getOrderItemType())){
+                        ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialMapper.findById(statementOrderDetailDO.getReletOrderItemReferId());
+                        reletOrderPaidMap.put(reletOrderMaterialDO.getReletOrderId(), BigDecimalUtil.add(reletOrderPaidMap.get(reletOrderMaterialDO.getReletOrderId()), needStatementDetailRentPayAmount));
+                    }
+                }
             }
         }
 
@@ -1201,6 +1217,22 @@ public class StatementServiceImpl implements StatementService {
             orderDO.setPayTime(currentTime);
             orderMapper.update(orderDO);
             orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_PAID, null, currentTime, loginUserId);
+        }
+        //更新续租单 支付状态和已付款金额
+        for (Map.Entry<Integer, BigDecimal> entry : reletOrderPaidMap.entrySet()) {
+            Integer reletOrderId = entry.getKey();
+            BigDecimal paidAmount = entry.getValue();
+            ReletOrderDO reletOrderDO = reletOrderMapper.findById(reletOrderId);
+            if (reletOrderDO == null) {
+                continue;
+            }
+            if (!PayStatus.PAY_STATUS_PAID.equals(reletOrderDO.getPayStatus())) {
+                reletOrderDO.setPayStatus(PayStatus.PAY_STATUS_PAID);
+            }
+
+            reletOrderDO.setTotalPaidOrderAmount(BigDecimalUtil.add(reletOrderDO.getTotalPaidOrderAmount(), paidAmount));
+            reletOrderDO.setPayTime(currentTime);
+            reletOrderMapper.update(reletOrderDO);
         }
     }
 
@@ -3663,11 +3695,20 @@ public class StatementServiceImpl implements StatementService {
     @Override
     public ServiceResult<String, Page<FinanceStatementOrderPayDetail>> queryFinanceStatementOrderPayDetail(StatementOrderDetailQueryParam statementOrderDetailQueryParam) {
         ServiceResult<String, Page<FinanceStatementOrderPayDetail>> serviceResult = new ServiceResult<>();
+        Integer currentUserType = 0;
+        if(userSupport.isSuperUser()){
+            currentUserType = 1;
+        }else if(userSupport.isHeadUser()){
+            currentUserType = 2;
+        }
+
         PageQuery pageQuery = new PageQuery(statementOrderDetailQueryParam.getPageNo(), statementOrderDetailQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("statementOrderDetailQueryParam", statementOrderDetailQueryParam);
+        maps.put("subCompanyId", userSupport.getCurrentUserCompanyId());
+        maps.put("currentUserType", currentUserType);
         Integer totalCount = statementOrderDetailMapper.queryStatementOrderDetailCountByParam(maps);
         List<FinanceStatementOrderPayDetail> financeStatementOrderPayDetailList = statementOrderDetailMapper.queryStatementOrderDetailByParam(maps);
         Page<FinanceStatementOrderPayDetail> page = new Page<>(financeStatementOrderPayDetailList, totalCount, statementOrderDetailQueryParam.getPageNo(), statementOrderDetailQueryParam.getPageSize());

@@ -6,12 +6,12 @@
         <form method="post" id="chooseForm" description="财务导出">
             <div class="panel-body p25">
                 <div class="form-group field">
-                    <label for="startAt" class="field-label text-right col-md-3">结算时间</label>
-                    <div class="col-md-9">
+                    <label for="startAt" class="field-label text-right col-md-4">预计支付时间</label>
+                    <div class="col-md-8">
                         <input type="hidden" name="" id="startTime" />
                         <input type="hidden" name="" id="endTime" />
                         <div class="input-group date" id="createTimePicker" style="height:40px;">
-                            <input type="text" name="createTimePicker" id="createTimePickerInput" class="form-control bradiusL"  style="height:40px;" autocomplete="off" placeholder="选择结算时间">
+                            <input type="text" name="createTimePicker" id="createTimePickerInput" class="form-control bradiusL"  style="height:40px;" autocomplete="off" placeholder="选择预计支付时间">
                             <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                         </div>
                     </div>

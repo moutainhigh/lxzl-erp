@@ -1,20 +1,24 @@
-package com.lxzl.erp.core.service.impl;
+package com.lxzl.erp.core.service.dynamicSql.impl;
 
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSql;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.IdCardCheckUtil;
-import com.lxzl.erp.core.service.DynamicSqlService;
+import com.lxzl.erp.core.service.dynamicSql.DynamicSqlService;
 import com.lxzl.erp.dataaccess.dao.jdbc.dynamicSql.DynamicSqlDao;
 import com.lxzl.se.common.exception.BusinessException;
+import com.lxzl.se.common.util.date.DateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +38,6 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     @Autowired
     private DynamicSqlDao dynamicSqlDao;
 
-
-
     @Override
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     public ServiceResult<String, List<List<Object>>> selectBySql(DynamicSql dynamicSql) {
@@ -54,6 +56,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
 
         if (CollectionUtil.isNotEmpty(listList)) {
             filterSensitiveInfo(listList); // 过滤敏感信息
+            formatResult(listList);
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(listList);
@@ -88,4 +91,28 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
             }
         }
     }
+
+    /**
+     * 格式化结果信息
+     * 1. 时间转为字符串
+     * 2. double float统一转为两位小数
+     * @param listList
+     */
+    private void formatResult(List<List<Object>> listList) {
+        for (List<Object> objList : listList) {
+            for (int i = 0; i < objList.size(); i++) {
+                Object obj = objList.get(i);
+                if (obj instanceof Date) { // 格式化时间
+                    String dateStr = DateUtil.formatDate((Date) obj, "yyyy-MM-dd HH:mm:ss");
+                    objList.set(i, dateStr);
+                }
+                if (obj instanceof Double || obj instanceof Float || obj instanceof BigDecimal) { // 格式化数字（保留两位小数）
+                    DecimalFormat df = new DecimalFormat("######0.00");
+                    String numberStr = df.format(obj);
+                    objList.set(i, numberStr);
+                }
+            }
+        }
+    }
+
 }

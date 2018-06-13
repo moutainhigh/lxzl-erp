@@ -18,9 +18,11 @@ public class DynamicSqlControllerTest extends ERPTransactionalTest {
         String sql2 = "update erp_joint_product set data_status = 2 where id = 33";
         String sql3 = "select eu.id as 唯一标识, eu.real_name as 姓名, eur.id as 唯一标识 from erp_user eu left join erp_user_role eur on eur.user_id = eu.id";
         String sql4 = "select * from (select eu.id as 唯一标识, eu.real_name as 姓名 from erp_user eu left join erp_user_role eur on eur.user_id = eu.id) haha";
+        String sql5 = "select id, create_time from erp_user";
+        String sql6 = "select * from erp_statement_order_detail";
 
         DynamicSql dynamicSql = new DynamicSql();
-        dynamicSql.setSql(sql3);
+        dynamicSql.setSql(sql6);
         getJsonTestResult("/dynamicSql/select", dynamicSql);
     }
 }
