@@ -205,20 +205,20 @@ public class StatementServiceImpl implements StatementService {
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, statementDays, loginUserId);
         List<StatementOrderDetailDO> finalAddStatementOrderDetailDOList = new ArrayList<>();
 
-        if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())){
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
             K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderDO.getId());
-            if(k3OrderStatementConfigDO!=null&&k3OrderStatementConfigDO.getRentStartTime()!=null){
+            if (k3OrderStatementConfigDO != null && k3OrderStatementConfigDO.getRentStartTime() != null) {
                 Date k3RentStartTime = k3OrderStatementConfigDO.getRentStartTime();
-                for(StatementOrderDetailDO statementOrderDetailDO : addStatementOrderDetailDOList){
+                for (StatementOrderDetailDO statementOrderDetailDO : addStatementOrderDetailDOList) {
                     //如果结算结束时间大于等于k3配置起租时间，则保存该结算单
-                    if(statementOrderDetailDO.getStatementEndTime().getTime()-k3RentStartTime.getTime()>=0){
+                    if (statementOrderDetailDO.getStatementEndTime().getTime() - k3RentStartTime.getTime() >= 0) {
                         finalAddStatementOrderDetailDOList.add(statementOrderDetailDO);
                     }
                 }
-            }else{
+            } else {
                 finalAddStatementOrderDetailDOList = addStatementOrderDetailDOList;
             }
-        }else{
+        } else {
             finalAddStatementOrderDetailDOList = addStatementOrderDetailDOList;
         }
         saveStatementOrder(finalAddStatementOrderDetailDOList, currentTime, loginUserId);
@@ -256,9 +256,9 @@ public class StatementServiceImpl implements StatementService {
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         Date rentStartTime = orderDO.getRentStartTime();
-        if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())){
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
             K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderDO.getId());
-            if(k3OrderStatementConfigDO!=null&&k3OrderStatementConfigDO.getRentStartTime()!=null){
+            if (k3OrderStatementConfigDO != null && k3OrderStatementConfigDO.getRentStartTime() != null) {
                 rentStartTime = k3OrderStatementConfigDO.getRentStartTime();
             }
         }
@@ -306,16 +306,17 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
         //续租不让重算
-        ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderDO.getId());
-        if(reletOrderDO!=null){
-            result.setErrorCode(ErrorCode.RELET_ORDER_NOT_ALLOW_RE_STATEMENT);
-            return result;
-        }
+//        ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderDO.getId());
+//        if (reletOrderDO != null) {
+//            result.setErrorCode(ErrorCode.RELET_ORDER_NOT_ALLOW_RE_STATEMENT);
+//            return result;
+//        }
         //目前仅允许未支付和支付失败订单重新结算
 //        if (!(PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_FAILED.equals(orderDO.getPayStatus()))) {
 //            result.setErrorCode(ErrorCode.ORDER_PAY_STATUS_CAN_NOT_RESETTLE);
 //            return result;
 //        }
+
 
         // 客户为确认结算单状态时，不允许重算客户的订单
         CustomerDO customerDO = customerMapper.findByNo(orderDO.getBuyerCustomerNo());
@@ -325,16 +326,16 @@ public class StatementServiceImpl implements StatementService {
         }
 
         //有退货单不允许重算
-        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
-        if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOList)) {
-            for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList){
-                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_RETURN,k3ReturnOrderDetailDO.getReturnOrderId());
-                if(CollectionUtil.isNotEmpty(statementOrderDetailDOList)){
-                    result.setErrorCode(ErrorCode.HAS_RETURN_ORDER);
-                    return result;
-                }
-            }
-        }
+//        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
+//        if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOList)) {
+//            for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList) {
+//                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_RETURN, k3ReturnOrderDetailDO.getReturnOrderId());
+//                if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+//                    result.setErrorCode(ErrorCode.HAS_RETURN_ORDER);
+//                    return result;
+//                }
+//            }
+//        }
 
 //        ServiceResult<String, String> clearResult = clearStatementOrderDetail(orderDO);
         ServiceResult<String, String> clearResult = clearStatementOrder(orderDO);
@@ -346,6 +347,25 @@ public class StatementServiceImpl implements StatementService {
         //创建失败回滚
         if (!ErrorCode.SUCCESS.equals(createResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return createResult;
+        }
+        //重算相关退货结算(有实际退货的)
+        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
+        reStatementReturnOrderItems(k3ReturnOrderDetailDOList);
+
+        //处理续租单重算
+        List<ReletOrderDO> reletOrderDOList = reletOrderMapper.findReletedOrdersByOrderId(orderDO.getId());
+        if (CollectionUtil.isNotEmpty(reletOrderDOList)) {
+            for (ReletOrderDO reletOrderDO : reletOrderDOList) {
+                //从订单同步更新续租单的结算类型和支付类型
+                syncReletOrderStatementByOrder(orderDO, reletOrderDO);
+                ServiceResult<String, BigDecimal> reletService = reCreateReletOrderStatement(reletOrderDO.getReletOrderNo());
+                if (!ErrorCode.SUCCESS.equals(reletService.getErrorCode())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    result.setErrorCode(ErrorCode.RELET_ORDER_RE_STATEMENT_FAIL, reletOrderDO.getReletOrderNo());
+                    return reletService;
+                }
+            }
         }
         //更新订单首次需支付金额
         orderDO.setFirstNeedPayAmount(createResult.getResult());
@@ -355,89 +375,126 @@ public class StatementServiceImpl implements StatementService {
         return createResult;
     }
 
+    /**
+     * 仅同步订单：结算类型，支付类型
+     * @param orderDO
+     * @param reletOrderDO
+     */
+    private void syncReletOrderStatementByOrder(OrderDO orderDO, ReletOrderDO reletOrderDO) {
+        //同步订单结算类型
+        if(!orderDO.getStatementDate().equals(reletOrderDO.getStatementDate())){
+            reletOrderDO.setStatementDate(orderDO.getStatementDate());
+            reletOrderMapper.update(reletOrderDO);
+        }
+        //同步订单项支付方式（商品项）
+        Map<Integer,OrderProductDO> orderProductCatch=new HashMap<>();
+        for(OrderProductDO productDO:orderDO.getOrderProductDOList()){
+            orderProductCatch.put(productDO.getId(),productDO);
+        }
+        for (ReletOrderProductDO productDO:reletOrderDO.getReletOrderProductDOList()){
+            OrderProductDO orderProductDO=orderProductCatch.get(productDO.getOrderProductId());
+            if(orderProductDO==null)continue;
+            if(orderProductDO.getPayMode().equals(productDO.getPayMode()))continue;
+            productDO.setPayMode(orderProductDO.getPayMode());
+            reletOrderProductMapper.update(productDO);
+        }
+        //同步订单项支付方式（物料项）
+        Map<Integer,OrderMaterialDO> orderMaterialCatch=new HashMap<>();
+        for(OrderMaterialDO materialDO:orderDO.getOrderMaterialDOList()){
+            orderMaterialCatch.put(materialDO.getId(),materialDO);
+        }
+        for (ReletOrderMaterialDO materialDO:reletOrderDO.getReletOrderMaterialDOList()){
+            OrderMaterialDO orderMaterialDO=orderMaterialCatch.get(materialDO.getOrderMaterialId());
+            if(orderMaterialDO==null)continue;
+            if(orderMaterialDO.getPayMode().equals(materialDO.getPayMode()))continue;
+            materialDO.setPayMode(orderMaterialDO.getPayMode());
+            reletOrderMaterialMapper.update(materialDO);
+        }
+    }
+
     @Override
     public String batchReCreateOrderStatement(List<String> orderNoList, List<String> customerNoList) {
 
         StringBuffer sb = new StringBuffer();
         Set<String> orderNoSet = new HashSet<>();
-        for(String orderNo : orderNoList){
+        for (String orderNo : orderNoList) {
             orderNoSet.add(orderNo);
         }
 //        待发货、已发货、确认收货，部分归还，全部归还，完成 状态可重算
-        if(CollectionUtil.isNotEmpty(customerNoList)){
-            for(String customerNo : customerNoList){
-                if(StringUtil.isEmpty(customerNo)){
+        if (CollectionUtil.isNotEmpty(customerNoList)) {
+            for (String customerNo : customerNoList) {
+                if (StringUtil.isEmpty(customerNo)) {
                     continue;
                 }
                 CustomerDO customerDO = customerMapper.findByNo(customerNo);
-                if(customerDO==null){
-                    sb.append("客户编号["+customerNo +"]不存在\n");
+                if (customerDO == null) {
+                    sb.append("客户编号[" + customerNo + "]不存在\n");
                     continue;
                 }
                 if (ConfirmStatementStatus.CONFIRM_STATUS_YES.equals(customerDO.getConfirmStatementStatus())) {
-                    sb.append("客户编号["+customerNo +"]已经是确认结算单状态\n");
+                    sb.append("客户编号[" + customerNo + "]已经是确认结算单状态\n");
                     continue;
                 }
                 List<OrderDO> orderDOList = orderMapper.findByCustomerId(customerDO.getId());
-                for(OrderDO orderDO : orderDOList){
-                    if(!PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus())){
-                        sb.append("批量重算不支持已支付订单["+orderDO.getOrderNo() +"]，未处理\n");
+                for (OrderDO orderDO : orderDOList) {
+                    if (!PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus())) {
+                        sb.append("批量重算不支持已支付订单[" + orderDO.getOrderNo() + "]，未处理\n");
                         continue;
                     }
-                    if(!OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())&&
-                        !OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())&&
-                        !OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus())&&
-                        !OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus())&&
-                        !OrderStatus.ORDER_STATUS_RETURN_BACK.equals(orderDO.getOrderStatus())&&
-                        !OrderStatus.ORDER_STATUS_OVER.equals(orderDO.getOrderStatus())
-                        ){
-                        sb.append("订单["+orderDO.getOrderNo() +"]状态不可重算，未处理\n");
+                    if (!OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus()) &&
+                            !OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus()) &&
+                            !OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus()) &&
+                            !OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus()) &&
+                            !OrderStatus.ORDER_STATUS_RETURN_BACK.equals(orderDO.getOrderStatus()) &&
+                            !OrderStatus.ORDER_STATUS_OVER.equals(orderDO.getOrderStatus())
+                            ) {
+                        sb.append("订单[" + orderDO.getOrderNo() + "]状态不可重算，未处理\n");
                         continue;
                     }
                     orderNoSet.add(orderDO.getOrderNo());
                 }
             }
         }
-        if(CollectionUtil.isNotEmpty(orderNoSet)){
+        if (CollectionUtil.isNotEmpty(orderNoSet)) {
 
-            for(String orderNo : orderNoSet){
-                try{
-                    if(StringUtil.isEmpty(orderNo)){
+            for (String orderNo : orderNoSet) {
+                try {
+                    if (StringUtil.isEmpty(orderNo)) {
                         continue;
                     }
                     OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
-                    if(orderDO==null){
-                        sb.append("订单号["+orderNo+"]"+"不存在\n");
+                    if (orderDO == null) {
+                        sb.append("订单号[" + orderNo + "]" + "不存在\n");
                         continue;
                     }
-                    if(!PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus())){
-                        sb.append("批量重算不支持已支付订单["+orderDO.getOrderNo() +"]，未处理\n");
+                    if (!PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus())) {
+                        sb.append("批量重算不支持已支付订单[" + orderDO.getOrderNo() + "]，未处理\n");
                         continue;
                     }
                     CustomerDO customerDO = customerMapper.findByNo(orderDO.getBuyerCustomerNo());
                     if (customerDO == null) {
-                        sb.append("订单号["+orderNo+"]"+"关联的客户不存在\n");
+                        sb.append("订单号[" + orderNo + "]" + "关联的客户不存在\n");
                         continue;
                     }
                     if (ConfirmStatementStatus.CONFIRM_STATUS_YES.equals(customerDO.getConfirmStatementStatus())) {
-                        sb.append("订单号["+orderNo+"]"+"关联的客户编号["+customerDO.getCustomerNo() +"]已经是确认结算单状态\n");
+                        sb.append("订单号[" + orderNo + "]" + "关联的客户编号[" + customerDO.getCustomerNo() + "]已经是确认结算单状态\n");
                         continue;
                     }
                     ServiceResult<String, BigDecimal> result = reCreateOrderStatement(orderNo);
-                    if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
+                    if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
                         String json = JSON.toJSONString(resultGenerator.generate(result.getErrorCode()));
-                        sb.append("重算订单结算单【失败】：订单号["+orderNo +"]"+json+"\n");
-                    }else{
-                        sb.append("成功重算订单：订单号["+orderNo+"]\n");
+                        sb.append("重算订单结算单【失败】：订单号[" + orderNo + "]" + json + "\n");
+                    } else {
+                        sb.append("成功重算订单：订单号[" + orderNo + "]\n");
                     }
-                }catch (Exception e){
-                    logger.error("重算订单【系统错误】：订单号["+orderNo+"]",e);
-                    sb.append("重算订单【系统错误】：订单号["+orderNo+"]"+e.getMessage()+"\n");
+                } catch (Exception e) {
+                    logger.error("重算订单【系统错误】：订单号[" + orderNo + "]", e);
+                    sb.append("重算订单【系统错误】：订单号[" + orderNo + "]" + e.getMessage() + "\n");
                 }
             }
         }
         String message = sb.toString();
-        if(StringUtil.isNotEmpty(message)){
+        if (StringUtil.isNotEmpty(message)) {
             dingDingSupport.dingDingSendMessage(message);
         }
         return ErrorCode.SUCCESS;
@@ -514,7 +571,7 @@ public class StatementServiceImpl implements StatementService {
                             }
                         } else if (statementMonthCount == i) {
                             // 最后一期
-                            StatementOrderDetailDO statementOrderDetailDO = calculateLastStatementOrderDetail(buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), lastCalculateDate, rentStartTime, orderProductDO.getPayMode(), orderProductDO.getRentType(), orderProductDO.getRentTimeLength(), itemAllAmount, alreadyPaidAmount, currentTime, loginUserId,null);
+                            StatementOrderDetailDO statementOrderDetailDO = calculateLastStatementOrderDetail(buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), lastCalculateDate, rentStartTime, orderProductDO.getPayMode(), orderProductDO.getRentType(), orderProductDO.getRentTimeLength(), itemAllAmount, alreadyPaidAmount, currentTime, loginUserId, null);
                             if (statementOrderDetailDO != null) {
                                 statementOrderDetailDO.setSerialNumber(orderProductDO.getSerialNumber());
                                 statementOrderDetailDO.setItemName(orderProductDO.getProductName() + orderProductDO.getProductSkuName());
@@ -530,7 +587,7 @@ public class StatementServiceImpl implements StatementService {
                             }
                         } else {
                             // 中间期数
-                            StatementOrderDetailDO statementOrderDetailDO = calculateMiddleStatementOrderDetail(orderProductDO.getRentType(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), lastCalculateDate, orderProductDO.getPaymentCycle(), orderProductDO.getProductUnitAmount(), orderProductDO.getProductCount(), statementDays, orderProductDO.getPayMode(), currentTime, loginUserId,null);
+                            StatementOrderDetailDO statementOrderDetailDO = calculateMiddleStatementOrderDetail(orderProductDO.getRentType(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), lastCalculateDate, orderProductDO.getPaymentCycle(), orderProductDO.getProductUnitAmount(), orderProductDO.getProductCount(), statementDays, orderProductDO.getPayMode(), currentTime, loginUserId, null);
                             if (statementOrderDetailDO != null) {
                                 statementOrderDetailDO.setSerialNumber(orderProductDO.getSerialNumber());
                                 statementOrderDetailDO.setItemName(orderProductDO.getProductName() + orderProductDO.getProductSkuName());
@@ -562,7 +619,7 @@ public class StatementServiceImpl implements StatementService {
                 Calendar rentStartTimeCalendar = Calendar.getInstance();
                 rentStartTimeCalendar.setTime(rentStartTime);
                 // 无论什么时候交租金，押金必须当天缴纳
-                StatementOrderDetailDO depositDetail = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, orderMaterialDO.getRentDepositAmount(), orderMaterialDO.getDepositAmount(), BigDecimal.ZERO, currentTime, loginUserId,null);
+                StatementOrderDetailDO depositDetail = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, orderMaterialDO.getRentDepositAmount(), orderMaterialDO.getDepositAmount(), BigDecimal.ZERO, currentTime, loginUserId, null);
                 if (depositDetail != null) {
                     depositDetail.setSerialNumber(orderMaterialDO.getSerialNumber());
                     depositDetail.setItemName(orderMaterialDO.getMaterialName());
@@ -574,7 +631,7 @@ public class StatementServiceImpl implements StatementService {
                 // 先确定订单需要结算几期
                 Integer statementMonthCount = calculateStatementMonthCount(orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength(), orderMaterialDO.getPaymentCycle(), orderMaterialDO.getPayMode(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
                 if (statementMonthCount == 1) {
-                    StatementOrderDetailDO statementOrderDetailDO = calculateOneStatementOrderDetail(orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength(), orderMaterialDO.getPayMode(), rentStartTime, orderMaterialDO.getMaterialAmount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), currentTime, loginUserId,null);
+                    StatementOrderDetailDO statementOrderDetailDO = calculateOneStatementOrderDetail(orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength(), orderMaterialDO.getPayMode(), rentStartTime, orderMaterialDO.getMaterialAmount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), currentTime, loginUserId, null);
                     if (statementOrderDetailDO != null) {
                         statementOrderDetailDO.setSerialNumber(orderMaterialDO.getSerialNumber());
                         statementOrderDetailDO.setItemName(orderMaterialDO.getMaterialName());
@@ -590,7 +647,7 @@ public class StatementServiceImpl implements StatementService {
                     for (int i = 1; i <= statementMonthCount; i++) {
                         // 第一期
                         if (i == 1) {
-                            StatementOrderDetailDO statementOrderDetailDO = calculateFirstStatementOrderDetail(orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength(), statementDays, orderMaterialDO.getPaymentCycle(), orderMaterialDO.getPayMode(), rentStartTime, orderMaterialDO.getMaterialUnitAmount(), orderMaterialDO.getMaterialCount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), currentTime, loginUserId, orderDO.getStatementDate(),null);
+                            StatementOrderDetailDO statementOrderDetailDO = calculateFirstStatementOrderDetail(orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength(), statementDays, orderMaterialDO.getPaymentCycle(), orderMaterialDO.getPayMode(), rentStartTime, orderMaterialDO.getMaterialUnitAmount(), orderMaterialDO.getMaterialCount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), currentTime, loginUserId, orderDO.getStatementDate(), null);
                             if (statementOrderDetailDO != null) {
                                 statementOrderDetailDO.setSerialNumber(orderMaterialDO.getSerialNumber());
                                 statementOrderDetailDO.setItemName(orderMaterialDO.getMaterialName());
@@ -603,7 +660,7 @@ public class StatementServiceImpl implements StatementService {
                             }
                         } else if (statementMonthCount == i) {
                             // 最后一期
-                            StatementOrderDetailDO statementOrderDetailDO = calculateLastStatementOrderDetail(buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), lastCalculateDate, rentStartTime, orderMaterialDO.getPayMode(), orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength(), itemAllAmount, alreadyPaidAmount, currentTime, loginUserId,null);
+                            StatementOrderDetailDO statementOrderDetailDO = calculateLastStatementOrderDetail(buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), lastCalculateDate, rentStartTime, orderMaterialDO.getPayMode(), orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength(), itemAllAmount, alreadyPaidAmount, currentTime, loginUserId, null);
                             if (statementOrderDetailDO != null) {
                                 statementOrderDetailDO.setSerialNumber(orderMaterialDO.getSerialNumber());
                                 statementOrderDetailDO.setItemName(orderMaterialDO.getMaterialName());
@@ -614,7 +671,7 @@ public class StatementServiceImpl implements StatementService {
                             }
                         } else {
                             // 中间期数
-                            StatementOrderDetailDO statementOrderDetailDO = calculateMiddleStatementOrderDetail(orderMaterialDO.getRentType(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), lastCalculateDate, orderMaterialDO.getPaymentCycle(), orderMaterialDO.getMaterialUnitAmount(), orderMaterialDO.getMaterialCount(), statementDays, orderMaterialDO.getPayMode(), currentTime, loginUserId,null);
+                            StatementOrderDetailDO statementOrderDetailDO = calculateMiddleStatementOrderDetail(orderMaterialDO.getRentType(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), lastCalculateDate, orderMaterialDO.getPaymentCycle(), orderMaterialDO.getMaterialUnitAmount(), orderMaterialDO.getMaterialCount(), statementDays, orderMaterialDO.getPayMode(), currentTime, loginUserId, null);
                             if (statementOrderDetailDO != null) {
                                 statementOrderDetailDO.setSerialNumber(orderMaterialDO.getSerialNumber());
                                 statementOrderDetailDO.setItemName(orderMaterialDO.getMaterialName());
@@ -636,7 +693,7 @@ public class StatementServiceImpl implements StatementService {
 
         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
             // 其他费用统一结算
-            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_OTHER, BigInteger.ZERO.intValue(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUserId,null);
+            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_OTHER, BigInteger.ZERO.intValue(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUserId, null);
             if (thisStatementOrderDetailDO != null) {
                 thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OTHER);
                 addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
@@ -1008,6 +1065,7 @@ public class StatementServiceImpl implements StatementService {
         statementOrderDO.setUpdateUser(loginUserId.toString());
         statementOrderMapper.update(statementOrderDO);
         Map<Integer, BigDecimal> orderPaidMap = new HashMap<>();
+        Map<Integer, BigDecimal> reletOrderPaidMap = new HashMap<>();
 
         BigDecimal totalPaidAmount = statementOrderDO.getStatementPaidAmount();
 
@@ -1063,7 +1121,7 @@ public class StatementServiceImpl implements StatementService {
                 if (BigDecimalUtil.compare(noPaidStatementDetailRentPayAmount, BigDecimal.ZERO) > 0) {
                     needStatementDetailRentPayAmount = BigDecimalUtil.sub(noPaidStatementDetailRentPayAmount, correctBusinessAmount);
                     needStatementDetailRentPayAmount = BigDecimalUtil.add(needStatementDetailRentPayAmount, returnStatementRentAmount);
-                    needStatementDetailRentPayAmount = BigDecimalUtil.compare(needStatementDetailRentPayAmount,BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : needStatementDetailRentPayAmount;
+                    needStatementDetailRentPayAmount = BigDecimalUtil.compare(needStatementDetailRentPayAmount, BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : needStatementDetailRentPayAmount;
                     if (BigDecimalUtil.compare(needStatementDetailRentPayAmount, totalPaidAmount) > 0) {
                         needStatementDetailRentPayAmount = totalPaidAmount;
                         totalPaidAmount = BigDecimal.ZERO;
@@ -1129,7 +1187,22 @@ public class StatementServiceImpl implements StatementService {
                 statementOrderDetailMapper.update(statementOrderDetailDO);
 
                 // 已支付的租金
-                orderPaidMap.put(statementOrderDetailDO.getOrderId(), BigDecimalUtil.add(orderPaidMap.get(statementOrderDetailDO.getOrderId()), needStatementDetailRentPayAmount));
+//                orderPaidMap.put(statementOrderDetailDO.getOrderId(), BigDecimalUtil.add(orderPaidMap.get(statementOrderDetailDO.getOrderId()), needStatementDetailRentPayAmount));
+
+                if (statementOrderDetailDO.getReletOrderItemReferId() == null){
+                    orderPaidMap.put(statementOrderDetailDO.getOrderId(), BigDecimalUtil.add(orderPaidMap.get(statementOrderDetailDO.getOrderId()), needStatementDetailRentPayAmount));
+                }
+                else {
+                    if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetailDO.getOrderItemType())){
+                        ReletOrderProductDO reletOrderProductDO = reletOrderProductMapper.findById(statementOrderDetailDO.getReletOrderItemReferId());
+                        reletOrderPaidMap.put(reletOrderProductDO.getReletOrderId(), BigDecimalUtil.add(reletOrderPaidMap.get(reletOrderProductDO.getReletOrderId()), needStatementDetailRentPayAmount));
+
+                    }
+                    if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetailDO.getOrderItemType())){
+                        ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialMapper.findById(statementOrderDetailDO.getReletOrderItemReferId());
+                        reletOrderPaidMap.put(reletOrderMaterialDO.getReletOrderId(), BigDecimalUtil.add(reletOrderPaidMap.get(reletOrderMaterialDO.getReletOrderId()), needStatementDetailRentPayAmount));
+                    }
+                }
             }
         }
 
@@ -1148,6 +1221,22 @@ public class StatementServiceImpl implements StatementService {
             orderDO.setPayTime(currentTime);
             orderMapper.update(orderDO);
             orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_PAID, null, currentTime, loginUserId);
+        }
+        //更新续租单 支付状态和已付款金额
+        for (Map.Entry<Integer, BigDecimal> entry : reletOrderPaidMap.entrySet()) {
+            Integer reletOrderId = entry.getKey();
+            BigDecimal paidAmount = entry.getValue();
+            ReletOrderDO reletOrderDO = reletOrderMapper.findById(reletOrderId);
+            if (reletOrderDO == null) {
+                continue;
+            }
+            if (!PayStatus.PAY_STATUS_PAID.equals(reletOrderDO.getPayStatus())) {
+                reletOrderDO.setPayStatus(PayStatus.PAY_STATUS_PAID);
+            }
+
+            reletOrderDO.setTotalPaidOrderAmount(BigDecimalUtil.add(reletOrderDO.getTotalPaidOrderAmount(), paidAmount));
+            reletOrderDO.setPayTime(currentTime);
+            reletOrderMapper.update(reletOrderDO);
         }
     }
 
@@ -1366,7 +1455,7 @@ public class StatementServiceImpl implements StatementService {
         List<StatementOrderDetail> statementOrderDetailList = ListUtil.mapToList(hashMap);
         //排序
         if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
-            statementOrderDetailList= sorting(statementOrderDetailList);
+            statementOrderDetailList = sorting(statementOrderDetailList);
         }
         statementOrder.setStatementOrderDetailList(statementOrderDetailList);
 
@@ -1378,26 +1467,26 @@ public class StatementServiceImpl implements StatementService {
     private List<StatementOrderDetail> sorting(List<StatementOrderDetail> statementOrderDetailList) {
         //存放非退货单结算单详情项
 //        List<StatementOrderDetail> notReturnOrderList = new ArrayList<>();
-        Map<Integer,StatementOrderDetail> notReturnOrderMap = new TreeMap<>();
+        Map<Integer, StatementOrderDetail> notReturnOrderMap = new TreeMap<>();
         //存放最终结果
         List<StatementOrderDetail> allList = new ArrayList<>();
         //存放退货结算单详情项其它费用项
         List<StatementOrderDetail> returnOrderOtherList = new ArrayList<>();
         //存放退货结算单商品、配件项
-        Map<Integer,List<StatementOrderDetail>> returnOrderProudctAndMaterialMap = new HashMap<>();
-        for (StatementOrderDetail statementOrderDetail:statementOrderDetailList) {
+        Map<Integer, List<StatementOrderDetail>> returnOrderProudctAndMaterialMap = new HashMap<>();
+        for (StatementOrderDetail statementOrderDetail : statementOrderDetailList) {
             if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
-                notReturnOrderMap.put(statementOrderDetail.getStatementOrderDetailId(),statementOrderDetail);
-            }else {
-                if(null==statementOrderDetail.getReturnReferId()){
+                notReturnOrderMap.put(statementOrderDetail.getStatementOrderDetailId(), statementOrderDetail);
+            } else {
+                if (null == statementOrderDetail.getReturnReferId()) {
                     returnOrderOtherList.add(statementOrderDetail);
-                }else {
-                    if(null!=returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId())){
+                } else {
+                    if (null != returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId())) {
                         returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId()).add(statementOrderDetail);
-                    }else {
+                    } else {
                         List<StatementOrderDetail> returnOrderProudctAndMaterialList = new ArrayList<>();
                         returnOrderProudctAndMaterialList.add(statementOrderDetail);
-                        returnOrderProudctAndMaterialMap.put(statementOrderDetail.getReturnReferId(),returnOrderProudctAndMaterialList);
+                        returnOrderProudctAndMaterialMap.put(statementOrderDetail.getReturnReferId(), returnOrderProudctAndMaterialList);
                     }
                 }
             }
@@ -1405,7 +1494,7 @@ public class StatementServiceImpl implements StatementService {
         if (CollectionUtil.isNotEmpty(returnOrderOtherList)) {
             allList.addAll(returnOrderOtherList);
         }
-        for (Integer statementOrderDetailId:notReturnOrderMap.keySet()) {
+        for (Integer statementOrderDetailId : notReturnOrderMap.keySet()) {
             StatementOrderDetail statementOrderDetail = notReturnOrderMap.get(statementOrderDetailId);
             allList.add(statementOrderDetail);
             List<StatementOrderDetail> statementOrderDetails = returnOrderProudctAndMaterialMap.get(statementOrderDetail.getStatementOrderDetailId());
@@ -1497,20 +1586,19 @@ public class StatementServiceImpl implements StatementService {
                             }
                         }
                     }
-                }
-                else{
-                    if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType())){
+                } else {
+                    if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType())) {
                         ReletOrderProductDO reletOrderProductDO = reletOrderProductMapper.findById(statementOrderDetail.getReletOrderItemReferId());
-                        if (reletOrderProductDO != null){
+                        if (reletOrderProductDO != null) {
                             statementOrderDetail.setItemName(reletOrderProductDO.getProductName() + reletOrderProductDO.getProductSkuName());
                             statementOrderDetail.setItemCount(reletOrderProductDO.getRentingProductCount());
                             statementOrderDetail.setUnitAmount(reletOrderProductDO.getProductUnitAmount());
                             statementOrderDetail.setItemRentType(orderDO.getRentType());
                         }
                     }
-                    if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType())){
+                    if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType())) {
                         ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialMapper.findById(statementOrderDetail.getReletOrderItemReferId());
-                        if (reletOrderMaterialDO != null){
+                        if (reletOrderMaterialDO != null) {
                             statementOrderDetail.setItemName(reletOrderMaterialDO.getMaterialName());
                             statementOrderDetail.setItemCount(reletOrderMaterialDO.getRentingMaterialCount());
                             statementOrderDetail.setUnitAmount(reletOrderMaterialDO.getMaterialUnitAmount());
@@ -1531,7 +1619,7 @@ public class StatementServiceImpl implements StatementService {
                 //如果退货单详情不为空
                 if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
                     //循环退货单详情
-                    for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
+                    for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
                         if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(k3ReturnOrderDetailDO.getId())) {
                             OrderProductDO orderProductDO = orderProductMapper.findById(Integer.valueOf(k3ReturnOrderDetailDO.getOrderItemId()));
                             //存入商品名称
@@ -1566,9 +1654,9 @@ public class StatementServiceImpl implements StatementService {
                 }
                 if (statementOrderDetail.getReletOrderItemReferId() != null) {
 
-                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType())){
+                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType())) {
                         ReletOrderProductDO reletOrderProductDO = reletOrderProductMapper.findById(statementOrderDetail.getReletOrderItemReferId());
-                        if (reletOrderProductDO != null){
+                        if (reletOrderProductDO != null) {
 //                            ReletOrderDO reletOrderDO = reletOrderMapper.findById(reletOrderProductDO.getReletOrderId());
 //                            statementOrderDetail.setItemName(reletOrderProductDO.getProductName() + reletOrderProductDO.getProductSkuName());
 //                            statementOrderDetail.setItemCount(reletOrderProductDO.getRentingProductCount());
@@ -1576,9 +1664,9 @@ public class StatementServiceImpl implements StatementService {
 //                            statementOrderDetail.setItemRentType(reletOrderDO.getRentType());
                         }
                     }
-                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(statementOrderDetail.getOrderItemType())){
+                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(statementOrderDetail.getOrderItemType())) {
                         ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialMapper.findById(statementOrderDetail.getReletOrderItemReferId());
-                        if (reletOrderMaterialDO != null){
+                        if (reletOrderMaterialDO != null) {
 //                            ReletOrderDO reletOrderDO = reletOrderMapper.findById(reletOrderMaterialDO.getReletOrderId());
 //                            statementOrderDetail.setItemName(reletOrderMaterialDO.getMaterialName());
 //                            statementOrderDetail.setItemCount(reletOrderMaterialDO.getRentingMaterialCount());
@@ -1643,7 +1731,7 @@ public class StatementServiceImpl implements StatementService {
         }
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
-        Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID:loginUser.getUserId();
+        Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
 
         Map<String, StatementOrderDetailDO> addStatementOrderDetailDOMap = new HashMap<>();
         String buyerCustomerNo = k3ReturnOrderDO.getK3CustomerNo();
@@ -1664,15 +1752,15 @@ public class StatementServiceImpl implements StatementService {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
                 OrderProductDO orderProductDO = null;
                 //如果是商品
-                if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())){
+                if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())) {
                     //兼容erp订单和k3订单商品项
-                    orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
+                    orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
                 }
                 if (orderProductDO == null) {
                     continue;
                 }
                 BigDecimal returnCount = new BigDecimal(k3ReturnOrderDetailDO.getRealProductCount());
-                if(BigDecimalUtil.compare(returnCount,BigDecimal.ZERO)<=0){
+                if (BigDecimalUtil.compare(returnCount, BigDecimal.ZERO) <= 0) {
                     continue;
                 }
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
@@ -1682,7 +1770,7 @@ public class StatementServiceImpl implements StatementService {
                 //获取此订单是否有续租成功的记录
                 boolean isReletOrder = false;
                 ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderProductDO.getOrderId());
-                if (reletOrderDO != null){
+                if (reletOrderDO != null) {
                     isReletOrder = true;
                 }
 
@@ -1785,34 +1873,33 @@ public class StatementServiceImpl implements StatementService {
 //                                }
 //                            }
                             //计算续租 退还金额
-                            if (isReletOrder && statementOrderDetailDO.getReletOrderItemReferId() != null){
+                            if (isReletOrder && statementOrderDetailDO.getReletOrderItemReferId() != null) {
 
                                 ReletOrderProductDO reletOrderProductDO = reletOrderProductMapper.findById(statementOrderDetailDO.getReletOrderItemReferId());
                                 Integer rentingProductCount = reletOrderProductDO.getRentingProductCount();
 
                                 //计算续租当期退还金额
-                                if (returnTime.getTime() >= statementDetailStartTime.getTime() && returnTime.getTime() <= statementDetailEndTime.getTime()){
+                                if (returnTime.getTime() >= statementDetailStartTime.getTime() && returnTime.getTime() <= statementDetailEndTime.getTime()) {
                                     Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(returnTime, statementDetailEndTime);
                                     Integer maxDayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(statementDetailStartTime, statementDetailEndTime) + 1;
 
-                                    reletCurrentPhaseReturnAmount =BigDecimalUtil.div(BigDecimalUtil.div(BigDecimalUtil.mul(new BigDecimal(dayCount),
-                                            BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount())),new BigDecimal(rentingProductCount),BigDecimalUtil.SCALE),
-                                            new BigDecimal(maxDayCount),BigDecimalUtil.SCALE);
+                                    reletCurrentPhaseReturnAmount = BigDecimalUtil.div(BigDecimalUtil.div(BigDecimalUtil.mul(new BigDecimal(dayCount),
+                                            BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount())), new BigDecimal(rentingProductCount), BigDecimalUtil.SCALE),
+                                            new BigDecimal(maxDayCount), BigDecimalUtil.SCALE);
 
                                     payReturnAmount = BigDecimalUtil.add(reletCurrentPhaseReturnAmount, payReturnAmount);
                                 }
 
                                 // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
-                                if (!OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())&&statementDetailStartTime.getTime()>returnTime.getTime()) {
+                                if (!OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && statementDetailStartTime.getTime() > returnTime.getTime()) {
 
-                                    payReturnAmount = BigDecimalUtil.add(payReturnAmount, BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()),new BigDecimal(rentingProductCount),BigDecimalUtil.SCALE));
+                                    payReturnAmount = BigDecimalUtil.add(payReturnAmount, BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()), new BigDecimal(rentingProductCount), BigDecimalUtil.SCALE));
                                 }
-                            }
-                            else{
+                            } else {
                                 // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
-                                if (!OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())&&statementDetailStartTime.getTime()>returnTime.getTime()) {
+                                if (!OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && statementDetailStartTime.getTime() > returnTime.getTime()) {
 //                                payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
-                                    payReturnAmount = BigDecimalUtil.add(payReturnAmount, BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()),new BigDecimal(orderProductDO.getProductCount()),BigDecimalUtil.SCALE));
+                                    payReturnAmount = BigDecimalUtil.add(payReturnAmount, BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE));
                                 }
                             }
 
@@ -1852,15 +1939,15 @@ public class StatementServiceImpl implements StatementService {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
                 OrderMaterialDO orderMaterialDO = null;
                 //如果是配件
-                if (productSupport.isMaterial(k3ReturnOrderDetailDO.getProductNo())){
+                if (productSupport.isMaterial(k3ReturnOrderDetailDO.getProductNo())) {
                     //兼容erp订单和k3订单配件项
-                    orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
+                    orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
                 }
-                if(orderMaterialDO==null){
+                if (orderMaterialDO == null) {
                     continue;
                 }
                 BigDecimal returnCount = new BigDecimal(k3ReturnOrderDetailDO.getRealProductCount());
-                if(BigDecimalUtil.compare(returnCount,BigDecimal.ZERO)<=0){
+                if (BigDecimalUtil.compare(returnCount, BigDecimal.ZERO) <= 0) {
                     continue;
                 }
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId());
@@ -1870,7 +1957,7 @@ public class StatementServiceImpl implements StatementService {
                 //获取此订单是否有续租成功的记录
                 boolean isReletOrder = false;
                 ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderMaterialDO.getOrderId());
-                if (reletOrderDO != null){
+                if (reletOrderDO != null) {
                     isReletOrder = true;
                 }
 
@@ -1971,33 +2058,32 @@ public class StatementServiceImpl implements StatementService {
 //                            }
 
                             //计算续租 退还金额
-                            if (isReletOrder && statementOrderDetailDO.getReletOrderItemReferId() != null){
+                            if (isReletOrder && statementOrderDetailDO.getReletOrderItemReferId() != null) {
                                 ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialMapper.findById(statementOrderDetailDO.getReletOrderItemReferId());
                                 Integer rentingMaterialCount = reletOrderMaterialDO.getRentingMaterialCount();
 
                                 //计算续租当期退还金额
-                                if (returnTime.getTime() >= statementDetailStartTime.getTime() && returnTime.getTime() <= statementDetailEndTime.getTime()){
+                                if (returnTime.getTime() >= statementDetailStartTime.getTime() && returnTime.getTime() <= statementDetailEndTime.getTime()) {
                                     Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(returnTime, statementDetailEndTime);
                                     Integer maxDayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(statementDetailStartTime, statementDetailEndTime) + 1;
 
-                                    reletCurrentPhaseReturnAmount =BigDecimalUtil.div(BigDecimalUtil.div(BigDecimalUtil.mul(new BigDecimal(dayCount),
-                                            BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount())),new BigDecimal(rentingMaterialCount),BigDecimalUtil.SCALE),
-                                            new BigDecimal(maxDayCount),BigDecimalUtil.SCALE);
+                                    reletCurrentPhaseReturnAmount = BigDecimalUtil.div(BigDecimalUtil.div(BigDecimalUtil.mul(new BigDecimal(dayCount),
+                                            BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount())), new BigDecimal(rentingMaterialCount), BigDecimalUtil.SCALE),
+                                            new BigDecimal(maxDayCount), BigDecimalUtil.SCALE);
 
                                     payReturnAmount = BigDecimalUtil.add(reletCurrentPhaseReturnAmount, payReturnAmount);
                                 }
                                 // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
-                                if (!OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())&&statementDetailStartTime.getTime()>returnTime.getTime()) {
+                                if (!OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && statementDetailStartTime.getTime() > returnTime.getTime()) {
 
-                                    payReturnAmount = BigDecimalUtil.add(payReturnAmount, BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()),new BigDecimal(rentingMaterialCount),BigDecimalUtil.SCALE));
+                                    payReturnAmount = BigDecimalUtil.add(payReturnAmount, BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()), new BigDecimal(rentingMaterialCount), BigDecimalUtil.SCALE));
                                 }
 
-                            }
-                            else{
+                            } else {
                                 // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
-                                if (!OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())&&statementDetailStartTime.getTime()>returnTime.getTime()) {
+                                if (!OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && statementDetailStartTime.getTime() > returnTime.getTime()) {
 //                                payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
-                                    payReturnAmount = BigDecimalUtil.add(payReturnAmount, BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()),new BigDecimal(orderMaterialDO.getMaterialCount()),BigDecimalUtil.SCALE));
+                                    payReturnAmount = BigDecimalUtil.add(payReturnAmount, BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE));
                                 }
                             }
 
@@ -2034,7 +2120,7 @@ public class StatementServiceImpl implements StatementService {
         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
             String key = OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER.toString();
             // 如果没有处理完差价，统一当天交钱
-            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, k3ReturnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER, BigInteger.ZERO.intValue(), otherStatementTime, returnTime, returnTime, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUserId,null);
+            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, k3ReturnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER, BigInteger.ZERO.intValue(), otherStatementTime, returnTime, returnTime, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUserId, null);
             if (thisStatementOrderDetailDO != null) {
                 thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OTHER);
                 addStatementOrderDetailDOMap.put(key, thisStatementOrderDetailDO);
@@ -2210,7 +2296,7 @@ public class StatementServiceImpl implements StatementService {
                             thisStatementOrderDetailDO.setStatementDetailRentAmount(BigDecimalUtil.add(thisStatementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1))));
                             addStatementOrderDetailDOMap.put(key, thisStatementOrderDetailDO);
                         } else {
-                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderProductEquipmentDO.getReturnOrderId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT, returnOrderProductEquipmentDO.getReturnOrderProductId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(),null);
+                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderProductEquipmentDO.getReturnOrderId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT, returnOrderProductEquipmentDO.getReturnOrderProductId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(), null);
                             if (thisStatementOrderDetailDO != null) {
                                 thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
                                 thisStatementOrderDetailDO.setReturnReferId(statementOrderDetailDO.getId());
@@ -2330,7 +2416,7 @@ public class StatementServiceImpl implements StatementService {
                             thisStatementOrderDetailDO.setStatementDetailRentAmount(BigDecimalUtil.add(thisStatementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1))));
                             addStatementOrderDetailDOMap.put(key, thisStatementOrderDetailDO);
                         } else {
-                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderMaterialBulkDO.getReturnOrderId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL, returnOrderMaterialBulkDO.getReturnOrderMaterialId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(),null);
+                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderMaterialBulkDO.getReturnOrderId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL, returnOrderMaterialBulkDO.getReturnOrderMaterialId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(), null);
                             if (thisStatementOrderDetailDO != null) {
                                 thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
                                 thisStatementOrderDetailDO.setReturnReferId(statementOrderDetailDO.getId());
@@ -2345,7 +2431,7 @@ public class StatementServiceImpl implements StatementService {
         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
             String key = OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER.toString();
             // 如果没有处理完差价，统一当天交钱
-            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER, BigInteger.ZERO.intValue(), otherStatementTime, returnTime, returnTime, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUser.getUserId(),null);
+            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER, BigInteger.ZERO.intValue(), otherStatementTime, returnTime, returnTime, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUser.getUserId(), null);
             if (thisStatementOrderDetailDO != null) {
                 thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OTHER);
                 addStatementOrderDetailDOMap.put(key, thisStatementOrderDetailDO);
@@ -2473,7 +2559,7 @@ public class StatementServiceImpl implements StatementService {
                         StatementOrderDetailDO changeStatementOrderDetailDO = buildStatementOrderDetailDO(nextStatement.getCustomerId(), OrderType.ORDER_TYPE_CHANGE,
                                 k3ChangeOrderDetailDO.getChangeOrderId(), orderItemType, Integer.parseInt(k3ChangeOrderDetailDO.getOrderItemId()),
                                 nextStatement.getStatementExpectPayTime(), nextStatement.getStatementStartTime(), nextStatement.getStatementEndTime(),
-                                thisMonthDiff, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(),null);
+                                thisMonthDiff, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(), null);
                         changeStatementOrderDetailDO.setStatementDetailPhase(nextStatement.getStatementDetailPhase());
                         changeStatementOrderDetailDO.setStatementDetailType(nextStatement.getStatementDetailType());
                         addStatementOrderDetailDOList.add(changeStatementOrderDetailDO);
@@ -2483,7 +2569,7 @@ public class StatementServiceImpl implements StatementService {
                         StatementOrderDetailDO changeStatementOrderDetailDO = buildStatementOrderDetailDO(nextStatement.getCustomerId(), OrderType.ORDER_TYPE_CHANGE,
                                 k3ChangeOrderDetailDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_OTHER, 0,
                                 nextStatement.getStatementExpectPayTime(), nextStatement.getStatementStartTime(), nextStatement.getStatementEndTime(),
-                                BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUser.getUserId(),null);
+                                BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUser.getUserId(), null);
                         changeStatementOrderDetailDO.setStatementDetailPhase(nextStatement.getStatementDetailPhase());
                         changeStatementOrderDetailDO.setStatementDetailType(nextStatement.getStatementDetailType());
                         addStatementOrderDetailDOList.add(changeStatementOrderDetailDO);
@@ -2521,7 +2607,7 @@ public class StatementServiceImpl implements StatementService {
                     StatementOrderDetailDO changeStatementOrderDetailDO = buildStatementOrderDetailDO(statementOrderDetailDO.getCustomerId(), OrderType.ORDER_TYPE_CHANGE,
                             k3ChangeOrderDetailDO.getChangeOrderId(), orderItemType, Integer.parseInt(k3ChangeOrderDetailDO.getOrderItemId()),
                             statementOrderDetailDO.getStatementExpectPayTime(), statementOrderDetailDO.getStatementStartTime(), statementOrderDetailDO.getStatementEndTime(),
-                            diff, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(),null);
+                            diff, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(), null);
                     changeStatementOrderDetailDO.setStatementDetailPhase(statementOrderDetailDO.getStatementDetailPhase());
                     changeStatementOrderDetailDO.setStatementDetailType(statementOrderDetailDO.getStatementDetailType());
                     addStatementOrderDetailDOList.add(changeStatementOrderDetailDO);
@@ -2579,7 +2665,7 @@ public class StatementServiceImpl implements StatementService {
 
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
                     statementDetailEndTime = orderProductEquipmentDO.getExpectReturnTime();
-                    StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderProductEquipmentDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT, changeOrderProductEquipmentDO.getChangeOrderProductId(), statementDetailStartTime, statementDetailStartTime, statementDetailEndTime, productEquipmentDiffAmount, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(),null);
+                    StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderProductEquipmentDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT, changeOrderProductEquipmentDO.getChangeOrderProductId(), statementDetailStartTime, statementDetailStartTime, statementDetailEndTime, productEquipmentDiffAmount, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(), null);
                     addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
                 } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
                     List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
@@ -2606,7 +2692,7 @@ public class StatementServiceImpl implements StatementService {
                                 payDiffAmount = productEquipmentDiffAmount;
                             }
 
-                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderProductEquipmentDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT, changeOrderProductEquipmentDO.getChangeOrderProductId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, payDiffAmount, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(),null);
+                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderProductEquipmentDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT, changeOrderProductEquipmentDO.getChangeOrderProductId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, payDiffAmount, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(), null);
                             if (thisStatementOrderDetailDO != null) {
                                 addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
                             }
@@ -2629,7 +2715,7 @@ public class StatementServiceImpl implements StatementService {
                 OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(orderMaterialBulkDO.getOrderMaterialId());
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())) {
                     statementDetailEndTime = orderMaterialBulkDO.getExpectReturnTime();
-                    StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderMaterialBulkDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL, changeOrderMaterialBulkDO.getChangeOrderMaterialId(), statementDetailStartTime, statementDetailStartTime, statementDetailEndTime, materialBulkDiffAmount, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(),null);
+                    StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderMaterialBulkDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL, changeOrderMaterialBulkDO.getChangeOrderMaterialId(), statementDetailStartTime, statementDetailStartTime, statementDetailEndTime, materialBulkDiffAmount, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(), null);
                     addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
                 } else if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())) {
                     List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId());
@@ -2655,7 +2741,7 @@ public class StatementServiceImpl implements StatementService {
                                 statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                                 payDiffAmount = materialBulkDiffAmount;
                             }
-                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(statementOrderDetailDO.getCustomerId(), OrderType.ORDER_TYPE_CHANGE, changeOrderMaterialBulkDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL, changeOrderMaterialBulkDO.getChangeOrderMaterialId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, payDiffAmount, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(),null);
+                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(statementOrderDetailDO.getCustomerId(), OrderType.ORDER_TYPE_CHANGE, changeOrderMaterialBulkDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL, changeOrderMaterialBulkDO.getChangeOrderMaterialId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, payDiffAmount, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId(), null);
                             if (thisStatementOrderDetailDO != null) {
                                 addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
                             }
@@ -2666,7 +2752,7 @@ public class StatementServiceImpl implements StatementService {
         }
         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
             // 如果没有处理完差价，统一当天交钱
-            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, changeOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_OTHER, BigInteger.ZERO.intValue(), currentTime, currentTime, currentTime, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUser.getUserId(),null);
+            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, changeOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_OTHER, BigInteger.ZERO.intValue(), currentTime, currentTime, currentTime, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUser.getUserId(), null);
             addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
         }
         saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUser.getUserId());
@@ -3060,8 +3146,8 @@ public class StatementServiceImpl implements StatementService {
         if (CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)) {
             // 同一个时间的做归集
             Map<Date, StatementOrderDO> statementOrderDOMap = new HashMap<>();
-            Map<Date,Date> statementStartTimeMap = new HashMap<>();
-            Map<Date,Date> statementEndTimeMap = new HashMap<>();
+            Map<Date, Date> statementStartTimeMap = new HashMap<>();
+            Map<Date, Date> statementEndTimeMap = new HashMap<>();
             for (StatementOrderDetailDO statementOrderDetailDO : addStatementOrderDetailDOList) {
                 if (statementOrderDetailDO == null) {
                     continue;
@@ -3154,21 +3240,21 @@ public class StatementServiceImpl implements StatementService {
             //找出结算单对应结算单所有结算单项的最大值和最小值
             for (Date dateKey : statementOrderDOMap.keySet()) {
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByStatementOrderId(statementOrderDOMap.get(dateKey).getId());
-                for (StatementOrderDetailDO statementOrderDetailDO:statementOrderDetailDOList) {
+                for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
                     if (statementStartTimeMap.containsKey(dateKey)) {
                         if (statementOrderDetailDO.getStatementStartTime().getTime() < statementStartTimeMap.get(dateKey).getTime()) {
-                            statementStartTimeMap.put(dateKey,statementOrderDetailDO.getStatementStartTime());
+                            statementStartTimeMap.put(dateKey, statementOrderDetailDO.getStatementStartTime());
                         }
-                    }else {
-                        statementStartTimeMap.put(dateKey,statementOrderDetailDO.getStatementStartTime());
+                    } else {
+                        statementStartTimeMap.put(dateKey, statementOrderDetailDO.getStatementStartTime());
                     }
                     //存储结算单详情中最大的结束日期
                     if (statementEndTimeMap.containsKey(dateKey)) {
                         if (statementOrderDetailDO.getStatementEndTime().getTime() > statementEndTimeMap.get(dateKey).getTime()) {
-                            statementEndTimeMap.put(dateKey,statementOrderDetailDO.getStatementEndTime());
+                            statementEndTimeMap.put(dateKey, statementOrderDetailDO.getStatementEndTime());
                         }
-                    }else {
-                        statementEndTimeMap.put(dateKey,statementOrderDetailDO.getStatementEndTime());
+                    } else {
+                        statementEndTimeMap.put(dateKey, statementOrderDetailDO.getStatementEndTime());
                     }
                 }
             }
@@ -3643,16 +3729,32 @@ public class StatementServiceImpl implements StatementService {
      */
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, String> clearStatementOrder(OrderDO orderDO) {
-        ServiceResult<String, String> result = new ServiceResult<>();
-        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
-        Map<Integer,StatementOrderDO> statementOrderDOMap = statementOrderSupport.getStatementOrderByDetails(statementOrderDetailDOList);
-        statementOrderSupport.reStatement(new Date(),statementOrderDOMap,statementOrderDetailDOList);
 
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, orderDO.getId());
         //处理已支付订单
-        boolean paid = false;
-        if(PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())){
-            paid = true;
-        }
+        boolean paid = PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus());
+        //清除结算信息
+        ServiceResult<String, String> result = clearStatement(paid, orderDO.getBuyerCustomerNo(), statementOrderDetailDOList);
+//        //创建失败回滚
+//        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//            return result;
+//        }
+//        if (paid) {
+//            //此处逻辑与强制取消订单不同，强制取消订单留存支付记录，不修改订单，重算修改订单支付状态
+//            orderDO.setPayStatus(PayStatus.PAY_STATUS_INIT);
+//            orderDO.setTotalPaidOrderAmount(BigDecimal.ZERO);
+//            orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+//            orderDO.setUpdateTime(new Date());
+//            orderMapper.update(orderDO);
+//        }
+        return result;
+    }
+
+    private ServiceResult<String, String> clearStatement(boolean paid, String buyerCustomerNo, List<StatementOrderDetailDO> statementOrderDetailDOList) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Map<Integer, StatementOrderDO> statementOrderDOMap = statementOrderSupport.getStatementOrderByDetails(statementOrderDetailDOList);
+        statementOrderSupport.reStatement(new Date(), statementOrderDOMap, statementOrderDetailDOList);
         if (paid) {
             //已付设备押金
             BigDecimal depositPaidAmount = BigDecimal.ZERO;
@@ -3666,43 +3768,37 @@ public class StatementServiceImpl implements StatementService {
             BigDecimal penaltyPaidAmount = BigDecimal.ZERO;
             //已付租金押金
             BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
-            for(StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList){
+            for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
                 //计算所有已支付金额,由于付款是在冲正后做的，所以此时无需考虑冲正金额
-                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount,statementOrderDetailDO.getStatementDetailDepositPaidAmount());
-                otherPaidAmount = BigDecimalUtil.add(otherPaidAmount,statementOrderDetailDO.getStatementDetailOtherPaidAmount());
-                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount,statementOrderDetailDO.getStatementDetailRentPaidAmount());
-                overduePaidAmount = BigDecimalUtil.add(overduePaidAmount,statementOrderDetailDO.getStatementDetailOverduePaidAmount());
-                penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount,statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
-                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
+                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount, statementOrderDetailDO.getStatementDetailDepositPaidAmount());
+                otherPaidAmount = BigDecimalUtil.add(otherPaidAmount, statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount, statementOrderDetailDO.getStatementDetailRentPaidAmount());
+                overduePaidAmount = BigDecimalUtil.add(overduePaidAmount, statementOrderDetailDO.getStatementDetailOverduePaidAmount());
+                penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount, statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
+                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount, statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
             }
             //处理结算单总状态及已支付金额
-            statementOrderSupport.reStatementPaid(statementOrderDOMap,statementOrderDetailDOList);
-            String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(),rentPaidAmount,BigDecimalUtil.addAll(otherPaidAmount,overduePaidAmount,penaltyPaidAmount)
-                    ,rentDepositPaidAmount,depositPaidAmount,"重算结算单，已支付金额退还到客户余额");
-            if(!ErrorCode.SUCCESS.equals(returnCode)){
+            statementOrderSupport.reStatementPaid(statementOrderDOMap, statementOrderDetailDOList);
+            String returnCode = paymentService.returnDepositExpand(buyerCustomerNo, rentPaidAmount, BigDecimalUtil.addAll(otherPaidAmount, overduePaidAmount, penaltyPaidAmount)
+                    , rentDepositPaidAmount, depositPaidAmount, "重算结算单，已支付金额退还到客户余额");
+            if (!ErrorCode.SUCCESS.equals(returnCode)) {
                 result.setErrorCode(returnCode);
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 return result;
             }
-            //此处逻辑与强制取消订单不同，强制取消订单留存支付记录，不修改订单，重算修改订单支付状态
-            orderDO.setPayStatus(PayStatus.PAY_STATUS_INIT);
-            orderDO.setTotalPaidOrderAmount(BigDecimal.ZERO);
-            orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            orderDO.setUpdateTime(new Date());
-            orderMapper.update(orderDO);
-        }else{
+        } else {
             //如果未支付，物理删除结算单详情，结算单
-            if(CollectionUtil.isNotEmpty(statementOrderDetailDOList)){
+            if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
                 statementOrderDetailMapper.realDeleteStatementOrderDetailList(statementOrderDetailDOList);
             }
             List<StatementOrderDO> deleteStatementOrderDOList = new ArrayList<>();
-            for(Integer key : statementOrderDOMap.keySet()){
+            for (Integer key : statementOrderDOMap.keySet()) {
                 StatementOrderDO statementOrderDO = statementOrderDOMap.get(key);
-                if(CommonConstant.DATA_STATUS_DELETE.equals(statementOrderDO.getDataStatus())){
+                if (CommonConstant.DATA_STATUS_DELETE.equals(statementOrderDO.getDataStatus())) {
                     deleteStatementOrderDOList.add(statementOrderDO);
                 }
             }
-            if(CollectionUtil.isNotEmpty(deleteStatementOrderDOList)){
+            if (CollectionUtil.isNotEmpty(deleteStatementOrderDOList)) {
                 statementOrderMapper.realDeleteStatementOrderList(deleteStatementOrderDOList);
             }
 
@@ -3715,31 +3811,36 @@ public class StatementServiceImpl implements StatementService {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createReletOrderStatement(ReletOrderDO reletOrderDO) {
+        return reletOrderStatement(reletOrderDO, false);
+    }
+
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, BigDecimal> reletOrderStatement(ReletOrderDO reletOrderDO, boolean allowUnpay) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         if (reletOrderDO == null) {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
-
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         Date rentStartTime = reletOrderDO.getRentStartTime();
-
-        List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(reletOrderDO.getOrderId());
-        if (CollectionUtil.isNotEmpty(dbStatementOrderDetailDOList)) {
-            for(StatementOrderDetailDO statementOrderDetailDO: dbStatementOrderDetailDOList){
-                Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(statementOrderDetailDO.getStatementExpectPayTime(), currentTime);
-                if (CommonConstant.NO == statementOrderDetailDO.getStatementDetailStatus() && dayCount > 0){
-                    result.setErrorCode(ErrorCode.RELET_ORDER_EXISTS_UNPAID_STATEMENT);
-                    return result;
-                }
-            }
-        }
 
         CustomerDO customerDO = customerMapper.findById(reletOrderDO.getBuyerCustomerId());
         if (customerDO == null) {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
+        }
+        if (!allowUnpay) {
+            List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(reletOrderDO.getOrderId());
+            if (CollectionUtil.isNotEmpty(dbStatementOrderDetailDOList)) {
+                for (StatementOrderDetailDO statementOrderDetailDO : dbStatementOrderDetailDOList) {
+                    Integer dayCount = DateUtil.daysBetween(statementOrderDetailDO.getStatementExpectPayTime(), new Date());
+                    if (CommonConstant.NO == statementOrderDetailDO.getStatementDetailStatus() && dayCount > 0) {
+                        result.setErrorCode(ErrorCode.RELET_ORDER_EXISTS_UNPAID_STATEMENT);
+                        return result;
+                    }
+                }
+            }
         }
         //统一拿订单结算日
         Integer statementDays = statementOrderSupport.getCustomerStatementDate(reletOrderDO.getStatementDate(), rentStartTime);
@@ -3927,6 +4028,321 @@ public class StatementServiceImpl implements StatementService {
         }
 
         return addStatementOrderDetailDOList;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, BigDecimal> reCreateReletOrderStatement(String reletOrderNo) {
+        ServiceResult<String, BigDecimal> serviceResult = new ServiceResult<>();
+
+        ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrderNo);
+        if (reletOrderDO == null) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            serviceResult.setErrorCode(ErrorCode.RELET_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        ServiceResult<String, String> result = clearReletOrderStatement(reletOrderDO);
+        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            serviceResult.setErrorCode(result.getErrorCode());
+            return serviceResult;
+        }
+
+        serviceResult = reletOrderStatement(reletOrderDO,true);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return serviceResult;
+        }
+        return serviceResult;
+    }
+
+    /**
+     * 清除续租单的结算
+     *
+     * @param reletOrderNo
+     */
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    ServiceResult<String, String> clearReletOrderStatement(String reletOrderNo) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrderNo);
+        if (reletOrderDO == null) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            serviceResult.setErrorCode(ErrorCode.RELET_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        return clearReletOrderStatement(reletOrderDO);
+    }
+
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    ServiceResult<String, String> clearReletOrderStatement(ReletOrderDO reletOrderDO) {
+        List<Integer> ids = new ArrayList<>();
+        List<ReletOrderMaterialDO> materialDOList = reletOrderDO.getReletOrderMaterialDOList();
+        if (CollectionUtil.isNotEmpty(materialDOList)) {
+            for (ReletOrderMaterialDO materialDO : materialDOList) ids.add(materialDO.getId());
+        }
+        List<ReletOrderProductDO> productDOList = reletOrderDO.getReletOrderProductDOList();
+        if (CollectionUtil.isNotEmpty(productDOList)) {
+            for (ReletOrderProductDO productDO : productDOList) ids.add(productDO.getId());
+        }
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByReletOrderItemReferIds(ids);
+
+        //处理已支付订单
+        //boolean paid = PayStatus.PAY_STATUS_PAID_PART.equals(reletOrderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(reletOrderDO.getPayStatus());
+        //续租单默认已支付（考虑到脏数据，交了钱状态为未支付）
+        boolean paid = true;
+        //清除结算信息
+        ServiceResult<String, String> result = clearStatement(paid, reletOrderDO.getBuyerCustomerNo(), statementOrderDetailDOList);
+        //创建失败回滚
+        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
+        if (paid) {
+            reletOrderDO.setPayStatus(PayStatus.PAY_STATUS_INIT);
+            reletOrderDO.setTotalPaidOrderAmount(BigDecimal.ZERO);
+            reletOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            reletOrderDO.setUpdateTime(new Date());
+            reletOrderMapper.update(reletOrderDO);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, BigDecimal> batchReCreateReletOrderStatement(List<String> reletOrderNos) {
+        ServiceResult<String, BigDecimal> serviceResult = new ServiceResult<>();
+        if (CollectionUtil.isNotEmpty(reletOrderNos)) {
+            BigDecimal needPay = BigDecimal.ZERO;
+            for (String reletOrderNo : reletOrderNos) {
+                ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrderNo);
+                if (reletOrderDO == null) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.RELET_ORDER_NOT_EXISTS);
+                    return serviceResult;
+                }
+                if (PayStatus.PAY_STATUS_PAID_PART.equals(reletOrderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(reletOrderDO.getPayStatus())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.RELET_ORDER_HAS_PAID);
+                    return serviceResult;
+                }
+                ServiceResult<String, BigDecimal> result = reCreateReletOrderStatement(reletOrderNo);
+                if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(result.getErrorCode());
+                    return serviceResult;
+                }
+                needPay = needPay.add(result.getResult());
+            }
+            serviceResult.setResult(needPay);
+        }
+        return serviceResult;
+    }
+    /**
+     * 根据退货单项，清除退货租金结算
+     *
+     * @param k3ReturnOrderDetailDO
+     */
+
+    private void deleteK3ReturnOrderDetailRefRentStatement(K3ReturnOrderDetailDO k3ReturnOrderDetailDO) {
+        if (k3ReturnOrderDetailDO == null) return;
+        Integer orderItemType = productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo()) ? OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT : OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL;
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findReturnByOrderItemTypeAndId(orderItemType, k3ReturnOrderDetailDO.getId());
+        if (CollectionUtil.isEmpty(statementOrderDetailDOList)) return;
+        Map<Date, StatementOrderDO> statementOrderCatch = new HashMap<>();
+        List<StatementOrderDetailDO> needDeleteList = new ArrayList<>();
+        for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+            //只处理租金
+            if (!StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT.equals(statementOrderDetailDO.getStatementDetailType()))
+                continue;
+            Date dateKey = com.lxzl.se.common.util.date.DateUtil.getBeginOfDay(statementOrderDetailDO.getStatementExpectPayTime());
+            if (!statementOrderCatch.containsKey(dateKey)) {
+                StatementOrderDO statementOrderDO = statementOrderMapper.findByCustomerAndPayTime(statementOrderDetailDO.getCustomerId(), dateKey);
+                statementOrderCatch.put(dateKey, statementOrderDO);
+            }
+            StatementOrderDO statementOrderDO = statementOrderCatch.get(dateKey);
+            if (statementOrderDO == null) continue;
+            statementOrderDO.setStatementRentAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementRentAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.STANDARD_SCALE)));
+            statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.STANDARD_SCALE)));
+            //已结算将改为部分结算（当退货结算金额正常为负时)
+            if (statementOrderDO.getStatementStatus().equals(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED) && BigDecimal.ZERO.compareTo(statementOrderDO.getStatementRentAmount()) > 0)
+                statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
+            //更新结算单
+            statementOrderMapper.update(statementOrderDO);
+            needDeleteList.add(statementOrderDetailDO);
+        }
+        //删除结算详情
+        statementOrderDetailMapper.deleteStatementOrderDetailList(needDeleteList);
+    }
+
+    /**
+     * 根据退货单商品项，结算租金（仅处理租金）
+     *
+     * @param k3ReturnOrderDetailDO
+     */
+    private void statementReturnOrderProductItemRent(K3ReturnOrderDetailDO k3ReturnOrderDetailDO) {
+        if (k3ReturnOrderDetailDO == null || k3ReturnOrderDetailDO.getRealProductCount() <= 0) return;
+        if (!productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())) return;
+        OrderProductDO orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
+        if (orderProductDO == null) return;
+
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
+
+        if (CollectionUtil.isEmpty(statementOrderDetailDOList)) return;
+
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findReturnOrderById(k3ReturnOrderDetailDO.getReturnOrderId());
+        CustomerDO customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
+        Integer buyerCustomerId = customerDO.getId();
+        Date statementDetailStartTime;
+        Date statementDetailEndTime;
+        Map<String, StatementOrderDetailDO> addStatementOrderDetailDOMap = new HashMap<>();
+        Date returnTime = k3ReturnOrderDO.getReturnTime();
+        User loginUser = userSupport.getCurrentUser();
+        Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
+        Date currentTime = new Date();
+        BigDecimal returnCount = new BigDecimal(k3ReturnOrderDetailDO.getRealProductCount());
+        for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+            //结算了的跳过
+            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
+                continue;
+            }
+            //押金结算不处理
+            if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType()))
+                continue;
+            statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
+            statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
+
+
+            BigDecimal payReturnAmount = BigDecimal.ZERO;
+
+            if (statementOrderDetailDO.getStatementDetailPhase() != 0) {
+                // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
+                if (!OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && statementDetailStartTime.getTime() > returnTime.getTime()) {
+                    payReturnAmount = BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
+                }
+            }
+            String key = OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT + "-" + orderProductDO.getId() + "-" + orderProductDO.getProductSkuId() + "-" + statementOrderDetailDO.getStatementExpectPayTime();
+            if (addStatementOrderDetailDOMap.containsKey(key)) {
+                StatementOrderDetailDO thisStatementOrderDetailDO = addStatementOrderDetailDOMap.get(key);
+                thisStatementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.add(thisStatementOrderDetailDO.getStatementDetailAmount(), BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1))));
+                thisStatementOrderDetailDO.setStatementDetailRentAmount(BigDecimalUtil.add(thisStatementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1))));
+                addStatementOrderDetailDOMap.put(key, thisStatementOrderDetailDO);
+            } else {
+                StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, k3ReturnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT, k3ReturnOrderDetailDO.getId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId,null);
+                if (thisStatementOrderDetailDO != null) {
+                    thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
+                    thisStatementOrderDetailDO.setReturnReferId(statementOrderDetailDO.getId());
+                    addStatementOrderDetailDOMap.put(key, thisStatementOrderDetailDO);
+                }
+            }
+        }
+        saveStatementOrder(new ArrayList(addStatementOrderDetailDOMap.values()), currentTime, loginUserId);
+    }
+
+    /**
+     * 根据退货单物料项，结算租金（仅处理租金）
+     *
+     * @param k3ReturnOrderDetailDO
+     */
+    private void statementReturnOrderMaterialItemRent(K3ReturnOrderDetailDO k3ReturnOrderDetailDO) {
+        if (k3ReturnOrderDetailDO == null || k3ReturnOrderDetailDO.getRealProductCount() <= 0) return;
+
+        if (!productSupport.isMaterial(k3ReturnOrderDetailDO.getProductNo())) return;
+
+        OrderMaterialDO orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
+        if (orderMaterialDO == null) return;
+
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId());
+        if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+
+            User loginUser = userSupport.getCurrentUser();
+            Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
+
+            K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findReturnOrderById(k3ReturnOrderDetailDO.getReturnOrderId());
+            CustomerDO customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
+            Integer buyerCustomerId = customerDO.getId();
+
+            Date statementDetailStartTime;
+            Date statementDetailEndTime;
+            Date returnTime = k3ReturnOrderDO.getReturnTime();
+            Date currentTime = new Date();
+            BigDecimal returnCount = new BigDecimal(k3ReturnOrderDetailDO.getRealProductCount());
+            Map<String, StatementOrderDetailDO> addStatementOrderDetailDOMap = new HashMap<>();
+            for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+                if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus()))
+                    continue;
+                //押金结算不处理
+                if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType()))
+                    continue;
+
+                statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
+                statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
+
+                BigDecimal payReturnAmount = BigDecimal.ZERO;
+                if (statementOrderDetailDO.getStatementDetailPhase() != 0) {
+                    // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
+                    if (!OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && statementDetailStartTime.getTime() > returnTime.getTime()) {
+                        payReturnAmount = BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE);
+                    }
+                }
+                String key = OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL + "-" + orderMaterialDO.getId() + "-" + orderMaterialDO.getMaterialId() + "-" + statementOrderDetailDO.getStatementExpectPayTime();
+                if (addStatementOrderDetailDOMap.containsKey(key)) {
+                    StatementOrderDetailDO thisStatementOrderDetailDO = addStatementOrderDetailDOMap.get(key);
+                    thisStatementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.add(thisStatementOrderDetailDO.getStatementDetailAmount(), BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1))));
+                    thisStatementOrderDetailDO.setStatementDetailRentAmount(BigDecimalUtil.add(thisStatementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1))));
+                    addStatementOrderDetailDOMap.put(key, thisStatementOrderDetailDO);
+                } else {
+                    StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, k3ReturnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL, k3ReturnOrderDetailDO.getId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId,null);
+                    if (thisStatementOrderDetailDO != null) {
+                        thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
+                        thisStatementOrderDetailDO.setReturnReferId(statementOrderDetailDO.getId());
+                        addStatementOrderDetailDOMap.put(key, thisStatementOrderDetailDO);
+                    }
+                }
+            }
+            List<StatementOrderDetailDO> addStatementOrderDetailDOList = new ArrayList<>();
+            if (!addStatementOrderDetailDOMap.isEmpty()) {
+                for (Map.Entry<String, StatementOrderDetailDO> entry : addStatementOrderDetailDOMap.entrySet()) {
+                    addStatementOrderDetailDOList.add(entry.getValue());
+                }
+            }
+            saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUserId);
+        }
+    }
+
+    /**
+     * 仅重算退货单租金
+     *
+     * @param returnOrderNo
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> reStatementK3ReturnOrderRentOnly(String returnOrderNo) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);
+        if (k3ReturnOrderDO == null) {
+            result.setErrorCode(ErrorCode.K3_RETURN_ORDER_IS_NOT_NULL);
+            return result;
+        }
+        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOS = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
+        reStatementReturnOrderItems(k3ReturnOrderDetailDOS);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    /**
+     * 重结算算退货单项租金
+     * @param k3ReturnOrderDetailDOS
+     */
+    private void reStatementReturnOrderItems(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOS) {
+        if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOS)) {
+            for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOS) {
+                deleteK3ReturnOrderDetailRefRentStatement(k3ReturnOrderDetailDO);
+                if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo()))
+                    statementReturnOrderProductItemRent(k3ReturnOrderDetailDO);
+                else statementReturnOrderMaterialItemRent(k3ReturnOrderDetailDO);
+            }
+        }
     }
 
 
