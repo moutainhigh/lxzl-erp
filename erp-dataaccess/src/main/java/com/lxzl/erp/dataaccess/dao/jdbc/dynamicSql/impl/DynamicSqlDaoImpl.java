@@ -43,7 +43,7 @@ public class DynamicSqlDaoImpl implements DynamicSqlDao {
             int columnCount = rsm.getColumnCount();
             List<Object> columnNameList = new LinkedList<>();
             for (int i = 1; i <= columnCount; i++) {
-                columnNameList.add(rsm.getColumnName(i));
+                columnNameList.add(rsm.getColumnLabel(i));
             }
             result.add(columnNameList);
 

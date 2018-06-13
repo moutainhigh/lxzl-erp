@@ -31,7 +31,7 @@ public class AmountExcelExportView implements ExcelExportView {
     private Object formatBigDecimal(Object o) {
         if(o != null){
             BigDecimal receive = new BigDecimal(o.toString());
-            receive = receive.setScale(2,BigDecimal.ROUND_UP );
+            receive = receive.setScale(2,BigDecimal.ROUND_DOWN );
             return receive;
         }
         return "0.00";

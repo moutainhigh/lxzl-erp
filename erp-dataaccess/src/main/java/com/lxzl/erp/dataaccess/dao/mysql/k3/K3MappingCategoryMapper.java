@@ -5,6 +5,7 @@ import com.lxzl.erp.dataaccess.domain.k3.K3MappingCategoryDO;import org.apache.i
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public interface K3MappingCategoryMapper extends BaseMysqlDAO<K3MappingCategoryDO> {
@@ -16,4 +17,6 @@ public interface K3MappingCategoryMapper extends BaseMysqlDAO<K3MappingCategoryD
 	K3MappingCategoryDO findByErpCode(@Param("erpCode") String erpCode);
 
 	K3MappingCategoryDO findByK3Code(@Param("k3Code") String k3Code);
+
+    List<K3MappingCategoryDO> findByErpCodeList(@Param("productDOCategoryIdSet") Set<String> productDOCategoryIdSet);
 }

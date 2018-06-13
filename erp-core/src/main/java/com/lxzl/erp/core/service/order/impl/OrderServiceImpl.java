@@ -16,6 +16,7 @@ import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.*;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
+import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.system.pojo.Image;
@@ -970,7 +971,9 @@ public class OrderServiceImpl implements OrderService {
         orderConfirmChangeToK3Param.setOrderNo(orderDO.getOrderNo());
         // TODO: 2018\5\23 0023 按天计算的单子押金退还需要单独一个逻辑来进行退还
         StringBuffer sb = new StringBuffer();
-        sb.append("租赁订单-").append(orderDO.getOrderNo()).append("用户已经确认收货，有部分退货情况，退货信息如下：\n");
+        sb.append("您的客户[").append(orderDO.getBuyerCustomerName()).append("]所下租赁订单（订单号：").append(orderDO.getOrderNo()).append("）已经部分确认收货，内容如下：\n");
+        StringBuffer confirmsb = new StringBuffer();
+        StringBuffer returnsb = new StringBuffer();
         Integer count = 0;
         for (OrderItemParam orderItemParam:orderItemParamList) {
             count+=orderItemParam.getItemCount();
@@ -1008,7 +1011,14 @@ public class OrderServiceImpl implements OrderService {
                             orderConfirmChangeLogDetailDO.setCreateTime(date);
                             orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
                             orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
-                            sb.append("商品-").append(orderProductDO.getProductName()).append("退").append(orderProductDO.getProductCount()-orderItemParam.getItemCount()).append("台\n");
+                            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
+                                confirmsb.append(orderProductDO.getProductName()).append("(").append(orderItemParam.getItemCount()).append("台)(全新)\n");
+                                returnsb.append(orderProductDO.getProductName()).append("(").append(orderProductDO.getProductCount()-orderItemParam.getItemCount()).append("台)(全新)\n");
+                            }else {
+                                confirmsb.append(orderProductDO.getProductName()).append("(").append(orderItemParam.getItemCount()).append("台)(次新)\n");
+                                returnsb.append(orderProductDO.getProductName()).append("(").append(orderProductDO.getProductCount()-orderItemParam.getItemCount()).append("台)(次新)\n");
+
+                            }
                             //按天租的设置押金
                             if (orderDO.getRentType() == 1) {
                                 BigDecimal one = BigDecimalUtil.div(orderProductDO.getDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),3);
@@ -1017,6 +1027,12 @@ public class OrderServiceImpl implements OrderService {
                             //将订单商品项中的商品总数、商品在租数进行更新
                             orderProductDO.setProductCount(orderItemParam.getItemCount());
                             orderProductDO.setRentingProductCount(orderItemParam.getItemCount());
+                        }else {
+                            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
+                                confirmsb.append(orderProductDO.getProductName()).append("(").append(orderProductDO.getProductCount()).append("台)(全新)\n");
+                            }else {
+                                confirmsb.append(orderProductDO.getProductName()).append("(").append(orderProductDO.getProductCount()).append("台)(次新)\n");
+                            }
                         }
                     }
                 }
@@ -1055,7 +1071,13 @@ public class OrderServiceImpl implements OrderService {
                             orderConfirmChangeLogDetailDO.setCreateTime(date);
                             orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
                             orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
-                            sb.append("配件-").append(orderMaterialDO.getMaterialName()).append("退").append(orderMaterialDO.getMaterialCount()-orderItemParam.getItemCount()).append("台\n");
+                            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
+                                confirmsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderItemParam.getItemCount()).append("台)(全新)\n");
+                                returnsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderMaterialDO.getMaterialCount()-orderItemParam.getItemCount()).append("台)(全新)\n");
+                            }else {
+                                confirmsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderItemParam.getItemCount()).append("台)(次新)\n");
+                                returnsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderMaterialDO.getMaterialCount()-orderItemParam.getItemCount()).append("台)(次新)\n");
+                            }
                             //按天租的设置押金
                             if (orderDO.getRentType() == 1) {
                                 BigDecimal one = BigDecimalUtil.div(orderMaterialDO.getDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),3);
@@ -1064,6 +1086,12 @@ public class OrderServiceImpl implements OrderService {
                             //将订单商品项中的商品总数、商品在租数进行更新
                             orderMaterialDO.setMaterialCount(orderItemParam.getItemCount());
                             orderMaterialDO.setRentingMaterialCount(orderItemParam.getItemCount());
+                        }else {
+                            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
+                                confirmsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderMaterialDO.getMaterialCount()).append("台)(全新)\n");
+                            }else {
+                                confirmsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderMaterialDO.getMaterialCount()).append("台)(次新)\n");
+                            }
                         }
                     }
                 }
@@ -1097,7 +1125,9 @@ public class OrderServiceImpl implements OrderService {
             // 记录订单时间轴
             orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId());
             sb = new StringBuffer();
-            sb.append("租赁订单-").append(orderDO.getOrderNo()).append("用户已经确认收货，没有退货情况。");
+            sb.append("您的客户[").append(orderDO.getBuyerCustomerName()).append("]所下租赁订单（订单号：").append(orderDO.getOrderNo()).append("）已经正常确认收货。收货内容如下：\n");
+            sb.append(confirmsb.toString());
+            //给「业务员」发送消息
             if (orderDO.getOrderSellerId()!= null) {
                 MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
                 messageThirdChannel.setMessageContent(sb.toString());
@@ -1222,9 +1252,13 @@ public class OrderServiceImpl implements OrderService {
         if (flag) {//有退货
             if (orderDO.getOrderStatus()==OrderStatus.ORDER_STATUS_COLSE) {//订单状态为关闭，全部退货
                 sb = new StringBuffer();
-                sb.append("租赁订单-").append(orderDO.getOrderNo()).append("用户没有收货，订单中商品全部退回");
+                sb.append("您的客户[").append(orderDO.getBuyerCustomerName()).append("]所下租赁订单（订单号：").append(orderDO.getOrderNo()).append("）已全部退货,退回内容如下：\n");
+                sb.append(returnsb.toString());
+            }else {
+                sb.append(confirmsb.toString()).append("\n").append("下列商品、配件退回：\n").append(returnsb.toString());
             }
         }
+        //给「业务员」发送消息
         if (orderDO.getOrderSellerId()!= null) {
             MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
             messageThirdChannel.setMessageContent(sb.toString());
@@ -1579,6 +1613,9 @@ public class OrderServiceImpl implements OrderService {
         List<OrderTimeAxisDO> orderTimeAxisDOList = orderTimeAxisSupport.getOrderTimeAxis(orderDO.getId());
         orderDO.setOrderTimeAxisDOList(orderTimeAxisDOList);
 
+        List<ReletOrderDO> reletOrderDOList = reletOrderMapper.findReletOrderByOrderNo(orderDO.getOrderNo());
+        orderDO.setReletOrderDOList(reletOrderDOList);
+
         Order order = ConverterUtil.convert(orderDO, Order.class);
 
         ServiceResult<String, StatementOrder> statementOrderResult = statementService.queryStatementOrderDetailByOrderId(order.getOrderNo());
@@ -1664,8 +1701,10 @@ public class OrderServiceImpl implements OrderService {
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         //判断是否可续租
-        Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
+        Integer canReletOrder = isOrderCanRelet(order);
         order.setCanReletOrder(canReletOrder);
+        Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
+        order.setIsReletOrder(isReletOrder);
 
         //获取确认收货变更原因及交货单客户签字图片逻辑
         if (order.getOrderStatus()>OrderStatus.ORDER_STATUS_DELIVERED) {
@@ -1691,36 +1730,38 @@ public class OrderServiceImpl implements OrderService {
      * @param
      * @return
      */
-    private Boolean isOrderCanRelet(Order order){
+    private Integer isOrderCanRelet(Order order){
 
         //检查是否在续租时间范围
         Date currentTime = new Date();
         Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(order.getExpectReturnTime(), currentTime);
         if ((OrderRentType.RENT_TYPE_MONTH.equals(order.getRentType()) && dayCount < -9)
                 || (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && dayCount < -2)) {  //订单： 长租前10天 和 短租前3天 可续租
-            return false;
+            return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_NO;
         }
 
         //订单状态 必须是租赁中 ，续租中，部分退还  才可续租
         if (!OrderStatus.canReletOrderByCurrentStatus(order.getOrderStatus())){
-            return false;
+            return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_NO;
         }
 
-        //有续租单，且续租状态为续租中 才可续租
-        ReletOrderDO recentlyReletOrderInDB = reletOrderMapper.findRecentlyReletOrderByOrderNo(order.getOrderNo());
-        if (null != recentlyReletOrderInDB) {
-            if (!ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())){
+        if (CollectionUtil.isNotEmpty(order.getReletOrderList())){
+            for (ReletOrder reletOrder : order.getReletOrderList()){
+                if (!ReletOrderStatus.canReletOrderByCurrentStatus(reletOrder.getReletOrderStatus())){
 
-                return false;
+                    return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_EXIST_WAIT_HANDLE;
+                }
+                else {
+
+                    if (currentTime.compareTo(reletOrder.getRentStartTime()) < 0){  //如果当前续租还没开始  不允许再次续租
+
+                        return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_EXIST_SUCCESS_RELET_NOT_BEGIN;
+                    }
+                }
             }
-
-//            if (currentTime.compareTo(recentlyReletOrderInDB.getRentStartTime()) < 0){  //如果当前续租还没开始  不允许再次续租
-//
-//                return false;
-//            }
         }
 
-        return true;
+        return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_YES;
     }
 
     @Override
@@ -1738,6 +1779,9 @@ public class OrderServiceImpl implements OrderService {
 
         List<OrderTimeAxisDO> orderTimeAxisDOList = orderTimeAxisSupport.getOrderTimeAxis(orderDO.getId());
         orderDO.setOrderTimeAxisDOList(orderTimeAxisDOList);
+
+        List<ReletOrderDO> reletOrderDOList = reletOrderMapper.findReletOrderByOrderNo(orderDO.getOrderNo());
+        orderDO.setReletOrderDOList(reletOrderDOList);
 
         Order order = ConverterUtil.convert(orderDO, Order.class);
 
@@ -1825,8 +1869,10 @@ public class OrderServiceImpl implements OrderService {
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
 
         //判断是否可续租
-        Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
+        Integer canReletOrder = isOrderCanRelet(order);
         order.setCanReletOrder(canReletOrder);
+        Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
+        order.setIsReletOrder(isReletOrder);
 
         /*******组合商品逻辑 start********/
         // 将orderJointProductId不为空的订单商品和配件放入对应的OrderJointProduct中, 并将数量除以组合商品数
@@ -2446,8 +2492,10 @@ public class OrderServiceImpl implements OrderService {
             Order order = ConverterUtil.convert(orderDO, Order.class);
             orderDOMap.put(orderDO.getOrderNo(), order);
             //判断是否可续租
-//            Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
-//            order.setCanReletOrder(canReletOrder);
+            Integer canReletOrder = isOrderCanRelet(order);
+            order.setCanReletOrder(canReletOrder);
+            Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
+            order.setIsReletOrder(isReletOrder);
             orderList.add(order);
         }
         List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
@@ -2484,8 +2532,10 @@ public class OrderServiceImpl implements OrderService {
 
             Order order = ConverterUtil.convert(orderDO, Order.class);
             //判断是否可续租
-            Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
+            Integer canReletOrder = isOrderCanRelet(order);
             order.setCanReletOrder(canReletOrder);
+            Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
+            order.setIsReletOrder(isReletOrder);
             orderList.add(order);
         }
 
