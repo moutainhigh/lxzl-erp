@@ -3735,19 +3735,19 @@ public class StatementServiceImpl implements StatementService {
         boolean paid = PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus());
         //清除结算信息
         ServiceResult<String, String> result = clearStatement(paid, orderDO.getBuyerCustomerNo(), statementOrderDetailDOList);
-//        //创建失败回滚
-//        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
-//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//            return result;
-//        }
-//        if (paid) {
-//            //此处逻辑与强制取消订单不同，强制取消订单留存支付记录，不修改订单，重算修改订单支付状态
-//            orderDO.setPayStatus(PayStatus.PAY_STATUS_INIT);
-//            orderDO.setTotalPaidOrderAmount(BigDecimal.ZERO);
-//            orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-//            orderDO.setUpdateTime(new Date());
-//            orderMapper.update(orderDO);
-//        }
+        //创建失败回滚
+        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
+        if (paid) {
+            //此处逻辑与强制取消订单不同，强制取消订单留存支付记录，不修改订单，重算修改订单支付状态
+            orderDO.setPayStatus(PayStatus.PAY_STATUS_INIT);
+            orderDO.setTotalPaidOrderAmount(BigDecimal.ZERO);
+            orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            orderDO.setUpdateTime(new Date());
+            orderMapper.update(orderDO);
+        }
         return result;
     }
 
