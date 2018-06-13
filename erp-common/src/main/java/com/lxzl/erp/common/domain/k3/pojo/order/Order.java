@@ -69,6 +69,8 @@ public class Order extends BasePO {
     private List<OrderProduct> orderProductList;                // 订单商品项
     private List<OrderMaterial> orderMaterialList;              // 订单配件项
     private OrderConsignInfo orderConsignInfo;                  // 收货地址信息
+    private Integer deliverySubCompanyId;                       // 发货所属分公司
+    private String deliverySubCompanyName;                         // 发货所属分公司名称
 
 
     // 审核人和提交审核信息,只提供给审核的时候用
@@ -76,6 +78,21 @@ public class Order extends BasePO {
     private String commitRemark;                                // 提交审核备注
     private Integer cancelOrderReasonType;                      //取消订单原因类型，1-下错单，2-变更数量，3-变更单价，4-变更配件，5-变更结算日，6-变更支付方式，7-变更时间/租期，8-变更型号/配置，9-变更收货人信息，10-同行调货选错，12-设备故障换货，13-客户名称错误，14-客户取消订单，15-缺货取消，16-实际出货与订单不符
 
+    public Integer getDeliverySubCompanyId() {
+        return deliverySubCompanyId;
+    }
+
+    public void setDeliverySubCompanyId(Integer deliverySubCompanyId) {
+        this.deliverySubCompanyId = deliverySubCompanyId;
+    }
+
+    public String getDeliverySubCompanyName() {
+        return deliverySubCompanyName;
+    }
+
+    public void setDeliverySubCompanyName(String deliverySubCompanyName) {
+        this.deliverySubCompanyName = deliverySubCompanyName;
+    }
 
     public List<OrderProduct> getOrderProductList() {
         return orderProductList;

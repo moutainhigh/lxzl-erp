@@ -432,6 +432,8 @@ public class ErrorCode {
     public static final String ORDER_ITEM_PARAM_LIST_NOT_NULL = "J400153";
     public static final String ITEM_COUNT_MORE_THAN_STABLE_PRODUCT_COUNT = "J400154";
     public static final String ITEM_COUNT_MORE_THAN_STABLE_MATERIAL_COUNT = "J400155";
+    public static final String RETURN_DELIVERY_SUB_COMPANY_NOT_EQUALS_ORDER_SUB_COMPANY = "J400156";
+    public static final String RETURN_DELIVERY_SUB_COMPANY_NOT_EQUALS_DELIVERY_SUB_COMPANY = "J400157";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -1547,7 +1549,8 @@ public class ErrorCode {
         MAP.put(ITEM_COUNT_MORE_THAN_STABLE_PRODUCT_COUNT, "确认收货的商品数大于最初下单商品总数");
         MAP.put(ITEM_COUNT_MORE_THAN_STABLE_MATERIAL_COUNT, "确认收货的配件数大于最初下单配件总数");
         MAP.put(CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY, "客户的业务员不能由地方分公司转为渠道大客户业务员");
-
+        MAP.put(RETURN_DELIVERY_SUB_COMPANY_NOT_EQUALS_ORDER_SUB_COMPANY, "订单【%s 】不是归属于电销或渠道大客户，创建退货单时选取的发货分公司必须跟该订单所属分公司一致");
+        MAP.put(RETURN_DELIVERY_SUB_COMPANY_NOT_EQUALS_DELIVERY_SUB_COMPANY, "订单【%s 】归属于电销或渠道大客户，创建退货单时选取的发货分公司必须跟该订单发货分公司一致");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
