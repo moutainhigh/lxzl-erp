@@ -1163,7 +1163,7 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         orderDO.setUpdateTime(date);
         orderDO.setConfirmDeliveryTime(date);
-        // TODO: 2018\5\22 0022  4.恢复信用额度（现成方法，看看是否有日志的记录）
+        //恢复信用额度（现成方法，有日志的记录）
         if (BigDecimalUtil.compare(oldTotalCreditDepositAmount,orderDO.getTotalCreditDepositAmount())>0) {
             BigDecimal value = BigDecimalUtil.sub(oldTotalCreditDepositAmount,orderDO.getTotalCreditDepositAmount());
             if (BigDecimalUtil.compare(value, BigDecimal.ZERO) != 0) {
@@ -3826,13 +3826,13 @@ public class OrderServiceImpl implements OrderService {
         if (order.getRentStartTime() == null) {
             return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
         }
-        try {
-            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
-                return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
-            }
-        } catch (Exception e) {
-            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
-        }
+//        try {
+//            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
+//                return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+//            }
+//        } catch (Exception e) {
+//            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+//        }
         if (order.getExpectDeliveryTime() == null) {
             return ErrorCode.ORDER_EXPECT_DELIVERY_TIME;
         }
