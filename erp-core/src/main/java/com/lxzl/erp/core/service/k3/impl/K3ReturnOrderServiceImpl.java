@@ -64,6 +64,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -87,10 +88,6 @@ import java.util.concurrent.Executors;
 public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 
     private static final Logger logger = LoggerFactory.getLogger(K3ReturnOrderServiceImpl.class);
-    /**
-     * 发送退货信息给K3
-     */
-    private ExecutorService sendReturnOrderToK3Executor = Executors.newCachedThreadPool(new ThreadFactoryDefault("sendReturnOrderToK3"));
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -331,12 +328,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         //异步向K3推送退货单
         ServiceResult<String, String> serviceResult = sendReturnOrderToK3Asynchronous(k3ReturnOrder,k3SendRecordDO);
-
-        if (ErrorCode.K3_SERVER_ERROR.equals(serviceResult.getErrorCode())) {
-            result.setErrorCode(ErrorCode.K3_SERVER_ERROR);
-            return result;
-        }
-
         if (ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
             k3ReturnOrderDO.setUpdateTime(currentTime);
@@ -350,7 +341,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     }
     public ServiceResult<String, String> sendReturnOrderToK3Asynchronous(final K3ReturnOrder k3ReturnOrder,final K3SendRecordDO k3SendRecordDO) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        sendReturnOrderToK3Executor.execute(new Runnable() {
+        threadPoolTaskExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 logger.info("【异步向K3推送退货消息，退货单号：】"+k3ReturnOrder.getReturnOrderNo());
@@ -1756,5 +1747,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     private MaterialMapper materialMapper;
     @Autowired
     private K3MappingMaterialTypeMapper k3MappingMaterialTypeMapper;
+    @Autowired
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
 }
