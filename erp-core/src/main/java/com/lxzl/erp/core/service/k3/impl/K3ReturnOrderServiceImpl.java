@@ -344,7 +344,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         threadPoolTaskExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                logger.info("【异步向K3推送退货消息，退货单号：】"+k3ReturnOrder.getReturnOrderNo());
+                logger.info("【异步向K3推送退货消息，退货单号："+k3ReturnOrder.getReturnOrderNo()+"】,发送数据："+JSON.toJSONString(k3ReturnOrder));
                 ServiceResult<String, String> result = sendReturnOrderToK3Method(k3ReturnOrder,k3SendRecordDO);
             }
         });
