@@ -24,6 +24,7 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
+import com.lxzl.erp.common.util.thread.ThreadFactoryDefault;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOutStock;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
@@ -63,16 +64,21 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @Author: your name
@@ -310,6 +316,10 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(k3ReturnOrderDO.getId(), PostK3Type.POST_K3_TYPE_RETURN_ORDER);
         K3ReturnOrder k3ReturnOrder = ConverterUtil.convert(k3ReturnOrderDO, K3ReturnOrder.class);
+        k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
+        k3ReturnOrderDO.setUpdateTime(currentTime);
+        k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        k3ReturnOrderMapper.update(k3ReturnOrderDO);
         if (k3SendRecordDO == null) {
             //创建推送记录，此时发送状态失败，接收状态失败
             k3SendRecordDO = new K3SendRecordDO();
@@ -322,29 +332,24 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             k3SendRecordMapper.save(k3SendRecordDO);
             logger.info("【推送消息】" + JSON.toJSONString(k3ReturnOrder));
         }
-
-        ServiceResult<String, String> serviceResult = sendReturnOrderToK3Method(k3ReturnOrder,k3SendRecordDO);
-
-        if (ErrorCode.K3_SERVER_ERROR.equals(serviceResult.getErrorCode())) {
-            result.setErrorCode(ErrorCode.K3_SERVER_ERROR);
-            return result;
-        }
-
-        if (ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
-            k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
-            k3ReturnOrderDO.setUpdateTime(currentTime);
-            k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
-            k3ReturnOrderMapper.update(k3ReturnOrderDO);
-            result.setErrorCode(ErrorCode.SUCCESS);
-            return result;
-        }
-
+        //异步向K3推送退货单
+        sendReturnOrderToK3Asynchronous(k3ReturnOrder,k3SendRecordDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+
+    }
+    public void sendReturnOrderToK3Asynchronous(final K3ReturnOrder k3ReturnOrder,final K3SendRecordDO k3SendRecordDO) {
+        threadPoolTaskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                logger.info("【异步向K3推送退货消息，退货单号："+k3ReturnOrder.getReturnOrderNo()+"】,发送数据："+JSON.toJSONString(k3ReturnOrder));
+                sendReturnOrderToK3Method(k3ReturnOrder,k3SendRecordDO);
+            }
+        });
     }
 
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> sendReturnOrderToK3Method(K3ReturnOrder k3ReturnOrder,K3SendRecordDO k3SendRecordDO) {
-        ServiceResult<String, String> result = new ServiceResult<>();
+    public void sendReturnOrderToK3Method(K3ReturnOrder k3ReturnOrder,K3SendRecordDO k3SendRecordDO) {
         com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response = null;
         try {
             ConvertK3DataService convertK3DataService = postK3ServiceManager.getService(PostK3Type.POST_K3_TYPE_RETURN_ORDER);
@@ -354,13 +359,11 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             //修改推送记录
             if (response == null) {
                 k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
-                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： " + JSON.toJSONString(response));
+                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： 退货单号--"+k3ReturnOrder.getReturnOrderNo()+",响应结果" + JSON.toJSONString(response));
                 dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
-                result.setErrorCode(ErrorCode.K3_SERVER_ERROR);
-                return result;
             } else if (response.getStatus() != 0) {
                 k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
-                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： " + JSON.toJSONString(response));
+                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： 退货单号--"+k3ReturnOrder.getReturnOrderNo()+",响应结果" + JSON.toJSONString(response));
                 dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
                 throw new BusinessException(response.getResult());
             } else {
@@ -380,19 +383,19 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 //                        }
 //                    }
 //                }
-                logger.info("【PUSH DATA TO K3 RESPONSE SUCCESS】 ： " + JSON.toJSONString(response));
+                logger.info("【PUSH DATA TO K3 RESPONSE SUCCESS】 ： 退货单号--"+k3ReturnOrder.getReturnOrderNo()+",响应结果" + JSON.toJSONString(response));
             }
             k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_YES);
             k3SendRecordDO.setResponseJson(JSON.toJSONString(response));
             k3SendRecordMapper.update(k3SendRecordDO);
-            logger.info("【返回结果】" + response);
         } catch (Exception e) {
             dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
+            StringWriter exceptionFormat=new StringWriter();
+            e.printStackTrace(new PrintWriter(exceptionFormat,true));
+            logger.error("【退货K3服务异常：退货单号--"+k3ReturnOrder.getReturnOrderNo()+"】错误原因："+e);
             //将K3返回的具体错误信息返回，不返回自己定义的K3退货失败
             throw new BusinessException(response.getResult());
         }
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
     }
 
     @Override
@@ -1736,5 +1739,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     private MaterialMapper materialMapper;
     @Autowired
     private K3MappingMaterialTypeMapper k3MappingMaterialTypeMapper;
+    @Autowired
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
 }
