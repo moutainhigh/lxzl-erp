@@ -178,6 +178,8 @@ public class StatementOrderSupport {
                 StatementOrderDO statementOrderDO = statementCache.get(key);
                 if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) == 0) {
                     statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                }else  if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), statementOrderDO.getStatementPaidAmount()) <= 0){
+                    statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
                 }
                 statementOrderDO.setUpdateTime(currentTime);
                 statementOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
