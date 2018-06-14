@@ -3735,7 +3735,8 @@ public class StatementServiceImpl implements StatementService {
 
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, orderDO.getId());
         //处理已支付订单
-        boolean paid = PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus());
+        //boolean paid = PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus());
+        boolean paid = true;//物理删除会导致问题
         //清除结算信息
         ServiceResult<String, String> result = clearStatement(paid, orderDO.getBuyerCustomerNo(), statementOrderDetailDOList);
         //创建失败回滚
@@ -4157,7 +4158,7 @@ public class StatementServiceImpl implements StatementService {
         Map<Date, StatementOrderDO> statementOrderCatch = new HashMap<>();
         List<StatementOrderDetailDO> needDeleteList = new ArrayList<>();
         for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
-            //只处理租金
+            //只处理租金（押金已在结清除订单结算时全部返还）
             if (!StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT.equals(statementOrderDetailDO.getStatementDetailType()))
                 continue;
             Date dateKey = com.lxzl.se.common.util.date.DateUtil.getBeginOfDay(statementOrderDetailDO.getStatementExpectPayTime());
