@@ -1163,7 +1163,7 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         orderDO.setUpdateTime(date);
         orderDO.setConfirmDeliveryTime(date);
-        // TODO: 2018\5\22 0022  4.恢复信用额度（现成方法，看看是否有日志的记录）
+        //恢复信用额度（现成方法，有日志的记录）
         if (BigDecimalUtil.compare(oldTotalCreditDepositAmount,orderDO.getTotalCreditDepositAmount())>0) {
             BigDecimal value = BigDecimalUtil.sub(oldTotalCreditDepositAmount,orderDO.getTotalCreditDepositAmount());
             if (BigDecimalUtil.compare(value, BigDecimal.ZERO) != 0) {
