@@ -368,7 +368,7 @@ public class StatementServiceImpl implements StatementService {
 
         //重算相关退货结算(有实际退货的)
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
-        reStatementReturnOrderItems(k3ReturnOrderDetailDOList);
+        reStatementReturnOrderItems(k3ReturnOrderDetailDOList,true);
 
         //更新订单首次需支付金额
         orderDO.setFirstNeedPayAmount(createResult.getResult());
@@ -4176,6 +4176,7 @@ public class StatementServiceImpl implements StatementService {
             if (statementOrderDO.getStatementStatus().equals(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED) && BigDecimal.ZERO.compareTo(statementOrderDO.getStatementRentAmount()) > 0)
                 statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
             //更新结算单
+            if(BigDecimalUtil.compare(statementOrderDO.getStatementAmount(),BigDecimal.ZERO)==0) statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
             statementOrderMapper.update(statementOrderDO);
             needDeleteList.add(statementOrderDetailDO);
         }
@@ -4188,7 +4189,7 @@ public class StatementServiceImpl implements StatementService {
      *
      * @param k3ReturnOrderDetailDO
      */
-    private void statementReturnOrderProductItemRent(K3ReturnOrderDetailDO k3ReturnOrderDetailDO) {
+    private void statementReturnOrderProductItemRent(K3ReturnOrderDetailDO k3ReturnOrderDetailDO,boolean ifDealDeposit) {
         if (k3ReturnOrderDetailDO == null || k3ReturnOrderDetailDO.getRealProductCount() <= 0) return;
         if (!productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())) return;
         OrderProductDO orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
@@ -4215,7 +4216,26 @@ public class StatementServiceImpl implements StatementService {
 
         for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
             //结算了的跳过
-            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
+            if (ifDealDeposit&&StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
+                BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), returnCount);
+                BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), returnCount);
+                StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
+                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
+                    statementOrderDetailDO.setStatementDetailDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositReturnAmount(), thisReturnDepositAmount));
+                    statementOrderDetailDO.setStatementDetailDepositReturnTime(currentTime);
+                    statementOrderDO.setStatementDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositReturnAmount(), thisReturnDepositAmount));
+                    statementOrderDO.setStatementAmount(BigDecimalUtil.sub(statementOrderDO.getStatementAmount(),thisReturnDepositAmount));
+                    statementReturnSupport.saveStatementReturnRecord(statementOrderDO.getId(), statementOrderDO.getCustomerId(), statementOrderDetailDO.getOrderId(), statementOrderDetailDO.getOrderItemReferId(), StatementReturnType.RETURN_TYPE_DEPOSIT, thisReturnDepositAmount, returnTime, loginUserId, currentTime);
+                }
+                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), statementOrderDetailDO.getStatementDetailRentDepositReturnAmount()), thisReturnRentDepositAmount) >= 0) {
+                    statementOrderDetailDO.setStatementDetailRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositReturnAmount(), thisReturnRentDepositAmount));
+                    statementOrderDetailDO.setStatementDetailRentDepositReturnTime(currentTime);
+                    statementOrderDO.setStatementRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositReturnAmount(), thisReturnRentDepositAmount));
+                    statementOrderDO.setStatementAmount(BigDecimalUtil.sub(statementOrderDO.getStatementAmount(),thisReturnRentDepositAmount));
+                    statementReturnSupport.saveStatementReturnRecord(statementOrderDO.getId(), statementOrderDO.getCustomerId(), statementOrderDetailDO.getOrderId(), statementOrderDetailDO.getOrderItemReferId(), StatementReturnType.RETURN_TYPE_RENT_DEPOSIT, thisReturnRentDepositAmount, returnTime, loginUserId, currentTime);
+                }
+                statementOrderDetailMapper.update(statementOrderDetailDO);
+                statementOrderMapper.update(statementOrderDO);
                 continue;
             }
             //押金结算不处理
@@ -4285,7 +4305,7 @@ public class StatementServiceImpl implements StatementService {
      *
      * @param k3ReturnOrderDetailDO
      */
-    private void statementReturnOrderMaterialItemRent(K3ReturnOrderDetailDO k3ReturnOrderDetailDO) {
+    private void statementReturnOrderMaterialItemRent(K3ReturnOrderDetailDO k3ReturnOrderDetailDO,boolean ifDealDeposit) {
         if (k3ReturnOrderDetailDO == null || k3ReturnOrderDetailDO.getRealProductCount() <= 0) return;
 
         if (!productSupport.isMaterial(k3ReturnOrderDetailDO.getProductNo())) return;
@@ -4315,8 +4335,29 @@ public class StatementServiceImpl implements StatementService {
                 if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus()))
                     continue;
                 //押金结算不处理
-                if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType()))
+                if (ifDealDeposit&&StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())){
+                    BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getRentDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
+                    BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
+                    StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
+                    if (BigDecimalUtil.compare(thisReturnDepositAmount,BigDecimal.ZERO) >= 0) {
+                        statementOrderDetailDO.setStatementDetailDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositReturnAmount(), thisReturnDepositAmount));
+                        statementOrderDetailDO.setStatementDetailDepositReturnTime(currentTime);
+                        statementOrderDO.setStatementDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositReturnAmount(), thisReturnDepositAmount));
+                        statementOrderDO.setStatementAmount(BigDecimalUtil.sub(statementOrderDO.getStatementAmount(),thisReturnDepositAmount));
+                        statementReturnSupport.saveStatementReturnRecord(statementOrderDO.getId(), statementOrderDO.getCustomerId(), statementOrderDetailDO.getOrderId(), statementOrderDetailDO.getOrderItemReferId(), StatementReturnType.RETURN_TYPE_DEPOSIT, thisReturnDepositAmount, returnTime, loginUserId, currentTime);
+                    }
+                    if (BigDecimalUtil.compare(thisReturnRentDepositAmount,BigDecimal.ZERO) >= 0) {
+                        statementOrderDetailDO.setStatementDetailRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositReturnAmount(), thisReturnRentDepositAmount));
+                        statementOrderDetailDO.setStatementDetailRentDepositReturnTime(currentTime);
+                        statementOrderDO.setStatementRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositReturnAmount(), thisReturnRentDepositAmount));
+                        statementOrderDO.setStatementAmount(BigDecimalUtil.sub(statementOrderDO.getStatementAmount(),thisReturnRentDepositAmount));
+                        statementReturnSupport.saveStatementReturnRecord(statementOrderDO.getId(), statementOrderDO.getCustomerId(), statementOrderDetailDO.getOrderId(), statementOrderDetailDO.getOrderItemReferId(), StatementReturnType.RETURN_TYPE_RENT_DEPOSIT, thisReturnRentDepositAmount, returnTime, loginUserId, currentTime);
+                    }
+                    statementOrderDetailMapper.update(statementOrderDetailDO);
+                    statementOrderMapper.update(statementOrderDO);
                     continue;
+                }
+
 
                 statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                 statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
@@ -4397,7 +4438,7 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOS = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
-        reStatementReturnOrderItems(k3ReturnOrderDetailDOS);
+        reStatementReturnOrderItems(k3ReturnOrderDetailDOS,false);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -4406,13 +4447,13 @@ public class StatementServiceImpl implements StatementService {
      * 重结算算退货单项租金
      * @param k3ReturnOrderDetailDOS
      */
-    private void reStatementReturnOrderItems(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOS) {
+    private void reStatementReturnOrderItems(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOS,boolean ifDealDeposit) {
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOS)) {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOS) {
                 deleteK3ReturnOrderDetailRefRentStatement(k3ReturnOrderDetailDO);
                 if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo()))
-                    statementReturnOrderProductItemRent(k3ReturnOrderDetailDO);
-                else statementReturnOrderMaterialItemRent(k3ReturnOrderDetailDO);
+                    statementReturnOrderProductItemRent(k3ReturnOrderDetailDO,ifDealDeposit);
+                else statementReturnOrderMaterialItemRent(k3ReturnOrderDetailDO,ifDealDeposit);
             }
         }
     }
