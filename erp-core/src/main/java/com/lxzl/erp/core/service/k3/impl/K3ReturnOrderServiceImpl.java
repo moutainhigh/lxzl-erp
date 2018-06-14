@@ -316,6 +316,10 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(k3ReturnOrderDO.getId(), PostK3Type.POST_K3_TYPE_RETURN_ORDER);
         K3ReturnOrder k3ReturnOrder = ConverterUtil.convert(k3ReturnOrderDO, K3ReturnOrder.class);
+        k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
+        k3ReturnOrderDO.setUpdateTime(currentTime);
+        k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        k3ReturnOrderMapper.update(k3ReturnOrderDO);
         if (k3SendRecordDO == null) {
             //创建推送记录，此时发送状态失败，接收状态失败
             k3SendRecordDO = new K3SendRecordDO();
@@ -330,10 +334,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         //异步向K3推送退货单
         sendReturnOrderToK3Asynchronous(k3ReturnOrder,k3SendRecordDO);
-        k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
-        k3ReturnOrderDO.setUpdateTime(currentTime);
-        k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
-        k3ReturnOrderMapper.update(k3ReturnOrderDO);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
 
