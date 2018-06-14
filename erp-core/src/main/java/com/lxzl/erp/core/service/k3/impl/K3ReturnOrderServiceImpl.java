@@ -1129,10 +1129,19 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
         List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
-        //设置商品项行号及商品编码
-        setProductNumberAndFEntryId(orderDO, orderProductDOList);
-        //设置配件项行号，获取对应配件项的商品编码
-        Map<Integer, String> FNumberMap = setMaterialFEntryIdAndNumber(orderDO, orderMaterialDOList);
+        Map<Integer, String> FNumberMap = new HashMap<>();
+        //不是K3老订单才设置商品行号和编码，如果是则不进行设置
+        if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
+            //设置商品项行号及商品编码
+            setProductNumberAndFEntryId(orderDO, orderProductDOList);
+            //设置配件项行号，获取对应配件项的商品编码
+            FNumberMap = setMaterialFEntryIdAndNumber(orderDO, orderMaterialDOList);
+        }else if(CollectionUtil.isNotEmpty(orderProductDOList)){
+            for (OrderMaterialDO orderMaterialDO:orderMaterialDOList) {
+                FNumberMap.put(orderMaterialDO.getFEntryID(),orderMaterialDO.getProductNumber());
+            }
+        }
+
         Order order = ConverterUtil.convert(orderDO, Order.class);
         List<OrderMaterial> orderMaterialList = order.getOrderMaterialList();
         //设置配件项商品编码
@@ -1192,9 +1201,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     }
                 }
                 for (OrderMaterialDO orderMaterialDO:orderMaterialDOList) {
-                    if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
-                        orderMaterialDO.setFEntryID(orderMaterialDO.getId());
-                    }
+                    orderMaterialDO.setFEntryID(orderMaterialDO.getId());
                     MaterialDO materialDO = materialDOMap.get(orderMaterialDO.getId());
                     K3MappingMaterialTypeDO k3MappingMaterialTypeDO = k3MappingMaterialTypeMap.get(materialDO.getId());
                     K3MappingBrandDO k3MappingBrandDO = materialk3MappingBrandDOMap.get(materialDO.getId());
@@ -1271,9 +1278,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsPeer())){
                         number = "90"+number.substring(2,number.length());
                     }
-                    if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
-                        orderProductDO.setFEntryID(orderProductDO.getId());
-                    }
+                    orderProductDO.setFEntryID(orderProductDO.getId());
                     orderProductDO.setProductNumber(number);
                 }
             }
