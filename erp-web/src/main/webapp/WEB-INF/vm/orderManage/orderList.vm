@@ -155,7 +155,7 @@
                                                 {{#isReletOrder}}
                                                 <span class="label label-primary" title="续租单">续</span>
                                                 {{/isReletOrder}}
-                                                {{orderNo}}
+                                                <a href="{{detailUrl}}" target="_blank">{{orderNo}}</a>
                                             </td>
                                             <td>{{orderSubCompanyName}}</td>
                                             <td>{{buyerCustomerName}}</td>
