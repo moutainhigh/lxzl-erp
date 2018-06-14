@@ -37,6 +37,11 @@ public class PageController extends BaseController {
 //        return "/uppwd";
 //    }
 
+    @RequestMapping("/no-access")
+    public String noAcccess() {
+        return "/noAccess";
+    }
+
     @RequestMapping("/index")
     public String index() {
         return "/home";
