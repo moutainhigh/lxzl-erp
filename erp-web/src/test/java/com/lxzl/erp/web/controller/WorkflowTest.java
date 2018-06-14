@@ -41,7 +41,7 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     @Test
     public void verifyWorkFlow() throws Exception {
         VerifyWorkflowParam workflowParam = new VerifyWorkflowParam();
-        workflowParam.setWorkflowLinkNo("LXWF-500001-20180411-00070");
+        workflowParam.setWorkflowLinkNo("LXWF-500355-20180510-00136");
         workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
 //        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
         workflowParam.setReturnType(1);
@@ -52,6 +52,7 @@ public class WorkflowTest extends ERPUnTransactionalTest {
 //        workflowParam.setImgIdList(list);
 
         TestResult testResult = getJsonTestResult("/workflow/verifyWorkFlow", workflowParam);
+        Thread.sleep(60000);
     }
 
     @Test
