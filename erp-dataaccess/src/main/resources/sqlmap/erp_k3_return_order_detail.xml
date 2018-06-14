@@ -130,4 +130,11 @@
         LEFT JOIN erp_k3_return_order ekro on ekro.id =ekrod.return_order_id AND ekro.data_status=1
         WHERE ekrod.order_no = #{orderNo,jdbcType=VARCHAR} AND ekrod.data_status = 1 AND ekrod.real_product_count>0
     </select>
+
+    <select id="findRealReturnCountByOrderEntry"  resultType="java.lang.Integer">
+        SELECT COALESCE(sum(ekrod.real_product_count),0)
+        from erp_k3_return_order_detail ekrod WHERE
+        ekrod.order_entry = #{orderEntry,jdbcType=VARCHAR} AND ekrod.order_no = #{orderNo,jdbcType=VARCHAR} AND ekrod.data_status = 1
+    </select>
+
 </mapper>
