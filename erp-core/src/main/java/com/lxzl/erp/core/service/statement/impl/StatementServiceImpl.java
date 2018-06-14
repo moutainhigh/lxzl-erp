@@ -4211,13 +4211,7 @@ public class StatementServiceImpl implements StatementService {
         BigDecimal returnCount = new BigDecimal(k3ReturnOrderDetailDO.getRealProductCount());
 
         //获取此订单是否有续租成功的记录
-        boolean isReletOrder = false;
-        ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderProductDO.getOrderId());
-        if (reletOrderDO != null) {
-            isReletOrder = true;
-        }
-
-        List<ReletOrderDO> reletOrderDOList = reletOrderMapper.findReletedOrdersByOrderId(orderProductDO.getOrderId());
+        boolean isReletOrder = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderProductDO.getOrderId())!=null;
 
         for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
             //结算了的跳过
@@ -4239,15 +4233,10 @@ public class StatementServiceImpl implements StatementService {
 //                    payReturnAmount = BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
 //                }
                 if (isReletOrder && statementOrderDetailDO.getReletOrderItemReferId() != null) {
-
-
                     ReletOrderProductDO reletOrderProductDO = reletOrderProductMapper.findById(statementOrderDetailDO.getReletOrderItemReferId());
                     ReletOrderDO reletOrder=reletOrderMapper.findById(reletOrderProductDO.getReletOrderId());
                     if(!(returnTime.getTime()<reletOrder.getExpectReturnTime().getTime()&&returnTime.getTime()>=reletOrder.getRentStartTime().getTime()))continue;
                     Integer rentingProductCount = reletOrderProductDO.getRentingProductCount();
-if(reletOrderProductDO.getOrderId()==389l){
-    System.out.println("");
-}
                     //计算续租当期退还金额
                     if (returnTime.getTime() >= statementDetailStartTime.getTime() && returnTime.getTime() <= statementDetailEndTime.getTime()) {
                         Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(returnTime, statementDetailEndTime);
@@ -4280,7 +4269,7 @@ if(reletOrderProductDO.getOrderId()==389l){
                 thisStatementOrderDetailDO.setStatementDetailRentAmount(BigDecimalUtil.add(thisStatementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1))));
                 addStatementOrderDetailDOMap.put(key, thisStatementOrderDetailDO);
             } else {
-                StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, k3ReturnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT, k3ReturnOrderDetailDO.getId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId,null);
+                StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, k3ReturnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT, k3ReturnOrderDetailDO.getId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId,statementOrderDetailDO.getReletOrderItemReferId());
                 if (thisStatementOrderDetailDO != null) {
                     thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
                     thisStatementOrderDetailDO.setReturnReferId(statementOrderDetailDO.getId());
@@ -4321,11 +4310,7 @@ if(reletOrderProductDO.getOrderId()==389l){
             BigDecimal returnCount = new BigDecimal(k3ReturnOrderDetailDO.getRealProductCount());
             Map<String, StatementOrderDetailDO> addStatementOrderDetailDOMap = new HashMap<>();
             //获取此订单是否有续租成功的记录
-            boolean isReletOrder = false;
-            ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderMaterialDO.getOrderId());
-            if (reletOrderDO != null) {
-                isReletOrder = true;
-            }
+            boolean isReletOrder =reletOrderMapper.findRecentlyReletedOrderByOrderId(orderMaterialDO.getOrderId())!=null;
             for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
                 if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus()))
                     continue;
@@ -4378,7 +4363,7 @@ if(reletOrderProductDO.getOrderId()==389l){
                     thisStatementOrderDetailDO.setStatementDetailRentAmount(BigDecimalUtil.add(thisStatementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1))));
                     addStatementOrderDetailDOMap.put(key, thisStatementOrderDetailDO);
                 } else {
-                    StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, k3ReturnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL, k3ReturnOrderDetailDO.getId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId,null);
+                    StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, k3ReturnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL, k3ReturnOrderDetailDO.getId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId,statementOrderDetailDO.getReletOrderItemReferId());
                     if (thisStatementOrderDetailDO != null) {
                         thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
                         thisStatementOrderDetailDO.setReturnReferId(statementOrderDetailDO.getId());
