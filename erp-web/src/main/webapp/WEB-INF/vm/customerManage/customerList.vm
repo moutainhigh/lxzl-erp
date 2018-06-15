@@ -154,6 +154,7 @@
                                                            data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
                                                            data-ownerSubCompanyId="{{ownerSubCompanyId}}"
                                                            data-customertype="{{customerType}}"
+                                                           data-customername="{{customerName}}"
                                                             class="{{class}}">{{text}}</a>
                                                     </li>
                                                 {{/rowActionButtons}}
@@ -206,6 +207,7 @@
                 'manage.customer.js',
                 'manage.customer.risk.js',
                 'manage.customer.address.add.js',
+                'manage.customer.confirm.statement.js',
                 'modal.input.js',
                 'modal.submit.audit.js');
     </script>

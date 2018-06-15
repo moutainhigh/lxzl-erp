@@ -37,6 +37,11 @@ public class PageController extends BaseController {
 //        return "/uppwd";
 //    }
 
+    @RequestMapping("/no-access")
+    public String noAcccess() {
+        return "/noAccess";
+    }
+
     @RequestMapping("/index")
     public String index() {
         return "/home";
@@ -377,6 +382,11 @@ public class PageController extends BaseController {
     @RequestMapping("/customer-business-manage/edit-after-pass")
     public String customerBusinessManageEditAfterPass() {
         return "/businessCustomerManage/businessCustomerEditAfterPass";
+    }
+
+    @RequestMapping("/customer-manage/confirm-statement")
+    public String customerManageConfirmStatement() {
+        return "/component/customer/confirmStatementModal";
     }
 
     @RequestMapping(value = "customer-common-manage/detail", method = RequestMethod.GET)

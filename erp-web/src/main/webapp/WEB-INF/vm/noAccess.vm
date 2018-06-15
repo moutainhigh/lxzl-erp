@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>首页-凌雄-中国领先的IT设备租赁服务商</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+            <div class="section row welcome">
+                <div class="mw1100 center-block">
+                    <h2 class="lh30 mt70 text-center">对不起，您没有权限访问该页面</h2>
+                </div>
+            </div>
+        </section>
+    </section>
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+
+<!-- Charts JS -->
+<script type="text/javascript">
+    Rental.init();
+    Layout.init();
+
+    Core.init();
+    Demo.init();
+</script>
+
+</body>
+</html>
