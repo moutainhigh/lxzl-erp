@@ -155,7 +155,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         Boolean isK3OrderStatementConfigTime = false; //是否为k3配置表时间
         K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderServiceResult.getResult().getOrderId());
         if(k3OrderStatementConfigDO!=null&&k3OrderStatementConfigDO.getRentStartTime()!=null){
-            if (k3OrderStatementConfigDO.getRentStartTime().getTime() > returnTime.getTime()){
+            if (DateUtil.getFirstOfDay(k3OrderStatementConfigDO.getRentStartTime()).getTime() > DateUtil.getFirstOfDay(returnTime).getTime()){
                 returnTime = k3OrderStatementConfigDO.getRentStartTime();
                 isK3OrderStatementConfigTime = true;
             }
