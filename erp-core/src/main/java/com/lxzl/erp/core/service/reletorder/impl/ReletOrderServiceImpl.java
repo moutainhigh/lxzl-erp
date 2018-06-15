@@ -36,6 +36,7 @@ import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3OrderStatementConfigMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderConsignInfoMapper;
@@ -48,6 +49,7 @@ import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3OrderStatementConfigDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
@@ -125,6 +127,14 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         //到期时间=订单的归还时间
         returnTime = orderServiceResult.getResult().getExpectReturnTime();
+        //比较订单配置表到期时间 ：取较大时间
+        K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderServiceResult.getResult().getOrderId());
+        if(k3OrderStatementConfigDO!=null&&k3OrderStatementConfigDO.getRentStartTime()!=null){
+            if (k3OrderStatementConfigDO.getRentStartTime().getTime() > returnTime.getTime()){
+                returnTime = k3OrderStatementConfigDO.getRentStartTime();
+            }
+        }
+
         String validReletTimeRangeCode = validReletTimeRange(returnTime, currentTime, orderServiceResult.getResult().getRentType());
         if (!ErrorCode.SUCCESS.equals(validReletTimeRangeCode)) {
             result.setErrorCode(validReletTimeRangeCode);
@@ -712,13 +722,13 @@ public class ReletOrderServiceImpl implements ReletOrderService {
      * @return
      */
     private Boolean checkReletOrderUnitAmountScope(BigDecimal unitAmount,BigDecimal originUnitAmount){
-        BigDecimal floorValue = new BigDecimal(0.9);
+        BigDecimal floorValue = new BigDecimal(1);
         BigDecimal ceilValue = new BigDecimal(1.1);
 
         BigDecimal resultFloorValue = BigDecimalUtil.mul(originUnitAmount, floorValue);
         BigDecimal resultCeilValue = BigDecimalUtil.mul(originUnitAmount, ceilValue);
 
-        if (BigDecimalUtil.compare(unitAmount, resultFloorValue) <= 0
+        if (BigDecimalUtil.compare(unitAmount, resultFloorValue) < 0
                 || BigDecimalUtil.compare(unitAmount, resultCeilValue) >= 0) {
             return true;
         }
@@ -1709,4 +1719,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
     @Autowired
     private K3Service k3Service;
+
+    @Autowired
+    private K3OrderStatementConfigMapper k3OrderStatementConfigMapper;
 }
