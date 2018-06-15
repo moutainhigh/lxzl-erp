@@ -3885,12 +3885,31 @@ public class StatementServiceImpl implements StatementService {
         Integer statementDays = statementOrderSupport.getCustomerStatementDate(reletOrderDO.getStatementDate(), rentStartTime);
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateReletStatementDetailList(reletOrderDO, currentTime, statementDays, loginUserId);
-        saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUser.getUserId());
+        List<StatementOrderDetailDO> finalAddStatementOrderDetailDOList = new ArrayList<>();
+
+        OrderDO orderDO = orderMapper.findByOrderNo(reletOrderDO.getOrderNo());
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
+            K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderDO.getId());
+            if (k3OrderStatementConfigDO != null && k3OrderStatementConfigDO.getRentStartTime() != null) {
+                Date k3RentStartTime = k3OrderStatementConfigDO.getRentStartTime();
+                for (StatementOrderDetailDO statementOrderDetailDO : addStatementOrderDetailDOList) {
+                    //如果结算结束时间大于等于k3配置起租时间，则保存该结算单
+                    if (statementOrderDetailDO.getStatementEndTime().getTime() - k3RentStartTime.getTime() >= 0) {
+                        finalAddStatementOrderDetailDOList.add(statementOrderDetailDO);
+                    }
+                }
+            } else {
+                finalAddStatementOrderDetailDOList = addStatementOrderDetailDOList;
+            }
+        } else {
+            finalAddStatementOrderDetailDOList = addStatementOrderDetailDOList;
+        }
+        saveStatementOrder(finalAddStatementOrderDetailDOList, currentTime, loginUser.getUserId());
 
         // 生成单子后，本次需要付款的金额
         BigDecimal thisNeedPayAmount = BigDecimal.ZERO;
-        if (CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)) {
-            for (StatementOrderDetailDO statementOrderDetailDO : addStatementOrderDetailDOList) {
+        if (CollectionUtil.isNotEmpty(finalAddStatementOrderDetailDOList)) {
+            for (StatementOrderDetailDO statementOrderDetailDO : finalAddStatementOrderDetailDOList) {
                 // 核算本次应该交多少钱
                 if (DateUtil.isSameDay(rentStartTime, statementOrderDetailDO.getStatementExpectPayTime())) {
                     thisNeedPayAmount = BigDecimalUtil.add(thisNeedPayAmount, statementOrderDetailDO.getStatementDetailAmount().setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP));
