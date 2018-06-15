@@ -1591,7 +1591,7 @@ public class OrderServiceImpl implements OrderService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("审批订单通知失败： " + businessNo, e);
+            logger.error("审批订单通知失败： {} {}", businessNo, e.toString());
             return ErrorCode.BUSINESS_EXCEPTION;
         }
         return ErrorCode.SUCCESS;
