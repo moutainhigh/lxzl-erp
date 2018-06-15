@@ -23,5 +23,4 @@ public interface OrderProductMapper extends BaseMysqlDAO<OrderProductDO> {
 
     Integer findTotalRentingProductCountByOrderId(@Param("orderId") Integer orderId);
 
-    OrderProductDO findByOrderIdAndFEntryId(@Param("orderId") Integer orderId,@Param("orderEntry") Integer orderEntry);
 }

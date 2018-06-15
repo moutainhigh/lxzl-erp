@@ -230,8 +230,4 @@
     <select id="findTotalRentingProductCountByOrderId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
         SELECT sum(renting_product_count) FROM erp_order_product WHERE order_id = #{orderId} AND data_status = 1
     </select>
-    <select id="findByOrderIdAndFEntryId"  resultMap="OrderProductDO">
-        SELECT <include refid="set_column_sql"/> FROM erp_order_product WHERE
-        FEntry_id = #{orderEntry,jdbcType=Integer} AND order_id = #{orderId,jdbcType=Integer} AND data_status = 1
-    </select>
 </mapper>
