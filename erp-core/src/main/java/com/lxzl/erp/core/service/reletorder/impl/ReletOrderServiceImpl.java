@@ -151,20 +151,9 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             return result;
         }
 
-        //比较订单配置表到期时间 ：取较大时间
-        Boolean isK3OrderStatementConfigTime = false; //是否为k3配置表时间
-        K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderServiceResult.getResult().getOrderId());
-        if(k3OrderStatementConfigDO!=null&&k3OrderStatementConfigDO.getRentStartTime()!=null){
-            if (DateUtil.getFirstOfDay(k3OrderStatementConfigDO.getRentStartTime()).getTime() > DateUtil.getFirstOfDay(returnTime).getTime()){
-                returnTime = k3OrderStatementConfigDO.getRentStartTime();
-                isK3OrderStatementConfigTime = true;
-            }
-        }
         Calendar cal = Calendar.getInstance();
         cal.setTime(returnTime);
-        if (!isK3OrderStatementConfigTime){ //非k3配置表时间 才需要加一天 当作续租开始时间
-            cal.add(Calendar.DAY_OF_MONTH, 1);
-        }
+        cal.add(Calendar.DAY_OF_MONTH, 1);
         reletOrderDO.setRentStartTime(cal.getTime());//更新起租时间= 到期时间后一天
 
         //续租时允许客户修改时长 和 单价
