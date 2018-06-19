@@ -42,9 +42,22 @@
                                 <div class="form-group pull-right mn mr10" style="width: 120px;">
                                     <input type="text" name="statementCorrectNo" id="statementCorrectNo" class="form-control input-sm bradius" autocomplete="off" placeholder="冲正单编号">
                                 </div>
+                                <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                    <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
+                                </div>
+                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                    <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
+                                </div>
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
                                         <select class="form-control input-sm bradius" name="statementOrderCorrectStatus" id="statementOrderCorrectStatus"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId">
+                                            <option value="">请选择</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group pull-right mn mr10" style="width: 210px;">

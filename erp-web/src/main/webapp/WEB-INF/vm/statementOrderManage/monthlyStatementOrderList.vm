@@ -42,6 +42,18 @@
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <input type="text" name="statementOrderCustomerName" id="statementOrderCustomerName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
                                 </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId">
+                                            <option value="">请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                    <div class="input-group">
+                                        <input type="text" name="ownerName" id="ownerName" class="form-control input-sm bradius" autocomplete="off" placeholder="业务员姓名">
+                                    </div>
+                                </div>
                                 <div class="form-group pull-right mn mr10" style="width: 210px;">
                                     <label for="monthTime" class="input-group date">
                                         <input type="text" name="monthTime" id="monthTime" data-type="date" data-format="yyyy-MM" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择时间">
