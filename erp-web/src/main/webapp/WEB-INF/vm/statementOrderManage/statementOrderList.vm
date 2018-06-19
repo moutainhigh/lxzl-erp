@@ -117,6 +117,7 @@
                                     <td>
                                         <p class="mn" title="结算明细最早的一个日期">开始：{{#clockShorTime}}{{statementStartTime}}{{/clockShorTime}}</p>
                                         <p class="mn mt5" title="结算明细最晚的一个日期">结束：{{#clockShorTime}}{{statementEndTime}}{{/clockShorTime}}</p>
+                                        <p class="mn mt5">期限：{{dataLimit}}</p>
                                     </td>
                                     <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
 ##                                    <td>￥{{#price}}{{statementPaidAmount}}{{/price}}</td>
@@ -136,6 +137,8 @@
                                                type="button"
                                                class="btn btn-default btn-xs {{class}}"
                                                data-no="{{statementOrderNo}}"
+                                               data-customerno="{{customerNo}}"
+                                               data-customername="{{customerName}}"
                                                data-statementPaidAmount="{{statementPaidAmount}}"
                                                data-statementamount="{{statementAmount}}">{{text}}</a>
                                             {{/buttons}}
