@@ -1289,25 +1289,6 @@ public class StatementServiceImpl implements StatementService {
         return result;
     }
 
-    /**
-     * 查询结算单的明细是否有已支付记录
-     *
-     * @author ZhaoZiXuan
-     * @date 2018/6/13 14:24
-     * @param
-     * @return
-     */
-    private Boolean queryStatementOrderHasSettledDetail(Integer statementOrderId){
-        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByStatementOrderId(statementOrderId);
-        if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)){
-            for (StatementOrderDetailDO statementOrderDetailDO: statementOrderDetailDOList){
-                if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     @Override
     public ServiceResult<String, StatementOrder> queryStatementOrderDetail(String statementOrderNo) {
@@ -3229,12 +3210,8 @@ public class StatementServiceImpl implements StatementService {
                     if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())) {
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
                     }
-                    if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), new BigDecimal(0.1)) < 0) {
+                    else if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), new BigDecimal(0.1)) < 0) {
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
-                    }
-                    else if (queryStatementOrderHasSettledDetail(statementOrderDO.getId())){
-
-                        statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
                     }
                     else {
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
