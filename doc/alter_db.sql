@@ -890,3 +890,5 @@ CREATE TABLE `erp_dynamic_sql` (
 	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='动态sql表';
+
+ALTER TABLE erp_k3_statement_date_change ADD COLUMN `change_type` INT(11) NOT NULL DEFAULT '0' COMMENT '改变方式，0当月1下月';

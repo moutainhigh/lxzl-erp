@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.k3.K3StatementDateChangeMapper">
+
+	<resultMap id="K3StatementDateChangeDO" type="com.lxzl.erp.dataaccess.domain.k3.K3StatementDateChangeDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+		<result column="statement_date_change_time" jdbcType="TIMESTAMP" property="statementDateChangeTime" />
+		<result column="before_statement_date" jdbcType="INTEGER" property="beforeStatementDate" />
+		<result column="after_statement_date" jdbcType="INTEGER" property="afterStatementDate" />
+		<result column="change_type" jdbcType="INTEGER" property="changeType" />
+	</resultMap>
+
+	<sql id="column_List">
+		eksdc.id,eksdc.order_no,eksdc.statement_date_change_time,eksdc.before_statement_date,eksdc.after_statement_date,eksdc.change_type
+	</sql>
+
+	<select id="findById" resultMap="K3StatementDateChangeDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_k3_statement_date_change eksdc 
+		WHERE eksdc.id = #{id, jdbcType=INTEGER} AND eksdc.data_status = 1 
+	</select>
+
+	<select id="findByOrderNo" resultMap="K3StatementDateChangeDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_k3_statement_date_change eksdc
+		WHERE eksdc.order_no = #{orderNo, jdbcType=VARCHAR}
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eksdc.id) FROM erp_k3_statement_date_change eksdc 
+		<where>
+			<if test="true">
+				AND eksdc.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="K3StatementDateChangeDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_k3_statement_date_change eksdc 
+		<where>
+			<if test="true">
+				AND eksdc.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="orderNo != null">
+				order_no = #{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="statementDateChangeTime != null">
+				statement_date_change_time = #{statementDateChangeTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="beforeStatementDate != null">
+				before_statement_date = #{beforeStatementDate,jdbcType=INTEGER},
+			</if>
+			<if test="afterStatementDate != null">
+				after_statement_date = #{afterStatementDate,jdbcType=INTEGER},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3StatementDateChangeDO">
+		INSERT INTO erp_k3_statement_date_change <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3StatementDateChangeDO">
+		UPDATE erp_k3_statement_date_change <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
