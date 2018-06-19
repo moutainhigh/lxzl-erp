@@ -55,6 +55,8 @@ public class StatementOrderCorrect extends BasePO {
 	private String orderNo;  //订单编号
 	private String customerName;  //客户名称
 
+	private String customerNo;
+
 	public String getCustomerName() {
 		return customerName;
 	}
@@ -261,5 +263,13 @@ public class StatementOrderCorrect extends BasePO {
 
 	public void setStatementOrderReferId(Integer statementOrderReferId) {
 		this.statementOrderReferId = statementOrderReferId;
+	}
+
+	public String getCustomerNo() {
+		return customerNo;
+	}
+
+	public void setCustomerNo(String customerNo) {
+		this.customerNo = customerNo;
 	}
 }
