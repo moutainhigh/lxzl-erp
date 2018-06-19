@@ -858,6 +858,7 @@ public class K3ServiceImpl implements K3Service {
                 StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
                 sb.append("向K3推送【订单续租-").append(reletOrderDO.getOrderNo()).append("】数据失败：");
                 sb.append(responseMap.get("Message").toString());
+                sb.append("\r\n").append("请求参数：").append(requestJson);
                 dingDingSupport.dingDingSendMessage(sb.toString());
                 return ErrorCode.K3_RELET_ORDER_ERROR;
             }
@@ -865,6 +866,7 @@ public class K3ServiceImpl implements K3Service {
             StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
             sb.append("向K3推送【订单续租-").append(reletOrderDO.getOrderNo()).append("】数据失败：");
             sb.append(JSON.toJSONString(response));
+            sb.append("\r\n").append("请求参数：").append(requestJson);
             dingDingSupport.dingDingSendMessage(sb.toString());
             return ErrorCode.K3_SERVER_ERROR;
         }
