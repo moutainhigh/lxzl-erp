@@ -1301,7 +1301,7 @@ public class StatementServiceImpl implements StatementService {
         StatementOrderDO statementOrderDO = statementOrderMapper.findByNo(statementOrderNo);
         if (statementOrderDO != null && CollectionUtil.isNotEmpty(statementOrderDO.getStatementOrderDetailDOList())){
             for (StatementOrderDetailDO statementOrderDetailDO: statementOrderDO.getStatementOrderDetailDOList()){
-                if (statementOrderDetailDO.getStatementDetailStatus().equals(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED)){
+                if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())){
                     return true;
                 }
             }
