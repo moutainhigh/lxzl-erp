@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrder;
-import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.se.common.domain.Result;
@@ -33,21 +32,16 @@ public class K3CallbackControllerTest extends ERPTransactionalTest {
     @Test
     public void callbackReturnOrder() throws Exception {
         K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
-        k3ReturnOrder.setReturnOrderNo("LXK3RO20180606123652654");
-//        k3ReturnOrder.setUpdateUserRealName("喻晓艳");
-        k3ReturnOrder.setReturnOrderStatus(20);
+        k3ReturnOrder.setReturnOrderNo("LXK3RO20180328035118307");
+        k3ReturnOrder.setUpdateUserRealName("喻晓艳");
 
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = new ArrayList<>();
         K3ReturnOrderDetail k3ReturnOrderDetail = new K3ReturnOrderDetail();
-        k3ReturnOrderDetail.setOrderNo("LXO-20180606-027-00033");
-        k3ReturnOrderDetail.setOrderItemId("5162");
-        k3ReturnOrderDetail.setRealProductCount(0);
-        k3ReturnOrderDetail.setProductCount(5);
+        k3ReturnOrderDetail.setOrderNo("LXO-20180328-1000-01286");
+        k3ReturnOrderDetail.setOrderItemId("1953");
+        k3ReturnOrderDetail.setRealProductCount(666);
         k3ReturnOrderDetailList.add(k3ReturnOrderDetail);
 
-        OrderMaterial orderMaterial = new OrderMaterial();
-        orderMaterial.setOrderId(3002024);
-        orderMaterial.setOrderMaterialId(5162);
         k3ReturnOrder.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         TestResult testResult = getJsonTestResult("/k3Callback/callbackReturnOrder",k3ReturnOrder);
     }

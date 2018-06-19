@@ -41,26 +41,25 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     @Test
     public void verifyWorkFlow() throws Exception {
         VerifyWorkflowParam workflowParam = new VerifyWorkflowParam();
-        workflowParam.setWorkflowLinkNo("LXWF-500355-20180605-00052");
+        workflowParam.setWorkflowLinkNo("LXWF-500001-20180413-00106");
         workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
 //        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
-//        workflowParam.setReturnType(1);
-        workflowParam.setVerifyOpinion("test10...");
-//        workflowParam.setNextVerifyUser(500359);
+        workflowParam.setReturnType(1);
+        workflowParam.setVerifyOpinion("test10");
+//        workflowParam.setNextVerifyUser(500016);
 //        List<Integer> list = new ArrayList<>();
 //        list.add(1819);
 //        workflowParam.setImgIdList(list);
 
         TestResult testResult = getJsonTestResult("/workflow/verifyWorkFlow", workflowParam);
+        Thread.sleep(30000);
     }
 
     @Test
     public void queryNextVerifyUsers() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
-//        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_CUSTOMER);
-//        workflowLinkQueryParam.setWorkflowReferNo("LXCC-027-20180412-00021");
-        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_ORDER_INFO);
-        workflowLinkQueryParam.setWorkflowReferNo("LXWF-500355-20180604-00011");
+        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_CUSTOMER);
+        workflowLinkQueryParam.setWorkflowReferNo("LXCC-027-20180412-00021");
         TestResult testResult = getJsonTestResult("/workflow/queryNextVerifyUsers", workflowLinkQueryParam);
     }
 
@@ -226,10 +225,8 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     @Test
     public void queryWorkflowLinkDetailByType() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
-//        workflowLinkQueryParam.setWorkflowType(16);
-//        workflowLinkQueryParam.setWorkflowReferNo("LXCC-1000-20180327-00815");
-        workflowLinkQueryParam.setWorkflowType(19);
-        workflowLinkQueryParam.setWorkflowReferNo("LXR-20180531-1000-00012");
+        workflowLinkQueryParam.setWorkflowType(16);
+        workflowLinkQueryParam.setWorkflowReferNo("LXCC-1000-20180327-00815");
         TestResult testResult = getJsonTestResult("/workflow/queryWorkflowLinkDetailByType", workflowLinkQueryParam);
     }
     @Test

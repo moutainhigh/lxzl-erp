@@ -524,14 +524,10 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        param.setBuyerRealName("二零一八三月");
 //        param.setBuyerRealName("荣焱");
 //        param.setIsPendingDelivery(1);
-        param.setOrderNo("LXSE2018010510");
-//        param.setBuyerCustomerId(705387);
-//        param.setDeliveryMode(1);
-//        param.setDeliverySubCompanyId(8);
-//        param.setOrderStatus(20);
-//        param.setRentType(2);
-
-//        param.setEndRentStratTime(new Date());
+//        param.setOrderNo("LXO-20180307-1000-00014");
+//        param.setDeliverySubCompanyId(2);
+//        param.setOrderStatus(16);
+        param.setEndRentStratTime(new Date());
 //        param.setPayStatus(24);
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
@@ -558,7 +554,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         Order order = new Order();
-        order.setOrderNo("LXO-20180604-027-00013");
+        order.setOrderNo("LXO-20180523-027-00106");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
     }
 
