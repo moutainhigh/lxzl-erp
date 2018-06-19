@@ -720,9 +720,9 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         BigDecimal resultFloorValue = BigDecimalUtil.mul(originUnitAmount, floorValue);
         BigDecimal resultCeilValue = BigDecimalUtil.mul(originUnitAmount, ceilValue);
-        BigDecimal zeroValue = new BigDecimal(0);
+
         //原价和现价都为零时  无需审核
-        if (BigDecimalUtil.compare(unitAmount, zeroValue) == 0 && BigDecimalUtil.compare(originUnitAmount, zeroValue) == 0){
+        if (BigDecimalUtil.compare(unitAmount, BigDecimal.ZERO) == 0 && BigDecimalUtil.compare(originUnitAmount, BigDecimal.ZERO) == 0){
             return false;
         }
 
