@@ -1297,10 +1297,10 @@ public class StatementServiceImpl implements StatementService {
      * @param
      * @return
      */
-    private Boolean queryStatementOrderHasSettledDetail(String statementOrderNo){
-        StatementOrderDO statementOrderDO = statementOrderMapper.findByNo(statementOrderNo);
-        if (statementOrderDO != null && CollectionUtil.isNotEmpty(statementOrderDO.getStatementOrderDetailDOList())){
-            for (StatementOrderDetailDO statementOrderDetailDO: statementOrderDO.getStatementOrderDetailDOList()){
+    private Boolean queryStatementOrderHasSettledDetail(Integer statementOrderId){
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByStatementOrderId(statementOrderId);
+        if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)){
+            for (StatementOrderDetailDO statementOrderDetailDO: statementOrderDetailDOList){
                 if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())){
                     return true;
                 }
@@ -3232,7 +3232,7 @@ public class StatementServiceImpl implements StatementService {
                     if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), new BigDecimal(0.1)) < 0) {
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
                     }
-                    else if (queryStatementOrderHasSettledDetail(statementOrderDO.getStatementOrderNo())){
+                    else if (queryStatementOrderHasSettledDetail(statementOrderDO.getId())){
 
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
                     }
