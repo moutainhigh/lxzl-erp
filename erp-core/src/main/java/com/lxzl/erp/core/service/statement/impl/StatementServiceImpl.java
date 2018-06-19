@@ -1289,6 +1289,26 @@ public class StatementServiceImpl implements StatementService {
         return result;
     }
 
+    /**
+     * 查询结算单的明细是否有已支付记录
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/6/13 14:24
+     * @param
+     * @return
+     */
+    private Boolean queryStatementOrderHasSettledDetail(String statementOrderNo){
+        StatementOrderDO statementOrderDO = statementOrderMapper.findByNo(statementOrderNo);
+        if (statementOrderDO != null && CollectionUtil.isNotEmpty(statementOrderDO.getStatementOrderDetailDOList())){
+            for (StatementOrderDetailDO statementOrderDetailDO: statementOrderDO.getStatementOrderDetailDOList()){
+                if (statementOrderDetailDO.getStatementDetailStatus().equals(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public ServiceResult<String, StatementOrder> queryStatementOrderDetail(String statementOrderNo) {
         ServiceResult<String, StatementOrder> result = new ServiceResult<>();
@@ -3212,6 +3232,13 @@ public class StatementServiceImpl implements StatementService {
                     if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), new BigDecimal(0.1)) < 0) {
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
                     }
+                    else if (queryStatementOrderHasSettledDetail(statementOrderDO.getStatementOrderNo())){
+
+                        statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
+                    }
+                    else {
+                        statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
+                    }
 //                    if (statementOrderDetailDO.getStatementStartTime().getTime() < statementOrderDO.getStatementStartTime().getTime()) {
 //                        statementOrderDO.setStatementStartTime(statementOrderDetailDO.getStatementStartTime());
 //                    }
@@ -3858,12 +3885,31 @@ public class StatementServiceImpl implements StatementService {
         Integer statementDays = statementOrderSupport.getCustomerStatementDate(reletOrderDO.getStatementDate(), rentStartTime);
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateReletStatementDetailList(reletOrderDO, currentTime, statementDays, loginUserId);
-        saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUser.getUserId());
+        List<StatementOrderDetailDO> finalAddStatementOrderDetailDOList = new ArrayList<>();
+
+        OrderDO orderDO = orderMapper.findByOrderNo(reletOrderDO.getOrderNo());
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
+            K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderDO.getId());
+            if (k3OrderStatementConfigDO != null && k3OrderStatementConfigDO.getRentStartTime() != null) {
+                Date k3RentStartTime = k3OrderStatementConfigDO.getRentStartTime();
+                for (StatementOrderDetailDO statementOrderDetailDO : addStatementOrderDetailDOList) {
+                    //如果结算结束时间大于等于k3配置起租时间，则保存该结算单
+                    if (statementOrderDetailDO.getStatementEndTime().getTime() - k3RentStartTime.getTime() >= 0) {
+                        finalAddStatementOrderDetailDOList.add(statementOrderDetailDO);
+                    }
+                }
+            } else {
+                finalAddStatementOrderDetailDOList = addStatementOrderDetailDOList;
+            }
+        } else {
+            finalAddStatementOrderDetailDOList = addStatementOrderDetailDOList;
+        }
+        saveStatementOrder(finalAddStatementOrderDetailDOList, currentTime, loginUser.getUserId());
 
         // 生成单子后，本次需要付款的金额
         BigDecimal thisNeedPayAmount = BigDecimal.ZERO;
-        if (CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)) {
-            for (StatementOrderDetailDO statementOrderDetailDO : addStatementOrderDetailDOList) {
+        if (CollectionUtil.isNotEmpty(finalAddStatementOrderDetailDOList)) {
+            for (StatementOrderDetailDO statementOrderDetailDO : finalAddStatementOrderDetailDOList) {
                 // 核算本次应该交多少钱
                 if (DateUtil.isSameDay(rentStartTime, statementOrderDetailDO.getStatementExpectPayTime())) {
                     thisNeedPayAmount = BigDecimalUtil.add(thisNeedPayAmount, statementOrderDetailDO.getStatementDetailAmount().setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP));

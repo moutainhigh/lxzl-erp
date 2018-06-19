@@ -597,18 +597,17 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 //对退货单提交的数量进行判断
                 String productNo = k3ReturnOrderDetailDO.getProductNo();
                 if (productSupport.isMaterial(productNo)) {
-                    //物料
-                    materialId = Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId());
-                    if (materialId != null && materialId != 0) {
-                        OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(materialId);
+                    OrderMaterialDO orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
+                    if (orderMaterialDO != null ) {
+                        materialId = orderMaterialDO.getId();
                         rentingMaterialCountMap.put(materialId, orderMaterialDO.getRentingMaterialCount());
                         nowMaterialCountMap.put(materialId, k3ReturnOrderDetailDO.getProductCount());
                     }
                 } else {
                     //设备，查询数量的在租数量
-                    productId = Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId());
-                    if (productId != null && productId != 0) {
-                        OrderProductDO orderProductDO = orderProductMapper.findById(productId);
+                    OrderProductDO orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
+                    if (orderProductDO != null ) {
+                        productId = orderProductDO.getId();
                         rentingProductCountMap.put(productId, orderProductDO.getRentingProductCount());
                         nowProductCountMap.put(productId, k3ReturnOrderDetailDO.getProductCount());
                     }
@@ -628,7 +627,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                         String productNo = k3ReturnOrderDetailDO.getProductNo();
                         if (productSupport.isMaterial(productNo)) {
                             //物料
-                            materialId = Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId());
+                            materialId = productSupport.getMaterialId(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
                             if (materialCountMap.get(materialId) == null) {
                                 materialCountMap.put(materialId, k3ReturnOrderDetailDO.getProductCount());
                             } else {
@@ -637,7 +636,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 
                         } else {
                             //设备
-                            productId = Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId());
+                            productId = productSupport.getProductId(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
                             if (productCountMap.get(productId) == null) {
                                 productCountMap.put(productId, k3ReturnOrderDetailDO.getProductCount());
                             } else {
@@ -985,10 +984,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 if (!orderCatch.containsKey(k3ReturnOrderDetail.getOrderNo())) {
                     // 改成从erp里查询订单
                     OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
-                    // 如果订单不是属于电销和大客户的选择的发货分公司必须和订单所属分公司一致，如果是则所选发货分公司一定要和订单发货分公司一致
-                    if (verifyDeliverySubCompany(k3ReturnOrder, result, orderDO)) {
-                        return result;
-                    }
                     Order order = ConverterUtil.convert(orderDO, Order.class);
                     if (orderDO.getRentStartTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
                         result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
@@ -997,8 +992,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     }
                     orderCatch.put(k3ReturnOrderDetail.getOrderNo(), order);
                 }
-
-
                 K3ReturnOrderDetailDO k3ReturnOrderDetailDO = ConverterUtil.convert(k3ReturnOrderDetail, K3ReturnOrderDetailDO.class);
                 k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
                 k3ReturnOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -1012,30 +1005,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         result.setResult(k3ReturnOrderDO.getReturnOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
-    }
-
-    /**
-     * 如果订单不是属于电销和大客户的选择的发货分公司必须和订单所属分公司一致，如果是则所选发货分公司一定要和订单发货分公司一致
-     * @param k3ReturnOrder
-     * @param result
-     * @param orderDO
-     * @return
-     */
-    private boolean verifyDeliverySubCompany(K3ReturnOrder k3ReturnOrder, ServiceResult<String, String> result, OrderDO orderDO) {
-        if (orderDO.getOrderSubCompanyId() != 10 && orderDO.getOrderSubCompanyId() != 11) {
-            if (!k3ReturnOrder.getDeliverySubCompanyId().equals(orderDO.getOrderSubCompanyId())) {
-                result.setErrorCode(ErrorCode.RETURN_DELIVERY_SUB_COMPANY_NOT_EQUALS_ORDER_SUB_COMPANY,orderDO.getOrderNo());
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                return true;
-            }
-        } else {
-            if (!k3ReturnOrder.getDeliverySubCompanyId().equals(orderDO.getDeliverySubCompanyId())) {
-                result.setErrorCode(ErrorCode.RETURN_DELIVERY_SUB_COMPANY_NOT_EQUALS_DELIVERY_SUB_COMPANY,orderDO.getOrderNo());
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -1085,10 +1054,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 if (!orderCatch.containsKey(k3ReturnOrderDetail.getOrderNo())) {
                     //改成从erp里查询订单
                     OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
-                    // TODO: 2018\6\12 0012 如果订单不是属于电销和大客户的选择的发货分公司必须和订单所属分公司一致，如果是则所选发货分公司一定要和订单发货分公司一致
-                    if (verifyDeliverySubCompany(k3ReturnOrder, result, orderDO)) {
-                        return result;
-                    }
                     Order order = ConverterUtil.convert(orderDO, Order.class);
                     if (order.getRentStartTime().compareTo(k3ReturnOrder.getReturnTime()) > 0) {
                         result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
