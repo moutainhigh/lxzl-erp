@@ -328,7 +328,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
             k3SendRecordDO.setRecordJson(JSON.toJSONString(k3ReturnOrder));
             k3SendRecordDO.setSendTime(new Date());
-            k3SendRecordDO.setRecordReferId(k3SendRecordDO.getId());
+            k3SendRecordDO.setRecordReferId(k3ReturnOrderDO.getId());
             k3SendRecordMapper.save(k3SendRecordDO);
             logger.info("【推送消息】" + JSON.toJSONString(k3ReturnOrder));
         }
