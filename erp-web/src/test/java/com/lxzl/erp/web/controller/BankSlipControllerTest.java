@@ -132,7 +132,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void verifyBankSlipDetail() throws Exception {
         BankSlip bankSlip = new BankSlip();
-        bankSlip.setBankSlipId(18);
+        bankSlip.setBankSlipId(4);
         TestResult result = getJsonTestResult("/bankSlip/confirmBankSlip", bankSlip);
     }
 
