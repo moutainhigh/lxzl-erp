@@ -127,13 +127,6 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         //到期时间=订单的归还时间
         returnTime = orderServiceResult.getResult().getExpectReturnTime();
-        //比较订单配置表到期时间 ：取较大时间
-        K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderServiceResult.getResult().getOrderId());
-        if(k3OrderStatementConfigDO!=null&&k3OrderStatementConfigDO.getRentStartTime()!=null){
-            if (k3OrderStatementConfigDO.getRentStartTime().getTime() > returnTime.getTime()){
-                returnTime = k3OrderStatementConfigDO.getRentStartTime();
-            }
-        }
 
         String validReletTimeRangeCode = validReletTimeRange(returnTime, currentTime, orderServiceResult.getResult().getRentType());
         if (!ErrorCode.SUCCESS.equals(validReletTimeRangeCode)) {

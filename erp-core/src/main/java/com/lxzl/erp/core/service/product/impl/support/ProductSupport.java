@@ -114,4 +114,52 @@ public class ProductSupport {
         }
         return orderMaterialDO;
     }
+    /**
+     * 兼容erp订单和k3订单配件项
+     * @param orderNo
+     * @param orderItemId
+     * @param orderEntry
+     * @return
+     */
+    public Integer getMaterialId(String orderNo , String orderItemId , String orderEntry){
+        if(StringUtil.isNotEmpty(orderItemId)&&!"0".equals(orderItemId)){
+            return Integer.parseInt(orderItemId);
+        }else if(StringUtil.isNotEmpty(orderEntry)){
+            Integer oe = Integer.parseInt(orderEntry);
+            OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+            if(orderDO!=null&& CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())){
+                List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
+                for(OrderMaterialDO om : orderMaterialDOList){
+                    if(oe.equals(om.getFEntryID())){
+                        return om.getId();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    /**
+     * 兼容erp订单和k3订单商品项
+     * @param orderNo
+     * @param orderItemId
+     * @param orderEntry
+     * @return
+     */
+    public Integer getProductId(String orderNo , String orderItemId , String orderEntry){
+        if(StringUtil.isNotEmpty(orderItemId)&&!"0".equals(orderItemId)){
+            return Integer.parseInt(orderItemId);
+        }else if(StringUtil.isNotEmpty(orderEntry)){
+            Integer oe = Integer.parseInt(orderEntry);
+            OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+            if(orderDO!=null&& CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())){
+                List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
+                for(OrderProductDO op : orderProductDOList){
+                    if(oe.equals(op.getFEntryID())){
+                        return op.getId();
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }
