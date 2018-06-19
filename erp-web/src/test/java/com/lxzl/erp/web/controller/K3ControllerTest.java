@@ -527,66 +527,51 @@ public class K3ControllerTest extends ERPTransactionalTest {
     @Test
     public void queryOrderForReturn() throws Exception {
         OrderForReturnQueryParam param = new OrderForReturnQueryParam();
-        param.setCustomerNo("LXCC-027-20180305-00198");
-        param.setCreateStartTime(new SimpleDateFormat("yyyy-MM-dd").parse("2001-03-01"));
-        param.setCreateEndTime(new SimpleDateFormat("yyyy-MM-dd").parse("2018-06-22"));
+//        param.setCustomerNo("LXCC-1000-20180408-00003");
 //        param.setOrderStatus(20);
 //        param.setOrderStatus(16);
 //        param.setCustomerNo("LXCC-0755-20180112-00048");
-        TestResult testResult = getJsonTestResult("/k3/queryOrderForReturn", param);
-    }
-    @Test
-    public void queryOrderForReturnJson() throws Exception {
-        String str = "{\"pageNo\":1,\"pageSize\":15,\"orderNo\":\"\",\"orderStatus\":\"\",\"createStartTime\":\"983376000000\",\"createEndTime\":\"1530374399999\",\"createTimePicker\":\"2001-03-01 - 2018-06-30\",\"customerNo\":\"LXCC-027-20180305-00198\"}";
-
-        OrderForReturnQueryParam param = JSON.parseObject(str, OrderForReturnQueryParam.class);
+        param.setOrderNo("LXSE2018010320");
         TestResult testResult = getJsonTestResult("/k3/queryOrderForReturn", param);
     }
     @Test
     public void queryOrderByNoForReturn() throws Exception {
         OrderForReturnQueryParam param = new OrderForReturnQueryParam();
-        param.setOrderNo("LXO-20180613-027-00101");
+        param.setOrderNo("LXO-20180522-1000-00050");
         TestResult testResult = getJsonTestResult("/k3/queryOrderByNoForReturn", param);
     }
     @Test
     public void createReturnOrderFromERP() throws Exception {
         K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
-        k3ReturnOrder.setK3CustomerNo("LXCC-027-20180417-00031");
-        k3ReturnOrder.setK3CustomerName("退货ing五号");
+        k3ReturnOrder.setK3CustomerNo("LXCC-020-20180315-00773");
+        k3ReturnOrder.setK3CustomerName("广州普蓝文化发展有限公司");
         k3ReturnOrder.setReturnTime(new Date());
-        k3ReturnOrder.setReturnAddress("北京市北京东城区天安门");
-        k3ReturnOrder.setReturnContacts("皮皮狗");
-        k3ReturnOrder.setReturnPhone("18566324590");
-        k3ReturnOrder.setLogisticsAmount(new BigDecimal(1000));
-        k3ReturnOrder.setServiceAmount(new BigDecimal(0));
-        k3ReturnOrder.setDeliverySubCompanyId(2);
-        k3ReturnOrder.setReturnReasonType(4);
+        k3ReturnOrder.setReturnAddress("北京京西蓝靛厂");
+        k3ReturnOrder.setReturnContacts("宋老三");
+        k3ReturnOrder.setReturnPhone("13809908800");
+        k3ReturnOrder.setDeliverySubCompanyId(8);
+        k3ReturnOrder.setReturnReasonType(1);
         k3ReturnOrder.setReturnMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_MAIL);
 
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = new ArrayList<>();
 
         K3ReturnOrderDetail k3ReturnOrderDetail1 = new K3ReturnOrderDetail();
-        k3ReturnOrderDetail1.setOrderNo("LXO-20180517-027-00082");
-        k3ReturnOrderDetail1.setOrderItemId("2828");
-        k3ReturnOrderDetail1.setOrderEntry("2828");
-        k3ReturnOrderDetail1.setProductNo("10.TPC.AP.IPADPRO-64G");
-        k3ReturnOrderDetail1.setProductName("苹果IPADPRO-64G");
+        k3ReturnOrderDetail1.setOrderNo("LXO-20180315-020-01207");
+        k3ReturnOrderDetail1.setOrderItemId("1826");
+        k3ReturnOrderDetail1.setOrderEntry("1");
+
+        ProductDO product = productMapper.findById(2000435);
+        K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(product.getCategoryId().toString());
+        K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
+        String number = "";
+        if(StringUtil.isNotEmpty(product.getK3ProductNo())){
+            number = product.getK3ProductNo();
+        }else {
+            number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + product.getProductModel();
+        }
+        k3ReturnOrderDetail1.setProductNo(number);
+        k3ReturnOrderDetail1.setProductName(product.getProductName());
         k3ReturnOrderDetail1.setProductCount(1);
-
-
-//        ProductDO product = productMapper.findById(2000435);
-//        K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(product.getCategoryId().toString());
-//        K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
-//        String number = "";
-//        if(StringUtil.isNotEmpty(product.getK3ProductNo())){
-//            number = product.getK3ProductNo();
-//        }else {
-//            number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + product.getProductModel();
-//        }
-//        k3ReturnOrderDetail1.setProductNo(number);
-//        k3ReturnOrderDetail1.setProductName(product.getProductName());
-//        k3ReturnOrderDetail1.setProductCount(1);
-
 
 //        K3ReturnOrderDetail k3ReturnOrderDetail2 = new K3ReturnOrderDetail();
 //        k3ReturnOrderDetail2.setOrderNo("LXO-20180315-020-01207");

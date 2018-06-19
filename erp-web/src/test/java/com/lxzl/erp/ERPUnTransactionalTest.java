@@ -47,6 +47,9 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
 //            sessionResult = getLoginSession("lxcs","123456");//采购部审核人
 //            sessionResult = getLoginSession("liuke","Lxzl123456");
             sessionResult = getLoginSession("13972826280", "lxzl123.456");
+//            sessionResult = getLoginSession("13618654585", "lxzl123.456");  //刘君诚
+//            sessionResult = getLoginSession("18694045505", "lxzl123.456");//18694045505	魏玲雨
+//            sessionResult = getLoginSession("18938182688", "lxzl123.456");
 //            sessionResult = getLoginSession("13564297176", "lxzl123.456");//分公司商务
 //            sessionResult = getLoginSession("liuke", "lxzl123.456");//总公司商务
 //            sessionResult = getLoginSession("13403752683", "lxzl123.456");//电销
@@ -54,7 +57,7 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
 //            sessionResult = getLoginSession("lxcs", "lxzl123.456");
 //            sessionResult = getLoginSession("xiaoluyu", "Lxzl123456");
 //            sessionResult = getLoginSession("chenchao", "Lxzl123456");
-//            sessionResult = getLoginSession("13428939250", "lxzl123.456");
+//            sessionResult = getLoginSession("admin", "lxzl123.456");
             this.session = sessionResult.mockHttpSession;
         } catch (Exception e) {
             e.printStackTrace();
