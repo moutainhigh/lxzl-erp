@@ -1591,7 +1591,7 @@ public class OrderServiceImpl implements OrderService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("审批订单通知失败： {} {}", businessNo, e.toString());
+            logger.error("审批订单通知失败： " + businessNo, e);
             return ErrorCode.BUSINESS_EXCEPTION;
         }
         return ErrorCode.SUCCESS;
@@ -3640,6 +3640,12 @@ public class OrderServiceImpl implements OrderService {
             orderDO.setTotalProductRentDepositAmount(totalRentDepositAmount);
             orderDO.setTotalProductCount(productCount);
             orderDO.setTotalProductAmount(productAmountTotal);
+        }else {
+            orderDO.setTotalProductDepositAmount(BigDecimal.ZERO);
+            orderDO.setTotalProductCreditDepositAmount(BigDecimal.ZERO);
+            orderDO.setTotalProductRentDepositAmount(BigDecimal.ZERO);
+            orderDO.setTotalProductCount(CommonConstant.COMMON_ZERO);
+            orderDO.setTotalProductAmount(BigDecimal.ZERO);
         }
     }
 
@@ -3731,6 +3737,12 @@ public class OrderServiceImpl implements OrderService {
             orderDO.setTotalMaterialRentDepositAmount(totalRentDepositAmount);
             orderDO.setTotalMaterialCount(materialCount);
             orderDO.setTotalMaterialAmount(materialAmountTotal);
+        }else {
+            orderDO.setTotalMaterialDepositAmount(BigDecimal.ZERO);
+            orderDO.setTotalMaterialCreditDepositAmount(BigDecimal.ZERO);
+            orderDO.setTotalMaterialRentDepositAmount(BigDecimal.ZERO);
+            orderDO.setTotalMaterialCount(CommonConstant.COMMON_ZERO);
+            orderDO.setTotalMaterialAmount(BigDecimal.ZERO);
         }
     }
 
@@ -3826,13 +3838,13 @@ public class OrderServiceImpl implements OrderService {
         if (order.getRentStartTime() == null) {
             return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
         }
-//        try {
-//            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
-//                return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
-//            }
-//        } catch (Exception e) {
-//            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
-//        }
+        try {
+            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
+                return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+            }
+        } catch (Exception e) {
+            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+        }
         if (order.getExpectDeliveryTime() == null) {
             return ErrorCode.ORDER_EXPECT_DELIVERY_TIME;
         }
