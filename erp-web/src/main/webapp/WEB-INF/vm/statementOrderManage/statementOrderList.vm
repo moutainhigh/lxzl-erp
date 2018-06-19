@@ -120,7 +120,6 @@
                                         <p class="mn mt5">期限：{{dataLimit}}</p>
                                     </td>
                                     <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
-##                                    <td>￥{{#price}}{{statementPaidAmount}}{{/price}}</td>
                                     <td>
                                         <p class="mn">￥{{#price}}{{statementPaidAmount}}{{/price}}</p>
                                         <p class="mn mt5" title="支付时间">{{#clockTime}}{{statementPaidTime}}{{/clockTime}}</p>
