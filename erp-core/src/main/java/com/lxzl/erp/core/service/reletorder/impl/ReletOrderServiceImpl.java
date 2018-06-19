@@ -99,7 +99,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             return result;
         }
         //如果按天租的订单，续租时长不允许超过89天
-        if(OrderRentType.RENT_TYPE_DAY.equals(order.getRentType())&&order.getRentTimeLength()>89){
+        if(OrderRentType.RENT_TYPE_DAY.equals(orderServiceResult.getResult().getRentType())&&order.getRentTimeLength()>89){
             result.setErrorCode(ErrorCode.RELET_ORDER_RENT_TYPE_DAY_CAN_NOT_RENT_TOO_LONG);
             return result;
         }
