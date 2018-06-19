@@ -388,7 +388,7 @@ public class PaymentServiceImpl implements PaymentService {
             headerBuilder.contentType("application/json");
             String requestJson = null;
 
-            PaymentChargeRecordPageParam paymentChargeRecordPageParam = convert(chargeRecordPageParam);
+            PaymentChargeRecordPageParam paymentChargeRecordPageParam = ConverterUtil.convert(chargeRecordPageParam, PaymentChargeRecordPageParam.class);
             if (StringUtil.isEmpty(chargeRecordPageParam.getCustomerName())) {
                 paymentChargeRecordPageParam.setBusinessCustomerName(null);
             } else {
@@ -874,14 +874,6 @@ public class PaymentServiceImpl implements PaymentService {
         exportChargeRecordPageParam.setStartTime(DateUtil.getDayByCurrentOffset(CommonConstant.COMMON_ZERO));
         exportChargeRecordPageParam.setEndTime(DateUtil.getDayByCurrentOffset(CommonConstant.COMMON_ONE));
         return exportHistoryChargeRecord(exportChargeRecordPageParam);
-    }
-
-    private PaymentChargeRecordPageParam convert(ChargeRecordPageParam chargeRecordPageParam) {
-        PaymentChargeRecordPageParam paymentChargeRecordPageParam = new PaymentChargeRecordPageParam();
-        paymentChargeRecordPageParam.setBusinessCustomerNo(chargeRecordPageParam.getBusinessCustomerNo());
-        paymentChargeRecordPageParam.setBusinessAppId(chargeRecordPageParam.getBusinessAppId());
-        paymentChargeRecordPageParam.setBusinessAppSecret(chargeRecordPageParam.getBusinessAppSecret());
-        return paymentChargeRecordPageParam;
     }
 
 }
