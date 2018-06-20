@@ -87,7 +87,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> createPeerDeploymentOrder(PeerDeploymentOrder peerDeploymentOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
         String currentUserId = userSupport.getCurrentUserId().toString();

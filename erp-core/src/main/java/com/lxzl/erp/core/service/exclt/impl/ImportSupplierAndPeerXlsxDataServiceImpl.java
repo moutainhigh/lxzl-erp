@@ -48,7 +48,7 @@ public class ImportSupplierAndPeerXlsxDataServiceImpl implements ImportSupplierA
     PeerService peerService;
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Map<String, String>> importData(String str) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         ServiceResult<String, Map<String, String>> serviceResult = new ServiceResult<>();
         FileInputStream fileIn = new FileInputStream("C:\\Users\\Administrator\\Desktop\\供应商.xlsx");
