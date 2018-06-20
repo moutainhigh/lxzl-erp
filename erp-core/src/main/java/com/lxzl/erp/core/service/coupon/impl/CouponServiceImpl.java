@@ -659,7 +659,7 @@ public class CouponServiceImpl implements CouponService{
         couponDO.setUpdateTime(date);
         couponDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         couponDO.setOrderId(statementOrderDetailDO.getOrderId());
-        couponDO.setOrderNo(orderMapper.findByOrderId(statementOrderDetailDO.getOrderId()).getOrderNo());
+        couponDO.setOrderNo(orderMapper.findById(statementOrderDetailDO.getOrderId()).getOrderNo());
         couponDO.setOrderProductId(statementOrderDetailDO.getOrderItemReferId());
         couponDO.setStatementOrderId(statementOrderDO.getId());
         couponDO.setStatementOrderNo(statementOrderDO.getStatementOrderNo());
