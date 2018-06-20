@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
+import com.lxzl.erp.common.domain.k3.pojo.K3StatementDateChange;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
@@ -298,17 +299,20 @@ public class StatementServiceImpl implements StatementService {
             return DateUtil.daysBetween(rentStartTime,statementDateChangeTime)/(double)DateUtil.daysBetween(rentStartTime,expectReturnTime)* CommonConstant.PROPORTION_MAX;
         }else{
             double phaseCout=0;
+            boolean isFirst=true;
             if(k3StatementDateChangeDO.getBeforeStatementDate()== StatementMode.STATEMENT_MONTH_END){
                 Date nextStartTime=rentStartTime;
+
                 while (nextStartTime.compareTo(statementDateChangeTime)<0){
                     Calendar endCalandar=Calendar.getInstance();
-                    endCalandar.setTime(rentStartTime);
+                    endCalandar.setTime(nextStartTime);
                     endCalandar.set(Calendar.DAY_OF_MONTH,endCalandar.getActualMaximum(Calendar.DAY_OF_MONTH));
                     Date endTime=endCalandar.getTime();
-                    //首位算比例
-                    if(endTime.compareTo(statementDateChangeTime)>0||nextStartTime.compareTo(rentStartTime)<=0){
-                        endTime=statementDateChangeTime;
-                        phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/endCalandar.getActualMaximum(Calendar.DAY_OF_MONTH);
+                    //首尾算比例
+                    if(endTime.compareTo(statementDateChangeTime)>0||isFirst){
+                        isFirst=false;
+                        if(endTime.compareTo(statementDateChangeTime)>0)endTime=statementDateChangeTime;
+                        phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/(double)endCalandar.getActualMaximum(Calendar.DAY_OF_MONTH);
                     }else phaseCout+=1;
 
                     nextStartTime=DateUtil.getDayByOffset(endTime,1);
@@ -318,7 +322,7 @@ public class StatementServiceImpl implements StatementService {
                 Date nextStartTime=rentStartTime;
                 while (nextStartTime.compareTo(statementDateChangeTime)<0){
                     Calendar endCalandar=Calendar.getInstance();
-                    endCalandar.setTime(rentStartTime);
+                    endCalandar.setTime(nextStartTime);
                     endCalandar.set(Calendar.DAY_OF_MONTH,StatementMode.STATEMENT_20);
                     Date endTime=endCalandar.getTime();
                     if(endTime.compareTo(nextStartTime)<=0){
@@ -327,9 +331,10 @@ public class StatementServiceImpl implements StatementService {
                     }
                     endCalandar.add(Calendar.MONTH,-1);
                     Date beforeEndTime=endCalandar.getTime();
-                    if(endTime.compareTo(statementDateChangeTime)>0||nextStartTime.compareTo(rentStartTime)<=0){
-                        endTime=statementDateChangeTime;
-                        phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/DateUtil.daysBetween(beforeEndTime,endTime);
+                    if(endTime.compareTo(statementDateChangeTime)>0||isFirst){
+                        isFirst=false;
+                        if(endTime.compareTo(statementDateChangeTime)>0)endTime=statementDateChangeTime;
+                        phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/(double)DateUtil.daysBetween(beforeEndTime,endTime);
                     }else phaseCout+=1;
 
                     nextStartTime=DateUtil.getDayByOffset(endTime,1);
@@ -342,7 +347,7 @@ public class StatementServiceImpl implements StatementService {
                 Date nextStartTime=rentStartTime;
                 while (nextStartTime.compareTo(statementDateChangeTime)<0){
                     Calendar endCalandar=Calendar.getInstance();
-                    endCalandar.setTime(rentStartTime);
+                    endCalandar.setTime(nextStartTime);
                     endCalandar.set(Calendar.DAY_OF_MONTH,actualStatementDate);
                     Date endTime=endCalandar.getTime();
                     if(endTime.compareTo(nextStartTime)<=0){
@@ -351,9 +356,10 @@ public class StatementServiceImpl implements StatementService {
                     }
                     endCalandar.add(Calendar.MONTH,-1);
                     Date beforeEndTime=endCalandar.getTime();
-                    if(endTime.compareTo(statementDateChangeTime)>0||nextStartTime.compareTo(rentStartTime)<=0){
-                        endTime=statementDateChangeTime;
-                        phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/DateUtil.daysBetween(beforeEndTime,endTime);
+                    if(endTime.compareTo(statementDateChangeTime)>0||isFirst){
+                        isFirst=false;
+                        if(endTime.compareTo(statementDateChangeTime)>0)endTime=statementDateChangeTime;
+                        phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/(double)DateUtil.daysBetween(beforeEndTime,endTime);
                     }else phaseCout+=1;
                     nextStartTime=DateUtil.getDayByOffset(endTime,1);
                 }
@@ -493,6 +499,31 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
+    public ServiceResult<String, BigDecimal> reCreateOrderStatement(K3StatementDateChange k3StatementDateChange) {
+        K3StatementDateChangeDO k3StatementDateChangeDO= k3StatementDateChangeMapper.findByOrderNo(k3StatementDateChange.getOrderNo());
+        Date currentTime=new Date();
+        String userId=userSupport.getCurrentUserId().toString();
+        if(k3StatementDateChangeDO==null){
+            K3StatementDateChangeDO addStatementSplit=ConverterUtil.convert(k3StatementDateChange, K3StatementDateChangeDO.class);
+            addStatementSplit.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            addStatementSplit.setCreateUser(userId);
+            addStatementSplit.setCreateTime(currentTime);
+            addStatementSplit.setUpdateUser(userId);
+            addStatementSplit.setUpdateTime(currentTime);
+            k3StatementDateChangeMapper.save(addStatementSplit);
+        }else{
+            k3StatementDateChangeDO.setUpdateUser(userId);
+            k3StatementDateChangeDO.setUpdateTime(currentTime);
+            k3StatementDateChangeDO.setStatementDateChangeTime(k3StatementDateChange.getStatementDateChangeTime());
+            k3StatementDateChangeDO.setBeforeStatementDate(k3StatementDateChange.getBeforeStatementDate());
+            k3StatementDateChangeDO.setAfterStatementDate(k3StatementDateChange.getAfterStatementDate());
+            k3StatementDateChangeDO.setChangeType(k3StatementDateChange.getChangeType());
+            k3StatementDateChangeMapper.update(k3StatementDateChangeDO);
+        }
+        return reCreateOrderStatement(k3StatementDateChangeDO.getOrderNo());
+    }
+
+    @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> reCreateOrderStatement(String orderNo,Integer statementDate) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
@@ -517,6 +548,14 @@ public class StatementServiceImpl implements StatementService {
 //            return result;
 //        }
 
+
+
+        // 客户为确认结算单状态时，不允许重算客户的订单
+        CustomerDO customerDO = customerMapper.findByNo(orderDO.getBuyerCustomerNo());
+        if (customerDO != null && ConfirmStatementStatus.CONFIRM_STATUS_YES.equals(customerDO.getConfirmStatementStatus())) {
+            result.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE);
+            return result;
+        }
         //用户手动修改结算日
         if(statementDate!=null){
             if(!Arrays.asList(StatementMode.STATEMENT_MONTH_END,StatementMode.STATEMENT_20,StatementMode.STATEMENT_MONTH_NATURAL).contains(statementDate)){
@@ -526,14 +565,6 @@ public class StatementServiceImpl implements StatementService {
             orderDO.setStatementDate(statementDate);
             orderMapper.update(orderDO);
         }
-
-        // 客户为确认结算单状态时，不允许重算客户的订单
-        CustomerDO customerDO = customerMapper.findByNo(orderDO.getBuyerCustomerNo());
-        if (customerDO != null && ConfirmStatementStatus.CONFIRM_STATUS_YES.equals(customerDO.getConfirmStatementStatus())) {
-            result.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE);
-            return result;
-        }
-
         //有退货单不允许重算
 //        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
 //        if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOList)) {
