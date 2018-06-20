@@ -76,14 +76,23 @@
 
 	<sql id="relet_order_control">
 		<if test="maps.permissionParam!=null">
-			AND
+			AND (
 			<if test="maps.permissionParam.permissionUserIdList!= null" >
 				(ero.create_user in
 				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
 						 separator="," close=")">
 					#{item}
 				</foreach>
-
+				OR ec.union_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.owner in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
 			</if>
 			<if test="maps.permissionParam.permissionSubCompanyId!= null" >
 				OR (
