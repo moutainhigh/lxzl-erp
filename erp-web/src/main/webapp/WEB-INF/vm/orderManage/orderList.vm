@@ -158,7 +158,7 @@
                                                 <a href="{{detailUrl}}" target="_blank">{{orderNo}}</a>
                                             </td>
                                             <td>{{orderSubCompanyName}}</td>
-                                            <td>{{buyerCustomerName}}</td>
+                                            <td><a href="{{customerUrl}}" target="_blank">{{buyerCustomerName}}</a></td>
                                             <td>
                                                 <p class="mn">{{orderConsignInfo.consigneeName}}</p>
                                                 <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{orderConsignInfo.consigneePhone}}</p>
