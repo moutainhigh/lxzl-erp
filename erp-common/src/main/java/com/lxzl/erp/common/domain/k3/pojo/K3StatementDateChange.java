@@ -14,6 +14,12 @@ public class K3StatementDateChange extends BasePO {
 	private Integer beforeStatementDate;   //修改前结算时间（天），-1,20和31三种情况，如果为空取系统设定
 	private Integer afterStatementDate;   //修改后结算时间（天），-1,20和31三种情况，如果为空取系统设定
 	private Integer changeType;   //改变类型，0-当月，1-下月
+	private Integer dataStatus;   //状态：0不可用；1可用；2删除
+	private String remark;   //备注
+	private Date createTime;   //添加时间
+	private String createUser;   //添加人
+	private Date updateTime;   //修改时间
+	private String updateUser;   //修改人
 
 
 
@@ -63,5 +69,53 @@ public class K3StatementDateChange extends BasePO {
 
 	public void setChangeType(Integer changeType) {
 		this.changeType = changeType;
+	}
+
+	public Integer getDataStatus() {
+		return dataStatus;
+	}
+
+	public void setDataStatus(Integer dataStatus) {
+		this.dataStatus = dataStatus;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getCreateUser() {
+		return createUser;
+	}
+
+	public void setCreateUser(String createUser) {
+		this.createUser = createUser;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public String getUpdateUser() {
+		return updateUser;
+	}
+
+	public void setUpdateUser(String updateUser) {
+		this.updateUser = updateUser;
 	}
 }

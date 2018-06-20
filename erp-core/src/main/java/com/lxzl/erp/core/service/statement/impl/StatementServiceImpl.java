@@ -87,7 +87,6 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -249,7 +248,7 @@ public class StatementServiceImpl implements StatementService {
         //Date expectReturnTime=orderDO.getExpectReturnTime();
         //考虑到续租会覆盖原订单的归还时间
         Date expectReturnTime=orderSupport.generateExpectReturnTime(orderDO);
-        boolean isStatementDateChangeInOrderRentTime=k3StatementDateChangeDO!=null&&k3StatementDateChangeDO.getAfterStatementDate()!=null&&k3StatementDateChangeDO.getBeforeStatementDate()!=null&&!k3StatementDateChangeDO.getBeforeStatementDate().equals(k3StatementDateChangeDO.getAfterStatementDate())||k3StatementDateChangeDO.getStatementDateChangeTime().compareTo(orderDO.getRentStartTime())<=0||k3StatementDateChangeDO.getStatementDateChangeTime().compareTo(expectReturnTime)>=0;
+        boolean isStatementDateChangeInOrderRentTime=k3StatementDateChangeDO!=null&&k3StatementDateChangeDO.getAfterStatementDate()!=null&&k3StatementDateChangeDO.getBeforeStatementDate()!=null&&!k3StatementDateChangeDO.getBeforeStatementDate().equals(k3StatementDateChangeDO.getAfterStatementDate())&&k3StatementDateChangeDO.getStatementDateChangeTime().compareTo(orderDO.getRentStartTime())>0&&k3StatementDateChangeDO.getStatementDateChangeTime().compareTo(expectReturnTime)<0;
         if(isStatementDateChangeInOrderRentTime){
             //获取分割点
             Date statementDateChangeTime=getStatementChangeDate(rentStartTime,k3StatementDateChangeDO);
@@ -370,7 +369,7 @@ public class StatementServiceImpl implements StatementService {
         //Date expectReturnTime=orderDO.getExpectReturnTime();
         //考虑到续租会覆盖原订单的归还时间
         Date expectReturnTime=reletOrderDO.getExpectReturnTime();
-        boolean isStatementDateChangeInOrderRentTime=k3StatementDateChangeDO!=null&&k3StatementDateChangeDO.getAfterStatementDate()!=null&&k3StatementDateChangeDO.getBeforeStatementDate()!=null&&!k3StatementDateChangeDO.getBeforeStatementDate().equals(k3StatementDateChangeDO.getAfterStatementDate())||k3StatementDateChangeDO.getStatementDateChangeTime().compareTo(reletOrderDO.getRentStartTime())<=0||k3StatementDateChangeDO.getStatementDateChangeTime().compareTo(expectReturnTime)>=0;
+        boolean isStatementDateChangeInOrderRentTime=k3StatementDateChangeDO!=null&&k3StatementDateChangeDO.getAfterStatementDate()!=null&&k3StatementDateChangeDO.getBeforeStatementDate()!=null&&!k3StatementDateChangeDO.getBeforeStatementDate().equals(k3StatementDateChangeDO.getAfterStatementDate())&&k3StatementDateChangeDO.getStatementDateChangeTime().compareTo(reletOrderDO.getRentStartTime())>0&&k3StatementDateChangeDO.getStatementDateChangeTime().compareTo(expectReturnTime)<0;
         if(isStatementDateChangeInOrderRentTime){
             //获取分割点
             Date statementDateChangeTime=getStatementChangeDate(rentStartTime,k3StatementDateChangeDO);
@@ -489,7 +488,13 @@ public class StatementServiceImpl implements StatementService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, BigDecimal> reCreateOrderStatement(String orderNo) {
+    public ServiceResult<String, BigDecimal> reCreateOrderStatement(String orderNo){
+        return reCreateOrderStatement(orderNo,null);
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, BigDecimal> reCreateOrderStatement(String orderNo,Integer statementDate) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         if (StringUtil.isEmpty(orderNo)) {
             result.setErrorCode(ErrorCode.ORDER_NO_NOT_NULL);
@@ -512,6 +517,15 @@ public class StatementServiceImpl implements StatementService {
 //            return result;
 //        }
 
+        //用户手动修改结算日
+        if(statementDate!=null){
+            if(!Arrays.asList(StatementMode.STATEMENT_MONTH_END,StatementMode.STATEMENT_20,StatementMode.STATEMENT_MONTH_NATURAL).contains(statementDate)){
+                result.setErrorCode(ErrorCode.STATEMENT_DATE_NOT_SUPPORT,statementDate.toString());
+                return result;
+            }
+            orderDO.setStatementDate(statementDate);
+            orderMapper.update(orderDO);
+        }
 
         // 客户为确认结算单状态时，不允许重算客户的订单
         CustomerDO customerDO = customerMapper.findByNo(orderDO.getBuyerCustomerNo());
@@ -565,6 +579,7 @@ public class StatementServiceImpl implements StatementService {
         reStatementReturnOrderItems(k3ReturnOrderDetailDOList,true);
 
         //修正结算单时间范围
+
 
         //更新订单首次需支付金额
         orderDO.setFirstNeedPayAmount(createResult.getResult());
