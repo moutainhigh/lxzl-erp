@@ -38,10 +38,10 @@
         <div class="col-md-4">
             <dl class="dl-horizontal dl-horizontal-rental">
                 <dt><label>客户编号</label><span class="mr5">：</span></dt>
-                <dd class="mb5">{{buyerCustomerNo}}&nbsp;</dd>
+                <dd class="mb5"><a href="{{customerUrl}}" target="_blank">{{buyerCustomerNo}}</a>&nbsp;</dd>
 
                 <dt><label>客户名称</label><span class="mr5">：</span></dt>
-                <dd class="mb5">{{buyerCustomerName}}&nbsp;</dd>
+                <dd class="mb5"><a href="{{customerUrl}}" target="_blank">{{buyerCustomerName}}</a>&nbsp;</dd>
 
                 <dt><label style="letter-spacing: 0.33em">收货人</label><span class="mr5">：</span></dt>
                 <dd class="mb5">{{orderConsignInfo.consigneeName}}&nbsp;</dd>
