@@ -38,7 +38,7 @@ public class SwitchServiceImpl implements SwitchService {
     @Autowired
     private UserSupport userSupport;
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> add(Switch interfaceSwitch) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         if (!userSupport.isSuperUser()) {
@@ -78,7 +78,7 @@ public class SwitchServiceImpl implements SwitchService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> update(Switch interfaceSwitch) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         if (!userSupport.isSuperUser()) {
@@ -135,7 +135,7 @@ public class SwitchServiceImpl implements SwitchService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> delete(Switch interfaceSwitch) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         if (!userSupport.isSuperUser()) {
