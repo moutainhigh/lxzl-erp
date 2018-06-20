@@ -177,6 +177,30 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    public ServiceResult<String, Boolean> publicTransferPlusCharge(PublicTransferPlusChargeParam param) {
+        ServiceResult<String, Boolean> result = new ServiceResult<>();
+        param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        param.setBusinessOperateUser(userSupport.getCurrentUserId().toString());
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = FastJsonUtil.toJSONString(param);
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemPublicTransferPlusChargeURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("public transfer plus charge response:{}", response);
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                result.setResult((Boolean) paymentResult.getResultMap().get("data"));
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    @Override
     public ServiceResult<String, Boolean> manualDeduct(ManualDeductParam param) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
@@ -388,7 +412,7 @@ public class PaymentServiceImpl implements PaymentService {
             headerBuilder.contentType("application/json");
             String requestJson = null;
 
-            PaymentChargeRecordPageParam paymentChargeRecordPageParam = convert(chargeRecordPageParam);
+            PaymentChargeRecordPageParam paymentChargeRecordPageParam = ConverterUtil.convert(chargeRecordPageParam, PaymentChargeRecordPageParam.class);
             if (StringUtil.isEmpty(chargeRecordPageParam.getCustomerName())) {
                 paymentChargeRecordPageParam.setBusinessCustomerName(null);
             } else {
@@ -874,14 +898,6 @@ public class PaymentServiceImpl implements PaymentService {
         exportChargeRecordPageParam.setStartTime(DateUtil.getDayByCurrentOffset(CommonConstant.COMMON_ZERO));
         exportChargeRecordPageParam.setEndTime(DateUtil.getDayByCurrentOffset(CommonConstant.COMMON_ONE));
         return exportHistoryChargeRecord(exportChargeRecordPageParam);
-    }
-
-    private PaymentChargeRecordPageParam convert(ChargeRecordPageParam chargeRecordPageParam) {
-        PaymentChargeRecordPageParam paymentChargeRecordPageParam = new PaymentChargeRecordPageParam();
-        paymentChargeRecordPageParam.setBusinessCustomerNo(chargeRecordPageParam.getBusinessCustomerNo());
-        paymentChargeRecordPageParam.setBusinessAppId(chargeRecordPageParam.getBusinessAppId());
-        paymentChargeRecordPageParam.setBusinessAppSecret(chargeRecordPageParam.getBusinessAppSecret());
-        return paymentChargeRecordPageParam;
     }
 
 }

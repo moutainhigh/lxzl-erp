@@ -106,8 +106,8 @@ public class ConverterUtil {
                             }
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        logger.error("=======================" + o.getClass().getName() + "类，" + field.getName() + "字段转换异常========================");
+//                        e.printStackTrace();
+//                        logger.error("=======================" + o.getClass().getName() + "类，" + field.getName() + "字段转换异常========================");
                         continue;
                     }
 
@@ -183,8 +183,8 @@ public class ConverterUtil {
                             }
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        logger.error("=====" + o.getClass().getName() + "类，" + field.getName() + "字段转换异常====");
+//                        e.printStackTrace();
+//                        logger.error("=====" + o.getClass().getName() + "类，" + field.getName() + "字段转换异常====");
                         continue;
                     }
 
@@ -198,8 +198,8 @@ public class ConverterUtil {
                     Object createUserId = doField.get(o);
                     setName(createUserId, poField, t);
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    logger.error("====" + o.getClass().getName() + "类，createUser字段转换异常====");
+//                    e.printStackTrace();
+//                    logger.error("====" + o.getClass().getName() + "类，createUser字段转换异常====");
                 }
                 try {
                     Class parentDOClazz = o.getClass().getSuperclass();
@@ -210,8 +210,8 @@ public class ConverterUtil {
                     Object updateUserId = doField.get(o);
                     setName(updateUserId, poField, t);
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    logger.error("=======================" + o.getClass().getName() + "类，updateUser字段转换异常========================");
+//                    e.printStackTrace();
+//                    logger.error("=======================" + o.getClass().getName() + "类，updateUser字段转换异常========================");
                 }
                 return t;
             }
