@@ -63,6 +63,14 @@ public interface StatementService extends BaseService {
     ServiceResult<String, BigDecimal> reCreateOrderStatement(String orderNo);
 
     /**
+     * 重算结算单（修改结算日）
+     * @param orderNo
+     * @param statementDate
+     * @return
+     */
+    ServiceResult<String, BigDecimal> reCreateOrderStatement(String orderNo,Integer statementDate);
+
+    /**
      * 批量重算结算单
      * @param orderNoList
      * @param customerNoList
