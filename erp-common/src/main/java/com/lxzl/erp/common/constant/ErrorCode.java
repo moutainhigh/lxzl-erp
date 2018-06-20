@@ -927,6 +927,7 @@ public class ErrorCode {
     public static final String RELET_ORDER_STATUS_CAN_NOT_CANCEL = "J21000015";
     public static final String RELET_ORDER_HAS_PAID = "J21000016";
     public static final String RELET_ORDER_RE_STATEMENT_FAIL = "J21000017";
+    public static final String RELET_ORDER_RENT_TYPE_DAY_CAN_NOT_RENT_TOO_LONG = "J21000018";
 
 
     public static final String PRINT_LOG_REFER_NO_NOT_NULL = "J220000001";
