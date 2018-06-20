@@ -76,7 +76,7 @@ import java.util.*;
 public class K3CallbackServiceImpl implements K3CallbackService {
     private static Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> callbackDelivery(DeliveryOrder deliveryOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -179,7 +179,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> callbackReturnOrder(K3ReturnOrder k3ReturnOrder) {
         String json = JSON.toJSONString(k3ReturnOrder);
         logger.info("return order call back : "+json);

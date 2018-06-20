@@ -75,7 +75,7 @@ public class ImportMaterialServiceImpl implements ImportMaterialService {
     private BrandMapper brandMapper;
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Map<String, String>> importData(String str) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, IOException, InvalidFormatException {
 
         ServiceResult<String, Map<String, String>> serviceResult = new ServiceResult<>();

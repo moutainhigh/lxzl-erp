@@ -165,7 +165,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createOrderStatement(String orderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
@@ -241,7 +241,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createK3OrderStatement(Order order) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
@@ -294,7 +294,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> reCreateOrderStatement(String orderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         if (StringUtil.isEmpty(orderNo)) {
@@ -711,7 +711,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> weixinPayStatementOrder(String statementOrderNo, String openId, String ip) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -827,7 +827,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> weixinPayCallback(WeixinPayCallbackParam param) {
         ServiceResult<String, String> result = new ServiceResult<>();
 
@@ -902,7 +902,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Boolean> payStatementOrder(String statementOrderNo) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
 
@@ -1003,7 +1003,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, List<String>> batchPayStatementOrder(List<StatementOrderPayParam> param) {
         ServiceResult<String, List<String>> result = new ServiceResult<>();
 
@@ -1717,7 +1717,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createK3ReturnOrderStatement(String returnOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);
@@ -2173,7 +2173,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createReturnOrderStatement(String returnOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(returnOrderNo);
@@ -2471,7 +2471,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createK3ChangeOrderStatement(String changeOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -2629,7 +2629,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createChangeOrderStatement(String changeOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -2770,7 +2770,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Boolean> handleOverdueStatementOrder(Date startTime, Date endTime) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -2790,7 +2790,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Boolean> handleNoPaidStatementOrder(Date startTime, Date endTime) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         StatementPayOrderQueryParam statementPayOrderQueryParam = new StatementPayOrderQueryParam();
@@ -3526,7 +3526,7 @@ public class StatementServiceImpl implements StatementService {
      * @param orderDO
      * @return
      */
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, String> clearStatementOrderDetail(OrderDO orderDO) {
         ServiceResult<String, String> result = new ServiceResult<>();
         CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
@@ -3741,7 +3741,7 @@ public class StatementServiceImpl implements StatementService {
      * @param orderDO
      * @return
      */
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, String> clearStatementOrder(OrderDO orderDO) {
 
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, orderDO.getId());
@@ -3827,12 +3827,12 @@ public class StatementServiceImpl implements StatementService {
 
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createReletOrderStatement(ReletOrderDO reletOrderDO) {
         return reletOrderStatement(reletOrderDO, true);
     }
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> reletOrderStatement(ReletOrderDO reletOrderDO, boolean allowUnpay) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         if (reletOrderDO == null) {
@@ -4068,7 +4068,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> reCreateReletOrderStatement(String reletOrderNo) {
         ServiceResult<String, BigDecimal> serviceResult = new ServiceResult<>();
 
@@ -4099,7 +4099,7 @@ public class StatementServiceImpl implements StatementService {
      *
      * @param reletOrderNo
      */
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, String> clearReletOrderStatement(String reletOrderNo) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrderNo);
@@ -4111,7 +4111,7 @@ public class StatementServiceImpl implements StatementService {
         return clearReletOrderStatement(reletOrderDO);
     }
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, String> clearReletOrderStatement(ReletOrderDO reletOrderDO) {
         List<Integer> ids = new ArrayList<>();
         List<ReletOrderMaterialDO> materialDOList = reletOrderDO.getReletOrderMaterialDOList();
@@ -4459,7 +4459,7 @@ public class StatementServiceImpl implements StatementService {
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> reStatementK3ReturnOrderRentOnly(String returnOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);
