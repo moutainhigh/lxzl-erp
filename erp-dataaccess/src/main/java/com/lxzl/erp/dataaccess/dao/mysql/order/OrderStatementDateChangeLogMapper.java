@@ -1,6 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.order;
 
-import com.lxzl.erp.dataaccess.domain.order.OrderStatementDateLogDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderStatementDateChangeLogDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
  * @Date: 2018/6/20
  */
 @Repository
-public interface OrderStatementDateLogMapper extends BaseMysqlDAO<OrderStatementDateLogDO> {
+public interface OrderStatementDateChangeLogMapper extends BaseMysqlDAO<OrderStatementDateChangeLogDO> {
 }

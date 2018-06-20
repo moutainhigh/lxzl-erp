@@ -12,13 +12,13 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerPersonMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderStatementDateLogMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderStatementDateChangeLogMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
-import com.lxzl.erp.dataaccess.domain.order.OrderStatementDateLogDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderStatementDateChangeLogDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
@@ -245,19 +245,22 @@ public class StatementOrderSupport {
     }
 
     public void recordStatementDateLog(String orderNo, Integer statementDate) {
-        OrderStatementDateLogDO orderStatementDateLogDO = new OrderStatementDateLogDO();
-        orderStatementDateLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        orderStatementDateLogDO.setStatementDate(statementDate);
-        orderStatementDateLogDO.setOrderNo(orderNo);
-        orderStatementDateLogDO.setCreateTime(new Date());
-        orderStatementDateLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
-        orderStatementDateLogMapper.save(orderStatementDateLogDO);
+        Date now = new Date();
+        OrderStatementDateChangeLogDO orderStatementDateChangeLogDO = new OrderStatementDateChangeLogDO();
+        orderStatementDateChangeLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        orderStatementDateChangeLogDO.setStatementDate(statementDate);
+        orderStatementDateChangeLogDO.setOrderNo(orderNo);
+        orderStatementDateChangeLogDO.setCreateTime(now);
+        orderStatementDateChangeLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        orderStatementDateChangeLogDO.setUpdateTime(now);
+        orderStatementDateChangeLogDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        orderStatementDateChangeLogMapper.save(orderStatementDateChangeLogDO);
     }
 
     @Autowired
     private UserSupport userSupport;
     @Autowired
-    private OrderStatementDateLogMapper orderStatementDateLogMapper;
+    private OrderStatementDateChangeLogMapper orderStatementDateChangeLogMapper;
 
 
 }
