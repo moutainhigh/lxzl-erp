@@ -222,6 +222,7 @@
 		SELECT count(ero.id)
 		FROM erp_relet_order  ero
 		INNER JOIN erp_user eu ON eu.id = ero.order_seller_id
+		INNER JOIN erp_customer ec ON ec.id = ero.buyer_customer_id AND ec.data_status = 1
 		INNER JOIN erp_sub_company esc ON esc.id = ero.order_sub_company_id AND esc.data_status = 1
 		LEFT JOIN erp_sub_company escd ON escd.id = ero.delivery_sub_company_id AND escd.data_status = 1
 		<where>
@@ -245,7 +246,7 @@
 				and ero.buyer_customer_id = #{maps.reletOrderQueryParam.buyerCustomerId, jdbcType=INTEGER}
 			</if>
 			<if test="maps.reletOrderQueryParam.buyerCustomerNo != null &amp;&amp; maps.reletOrderQueryParam.buyerCustomerNo != ''">
-				and ero.buyer_customer_no = #{maps.reletOrderQueryParam.buyerCustomerNo, jdbcType=VARCHAR}
+				and ec.customer_no = #{maps.reletOrderQueryParam.buyerCustomerNo, jdbcType=VARCHAR}
 			</if>
 			<if test="maps.reletOrderQueryParam.orderSellerId != null">
 				and ero.order_seller_id = #{maps.reletOrderQueryParam.orderSellerId, jdbcType=INTEGER}

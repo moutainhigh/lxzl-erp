@@ -1613,8 +1613,8 @@ public class OrderServiceImpl implements OrderService {
         List<OrderTimeAxisDO> orderTimeAxisDOList = orderTimeAxisSupport.getOrderTimeAxis(orderDO.getId());
         orderDO.setOrderTimeAxisDOList(orderTimeAxisDOList);
 
-        List<ReletOrderDO> reletOrderDOList = reletOrderMapper.findReletOrderByOrderNo(orderDO.getOrderNo());
-        orderDO.setReletOrderDOList(reletOrderDOList);
+//        List<ReletOrderDO> reletOrderDOList = reletOrderMapper.findReletOrderByOrderNo(orderDO.getOrderNo());
+//        orderDO.setReletOrderDOList(reletOrderDOList);
 
         Order order = ConverterUtil.convert(orderDO, Order.class);
 
@@ -1780,8 +1780,8 @@ public class OrderServiceImpl implements OrderService {
         List<OrderTimeAxisDO> orderTimeAxisDOList = orderTimeAxisSupport.getOrderTimeAxis(orderDO.getId());
         orderDO.setOrderTimeAxisDOList(orderTimeAxisDOList);
 
-        List<ReletOrderDO> reletOrderDOList = reletOrderMapper.findReletOrderByOrderNo(orderDO.getOrderNo());
-        orderDO.setReletOrderDOList(reletOrderDOList);
+//        List<ReletOrderDO> reletOrderDOList = reletOrderMapper.findReletOrderByOrderNo(orderDO.getOrderNo());
+//        orderDO.setReletOrderDOList(reletOrderDOList);
 
         Order order = ConverterUtil.convert(orderDO, Order.class);
 
