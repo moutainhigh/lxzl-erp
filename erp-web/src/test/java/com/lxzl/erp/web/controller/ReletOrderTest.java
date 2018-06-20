@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.OrderPayMode;
@@ -7,8 +8,16 @@ import com.lxzl.erp.common.constant.OrderRentType;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
+import com.lxzl.erp.common.domain.reletorder.ReletOrderCommitParam;
 import com.lxzl.erp.common.domain.reletorder.ReletOrderQueryParam;
+import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
+import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderMaterial;
+import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderProduct;
+import com.lxzl.erp.core.service.reletorder.ReletOrderService;
+import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
+import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,14 +30,171 @@ import java.util.List;
  * @author ZhaoZiXuan
  * @date 2018/4/24 9:53
  */
-public class ReletOrderTest extends ERPUnTransactionalTest {
+public class ReletOrderTest extends ERPTransactionalTest {
 
+    @Autowired
+    private ReletOrderMapper reletOrderMapper;
+
+    @Autowired
+    private ReletOrderService reletOrderService;
 
     @Test
     public void testCreateReletByOrderNo() throws  Exception{
         Order order = new Order();
-        order.setOrderNo("LXO-20180305-2000-00032");
+//        order.setOrderNo("LXO-20180523-1000-00053");
+        order.setOrderNo("LXO-20180529-027-00164");
+//        order.setOrderNo("LXSE2018010930");
+        order.setRentTimeLength(1);
+
+        List<OrderProduct> orderProductList = new ArrayList<>();
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setOrderProductId(2986);
+        BigDecimal productUnitAmount = new BigDecimal(20.00000);
+        orderProduct.setProductUnitAmount(productUnitAmount);
+        orderProductList.add(orderProduct);
+
+//        OrderProduct orderProduct1 = new OrderProduct();
+//        orderProduct1.setOrderProductId(2757);
+//        BigDecimal productUnitAmount1 = new BigDecimal(600.00000);
+//        orderProduct1.setProductUnitAmount(productUnitAmount1);
+//        orderProductList.add(orderProduct1);
+
+//        OrderProduct orderProduct2 = new OrderProduct();
+//        orderProduct2.setOrderProductId(2764);
+//        BigDecimal productUnitAmount2 = new BigDecimal(150.00000);
+//        orderProduct2.setProductUnitAmount(productUnitAmount2);
+//        orderProductList.add(orderProduct2);
+//
+//        OrderProduct orderProduct3 = new OrderProduct();
+//        orderProduct3.setOrderProductId(2765);
+//        BigDecimal productUnitAmount3 = new BigDecimal(150.00000);
+//        orderProduct3.setProductUnitAmount(productUnitAmount3);
+//        orderProductList.add(orderProduct3);
+
+        order.setOrderProductList(orderProductList);  //商品项
+
+        List<OrderMaterial> orderMaterialList = new ArrayList<>();
+        OrderMaterial orderMaterial = new OrderMaterial();
+        orderMaterial.setOrderMaterialId(5105);
+        BigDecimal materialUnitAmount = new BigDecimal(20.00000);
+        orderMaterial.setMaterialUnitAmount(materialUnitAmount);
+        orderMaterialList.add(orderMaterial);
+
+//        OrderMaterial orderMaterial1 = new OrderMaterial();
+//        orderMaterial1.setOrderMaterialId(4717);
+//        BigDecimal materialUnitAmount1 = new BigDecimal(10.00000);
+//        orderMaterial1.setMaterialUnitAmount(materialUnitAmount1);
+//        orderMaterialList.add(orderMaterial1);
+//
+//        OrderMaterial orderMaterial2 = new OrderMaterial();
+//        orderMaterial2.setOrderMaterialId(4349);
+//        BigDecimal materialUnitAmount2 = new BigDecimal(600.00000);
+//        orderMaterial2.setMaterialUnitAmount(materialUnitAmount2);
+//        orderMaterialList.add(orderMaterial2);
+//
+        order.setOrderMaterialList(orderMaterialList);   //配件项
+
         TestResult testResult = getJsonTestResult("/reletOrder/create", order);
+    }
+
+
+    @Test
+    public void testUpdateReletByOrderNo() throws  Exception{
+        ReletOrder reletOrder = new ReletOrder();
+        reletOrder.setReletOrderNo("LXR-20180605-027-00028");
+        reletOrder.setRentTimeLength(1);
+
+        List<ReletOrderProduct> orderProductList = new ArrayList<>();
+        ReletOrderProduct orderProduct = new ReletOrderProduct();
+        orderProduct.setOrderProductId(2986);
+        BigDecimal productUnitAmount = new BigDecimal(20.10000);
+        orderProduct.setProductUnitAmount(productUnitAmount);
+        orderProductList.add(orderProduct);
+
+//        ReletOrderProduct orderProduct1 = new ReletOrderProduct();
+//        orderProduct1.setOrderProductId(25);
+//        BigDecimal productUnitAmount1 = new BigDecimal(600.30000);
+//        orderProduct1.setProductUnitAmount(productUnitAmount1);
+//        orderProductList.add(orderProduct1);
+
+        reletOrder.setReletOrderProductList(orderProductList);
+
+//        List<ReletOrderMaterial> orderMaterialList = new ArrayList<>();
+//        ReletOrderMaterial orderMaterial = new ReletOrderMaterial();
+//        orderMaterial.setOrderMaterialId(4359);
+//        BigDecimal materialUnitAmount = new BigDecimal(1.00000);
+//        orderMaterial.setMaterialUnitAmount(materialUnitAmount);
+//        orderMaterialList.add(orderMaterial);
+
+//        ReletOrderMaterial orderMaterial1 = new ReletOrderMaterial();
+//        orderMaterial1.setOrderMaterialId(26);
+//        BigDecimal materialUnitAmount1 = new BigDecimal(600.00000);
+//        orderMaterial1.setMaterialUnitAmount(materialUnitAmount1);
+//        orderMaterialList.add(orderMaterial1);
+//
+//        ReletOrderMaterial orderMaterial2 = new ReletOrderMaterial();
+//        orderMaterial2.setOrderMaterialId(27);
+//        BigDecimal materialUnitAmount2 = new BigDecimal(600.00000);
+//        orderMaterial2.setMaterialUnitAmount(materialUnitAmount2);
+//        orderMaterialList.add(orderMaterial2);
+
+//        reletOrder.setReletOrderMaterialList(orderMaterialList);
+
+        TestResult testResult = getJsonTestResult("/reletOrder/update", reletOrder);
+    }
+
+    @Test
+    public void testCommitReletByOrderNo() throws  Exception{
+        ReletOrderCommitParam reletOrderCommitParam = new ReletOrderCommitParam();
+        reletOrderCommitParam.setReletOrderNo("LXR-20180604-027-00015");
+//        reletOrderCommitParam.setVerifyUser(500335);
+        TestResult testResult = getJsonTestResult("/reletOrder/commit", reletOrderCommitParam);
+    }
+
+    @Test
+    public void testIsNeedVerify() throws  Exception{
+        ReletOrder reletOrder = new ReletOrder();
+        reletOrder.setReletOrderNo("LXR-20180605-027-00028");
+        TestResult testResult = getJsonTestResult("/reletOrder/isNeedVerify", reletOrder);
+    }
+
+    @Test
+    public void testcancelReletOrderByNo() throws  Exception{
+        ReletOrder reletOrder = new ReletOrder();
+        reletOrder.setReletOrderNo("LXR-20180601-2001-00001");
+        TestResult testResult = getJsonTestResult("/reletOrder/cancelReletOrderByNo", reletOrder);
+    }
+
+
+    @Test
+    public void testhandleReletSendMessage() throws  Exception{
+        reletOrderService.handleReletSendMessage(new Date());
+    }
+
+
+    @Test
+    public void test() throws  Exception{
+        //获取此订单是否有续租单
+        boolean isReletOrder = false;
+        ReletOrder reletOrder = new ReletOrder();
+//        Integer orderId = 3002009;
+//        testInteger(orderId);
+//        System.out.println(orderId);
+
+        reletOrder.setOrderId(213);
+        testObj(reletOrder);
+        System.out.println(reletOrder.getOrderId());
+    }
+
+    private void testInteger(Integer orderId){
+        Integer a = new Integer(10020);
+        orderId = a;
+    }
+
+    private void testObj(ReletOrder reletOrder){
+        ReletOrder reletOrder1 = new ReletOrder();
+        reletOrder1.setOrderId(33333);
+        reletOrder = reletOrder1;
     }
 
 
@@ -156,27 +322,10 @@ public class ReletOrderTest extends ERPUnTransactionalTest {
     @Test
     public void testQueryReletOrderDetailById() throws Exception{
         ReletOrderQueryParam reletOrderQueryParam = new ReletOrderQueryParam();
-//        reletOrderQueryParam.setBuyerCustomerId(704200);
-//        reletOrderQueryParam.setBuyerCustomerNo("LXO-20180305-0755-00028");
-//        reletOrderQueryParam.setBuyerRealName("湖北华天翼建设工程有限公司");
-////        reletOrderQueryParam.setCreateEndTime();
-////        reletOrderQueryParam.setCreateStartTime();
-//        reletOrderQueryParam.setOrderId(3000005);
 
-        reletOrderQueryParam.setReletOrderId(18);
-//
-//        //reletOrderQueryParam.setOrderStatus(0);
-//        List<Integer> statusList = new ArrayList<>();
-//        statusList.add(0);
-//        statusList.add(8);
-//        reletOrderQueryParam.setOrderStatusList(statusList);
-//
-//        reletOrderQueryParam.setOrderSellerId(500038);
-//        reletOrderQueryParam.setPayStatus(0);
-//
-//        reletOrderQueryParam.setSubCompanyId(1);
-//        reletOrderQueryParam.setDeliverySubCompanyId(8);
-        TestResult testResult = getJsonTestResult("/reletOrder/queryReletOrderDetailById", reletOrderQueryParam);
+        reletOrderQueryParam.setReletOrderNo("LXR-20180530-1000-00007");
+
+        TestResult testResult = getJsonTestResult("/reletOrder/queryReletOrderByNo", reletOrderQueryParam);
     }
 
 }

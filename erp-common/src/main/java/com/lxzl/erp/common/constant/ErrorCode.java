@@ -434,6 +434,9 @@ public class ErrorCode {
     public static final String ITEM_COUNT_MORE_THAN_STABLE_MATERIAL_COUNT = "J400155";
     public static final String RETURN_DELIVERY_SUB_COMPANY_NOT_EQUALS_ORDER_SUB_COMPANY = "J400156";
     public static final String RETURN_DELIVERY_SUB_COMPANY_NOT_EQUALS_DELIVERY_SUB_COMPANY = "J400157";
+    public static final String ORDER_PRODUCR_AND_ORDER_MATERIAL = "J400158";
+    public static final String RETURN_COUNT_MORE_THAN_RENTING_MATERIAL_COUNT = "J400159";
+    public static final String RETURN_COUNT_MORE_THAN_RENTING_PRODUCT_COUNT = "J400160";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -1551,6 +1554,9 @@ public class ErrorCode {
         MAP.put(CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY, "客户的业务员不能由地方分公司转为渠道大客户业务员");
         MAP.put(RETURN_DELIVERY_SUB_COMPANY_NOT_EQUALS_ORDER_SUB_COMPANY, "订单【%s 】不是归属于电销或渠道大客户，创建退货单时选取的发货分公司必须跟该订单所属分公司一致");
         MAP.put(RETURN_DELIVERY_SUB_COMPANY_NOT_EQUALS_DELIVERY_SUB_COMPANY, "订单【%s 】归属于电销或渠道大客户，创建退货单时选取的发货分公司必须跟该订单发货分公司一致");
+        MAP.put(ORDER_PRODUCR_AND_ORDER_MATERIAL, "退货单项找不到对应的商品项和配件项");
+        MAP.put(RETURN_COUNT_MORE_THAN_RENTING_MATERIAL_COUNT, "所退配件超过该配件的再租数量");
+        MAP.put(RETURN_COUNT_MORE_THAN_RENTING_PRODUCT_COUNT, "所退商品超过该商品的再租数量");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
@@ -1814,7 +1820,7 @@ public class ErrorCode {
         MAP.put(CHARGE_ORDER_NO_IS_NULL, "支付系统充值订单号为空");
         MAP.put(EXPORT_CHARGE_RECORD_IS_FAIL, "充值记录导入银行流水失败");
         MAP.put(CHARGE_RECORD_IS_EXIST, "快付通充值记录以存在");
-        MAP.put(BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED, "该条银行对公流水记录项为已认领状态，需创建人取消认领后才能重新认领");
+        MAP.put(BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED, "该条银行对公流水记录项为已认领状态，需商务或创建人取消认领后才能重新认领");
         MAP.put(BANK_SLIP_DETAIL_STATUS_CAN_NOT_CONFIRM, "该条银行对公流水记录不允许确认");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");

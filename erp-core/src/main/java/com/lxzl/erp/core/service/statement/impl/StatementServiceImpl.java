@@ -1489,6 +1489,7 @@ public class StatementServiceImpl implements StatementService {
         return result;
     }
 
+
     @Override
     public ServiceResult<String, StatementOrder> queryStatementOrderDetail(String statementOrderNo) {
         ServiceResult<String, StatementOrder> result = new ServiceResult<>();
@@ -3406,11 +3407,16 @@ public class StatementServiceImpl implements StatementService {
                     statementOrderDO.setStatementDepositAmount(BigDecimalUtil.add(BigDecimalUtil.round(statementOrderDO.getStatementDepositAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailDepositAmount(), BigDecimalUtil.STANDARD_SCALE)));
                     statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.add(BigDecimalUtil.round(statementOrderDO.getStatementRentDepositAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailRentDepositAmount(), BigDecimalUtil.STANDARD_SCALE)));
                     statementOrderDO.setStatementOtherAmount(BigDecimalUtil.add(BigDecimalUtil.round(statementOrderDO.getStatementOtherAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailOtherAmount(), BigDecimalUtil.STANDARD_SCALE)));
-                    if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())) {
+                    //结算单为已支付或者部分支付时为部分支付状态；结算金额小于零则无需支付；其它为未支付状态。
+                    if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())
+                            || StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART.equals(statementOrderDO.getStatementStatus())) {
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
                     }
-                    if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), new BigDecimal(0.1)) < 0) {
+                    else if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), new BigDecimal(0.1)) < 0) {
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
+                    }
+                    else {
+                        statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
                     }
 //                    if (statementOrderDetailDO.getStatementStartTime().getTime() < statementOrderDO.getStatementStartTime().getTime()) {
 //                        statementOrderDO.setStatementStartTime(statementOrderDetailDO.getStatementStartTime());
@@ -4057,12 +4063,31 @@ public class StatementServiceImpl implements StatementService {
         //统一拿订单结算日
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = getStatementReletOrderDetailDOS(reletOrderDO, currentTime, rentStartTime, loginUserId);
-        saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUser.getUserId());
+        List<StatementOrderDetailDO> finalAddStatementOrderDetailDOList = new ArrayList<>();
+
+        OrderDO orderDO = orderMapper.findByOrderNo(reletOrderDO.getOrderNo());
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
+            K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderDO.getId());
+            if (k3OrderStatementConfigDO != null && k3OrderStatementConfigDO.getRentStartTime() != null) {
+                Date k3RentStartTime = k3OrderStatementConfigDO.getRentStartTime();
+                for (StatementOrderDetailDO statementOrderDetailDO : addStatementOrderDetailDOList) {
+                    //如果结算结束时间大于等于k3配置起租时间，则保存该结算单
+                    if (statementOrderDetailDO.getStatementEndTime().getTime() - k3RentStartTime.getTime() >= 0) {
+                        finalAddStatementOrderDetailDOList.add(statementOrderDetailDO);
+                    }
+                }
+            } else {
+                finalAddStatementOrderDetailDOList = addStatementOrderDetailDOList;
+            }
+        } else {
+            finalAddStatementOrderDetailDOList = addStatementOrderDetailDOList;
+        }
+        saveStatementOrder(finalAddStatementOrderDetailDOList, currentTime, loginUser.getUserId());
 
         // 生成单子后，本次需要付款的金额
         BigDecimal thisNeedPayAmount = BigDecimal.ZERO;
-        if (CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)) {
-            for (StatementOrderDetailDO statementOrderDetailDO : addStatementOrderDetailDOList) {
+        if (CollectionUtil.isNotEmpty(finalAddStatementOrderDetailDOList)) {
+            for (StatementOrderDetailDO statementOrderDetailDO : finalAddStatementOrderDetailDOList) {
                 // 核算本次应该交多少钱
                 if (DateUtil.isSameDay(rentStartTime, statementOrderDetailDO.getStatementExpectPayTime())) {
                     thisNeedPayAmount = BigDecimalUtil.add(thisNeedPayAmount, statementOrderDetailDO.getStatementDetailAmount().setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP));
