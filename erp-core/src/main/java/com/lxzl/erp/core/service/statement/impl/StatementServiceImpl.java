@@ -321,7 +321,7 @@ public class StatementServiceImpl implements StatementService {
             if(k3StatementDateChangeDO.getBeforeStatementDate()== StatementMode.STATEMENT_MONTH_END){
                 Date nextStartTime=rentStartTime;
 
-                while (nextStartTime.compareTo(statementDateChangeTime)<0){
+                while (DateUtil.daysBetween(nextStartTime,statementDateChangeTime)>0){
                     Calendar endCalandar=Calendar.getInstance();
                     endCalandar.setTime(nextStartTime);
                     endCalandar.set(Calendar.DAY_OF_MONTH,endCalandar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -333,12 +333,12 @@ public class StatementServiceImpl implements StatementService {
                         phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/(double)endCalandar.getActualMaximum(Calendar.DAY_OF_MONTH);
                     }else phaseCout+=1;
 
-                    nextStartTime=DateUtil.getDayByOffset(endTime,1);
+                    nextStartTime=endTime;
                 }
             }
             else if(k3StatementDateChangeDO.getBeforeStatementDate()==StatementMode.STATEMENT_20){
                 Date nextStartTime=rentStartTime;
-                while (nextStartTime.compareTo(statementDateChangeTime)<0){
+                while (DateUtil.daysBetween(nextStartTime,statementDateChangeTime)>0){
                     Calendar endCalandar=Calendar.getInstance();
                     endCalandar.setTime(nextStartTime);
                     endCalandar.set(Calendar.DAY_OF_MONTH,StatementMode.STATEMENT_20);
@@ -355,7 +355,7 @@ public class StatementServiceImpl implements StatementService {
                         phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/(double)DateUtil.daysBetween(beforeEndTime,endTime);
                     }else phaseCout+=1;
 
-                    nextStartTime=DateUtil.getDayByOffset(endTime,1);
+                    nextStartTime=endTime;
                 }
             }
             else if(k3StatementDateChangeDO.getBeforeStatementDate()==StatementMode.STATEMENT_MONTH_NATURAL){
@@ -363,7 +363,7 @@ public class StatementServiceImpl implements StatementService {
                 rentStartCalendar.setTime(rentStartTime);
                 int actualStatementDate=rentStartCalendar.get(Calendar.DAY_OF_MONTH);
                 Date nextStartTime=rentStartTime;
-                while (nextStartTime.compareTo(statementDateChangeTime)<0){
+                while (DateUtil.daysBetween(nextStartTime,statementDateChangeTime)>0){
                     Calendar endCalandar=Calendar.getInstance();
                     endCalandar.setTime(nextStartTime);
                     endCalandar.set(Calendar.DAY_OF_MONTH,actualStatementDate);
@@ -379,7 +379,7 @@ public class StatementServiceImpl implements StatementService {
                         if(endTime.compareTo(statementDateChangeTime)>0)endTime=statementDateChangeTime;
                         phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/(double)DateUtil.daysBetween(beforeEndTime,endTime);
                     }else phaseCout+=1;
-                    nextStartTime=DateUtil.getDayByOffset(endTime,1);
+                    nextStartTime=endTime;
                 }
             }
             return phaseCout/rentTimeLength* CommonConstant.PROPORTION_MAX;
@@ -630,6 +630,7 @@ public class StatementServiceImpl implements StatementService {
         reStatementReturnOrderItems(k3ReturnOrderDetailDOList,true);
 
         //修正结算单时间范围
+
 
 
         //更新订单首次需支付金额
