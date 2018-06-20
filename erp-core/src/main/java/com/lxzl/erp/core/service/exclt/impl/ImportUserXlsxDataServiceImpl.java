@@ -89,7 +89,7 @@ public class ImportUserXlsxDataServiceImpl implements ImportUserXlsxDataService 
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.util.Map<java.lang.String,java.lang.String>>
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Map<String, String>> importData(String str) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ParseException {
         ServiceResult<String, Map<String, String>> serviceResult = new ServiceResult<>();
 

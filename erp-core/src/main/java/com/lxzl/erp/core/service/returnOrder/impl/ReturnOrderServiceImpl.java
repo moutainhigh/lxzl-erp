@@ -233,7 +233,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, ProductEquipment> doReturnEquipment(DoReturnEquipmentParam doReturnEquipmentParam) {
         ServiceResult<String, ProductEquipment> serviceResult = new ServiceResult<>();
         //校验退还单是否存在
@@ -367,7 +367,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Material> doReturnMaterial(DoReturnMaterialParam doReturnMaterialParam) {
         ServiceResult<String, Material> serviceResult = new ServiceResult<>();
         //校验退还单是否存在

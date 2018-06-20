@@ -75,7 +75,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
     private static Logger logger = LoggerFactory.getLogger(ReletOrderServiceImpl.class);
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, ReletOrderCreateResult> createReletOrder(Order order) {
         ServiceResult<String, ReletOrderCreateResult> result = new ServiceResult<>();
         ReletOrderCreateResult reletOrderCreateResult = new ReletOrderCreateResult();
@@ -213,7 +213,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, ReletOrderCreateResult> updateReletOrder(ReletOrder reletOrder) {
         ServiceResult<String, ReletOrderCreateResult> result = new ServiceResult<>();
         ReletOrderCreateResult reletOrderCreateResult = new ReletOrderCreateResult();
@@ -281,7 +281,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> commitReletOrder(ReletOrderCommitParam reletOrderCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -457,7 +457,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
             Date currentTime = new Date();

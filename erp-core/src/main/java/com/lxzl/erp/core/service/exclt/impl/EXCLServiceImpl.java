@@ -49,7 +49,7 @@ public class EXCLServiceImpl implements EXCLService {
     CustomerService customerService;
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Map<String, String>> importData(String str) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ParseException {
         ServiceResult<String, Map<String, String>> serviceResult = new ServiceResult<>();
 

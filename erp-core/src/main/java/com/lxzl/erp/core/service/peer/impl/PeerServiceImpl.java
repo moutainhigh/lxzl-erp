@@ -43,7 +43,7 @@ public class PeerServiceImpl implements PeerService {
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> addPeer(Peer peer) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         //检验 供应商名称 和 供应商自定义编码
@@ -75,7 +75,7 @@ public class PeerServiceImpl implements PeerService {
      * @Return : com.lxzl.se.common.domain.Result
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> updatePeer(Peer peer) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         //peerNo查对象

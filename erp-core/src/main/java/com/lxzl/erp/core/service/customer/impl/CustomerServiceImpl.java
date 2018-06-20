@@ -61,7 +61,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addCompany(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -256,7 +256,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addPerson(Customer customer) {
 
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
@@ -336,7 +336,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> updateCompany(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -663,7 +663,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> updatePerson(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -1700,7 +1700,7 @@ public class CustomerServiceImpl implements CustomerService {
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> addCustomerConsignInfo(CustomerConsignInfo customerConsignInfo) {
 
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
@@ -1752,7 +1752,7 @@ public class CustomerServiceImpl implements CustomerService {
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> updateCustomerConsignInfo(CustomerConsignInfo customerConsignInfo) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -2895,7 +2895,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateOwnerAndUnionUser(Customer customer) {
         CustomerDO customerDO = customerMapper.findByNo(customer.getCustomerNo());
         Date now = new Date();
@@ -3043,7 +3043,7 @@ public class CustomerServiceImpl implements CustomerService {
      * @return
      */
 
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> customerCompanySimpleNameProcessing() {
 
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
@@ -3331,7 +3331,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> confirmStatement(String customerNo) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();

@@ -777,7 +777,7 @@ public class StatisticsServiceImpl implements StatisticsService {
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> updateStatisticsSalesmanMonth(StatisticsSalesmanMonth statisticsSalesmanMonth) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
         Date date = new Date();

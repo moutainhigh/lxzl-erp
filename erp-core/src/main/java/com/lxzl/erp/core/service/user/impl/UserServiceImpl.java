@@ -72,7 +72,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     private DingdingService dingdingService;
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, User> login(LoginParam loginParam, String ip) {
         ServiceResult<String, User> result = new ServiceResult<>();
         userLoginLogSupport.addUserLoginLog(loginParam.getUserName(), ip, null);
@@ -100,7 +100,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> addUser(User user) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
@@ -190,7 +190,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> updateUser(User user) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         UserDO userDO = userMapper.findByUserId(user.getUserId());

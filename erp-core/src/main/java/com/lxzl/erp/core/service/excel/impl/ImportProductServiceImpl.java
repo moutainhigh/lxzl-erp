@@ -57,7 +57,7 @@ public class ImportProductServiceImpl implements ImportProductService {
 
     // 服务器
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importServerProduct(String filePath) throws Exception {
         Integer categoryId = 800013;
         FileInputStream fileIn = new FileInputStream(filePath);
@@ -235,7 +235,7 @@ public class ImportProductServiceImpl implements ImportProductService {
 
     // 复印机
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importCopierProduct(String filePath) throws Exception {
         Integer categoryId = 800008;
         FileInputStream fileIn = new FileInputStream(filePath);
@@ -388,7 +388,7 @@ public class ImportProductServiceImpl implements ImportProductService {
 
     // 交换机
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importSwitchboardProduct(String filePath) throws Exception {
         Integer categoryId = 800011;
         FileInputStream fileIn = new FileInputStream(filePath);
@@ -540,7 +540,7 @@ public class ImportProductServiceImpl implements ImportProductService {
 
     // 路由器
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importRouterProduct(String filePath) throws Exception {
         Integer categoryId = 800014;
         FileInputStream fileIn = new FileInputStream(filePath);
@@ -669,7 +669,7 @@ public class ImportProductServiceImpl implements ImportProductService {
 
     // 平板电脑
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importPadProduct(String filePath) throws Exception {
         Integer categoryId = 800005;
         FileInputStream fileIn = new FileInputStream(filePath);
@@ -822,7 +822,7 @@ public class ImportProductServiceImpl implements ImportProductService {
 
     // 投影仪
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importProjectorProduct(String filePath) throws Exception {
         Integer categoryId = 800010;
         FileInputStream fileIn = new FileInputStream(filePath);
@@ -950,7 +950,7 @@ public class ImportProductServiceImpl implements ImportProductService {
 
     // 打印机
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importPrinterProduct(String filePath) throws Exception {
         Integer categoryId = 800007;
         FileInputStream fileIn = new FileInputStream(filePath);
@@ -1078,7 +1078,7 @@ public class ImportProductServiceImpl implements ImportProductService {
 
     // 手机
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importPhoneProduct(String filePath) throws Exception {
         Integer categoryId = 800015;
         FileInputStream fileIn = new FileInputStream(filePath);
@@ -1206,7 +1206,7 @@ public class ImportProductServiceImpl implements ImportProductService {
 
     // 电视机
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importMonitorProduct(String filePath) throws Exception {
         Integer categoryId = 800006;
         FileInputStream fileIn = new FileInputStream(filePath);
@@ -1341,7 +1341,7 @@ public class ImportProductServiceImpl implements ImportProductService {
 
     // 电视机
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importTVProduct(String filePath) throws Exception {
         Integer categoryId = 800009;
         FileInputStream fileIn = new FileInputStream(filePath);
@@ -1476,7 +1476,7 @@ public class ImportProductServiceImpl implements ImportProductService {
 
     // 一体机
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importAIOProduct(String filePath) throws Exception {
         Integer categoryId = 800003;
         FileInputStream fileIn = new FileInputStream(filePath);
@@ -1659,7 +1659,7 @@ public class ImportProductServiceImpl implements ImportProductService {
 
     // 台式机
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importNodeProduct(String filePath) throws Exception {
         Integer categoryId = 800002;
         FileInputStream fileIn = new FileInputStream(filePath);
@@ -1866,7 +1866,7 @@ public class ImportProductServiceImpl implements ImportProductService {
 
     // 台式机
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importAssemblyProduct(String filePath) throws Exception {
         Integer categoryId = 800004;
         FileInputStream fileIn = new FileInputStream(filePath);

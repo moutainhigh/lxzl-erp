@@ -744,7 +744,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
      */
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
             ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(businessNo);
@@ -776,7 +776,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> stockUpForChange(StockUpForChangeParam param) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -828,7 +828,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> delivery(ChangeOrder changeOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(changeOrder.getChangeOrderNo());
@@ -910,7 +910,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> doChangeEquipment(ChangeOrderProductEquipment changeOrderProductEquipment) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -1016,7 +1016,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> doChangeMaterial(ChangeOrderMaterial changeOrderMaterial) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -1175,7 +1175,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> processNoChangeEquipment(ProcessNoChangeEquipmentParam processNoChangeEquipmentParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -1251,7 +1251,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> confirmChangeOrder(String changeOrderNo) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(changeOrderNo);
@@ -1297,7 +1297,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> updateEquipmentPriceDiff(UpdateEquipmentPriceDiffParam updateEquipmentPriceDiffParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(updateEquipmentPriceDiffParam.getChangeOrderNo());
@@ -1334,7 +1334,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> updateBulkPriceDiff(UpdateBulkPriceDiffParam updateBulkPriceDiffParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(updateBulkPriceDiffParam.getChangeOrderNo());
@@ -1371,7 +1371,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> end(ChangeOrder changeOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 

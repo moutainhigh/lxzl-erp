@@ -50,7 +50,7 @@ import java.util.regex.Pattern;
 @Service
 public class ImplK3MappingCustomerServiceImpl implements ImplK3MappingCustomerService {
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Map<String, String>> importData(String str) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, IOException, InvalidFormatException {
 
         ServiceResult<String, Map<String, String>> serviceResult = new ServiceResult<>();

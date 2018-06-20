@@ -64,7 +64,7 @@ public class CouponSupport {
      * @param order
      * @return
      */
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String useCoupon(Order order){
         Date date = new Date();
         if (order == null) {
@@ -205,7 +205,7 @@ public class CouponSupport {
      * @param statementOrderDetailDO
      * @return
      */
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, BigDecimal> setDeductionAmount(StatementOrderDetailDO statementOrderDetailDO){
         ServiceResult<String, BigDecimal> serviceResult = new ServiceResult<>();
         Date date = new Date();
@@ -336,7 +336,7 @@ public class CouponSupport {
      * @param orderNo
      * @return
      */
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String revertCoupon(String orderNo) {
         Date date = new Date();
         if (StringUtil.isEmpty(orderNo)) {
