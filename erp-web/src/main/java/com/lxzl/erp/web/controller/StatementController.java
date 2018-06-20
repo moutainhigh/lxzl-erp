@@ -124,8 +124,8 @@ public class StatementController extends BaseController {
 
     @RequestMapping(value = "reCreateOrderStatement", method = RequestMethod.POST)
     public Result reCreateOrderStatement(@RequestBody Order order) {
-        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(order.getOrderNo());
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(order.getOrderNo(),order.getStatementDate());
+        return resultGenerator.generate(serviceResult);
     }
 
     @RequestMapping(value = "batchReCreateOrderStatement", method = RequestMethod.POST)
