@@ -26,6 +26,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipDetailOperationLogMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipClaimDO;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDO;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
@@ -369,8 +370,8 @@ public class BankSlipServiceImpl implements BankSlipService {
                 return deleteUnknownBankSlipClaim(now, bankSlipClaimDOList, bankSlipDetailDO, bankSlipDO);
             } else {
                 if (CollectionUtil.isNotEmpty(bankSlipClaimDOList)) {
-                    //如果不是未知状态判断当前用户是否是认领创建人
-                    if (!userSupport.getCurrentUserId().toString().equals(bankSlipClaimDOList.get(0).getCreateUser())) {
+                    //如果不是未知状态判断当前用户是否是认领创建人或者是商务
+                    if (!userSupport.getCurrentUserId().toString().equals(bankSlipClaimDOList.get(0).getCreateUser())&& !userSupport.isBusinessAffairsPerson()) {
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED);
                         return serviceResult;
                     }
@@ -1562,8 +1563,28 @@ public class BankSlipServiceImpl implements BankSlipService {
     private ServiceResult<String, Integer> deleteUnknownBankSlipClaim(Date now, List<BankSlipClaimDO> bankSlipClaimDOList, BankSlipDetailDO bankSlipDetailDO, BankSlipDO bankSlipDO) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         if (CollectionUtil.isNotEmpty(bankSlipClaimDOList)) {
-            //找出所有当前用户的认领数据
-            bankSlipClaimDOList = bankSlipClaimMapper.findAmountByBankSlipDetailIdAndCreateUser(bankSlipDetailDO.getId(), userSupport.getCurrentUserId().toString());
+            //判断是否是商务
+            if (userSupport.isBusinessAffairsPerson()) {
+                //判断是否是总公司商务，总公司商务删除该条资金流水详情的所有认领信息，分公司商务只能删除该分公司业务认领的数据
+                if (userSupport.isHeadUser()) {
+                    bankSlipClaimDOList = bankSlipDetailDO.getBankSlipClaimDOList();
+                }else {
+                    //查询该商务所属分公司
+                    Integer subCompanyId = userSupport.getCurrentUserCompanyId();
+                    //获取该公司的所有认领记录
+                    List<BankSlipClaimDO> deleteBankSlipClaimDOList = new ArrayList<>();
+                    for (BankSlipClaimDO bankSlipClaimDO:bankSlipClaimDOList) {
+                        if (subCompanyId.equals(userSupport.getCompanyIdByUser(Integer.parseInt(bankSlipClaimDO.getUpdateUser())))) {
+                            deleteBankSlipClaimDOList.add(bankSlipClaimDO);
+                        }
+                    }
+                    bankSlipClaimDOList = deleteBankSlipClaimDOList;
+                }
+            }else {
+                //找出所有当前用户的认领数据
+                bankSlipClaimDOList = bankSlipClaimMapper.findAmountByBankSlipDetailIdAndCreateUser(bankSlipDetailDO.getId(), userSupport.getCurrentUserId().toString());
+            }
+
             if (CollectionUtil.isNotEmpty(bankSlipClaimDOList)) {
                 //删除所有
                 bankSlipClaimMapper.deleteBankSlipClaimDO(userSupport.getCurrentUserId().toString(), now, bankSlipClaimDOList);
@@ -1597,9 +1618,7 @@ public class BankSlipServiceImpl implements BankSlipService {
                     bankSlipDO.setUpdateTime(now);
                     bankSlipMapper.update(bankSlipDO);
                 }
-
             }
-
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
