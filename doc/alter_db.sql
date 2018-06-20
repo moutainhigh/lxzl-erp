@@ -892,3 +892,15 @@ CREATE TABLE `erp_dynamic_sql` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='动态sql表';
 
 ALTER TABLE erp_k3_statement_date_change ADD COLUMN `change_type` INT(11) NOT NULL DEFAULT '0' COMMENT '改变方式，0当月1下月';
+
+DROP TABLE IF EXISTS `erp_order_statement_date_log`;
+CREATE TABLE `erp_order_statement_date_log` (
+	`id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+	`statement_date` int(20) COMMENT '结算时间（天），20和31两种情况，如果为空取系统设定',
+	`order_no` VARCHAR(100) NOT NULL COMMENT '关联单号',
+	`data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+	`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+	`create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+	PRIMARY KEY (`id`),
+	KEY `index_order_no` (`order_no`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='重算订单结算日记录表';

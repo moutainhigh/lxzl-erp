@@ -3665,3 +3665,19 @@ CREATE TABLE `erp_k3_statement_date_change` (
   PRIMARY KEY (`id`),
   INDEX index_order_no ( `order_no` )
 ) ENGINE=InnoDB AUTO_INCREMENT=500001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单结算日修改记录表';
+
+
+DROP TABLE IF EXISTS `erp_order_statement_date_change_log`;
+CREATE TABLE `erp_order_statement_date_change_log` (
+	`id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+	`statement_date` int(20) NOT NULL COMMENT '结算时间（天），-1,20和31三种情况',
+	`order_no` VARCHAR(100) NOT NULL COMMENT '关联单号',
+	`data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+	`remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+	`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+	`create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+	`update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+	PRIMARY KEY (`id`),
+	KEY `index_order_no` (`order_no`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单结算日修变更录表';
