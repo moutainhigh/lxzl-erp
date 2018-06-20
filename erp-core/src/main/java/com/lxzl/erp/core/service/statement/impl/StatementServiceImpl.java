@@ -1289,25 +1289,6 @@ public class StatementServiceImpl implements StatementService {
         return result;
     }
 
-    /**
-     * 查询结算单的明细是否有已支付记录
-     *
-     * @author ZhaoZiXuan
-     * @date 2018/6/13 14:24
-     * @param
-     * @return
-     */
-    private Boolean queryStatementOrderHasSettledDetail(String statementOrderNo){
-        StatementOrderDO statementOrderDO = statementOrderMapper.findByNo(statementOrderNo);
-        if (statementOrderDO != null && CollectionUtil.isNotEmpty(statementOrderDO.getStatementOrderDetailDOList())){
-            for (StatementOrderDetailDO statementOrderDetailDO: statementOrderDO.getStatementOrderDetailDOList()){
-                if (statementOrderDetailDO.getStatementDetailStatus().equals(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED)){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     @Override
     public ServiceResult<String, StatementOrder> queryStatementOrderDetail(String statementOrderNo) {
@@ -3226,15 +3207,13 @@ public class StatementServiceImpl implements StatementService {
                     statementOrderDO.setStatementDepositAmount(BigDecimalUtil.add(BigDecimalUtil.round(statementOrderDO.getStatementDepositAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailDepositAmount(), BigDecimalUtil.STANDARD_SCALE)));
                     statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.add(BigDecimalUtil.round(statementOrderDO.getStatementRentDepositAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailRentDepositAmount(), BigDecimalUtil.STANDARD_SCALE)));
                     statementOrderDO.setStatementOtherAmount(BigDecimalUtil.add(BigDecimalUtil.round(statementOrderDO.getStatementOtherAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailOtherAmount(), BigDecimalUtil.STANDARD_SCALE)));
-                    if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())) {
+                    //结算单为已支付或者部分支付时为部分支付状态；结算金额小于零则无需支付；其它为未支付状态。
+                    if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())
+                            || StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART.equals(statementOrderDO.getStatementStatus())) {
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
                     }
-                    if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), new BigDecimal(0.1)) < 0) {
+                    else if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), new BigDecimal(0.1)) < 0) {
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
-                    }
-                    else if (queryStatementOrderHasSettledDetail(statementOrderDO.getStatementOrderNo())){
-
-                        statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
                     }
                     else {
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
