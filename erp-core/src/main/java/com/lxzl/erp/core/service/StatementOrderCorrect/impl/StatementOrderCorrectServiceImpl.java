@@ -60,7 +60,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> createStatementOrderCorrect(StatementOrderCorrect statementOrderCorrect) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
@@ -99,7 +99,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> commitStatementOrderCorrect(StatementOrderCorrectParam statementOrderCorrectParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //查看结算冲正单是否存在
@@ -175,7 +175,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> updateStatementOrderCorrect(StatementOrderCorrect statementOrderCorrect) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //查看结算冲正单是否存在
@@ -216,7 +216,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> cancelStatementOrderCorrect(String statementOrderCorrectNo) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //查看结算冲正单是否存在
@@ -392,7 +392,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : boolean
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         //校验结算冲正单是否存在记录和是否是已结算状态
         Date currentTime = new Date();

@@ -79,7 +79,7 @@ public class CouponServiceImpl implements CouponService{
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addCouponBatch(CouponBatch couponBatch) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
         Date date = new Date();
@@ -109,7 +109,7 @@ public class CouponServiceImpl implements CouponService{
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> updateCouponBatch(CouponBatch couponBatch) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
         Date date = new Date();
@@ -142,7 +142,7 @@ public class CouponServiceImpl implements CouponService{
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> deleteCouponBatch(CouponBatch couponBatch) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
         Date date = new Date();
@@ -195,7 +195,7 @@ public class CouponServiceImpl implements CouponService{
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addCouponBatchDetail(CouponBatchDetail couponBatchDetail) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
         Date date = new Date();
@@ -298,7 +298,7 @@ public class CouponServiceImpl implements CouponService{
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> deleteCoupon(List<Coupon> list) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
         Date date = new Date();
@@ -393,7 +393,7 @@ public class CouponServiceImpl implements CouponService{
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> provideCoupon(CouponProvideParam couponProvideParam) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
         Date date = new Date();
@@ -441,7 +441,7 @@ public class CouponServiceImpl implements CouponService{
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, List<Coupon>> findCouponByCustomerNo(CustomerOrderCouponParam customerOrderCouponParam) {
         ServiceResult<String,List<Coupon>> serviceResult = new ServiceResult<>();
         if (customerOrderCouponParam.getCustomer() == null && customerOrderCouponParam.getCustomer().getCustomerNo() == null) {
@@ -731,7 +731,7 @@ public class CouponServiceImpl implements CouponService{
      * @param couponBatchDetailDO
      * @return
      */
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public void addCoupon(CouponBatchDetailDO couponBatchDetailDO) {
         Date date = new Date();
         List<CouponDO> list = new ArrayList<>();
