@@ -1836,7 +1836,7 @@ public class StatementServiceImpl implements StatementService {
     private void convertStatementOrderDetailOtherInfo(StatementOrderDetail statementOrderDetail, StatementOrderDetail returnReferStatementOrderDetail, OrderDO orderDO) {
         if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
 
-            orderDO = orderDO == null ? orderMapper.findByOrderId(statementOrderDetail.getOrderId()) : orderDO;
+            orderDO = orderDO == null ? orderMapper.findByOrderIdSimple(statementOrderDetail.getOrderId()) : orderDO;
             if (orderDO != null) {
                 statementOrderDetail.setOrderNo(orderDO.getOrderNo());
                 if (statementOrderDetail.getReletOrderItemReferId() == null) {
