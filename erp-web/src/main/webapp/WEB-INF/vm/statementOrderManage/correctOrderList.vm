@@ -113,8 +113,8 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{statementCorrectNo}}</td>
-                                <td>{{customerName}}</td>
+                                <td><a href="{{detailUrl}}" target="_blank">{{statementCorrectNo}}</a></td>
+                                <td><a href="{{customerUrl}}" target="_blank">{{customerName}}</a></td>
                                 <td>{{orderNo}}</td>
                                 <td>￥{{#price}}{{statementCorrectAmount}}{{/price}}</td>
                                 <td>{{statementCorrectReason}}</td>

@@ -274,9 +274,22 @@
     <select id="findById" resultMap="OrderDO" parameterType="java.lang.Integer">
         select
         <include refid="column_List"/>
-        from erp_order eo where id = #{id, jdbcType=INTEGER}
+        from erp_order eo where eo.id = #{id, jdbcType=INTEGER} and eo.data_status = 1
     </select>
-
+    <select id="findByOrderIdSimple" resultMap="OrderDO" parameterType="java.lang.Integer">
+        SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>
+        from erp_order eo
+        LEFT JOIN erp_order_product eop ON eo.id = eop.order_id and eop.data_status = 1
+        LEFT JOIN erp_order_material eom ON eo.id = eom.order_id and eom.data_status = 1
+        where eo.id = #{orderId, jdbcType=INTEGER} and  eo.data_status = 1
+    </select>
+    <select id="findByOrderNoSimple" resultMap="OrderDO" parameterType="java.lang.String">
+        SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>
+        from erp_order eo
+        LEFT JOIN erp_order_product eop ON eo.id = eop.order_id and eop.data_status = 1
+        LEFT JOIN erp_order_material eom ON eo.id = eom.order_id and eom.data_status = 1
+        where eo.order_no = #{orderNo, jdbcType=VARCHAR} and eo.data_status=1
+    </select>
     <select id="findByOrderParam" resultMap="OrderDO" parameterType="java.lang.Integer">
         select
         <include refid="column_List"/>
@@ -1132,6 +1145,7 @@
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
             </if>
+            <include refid="permission_sql.order_control"/>
         </where>
     </select>
 
@@ -1175,6 +1189,7 @@
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
             </if>
+            <include refid="permission_sql.order_control"/>
         </where>
         ORDER BY eo.create_time DESC
         LIMIT #{maps.start},#{maps.pageSize}

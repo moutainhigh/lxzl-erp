@@ -893,6 +893,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("orderForReturnQueryParam", param);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
         //如果查询的状态不是确认收货（20），部分退还（22）,不查询数据库直接返回空集合
         if (param.getOrderStatus()!=null
                 && !OrderStatus.ORDER_STATUS_CONFIRM.equals(param.getOrderStatus())
@@ -981,6 +982,12 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if (CollectionUtil.isNotEmpty(k3ReturnOrder.getK3ReturnOrderDetailList())) {
             Map<String, Order> orderCatch = new HashMap<String, Order>();
             for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
+                //添加退货商品数量不能小于零的校验
+                if (k3ReturnOrderDetail.getProductCount()<= 0) {
+                    result.setErrorCode(ErrorCode.RETURN_COUNT_ERROR);
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    return result;
+                }
                 if (!orderCatch.containsKey(k3ReturnOrderDetail.getOrderNo())) {
                     // 改成从erp里查询订单
                     OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());

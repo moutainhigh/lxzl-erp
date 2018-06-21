@@ -23,6 +23,11 @@ public class PaymentSystemConfig {
     public static String paymentSystemQueryPayResultURL;
     public static String paymentSystemQueryCustomerAccountLogPageURL;
     public static String paymentSystemReturnDepositExpandURL;
+    public static String paymentSystemPublicTransferPlusChargeURL;
+
+    public static void setPaymentSystemPublicTransferPlusChargeURL(String paymentSystemPublicTransferPlusChargeURL) {
+        PaymentSystemConfig.paymentSystemPublicTransferPlusChargeURL = paymentSystemPublicTransferPlusChargeURL;
+    }
 
     public void setPaymentSystemManualChargeURL(String paymentSystemManualChargeURL) {
         PaymentSystemConfig.paymentSystemManualChargeURL = paymentSystemManualChargeURL;

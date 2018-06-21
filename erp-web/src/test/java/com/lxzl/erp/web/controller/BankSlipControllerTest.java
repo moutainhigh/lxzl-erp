@@ -132,7 +132,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void verifyBankSlipDetail() throws Exception {
         BankSlip bankSlip = new BankSlip();
-        bankSlip.setBankSlipId(18);
+        bankSlip.setBankSlipId(4);
         TestResult result = getJsonTestResult("/bankSlip/confirmBankSlip", bankSlip);
     }
 
@@ -140,7 +140,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     public void claimBankSlipDetail() throws Exception {
 
         BankSlipClaim bankSlipClaim = new BankSlipClaim();
-        bankSlipClaim.setBankSlipDetailId(1574);
+        bankSlipClaim.setBankSlipDetailId(51);
 //        ArrayList<ClaimParam> list = new ArrayList<>();
 //        ClaimParam claimParam =  new ClaimParam();
 //        claimParam.setClaimAmount(new BigDecimal("133"));

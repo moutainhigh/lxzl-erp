@@ -890,3 +890,21 @@ CREATE TABLE `erp_dynamic_sql` (
 	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='动态sql表';
+
+DROP TABLE if exists `erp_k3_statement_date_change`;
+CREATE TABLE `erp_k3_statement_date_change` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_no` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '订单编号',
+  `statement_date_change_time` datetime DEFAULT NULL COMMENT '结算类型分隔时间',
+  `before_statement_date` int(20) DEFAULT NULL COMMENT '修改前结算时间（天），-1,20和31三种情况，如果为空取系统设定',
+  `after_statement_date` int(20) DEFAULT NULL COMMENT '修改后结算时间（天），-1,20和31三种情况，如果为空取系统设定',
+  `change_type` INT(11) NOT NULL DEFAULT '0' COMMENT '改变方式，0当月1下月',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+	`remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+	`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+	`create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+	`update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  INDEX index_order_no ( `order_no` )
+) ENGINE=InnoDB AUTO_INCREMENT=500001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单结算日修改记录表';
