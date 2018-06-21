@@ -4,9 +4,7 @@
     <title>凌雄ERP-采购管理-采购单列表</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
-##    <script type="text/javascript">
-##        common_load_css('${staticCommon}/rental/css','dropzone.css');
-##    </script>
+    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/viewer/viewer.min.css">
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
@@ -137,6 +135,7 @@
         #parse("layout/sidebarRight.vm")
     </div>
     #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'manage.purchase.handle.mixin.js',
