@@ -95,6 +95,8 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
     @Test
     public void pageStatementOrderCorrect() throws Exception {
         StatementOrderCorrectQueryParam statementOrderCorrectQueryParam = new StatementOrderCorrectQueryParam();
+//        statementOrderCorrectQueryParam.setCustomerName("上海斯歌");
+//        statementOrderCorrectQueryParam.setOrderNo("LXO-20180315-010-01203");
 //        statementOrderCorrectQueryParam.setStatementCorrectNo("LXSOC-3864-20180606-00003");
 //        statementOrderCorrectQueryParam.setStatementOrderDetailId(79);
 //        statementOrderCorrectQueryParam.setStatementOrderId(22);
@@ -104,6 +106,8 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
 //        statementOrderCorrectQueryParam.setCreateStartTime(calendar.getTime());
 //        calendar.set(2018, 02, 23);
 //        statementOrderCorrectQueryParam.setCreateEndTime(calendar.getTime());
+        statementOrderCorrectQueryParam.setReturnOrderNo("LXK3RO");
+        statementOrderCorrectQueryParam.setSubCompanyId(8);
         TestResult testResult = getJsonTestResult("/correct/page", statementOrderCorrectQueryParam);
     }
 

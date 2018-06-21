@@ -347,18 +347,6 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderCorrectAndStatementOrderByQueryParam(maps);
         List<StatementOrderCorrect> statementOrderCorrectList = ConverterUtil.convertList(statementOrderCorrectDOList, StatementOrderCorrect.class);
         for (StatementOrderCorrect statementOrderCorrect : statementOrderCorrectList) {
-            Integer statementOrderId = statementOrderCorrect.getStatementOrderId();
-            StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderId);
-            if (statementOrderDO == null) {
-                serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
-                return serviceResult;
-            }
-            //结算单编号
-            statementOrderCorrect.setStatementOrderNo(statementOrderDO.getStatementOrderNo());
-            //客户名称
-            statementOrderCorrect.setCustomerName(statementOrderDO.getCustomerName());
-            //客户编号
-            statementOrderCorrect.setCustomerNo(statementOrderDO.getCustomerNo());
 
             List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, statementOrderCorrect.getStatementOrderReferId());
             if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
@@ -367,6 +355,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                 if (orderDO != null) {
                     //订单编号
                     statementOrderCorrect.setOrderNo(orderDO.getOrderNo());
+                    statementOrderCorrect.setStatementOrderCorrectType(StatementOrderCorrectType.STATEMENT_ORDER_CORRECT_ORDER);
                 }
             } else {
                 statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_RETURN, statementOrderCorrect.getStatementOrderReferId());
@@ -376,6 +365,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                     if (k3ReturnOrderDO != null) {
                         //订单编号
                         statementOrderCorrect.setOrderNo(k3ReturnOrderDO.getReturnOrderNo());
+                        statementOrderCorrect.setStatementOrderCorrectType(StatementOrderCorrectType.STATEMENT_ORDER_CORRECT_RETURN);
                     }
                 }
             }

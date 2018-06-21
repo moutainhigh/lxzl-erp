@@ -1135,14 +1135,14 @@ public class PageController extends BaseController {
         return "/component/address/inputAddressModal";
     }
 
-    //输入地址
+    //添加备注
     @RequestMapping("/common-modal/remark")
     public String commonModalRemark() {
         return "/component/common/remarkModal";
     }
 
 
-    //输入地址
+    //查看工作流
     @RequestMapping("/view-work-flow/modal")
     public String viewWorkFlowModal() {
         return "/component/workFlow/viewWorkFlow";

@@ -23,6 +23,7 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private Date createStartTime;
     private Date createEndTime;
     private Integer orderSellerId;
+    private String orderSellerName;                             // 业务员姓名
     private Date startRentStratTime;
     private Date endRentStratTime;
 
@@ -135,6 +136,14 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setOrderSellerId(Integer orderSellerId) {
         this.orderSellerId = orderSellerId;
+    }
+
+    public String getOrderSellerName() {
+        return orderSellerName;
+    }
+
+    public void setOrderSellerName(String orderSellerName) {
+        this.orderSellerName = orderSellerName;
     }
 
     public List<Integer> getPassiveUserIdList() {

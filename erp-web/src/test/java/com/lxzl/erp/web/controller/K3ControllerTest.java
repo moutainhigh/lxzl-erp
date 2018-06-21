@@ -103,7 +103,7 @@ public class K3ControllerTest extends ERPTransactionalTest {
         }
         k3ReturnOrderDetail1.setProductNo(number);
         k3ReturnOrderDetail1.setProductName(product.getProductName());
-        k3ReturnOrderDetail1.setProductCount(0);
+        k3ReturnOrderDetail1.setProductCount(-1);
 
 //        K3ReturnOrderDetail k3ReturnOrderDetail2 = new K3ReturnOrderDetail();
 //        k3ReturnOrderDetail2.setOrderNo("LXO-20180315-020-01207");
@@ -260,6 +260,15 @@ public class K3ControllerTest extends ERPTransactionalTest {
         k3ReturnOrderDetail2.setRemark("备注测试");
         k3ReturnOrderDetailList.add(k3ReturnOrderDetail2);
         k3ReturnOrder.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
+
+        TestResult testResult = getJsonTestResult("/k3/addReturnOrder", k3ReturnOrder);
+    }
+    @Test
+    public void addReturnOrderJSON() throws Exception {
+        String str = "{\"returnOrderNo\":\"LXK3RO20180621102853325\",\"k3ReturnOrderDetailList\":[{\"orderNo\":\"LXO-20180620-027-00116\",\"orderEntry\":3523,\"productNo\":\"10.TPC.AP.IPADPRO-64G\",\"productName\":\"苹果IPADPRO-64G\",\"productCount\":\"-1\",\"k3CustomerNo\":\"LXCC-027-20180620-00126\",\"k3CustomerName\":\"分直结算二号\",\"orderItemId\":3523,\"productId\":2000577,\"rentType\":2,\"rentLengthType\":2,\"rentTimeLength\":12,\"remark\":\"\",\"skuStr\":\"双核 | 64G | 银色 | 12.9\"}]}";
+
+        K3ReturnOrder k3ReturnOrder = JSON.parseObject(str, K3ReturnOrder.class);
+
 
         TestResult testResult = getJsonTestResult("/k3/addReturnOrder", k3ReturnOrder);
     }
@@ -527,12 +536,13 @@ public class K3ControllerTest extends ERPTransactionalTest {
     @Test
     public void queryOrderForReturn() throws Exception {
         OrderForReturnQueryParam param = new OrderForReturnQueryParam();
-        param.setCustomerNo("LXCC-027-20180305-00198");
-        param.setCreateStartTime(new SimpleDateFormat("yyyy-MM-dd").parse("2001-03-01"));
-        param.setCreateEndTime(new SimpleDateFormat("yyyy-MM-dd").parse("2018-06-22"));
+//        param.setCustomerNo("LXCC-027-20180305-00198");
+//        param.setCreateStartTime(new SimpleDateFormat("yyyy-MM-dd").parse("2001-03-01"));
+//        param.setCreateEndTime(new SimpleDateFormat("yyyy-MM-dd").parse("2018-06-22"));
 //        param.setOrderStatus(20);
 //        param.setOrderStatus(16);
-//        param.setCustomerNo("LXCC-0755-20180112-00048");
+//        param.setCustomerNo("LXO-20180613-027-00096");
+        param.setOrderNo("LXO-20180613-027-00096");
         TestResult testResult = getJsonTestResult("/k3/queryOrderForReturn", param);
     }
     @Test
@@ -571,7 +581,7 @@ public class K3ControllerTest extends ERPTransactionalTest {
         k3ReturnOrderDetail1.setOrderEntry("2828");
         k3ReturnOrderDetail1.setProductNo("10.TPC.AP.IPADPRO-64G");
         k3ReturnOrderDetail1.setProductName("苹果IPADPRO-64G");
-        k3ReturnOrderDetail1.setProductCount(1);
+        k3ReturnOrderDetail1.setProductCount(-1);
 
 
 //        ProductDO product = productMapper.findById(2000435);

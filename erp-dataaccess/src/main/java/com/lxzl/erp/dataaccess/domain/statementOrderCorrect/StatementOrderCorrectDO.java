@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 import java.math.BigDecimal;
 
@@ -31,6 +33,46 @@ public class StatementOrderCorrectDO  extends BaseDO {
 	private String statementOrderNo;  //结算单编号
 	private String productName;  //商品名称
 	private String productNo;  //商品编号
+	@Transient
+	private Integer subCompanyId;// 分公司ID
+	@Transient
+	private String customerName;  //客户名称
+	@Transient
+	private String subCompanyName; //所属分公司名称
+	@Transient
+	private String customerNo; //客户编号
+
+	public String getCustomerNo() {
+		return customerNo;
+	}
+
+	public void setCustomerNo(String customerNo) {
+		this.customerNo = customerNo;
+	}
+
+	public Integer getSubCompanyId() {
+		return subCompanyId;
+	}
+
+	public void setSubCompanyId(Integer subCompanyId) {
+		this.subCompanyId = subCompanyId;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public String getSubCompanyName() {
+		return subCompanyName;
+	}
+
+	public void setSubCompanyName(String subCompanyName) {
+		this.subCompanyName = subCompanyName;
+	}
 
 	public String getStatementOrderNo() {
 		return statementOrderNo;

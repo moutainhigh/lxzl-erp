@@ -195,6 +195,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     }
 
     @Override
+    @Transactional(readOnly = false,isolation = Isolation.REPEATABLE_READ,propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addReturnOrder(K3ReturnOrder k3ReturnOrder) {
 
         ServiceResult<String, String> result = new ServiceResult<>();
@@ -232,6 +233,12 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             return result;
         }
         for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
+            //添加退货商品数量不能小于零的校验
+            if (k3ReturnOrderDetail.getProductCount()<= 0) {
+                result.setErrorCode(ErrorCode.RETURN_COUNT_ERROR);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return result;
+            }
             K3ReturnOrderDetailDO k3ReturnOrderDetailDO = ConverterUtil.convert(k3ReturnOrderDetail, K3ReturnOrderDetailDO.class);
             k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
             k3ReturnOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -893,6 +900,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("orderForReturnQueryParam", param);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
         //如果查询的状态不是确认收货（20），部分退还（22）,不查询数据库直接返回空集合
         if (param.getOrderStatus()!=null
                 && !OrderStatus.ORDER_STATUS_CONFIRM.equals(param.getOrderStatus())
@@ -981,6 +989,12 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if (CollectionUtil.isNotEmpty(k3ReturnOrder.getK3ReturnOrderDetailList())) {
             Map<String, Order> orderCatch = new HashMap<String, Order>();
             for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
+                //添加退货商品数量不能小于零的校验
+                if (k3ReturnOrderDetail.getProductCount()<= 0) {
+                    result.setErrorCode(ErrorCode.RETURN_COUNT_ERROR);
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    return result;
+                }
                 if (!orderCatch.containsKey(k3ReturnOrderDetail.getOrderNo())) {
                     // 改成从erp里查询订单
                     OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
@@ -1094,25 +1108,25 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
         List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
-        Map<Integer, String> FNumberMap = new HashMap<>();
+        Map<Integer, String> fNumberMap = new HashMap<>();
         //不是K3老订单才设置商品行号和编码，如果是则不进行设置
         if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
             //设置商品项行号及商品编码
             setProductNumberAndFEntryId(orderDO, orderProductDOList);
             //设置配件项行号，获取对应配件项的商品编码
-            FNumberMap = setMaterialFEntryIdAndNumber(orderDO, orderMaterialDOList);
-        }else if(CollectionUtil.isNotEmpty(orderProductDOList)){
+            fNumberMap = setMaterialFEntryIdAndNumber(orderDO, orderMaterialDOList);
+        }else if(CollectionUtil.isNotEmpty(orderMaterialDOList)){
             for (OrderMaterialDO orderMaterialDO:orderMaterialDOList) {
-                FNumberMap.put(orderMaterialDO.getFEntryID(),orderMaterialDO.getProductNumber());
+                fNumberMap.put(orderMaterialDO.getFEntryID(),orderMaterialDO.getProductNumber());
             }
         }
 
         Order order = ConverterUtil.convert(orderDO, Order.class);
         List<OrderMaterial> orderMaterialList = order.getOrderMaterialList();
         //设置配件项商品编码
-        if (!FNumberMap.isEmpty()) {
+        if (!fNumberMap.isEmpty()) {
             for (OrderMaterial orderMaterial:orderMaterialList) {
-                orderMaterial.setFNumber(FNumberMap.get(orderMaterial.getFEntryID()));
+                orderMaterial.setFNumber(fNumberMap.get(orderMaterial.getFEntryID()));
             }
         }
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -1133,7 +1147,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         Map<Integer,MaterialDO> materialDOMap = new HashMap<>();
         Map<Integer,K3MappingMaterialTypeDO> k3MappingMaterialTypeMap = new HashMap<>();
         Map<Integer,K3MappingBrandDO> materialk3MappingBrandDOMap = new HashMap<>();
-        Map<Integer,String> FNumberMap = new HashMap<>();
+        Map<Integer,String> fNumberMap = new HashMap<>();
         if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
             for (OrderMaterialDO orderMaterialDO:orderMaterialDOList) {
                 materialIdSet.add(orderMaterialDO.getMaterialId());
@@ -1176,11 +1190,11 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     } else {
                         number = "20." + k3MappingMaterialTypeDO.getK3MaterialTypeCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + materialDO.getMaterialModel();
                     }
-                    FNumberMap.put(orderMaterialDO.getFEntryID(),number);
+                    fNumberMap.put(orderMaterialDO.getFEntryID(),number);
                 }
             }
         }
-        return FNumberMap;
+        return fNumberMap;
     }
 
     /**

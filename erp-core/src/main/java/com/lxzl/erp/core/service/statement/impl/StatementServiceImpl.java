@@ -265,7 +265,9 @@ public class StatementServiceImpl implements StatementService {
             orderDO.setRentTimeLength(beforeLength);
             orderDO.setStatementDate(k3StatementDateChangeDO.getBeforeStatementDate());
             List<StatementOrderDetailDO> beforeStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, beforeStatementDays, loginUserId,percent);
-            for (StatementOrderDetailDO statementOrderDetailDO:beforeStatementOrderDetailDOList)if(statementOrderDetailDO.getStatementDetailPhase().equals(beforeLength))statementOrderDetailDO.setStatementEndTime(DateUtil.getDayByOffset(statementDateChangeTime,-1));
+            //补全最后一期结算时间
+            List<StatementOrderDetailDO> lastPhaseList = getLastPhaseStatementOrderDetailDOS(beforeStatementOrderDetailDOList);
+            for (StatementOrderDetailDO statementOrderDetailDO:lastPhaseList) statementOrderDetailDO.setStatementEndTime(DateUtil.getDayByOffset(statementDateChangeTime,-1));
 
             orderDO.setRentStartTime(statementDateChangeTime);
             orderDO.setExpectReturnTime(expectReturnTime);
@@ -273,7 +275,8 @@ public class StatementServiceImpl implements StatementService {
             orderDO.setRentTimeLength(rentLenth-beforeLength);
 
             List<StatementOrderDetailDO> afterStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, afterStatementDays, loginUserId,CommonConstant.PROPORTION_MAX-percent);
-            for(StatementOrderDetailDO statementOrderDetailDO:afterStatementOrderDetailDOList)if(statementOrderDetailDO.getStatementDetailPhase().equals(orderDO.getRentTimeLength()))statementOrderDetailDO.setStatementEndTime(expectReturnTime);
+            lastPhaseList = getLastPhaseStatementOrderDetailDOS(afterStatementOrderDetailDOList);
+            for(StatementOrderDetailDO statementOrderDetailDO:lastPhaseList)statementOrderDetailDO.setStatementEndTime(expectReturnTime);
 
             //过滤第二部分重算的押金
             if(CollectionUtil.isNotEmpty(beforeStatementOrderDetailDOList))addStatementOrderDetailDOList.addAll(beforeStatementOrderDetailDOList);
@@ -294,6 +297,21 @@ public class StatementServiceImpl implements StatementService {
         return addStatementOrderDetailDOList;
     }
 
+    private List<StatementOrderDetailDO> getLastPhaseStatementOrderDetailDOS(List<StatementOrderDetailDO> beforeStatementOrderDetailDOList) {
+        List<StatementOrderDetailDO> lastPhaseList=new ArrayList<>();
+        Integer maxPhase=1;
+        for (StatementOrderDetailDO statementOrderDetailDO:beforeStatementOrderDetailDOList){
+
+            if(statementOrderDetailDO.getStatementDetailPhase().equals(maxPhase))lastPhaseList.add(statementOrderDetailDO);
+            else if(statementOrderDetailDO.getStatementDetailPhase()>maxPhase){
+                lastPhaseList.clear();
+                lastPhaseList.add(statementOrderDetailDO);
+            }
+
+        }
+        return lastPhaseList;
+    }
+
     private double getOrderPercent(Integer rentTimeLength,Integer rentType, Date rentStartTime, K3StatementDateChangeDO k3StatementDateChangeDO, Date expectReturnTime, Date statementDateChangeTime) {
         if(rentType.equals(OrderRentType.RENT_TYPE_DAY)){
             return DateUtil.daysBetween(rentStartTime,statementDateChangeTime)/(double)DateUtil.daysBetween(rentStartTime,expectReturnTime)* CommonConstant.PROPORTION_MAX;
@@ -303,7 +321,7 @@ public class StatementServiceImpl implements StatementService {
             if(k3StatementDateChangeDO.getBeforeStatementDate()== StatementMode.STATEMENT_MONTH_END){
                 Date nextStartTime=rentStartTime;
 
-                while (nextStartTime.compareTo(statementDateChangeTime)<0){
+                while (DateUtil.daysBetween(nextStartTime,statementDateChangeTime)>0){
                     Calendar endCalandar=Calendar.getInstance();
                     endCalandar.setTime(nextStartTime);
                     endCalandar.set(Calendar.DAY_OF_MONTH,endCalandar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -315,12 +333,12 @@ public class StatementServiceImpl implements StatementService {
                         phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/(double)endCalandar.getActualMaximum(Calendar.DAY_OF_MONTH);
                     }else phaseCout+=1;
 
-                    nextStartTime=DateUtil.getDayByOffset(endTime,1);
+                    nextStartTime=endTime;
                 }
             }
             else if(k3StatementDateChangeDO.getBeforeStatementDate()==StatementMode.STATEMENT_20){
                 Date nextStartTime=rentStartTime;
-                while (nextStartTime.compareTo(statementDateChangeTime)<0){
+                while (DateUtil.daysBetween(nextStartTime,statementDateChangeTime)>0){
                     Calendar endCalandar=Calendar.getInstance();
                     endCalandar.setTime(nextStartTime);
                     endCalandar.set(Calendar.DAY_OF_MONTH,StatementMode.STATEMENT_20);
@@ -337,7 +355,7 @@ public class StatementServiceImpl implements StatementService {
                         phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/(double)DateUtil.daysBetween(beforeEndTime,endTime);
                     }else phaseCout+=1;
 
-                    nextStartTime=DateUtil.getDayByOffset(endTime,1);
+                    nextStartTime=endTime;
                 }
             }
             else if(k3StatementDateChangeDO.getBeforeStatementDate()==StatementMode.STATEMENT_MONTH_NATURAL){
@@ -345,7 +363,7 @@ public class StatementServiceImpl implements StatementService {
                 rentStartCalendar.setTime(rentStartTime);
                 int actualStatementDate=rentStartCalendar.get(Calendar.DAY_OF_MONTH);
                 Date nextStartTime=rentStartTime;
-                while (nextStartTime.compareTo(statementDateChangeTime)<0){
+                while (DateUtil.daysBetween(nextStartTime,statementDateChangeTime)>0){
                     Calendar endCalandar=Calendar.getInstance();
                     endCalandar.setTime(nextStartTime);
                     endCalandar.set(Calendar.DAY_OF_MONTH,actualStatementDate);
@@ -361,7 +379,7 @@ public class StatementServiceImpl implements StatementService {
                         if(endTime.compareTo(statementDateChangeTime)>0)endTime=statementDateChangeTime;
                         phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/(double)DateUtil.daysBetween(beforeEndTime,endTime);
                     }else phaseCout+=1;
-                    nextStartTime=DateUtil.getDayByOffset(endTime,1);
+                    nextStartTime=endTime;
                 }
             }
             return phaseCout/rentTimeLength* CommonConstant.PROPORTION_MAX;
@@ -427,9 +445,10 @@ public class StatementServiceImpl implements StatementService {
         if(k3StatementDateChangeDO.getChangeType().equals(CommonConstant.COMMON_ONE)){
             calendar.add(Calendar.MONTH,1);
         }
-        if(k3StatementDateChangeDO.getBeforeStatementDate()== StatementMode.STATEMENT_MONTH_END) calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH)-1);
+        if(k3StatementDateChangeDO.getBeforeStatementDate()== StatementMode.STATEMENT_MONTH_END)
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
         else if(k3StatementDateChangeDO.getBeforeStatementDate()==StatementMode.STATEMENT_20){
-            calendar.set(Calendar.DAY_OF_MONTH, StatementMode.STATEMENT_20-1);
+            calendar.set(Calendar.DAY_OF_MONTH, StatementMode.STATEMENT_20);
         }
         else if(k3StatementDateChangeDO.getBeforeStatementDate()==StatementMode.STATEMENT_MONTH_NATURAL){
             Calendar startRentC=Calendar.getInstance();
@@ -564,6 +583,7 @@ public class StatementServiceImpl implements StatementService {
             }
             orderDO.setStatementDate(statementDate);
             orderMapper.update(orderDO);
+            statementOrderSupport.recordStatementDateLog(orderNo,statementDate);
         }
         //有退货单不允许重算
 //        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
@@ -610,6 +630,7 @@ public class StatementServiceImpl implements StatementService {
         reStatementReturnOrderItems(k3ReturnOrderDetailDOList,true);
 
         //修正结算单时间范围
+
 
 
         //更新订单首次需支付金额
