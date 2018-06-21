@@ -347,18 +347,6 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderCorrectAndStatementOrderByQueryParam(maps);
         List<StatementOrderCorrect> statementOrderCorrectList = ConverterUtil.convertList(statementOrderCorrectDOList, StatementOrderCorrect.class);
         for (StatementOrderCorrect statementOrderCorrect : statementOrderCorrectList) {
-            Integer statementOrderId = statementOrderCorrect.getStatementOrderId();
-            StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderId);
-            if (statementOrderDO == null) {
-                serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
-                return serviceResult;
-            }
-            //结算单编号
-            statementOrderCorrect.setStatementOrderNo(statementOrderDO.getStatementOrderNo());
-            //客户名称
-            statementOrderCorrect.setCustomerName(statementOrderDO.getCustomerName());
-            //客户编号
-            statementOrderCorrect.setCustomerNo(statementOrderDO.getCustomerNo());
 
             List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, statementOrderCorrect.getStatementOrderReferId());
             if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {

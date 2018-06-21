@@ -53,9 +53,25 @@ public class StatementOrderCorrect extends BasePO {
 	private List<String> productName;  //商品名称
 	private List<String> materialName;  //物料名称
 	private String orderNo;  //订单编号
+	private Integer subCompanyId;// 分公司ID
 	private String customerName;  //客户名称
+	private String subCompanyName; //所属分公司名称
+	private String customerNo; //客户编号
+	public Integer getSubCompanyId() {
+		return subCompanyId;
+	}
 
-	private String customerNo;
+	public void setSubCompanyId(Integer subCompanyId) {
+		this.subCompanyId = subCompanyId;
+	}
+
+	public String getSubCompanyName() {
+		return subCompanyName;
+	}
+
+	public void setSubCompanyName(String subCompanyName) {
+		this.subCompanyName = subCompanyName;
+	}
 
 	public String getCustomerName() {
 		return customerName;

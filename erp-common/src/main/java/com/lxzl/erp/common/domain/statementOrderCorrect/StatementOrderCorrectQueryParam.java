@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.statementOrderCorrect;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePageParam;
+import com.lxzl.erp.common.util.validate.constraints.In;
 
 import java.util.Date;
 
@@ -19,6 +20,42 @@ public class StatementOrderCorrectQueryParam extends BasePageParam {
     private Integer statementOrderDetailId;   //结算单项ID
     private Date createStartTime;
     private Date createEndTime;
+    private Integer subCompanyId; //分公司ID
+    private String orderNo; //订单编号
+    private String customerName; //客户名称
+    private String returnOrderNo; //退货单编号
+
+    public String getReturnOrderNo() {
+        return returnOrderNo;
+    }
+
+    public void setReturnOrderNo(String returnOrderNo) {
+        this.returnOrderNo = returnOrderNo;
+    }
+
+    public Integer getSubCompanyId() {
+        return subCompanyId;
+    }
+
+    public void setSubCompanyId(Integer subCompanyId) {
+        this.subCompanyId = subCompanyId;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
 
     public String getStatementCorrectNo() {
         return statementCorrectNo;
