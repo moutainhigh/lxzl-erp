@@ -286,6 +286,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             if (orderDO != null) {
                 //订单编号
                 statementOrderCorrect.setOrderNo(orderDO.getOrderNo());
+                statementOrderCorrect.setStatementOrderCorrectType(StatementOrderCorrectType.STATEMENT_ORDER_CORRECT_ORDER);
                 //商品名称
                 List<OrderProductDO> orderProductDOList = orderProductMapper.findByOrderId(orderDO.getId());
                 List<String> productNameList = new ArrayList<>();
@@ -314,6 +315,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                 if (k3ReturnOrderDO != null) {
                     //订单编号
                     statementOrderCorrect.setOrderNo(k3ReturnOrderDO.getReturnOrderNo());
+                    statementOrderCorrect.setStatementOrderCorrectType(StatementOrderCorrectType.STATEMENT_ORDER_CORRECT_RETURN);
                 }
             }
         }
