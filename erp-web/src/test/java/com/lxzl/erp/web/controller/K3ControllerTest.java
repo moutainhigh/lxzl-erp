@@ -103,7 +103,7 @@ public class K3ControllerTest extends ERPTransactionalTest {
         }
         k3ReturnOrderDetail1.setProductNo(number);
         k3ReturnOrderDetail1.setProductName(product.getProductName());
-        k3ReturnOrderDetail1.setProductCount(0);
+        k3ReturnOrderDetail1.setProductCount(-1);
 
 //        K3ReturnOrderDetail k3ReturnOrderDetail2 = new K3ReturnOrderDetail();
 //        k3ReturnOrderDetail2.setOrderNo("LXO-20180315-020-01207");
@@ -527,12 +527,13 @@ public class K3ControllerTest extends ERPTransactionalTest {
     @Test
     public void queryOrderForReturn() throws Exception {
         OrderForReturnQueryParam param = new OrderForReturnQueryParam();
-        param.setCustomerNo("LXCC-027-20180305-00198");
-        param.setCreateStartTime(new SimpleDateFormat("yyyy-MM-dd").parse("2001-03-01"));
-        param.setCreateEndTime(new SimpleDateFormat("yyyy-MM-dd").parse("2018-06-22"));
+//        param.setCustomerNo("LXCC-027-20180305-00198");
+//        param.setCreateStartTime(new SimpleDateFormat("yyyy-MM-dd").parse("2001-03-01"));
+//        param.setCreateEndTime(new SimpleDateFormat("yyyy-MM-dd").parse("2018-06-22"));
 //        param.setOrderStatus(20);
 //        param.setOrderStatus(16);
-//        param.setCustomerNo("LXCC-0755-20180112-00048");
+//        param.setCustomerNo("LXO-20180613-027-00096");
+        param.setOrderNo("LXO-20180613-027-00096");
         TestResult testResult = getJsonTestResult("/k3/queryOrderForReturn", param);
     }
     @Test
@@ -571,7 +572,7 @@ public class K3ControllerTest extends ERPTransactionalTest {
         k3ReturnOrderDetail1.setOrderEntry("2828");
         k3ReturnOrderDetail1.setProductNo("10.TPC.AP.IPADPRO-64G");
         k3ReturnOrderDetail1.setProductName("苹果IPADPRO-64G");
-        k3ReturnOrderDetail1.setProductCount(1);
+        k3ReturnOrderDetail1.setProductCount(-1);
 
 
 //        ProductDO product = productMapper.findById(2000435);
