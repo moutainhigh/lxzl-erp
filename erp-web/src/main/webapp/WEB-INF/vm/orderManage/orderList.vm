@@ -3,9 +3,8 @@
 <head>
     <title>凌雄ERP-订单管理-订单列表</title>
     #parse("layout/header.vm")
-##    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-##    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/viewer/viewer.min.css">
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
@@ -246,6 +245,7 @@
         #parse("layout/sidebarRight.vm")
     </div>
     #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'manage.order.handle.mixin.js',
