@@ -88,14 +88,14 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
     @Test
     public void queryStatementOrderCorrectDetailByNo() throws Exception {
         StatementOrderCorrect statementOrderCorrect = new StatementOrderCorrect();
-        statementOrderCorrect.setStatementCorrectNo("LXSOC-1432-20180303-00003");
+        statementOrderCorrect.setStatementCorrectNo("LXSOC-3154-20180606-00006");
         TestResult testResult = getJsonTestResult("/correct/query", statementOrderCorrect);
     }
 
     @Test
     public void pageStatementOrderCorrect() throws Exception {
         StatementOrderCorrectQueryParam statementOrderCorrectQueryParam = new StatementOrderCorrectQueryParam();
-        statementOrderCorrectQueryParam.setStatementCorrectNo("LXSOC-24-20180223-00007");
+//        statementOrderCorrectQueryParam.setStatementCorrectNo("LXSOC-3864-20180606-00003");
 //        statementOrderCorrectQueryParam.setStatementOrderDetailId(79);
 //        statementOrderCorrectQueryParam.setStatementOrderId(22);
 //        statementOrderCorrectQueryParam.setStatementOrderCorrectStatus(0);

@@ -115,6 +115,9 @@
 			<trim prefix=",">
 				ec.customer_name AS customer_name
 			</trim>
+			<trim prefix=",">
+				ec.customer_no AS customer_no
+			</trim>
 			FROM erp_statement_order eso
             INNER JOIN erp_customer ec ON eso.customer_id = ec.id
 			WHERE eso.id = #{id, jdbcType=INTEGER} AND eso.data_status = 1
@@ -218,6 +221,9 @@
 			SELECT <include refid="column_List"/>
 			<trim prefix=",">
 				ec.customer_name AS customer_name
+			</trim>
+			<trim prefix=",">
+				ec.customer_no AS customer_no
 			</trim>
 			FROM erp_statement_order eso
 			INNER JOIN erp_customer ec on eso.customer_id = ec.id
@@ -337,6 +343,9 @@
 		SELECT <include refid="column_List"/>
 		<trim prefix=",">
 			ec.customer_name AS customer_name
+		</trim>
+		<trim prefix=",">
+			ec.customer_no AS customer_no
 		</trim>
 		<trim prefix=",">
 			owner_user.real_name AS ownerName

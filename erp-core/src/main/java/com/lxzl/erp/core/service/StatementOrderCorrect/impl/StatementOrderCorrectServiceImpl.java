@@ -280,6 +280,8 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         StatementOrderCorrect statementOrderCorrect = ConverterUtil.convert(statementOrderCorrectDO, StatementOrderCorrect.class);
         //客户名称
         statementOrderCorrect.setCustomerName(statementOrderDO.getCustomerName());
+        //客户编号
+        statementOrderCorrect.setCustomerNo(statementOrderDO.getCustomerNo());
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, statementOrderCorrect.getStatementOrderReferId());
         if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
             OrderDO orderDO = orderMapper.findById(statementOrderReferId);
@@ -357,6 +359,8 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             statementOrderCorrect.setStatementOrderNo(statementOrderDO.getStatementOrderNo());
             //客户名称
             statementOrderCorrect.setCustomerName(statementOrderDO.getCustomerName());
+            //客户编号
+            statementOrderCorrect.setCustomerNo(statementOrderDO.getCustomerNo());
 
             List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, statementOrderCorrect.getStatementOrderReferId());
             if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
