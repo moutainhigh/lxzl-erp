@@ -1108,25 +1108,25 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
         List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
-        Map<Integer, String> FNumberMap = new HashMap<>();
+        Map<Integer, String> fNumberMap = new HashMap<>();
         //不是K3老订单才设置商品行号和编码，如果是则不进行设置
         if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
             //设置商品项行号及商品编码
             setProductNumberAndFEntryId(orderDO, orderProductDOList);
             //设置配件项行号，获取对应配件项的商品编码
-            FNumberMap = setMaterialFEntryIdAndNumber(orderDO, orderMaterialDOList);
-        }else if(CollectionUtil.isNotEmpty(orderProductDOList)){
+            fNumberMap = setMaterialFEntryIdAndNumber(orderDO, orderMaterialDOList);
+        }else if(CollectionUtil.isNotEmpty(orderMaterialDOList)){
             for (OrderMaterialDO orderMaterialDO:orderMaterialDOList) {
-                FNumberMap.put(orderMaterialDO.getFEntryID(),orderMaterialDO.getProductNumber());
+                fNumberMap.put(orderMaterialDO.getFEntryID(),orderMaterialDO.getProductNumber());
             }
         }
 
         Order order = ConverterUtil.convert(orderDO, Order.class);
         List<OrderMaterial> orderMaterialList = order.getOrderMaterialList();
         //设置配件项商品编码
-        if (!FNumberMap.isEmpty()) {
+        if (!fNumberMap.isEmpty()) {
             for (OrderMaterial orderMaterial:orderMaterialList) {
-                orderMaterial.setFNumber(FNumberMap.get(orderMaterial.getFEntryID()));
+                orderMaterial.setFNumber(fNumberMap.get(orderMaterial.getFEntryID()));
             }
         }
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -1147,7 +1147,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         Map<Integer,MaterialDO> materialDOMap = new HashMap<>();
         Map<Integer,K3MappingMaterialTypeDO> k3MappingMaterialTypeMap = new HashMap<>();
         Map<Integer,K3MappingBrandDO> materialk3MappingBrandDOMap = new HashMap<>();
-        Map<Integer,String> FNumberMap = new HashMap<>();
+        Map<Integer,String> fNumberMap = new HashMap<>();
         if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
             for (OrderMaterialDO orderMaterialDO:orderMaterialDOList) {
                 materialIdSet.add(orderMaterialDO.getMaterialId());
@@ -1190,11 +1190,11 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     } else {
                         number = "20." + k3MappingMaterialTypeDO.getK3MaterialTypeCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + materialDO.getMaterialModel();
                     }
-                    FNumberMap.put(orderMaterialDO.getFEntryID(),number);
+                    fNumberMap.put(orderMaterialDO.getFEntryID(),number);
                 }
             }
         }
-        return FNumberMap;
+        return fNumberMap;
     }
 
     /**
