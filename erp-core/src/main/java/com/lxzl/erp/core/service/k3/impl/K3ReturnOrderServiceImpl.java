@@ -288,6 +288,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             Date minDate = calendar.getTime();
             if (minDate.compareTo(newK3ReturnOrderDO.getReturnTime()) > 0) {
                 result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 return result;
             }
         }
@@ -1063,6 +1064,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             Date minDate = calendar.getTime();
             if (minDate.compareTo(k3ReturnOrder.getReturnTime()) > 0) {
                 result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 return result;
             }
         }
@@ -1132,6 +1134,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             Date minDate = calendar.getTime();
             if (minDate.compareTo(k3ReturnOrder.getReturnTime()) > 0) {
                 result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 return result;
             }
         }
