@@ -437,6 +437,7 @@ public class ErrorCode {
     public static final String ORDER_PRODUCR_AND_ORDER_MATERIAL = "J400158";
     public static final String RETURN_COUNT_MORE_THAN_RENTING_MATERIAL_COUNT = "J400159";
     public static final String RETURN_COUNT_MORE_THAN_RENTING_PRODUCT_COUNT = "J400160";
+    public static final String RETURN_ORDER_HAVE_THE_SAME_PRODUCT_OR_MATERIAL = "J400161";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -1558,6 +1559,7 @@ public class ErrorCode {
         MAP.put(ORDER_PRODUCR_AND_ORDER_MATERIAL, "退货单项找不到对应的商品项和配件项");
         MAP.put(RETURN_COUNT_MORE_THAN_RENTING_MATERIAL_COUNT, "所退配件超过该配件的再租数量");
         MAP.put(RETURN_COUNT_MORE_THAN_RENTING_PRODUCT_COUNT, "所退商品超过该商品的再租数量");
+        MAP.put(RETURN_ORDER_HAVE_THE_SAME_PRODUCT_OR_MATERIAL, "该退货单存在相同的商品或配件，不能重复添加");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
