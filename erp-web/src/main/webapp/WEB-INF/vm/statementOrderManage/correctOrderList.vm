@@ -120,7 +120,7 @@
                                 <td><a href="{{detailUrl}}" target="_blank">{{statementCorrectNo}}</a></td>
                                 <td><a href="{{customerUrl}}" target="_blank">{{customerName}}</a></td>
                                 <td>{{subCompanyName}}</td>
-                                <td>{{orderNo}}</td>
+                                <td><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></td>
                                 <td>￥{{#price}}{{statementCorrectAmount}}{{/price}}</td>
                                 <td>{{statementCorrectReason}}</td>
                                 <td class="{{statementOrderCorrectStatusClass}}">{{statementOrderCorrectStatusValue}}</td>
