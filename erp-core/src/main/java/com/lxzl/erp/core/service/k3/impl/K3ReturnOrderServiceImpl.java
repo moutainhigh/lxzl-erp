@@ -286,7 +286,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             Calendar calendar = Calendar.getInstance();
             calendar.set(2018, 2, 5, 0, 0, 0);
             Date minDate = calendar.getTime();
-            if (minDate.compareTo(k3ReturnOrder.getReturnTime()) > 0) {
+            if (minDate.compareTo(newK3ReturnOrderDO.getReturnTime()) > 0) {
                 result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
                 return result;
             }
