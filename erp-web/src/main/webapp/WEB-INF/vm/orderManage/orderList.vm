@@ -21,8 +21,8 @@
 
                 <div class="panel panel-primary panel-border top">
                     <div class="panel-menu p12">
-                        <div class="row">
-                            <div class="pull-left pl10">
+                        <div class="row" style="position:relative;">
+                            <div class="pull-left pl10" style="position:absolute; bottom: 0; left:0; z-index:99;">
                                 <script type="text/html" id="actionCommonButtonsTpl">
                                     <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
                                     {{#acitonCommonButtons}}
@@ -37,27 +37,30 @@
                             <div class="text-right pull-right pr10">
                                 <form id="searchForm" class="form-horizontal">
                                     <div class="row">
-                                        <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                        <div class="form-group pull-right mn mr10 mb10" style="width: 120px;">
                                             <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
                                         </div>
-                                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                        <div class="field form-group pull-right mn mr10 mb10" style="width: 120px;">
+                                            <input type="text" name="orderSellerName" id="orderSellerName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入业务员姓名">
+                                        </div>
+                                        <div class="field form-group pull-right mn mr10 mb10" style="width: 120px;">
                                             <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
                                         </div>
-                                        <div class="form-group pull-right mn mr10">
+                                        <div class="form-group pull-right mn mr10 mb10">
                                             <div class="input-group">
                                                 <select class="form-control input-sm bradius" name="isReturnOverDue" id="isReturnOverDue">
                                                     <option value="">请选择</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group pull-right mn mr10">
+                                        <div class="form-group pull-right mn mr10 mb10">
                                             <div class="input-group">
                                                 <select class="form-control input-sm bradius" name="payStatus" id="payStatus">
                                                     <option value="">请选择</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group pull-right mn mr10">
+                                        <div class="form-group pull-right mn mr10 mb10">
                                             <div class="topbar-right">
                                                 <div class="ib topbar-dropdown bradius">
                                                     <select id="orderStatusList" multiple="multiple" name="orderStatusList" data-type="optgroup">
@@ -68,28 +71,28 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-group pull-right mn mr10">
+                                        <div class="form-group pull-right mn mr10 mb10">
                                             <div class="input-group">
                                                 <select class="form-control input-sm bradius" name="rentType" id="rentType">
                                                     <option value="">请选择</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group pull-right mn mr10">
+                                        <div class="form-group pull-right mn mr10 mb10">
                                             <div class="input-group">
                                                 <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId">
                                                     <option value="">请选择</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group pull-right mn mr10">
+                                        <div class="form-group pull-right mn mr10 mb10">
                                             <div class="input-group">
                                                 <select class="form-control input-sm bradius" name="deliverySubCompanyId" id="deliverySubCompanyId">
                                                     <option value="">请选择</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group pull-right mn mr10" style="width: 195px;">
+                                        <div class="form-group pull-right mn mr10 mb10" style="width: 195px;">
                                             <input type="hidden" name="startRentStratTime" id="startRentStratTime" />
                                             <input type="hidden" name="endRentStratTime" id="endRentStratTime" />
                                             <div class="input-group date" id="rentTimePicker">
@@ -97,7 +100,7 @@
                                                 <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                                             </div>
                                         </div>
-                                        <div class="form-group pull-right mn mr10" style="width: 195px;">
+                                        <div class="form-group pull-right mn mr10 mb10" style="width: 195px;">
                                             <input type="hidden" name="createStartTime" id="createStartTime" />
                                             <input type="hidden" name="createEndTime" id="createEndTime" />
                                             <div class="input-group date" id="createTimePicker">
@@ -106,7 +109,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row mt10">
+                                    <div class="row">
                                         <div class="pull-right mn mr10">
                                             <button type="submit" class="btn btn-primary btn-sm">查询</button>
                                             <button type="reset" class="btn btn-default btn-sm">重置</button>
