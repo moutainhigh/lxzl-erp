@@ -38,6 +38,8 @@
 		<result column="statement_coupon_amount" jdbcType="DECIMAL" property="statementCouponAmount" />
 		<result column="statement_penalty_amount" jdbcType="DECIMAL" property="statementPenaltyAmount" />
 		<result column="statement_penalty_paid_amount" jdbcType="DECIMAL" property="statementPenaltyPaidAmount" />
+		<result column="ownerSubCompanyId" jdbcType="INTEGER" property="ownerSubCompanyId" />
+		<result column="ownerSubCompanyName" jdbcType="VARCHAR" property="ownerSubCompanyName" />
 		<collection property="statementOrderDetailDOList" resultMap="StatementOrderDetailDO" />
 	</resultMap>
 
@@ -321,6 +323,9 @@
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.ownerName != null &amp;&amp; maps.statementOrderQueryParam.ownerName != ''">
 				and owner_user.real_name like CONCAT('%','${maps.statementOrderQueryParam.ownerName}','%' )
 			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.subCompanyId != null">
+				and ec.owner_sub_company_id = #{maps.statementOrderQueryParam.subCompanyId, jdbcType=INTEGER}
+			</if>
 			<if test="maps.isQueryAll == null">
 				and eso.data_status = 1
 			</if>
@@ -336,9 +341,16 @@
 		<trim prefix=",">
 			owner_user.real_name AS ownerName
 		</trim>
+		<trim prefix=",">
+			ec.owner_sub_company_id AS ownerSubCompanyId
+		</trim>
+		<trim prefix=",">
+			esc.sub_company_name AS ownerSubCompanyName
+		</trim>
 		FROM erp_statement_order eso
 		INNER JOIN erp_customer ec on eso.customer_id = ec.id
 		INNER JOIN  erp_user owner_user on ec.owner = owner_user.id
+		INNER JOIN erp_sub_company esc ON esc.id = ec.owner_sub_company_id AND esc.data_status = 1
 		<where>
 			<if test="maps.statementOrderIdList != null">
 				AND eso.id IN
@@ -386,6 +398,9 @@
 			</if>
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.ownerName != null &amp;&amp; maps.statementOrderQueryParam.ownerName != ''">
 				and owner_user.real_name like CONCAT('%','${maps.statementOrderQueryParam.ownerName}','%' )
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.subCompanyId != null">
+				and ec.owner_sub_company_id = #{maps.statementOrderQueryParam.subCompanyId, jdbcType=INTEGER}
 			</if>
 			<if test="maps.isQueryAll == null">
 				and eso.data_status = 1
@@ -507,7 +522,7 @@
 		FROM
 		erp_statement_order eso
 		INNER JOIN erp_customer ec on eso.customer_id = ec.id
-
+		INNER JOIN  erp_user owner_user on ec.owner = owner_user.id
 		<where>
 			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != ''">
 				and ec.customer_no like CONCAT('%','${maps.statementOrderMonthQueryParam.statementOrderCustomerNo}','%' )
@@ -526,6 +541,12 @@
 				and	 <![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( now(), '%Y-%m') ]]>
 				</otherwise>
 			</choose>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.ownerName != null &amp;&amp; maps.statementOrderMonthQueryParam.ownerName != ''">
+				and owner_user.real_name like CONCAT('%','${maps.statementOrderMonthQueryParam.ownerName}','%' )
+			</if>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.subCompanyId != null">
+				and ec.owner_sub_company_id = #{maps.statementOrderMonthQueryParam.subCompanyId, jdbcType=INTEGER}
+			</if>
 			<if test="maps.isQueryAll == null">
 				and eso.data_status = 1
 			</if>
@@ -554,8 +575,19 @@
 		SUM(eso.statement_overdue_paid_amount) as statement_overdue_paid_amount,
 		ec.customer_name AS customer_name,
 		ec.customer_no AS customer_no
+		<trim prefix=",">
+			owner_user.real_name AS ownerName
+		</trim>
+		<trim prefix=",">
+			ec.owner_sub_company_id AS ownerSubCompanyId
+		</trim>
+		<trim prefix=",">
+			esc.sub_company_name AS ownerSubCompanyName
+		</trim>
 		FROM erp_statement_order eso
 		INNER JOIN erp_customer ec on eso.customer_id = ec.id
+		INNER JOIN  erp_user owner_user on ec.owner = owner_user.id
+		INNER JOIN erp_sub_company esc ON esc.id = ec.owner_sub_company_id AND esc.data_status = 1
 		<where>
 			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != ''">
 				and ec.customer_no like CONCAT('%','${maps.statementOrderMonthQueryParam.statementOrderCustomerNo}','%' )
@@ -576,6 +608,12 @@
 					and <![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( now(), '%Y-%m') ]]>
 				</otherwise>
 			</choose>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.ownerName != null &amp;&amp; maps.statementOrderMonthQueryParam.ownerName != ''">
+				and owner_user.real_name like CONCAT('%','${maps.statementOrderMonthQueryParam.ownerName}','%' )
+			</if>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.subCompanyId != null">
+				and ec.owner_sub_company_id = #{maps.statementOrderMonthQueryParam.subCompanyId, jdbcType=INTEGER}
+			</if>
 			<if test="maps.isQueryAll == null">
 				and eso.data_status = 1
 			</if>
