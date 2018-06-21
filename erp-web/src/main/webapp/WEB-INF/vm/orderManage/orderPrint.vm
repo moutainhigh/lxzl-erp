@@ -239,7 +239,7 @@
                         <td class="text-center">
                             {{productCount}}
                         </td>
-                    ##                            <td class="text-center">{{rentTypeValue}}</td>
+##                            <td class="text-center">{{rentTypeValue}}</td>
                         <td class="text-center">
 ##                            <p style="white-space: nowrap">{{rentTypeValue}}</p>
 ##                            <p style="white-space: nowrap">{{rentTimeLength}}{{rentTypeUnit}}</p>
