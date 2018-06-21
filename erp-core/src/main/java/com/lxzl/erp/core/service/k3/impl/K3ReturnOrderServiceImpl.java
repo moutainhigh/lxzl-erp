@@ -195,6 +195,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     }
 
     @Override
+    @Transactional(readOnly = false,isolation = Isolation.REPEATABLE_READ,propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addReturnOrder(K3ReturnOrder k3ReturnOrder) {
 
         ServiceResult<String, String> result = new ServiceResult<>();
