@@ -109,17 +109,17 @@
 ##                                        </label>
 ##                                    </td>
 ##                                    {{/hasCommonActionButtons}}
-                                    <td>{{statementOrderNo}}</td>
-                                    <td>{{customerName}}</td>
+                                    <td><a href="{{detailUrl}}" target="_blank">{{statementOrderNo}}</a></td>
+                                    <td><a href="{{customerUrl}}" target="_blank">{{customerName}}</a></td>
                                     <td>{{ownerName}}</td>
                                     <td>￥{{#price}}{{statementAmount}}{{/price}}</td>
                                     <td>￥{{#price}}{{statementOhterAmount}}{{/price}}</td>
                                     <td>
                                         <p class="mn" title="结算明细最早的一个日期">开始：{{#clockShorTime}}{{statementStartTime}}{{/clockShorTime}}</p>
                                         <p class="mn mt5" title="结算明细最晚的一个日期">结束：{{#clockShorTime}}{{statementEndTime}}{{/clockShorTime}}</p>
+                                        <p class="mn mt5">期限：{{dataLimit}}</p>
                                     </td>
                                     <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
-##                                    <td>￥{{#price}}{{statementPaidAmount}}{{/price}}</td>
                                     <td>
                                         <p class="mn">￥{{#price}}{{statementPaidAmount}}{{/price}}</p>
                                         <p class="mn mt5" title="支付时间">{{#clockTime}}{{statementPaidTime}}{{/clockTime}}</p>
@@ -136,6 +136,8 @@
                                                type="button"
                                                class="btn btn-default btn-xs {{class}}"
                                                data-no="{{statementOrderNo}}"
+                                               data-customerno="{{customerNo}}"
+                                               data-customername="{{customerName}}"
                                                data-statementPaidAmount="{{statementPaidAmount}}"
                                                data-statementamount="{{statementAmount}}">{{text}}</a>
                                             {{/buttons}}

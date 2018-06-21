@@ -121,8 +121,8 @@
                                 {{#dataSource}}
                                 {{#listData}}
                                 <tr data-rowdata="{{rowData}}">
-                                    <td>{{customerNo}}</td>
-                                    <td>{{customerCompany.companyName}}</td>
+                                    <td><a href="{{detailUrl}}" target="_blank">{{customerNo}}</a></td>
+                                    <td><a href="{{detailUrl}}" target="_blank">{{customerCompany.companyName}}</a></td>
                                     <td>
                                         <p class="mn">{{customerCompany.connectRealName}}</p>
                                         <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{customerCompany.connectPhone}}</p>
