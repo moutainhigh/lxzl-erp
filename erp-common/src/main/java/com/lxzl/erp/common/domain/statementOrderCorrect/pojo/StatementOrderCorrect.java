@@ -57,6 +57,15 @@ public class StatementOrderCorrect extends BasePO {
 	private String customerName;  //客户名称
 	private String subCompanyName; //所属分公司名称
 	private String customerNo; //客户编号
+	private Integer statementOrderCorrectType; //冲正单类型 1订单，2退货单
+
+	public Integer getStatementOrderCorrectType() {
+		return statementOrderCorrectType;
+	}
+
+	public void setStatementOrderCorrectType(Integer statementOrderCorrectType) {
+		this.statementOrderCorrectType = statementOrderCorrectType;
+	}
 	public Integer getSubCompanyId() {
 		return subCompanyId;
 	}

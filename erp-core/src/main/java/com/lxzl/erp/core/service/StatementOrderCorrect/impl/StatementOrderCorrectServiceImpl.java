@@ -355,6 +355,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                 if (orderDO != null) {
                     //订单编号
                     statementOrderCorrect.setOrderNo(orderDO.getOrderNo());
+                    statementOrderCorrect.setStatementOrderCorrectType(StatementOrderCorrectType.STATEMENT_ORDER_CORRECT_ORDER);
                 }
             } else {
                 statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_RETURN, statementOrderCorrect.getStatementOrderReferId());
@@ -364,6 +365,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                     if (k3ReturnOrderDO != null) {
                         //订单编号
                         statementOrderCorrect.setOrderNo(k3ReturnOrderDO.getReturnOrderNo());
+                        statementOrderCorrect.setStatementOrderCorrectType(StatementOrderCorrectType.STATEMENT_ORDER_CORRECT_RETURN);
                     }
                 }
             }
