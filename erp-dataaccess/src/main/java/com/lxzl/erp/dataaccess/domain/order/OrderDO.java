@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.domain.order;
 
+import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -41,6 +42,7 @@ public class OrderDO extends BaseDO {
     private BigDecimal totalDiscountAmount;
     private BigDecimal logisticsAmount;
     private Integer orderSellerId;
+    private Integer orderUnionSellerId;
     private Integer orderSubCompanyId;
     private Integer orderStatus;
     private BigDecimal firstNeedPayAmount;
@@ -75,6 +77,7 @@ public class OrderDO extends BaseDO {
 
     private List<OrderJointProductDO> orderJointProductDOList;
 
+    private CustomerRiskManagementDO customerRiskManagementDO;
 
     @Transient
     private String buyerCustomerName;
@@ -82,6 +85,8 @@ public class OrderDO extends BaseDO {
     private String buyerCustomerNo;
     @Transient
     private String orderSellerName;
+    @Transient
+    private String orderSellerPhone;
     @Transient
     private String orderSubCompanyName;
     @Transient
@@ -93,6 +98,14 @@ public class OrderDO extends BaseDO {
 
     public void setOrderJointProductDOList(List<OrderJointProductDO> orderJointProductDOList) {
         this.orderJointProductDOList = orderJointProductDOList;
+    }
+
+    public CustomerRiskManagementDO getCustomerRiskManagementDO() {
+        return customerRiskManagementDO;
+    }
+
+    public void setCustomerRiskManagementDO(CustomerRiskManagementDO customerRiskManagementDO) {
+        this.customerRiskManagementDO = customerRiskManagementDO;
     }
 
     public Integer getId() {
@@ -312,6 +325,14 @@ public class OrderDO extends BaseDO {
         this.orderSellerId = orderSellerId;
     }
 
+    public Integer getOrderUnionSellerId() {
+        return orderUnionSellerId;
+    }
+
+    public void setOrderUnionSellerId(Integer orderUnionSellerId) {
+        this.orderUnionSellerId = orderUnionSellerId;
+    }
+
     public Integer getOrderSubCompanyId() {
         return orderSubCompanyId;
     }
@@ -366,6 +387,14 @@ public class OrderDO extends BaseDO {
 
     public void setOrderSellerName(String orderSellerName) {
         this.orderSellerName = orderSellerName;
+    }
+
+    public String getOrderSellerPhone() {
+        return orderSellerPhone;
+    }
+
+    public void setOrderSellerPhone(String orderSellerPhone) {
+        this.orderSellerPhone = orderSellerPhone;
     }
 
     public String getBuyerCustomerName() {

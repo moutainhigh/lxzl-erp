@@ -67,6 +67,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
@@ -87,6 +88,7 @@ import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
 import com.lxzl.se.common.exception.BusinessException;
@@ -1611,6 +1613,9 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
+        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
+        orderDO.setCustomerRiskManagementDO(customerRiskManagementDO);
+
         List<OrderTimeAxisDO> orderTimeAxisDOList = orderTimeAxisSupport.getOrderTimeAxis(orderDO.getId());
         orderDO.setOrderTimeAxisDOList(orderTimeAxisDOList);
 
@@ -1618,6 +1623,14 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setReletOrderDOList(reletOrderDOList);
 
         Order order = ConverterUtil.convert(orderDO, Order.class);
+
+        if (orderDO.getOrderUnionSellerId() != null){
+            UserDO unionUser = userMapper.findByUserId(orderDO.getOrderUnionSellerId());
+            if(unionUser != null){
+                order.setOrderUnionSellerName(unionUser.getRealName());
+                order.setOrderUnionSellerPhone(unionUser.getPhone());
+            }
+        }
 
         ServiceResult<String, StatementOrder> statementOrderResult = statementService.queryStatementOrderDetailByOrderId(order.getOrderNo());
         if (ErrorCode.SUCCESS.equals(statementOrderResult.getErrorCode())) {
@@ -4176,6 +4189,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private AmountSupport amountSupport;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Autowired
     private OrderMapper orderMapper;
