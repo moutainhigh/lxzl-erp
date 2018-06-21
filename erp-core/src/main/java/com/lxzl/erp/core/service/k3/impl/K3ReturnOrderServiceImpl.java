@@ -195,6 +195,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     }
 
     @Override
+    @Transactional(readOnly = false,isolation = Isolation.REPEATABLE_READ,propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addReturnOrder(K3ReturnOrder k3ReturnOrder) {
 
         ServiceResult<String, String> result = new ServiceResult<>();
@@ -235,6 +236,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             //添加退货商品数量不能小于零的校验
             if (k3ReturnOrderDetail.getProductCount()<= 0) {
                 result.setErrorCode(ErrorCode.RETURN_COUNT_ERROR);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 return result;
             }
             K3ReturnOrderDetailDO k3ReturnOrderDetailDO = ConverterUtil.convert(k3ReturnOrderDetail, K3ReturnOrderDetailDO.class);
