@@ -107,6 +107,7 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
 //        calendar.set(2018, 02, 23);
 //        statementOrderCorrectQueryParam.setCreateEndTime(calendar.getTime());
         statementOrderCorrectQueryParam.setReturnOrderNo("LXK3RO");
+        statementOrderCorrectQueryParam.setSubCompanyId(8);
         TestResult testResult = getJsonTestResult("/correct/page", statementOrderCorrectQueryParam);
     }
 
