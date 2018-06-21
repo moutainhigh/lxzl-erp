@@ -187,7 +187,7 @@
                                     <input type="hidden" name="productNo" class="productNo" value="{{productNo}}"  />
                                     <input type="hidden" name="orderNo" class="orderNo" value="{{orderNo}}"  />
                                     <input type="hidden" name="rowid" class="rowid" value="{{rowid}}"  />
-                                    <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入退货数量" />
+                                    <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number checkInteger pl10" placeholder="输入退货数量" />
                                 </label>
                             </td>
                             <td>
