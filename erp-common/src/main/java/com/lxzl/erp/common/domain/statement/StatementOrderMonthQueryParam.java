@@ -19,8 +19,26 @@ public class StatementOrderMonthQueryParam extends BasePageParam {
     private Integer statementOrderCustomerId;
     private String statementOrderCustomerNo;
     private Date monthTime;
+    private Integer subCompanyId;//分公司ID
+    private String ownerName;//业务员
 
     private List<Integer> passiveUserIdList;//控制数据权限
+
+    public Integer getSubCompanyId() {
+        return subCompanyId;
+    }
+
+    public void setSubCompanyId(Integer subCompanyId) {
+        this.subCompanyId = subCompanyId;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
 
     public Integer getStatementOrderCustomerId() { return statementOrderCustomerId; }
 
