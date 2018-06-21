@@ -43,10 +43,13 @@
                                     <input type="text" name="statementCorrectNo" id="statementCorrectNo" class="form-control input-sm bradius" autocomplete="off" placeholder="冲正单编号">
                                 </div>
                                 <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                    <input type="text" name="returnOrderNo" id="returnOrderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入退货编号">
+                                </div>
+                                <div class="form-group pull-right mn mr10" style="width: 120px;">
                                     <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
                                 </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                    <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
+                                    <input type="text" name="customerName" id="customerName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
                                 </div>
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
@@ -88,6 +91,7 @@
                                 {{/hasCommonActionButtons}}
                                 <th>冲正单编号</th>
                                 <th>客户名称</th>
+                                <th>归属公司</th>
                                 <th>订单编号</th>
                                 <th>冲正金额</th>
                                 <th>冲正原因</th>
@@ -115,6 +119,7 @@
                                 {{/hasCommonActionButtons}}
                                 <td><a href="{{detailUrl}}" target="_blank">{{statementCorrectNo}}</a></td>
                                 <td><a href="{{customerUrl}}" target="_blank">{{customerName}}</a></td>
+                                <td>{{subCompanyName}}</td>
                                 <td>{{orderNo}}</td>
                                 <td>￥{{#price}}{{statementCorrectAmount}}{{/price}}</td>
                                 <td>{{statementCorrectReason}}</td>

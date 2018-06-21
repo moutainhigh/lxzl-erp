@@ -42,16 +42,16 @@
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <input type="text" name="statementOrderCustomerName" id="statementOrderCustomerName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
                                 </div>
+                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                    <div class="input-group">
+                                        <input type="text" name="ownerName" id="ownerName" class="form-control input-sm bradius" autocomplete="off" placeholder="业务员姓名">
+                                    </div>
+                                </div>
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
                                         <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId">
                                             <option value="">请选择</option>
                                         </select>
-                                    </div>
-                                </div>
-                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                    <div class="input-group">
-                                        <input type="text" name="ownerName" id="ownerName" class="form-control input-sm bradius" autocomplete="off" placeholder="业务员姓名">
                                     </div>
                                 </div>
                                 <div class="form-group pull-right mn mr10" style="width: 210px;">
@@ -79,6 +79,8 @@
                                 {{/hasCommonActionButtons}}
                                 <th>客户编码</th>
                                 <th>客户</th>
+                                <th>归属公司</th>
+                                <th>业务员</th>
                                 <th>月份</th>
                                 <th>租金押金金额</th>
                                 <th>对账单押金金额</th>
@@ -107,6 +109,8 @@
                                 {{/hasCommonActionButtons}}
                                 <td>{{customerNo}}</td>
                                 <td>{{customerName}}</td>
+                                <td>{{ownerSubCompanyName}}</td>
+                                <td>{{ownerName}}</td>
                                 <td>{{#clockMonthTime}}{{monthTime}}{{/clockMonthTime}}</td>
                                 <td>￥{{#price}}{{statementRentDepositAmount}}{{/price}}</td>
                                 <td>￥{{#price}}{{statementDepositAmount}}{{/price}}</td>

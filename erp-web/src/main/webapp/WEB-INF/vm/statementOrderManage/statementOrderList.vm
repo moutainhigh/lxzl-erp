@@ -90,6 +90,7 @@
 ##                                    {{/hasCommonActionButtons}}
                                     <th>结算单编号</th>
                                     <th>客户</th>
+                                    <th>归属公司</th>
                                     <th>业务员</th>
                                     <th>结算单金额</th>
                                     <th>其它费用(运费等)</th>
@@ -118,6 +119,7 @@
 ##                                    {{/hasCommonActionButtons}}
                                     <td><a href="{{detailUrl}}" target="_blank">{{statementOrderNo}}</a></td>
                                     <td><a href="{{customerUrl}}" target="_blank">{{customerName}}</a></td>
+                                    <td>{{ownerSubCompanyName}}</td>
                                     <td>{{ownerName}}</td>
                                     <td>￥{{#price}}{{statementAmount}}{{/price}}</td>
                                     <td>￥{{#price}}{{statementOhterAmount}}{{/price}}</td>
