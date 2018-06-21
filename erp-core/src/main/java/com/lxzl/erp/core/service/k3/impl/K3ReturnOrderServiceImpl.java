@@ -232,7 +232,19 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
             return result;
         }
+        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
+
         for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
+            if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOList)) {
+                for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDetailDOList) {
+                    if (k3ReturnOrderDetailDO.getOrderItemId().equals(k3ReturnOrderDetail.getOrderItemId()) && k3ReturnOrderDetailDO.getOrderEntry().equals(k3ReturnOrderDetail.getOrderEntry())) {
+                        result.setErrorCode(ErrorCode.RETURN_ORDER_HAVE_THE_SAME_PRODUCT_OR_MATERIAL);
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        return result;
+                    }
+                }
+            }
+
             //添加退货商品数量不能小于零的校验
             if (k3ReturnOrderDetail.getProductCount()<= 0) {
                 result.setErrorCode(ErrorCode.RETURN_COUNT_ERROR);
