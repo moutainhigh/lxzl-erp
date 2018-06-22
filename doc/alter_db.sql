@@ -895,7 +895,7 @@ DROP TABLE if exists `erp_order_statement_date_split`;
 CREATE TABLE `erp_order_statement_date_split` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `order_no` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '订单编号',
-  `statement_date_change_time` datetime DEFAULT NULL COMMENT '结算类型分隔时间',
+  `statement_date_change_time` datetime DEFAULT NULL COMMENT '结算类型分段时间',
   `before_statement_date` int(20) NOT NULL COMMENT '修改前结算时间（天），-1,20和31三种情况',
   `after_statement_date` int(20) NOT NULL COMMENT '修改后结算时间（天），-1,20和31三种情况',
   `change_type` INT(11) NOT NULL DEFAULT '0' COMMENT '截止类型，0-截止到月底，1-截止到当前结算日',

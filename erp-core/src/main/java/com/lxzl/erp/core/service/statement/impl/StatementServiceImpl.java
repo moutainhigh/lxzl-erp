@@ -172,7 +172,7 @@ public class StatementServiceImpl implements StatementService {
         return  createOrderStatement(orderNo,false);
     }
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, BigDecimal> createOrderStatement(String orderNo,boolean allowHasPartStatement) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
@@ -209,6 +209,8 @@ public class StatementServiceImpl implements StatementService {
                 return result;
             }
         }
+        //保存结算日改变日志
+        statementOrderSupport.recordStatementDateLog(orderNo,orderDO.getStatementDate());
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = getStatementOrderDetailDOS(orderNo, orderDO, currentTime, rentStartTime, loginUserId);
 
@@ -260,7 +262,7 @@ public class StatementServiceImpl implements StatementService {
 
         boolean isStatementDateChangeInOrderRentTime= orderStatementDateSplitDO !=null&& orderStatementDateSplitDO.getAfterStatementDate()!=null&& orderStatementDateSplitDO.getBeforeStatementDate()!=null&&!orderStatementDateSplitDO.getBeforeStatementDate().equals(orderStatementDateSplitDO.getAfterStatementDate())&& orderStatementDateSplitDO.getStatementDateChangeTime().compareTo(orderDO.getRentStartTime())>0&& orderStatementDateSplitDO.getStatementDateChangeTime().compareTo(expectReturnTime)<0;
         if(isStatementDateChangeInOrderRentTime){
-            //获取分割点
+            //获取分段点
             addStatementOrderDetailDOList=generateStatementDetailListSplit(orderDO,currentTime,loginUserId, orderStatementDateSplitDO);
 //            Date statementDateChangeTime=getStatementChangeDate(rentStartTime,orderStatementDateSplitDO);
 //
@@ -416,7 +418,7 @@ public class StatementServiceImpl implements StatementService {
 
         boolean isStatementDateChangeInOrderRentTime= orderStatementDateSplitDO !=null&& orderStatementDateSplitDO.getAfterStatementDate()!=null&& orderStatementDateSplitDO.getBeforeStatementDate()!=null&&!orderStatementDateSplitDO.getBeforeStatementDate().equals(orderStatementDateSplitDO.getAfterStatementDate())&& orderStatementDateSplitDO.getStatementDateChangeTime().compareTo(reletOrderDO.getRentStartTime())>0&& orderStatementDateSplitDO.getStatementDateChangeTime().compareTo(expectReturnTime)<0;
         if(isStatementDateChangeInOrderRentTime){
-            //获取分割点
+            //获取分段点
             addStatementOrderDetailDOList=generateReletStatementDetailListSplit(reletOrderDO,currentTime,loginUserId, orderStatementDateSplitDO);
         }else{
             //已结算部分(不在节点内的订单或续租结算要么全清，要么全保留)
@@ -500,8 +502,8 @@ public class StatementServiceImpl implements StatementService {
 //    }
 
     /**
-     * 获取分割日
-     * @description 获取最近小于分隔日的结算日
+     * 获取分段日
+     * @description 获取最近小于分段日的结算日
      * @param rentStartTime
      * @param orderStatementDateSplitDO
      * @return
@@ -596,14 +598,30 @@ public class StatementServiceImpl implements StatementService {
 
     @Override
     public ServiceResult<String, BigDecimal> reCreateOrderStatement(OrderStatementDateSplit k3StatementDateChange) {
+        ServiceResult<String, BigDecimal> result=new ServiceResult<>();
+        OrderDO orderDO = orderMapper.findByOrderNo(k3StatementDateChange.getOrderNo());
+        if (orderDO == null) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        if(!OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())){
+            result.setErrorCode(ErrorCode.ONLY_RENT_TYPE_MONTH_NEED_SPLIT_STATEMENT);
+            return result;
+        }
+        if(k3StatementDateChange.getBeforeStatementDate().equals(k3StatementDateChange.getAfterStatementDate())){
+            result.setErrorCode(ErrorCode.SPLIT_STATEMENT_CAN_NOT_SAME,getStatementModeString(k3StatementDateChange.getBeforeStatementDate()),getStatementModeString(k3StatementDateChange.getAfterStatementDate()));
+            return result;
+        }
         OrderStatementDateSplitDO orderStatementDateSplitDO = orderStatementDateSplitMapper.findByOrderNo(k3StatementDateChange.getOrderNo());
         Date currentTime=new Date();
         String userId=userSupport.getCurrentUserId().toString();
         if(orderStatementDateSplitDO !=null){
-            orderStatementDateSplitDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-            orderStatementDateSplitDO.setUpdateUser(userId);
-            orderStatementDateSplitDO.setUpdateTime(currentTime);
-            orderStatementDateSplitMapper.update(orderStatementDateSplitDO);
+//            orderStatementDateSplitDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+//            orderStatementDateSplitDO.setUpdateUser(userId);
+//            orderStatementDateSplitDO.setUpdateTime(currentTime);
+//            orderStatementDateSplitMapper.update(orderStatementDateSplitDO);
+            result.setErrorCode(ErrorCode.HAS_SPLIT_STATEMENT_CFG);
+            return result;
         }
         OrderStatementDateSplitDO addStatementSplit=ConverterUtil.convert(k3StatementDateChange, OrderStatementDateSplitDO.class);
         addStatementSplit.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -661,7 +679,6 @@ public class StatementServiceImpl implements StatementService {
             }
             orderDO.setStatementDate(statementDate);
             orderMapper.update(orderDO);
-            statementOrderSupport.recordStatementDateLog(orderNo,statementDate);
         }
         //有退货单不允许重算
 //        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
@@ -678,7 +695,7 @@ public class StatementServiceImpl implements StatementService {
 //        ServiceResult<String, String> clearResult = clearStatementOrderDetail(orderDO);
         ServiceResult<String, String> clearResult = clearStatementOrder(orderDO,clearStatementDateSplitCfg);
         if (!ErrorCode.SUCCESS.equals(clearResult.getErrorCode())) {
-            result.setErrorCode(clearResult.getErrorCode());
+            result.setErrorCode(clearResult.getErrorCode(),clearResult.getFormatArgs());
             return result;
         }
         ServiceResult<String, BigDecimal> createResult = createOrderStatement(orderNo,true);
@@ -4118,14 +4135,14 @@ public class StatementServiceImpl implements StatementService {
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, String> clearStatementOrder(OrderDO orderDO,boolean clearStatementDateSplitCfg) {
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, orderDO.getId());
-        //分隔日之前的已支付结算保留（为兼容分段结算,分段结算仅删除分段时间点后的结算进行重算）
+        //分段日之前的已支付结算保留（为兼容分段结算,分段结算仅删除分段时间点后的结算进行重算）
         OrderStatementDateSplitDO orderStatementDateSplitDO = orderStatementDateSplitMapper.findByOrderNo(orderDO.getOrderNo());
         if(orderStatementDateSplitDO !=null){
             if(clearStatementDateSplitCfg){
                 orderStatementDateSplitDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 orderStatementDateSplitMapper.update(orderStatementDateSplitDO);
             }else{
-                //前结算日与订单原结算日不一致则不允许分割结算
+                //前结算日与订单原结算日不一致则不允许分段结算
                 ServiceResult<String, String> filterSettledOrderDetailResult=new ServiceResult<>();
                 boolean hasPaidPhase=false;
                 List<StatementOrderDetailDO> canClearList=new ArrayList<>();
@@ -4143,7 +4160,7 @@ public class StatementServiceImpl implements StatementService {
                 //如果有支付的期数，则认为认可原支付方式，只清除改变节点后的结算
                 if(hasPaidPhase){
                     if(!orderStatementDateSplitDO.getBeforeStatementDate().equals(orderDO.getStatementDate())){
-                        filterSettledOrderDetailResult.setErrorCode(ErrorCode.BEFORE_STATEMENT_MODE_NOT_SAME, orderStatementDateSplitDO.getBeforeStatementDate().toString(),orderDO.getStatementDate().toString());
+                        filterSettledOrderDetailResult.setErrorCode(ErrorCode.BEFORE_STATEMENT_MODE_NOT_SAME, getStatementModeString(orderStatementDateSplitDO.getBeforeStatementDate()),getStatementModeString(orderDO.getStatementDate()));
                         return filterSettledOrderDetailResult;
                     }
                     statementOrderDetailDOList=canClearList;
@@ -4897,7 +4914,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     /**
-     * 订单分割结算
+     * 订单分段结算
      * @param orderDO
      * @param currentTime
      * @param loginUserId
@@ -4948,7 +4965,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     /**
-     * 续租单分隔结算
+     * 续租单分段结算
      * @param reletOrderDO
      * @param currentTime
      * @param loginUserId
@@ -5065,7 +5082,7 @@ public class StatementServiceImpl implements StatementService {
         if(DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(), orderStatementDateSplitDO.getStatementDateChangeTime())<0){
             addStatementOrderDetailDOList.remove(statementOrderDetailDO);
             alreadyPaidAmount = BigDecimalUtil.sub(alreadyPaidAmount, statementOrderDetailDO.getStatementDetailAmount());
-            lastCalculateDate =  statementOrderDetailDO.getStatementStartTime();
+            lastCalculateDate =  DateUtil.getDayByOffset(statementOrderDetailDO.getStatementStartTime(),-1);
             phase--;
         }
         //后半段
@@ -5217,7 +5234,7 @@ public class StatementServiceImpl implements StatementService {
         if(DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(), orderStatementDateSplitDO.getStatementDateChangeTime())<0){
             addStatementOrderDetailDOList.remove(statementOrderDetailDO);
             alreadyPaidAmount = BigDecimalUtil.sub(alreadyPaidAmount, statementOrderDetailDO.getStatementDetailAmount());
-            lastCalculateDate =  statementOrderDetailDO.getStatementStartTime();
+            lastCalculateDate =  DateUtil.getDayByOffset(statementOrderDetailDO.getStatementStartTime(),-1);
             phase--;
         }
         //后半段
@@ -5387,7 +5404,7 @@ public class StatementServiceImpl implements StatementService {
         if(DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(), orderStatementDateSplitDO.getStatementDateChangeTime())<0){
             addStatementOrderDetailDOList.remove(statementOrderDetailDO);
             alreadyPaidAmount = BigDecimalUtil.sub(alreadyPaidAmount, statementOrderDetailDO.getStatementDetailAmount());
-            lastCalculateDate =  statementOrderDetailDO.getStatementStartTime();
+            lastCalculateDate =  DateUtil.getDayByOffset(statementOrderDetailDO.getStatementStartTime(),-1);
             phase--;
         }
         //后半段
@@ -5539,7 +5556,7 @@ public class StatementServiceImpl implements StatementService {
         if(DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(), orderStatementDateSplitDO.getStatementDateChangeTime())<0){
             addStatementOrderDetailDOList.remove(statementOrderDetailDO);
             alreadyPaidAmount = BigDecimalUtil.sub(alreadyPaidAmount, statementOrderDetailDO.getStatementDetailAmount());
-            lastCalculateDate =  statementOrderDetailDO.getStatementStartTime();
+            lastCalculateDate =  DateUtil.getDayByOffset(statementOrderDetailDO.getStatementStartTime(),-1);
             phase--;
         }
         //后半段
@@ -5627,10 +5644,12 @@ public class StatementServiceImpl implements StatementService {
     /**
      * 根据准确的起始结束时间算出当期结算(仅月租)
      */
-    StatementOrderDetailDO calculateStatementOrderDetailByActualTime(Integer rentType, Integer payMode, Date rentStartTime,Date statementEndTime, BigDecimal unitAmount, Integer itemCount, Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date currentTime, Integer loginUserId, Integer reletOrderItemReferId) {
+    StatementOrderDetailDO calculateStatementOrderDetailByActualTime(Integer rentType, Integer payMode, Date lastCalculateDate,Date statementEndTime, BigDecimal unitAmount, Integer itemCount, Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date currentTime, Integer loginUserId, Integer reletOrderItemReferId) {
         if (OrderRentType.RENT_TYPE_DAY.equals(rentType))return null;
         Calendar rentStartTimeCalendar = Calendar.getInstance();
-        rentStartTimeCalendar.setTime(rentStartTime);
+        rentStartTimeCalendar.setTime(lastCalculateDate);
+        rentStartTimeCalendar.add(Calendar.DAY_OF_MONTH,1);
+        Date rentStartTime=rentStartTimeCalendar.getTime();
 
         Date statementExpectPayTime = null;
         BigDecimal firstPhaseAmount;
@@ -5643,6 +5662,13 @@ public class StatementServiceImpl implements StatementService {
 
         firstPhaseAmount = BigDecimalUtil.round(firstPhaseAmount, 0);
         return buildStatementOrderDetailDO(customerId, OrderType.ORDER_TYPE_ORDER, orderId, orderItemType, orderItemReferId, statementExpectPayTime, rentStartTime, statementEndTime, firstPhaseAmount, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId, reletOrderItemReferId);
+    }
+
+    private String  getStatementModeString(Integer statementMode){
+        if(StatementMode.STATEMENT_MONTH_END.equals(statementMode))return "月底结算";
+        if (StatementMode.STATEMENT_20.equals(statementMode))return  "二十号结算";
+        if (StatementMode.STATEMENT_MONTH_NATURAL.equals(statementMode))return "自然日结算";
+        return "";
     }
 
     @Autowired
