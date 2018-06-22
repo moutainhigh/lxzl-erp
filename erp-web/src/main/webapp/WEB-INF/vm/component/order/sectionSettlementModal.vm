@@ -7,7 +7,7 @@
             <div class="panel-body p25">
                 <div class="section row">
                     <div class="col-md-6">
-                        <label for="changeTimePicker" class="field-label">结算类型修改时间</label>
+                        <label for="changeTimePicker" class="field-label">分段时间点</label>
                         <div>
                             <div class="input-group date" id="changeTimePicker">
                                 <input type="hidden" name="statementDateChangeTime" id="statementDateChangeTime">
@@ -17,7 +17,7 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <label for="changeType" class="field-label">截止类型</label>
+                        <label for="changeType" class="field-label">尾段首月结算方式</label>
                         <label class="field select">
                             <select id="changeType" name="changeType">
                             </select>
@@ -27,7 +27,7 @@
                 </div>
                 <div class="section row">
                     <div class="col-md-6">
-                        <label for="beforeStatementDate" class="field-label">修改前结算时间</label>
+                        <label for="beforeStatementDate" class="field-label">首段结算日</label>
                         <label class="field select">
                             <select id="beforeStatementDate" name="beforeStatementDate" class="settlementSelect">
                             </select>
@@ -35,7 +35,7 @@
                         </label>
                     </div>
                     <div class="col-md-6">
-                        <label for="afterStatementDate" class="field-label">修改后结算时间</label>
+                        <label for="afterStatementDate" class="field-label">尾段结算日</label>
                         <label class="field select">
                             <select id="afterStatementDate" name="afterStatementDate" class="settlementSelect">
                             </select>
