@@ -10,7 +10,7 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class K3StatementDateChange extends BasePO {
+public class OrderStatementDateSplit extends BasePO {
 
 	private Integer k3StatementDateChangeId;   //唯一标识
 	@NotBlank(message = ErrorCode.ORDER_NO_NOT_NULL)
@@ -18,11 +18,11 @@ public class K3StatementDateChange extends BasePO {
 	@NotNull(message = ErrorCode.STATEMENT_DATE_SPLIT_TIME_NOT_NULL)
 	private Date statementDateChangeTime;   //结算类型修改时间
 	@NotNull(message = ErrorCode.BEFORE_STATEMENT_DATE_NOT_NULL)
-	private Integer beforeStatementDate;   //修改前结算时间（天），-1,20和31三种情况，如果为空取系统设定
+	private Integer beforeStatementDate;   //修改前结算时间（天），-1,20和31三种情况
 	@NotNull(message = ErrorCode.AFTER_STATEMENT_DATE_NOT_NULL)
-	private Integer afterStatementDate;   //修改后结算时间（天），-1,20和31三种情况，如果为空取系统设定
+	private Integer afterStatementDate;   //修改后结算时间（天），-1,20和31三种情况
 	@NotNull(message = ErrorCode.STATEMENT_DATE_CHANGE_TYPE_NOT_NULL)
-	private Integer changeType;   //改变类型，0-当月，1-下月
+	private Integer changeType;   //截止类型，0-截止到月底，1-截止到当前结算日
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
