@@ -77,13 +77,13 @@
                                         <dl class="dl-horizontal dl-horizontal-rental">
                                             {{#hasStatementDateSplit}}    
                                             {{#statementDateSplit}}
-                                            <dt><label>结算类型修改时间</label><span class="mr5">：</span></dt>
-                                            <dd class="mb5">{{statementDateChangeTime}}</dd>
-                                            <dt><label>截止类型</label><span class="mr5">：</span></dt>
+                                            <dt><label>分段时间点</label><span class="mr5">：</span></dt>
+                                            <dd class="mb5">{{#shortTime}}{{statementDateChangeTime}}{{/shortTime}}</dd>
+                                            <dt><label>尾段首月结算方式</label><span class="mr5">：</span></dt>
                                             <dd class="mb5">{{changeTypeVal}}</dd>
-                                            <dt><label>修改前结算时间</label><span class="mr5">：</span></dt>
+                                            <dt><label>首段结算日</label><span class="mr5">：</span></dt>
                                             <dd class="mb5">{{beforeStatementDateVal}}</dd>
-                                            <dt><label>修改后结算时间</label><span class="mr5">：</span></dt>
+                                            <dt><label>尾段结算日</label><span class="mr5">：</span></dt>
                                             <dd class="mb5">{{afterStatementDateVal}}</dd>
                                             {{/statementDateSplit}}
                                             {{/hasStatementDateSplit}}
