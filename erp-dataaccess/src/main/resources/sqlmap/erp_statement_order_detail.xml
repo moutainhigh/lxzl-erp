@@ -920,4 +920,20 @@
         ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC,esod.statement_order_id ASC
     </select>
 
+    <select id="findByReletOrderItemReferId" resultMap="StatementOrderDetailDO">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_statement_order_detail esod
+        WHERE esod.data_status = 1 AND esod.relet_order_item_refer_id = #{id, jdbcType=INTEGER} AND statement_detail_type=1
+    </select>
+
+    <select id="findRentByReletOrderItemReferIds" resultMap="StatementOrderDetailDO">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_statement_order_detail esod
+        WHERE esod.data_status = 1 AND statement_detail_type=1 AND esod.relet_order_item_refer_id in
+        <foreach collection="ids" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
 </mapper>
