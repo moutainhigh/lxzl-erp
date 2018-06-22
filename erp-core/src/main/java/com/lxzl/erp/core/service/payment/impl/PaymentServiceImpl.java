@@ -789,7 +789,7 @@ public class PaymentServiceImpl implements PaymentService {
         return saveConstantlyExportQueryChargeRecordToBankSlip(result.getResult().getItemList().get(0));
     }
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     ServiceResult<String, String> saveConstantlyExportQueryChargeRecordToBankSlip(ChargeRecord chargeRecord) throws ParseException {
 
         ServiceResult<String, String> serviceResult = new ServiceResult<>();

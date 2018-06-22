@@ -38,7 +38,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
     private HttpSession session;
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> addDictionary(DataDictionary dataDictionary) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -55,7 +55,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> updateDictionary(DataDictionary dataDictionary) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         String verifyCode = verifyData(dataDictionary);

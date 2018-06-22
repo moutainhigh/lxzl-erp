@@ -107,7 +107,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     private GenerateNoSupport generateNoSupport;
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> addWarehouse(Warehouse warehouse) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -140,7 +140,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateWarehouse(Warehouse warehouse) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -419,7 +419,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> productOutStock(ProductOutStockParam productOutStockParam) {
         List<Integer> productEquipmentIdList = productOutStockParam.getProductEquipmentIdList();
         List<Integer> bulkMaterialIdList = productOutStockParam.getBulkMaterialIdList();
