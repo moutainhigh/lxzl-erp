@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductProduct;
 import com.lxzl.erp.common.domain.k3.pojo.OrderMessage;
+import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.messagethirdchannel.pojo.MessageThirdChannel;
@@ -37,6 +38,7 @@ import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.material.impl.support.MaterialSupport;
 import com.lxzl.erp.core.service.messagethirdchannel.MessageThirdChannelService;
 import com.lxzl.erp.core.service.order.OrderService;
+import com.lxzl.erp.core.service.order.impl.support.OrderSupport;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
@@ -56,6 +58,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointProductProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.OrderStatementDateSplitMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
@@ -76,6 +79,7 @@ import com.lxzl.erp.dataaccess.domain.jointProduct.JointMaterialDO;
 import com.lxzl.erp.dataaccess.domain.jointProduct.JointProductDO;
 import com.lxzl.erp.dataaccess.domain.jointProduct.JointProductProductDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
+import com.lxzl.erp.dataaccess.domain.k3.OrderStatementDateSplitDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
@@ -161,7 +165,7 @@ public class OrderServiceImpl implements OrderService {
         //添加当前客户名称
         orderDO.setBuyerCustomerName(customerDO.getCustomerName());
 
-        Date expectReturnTime = generateExpectReturnTime(orderDO);
+        Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
         orderMapper.save(orderDO);
 
@@ -244,7 +248,7 @@ public class OrderServiceImpl implements OrderService {
         //添加当前客户名称
         orderDO.setBuyerCustomerName(customerDO.getCustomerName());
 
-        Date expectReturnTime = generateExpectReturnTime(orderDO);
+        Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
         orderMapper.save(orderDO);
 
@@ -477,7 +481,7 @@ public class OrderServiceImpl implements OrderService {
 //        Date rentStartTime = order.getRentStartTime();
         orderDO.setStatementDate(customerDO.getStatementDate());
 
-        Date expectReturnTime = generateExpectReturnTime(orderDO);
+        Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
         orderMapper.update(orderDO);
 
@@ -577,7 +581,7 @@ public class OrderServiceImpl implements OrderService {
 //        Date rentStartTime = order.getRentStartTime();
         orderDO.setStatementDate(customerDO.getStatementDate());
 
-        Date expectReturnTime = generateExpectReturnTime(orderDO);
+        Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
         orderMapper.update(orderDO);
 
@@ -1730,7 +1734,10 @@ public class OrderServiceImpl implements OrderService {
             if (orderConfirmChangeLogDO!=null) {
                 order.setChangeReason(orderConfirmChangeLogDO.getChangeReason());
             }
-        }        result.setErrorCode(ErrorCode.SUCCESS);
+        }
+        OrderStatementDateSplitDO orderStatementDateSplitDO=orderStatementDateSplitMapper.findByOrderNo(orderNo);
+        if(orderStatementDateSplitDO!=null)order.setOrderStatementDateSplit(ConverterUtil.convert(orderStatementDateSplitDO, OrderStatementDateSplit.class));
+        result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
     }
@@ -2418,7 +2425,7 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime, subCompanyDO != null ? subCompanyDO.getSubCompanyCode() : null));
         //添加当前客户名称
         orderDO.setBuyerCustomerName(customerDO.getCustomerName());
-        Date expectReturnTime = generateExpectReturnTime(orderDO);
+        Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
         orderDO.setStatementDate(customerDO.getStatementDate());
         order = ConverterUtil.convert(orderDO, Order.class);
@@ -2715,7 +2722,7 @@ public class OrderServiceImpl implements OrderService {
                 bulkMaterialMapper.updateEquipmentOrderNo(productEquipmentDO.getEquipmentNo(), orderDO.getOrderNo());
 
                 BigDecimal expectRentAmount = calculationOrderExpectRentAmount(matchingOrderProductDO.getProductUnitAmount(), matchingOrderProductDO.getRentType(), matchingOrderProductDO.getRentTimeLength());
-                Date expectReturnTime = calculationOrderExpectReturnTime(orderDO.getRentStartTime(), matchingOrderProductDO.getRentType(), matchingOrderProductDO.getRentTimeLength());
+                Date expectReturnTime = orderSupport.calculationOrderExpectReturnTime(orderDO.getRentStartTime(), matchingOrderProductDO.getRentType(), matchingOrderProductDO.getRentTimeLength());
                 OrderProductEquipmentDO orderProductEquipmentDO = new OrderProductEquipmentDO();
                 orderProductEquipmentDO.setOrderId(matchingOrderProductDO.getOrderId());
                 orderProductEquipmentDO.setOrderProductId(matchingOrderProductDO.getId());
@@ -2787,7 +2794,7 @@ public class OrderServiceImpl implements OrderService {
                         bulkMaterialMapper.update(bulkMaterialDO);
 
                         BigDecimal expectRentAmount = calculationOrderExpectRentAmount(orderMaterialDO.getMaterialUnitAmount(), orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength());
-                        Date expectReturnTime = calculationOrderExpectReturnTime(orderDO.getRentStartTime(), orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength());
+                        Date expectReturnTime = orderSupport.calculationOrderExpectReturnTime(orderDO.getRentStartTime(), orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength());
                         OrderMaterialBulkDO orderMaterialBulkDO = new OrderMaterialBulkDO();
                         orderMaterialBulkDO.setOrderId(orderMaterialDO.getOrderId());
                         orderMaterialBulkDO.setOrderMaterialId(orderMaterialDO.getId());
@@ -2989,17 +2996,7 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
-    /**
-     * 计算订单预计归还时间
-     */
-    private Date calculationOrderExpectReturnTime(Date rentStartTime, Integer rentType, Integer rentTimeLength) {
-        if (OrderRentType.RENT_TYPE_DAY.equals(rentType)) {
-            return DateUtil.dateInterval(rentStartTime, rentTimeLength - 1);
-        } else if (OrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
-            return DateUtil.dateInterval(DateUtil.monthInterval(rentStartTime, rentTimeLength), -1);
-        }
-        return null;
-    }
+
 
     private BigDecimal calculationOrderExpectRentAmount(BigDecimal unitAmount, Integer rentType, Integer rentTimeLength) {
         if (OrderRentType.RENT_TYPE_DAY.equals(rentType)) {
@@ -3504,26 +3501,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    Date generateExpectReturnTime(OrderDO orderDO) {
-        Date expectReturnTime = null;
-        if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
-            for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
-                Date thisExpectReturnTime = calculationOrderExpectReturnTime(orderDO.getRentStartTime(), orderProductDO.getRentType(), orderProductDO.getRentTimeLength());
-                if (thisExpectReturnTime != null) {
-                    expectReturnTime = expectReturnTime == null || expectReturnTime.getTime() < thisExpectReturnTime.getTime() ? thisExpectReturnTime : expectReturnTime;
-                }
-            }
-        }
-        if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
-            for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
-                Date thisExpectReturnTime = calculationOrderExpectReturnTime(orderDO.getRentStartTime(), orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength());
-                if (thisExpectReturnTime != null) {
-                    expectReturnTime = expectReturnTime == null || expectReturnTime.getTime() < thisExpectReturnTime.getTime() ? thisExpectReturnTime : expectReturnTime;
-                }
-            }
-        }
-        return expectReturnTime;
-    }
+
 
     private void updateOrderConsignInfo(Integer userConsignId, Integer orderId, User loginUser, Date currentTime) {
         CustomerConsignInfoDO userConsignInfoDO = customerConsignInfoMapper.findById(userConsignId);
@@ -3851,6 +3829,7 @@ public class OrderServiceImpl implements OrderService {
         if (order.getRentStartTime() == null) {
             return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
         }
+        //测试放开起租时间限制
         try {
             if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
                 return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
@@ -4359,4 +4338,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private K3Service k3Service;
+
+    @Autowired
+    private OrderSupport orderSupport;
+
+    @Autowired
+    private OrderStatementDateSplitMapper  orderStatementDateSplitMapper;
 }
