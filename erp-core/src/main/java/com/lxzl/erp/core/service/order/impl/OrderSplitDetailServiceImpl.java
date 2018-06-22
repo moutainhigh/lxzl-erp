@@ -43,7 +43,7 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
     private static Logger logger = LoggerFactory.getLogger(OrderSplitDetailServiceImpl.class);
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, List<Integer>> addOrderSplitDetail(OrderSplit orderSplit) {
         ServiceResult<String, List<Integer>> serviceResult = new ServiceResult<>();
 
@@ -152,7 +152,7 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> updateOrderSplit(OrderSplit orderSplit) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         List<OrderSplitDetail> orderSplitDetailList = orderSplit.getSplitDetailList();
@@ -263,7 +263,7 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> deleteOrderSplit(Integer orderItemType, Integer orderItemReferId) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Integer result = 0;

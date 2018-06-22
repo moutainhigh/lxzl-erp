@@ -92,7 +92,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     private static final Logger logger = LoggerFactory.getLogger(K3ReturnOrderServiceImpl.class);
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> createReturnOrder(K3ReturnOrder k3ReturnOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -398,7 +398,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         });
     }
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void sendReturnOrderToK3Method(K3ReturnOrder k3ReturnOrder,K3SendRecordDO k3SendRecordDO) {
         com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response = null;
         try {
@@ -499,7 +499,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateReturnOrder(K3ReturnOrder k3ReturnOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -601,7 +601,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> commitK3ReturnOrder(K3ReturnOrderCommitParam k3ReturnOrderCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -765,7 +765,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(businessNo);
         try {
@@ -858,7 +858,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> importK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam) {
         StringBuffer info = new StringBuffer();
         ServiceResult<String, Integer> importResult = new ServiceResult<>();
@@ -969,7 +969,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> createReturnOrderFromERP(K3ReturnOrder k3ReturnOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -1079,7 +1079,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateReturnOrderFromERP(K3ReturnOrder k3ReturnOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();

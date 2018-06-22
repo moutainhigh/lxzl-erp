@@ -66,7 +66,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
     private static Logger logger = LoggerFactory.getLogger(RepairOrderServiceImpl.class);
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addRepairOrder(RepairOrder repairOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -232,7 +232,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String receiveVerifyResult(boolean verifyResult, String repairOrderNo) {
         try {
             RepairOrderDO repairOrderDO = repairOrderMapper.findByRepairOrderNo(repairOrderNo);
@@ -282,7 +282,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> cancelRepairOrder(RepairOrder repairOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         RepairOrderDO repairOrderDO = repairOrderMapper.findByRepairOrderNo(repairOrder.getRepairOrderNo());
@@ -344,7 +344,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> updateRepairOrder(RepairOrder repairOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -500,7 +500,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> fix(List<RepairOrderEquipment> repairOrderEquipmentList, List<RepairOrderBulkMaterial> repairOrderBulkMaterialList) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();

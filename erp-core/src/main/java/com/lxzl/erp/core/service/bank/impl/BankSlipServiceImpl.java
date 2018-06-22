@@ -130,7 +130,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> saveBankSlip(BankSlip bankSlip) throws Exception {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -214,7 +214,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> pushDownBankSlip(BankSlip bankSlip) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -275,7 +275,7 @@ public class BankSlipServiceImpl implements BankSlipService {
 
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> claimBankSlipDetail(BankSlipClaim bankSlipClaim) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -383,7 +383,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         return serviceResult;
     }
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> updateClaim(BankSlipDO bankSlipDO, BankSlipDetailDO bankSlipDetailDO, BankSlipClaim bankSlipClaim, List<ClaimParam> claimParamList, Date now) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         //如果状态为未认领状态
@@ -414,7 +414,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> confirmBankSlip(BankSlip bankSlip) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlip.getBankSlipId());
@@ -622,7 +622,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> deleteBankSlip(BankSlip bankSlip) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -685,7 +685,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> hideBankSlipDetail(BankSlipDetail bankSlipDetail) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -766,7 +766,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> displayBankSlipDetail(BankSlipDetail bankSlipDetail) {
         //校验权限可显示
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
@@ -826,7 +826,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> localizationBankSlipDetail(BankSlip bankSlip) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -952,7 +952,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, BankSlipDetailDO> cancelLocalizationBankSlipDetail(BankSlipDetail bankSlipDetail) {
         ServiceResult<String, BankSlipDetailDO> serviceResult = cancelLocalization(bankSlipDetail);
         return serviceResult;
@@ -1204,7 +1204,7 @@ public class BankSlipServiceImpl implements BankSlipService {
 
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> confirmBankSlipDetail(BankSlipDetail bankSlipDetail) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -1455,7 +1455,7 @@ public class BankSlipServiceImpl implements BankSlipService {
      * @Date : Created in 2018/5/26 15:03
      * @Return : void
      */
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     void saveBankSlipClaimDOAndBankSlipDetailOperationLog(BankSlipDO bankSlipDO, BankSlipClaim bankSlipClaim, List<ClaimParam> claimParamList, BankSlipDetailDO bankSlipDetailDO, Long currentTimeMillis, Date now) {
 
         StringBuffer stringBuffer = new StringBuffer("");
