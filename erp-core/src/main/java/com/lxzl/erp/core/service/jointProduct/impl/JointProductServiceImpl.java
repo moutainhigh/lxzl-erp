@@ -43,7 +43,7 @@ public class JointProductServiceImpl implements JointProductService {
      * 添加组合商品
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> addJointProduct(JointProduct jointProduct) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         //判断JointProductProductList 和 JointMaterialList 是否有值
@@ -134,7 +134,7 @@ public class JointProductServiceImpl implements JointProductService {
      * 更新组合商品
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> updateJointProduct(JointProduct jointProduct) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult();
         JointProductDO jointProductDO = jointProductMapper.findDetailByJointProductId(jointProduct.getJointProductId());
@@ -314,7 +314,7 @@ public class JointProductServiceImpl implements JointProductService {
      * 删除组合商品
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> deleteJointProduct(JointProduct jointProduct) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         //首先查看数据库中是否有此id

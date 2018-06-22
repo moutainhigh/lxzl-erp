@@ -57,6 +57,9 @@
                                         <dt><label>{{userRealName}}</label><span class="mr5">：</span></dt>
                                         <dd class="mb5">{{content}}</dd>
                                         {{/orderMessageData}}
+                                        {{^orderMessageData}}
+                                        <dd>暂无备注信息</dd>
+                                        {{/orderMessageData}}
                                     </dl>
                                 </div>
                             </div>

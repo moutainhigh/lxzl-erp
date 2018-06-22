@@ -30,6 +30,7 @@ public class InterfaceOrderQueryParam extends BasePageParam implements Serializa
     private Date createStartTime;
     private Date createEndTime;
     private Integer orderSellerId;
+    private String orderSellerName;                             // 业务员姓名
 
     private List<Integer> passiveUserIdList;
     private Integer subCompanyId;
@@ -143,6 +144,14 @@ public class InterfaceOrderQueryParam extends BasePageParam implements Serializa
 
     public void setOrderSellerId(Integer orderSellerId) {
         this.orderSellerId = orderSellerId;
+    }
+
+    public String getOrderSellerName() {
+        return orderSellerName;
+    }
+
+    public void setOrderSellerName(String orderSellerName) {
+        this.orderSellerName = orderSellerName;
     }
 
     public List<Integer> getPassiveUserIdList() {

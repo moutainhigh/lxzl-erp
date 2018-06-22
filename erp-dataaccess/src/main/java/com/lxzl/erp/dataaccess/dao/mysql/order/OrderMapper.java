@@ -14,6 +14,8 @@ import java.util.Map;
 public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
 
     OrderDO findByOrderId(@Param("orderId") Integer orderId);
+    OrderDO findByOrderIdSimple(@Param("orderId") Integer orderId);
+    OrderDO findByOrderNoSimple(@Param("orderNo") String orderNo);
     List<OrderDO> findByOrderParam(@Param("startTime")Date startTime,@Param("endTime")Date endTime);
     OrderDO findByOrderNo(@Param("orderNo") String orderNo);
     List<OrderDO> findByCustomerId(@Param("customerId") Integer customerId);
