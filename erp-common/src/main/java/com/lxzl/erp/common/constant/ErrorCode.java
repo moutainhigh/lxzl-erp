@@ -937,6 +937,7 @@ public class ErrorCode {
     public static final String RELET_ORDER_HAS_PAID = "J21000016";
     public static final String RELET_ORDER_RE_STATEMENT_FAIL = "J21000017";
     public static final String RELET_ORDER_RENT_TYPE_DAY_CAN_NOT_RENT_TOO_LONG = "J21000018";
+    public static final String RELET_ORDER_RENT_TYPE_MONTH_CAN_NOT_RENT_TOO_LONG = "J21000019";
 
 
     public static final String PRINT_LOG_REFER_NO_NOT_NULL = "J220000001";
@@ -1887,6 +1888,8 @@ public class ErrorCode {
         MAP.put(RELET_ORDER_STATUS_CAN_NOT_CANCEL, "只有待处理的续租单可以取消");
         MAP.put(RELET_ORDER_HAS_PAID, "已支付的续租单不允许批量重算");
         MAP.put(RELET_ORDER_RE_STATEMENT_FAIL, "续租单号【%s 】的续租单重新结算失败");
+        MAP.put(RELET_ORDER_RENT_TYPE_DAY_CAN_NOT_RENT_TOO_LONG, "按天租的订单，续租时长不允许超过89天");
+        MAP.put(RELET_ORDER_RENT_TYPE_MONTH_CAN_NOT_RENT_TOO_LONG, "按月租的订单，续租时长不允许超过2年");
 
         MAP.put(PRINT_LOG_REFER_NO_NOT_NULL, "关联编号不能为空");
         MAP.put(PRINT_LOG_REFER_TYPE_NOT_NULL, "关联类型不能为空");
