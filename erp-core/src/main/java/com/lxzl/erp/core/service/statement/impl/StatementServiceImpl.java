@@ -597,6 +597,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> reCreateOrderStatement(OrderStatementDateSplit k3StatementDateChange) {
         ServiceResult<String, BigDecimal> result=new ServiceResult<>();
         OrderDO orderDO = orderMapper.findByOrderNo(k3StatementDateChange.getOrderNo());
