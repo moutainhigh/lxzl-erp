@@ -597,6 +597,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> reCreateOrderStatement(OrderStatementDateSplit k3StatementDateChange) {
         ServiceResult<String, BigDecimal> result=new ServiceResult<>();
         OrderDO orderDO = orderMapper.findByOrderNo(k3StatementDateChange.getOrderNo());
@@ -630,7 +631,14 @@ public class StatementServiceImpl implements StatementService {
         addStatementSplit.setUpdateUser(userId);
         addStatementSplit.setUpdateTime(currentTime);
         orderStatementDateSplitMapper.save(addStatementSplit);
-        return reCreateOrderStatement(k3StatementDateChange.getOrderNo(),null,false);
+
+        ServiceResult<String, BigDecimal> serviceResult= reCreateOrderStatement(k3StatementDateChange.getOrderNo(),null,false);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            result.setErrorCode(serviceResult.getErrorCode());
+            return result;
+        }
+        return serviceResult;
     }
 
     @Override
