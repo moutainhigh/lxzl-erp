@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
+import com.lxzl.erp.common.domain.k3.pojo.K3StatementDateChange;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
@@ -167,7 +168,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createOrderStatement(String orderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
@@ -264,7 +265,9 @@ public class StatementServiceImpl implements StatementService {
             orderDO.setRentTimeLength(beforeLength);
             orderDO.setStatementDate(k3StatementDateChangeDO.getBeforeStatementDate());
             List<StatementOrderDetailDO> beforeStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, beforeStatementDays, loginUserId,percent);
-            for (StatementOrderDetailDO statementOrderDetailDO:beforeStatementOrderDetailDOList)if(statementOrderDetailDO.getStatementDetailPhase().equals(beforeLength))statementOrderDetailDO.setStatementEndTime(DateUtil.getDayByOffset(statementDateChangeTime,-1));
+            //补全最后一期结算时间
+            List<StatementOrderDetailDO> lastPhaseList = getLastPhaseStatementOrderDetailDOS(beforeStatementOrderDetailDOList);
+            for (StatementOrderDetailDO statementOrderDetailDO:lastPhaseList) statementOrderDetailDO.setStatementEndTime(DateUtil.getDayByOffset(statementDateChangeTime,-1));
 
             orderDO.setRentStartTime(statementDateChangeTime);
             orderDO.setExpectReturnTime(expectReturnTime);
@@ -272,7 +275,8 @@ public class StatementServiceImpl implements StatementService {
             orderDO.setRentTimeLength(rentLenth-beforeLength);
 
             List<StatementOrderDetailDO> afterStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, afterStatementDays, loginUserId,CommonConstant.PROPORTION_MAX-percent);
-            for(StatementOrderDetailDO statementOrderDetailDO:afterStatementOrderDetailDOList)if(statementOrderDetailDO.getStatementDetailPhase().equals(orderDO.getRentTimeLength()))statementOrderDetailDO.setStatementEndTime(expectReturnTime);
+            lastPhaseList = getLastPhaseStatementOrderDetailDOS(afterStatementOrderDetailDOList);
+            for(StatementOrderDetailDO statementOrderDetailDO:lastPhaseList)statementOrderDetailDO.setStatementEndTime(expectReturnTime);
 
             //过滤第二部分重算的押金
             if(CollectionUtil.isNotEmpty(beforeStatementOrderDetailDOList))addStatementOrderDetailDOList.addAll(beforeStatementOrderDetailDOList);
@@ -293,32 +297,50 @@ public class StatementServiceImpl implements StatementService {
         return addStatementOrderDetailDOList;
     }
 
+    private List<StatementOrderDetailDO> getLastPhaseStatementOrderDetailDOS(List<StatementOrderDetailDO> beforeStatementOrderDetailDOList) {
+        List<StatementOrderDetailDO> lastPhaseList=new ArrayList<>();
+        Integer maxPhase=1;
+        for (StatementOrderDetailDO statementOrderDetailDO:beforeStatementOrderDetailDOList){
+
+            if(statementOrderDetailDO.getStatementDetailPhase().equals(maxPhase))lastPhaseList.add(statementOrderDetailDO);
+            else if(statementOrderDetailDO.getStatementDetailPhase()>maxPhase){
+                lastPhaseList.clear();
+                lastPhaseList.add(statementOrderDetailDO);
+            }
+
+        }
+        return lastPhaseList;
+    }
+
     private double getOrderPercent(Integer rentTimeLength,Integer rentType, Date rentStartTime, K3StatementDateChangeDO k3StatementDateChangeDO, Date expectReturnTime, Date statementDateChangeTime) {
         if(rentType.equals(OrderRentType.RENT_TYPE_DAY)){
             return DateUtil.daysBetween(rentStartTime,statementDateChangeTime)/(double)DateUtil.daysBetween(rentStartTime,expectReturnTime)* CommonConstant.PROPORTION_MAX;
         }else{
             double phaseCout=0;
+            boolean isFirst=true;
             if(k3StatementDateChangeDO.getBeforeStatementDate()== StatementMode.STATEMENT_MONTH_END){
                 Date nextStartTime=rentStartTime;
-                while (nextStartTime.compareTo(statementDateChangeTime)<0){
+
+                while (DateUtil.daysBetween(nextStartTime,statementDateChangeTime)>0){
                     Calendar endCalandar=Calendar.getInstance();
-                    endCalandar.setTime(rentStartTime);
+                    endCalandar.setTime(nextStartTime);
                     endCalandar.set(Calendar.DAY_OF_MONTH,endCalandar.getActualMaximum(Calendar.DAY_OF_MONTH));
                     Date endTime=endCalandar.getTime();
-                    //首位算比例
-                    if(endTime.compareTo(statementDateChangeTime)>0||nextStartTime.compareTo(rentStartTime)<=0){
-                        endTime=statementDateChangeTime;
-                        phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/endCalandar.getActualMaximum(Calendar.DAY_OF_MONTH);
+                    //首尾算比例
+                    if(endTime.compareTo(statementDateChangeTime)>0||isFirst){
+                        isFirst=false;
+                        if(endTime.compareTo(statementDateChangeTime)>0)endTime=statementDateChangeTime;
+                        phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/(double)endCalandar.getActualMaximum(Calendar.DAY_OF_MONTH);
                     }else phaseCout+=1;
 
-                    nextStartTime=DateUtil.getDayByOffset(endTime,1);
+                    nextStartTime=endTime;
                 }
             }
             else if(k3StatementDateChangeDO.getBeforeStatementDate()==StatementMode.STATEMENT_20){
                 Date nextStartTime=rentStartTime;
-                while (nextStartTime.compareTo(statementDateChangeTime)<0){
+                while (DateUtil.daysBetween(nextStartTime,statementDateChangeTime)>0){
                     Calendar endCalandar=Calendar.getInstance();
-                    endCalandar.setTime(rentStartTime);
+                    endCalandar.setTime(nextStartTime);
                     endCalandar.set(Calendar.DAY_OF_MONTH,StatementMode.STATEMENT_20);
                     Date endTime=endCalandar.getTime();
                     if(endTime.compareTo(nextStartTime)<=0){
@@ -327,12 +349,13 @@ public class StatementServiceImpl implements StatementService {
                     }
                     endCalandar.add(Calendar.MONTH,-1);
                     Date beforeEndTime=endCalandar.getTime();
-                    if(endTime.compareTo(statementDateChangeTime)>0||nextStartTime.compareTo(rentStartTime)<=0){
-                        endTime=statementDateChangeTime;
-                        phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/DateUtil.daysBetween(beforeEndTime,endTime);
+                    if(endTime.compareTo(statementDateChangeTime)>0||isFirst){
+                        isFirst=false;
+                        if(endTime.compareTo(statementDateChangeTime)>0)endTime=statementDateChangeTime;
+                        phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/(double)DateUtil.daysBetween(beforeEndTime,endTime);
                     }else phaseCout+=1;
 
-                    nextStartTime=DateUtil.getDayByOffset(endTime,1);
+                    nextStartTime=endTime;
                 }
             }
             else if(k3StatementDateChangeDO.getBeforeStatementDate()==StatementMode.STATEMENT_MONTH_NATURAL){
@@ -340,9 +363,9 @@ public class StatementServiceImpl implements StatementService {
                 rentStartCalendar.setTime(rentStartTime);
                 int actualStatementDate=rentStartCalendar.get(Calendar.DAY_OF_MONTH);
                 Date nextStartTime=rentStartTime;
-                while (nextStartTime.compareTo(statementDateChangeTime)<0){
+                while (DateUtil.daysBetween(nextStartTime,statementDateChangeTime)>0){
                     Calendar endCalandar=Calendar.getInstance();
-                    endCalandar.setTime(rentStartTime);
+                    endCalandar.setTime(nextStartTime);
                     endCalandar.set(Calendar.DAY_OF_MONTH,actualStatementDate);
                     Date endTime=endCalandar.getTime();
                     if(endTime.compareTo(nextStartTime)<=0){
@@ -351,11 +374,12 @@ public class StatementServiceImpl implements StatementService {
                     }
                     endCalandar.add(Calendar.MONTH,-1);
                     Date beforeEndTime=endCalandar.getTime();
-                    if(endTime.compareTo(statementDateChangeTime)>0||nextStartTime.compareTo(rentStartTime)<=0){
-                        endTime=statementDateChangeTime;
-                        phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/DateUtil.daysBetween(beforeEndTime,endTime);
+                    if(endTime.compareTo(statementDateChangeTime)>0||isFirst){
+                        isFirst=false;
+                        if(endTime.compareTo(statementDateChangeTime)>0)endTime=statementDateChangeTime;
+                        phaseCout+=DateUtil.daysBetween(nextStartTime,endTime)/(double)DateUtil.daysBetween(beforeEndTime,endTime);
                     }else phaseCout+=1;
-                    nextStartTime=DateUtil.getDayByOffset(endTime,1);
+                    nextStartTime=endTime;
                 }
             }
             return phaseCout/rentTimeLength* CommonConstant.PROPORTION_MAX;
@@ -421,9 +445,10 @@ public class StatementServiceImpl implements StatementService {
         if(k3StatementDateChangeDO.getChangeType().equals(CommonConstant.COMMON_ONE)){
             calendar.add(Calendar.MONTH,1);
         }
-        if(k3StatementDateChangeDO.getBeforeStatementDate()== StatementMode.STATEMENT_MONTH_END) calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH)-1);
+        if(k3StatementDateChangeDO.getBeforeStatementDate()== StatementMode.STATEMENT_MONTH_END)
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
         else if(k3StatementDateChangeDO.getBeforeStatementDate()==StatementMode.STATEMENT_20){
-            calendar.set(Calendar.DAY_OF_MONTH, StatementMode.STATEMENT_20-1);
+            calendar.set(Calendar.DAY_OF_MONTH, StatementMode.STATEMENT_20);
         }
         else if(k3StatementDateChangeDO.getBeforeStatementDate()==StatementMode.STATEMENT_MONTH_NATURAL){
             Calendar startRentC=Calendar.getInstance();
@@ -434,7 +459,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createK3OrderStatement(Order order) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
@@ -487,13 +512,38 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> reCreateOrderStatement(String orderNo){
         return reCreateOrderStatement(orderNo,null);
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, BigDecimal> reCreateOrderStatement(K3StatementDateChange k3StatementDateChange) {
+        K3StatementDateChangeDO k3StatementDateChangeDO= k3StatementDateChangeMapper.findByOrderNo(k3StatementDateChange.getOrderNo());
+        Date currentTime=new Date();
+        String userId=userSupport.getCurrentUserId().toString();
+        if(k3StatementDateChangeDO==null){
+            K3StatementDateChangeDO addStatementSplit=ConverterUtil.convert(k3StatementDateChange, K3StatementDateChangeDO.class);
+            addStatementSplit.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            addStatementSplit.setCreateUser(userId);
+            addStatementSplit.setCreateTime(currentTime);
+            addStatementSplit.setUpdateUser(userId);
+            addStatementSplit.setUpdateTime(currentTime);
+            k3StatementDateChangeMapper.save(addStatementSplit);
+        }else{
+            k3StatementDateChangeDO.setUpdateUser(userId);
+            k3StatementDateChangeDO.setUpdateTime(currentTime);
+            k3StatementDateChangeDO.setStatementDateChangeTime(k3StatementDateChange.getStatementDateChangeTime());
+            k3StatementDateChangeDO.setBeforeStatementDate(k3StatementDateChange.getBeforeStatementDate());
+            k3StatementDateChangeDO.setAfterStatementDate(k3StatementDateChange.getAfterStatementDate());
+            k3StatementDateChangeDO.setChangeType(k3StatementDateChange.getChangeType());
+            k3StatementDateChangeMapper.update(k3StatementDateChangeDO);
+        }
+        return reCreateOrderStatement(k3StatementDateChangeDO.getOrderNo());
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> reCreateOrderStatement(String orderNo,Integer statementDate) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         if (StringUtil.isEmpty(orderNo)) {
@@ -517,6 +567,14 @@ public class StatementServiceImpl implements StatementService {
 //            return result;
 //        }
 
+
+
+        // 客户为确认结算单状态时，不允许重算客户的订单
+        CustomerDO customerDO = customerMapper.findByNo(orderDO.getBuyerCustomerNo());
+        if (customerDO != null && ConfirmStatementStatus.CONFIRM_STATUS_YES.equals(customerDO.getConfirmStatementStatus())) {
+            result.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE);
+            return result;
+        }
         //用户手动修改结算日
         if(statementDate!=null){
             if(!Arrays.asList(StatementMode.STATEMENT_MONTH_END,StatementMode.STATEMENT_20,StatementMode.STATEMENT_MONTH_NATURAL).contains(statementDate)){
@@ -525,15 +583,8 @@ public class StatementServiceImpl implements StatementService {
             }
             orderDO.setStatementDate(statementDate);
             orderMapper.update(orderDO);
+            statementOrderSupport.recordStatementDateLog(orderNo,statementDate);
         }
-
-        // 客户为确认结算单状态时，不允许重算客户的订单
-        CustomerDO customerDO = customerMapper.findByNo(orderDO.getBuyerCustomerNo());
-        if (customerDO != null && ConfirmStatementStatus.CONFIRM_STATUS_YES.equals(customerDO.getConfirmStatementStatus())) {
-            result.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE);
-            return result;
-        }
-
         //有退货单不允许重算
 //        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
 //        if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOList)) {
@@ -579,6 +630,7 @@ public class StatementServiceImpl implements StatementService {
         reStatementReturnOrderItems(k3ReturnOrderDetailDOList,true);
 
         //修正结算单时间范围
+
 
 
         //更新订单首次需支付金额
@@ -926,7 +978,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> weixinPayStatementOrder(String statementOrderNo, String openId, String ip) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -1042,7 +1094,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> weixinPayCallback(WeixinPayCallbackParam param) {
         ServiceResult<String, String> result = new ServiceResult<>();
 
@@ -1117,7 +1169,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Boolean> payStatementOrder(String statementOrderNo) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
 
@@ -1218,7 +1270,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, List<String>> batchPayStatementOrder(List<StatementOrderPayParam> param) {
         ServiceResult<String, List<String>> result = new ServiceResult<>();
 
@@ -1784,7 +1836,7 @@ public class StatementServiceImpl implements StatementService {
     private void convertStatementOrderDetailOtherInfo(StatementOrderDetail statementOrderDetail, StatementOrderDetail returnReferStatementOrderDetail, OrderDO orderDO) {
         if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
 
-            orderDO = orderDO == null ? orderMapper.findByOrderId(statementOrderDetail.getOrderId()) : orderDO;
+            orderDO = orderDO == null ? orderMapper.findByOrderIdSimple(statementOrderDetail.getOrderId()) : orderDO;
             if (orderDO != null) {
                 statementOrderDetail.setOrderNo(orderDO.getOrderNo());
                 if (statementOrderDetail.getReletOrderItemReferId() == null) {
@@ -1932,7 +1984,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createK3ReturnOrderStatement(String returnOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);
@@ -2388,7 +2440,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createReturnOrderStatement(String returnOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(returnOrderNo);
@@ -2686,7 +2738,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createK3ChangeOrderStatement(String changeOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -2844,7 +2896,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createChangeOrderStatement(String changeOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -2985,7 +3037,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Boolean> handleOverdueStatementOrder(Date startTime, Date endTime) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -3005,7 +3057,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Boolean> handleNoPaidStatementOrder(Date startTime, Date endTime) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         StatementPayOrderQueryParam statementPayOrderQueryParam = new StatementPayOrderQueryParam();
@@ -3741,7 +3793,7 @@ public class StatementServiceImpl implements StatementService {
      * @param orderDO
      * @return
      */
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, String> clearStatementOrderDetail(OrderDO orderDO) {
         ServiceResult<String, String> result = new ServiceResult<>();
         CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
@@ -3956,7 +4008,7 @@ public class StatementServiceImpl implements StatementService {
      * @param orderDO
      * @return
      */
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, String> clearStatementOrder(OrderDO orderDO) {
 
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, orderDO.getId());
@@ -4042,12 +4094,12 @@ public class StatementServiceImpl implements StatementService {
 
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createReletOrderStatement(ReletOrderDO reletOrderDO) {
         return reletOrderStatement(reletOrderDO, true);
     }
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> reletOrderStatement(ReletOrderDO reletOrderDO, boolean allowUnpay) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         if (reletOrderDO == null) {
@@ -4286,7 +4338,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> reCreateReletOrderStatement(String reletOrderNo) {
         ServiceResult<String, BigDecimal> serviceResult = new ServiceResult<>();
 
@@ -4317,7 +4369,7 @@ public class StatementServiceImpl implements StatementService {
      *
      * @param reletOrderNo
      */
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, String> clearReletOrderStatement(String reletOrderNo) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrderNo);
@@ -4329,7 +4381,7 @@ public class StatementServiceImpl implements StatementService {
         return clearReletOrderStatement(reletOrderDO);
     }
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, String> clearReletOrderStatement(ReletOrderDO reletOrderDO) {
         List<Integer> ids = new ArrayList<>();
         List<ReletOrderMaterialDO> materialDOList = reletOrderDO.getReletOrderMaterialDOList();
@@ -4677,7 +4729,7 @@ public class StatementServiceImpl implements StatementService {
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> reStatementK3ReturnOrderRentOnly(String returnOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);

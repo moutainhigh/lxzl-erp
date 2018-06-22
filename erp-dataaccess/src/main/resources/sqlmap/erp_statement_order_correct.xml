@@ -24,6 +24,11 @@
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="statement_correct_success_time" jdbcType="TIMESTAMP" property="statementCorrectSuccessTime" />
 		<result column="statement_correct_fail_reason" jdbcType="VARCHAR" property="statementCorrectFailReason" />
+		<result column="subCompanyId" jdbcType="INTEGER" property="subCompanyId" />
+		<result column="customerName" jdbcType="VARCHAR" property="customerName" />
+		<result column="subCompanyName" jdbcType="VARCHAR" property="subCompanyName" />
+		<result column="statementOrderNo" jdbcType="VARCHAR" property="statementOrderNo" />
+		<result column="customerNo" jdbcType="VARCHAR" property="customerNo" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -47,6 +52,15 @@
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(esoc.id) FROM erp_statement_order_correct esoc
+		INNER JOIN erp_statement_order eso on esoc.statement_order_id = eso.id AND eso.data_status = 1
+		INNER JOIN erp_customer ec on eso.customer_id = ec.id AND ec.data_status = 1
+		INNER JOIN erp_sub_company esc ON esc.id = ec.owner_sub_company_id AND esc.data_status = 1
+		<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.orderNo != null &amp;&amp; maps.statementOrderCorrectQueryParam.orderNo != ''">
+			LEFT JOIN erp_order eo on esoc.statement_order_refer_id = eo.id AND eo.data_status = 1
+		</if>
+		<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.returnOrderNo != null &amp;&amp; maps.statementOrderCorrectQueryParam.returnOrderNo != ''">
+			LEFT JOIN erp_k3_return_order ek3ro on esoc.statement_order_refer_id = ek3ro.id AND ek3ro.data_status = 1
+		</if>
 		<where>
 			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementCorrectNo != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementCorrectNo != ''">
 				AND esoc.statement_correct_no = #{maps.statementOrderCorrectQueryParam.statementCorrectNo,jdbcType=VARCHAR}
@@ -62,6 +76,18 @@
 			</if>
 			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.createEndTime != null">
 				<![CDATA[ AND esoc.create_time <= #{maps.statementOrderCorrectQueryParam.createEndTime} ]]>
+			</if>
+			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.customerName != null &amp;&amp; maps.statementOrderCorrectQueryParam.customerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.statementOrderCorrectQueryParam.customerName}','%' )
+			</if>
+			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.orderNo != null &amp;&amp; maps.statementOrderCorrectQueryParam.orderNo != ''">
+				and eo.order_no like CONCAT('%','${maps.statementOrderCorrectQueryParam.orderNo}','%' )
+			</if>
+			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.returnOrderNo != null &amp;&amp; maps.statementOrderCorrectQueryParam.returnOrderNo != ''">
+				and ek3ro.return_order_no like CONCAT('%','${maps.statementOrderCorrectQueryParam.returnOrderNo}','%' )
+			</if>
+			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.subCompanyId != null">
+				and ec.owner_sub_company_id = #{maps.statementOrderCorrectQueryParam.subCompanyId, jdbcType=INTEGER}
 			</if>
 			<if test="maps.isQueryAll == null">
 				AND esoc.data_status = 1
@@ -173,7 +199,32 @@
 	</select>
 
 	<select id="findStatementOrderCorrectAndStatementOrderByQueryParam" resultMap="StatementOrderCorrectDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc
+		SELECT <include refid="column_List"/>
+		<trim prefix=",">
+			ec.customer_name AS customerName
+		</trim>
+		<trim prefix=",">
+			ec.owner_sub_company_id AS subCompanyId
+		</trim>
+		<trim prefix=",">
+			esc.sub_company_name AS subCompanyName
+		</trim>
+		<trim prefix=",">
+			ec.customer_no AS customerNo
+		</trim>
+		<trim prefix=",">
+			eso.statement_order_no AS statementOrderNo
+		</trim>
+		FROM erp_statement_order_correct esoc
+		INNER JOIN erp_statement_order eso on esoc.statement_order_id = eso.id AND eso.data_status = 1
+		INNER JOIN erp_customer ec on eso.customer_id = ec.id AND ec.data_status = 1
+		INNER JOIN erp_sub_company esc ON esc.id = ec.owner_sub_company_id AND esc.data_status = 1
+		<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.orderNo != null &amp;&amp; maps.statementOrderCorrectQueryParam.orderNo != ''">
+		LEFT JOIN erp_order eo on esoc.statement_order_refer_id = eo.id AND eo.data_status = 1
+		</if>
+		<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.returnOrderNo != null &amp;&amp; maps.statementOrderCorrectQueryParam.returnOrderNo != ''">
+		LEFT JOIN erp_k3_return_order ek3ro on esoc.statement_order_refer_id = ek3ro.id AND ek3ro.data_status = 1
+		</if>
 		<where>
 			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementCorrectNo != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementCorrectNo != ''">
 				AND esoc.statement_correct_no = #{maps.statementOrderCorrectQueryParam.statementCorrectNo,jdbcType=VARCHAR}
@@ -189,6 +240,18 @@
 			</if>
 			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.createEndTime != null">
 				<![CDATA[ AND esoc.create_time <= #{maps.statementOrderCorrectQueryParam.createEndTime} ]]>
+			</if>
+			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.customerName != null &amp;&amp; maps.statementOrderCorrectQueryParam.customerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.statementOrderCorrectQueryParam.customerName}','%' )
+			</if>
+			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.orderNo != null &amp;&amp; maps.statementOrderCorrectQueryParam.orderNo != ''">
+				and eo.order_no like CONCAT('%','${maps.statementOrderCorrectQueryParam.orderNo}','%' )
+			</if>
+			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.returnOrderNo != null &amp;&amp; maps.statementOrderCorrectQueryParam.returnOrderNo != ''">
+				and ek3ro.return_order_no like CONCAT('%','${maps.statementOrderCorrectQueryParam.returnOrderNo}','%' )
+			</if>
+			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.subCompanyId != null">
+				and ec.owner_sub_company_id = #{maps.statementOrderCorrectQueryParam.subCompanyId, jdbcType=INTEGER}
 			</if>
 			<if test="maps.isQueryAll == null">
 				AND esoc.data_status = 1

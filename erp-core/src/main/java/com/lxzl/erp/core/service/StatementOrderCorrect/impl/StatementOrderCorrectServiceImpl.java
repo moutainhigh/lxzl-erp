@@ -60,7 +60,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> createStatementOrderCorrect(StatementOrderCorrect statementOrderCorrect) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
@@ -99,7 +99,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> commitStatementOrderCorrect(StatementOrderCorrectParam statementOrderCorrectParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //查看结算冲正单是否存在
@@ -175,7 +175,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> updateStatementOrderCorrect(StatementOrderCorrect statementOrderCorrect) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //查看结算冲正单是否存在
@@ -216,7 +216,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> cancelStatementOrderCorrect(String statementOrderCorrectNo) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //查看结算冲正单是否存在
@@ -288,6 +288,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             if (orderDO != null) {
                 //订单编号
                 statementOrderCorrect.setOrderNo(orderDO.getOrderNo());
+                statementOrderCorrect.setStatementOrderCorrectType(StatementOrderCorrectType.STATEMENT_ORDER_CORRECT_ORDER);
                 //商品名称
                 List<OrderProductDO> orderProductDOList = orderProductMapper.findByOrderId(orderDO.getId());
                 List<String> productNameList = new ArrayList<>();
@@ -316,6 +317,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                 if (k3ReturnOrderDO != null) {
                     //订单编号
                     statementOrderCorrect.setOrderNo(k3ReturnOrderDO.getReturnOrderNo());
+                    statementOrderCorrect.setStatementOrderCorrectType(StatementOrderCorrectType.STATEMENT_ORDER_CORRECT_RETURN);
                 }
             }
         }
@@ -347,18 +349,6 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderCorrectAndStatementOrderByQueryParam(maps);
         List<StatementOrderCorrect> statementOrderCorrectList = ConverterUtil.convertList(statementOrderCorrectDOList, StatementOrderCorrect.class);
         for (StatementOrderCorrect statementOrderCorrect : statementOrderCorrectList) {
-            Integer statementOrderId = statementOrderCorrect.getStatementOrderId();
-            StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderId);
-            if (statementOrderDO == null) {
-                serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
-                return serviceResult;
-            }
-            //结算单编号
-            statementOrderCorrect.setStatementOrderNo(statementOrderDO.getStatementOrderNo());
-            //客户名称
-            statementOrderCorrect.setCustomerName(statementOrderDO.getCustomerName());
-            //客户编号
-            statementOrderCorrect.setCustomerNo(statementOrderDO.getCustomerNo());
 
             List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, statementOrderCorrect.getStatementOrderReferId());
             if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
@@ -367,6 +357,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                 if (orderDO != null) {
                     //订单编号
                     statementOrderCorrect.setOrderNo(orderDO.getOrderNo());
+                    statementOrderCorrect.setStatementOrderCorrectType(StatementOrderCorrectType.STATEMENT_ORDER_CORRECT_ORDER);
                 }
             } else {
                 statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_RETURN, statementOrderCorrect.getStatementOrderReferId());
@@ -376,6 +367,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                     if (k3ReturnOrderDO != null) {
                         //订单编号
                         statementOrderCorrect.setOrderNo(k3ReturnOrderDO.getReturnOrderNo());
+                        statementOrderCorrect.setStatementOrderCorrectType(StatementOrderCorrectType.STATEMENT_ORDER_CORRECT_RETURN);
                     }
                 }
             }
@@ -396,7 +388,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : boolean
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         //校验结算冲正单是否存在记录和是否是已结算状态
         Date currentTime = new Date();

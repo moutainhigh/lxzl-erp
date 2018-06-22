@@ -53,11 +53,11 @@
                         <div class="divider-label" class="timelineEndLabel">当前</div>
                     </div>
 
-                    <div class="row">
+                    <div class="row" id="mix-container">
 
                         <script type="text/html" class="workflowTimelineTpl">
                             {{#dataSource}}
-                            <div class="timeline-item">
+                            <div class="timeline-item workFlowImg">
                                 <div class="timeline-icon">
                                     <span class="{{timeLinkClass}} {{textClass}}"></span>
                                 </div>
@@ -75,8 +75,17 @@
                                         <div class="row mb15">
                                             {{#imageListData}}
                                             <div class="col-xs-4" style="height: 200px; overflow: hidden;" >
-                                                <a class="gallery-item open-img-popup" data-imgs="{{imgListToJSONStringify}}" href="{{imgurl}}"><img src="{{imgurl}}" class="img-responsive" alt=""></a>
+                                                <span class="mix label1 folder1 custom-img-link" href="{{imgurl}}" title="" data-bound="" style="display: inline-block;">
+                                                    <div class="panel p6 pbn">
+                                                        <div class="of-h">
+                                                            <img src="{{imgurl}}"  alt=""/>
+                                                        </div>
+                                                    </div>
+                                                </span>
                                             </div>
+##                                            <div class="col-xs-4" style="height: 200px; overflow: hidden;" >
+##                                                <a class="gallery-item open-img-popup" data-imgs="{{imgListToJSONStringify}}" href="{{imgurl}}"><img src="{{imgurl}}" class="img-responsive" alt=""></a>
+##                                            </div>
                                             {{/imageListData}}
                                         </div>
                                         {{/imageListSource}}

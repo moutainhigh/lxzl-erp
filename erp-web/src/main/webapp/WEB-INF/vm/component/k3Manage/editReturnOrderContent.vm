@@ -160,6 +160,7 @@
                             <th>商品编号</th>
                             <th>商品名称</th>
                             <th>商品参数（SKU）</th>
+                            <th>在租数量</th>
                             <th>退货数量</th>
                             <th>备注</th>
                             <th class="text-right">操作</th>
@@ -180,12 +181,13 @@
                             <td>{{productNo}}</td>
                             <td>{{productName}}</td>
                             <td>{{skuStr}}</td>
+                            <td>{{rentingCount}}</td>
                             <td>
                                 <label class="field prepend-icon mw200">
                                     <input type="hidden" name="productNo" class="productNo" value="{{productNo}}"  />
                                     <input type="hidden" name="orderNo" class="orderNo" value="{{orderNo}}"  />
                                     <input type="hidden" name="rowid" class="rowid" value="{{rowid}}"  />
-                                    <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入退货数量" />
+                                    <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number checkInteger pl10" placeholder="输入退货数量" />
                                 </label>
                             </td>
                             <td>

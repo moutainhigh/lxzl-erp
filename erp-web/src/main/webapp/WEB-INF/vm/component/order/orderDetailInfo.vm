@@ -7,13 +7,13 @@
                 <h4>免押额度</h4>
                 <dl class="dl-horizontal dl-horizontal-rental">
                     <dt><label style="letter-spacing: 0.4em;">授信总额度</label><span class="mr5">：</span></dt>
-                    <dd class="mb5" id="creditAmount"></dd>
+                    <dd class="mb5">￥{{#price}}{{customerRiskManagement.creditAmount}}{{/price}}</dd>
 
                     <dt><label style="letter-spacing: 0.4em;">已使用额度</label><span class="mr5">：</span></dt>
-                    <dd class="mb5" id="creditAmountUsed"></dd>
+                    <dd class="mb5">￥{{#price}}{{customerRiskManagement.creditAmountUsed}}{{/price}}</dd>
 
                     <dt><label>剩余免押金额度</label><span class="mr5">：</span></dt>
-                    <dd class="mb5" id="surplusCreditAmount"></dd>
+                    <dd class="mb5">￥{{#price}}{{surplusCreditAmount}}{{/price}}</dd>
 
                     <dt><label>本期免押金额度</label><span class="mr5">：</span></dt>
                     <dd class="mb5">￥{{#price}}{{totalCreditDepositAmount}}{{/price}}#*（商品：￥{{#price}}{{totalProductCreditDepositAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialCreditDepositAmount}}{{/price}}）*#</dd>
