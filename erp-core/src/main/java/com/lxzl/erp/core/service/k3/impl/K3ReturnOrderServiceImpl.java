@@ -232,7 +232,19 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
             return result;
         }
+        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
+
         for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
+            if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOList)) {
+                for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDetailDOList) {
+                    if (k3ReturnOrderDetailDO.getOrderItemId().equals(k3ReturnOrderDetail.getOrderItemId()) && k3ReturnOrderDetailDO.getOrderEntry().equals(k3ReturnOrderDetail.getOrderEntry())) {
+                        result.setErrorCode(ErrorCode.RETURN_ORDER_HAVE_THE_SAME_PRODUCT_OR_MATERIAL);
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        return result;
+                    }
+                }
+            }
+
             //添加退货商品数量不能小于零的校验
             if (k3ReturnOrderDetail.getProductCount()<= 0) {
                 result.setErrorCode(ErrorCode.RETURN_COUNT_ERROR);
@@ -248,7 +260,38 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             k3ReturnOrderDetailDO.setUpdateUser(loginUser.getUserId().toString());
             k3ReturnOrderDetailMapper.save(k3ReturnOrderDetailDO);
         }
-
+        K3ReturnOrderDO newK3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
+        List<K3ReturnOrderDetailDO> newK3ReturnOrderDetailDOList = newK3ReturnOrderDO.getK3ReturnOrderDetailDOList();
+        //退货日期校验(退货时间不能大于起租时间)
+        Map<String, OrderDO> orderCatch = new HashMap<String, OrderDO>();
+        //记录erp订单个数
+        int erpOrderCount = 0;
+        for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO :newK3ReturnOrderDetailDOList) {
+            if (!orderCatch.containsKey(k3ReturnOrderDetailDO.getOrderNo())) {
+                //改成从erp里查询订单
+                OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
+                //不是K3老订单进行自加操作
+                if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
+                    erpOrderCount++;
+                }
+                if (orderDO.getRentStartTime().compareTo(newK3ReturnOrderDO.getReturnTime()) > 0) {
+                    result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
+                    return result;
+                }
+                orderCatch.put(k3ReturnOrderDetailDO.getOrderNo(), orderDO);
+            }
+        }
+        //不全部是K3老订单才校验退货日期不能小于三月五号，如果全部是老订单则不进行校验
+        if (erpOrderCount!=0) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(2018, 2, 5, 0, 0, 0);
+            Date minDate = calendar.getTime();
+            if (minDate.compareTo(newK3ReturnOrderDO.getReturnTime()) > 0) {
+                result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return result;
+            }
+        }
         result.setResult(k3ReturnOrderDO.getReturnOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -935,14 +978,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
-        //退货日期不能小于三月五号
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2018, 2, 5, 0, 0, 0);
-        Date minDate = calendar.getTime();
-        if (minDate.compareTo(k3ReturnOrder.getReturnTime()) > 0) {
-            result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
-            return result;
-        }
         //发货分公司检查
         SubCompanyDO subCompanyDO = subCompanyMapper.findById(k3ReturnOrder.getDeliverySubCompanyId());
         if (subCompanyDO == null) {
@@ -986,6 +1021,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if (k3ReturnOrderDO.getLogisticsAmount() == null) k3ReturnOrderDO.setLogisticsAmount(BigDecimal.ZERO);
         if (k3ReturnOrderDO.getServiceAmount() == null) k3ReturnOrderDO.setServiceAmount(BigDecimal.ZERO);
         k3ReturnOrderMapper.save(k3ReturnOrderDO);
+        //记录erp订单个数
+        int erpOrderCount = 0;
         if (CollectionUtil.isNotEmpty(k3ReturnOrder.getK3ReturnOrderDetailList())) {
             Map<String, Order> orderCatch = new HashMap<String, Order>();
             for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
@@ -998,6 +1035,10 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 if (!orderCatch.containsKey(k3ReturnOrderDetail.getOrderNo())) {
                     // 改成从erp里查询订单
                     OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
+                    //不是K3老订单进行自加操作
+                    if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
+                        erpOrderCount++;
+                    }
                     Order order = ConverterUtil.convert(orderDO, Order.class);
                     if (orderDO.getRentStartTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
                         result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
@@ -1016,6 +1057,17 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 k3ReturnOrderDetailMapper.save(k3ReturnOrderDetailDO);
             }
         }
+        //不全部是K3老订单才校验退货日期不能小于三月五号，如果全部是老订单则不进行校验
+        if (erpOrderCount!=0) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(2018, 2, 5, 0, 0, 0);
+            Date minDate = calendar.getTime();
+            if (minDate.compareTo(k3ReturnOrder.getReturnTime()) > 0) {
+                result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return result;
+            }
+        }
         result.setResult(k3ReturnOrderDO.getReturnOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -1032,14 +1084,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
-        //退货日期不能小于三月五号
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2018, 2, 5, 0, 0, 0);
-        Date minDate = calendar.getTime();
-        if (minDate.compareTo(k3ReturnOrder.getReturnTime()) > 0) {
-            result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
-            return result;
-        }
         if (k3ReturnOrder == null) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
@@ -1062,12 +1106,18 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         //退货日期校验(退货时间不能大于起租时间)
         Map<String, Order> orderCatch = new HashMap<String, Order>();
+        //记录erp订单个数
+        int erpOrderCount = 0;
         List<K3ReturnOrderDetailDO> orderDetailList = k3ReturnOrderDetailMapper.findListByReturnOrderId(dbK3ReturnOrderDO.getId());
         if (CollectionUtil.isNotEmpty(orderDetailList)) {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetail : orderDetailList) {
                 if (!orderCatch.containsKey(k3ReturnOrderDetail.getOrderNo())) {
                     //改成从erp里查询订单
                     OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
+                    //不是K3老订单进行自加操作
+                    if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
+                        erpOrderCount++;
+                    }
                     Order order = ConverterUtil.convert(orderDO, Order.class);
                     if (order.getRentStartTime().compareTo(k3ReturnOrder.getReturnTime()) > 0) {
                         result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
@@ -1075,6 +1125,17 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     }
                     orderCatch.put(k3ReturnOrderDetail.getOrderNo(), order);
                 }
+            }
+        }
+        //不全部是K3老订单才校验退货日期不能小于三月五号，如果全部是老订单则不进行校验
+        if (erpOrderCount!=0) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(2018, 2, 5, 0, 0, 0);
+            Date minDate = calendar.getTime();
+            if (minDate.compareTo(k3ReturnOrder.getReturnTime()) > 0) {
+                result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return result;
             }
         }
         K3ReturnOrderDO k3ReturnOrderDO = ConverterUtil.convert(k3ReturnOrder, K3ReturnOrderDO.class);
