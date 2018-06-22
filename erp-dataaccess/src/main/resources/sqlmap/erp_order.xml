@@ -560,11 +560,11 @@
             <if test="maps.orderQueryParam.createEndTime != null ">
                 <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
             </if>
-            <if test="maps.orderQueryParam.startRentStratTime != null">
-                <![CDATA[ AND eo.rent_start_time >= #{maps.orderQueryParam.startRentStratTime} ]]>
+            <if test="maps.orderQueryParam.startRentStartTime != null">
+                <![CDATA[ AND eo.rent_start_time >= #{maps.orderQueryParam.startRentStartTime} ]]>
             </if>
-            <if test="maps.orderQueryParam.endRentStratTime != null ">
-                <![CDATA[ AND eo.rent_start_time <= #{maps.orderQueryParam.endRentStratTime} ]]>
+            <if test="maps.orderQueryParam.endRentStartTime != null ">
+                <![CDATA[ AND eo.rent_start_time <= #{maps.orderQueryParam.endRentStartTime} ]]>
             </if>
             <if test="maps.orderQueryParam.startExpectReturnTime != null">
                 <![CDATA[ AND eo.expect_return_time >= #{maps.orderQueryParam.startExpectReturnTime} ]]>
@@ -702,11 +702,11 @@
             <if test="maps.orderQueryParam.createEndTime != null ">
                 <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
             </if>
-            <if test="maps.orderQueryParam.startRentStratTime != null">
-                <![CDATA[ AND eo.rent_start_time >= #{maps.orderQueryParam.startRentStratTime} ]]>
+            <if test="maps.orderQueryParam.startRentStartTime != null">
+                <![CDATA[ AND eo.rent_start_time >= #{maps.orderQueryParam.startRentStartTime} ]]>
             </if>
-            <if test="maps.orderQueryParam.endRentStratTime != null ">
-                <![CDATA[ AND eo.rent_start_time <= #{maps.orderQueryParam.endRentStratTime} ]]>
+            <if test="maps.orderQueryParam.endRentStartTime != null ">
+                <![CDATA[ AND eo.rent_start_time <= #{maps.orderQueryParam.endRentStartTime} ]]>
             </if>
             <if test="maps.orderQueryParam.startExpectReturnTime != null">
                 <![CDATA[ AND eo.expect_return_time >= #{maps.orderQueryParam.startExpectReturnTime} ]]>
