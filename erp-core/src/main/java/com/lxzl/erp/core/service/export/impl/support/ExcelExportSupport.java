@@ -3,14 +3,15 @@ package com.lxzl.erp.core.service.export.impl.support;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.validate.constraints.In;
 import com.lxzl.erp.core.service.export.ColConfig;
 import com.lxzl.erp.core.service.export.ExcelExportConfig;
 import com.lxzl.erp.core.service.export.impl.ExcelExportServiceImpl;
 import com.lxzl.se.common.util.StringUtil;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -225,5 +226,72 @@ public class ExcelExportSupport<T> {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
+
+    /**
+     * 导出设计表格
+     *
+     * @param : chargeRecordList
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/4/14 17:55
+     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>
+     */
+    public static <T> XSSFWorkbook getXSSFWorkbook(XSSFWorkbook hssfWorkbook,XSSFSheet hssSheet,List<T> list, ExcelExportConfig config, String sheetName,Integer rowNo,Integer headlineHeight,Integer rowHeight) throws Exception {
+        XSSFRow hssfRow = hssSheet.createRow(rowNo);
+        hssfRow.setHeightInPoints(headlineHeight);
+        int count = 0;
+        List<ColConfig> colConfigList = config.getConfigList();
+        for (int i = 0; i < colConfigList.size(); i++) {
+            ColConfig colConfig = colConfigList.get(i);
+            XSSFCell hssfCell = hssfRow.createCell(count++);
+            hssfCell.setCellValue(colConfig.getColName());
+            hssSheet.setColumnWidth(i, colConfig.getWidth());
+            setCellStyle( hssfWorkbook,hssfCell,colConfig.getHeadlineFontColor(),colConfig.getHeadlineBackGroupColor());
+        }
+
+        for (int i = 0; i < list.size(); i++) {
+            XSSFRow newXssfRow = hssSheet.createRow(rowNo+i+1);
+            newXssfRow.setHeightInPoints(rowHeight);
+            T t = list.get(i);
+            for (int j = 0; j < colConfigList.size(); j++) {
+                ColConfig colConfig = colConfigList.get(j);
+                //开始set值到表里面
+                String methodName = "get" + StringUtil.toUpperCaseFirstChar(colConfig.getFieldName());
+                Method method = t.getClass().getMethod(methodName);
+                Object value = method.invoke(t);
+                hssSheet.setColumnWidth(j, colConfig.getWidth());
+                Cell cell = newXssfRow.createCell(j);
+                cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
+                setCellStyle(hssfWorkbook,cell,colConfig.getFontColor(),colConfig.getBackGroupColor());
+            }
+        }
+        return hssfWorkbook;
+    }
+
+
+    public static void setCellStyle(Workbook hssfWorkbook, Cell cell, short fontColor, short backGroupColor){
+        CellStyle style = hssfWorkbook.createCellStyle();
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 居中
+        style.setWrapText(true);// 自动换行
+        style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);//垂直居中
+        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        style.setFillForegroundColor(backGroupColor);//背景颜色
+        //设置边框
+
+        style.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+        style.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        //设置边框颜色
+        style.setTopBorderColor(HSSFColor.BLACK.index);
+        style.setBottomBorderColor(HSSFColor.BLACK.index);
+        style.setLeftBorderColor(HSSFColor.BLACK.index);
+        style.setRightBorderColor(HSSFColor.BLACK.index);
+
+        Font font = hssfWorkbook.createFont();
+        font.setColor(fontColor); //字体颜色
+        style.setFont(font);
+        cell.setCellStyle(style);
+    }
+
 
 }

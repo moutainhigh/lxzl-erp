@@ -1,6 +1,7 @@
 package com.lxzl.erp.dataaccess.dao.mysql.statement;
 
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
+import com.lxzl.erp.dataaccess.domain.statement.CheckStatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
@@ -87,4 +88,6 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
      * @return
      */
     List<StatementOrderDetailDO> findReturnByOrderItemTypeAndId(@Param("orderItemType") Integer orderItemType, @Param("orderItemId") Integer orderItemId);
+
+    List<CheckStatementOrderDetailDO> exportListPage(@Param("maps") Map<String, Object> maps);
 }
