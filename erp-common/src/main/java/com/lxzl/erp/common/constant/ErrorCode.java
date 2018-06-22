@@ -622,6 +622,7 @@ public class ErrorCode {
     public static final String BEFORE_STATEMENT_MODE_NOT_SAME = "J500180";
     public static final String ONLY_RENT_TYPE_MONTH_NEED_SPLIT_STATEMENT = "J500181";
     public static final String SPLIT_STATEMENT_CAN_NOT_SAME = "J500182";
+    public static final String HAS_SPLIT_STATEMENT_CFG = "J500183";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1932,14 +1933,15 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户已经为确认结算单状态");
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE, "客户为确认结算单状态时不允许重算结算单");
         MAP.put(STATEMENT_DATE_NOT_SUPPORT, "不支持结算类型【%s 】");
-        MAP.put(STATEMENT_DATE_SPLIT_TIME_NOT_NULL, "结算分隔日期不能为空");
+        MAP.put(STATEMENT_DATE_SPLIT_TIME_NOT_NULL, "结算分段日期不能为空");
         MAP.put(BEFORE_STATEMENT_DATE_NOT_NULL, "前结算日不能为空");
         MAP.put(AFTER_STATEMENT_DATE_NOT_NULL, "后结算日不能为空");
         MAP.put(STATEMENT_DATE_CHANGE_TYPE_NOT_NULL, "结算日改变类型不能为空");
-        MAP.put(STATEMENT_SPLIT_TIME_ERROR, "已支付的结算无法分隔，请确认结算分隔时间是否正确");
-        MAP.put(BEFORE_STATEMENT_MODE_NOT_SAME, "分隔前结算方式【%s 】与已支付订单原结算方式【%s 】不一致");
+        MAP.put(STATEMENT_SPLIT_TIME_ERROR, "已支付的结算无法分段，请确认结算分段时间是否正确");
+        MAP.put(BEFORE_STATEMENT_MODE_NOT_SAME, "分段前结算方式【%s 】与已支付订单原结算方式【%s 】不一致");
         MAP.put(ONLY_RENT_TYPE_MONTH_NEED_SPLIT_STATEMENT, "短租不需要分段结算");
-        MAP.put(SPLIT_STATEMENT_CAN_NOT_SAME, "分隔前结算方式【%s 】与分隔后结算方式【%s 】一致\"");
+        MAP.put(SPLIT_STATEMENT_CAN_NOT_SAME, "分段前结算方式【%s 】与分段后结算方式【%s 】一致");
+        MAP.put(HAS_SPLIT_STATEMENT_CFG, "该订单已进行过分段结算，请先进行指定结算日结算");
     }
 
 
