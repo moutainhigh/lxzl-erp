@@ -31,6 +31,13 @@ public class InterfaceOrderQueryParam extends BasePageParam implements Serializa
     private Date createEndTime;
     private Integer orderSellerId;
     private String orderSellerName;                             // 业务员姓名
+    private Date startRentStartTime;
+    private Date endRentStartTime;
+    private Integer isReletOrder;                               //是否为续租单
+
+    private Date startExpectReturnTime;  //起始预计归还时间
+    private Date endExpectReturnTime;
+    private Integer rentLengthType;    //1 短租 2长租
 
     private List<Integer> passiveUserIdList;
     private Integer subCompanyId;
@@ -256,5 +263,53 @@ public class InterfaceOrderQueryParam extends BasePageParam implements Serializa
 
     public void setIsReturnOverDue(Integer isReturnOverDue) {
         this.isReturnOverDue = isReturnOverDue;
+    }
+
+    public Date getStartRentStartTime() {
+        return startRentStartTime;
+    }
+
+    public void setStartRentStartTime(Date startRentStartTime) {
+        this.startRentStartTime = startRentStartTime;
+    }
+
+    public Date getEndRentStartTime() {
+        return endRentStartTime;
+    }
+
+    public void setEndRentStartTime(Date endRentStartTime) {
+        this.endRentStartTime = endRentStartTime;
+    }
+
+    public Integer getIsReletOrder() {
+        return isReletOrder;
+    }
+
+    public void setIsReletOrder(Integer isReletOrder) {
+        this.isReletOrder = isReletOrder;
+    }
+
+    public Date getStartExpectReturnTime() {
+        return startExpectReturnTime;
+    }
+
+    public void setStartExpectReturnTime(Date startExpectReturnTime) {
+        this.startExpectReturnTime = startExpectReturnTime;
+    }
+
+    public Date getEndExpectReturnTime() {
+        return endExpectReturnTime;
+    }
+
+    public void setEndExpectReturnTime(Date endExpectReturnTime) {
+        this.endExpectReturnTime = endExpectReturnTime;
+    }
+
+    public Integer getRentLengthType() {
+        return rentLengthType;
+    }
+
+    public void setRentLengthType(Integer rentLengthType) {
+        this.rentLengthType = rentLengthType;
     }
 }

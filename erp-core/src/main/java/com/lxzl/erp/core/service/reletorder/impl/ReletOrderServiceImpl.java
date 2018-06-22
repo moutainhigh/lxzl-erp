@@ -98,9 +98,13 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             result.setErrorCode(orderServiceResult.getErrorCode());
             return result;
         }
-        //如果按天租的订单，续租时长不允许超过89天
+        //如果按天租的订单，续租时长不允许超过89天   //按月租的订单，续租时长不允许超过2年
         if(OrderRentType.RENT_TYPE_DAY.equals(orderServiceResult.getResult().getRentType())&&order.getRentTimeLength()>89){
             result.setErrorCode(ErrorCode.RELET_ORDER_RENT_TYPE_DAY_CAN_NOT_RENT_TOO_LONG);
+            return result;
+        }
+        else if(OrderRentType.RENT_TYPE_MONTH.equals(orderServiceResult.getResult().getRentType())&&order.getRentTimeLength()>24){
+            result.setErrorCode(ErrorCode.RELET_ORDER_RENT_TYPE_MONTH_CAN_NOT_RENT_TOO_LONG);
             return result;
         }
         //查询是否有续租单信息
@@ -232,6 +236,16 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrder.getReletOrderNo());
         if (reletOrderDO == null || !ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT.equals(reletOrderDO.getReletOrderStatus())) {
             result.setErrorCode(ErrorCode.RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_UPDATE);
+            return result;
+        }
+
+        //如果按天租的订单，续租时长不允许超过89天   //按月租的订单，续租时长不允许超过2年
+        if(OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType()) && reletOrder.getRentTimeLength()>89){
+            result.setErrorCode(ErrorCode.RELET_ORDER_RENT_TYPE_DAY_CAN_NOT_RENT_TOO_LONG);
+            return result;
+        }
+        else if(OrderRentType.RENT_TYPE_MONTH.equals(reletOrderDO.getRentType()) && reletOrder.getRentTimeLength()>24){
+            result.setErrorCode(ErrorCode.RELET_ORDER_RENT_TYPE_MONTH_CAN_NOT_RENT_TOO_LONG);
             return result;
         }
 
