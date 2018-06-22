@@ -299,7 +299,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> saveRoleMenu(RoleMenu roleMenu) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         String currentUserId = userSupport.getCurrentUserId().toString();

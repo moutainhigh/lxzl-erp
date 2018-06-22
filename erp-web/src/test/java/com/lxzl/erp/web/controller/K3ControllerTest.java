@@ -287,7 +287,8 @@ public class K3ControllerTest extends ERPTransactionalTest {
         K3ReturnOrderQueryParam param = new K3ReturnOrderQueryParam();
         param.setOrderNo("LXO-20180416-1000-00087");
 //        param.setReturnOrderStatus(16);
-        param.setK3CustomerNo("LXCC-027-20180416-00026");
+//        param.setK3CustomerNo("LXCC-027-20180416-00026");
+        param.setPageSize(3);
         TestResult testResult = getJsonTestResult("/k3/queryReturnOrder", param);
     }
 

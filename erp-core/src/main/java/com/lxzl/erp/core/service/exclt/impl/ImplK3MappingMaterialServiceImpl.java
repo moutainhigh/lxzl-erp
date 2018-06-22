@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
 public class ImplK3MappingMaterialServiceImpl implements ImplK3MappingMaterialService {
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Map<String, String>> importData(String str) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, IOException, InvalidFormatException {
 
         ServiceResult<String, Map<String, String>> serviceResult = new ServiceResult<>();

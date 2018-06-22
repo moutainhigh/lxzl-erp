@@ -4,7 +4,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
-import com.lxzl.erp.common.domain.k3.pojo.K3StatementDateChange;
+import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
@@ -76,7 +76,7 @@ public interface StatementService extends BaseService {
      * @param k3StatementDateChange
      * @return
      */
-    ServiceResult<String, BigDecimal> reCreateOrderStatement(K3StatementDateChange k3StatementDateChange);
+    ServiceResult<String, BigDecimal> reCreateOrderStatement(OrderStatementDateSplit k3StatementDateChange);
 
 
     /**
