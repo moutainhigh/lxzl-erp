@@ -613,6 +613,12 @@ public class ErrorCode {
 
     public static final String STATEMENT_DATE_NOT_SUPPORT = "J500174";
 
+    public static final String STATEMENT_DATE_SPLIT_TIME_NOT_NULL = "J500175";
+    public static final String BEFORE_STATEMENT_DATE_NOT_NULL = "J500176";
+    public static final String AFTER_STATEMENT_DATE_NOT_NULL = "J500177";
+    public static final String STATEMENT_DATE_CHANGE_TYPE_NOT_NULL = "J500178";
+    public static final String STATEMENT_SPLIT_TIME_ERROR = "J500179";
+
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
     public static final String MESSAGE_RECEIVER_NOT_NULL = "J600003";
@@ -1918,6 +1924,11 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户已经为确认结算单状态");
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE, "客户为确认结算单状态时不允许重算结算单");
         MAP.put(STATEMENT_DATE_NOT_SUPPORT, "不支持结算类型【%s 】");
+        MAP.put(STATEMENT_DATE_SPLIT_TIME_NOT_NULL, "结算分隔日期不能为空");
+        MAP.put(BEFORE_STATEMENT_DATE_NOT_NULL, "前结算日不能为空");
+        MAP.put(AFTER_STATEMENT_DATE_NOT_NULL, "后结算日不能为空");
+        MAP.put(STATEMENT_DATE_CHANGE_TYPE_NOT_NULL, "结算日改变类型不能为空");
+        MAP.put(STATEMENT_SPLIT_TIME_ERROR, "已支付的结算无法分隔，请确认结算分隔时间是否正确");
     }
 
 
