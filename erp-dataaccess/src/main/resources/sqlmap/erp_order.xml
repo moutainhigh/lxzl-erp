@@ -517,7 +517,7 @@
                 and eo.order_seller_id = #{maps.orderQueryParam.orderSellerId, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.orderSellerName != null &amp;&amp; maps.orderQueryParam.orderSellerName != ''">
-                and eu.real_name = #{maps.orderQueryParam.orderSellerName, jdbcType=VARCHAR}
+                and eu.real_name like CONCAT('%','${maps.orderQueryParam.orderSellerName}','%' )
             </if>
             <if test="maps.orderQueryParam.rentType != null">
                 and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
@@ -660,7 +660,7 @@
                 and eo.order_seller_id = #{maps.orderQueryParam.orderSellerId, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.orderSellerName != null &amp;&amp; maps.orderQueryParam.orderSellerName != ''">
-                and eu.real_name = #{maps.orderQueryParam.orderSellerName, jdbcType=VARCHAR}
+                and eu.real_name like CONCAT('%','${maps.orderQueryParam.orderSellerName}','%' )
             </if>
             <if test="maps.orderQueryParam.rentType != null">
                 and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
