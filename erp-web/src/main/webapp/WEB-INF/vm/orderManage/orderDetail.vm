@@ -45,12 +45,18 @@
                 </div>
 
                 <div class="panel">
-                    <div class="panel-body" id="orderMessage"></div>
-                    <script type="text/html" id="orderMessageTpl">
-                        {{#order}}
+                    
+                    
+                </div>
+
+                <div class="panel">
+                    <div class="panel-body">
                         <div class="dark">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <div id="orderMessage"></div>
+                                    <script type="text/html" id="orderMessageTpl">
+                                    {{#order}}
                                     <h4>备注信息</h4>
                                     <dl class="dl-horizontal dl-horizontal-rental">
                                         {{#orderMessageData}}
@@ -61,11 +67,35 @@
                                         <dd>暂无备注信息</dd>
                                         {{/orderMessageData}}
                                     </dl>
+                                    {{/order}}
+                                    </script>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="orderStatementDateSplit"></div>
+                                    <script type="text/html" id="orderStatementDateSplitTpl">
+                                        <h4>订单分割结算信息</h4>
+                                        <dl class="dl-horizontal dl-horizontal-rental">
+                                            {{#hasStatementDateSplit}}    
+                                            {{#statementDateSplit}}
+                                            <dt><label>结算类型修改时间</label><span class="mr5">：</span></dt>
+                                            <dd class="mb5">{{statementDateChangeTime}}</dd>
+                                            <dt><label>截止类型</label><span class="mr5">：</span></dt>
+                                            <dd class="mb5">{{changeTypeVal}}</dd>
+                                            <dt><label>修改前结算时间</label><span class="mr5">：</span></dt>
+                                            <dd class="mb5">{{beforeStatementDateVal}}</dd>
+                                            <dt><label>修改后结算时间</label><span class="mr5">：</span></dt>
+                                            <dd class="mb5">{{afterStatementDateVal}}</dd>
+                                            {{/statementDateSplit}}
+                                            {{/hasStatementDateSplit}}
+                                            {{^hasStatementDateSplit}}
+                                            <dd>暂无订单分割结算信息</dd>
+                                            {{/hasStatementDateSplit}}
+                                        </dl>
+                                    </script>
                                 </div>
                             </div>
                         </div>
-                        {{/order}}
-                    </script>
+                    </div>
                 </div>
 
                 <div class="panel">

@@ -122,7 +122,17 @@
                                                     </div>
                                                 </div>
                                             </div>
-
+                                            <div class="col-md-2">
+                                                <div class="field form-group mn">
+                                                    <div class="input-group" style="width: 100%">
+                                                        <select class="form-control input-sm bradius" name="isReletOrder" id="isReletOrder">
+                                                            <option value="">是否为续租单</option>
+                                                            <option value="1">是</option>
+                                                            <option value="0">否</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <hr class="short alt">
@@ -245,7 +255,8 @@
                                                     <ul class="dropdown-menu pull-right" role="menu">
                                                         {{#rowActionButtons}}
                                                         <li>
-                                                            <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" class="{{class}}" data-orderno="{{orderNo}}" data-canrelet="{{canReletOrder}}">{{text}}</a>
+                                                            <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" class="{{class}}" 
+                                                                data-orderno="{{orderNo}}" data-canrelet="{{canReletOrder}}" data-statement="{{statementDate}}">{{text}}</a>
                                                         </li>
                                                         {{/rowActionButtons}}
                                                     </ul>

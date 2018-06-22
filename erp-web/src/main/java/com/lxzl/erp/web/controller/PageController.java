@@ -258,6 +258,11 @@ public class PageController extends BaseController {
         return "/orderManage/reletOrderDetail";
     }
 
+    @RequestMapping("/order-manage/section-settlement")
+    public String orderManageSectionSettlement() {
+        return "/component/order/sectionSettlementModal";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
