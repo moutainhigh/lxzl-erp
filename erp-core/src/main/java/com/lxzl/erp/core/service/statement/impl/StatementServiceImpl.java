@@ -693,7 +693,7 @@ public class StatementServiceImpl implements StatementService {
 //        }
 
 //        ServiceResult<String, String> clearResult = clearStatementOrderDetail(orderDO);
-        ServiceResult<String, AmountNeedReturn> clearResult = clearStatementOrder(orderDO,clearStatementDateSplitCfg);
+        ServiceResult<String, String> clearResult = clearStatementOrder(orderDO,clearStatementDateSplitCfg);
         if (!ErrorCode.SUCCESS.equals(clearResult.getErrorCode())) {
             result.setErrorCode(clearResult.getErrorCode(),clearResult.getFormatArgs());
             return result;
@@ -734,17 +734,6 @@ public class StatementServiceImpl implements StatementService {
         orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         orderDO.setUpdateTime(new Date());
         orderMapper.update(orderDO);
-        //资金最后退款（保证原子性）
-        AmountNeedReturn amountNeedReturn= clearResult.getResult();
-       if(amountNeedReturn!=null&&BigDecimalUtil.compare(amountNeedReturn.getRentPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(amountNeedReturn.getRentDepositPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(amountNeedReturn.getDepositPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(BigDecimalUtil.addAll(amountNeedReturn.getOtherPaidAmount(), amountNeedReturn.getOverduePaidAmount(), amountNeedReturn.getPenaltyPaidAmount()),BigDecimal.ZERO)!=0){
-            String returnCode = paymentService.returnDepositExpand(customerDO.getCustomerNo(), amountNeedReturn.getRentPaidAmount(), BigDecimalUtil.addAll(amountNeedReturn.getOtherPaidAmount(), amountNeedReturn.getOverduePaidAmount(), amountNeedReturn.getPenaltyPaidAmount())
-                    , amountNeedReturn.getRentDepositPaidAmount(), amountNeedReturn.getDepositPaidAmount(), "重算结算单，已支付金额退还到客户余额");
-            if (!ErrorCode.SUCCESS.equals(returnCode)) {
-                result.setErrorCode(returnCode);
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                return result;
-            }
-        }
         return createResult;
     }
 
@@ -4144,7 +4133,7 @@ public class StatementServiceImpl implements StatementService {
      * @return
      */
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    ServiceResult<String, AmountNeedReturn> clearStatementOrder(OrderDO orderDO,boolean clearStatementDateSplitCfg) {
+    ServiceResult<String, String> clearStatementOrder(OrderDO orderDO,boolean clearStatementDateSplitCfg) {
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, orderDO.getId());
         //分段日之前的已支付结算保留（为兼容分段结算,分段结算仅删除分段时间点后的结算进行重算）
         OrderStatementDateSplitDO orderStatementDateSplitDO = orderStatementDateSplitMapper.findByOrderNo(orderDO.getOrderNo());
@@ -4154,7 +4143,7 @@ public class StatementServiceImpl implements StatementService {
                 orderStatementDateSplitMapper.update(orderStatementDateSplitDO);
             }else{
                 //前结算日与订单原结算日不一致则不允许分段结算
-                ServiceResult<String, AmountNeedReturn> filterSettledOrderDetailResult=new ServiceResult<>();
+                ServiceResult<String, String> filterSettledOrderDetailResult=new ServiceResult<>();
                 boolean hasPaidPhase=false;
                 List<StatementOrderDetailDO> canClearList=new ArrayList<>();
                 for(StatementOrderDetailDO orderDetailDO:statementOrderDetailDOList){
@@ -4182,7 +4171,7 @@ public class StatementServiceImpl implements StatementService {
         //boolean paid = PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus());
         boolean paid = true;//物理删除会导致问题
         //清除结算信息
-        ServiceResult<String, AmountNeedReturn> result = clearStatement(paid, orderDO.getBuyerCustomerNo(), statementOrderDetailDOList);
+        ServiceResult<String, String> result = clearStatement(paid, orderDO.getBuyerCustomerNo(), statementOrderDetailDOList);
         //创建失败回滚
         if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -4199,8 +4188,8 @@ public class StatementServiceImpl implements StatementService {
         return result;
     }
 
-    private ServiceResult<String, AmountNeedReturn> clearStatement(boolean paid, String buyerCustomerNo, List<StatementOrderDetailDO> statementOrderDetailDOList) {
-        ServiceResult<String, AmountNeedReturn> result = new ServiceResult<>();
+    private ServiceResult<String, String> clearStatement(boolean paid, String buyerCustomerNo, List<StatementOrderDetailDO> statementOrderDetailDOList) {
+        ServiceResult<String, String> result = new ServiceResult<>();
         Map<Integer, StatementOrderDO> statementOrderDOMap = statementOrderSupport.getStatementOrderByDetails(statementOrderDetailDOList);
         statementOrderSupport.reStatement(new Date(), statementOrderDOMap, statementOrderDetailDOList);
         if (paid) {
@@ -4227,23 +4216,16 @@ public class StatementServiceImpl implements StatementService {
             }
             //处理结算单总状态及已支付金额
             statementOrderSupport.reStatementPaid(statementOrderDOMap, statementOrderDetailDOList);
-            AmountNeedReturn amountNeedReturn=new AmountNeedReturn();
-            amountNeedReturn.setDepositPaidAmount(depositPaidAmount);
-            amountNeedReturn.setRentDepositPaidAmount(rentDepositPaidAmount);
-            amountNeedReturn.setOtherPaidAmount(otherPaidAmount);
-            amountNeedReturn.setOverduePaidAmount(overduePaidAmount);
-            amountNeedReturn.setPenaltyPaidAmount(penaltyPaidAmount);
-            amountNeedReturn.setRentPaidAmount(rentPaidAmount);
-//            if(BigDecimalUtil.compare(rentPaidAmount,BigDecimal.ZERO)!=0||BigDecimalUtil.compare(rentDepositPaidAmount,BigDecimal.ZERO)!=0||BigDecimalUtil.compare(depositPaidAmount,BigDecimal.ZERO)!=0||BigDecimalUtil.compare(BigDecimalUtil.addAll(otherPaidAmount, overduePaidAmount, penaltyPaidAmount),BigDecimal.ZERO)==0){
-//                String returnCode = paymentService.returnDepositExpand(buyerCustomerNo, rentPaidAmount, BigDecimalUtil.addAll(otherPaidAmount, overduePaidAmount, penaltyPaidAmount)
-//                        , rentDepositPaidAmount, depositPaidAmount, "重算结算单，已支付金额退还到客户余额");
-//                if (!ErrorCode.SUCCESS.equals(returnCode)) {
-//                    result.setErrorCode(returnCode);
-//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//                    return result;
-//                }
-//            }
-            result.setResult(amountNeedReturn);
+
+            if(BigDecimalUtil.compare(rentPaidAmount,BigDecimal.ZERO)!=0||BigDecimalUtil.compare(rentDepositPaidAmount,BigDecimal.ZERO)!=0||BigDecimalUtil.compare(depositPaidAmount,BigDecimal.ZERO)!=0||BigDecimalUtil.compare(BigDecimalUtil.addAll(otherPaidAmount, overduePaidAmount, penaltyPaidAmount),BigDecimal.ZERO)==0){
+                String returnCode = paymentService.returnDepositExpand(buyerCustomerNo, rentPaidAmount, BigDecimalUtil.addAll(otherPaidAmount, overduePaidAmount, penaltyPaidAmount)
+                        , rentDepositPaidAmount, depositPaidAmount, "重算结算单，已支付金额退还到客户余额");
+                if (!ErrorCode.SUCCESS.equals(returnCode)) {
+                    result.setErrorCode(returnCode);
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    return result;
+                }
+            }
         } else {
             //如果未支付，物理删除结算单详情，结算单
             if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
@@ -4522,7 +4504,7 @@ public class StatementServiceImpl implements StatementService {
             return serviceResult;
         }
 
-        ServiceResult<String, AmountNeedReturn> result = clearReletOrderStatement(reletOrderDO);
+        ServiceResult<String, String> result = clearReletOrderStatement(reletOrderDO);
         if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             serviceResult.setErrorCode(result.getErrorCode());
@@ -4534,19 +4516,6 @@ public class StatementServiceImpl implements StatementService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             return serviceResult;
         }
-
-        //最后退款
-        AmountNeedReturn amountNeedReturn= result.getResult();
-       if(amountNeedReturn!=null&&BigDecimalUtil.compare(amountNeedReturn.getRentPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(amountNeedReturn.getRentDepositPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(amountNeedReturn.getDepositPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(BigDecimalUtil.addAll(amountNeedReturn.getOtherPaidAmount(), amountNeedReturn.getOverduePaidAmount(), amountNeedReturn.getPenaltyPaidAmount()),BigDecimal.ZERO)!=0){
-            String returnCode = paymentService.returnDepositExpand(reletOrderDO.getBuyerCustomerNo(), amountNeedReturn.getRentPaidAmount(), BigDecimalUtil.addAll(amountNeedReturn.getOtherPaidAmount(), amountNeedReturn.getOverduePaidAmount(), amountNeedReturn.getPenaltyPaidAmount())
-                    , amountNeedReturn.getRentDepositPaidAmount(), amountNeedReturn.getDepositPaidAmount(), "重算结算单，已支付金额退还到客户余额");
-            if (!ErrorCode.SUCCESS.equals(returnCode)) {
-                result.setErrorCode(returnCode);
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                serviceResult.setErrorCode(returnCode);
-                return serviceResult;
-            }
-        }
         return serviceResult;
     }
 
@@ -4556,8 +4525,8 @@ public class StatementServiceImpl implements StatementService {
      * @param reletOrderNo
      */
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    ServiceResult<String, AmountNeedReturn> clearReletOrderStatement(String reletOrderNo) {
-        ServiceResult<String, AmountNeedReturn> serviceResult = new ServiceResult<>();
+    ServiceResult<String, String> clearReletOrderStatement(String reletOrderNo) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
         ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrderNo);
         if (reletOrderDO == null) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -4568,7 +4537,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    ServiceResult<String, AmountNeedReturn> clearReletOrderStatement(ReletOrderDO reletOrderDO) {
+    ServiceResult<String, String> clearReletOrderStatement(ReletOrderDO reletOrderDO) {
         List<Integer> ids = new ArrayList<>();
         List<ReletOrderMaterialDO> materialDOList = reletOrderDO.getReletOrderMaterialDOList();
         if (CollectionUtil.isNotEmpty(materialDOList)) {
@@ -4585,7 +4554,7 @@ public class StatementServiceImpl implements StatementService {
         //续租单默认已支付（考虑到脏数据，交了钱状态为未支付）
         boolean paid = true;
         //清除结算信息
-        ServiceResult<String, AmountNeedReturn> result = clearStatement(paid, reletOrderDO.getBuyerCustomerNo(), statementOrderDetailDOList);
+        ServiceResult<String, String> result = clearStatement(paid, reletOrderDO.getBuyerCustomerNo(), statementOrderDetailDOList);
         //创建失败回滚
         if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
