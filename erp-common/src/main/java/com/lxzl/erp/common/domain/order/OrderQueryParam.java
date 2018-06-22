@@ -26,6 +26,7 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private String orderSellerName;                             // 业务员姓名
     private Date startRentStartTime;
     private Date endRentStartTime;
+    private Integer isReletOrder;                               //是否为续租单
 
     private Date startExpectReturnTime;  //起始预计归还时间
     private Date endExpectReturnTime;
@@ -237,7 +238,15 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
         this.isReturnOverDue = isReturnOverDue;
     }
 
-public Date getStartExpectReturnTime() {
+    public Integer getIsReletOrder() {
+        return isReletOrder;
+    }
+
+    public void setIsReletOrder(Integer isReletOrder) {
+        this.isReletOrder = isReletOrder;
+    }
+
+    public Date getStartExpectReturnTime() {
         return startExpectReturnTime;
     }
 

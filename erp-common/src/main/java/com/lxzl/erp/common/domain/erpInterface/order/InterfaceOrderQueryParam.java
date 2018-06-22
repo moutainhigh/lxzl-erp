@@ -33,6 +33,7 @@ public class InterfaceOrderQueryParam extends BasePageParam implements Serializa
     private String orderSellerName;                             // 业务员姓名
     private Date startRentStartTime;
     private Date endRentStartTime;
+    private Integer isReletOrder;                               //是否为续租单
 
     private Date startExpectReturnTime;  //起始预计归还时间
     private Date endExpectReturnTime;
@@ -278,6 +279,14 @@ public class InterfaceOrderQueryParam extends BasePageParam implements Serializa
 
     public void setEndRentStartTime(Date endRentStartTime) {
         this.endRentStartTime = endRentStartTime;
+    }
+
+    public Integer getIsReletOrder() {
+        return isReletOrder;
+    }
+
+    public void setIsReletOrder(Integer isReletOrder) {
+        this.isReletOrder = isReletOrder;
     }
 
     public Date getStartExpectReturnTime() {
