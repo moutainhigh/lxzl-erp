@@ -575,6 +575,12 @@
             <if test="maps.orderQueryParam.rentLengthType != null">
                 and eo.rent_length_type = #{maps.orderQueryParam.rentLengthType, jdbcType=INTEGER}
             </if>
+            <if test="maps.orderQueryParam.isReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 1">
+                AND eo.relet_order_id IS NOT NULL
+            </if>
+            <if test="maps.orderQueryParam.isReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 0">
+                AND eo.relet_order_id IS NULL
+            </if>
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
             </if>
@@ -716,6 +722,12 @@
             </if>
             <if test="maps.orderQueryParam.rentLengthType != null">
                 and eo.rent_length_type = #{maps.orderQueryParam.rentLengthType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.isReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 1">
+                AND eo.relet_order_id IS NOT NULL
+            </if>
+            <if test="maps.orderQueryParam.isReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 0">
+                AND eo.relet_order_id IS NULL
             </if>
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
