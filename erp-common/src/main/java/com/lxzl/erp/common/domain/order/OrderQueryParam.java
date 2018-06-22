@@ -24,8 +24,9 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private Date createEndTime;
     private Integer orderSellerId;
     private String orderSellerName;                             // 业务员姓名
-    private Date startRentStratTime;
-    private Date endRentStratTime;
+    private Date startRentStartTime;
+    private Date endRentStartTime;
+    private Integer isReletOrder;                               //是否为续租单
 
     private Date startExpectReturnTime;  //起始预计归还时间
     private Date endExpectReturnTime;
@@ -214,20 +215,20 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
         this.isRecycleBin = isRecycleBin;
     }
 
-    public Date getStartRentStratTime() {
-        return startRentStratTime;
+    public Date getstartRentStartTime() {
+        return startRentStartTime;
     }
 
-    public void setStartRentStratTime(Date startRentStratTime) {
-        this.startRentStratTime = startRentStratTime;
+    public void setstartRentStartTime(Date startRentStartTime) {
+        this.startRentStartTime = startRentStartTime;
     }
 
-    public Date getEndRentStratTime() {
-        return endRentStratTime;
+    public Date getendRentStartTime() {
+        return endRentStartTime;
     }
 
-    public void setEndRentStratTime(Date endRentStratTime) {
-        this.endRentStratTime = endRentStratTime;
+    public void setendRentStartTime(Date endRentStartTime) {
+        this.endRentStartTime = endRentStartTime;
     }
     public Integer getIsReturnOverDue() {
         return isReturnOverDue;
@@ -237,7 +238,15 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
         this.isReturnOverDue = isReturnOverDue;
     }
 
-public Date getStartExpectReturnTime() {
+    public Integer getIsReletOrder() {
+        return isReletOrder;
+    }
+
+    public void setIsReletOrder(Integer isReletOrder) {
+        this.isReletOrder = isReletOrder;
+    }
+
+    public Date getStartExpectReturnTime() {
         return startExpectReturnTime;
     }
 

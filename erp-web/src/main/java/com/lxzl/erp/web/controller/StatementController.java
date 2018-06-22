@@ -2,7 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.k3.pojo.K3StatementDateChange;
+import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -131,7 +130,7 @@ public class StatementController extends BaseController {
         return resultGenerator.generate(serviceResult);
     }
     @RequestMapping(value = "reCreateOrderStatementSplit", method = RequestMethod.POST)
-    public Result reCreateOrderStatementSplit(@RequestBody @Validated K3StatementDateChange k3StatementDateChange, BindingResult validResult) {
+    public Result reCreateOrderStatementSplit(@RequestBody @Validated OrderStatementDateSplit k3StatementDateChange, BindingResult validResult) {
         ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(k3StatementDateChange);
         return resultGenerator.generate(serviceResult);
     }
