@@ -73,8 +73,8 @@
                                         <div class="col-md-12">
                                             <div class="col-md-2">
                                                 <div class="form-group mn">
-                                                    <input type="hidden" name="startRentStratTime" id="startRentStratTime" />
-                                                    <input type="hidden" name="endRentStratTime" id="endRentStratTime" />
+                                                    <input type="hidden" name="startRentStartTime" id="startRentStartTime" />
+                                                    <input type="hidden" name="endRentStartTime" id="endRentStartTime" />
                                                     <div class="input-group date" id="rentTimePicker">
                                                         <input type="text" name="rentTimePicker" id="rentTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="起租时间">
                                                         <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
