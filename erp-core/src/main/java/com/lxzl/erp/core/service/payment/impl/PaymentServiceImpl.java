@@ -177,6 +177,30 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    public ServiceResult<String, Boolean> publicTransferPlusCharge(PublicTransferPlusChargeParam param) {
+        ServiceResult<String, Boolean> result = new ServiceResult<>();
+        param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        param.setBusinessOperateUser(userSupport.getCurrentUserId().toString());
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = FastJsonUtil.toJSONString(param);
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemPublicTransferPlusChargeURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("public transfer plus charge response:{}", response);
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                result.setResult((Boolean) paymentResult.getResultMap().get("data"));
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    @Override
     public ServiceResult<String, Boolean> manualDeduct(ManualDeductParam param) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
@@ -765,7 +789,7 @@ public class PaymentServiceImpl implements PaymentService {
         return saveConstantlyExportQueryChargeRecordToBankSlip(result.getResult().getItemList().get(0));
     }
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     ServiceResult<String, String> saveConstantlyExportQueryChargeRecordToBankSlip(ChargeRecord chargeRecord) throws ParseException {
 
         ServiceResult<String, String> serviceResult = new ServiceResult<>();

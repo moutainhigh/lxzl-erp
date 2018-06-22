@@ -2,13 +2,12 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
+import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.*;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
-import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.statement.StatementService;
@@ -127,8 +126,13 @@ public class StatementController extends BaseController {
 
     @RequestMapping(value = "reCreateOrderStatement", method = RequestMethod.POST)
     public Result reCreateOrderStatement(@RequestBody Order order) {
-        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(order.getOrderNo());
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(order.getOrderNo(),order.getStatementDate());
+        return resultGenerator.generate(serviceResult);
+    }
+    @RequestMapping(value = "reCreateOrderStatementSplit", method = RequestMethod.POST)
+    public Result reCreateOrderStatementSplit(@RequestBody @Validated OrderStatementDateSplit k3StatementDateChange, BindingResult validResult) {
+        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(k3StatementDateChange);
+        return resultGenerator.generate(serviceResult);
     }
 
     @RequestMapping(value = "batchReCreateOrderStatement", method = RequestMethod.POST)

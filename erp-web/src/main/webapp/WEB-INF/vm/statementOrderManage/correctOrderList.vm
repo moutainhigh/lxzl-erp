@@ -21,40 +21,87 @@
             <div class="panel panel-primary panel-border top">
                 <div class="panel-menu p12">
                     <div class="row">
-                        <div class="col-md-3">
-                            <script type="text/html" id="actionCommonButtonsTpl">
-                                <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
-                                {{#acitonCommonButtons}}
-                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
-                                    <i class="{{iClass}}"></i> {{text}}
-                                </a>
-                                {{/acitonCommonButtons}}
-                            </script>
-
-                            <div class="btn-group" id="actionCommonButtons"></div>
-                        </div>
-                        <div class="col-md-9 text-right">
+                        <div class="col-lg-12 text-right">
                             <form id="searchForm" class="form-horizontal">
-                                <div class="pull-right">
-                                    <button type="submit" class="btn btn-primary btn-sm">查询</button>
-                                    <button type="reset" class="btn btn-default btn-sm">重置</button>
-                                </div>
-                                <div class="form-group pull-right mn mr10" style="width: 120px;">
-                                    <input type="text" name="statementCorrectNo" id="statementCorrectNo" class="form-control input-sm bradius" autocomplete="off" placeholder="冲正单编号">
-                                </div>
-                                <div class="form-group pull-right mn mr10">
-                                    <div class="input-group">
-                                        <select class="form-control input-sm bradius" name="statementOrderCorrectStatus" id="statementOrderCorrectStatus"></select>
+                                <div class="section row">
+                                    <div class="col-lg-12">
+                                        <div class="col-md-2">
+                                            <div class="form-group mn">
+                                                <input type="text" name="statementCorrectNo" id="statementCorrectNo" class="form-control input-sm bradius" autocomplete="off" placeholder="冲正单编号">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group mn">
+                                                <input type="text" name="returnOrderNo" id="returnOrderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入退货编号">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group mn">
+                                                <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="field form-group mn">
+                                                <input type="text" name="customerName" id="customerName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group mn">
+                                                <div class="input-group" style="width: 100%">
+                                                    <select class="form-control input-sm bradius" name="statementOrderCorrectStatus" id="statementOrderCorrectStatus"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group mn">
+                                                <div class="input-group" style="width: 100%">
+                                                    <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId">
+                                                        <option value="">请选择</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="form-group pull-right mn mr10" style="width: 210px;">
-                                    <input type="hidden" name="createStartTime" id="createStartTime" />
-                                    <input type="hidden" name="createEndTime" id="createEndTime" />
-                                    <div class="input-group date" id="createTimePicker">
-                                        <input type="text" name="createTimePicker" id="createTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择创建时间">
-                                        <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                <div class="section row mt15">
+                                    <div class="col-lg-12">
+                                        <div class="col-md-2">
+                                            <div class="form-group mn">
+                                                <input type="hidden" name="createStartTime" id="createStartTime" />
+                                                <input type="hidden" name="createEndTime" id="createEndTime" />
+                                                <div class="input-group date" id="createTimePicker">
+                                                    <input type="text" name="createTimePicker" id="createTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择创建时间">
+                                                    <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+
+                                <hr class="short alt">
+
+                                <div class="section row">
+                                    <div class="col-md-12">
+                                        <div class="pull-left ml15">
+                                            <script type="text/html" id="actionCommonButtonsTpl">
+                                                <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                                {{#acitonCommonButtons}}
+                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
+                                                    <i class="{{iClass}}"></i> {{text}}
+                                                </a>
+                                                {{/acitonCommonButtons}}
+                                            </script>
+
+                                            <div class="btn-group" id="actionCommonButtons"></div>
+                                        </div>
+                                        <div class="pull-right mr15">
+                                            <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                            <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+
                             </form>
                         </div>
                     </div>
@@ -75,6 +122,7 @@
                                 {{/hasCommonActionButtons}}
                                 <th>冲正单编号</th>
                                 <th>客户名称</th>
+                                <th>归属公司</th>
                                 <th>订单编号</th>
                                 <th>冲正金额</th>
                                 <th>冲正原因</th>
@@ -100,9 +148,10 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{statementCorrectNo}}</td>
-                                <td>{{customerName}}</td>
-                                <td>{{orderNo}}</td>
+                                <td><a href="{{detailUrl}}" target="_blank">{{statementCorrectNo}}</a></td>
+                                <td><a href="{{customerUrl}}" target="_blank">{{customerName}}</a></td>
+                                <td>{{subCompanyName}}</td>
+                                <td><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></td>
                                 <td>￥{{#price}}{{statementCorrectAmount}}{{/price}}</td>
                                 <td>{{statementCorrectReason}}</td>
                                 <td class="{{statementOrderCorrectStatusClass}}">{{statementOrderCorrectStatusValue}}</td>

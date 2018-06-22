@@ -50,7 +50,7 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
 
     //todo 检查拆卸和安装时，设备时空闲中时，设备当中有散料，那么散料状态就是租赁中，需要好好检查下
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> dismantleBulkMaterial(BulkMaterial bulkMaterial) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
 
@@ -121,7 +121,7 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> installBulkMaterial(BulkMaterialQueryParam bulkMaterialQueryParam) {
 
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
@@ -197,7 +197,7 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> changeProductDismantleAndInstall(Integer dismantleBulkMaterialId,Integer installBulkMaterialId) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();

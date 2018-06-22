@@ -3,6 +3,8 @@ package com.lxzl.erp.common.domain.order.pojo;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
+import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
@@ -111,8 +113,14 @@ public class Order extends BasePO {
     private Integer reletOrderId;                               //续租单ID
     private Integer isReletOrder;                               //是否为续租单    0否  1是
 
+    private String orderSellerPhone;                            //开发人电话
+    private String orderUnionSellerName;                        //联合开发人名称
+    private String orderUnionSellerPhone;                       //联合开发人电话
+    private CustomerRiskManagement customerRiskManagement;      //客户风控信息
+
     private String changeReason;//确认收货变更原因
     private Image deliveryNoteCustomerSignImg;//交货单客户签字
+    private OrderStatementDateSplit orderStatementDateSplit;//订单分割
 
     public String getChangeReason() {
         return changeReason;
@@ -717,5 +725,43 @@ public class Order extends BasePO {
         this.canReletOrder = canReletOrder;
     }
 
+    public String getOrderSellerPhone() {
+        return orderSellerPhone;
+    }
 
+    public void setOrderSellerPhone(String orderSellerPhone) {
+        this.orderSellerPhone = orderSellerPhone;
+    }
+
+    public String getOrderUnionSellerName() {
+        return orderUnionSellerName;
+    }
+
+    public void setOrderUnionSellerName(String orderUnionSellerName) {
+        this.orderUnionSellerName = orderUnionSellerName;
+    }
+
+    public String getOrderUnionSellerPhone() {
+        return orderUnionSellerPhone;
+    }
+
+    public void setOrderUnionSellerPhone(String orderUnionSellerPhone) {
+        this.orderUnionSellerPhone = orderUnionSellerPhone;
+    }
+
+    public CustomerRiskManagement getCustomerRiskManagement() {
+        return customerRiskManagement;
+    }
+
+    public void setCustomerRiskManagement(CustomerRiskManagement customerRiskManagement) {
+        this.customerRiskManagement = customerRiskManagement;
+    }
+
+    public OrderStatementDateSplit getOrderStatementDateSplit() {
+        return orderStatementDateSplit;
+    }
+
+    public void setOrderStatementDateSplit(OrderStatementDateSplit orderStatementDateSplit) {
+        this.orderStatementDateSplit = orderStatementDateSplit;
+    }
 }

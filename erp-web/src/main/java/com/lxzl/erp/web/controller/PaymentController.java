@@ -59,6 +59,12 @@ public class PaymentController extends BaseController {
         return resultGenerator.generate(result.getErrorCode(), result.getResult());
     }
 
+    @RequestMapping(value = "publicTransferPlusCharge", method = RequestMethod.POST)
+    public Result publicTransferPlusCharge(@RequestBody PublicTransferPlusChargeParam param, BindingResult validResult) {
+        ServiceResult<String, Boolean> result = paymentService.publicTransferPlusCharge(param);
+        return resultGenerator.generate(result.getErrorCode(), result.getResult());
+    }
+
     @RequestMapping(value = "manualDeduct", method = RequestMethod.POST)
     public Result manualDeduct(@RequestBody ManualDeductParam param, BindingResult validResult) {
         ServiceResult<String, Boolean> result = paymentService.manualDeduct(param);

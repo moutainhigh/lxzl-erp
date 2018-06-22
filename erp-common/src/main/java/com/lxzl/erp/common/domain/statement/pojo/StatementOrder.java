@@ -50,8 +50,26 @@ public class StatementOrder extends BasePO {
 
     private Integer owner;        //数据归属人，跟单员
     private String ownerName; //业务员姓名
+    private Integer ownerSubCompanyId; //业务员所属分公司ID
+    private String ownerSubCompanyName; //分公司名称
 
     private Date monthTime; //月时间
+
+    public Integer getOwnerSubCompanyId() {
+        return ownerSubCompanyId;
+    }
+
+    public void setOwnerSubCompanyId(Integer ownerSubCompanyId) {
+        this.ownerSubCompanyId = ownerSubCompanyId;
+    }
+
+    public String getOwnerSubCompanyName() {
+        return ownerSubCompanyName;
+    }
+
+    public void setOwnerSubCompanyName(String ownerSubCompanyName) {
+        this.ownerSubCompanyName = ownerSubCompanyName;
+    }
 
     public Integer getStatementOrderId() {
         return statementOrderId;

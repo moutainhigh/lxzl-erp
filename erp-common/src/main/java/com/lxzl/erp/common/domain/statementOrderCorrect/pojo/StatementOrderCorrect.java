@@ -53,7 +53,34 @@ public class StatementOrderCorrect extends BasePO {
 	private List<String> productName;  //商品名称
 	private List<String> materialName;  //物料名称
 	private String orderNo;  //订单编号
+	private Integer subCompanyId;// 分公司ID
 	private String customerName;  //客户名称
+	private String subCompanyName; //所属分公司名称
+	private String customerNo; //客户编号
+	private Integer statementOrderCorrectType; //冲正单类型 1订单，2退货单
+
+	public Integer getStatementOrderCorrectType() {
+		return statementOrderCorrectType;
+	}
+
+	public void setStatementOrderCorrectType(Integer statementOrderCorrectType) {
+		this.statementOrderCorrectType = statementOrderCorrectType;
+	}
+	public Integer getSubCompanyId() {
+		return subCompanyId;
+	}
+
+	public void setSubCompanyId(Integer subCompanyId) {
+		this.subCompanyId = subCompanyId;
+	}
+
+	public String getSubCompanyName() {
+		return subCompanyName;
+	}
+
+	public void setSubCompanyName(String subCompanyName) {
+		this.subCompanyName = subCompanyName;
+	}
 
 	public String getCustomerName() {
 		return customerName;
@@ -261,5 +288,13 @@ public class StatementOrderCorrect extends BasePO {
 
 	public void setStatementOrderReferId(Integer statementOrderReferId) {
 		this.statementOrderReferId = statementOrderReferId;
+	}
+
+	public String getCustomerNo() {
+		return customerNo;
+	}
+
+	public void setCustomerNo(String customerNo) {
+		this.customerNo = customerNo;
 	}
 }

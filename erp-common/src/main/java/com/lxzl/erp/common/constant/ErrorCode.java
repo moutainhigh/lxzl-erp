@@ -437,6 +437,7 @@ public class ErrorCode {
     public static final String ORDER_PRODUCR_AND_ORDER_MATERIAL = "J400158";
     public static final String RETURN_COUNT_MORE_THAN_RENTING_MATERIAL_COUNT = "J400159";
     public static final String RETURN_COUNT_MORE_THAN_RENTING_PRODUCT_COUNT = "J400160";
+    public static final String RETURN_ORDER_HAVE_THE_SAME_PRODUCT_OR_MATERIAL = "J400161";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -610,6 +611,18 @@ public class ErrorCode {
 
     public static final String CUSTOMER_CONFIRM_STATEMENT_EXIST = "J500172";
     public static final String CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE = "J500173";
+
+    public static final String STATEMENT_DATE_NOT_SUPPORT = "J500174";
+
+    public static final String STATEMENT_DATE_SPLIT_TIME_NOT_NULL = "J500175";
+    public static final String BEFORE_STATEMENT_DATE_NOT_NULL = "J500176";
+    public static final String AFTER_STATEMENT_DATE_NOT_NULL = "J500177";
+    public static final String STATEMENT_DATE_CHANGE_TYPE_NOT_NULL = "J500178";
+    public static final String STATEMENT_SPLIT_TIME_ERROR = "J500179";
+    public static final String BEFORE_STATEMENT_MODE_NOT_SAME = "J500180";
+    public static final String ONLY_RENT_TYPE_MONTH_NEED_SPLIT_STATEMENT = "J500181";
+    public static final String SPLIT_STATEMENT_CAN_NOT_SAME = "J500182";
+    public static final String HAS_SPLIT_STATEMENT_CFG = "J500183";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -928,6 +941,7 @@ public class ErrorCode {
     public static final String RELET_ORDER_HAS_PAID = "J21000016";
     public static final String RELET_ORDER_RE_STATEMENT_FAIL = "J21000017";
     public static final String RELET_ORDER_RENT_TYPE_DAY_CAN_NOT_RENT_TOO_LONG = "J21000018";
+    public static final String RELET_ORDER_RENT_TYPE_MONTH_CAN_NOT_RENT_TOO_LONG = "J21000019";
 
 
     public static final String PRINT_LOG_REFER_NO_NOT_NULL = "J220000001";
@@ -1480,7 +1494,7 @@ public class ErrorCode {
         MAP.put(CITY_ID_NOT_NULL, "城市ID不能为空");
         MAP.put(DISTRICT_ID_NOT_NULL, "街道ID不能为空");
         MAP.put(ADDRESS_NOT_NULL, "地址不能为空");
-        MAP.put(RETURN_COUNT_ERROR, "退还数量必须大于等于0");
+        MAP.put(RETURN_COUNT_ERROR, "退还数量必须大于0");
         MAP.put(RETURN_ORDER_NO_NOT_NULL, "退还单号不能为空");
         MAP.put(EQUIPMENT_NO_NOT_NULL, "设备编号不能为空");
         MAP.put(RETURN_ORDER_NOT_EXISTS, "退还单不存在");
@@ -1558,6 +1572,7 @@ public class ErrorCode {
         MAP.put(ORDER_PRODUCR_AND_ORDER_MATERIAL, "退货单项找不到对应的商品项和配件项");
         MAP.put(RETURN_COUNT_MORE_THAN_RENTING_MATERIAL_COUNT, "所退配件超过该配件的再租数量");
         MAP.put(RETURN_COUNT_MORE_THAN_RENTING_PRODUCT_COUNT, "所退商品超过该商品的再租数量");
+        MAP.put(RETURN_ORDER_HAVE_THE_SAME_PRODUCT_OR_MATERIAL, "该退货单存在相同的商品或配件，不能重复添加");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
@@ -1821,7 +1836,7 @@ public class ErrorCode {
         MAP.put(CHARGE_ORDER_NO_IS_NULL, "支付系统充值订单号为空");
         MAP.put(EXPORT_CHARGE_RECORD_IS_FAIL, "充值记录导入银行流水失败");
         MAP.put(CHARGE_RECORD_IS_EXIST, "快付通充值记录以存在");
-        MAP.put(BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED, "该条银行对公流水记录项为已认领状态，需创建人取消认领后才能重新认领");
+        MAP.put(BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED, "该条银行对公流水记录项为已认领状态，需商务或创建人取消认领后才能重新认领");
         MAP.put(BANK_SLIP_DETAIL_STATUS_CAN_NOT_CONFIRM, "该条银行对公流水记录不允许确认");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
@@ -1877,6 +1892,8 @@ public class ErrorCode {
         MAP.put(RELET_ORDER_STATUS_CAN_NOT_CANCEL, "只有待处理的续租单可以取消");
         MAP.put(RELET_ORDER_HAS_PAID, "已支付的续租单不允许批量重算");
         MAP.put(RELET_ORDER_RE_STATEMENT_FAIL, "续租单号【%s 】的续租单重新结算失败");
+        MAP.put(RELET_ORDER_RENT_TYPE_DAY_CAN_NOT_RENT_TOO_LONG, "按天租的订单，续租时长不允许超过89天");
+        MAP.put(RELET_ORDER_RENT_TYPE_MONTH_CAN_NOT_RENT_TOO_LONG, "按月租的订单，续租时长不允许超过2年");
 
         MAP.put(PRINT_LOG_REFER_NO_NOT_NULL, "关联编号不能为空");
         MAP.put(PRINT_LOG_REFER_TYPE_NOT_NULL, "关联类型不能为空");
@@ -1915,6 +1932,16 @@ public class ErrorCode {
 
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户已经为确认结算单状态");
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE, "客户为确认结算单状态时不允许重算结算单");
+        MAP.put(STATEMENT_DATE_NOT_SUPPORT, "不支持结算类型【%s 】");
+        MAP.put(STATEMENT_DATE_SPLIT_TIME_NOT_NULL, "结算分段日期不能为空");
+        MAP.put(BEFORE_STATEMENT_DATE_NOT_NULL, "前结算日不能为空");
+        MAP.put(AFTER_STATEMENT_DATE_NOT_NULL, "后结算日不能为空");
+        MAP.put(STATEMENT_DATE_CHANGE_TYPE_NOT_NULL, "结算日改变类型不能为空");
+        MAP.put(STATEMENT_SPLIT_TIME_ERROR, "已支付的结算无法分段，请确认结算分段时间是否正确");
+        MAP.put(BEFORE_STATEMENT_MODE_NOT_SAME, "分段前结算方式【%s 】与已支付订单原结算方式【%s 】不一致");
+        MAP.put(ONLY_RENT_TYPE_MONTH_NEED_SPLIT_STATEMENT, "短租不需要分段结算");
+        MAP.put(SPLIT_STATEMENT_CAN_NOT_SAME, "分段前结算方式【%s 】与分段后结算方式【%s 】一致");
+        MAP.put(HAS_SPLIT_STATEMENT_CFG, "该订单已进行过分段结算，请先进行指定结算日结算");
     }
 
 

@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.*;
+import com.lxzl.erp.common.domain.k3.group.AddK3ReturnOrderGroup;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
@@ -106,7 +107,7 @@ public class K3Controller extends BaseController {
     }
 
     @RequestMapping(value = "addReturnOrder", method = RequestMethod.POST)
-    public Result addReturnOrder(@RequestBody K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
+    public Result addReturnOrder(@RequestBody @Validated(AddK3ReturnOrderGroup.class) K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = k3ReturnOrderService.addReturnOrder(k3ReturnOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
