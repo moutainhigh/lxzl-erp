@@ -45,6 +45,30 @@
                 </div>
 
                 <div class="panel">
+                    <div class="panel-body" id="orderStatementDateSplit"></div>
+                    <script type="text/html" id="orderStatementDateSplitTpl">
+                        {{#order}}
+                        <div class="dark">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>备注信息</h4>
+                                    <dl class="dl-horizontal dl-horizontal-rental">
+                                        {{#OrderStatementDateSplit}}
+                                        <dt><label>{{userRealName}}</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5">{{content}}</dd>
+                                        {{/OrderStatementDateSplit}}
+                                        {{^OrderStatementDateSplit}}
+                                        <dd>暂无备注信息</dd>
+                                        {{/OrderStatementDateSplit}}
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        {{/order}}
+                    </script>
+                </div>
+
+                <div class="panel">
                     <div class="panel-body" id="orderMessage"></div>
                     <script type="text/html" id="orderMessageTpl">
                         {{#order}}

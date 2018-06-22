@@ -256,7 +256,7 @@
                                                         {{#rowActionButtons}}
                                                         <li>
                                                             <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" class="{{class}}" 
-                                                                data-orderno="{{orderNo}}" data-canrelet="{{canReletOrder}}" data-statement="{{}}">{{text}}</a>
+                                                                data-orderno="{{orderNo}}" data-canrelet="{{canReletOrder}}" data-statement="{{statementDate}}">{{text}}</a>
                                                         </li>
                                                         {{/rowActionButtons}}
                                                     </ul>
