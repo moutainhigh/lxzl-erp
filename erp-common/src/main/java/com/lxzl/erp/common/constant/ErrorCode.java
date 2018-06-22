@@ -620,6 +620,8 @@ public class ErrorCode {
     public static final String STATEMENT_DATE_CHANGE_TYPE_NOT_NULL = "J500178";
     public static final String STATEMENT_SPLIT_TIME_ERROR = "J500179";
     public static final String BEFORE_STATEMENT_MODE_NOT_SAME = "J500180";
+    public static final String ONLY_RENT_TYPE_MONTH_NEED_SPLIT_STATEMENT = "J500181";
+    public static final String SPLIT_STATEMENT_CAN_NOT_SAME = "J500182";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1936,6 +1938,8 @@ public class ErrorCode {
         MAP.put(STATEMENT_DATE_CHANGE_TYPE_NOT_NULL, "结算日改变类型不能为空");
         MAP.put(STATEMENT_SPLIT_TIME_ERROR, "已支付的结算无法分隔，请确认结算分隔时间是否正确");
         MAP.put(BEFORE_STATEMENT_MODE_NOT_SAME, "分隔前结算方式【%s 】与已支付订单原结算方式【%s 】不一致");
+        MAP.put(ONLY_RENT_TYPE_MONTH_NEED_SPLIT_STATEMENT, "短租不需要分段结算");
+        MAP.put(SPLIT_STATEMENT_CAN_NOT_SAME, "分隔前结算方式【%s 】与分隔后结算方式【%s 】一致\"");
     }
 
 

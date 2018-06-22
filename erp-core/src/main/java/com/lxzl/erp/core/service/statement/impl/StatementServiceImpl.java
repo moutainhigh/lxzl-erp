@@ -596,6 +596,20 @@ public class StatementServiceImpl implements StatementService {
 
     @Override
     public ServiceResult<String, BigDecimal> reCreateOrderStatement(OrderStatementDateSplit k3StatementDateChange) {
+        ServiceResult<String, BigDecimal> result=new ServiceResult<>();
+        OrderDO orderDO = orderMapper.findByOrderNo(k3StatementDateChange.getOrderNo());
+        if (orderDO == null) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        if(!OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())){
+            result.setErrorCode(ErrorCode.ONLY_RENT_TYPE_MONTH_NEED_SPLIT_STATEMENT);
+            return result;
+        }
+        if(k3StatementDateChange.getBeforeStatementDate().equals(k3StatementDateChange.getAfterStatementDate())){
+            result.setErrorCode(ErrorCode.SPLIT_STATEMENT_CAN_NOT_SAME,k3StatementDateChange.getBeforeStatementDate().toString(),k3StatementDateChange.getAfterStatementDate().toString());
+            return result;
+        }
         OrderStatementDateSplitDO orderStatementDateSplitDO = orderStatementDateSplitMapper.findByOrderNo(k3StatementDateChange.getOrderNo());
         Date currentTime=new Date();
         String userId=userSupport.getCurrentUserId().toString();
@@ -5065,7 +5079,7 @@ public class StatementServiceImpl implements StatementService {
         if(DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(), orderStatementDateSplitDO.getStatementDateChangeTime())<0){
             addStatementOrderDetailDOList.remove(statementOrderDetailDO);
             alreadyPaidAmount = BigDecimalUtil.sub(alreadyPaidAmount, statementOrderDetailDO.getStatementDetailAmount());
-            lastCalculateDate =  statementOrderDetailDO.getStatementStartTime();
+            lastCalculateDate =  DateUtil.getDayByOffset(statementOrderDetailDO.getStatementStartTime(),-1);
             phase--;
         }
         //后半段
@@ -5217,7 +5231,7 @@ public class StatementServiceImpl implements StatementService {
         if(DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(), orderStatementDateSplitDO.getStatementDateChangeTime())<0){
             addStatementOrderDetailDOList.remove(statementOrderDetailDO);
             alreadyPaidAmount = BigDecimalUtil.sub(alreadyPaidAmount, statementOrderDetailDO.getStatementDetailAmount());
-            lastCalculateDate =  statementOrderDetailDO.getStatementStartTime();
+            lastCalculateDate =  DateUtil.getDayByOffset(statementOrderDetailDO.getStatementStartTime(),-1);
             phase--;
         }
         //后半段
@@ -5387,7 +5401,7 @@ public class StatementServiceImpl implements StatementService {
         if(DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(), orderStatementDateSplitDO.getStatementDateChangeTime())<0){
             addStatementOrderDetailDOList.remove(statementOrderDetailDO);
             alreadyPaidAmount = BigDecimalUtil.sub(alreadyPaidAmount, statementOrderDetailDO.getStatementDetailAmount());
-            lastCalculateDate =  statementOrderDetailDO.getStatementStartTime();
+            lastCalculateDate =  DateUtil.getDayByOffset(statementOrderDetailDO.getStatementStartTime(),-1);
             phase--;
         }
         //后半段
@@ -5539,7 +5553,7 @@ public class StatementServiceImpl implements StatementService {
         if(DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(), orderStatementDateSplitDO.getStatementDateChangeTime())<0){
             addStatementOrderDetailDOList.remove(statementOrderDetailDO);
             alreadyPaidAmount = BigDecimalUtil.sub(alreadyPaidAmount, statementOrderDetailDO.getStatementDetailAmount());
-            lastCalculateDate =  statementOrderDetailDO.getStatementStartTime();
+            lastCalculateDate =  DateUtil.getDayByOffset(statementOrderDetailDO.getStatementStartTime(),-1);
             phase--;
         }
         //后半段
