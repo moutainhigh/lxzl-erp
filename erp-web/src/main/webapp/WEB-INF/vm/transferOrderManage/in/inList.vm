@@ -91,7 +91,7 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                <td>{{transferOrderNo}}</td>
+                                <td><a href="{{detailUrl}}" target="_blank">{{transferOrderNo}}</a></td>
                                 <td>{{transferOrderName}}</td>
                                 <td class="{{transferOrderStatusClass}}">{{transferOrderStatusValue}}</td>
                                 <td>{{transferOrderTypeValue}}</td>
