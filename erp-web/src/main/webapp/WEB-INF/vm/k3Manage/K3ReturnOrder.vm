@@ -90,9 +90,9 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                <td>{{returnOrderNo}}</td>
-                                <td>{{k3CustomerNo}}</td>
-                                <td>{{k3CustomerName}}</td>
+                                <td><a href="{{detailUrl}}" target="_blank">{{returnOrderNo}}</a></td>
+                                <td><a href="{{customerDetailUrl}}" target="_blank">{{k3CustomerNo}}</a></td>
+                                <td><a href="{{customerDetailUrl}}" target="_blank">{{k3CustomerName}}</a></td>
                                 <td>
                                     <p class="mn">{{returnContacts}}</p>
                                     <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{returnPhone}}</p>
