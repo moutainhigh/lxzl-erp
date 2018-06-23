@@ -83,7 +83,7 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                <td>{{peerDeploymentOrderNo}}</td>
+                                <td><a href="{{detailUrl}}" target="_blank">{{peerDeploymentOrderNo}}</a></td>
                                 <td>{{peerName}}</td>
                                 <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
                                 <td>{{warehouseName}}</td>
