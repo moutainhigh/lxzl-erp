@@ -4,7 +4,7 @@ import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import java.util.Date;
 
 
-public class K3StatementDateChangeDO  extends BaseDO {
+public class OrderStatementDateSplitDO extends BaseDO {
 
 	private Integer id;
 	private String orderNo;

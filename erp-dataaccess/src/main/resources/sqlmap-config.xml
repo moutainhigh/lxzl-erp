@@ -180,7 +180,7 @@
         <mapper resource="sqlmap/erp_order_confirm_change_log.xml" />
         <mapper resource="sqlmap/erp_order_confirm_change_log_detail.xml" />
         <mapper resource="sqlmap/erp_order_statement_date_change_log.xml" />
-        <mapper resource="sqlmap/erp_k3_statement_date_change.xml" />
+        <mapper resource="sqlmap/erp_order_statement_date_split.xml" />
 </mappers>
 
 </configuration>

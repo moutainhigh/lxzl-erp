@@ -560,11 +560,11 @@
             <if test="maps.orderQueryParam.createEndTime != null ">
                 <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
             </if>
-            <if test="maps.orderQueryParam.startRentStratTime != null">
-                <![CDATA[ AND eo.rent_start_time >= #{maps.orderQueryParam.startRentStratTime} ]]>
+            <if test="maps.orderQueryParam.startRentStartTime != null">
+                <![CDATA[ AND eo.rent_start_time >= #{maps.orderQueryParam.startRentStartTime} ]]>
             </if>
-            <if test="maps.orderQueryParam.endRentStratTime != null ">
-                <![CDATA[ AND eo.rent_start_time <= #{maps.orderQueryParam.endRentStratTime} ]]>
+            <if test="maps.orderQueryParam.endRentStartTime != null ">
+                <![CDATA[ AND eo.rent_start_time <= #{maps.orderQueryParam.endRentStartTime} ]]>
             </if>
             <if test="maps.orderQueryParam.startExpectReturnTime != null">
                 <![CDATA[ AND eo.expect_return_time >= #{maps.orderQueryParam.startExpectReturnTime} ]]>
@@ -574,6 +574,12 @@
             </if>
             <if test="maps.orderQueryParam.rentLengthType != null">
                 and eo.rent_length_type = #{maps.orderQueryParam.rentLengthType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.isReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 1">
+                AND eo.relet_order_id IS NOT NULL
+            </if>
+            <if test="maps.orderQueryParam.isReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 0">
+                AND eo.relet_order_id IS NULL
             </if>
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
@@ -702,11 +708,11 @@
             <if test="maps.orderQueryParam.createEndTime != null ">
                 <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
             </if>
-            <if test="maps.orderQueryParam.startRentStratTime != null">
-                <![CDATA[ AND eo.rent_start_time >= #{maps.orderQueryParam.startRentStratTime} ]]>
+            <if test="maps.orderQueryParam.startRentStartTime != null">
+                <![CDATA[ AND eo.rent_start_time >= #{maps.orderQueryParam.startRentStartTime} ]]>
             </if>
-            <if test="maps.orderQueryParam.endRentStratTime != null ">
-                <![CDATA[ AND eo.rent_start_time <= #{maps.orderQueryParam.endRentStratTime} ]]>
+            <if test="maps.orderQueryParam.endRentStartTime != null ">
+                <![CDATA[ AND eo.rent_start_time <= #{maps.orderQueryParam.endRentStartTime} ]]>
             </if>
             <if test="maps.orderQueryParam.startExpectReturnTime != null">
                 <![CDATA[ AND eo.expect_return_time >= #{maps.orderQueryParam.startExpectReturnTime} ]]>
@@ -716,6 +722,12 @@
             </if>
             <if test="maps.orderQueryParam.rentLengthType != null">
                 and eo.rent_length_type = #{maps.orderQueryParam.rentLengthType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.isReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 1">
+                AND eo.relet_order_id IS NOT NULL
+            </if>
+            <if test="maps.orderQueryParam.isReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 0">
+                AND eo.relet_order_id IS NULL
             </if>
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1

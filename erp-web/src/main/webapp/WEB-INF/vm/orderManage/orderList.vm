@@ -21,7 +21,7 @@
 
                 <div class="panel panel-primary panel-border top">
                     <div class="panel-menu p12">
-                        <div class="row" style="position:relative;">
+                        <div class="row">
                             <div class="col-lg-12">
                                 <form id="searchForm" class="form-horizontal">
                                     <div class="section row">
@@ -73,8 +73,8 @@
                                         <div class="col-md-12">
                                             <div class="col-md-2">
                                                 <div class="form-group mn">
-                                                    <input type="hidden" name="startRentStratTime" id="startRentStratTime" />
-                                                    <input type="hidden" name="endRentStratTime" id="endRentStratTime" />
+                                                    <input type="hidden" name="startRentStartTime" id="startRentStartTime" />
+                                                    <input type="hidden" name="endRentStartTime" id="endRentStartTime" />
                                                     <div class="input-group date" id="rentTimePicker">
                                                         <input type="text" name="rentTimePicker" id="rentTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="起租时间">
                                                         <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
@@ -111,8 +111,8 @@
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="field form-group mn">
-                                                    <div class="pull-left" >
-                                                        <div class="ib topbar-dropdown bradius">
+                                                    <div class="pull-left" style="width: 100%">
+                                                        <div class="ib topbar-dropdown bradius multiple-box">
                                                             <select id="orderStatusList" multiple="multiple" name="orderStatusList" data-type="optgroup">
                                                                 <optgroup label="请选择:">
                                                                     <option value="">全部（订单状态）</option>
@@ -122,7 +122,17 @@
                                                     </div>
                                                 </div>
                                             </div>
-
+                                            <div class="col-md-2">
+                                                <div class="field form-group mn">
+                                                    <div class="input-group" style="width: 100%">
+                                                        <select class="form-control input-sm bradius" name="isReletOrder" id="isReletOrder">
+                                                            <option value="">是否为续租单</option>
+                                                            <option value="1">是</option>
+                                                            <option value="0">否</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <hr class="short alt">
@@ -245,7 +255,8 @@
                                                     <ul class="dropdown-menu pull-right" role="menu">
                                                         {{#rowActionButtons}}
                                                         <li>
-                                                            <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" class="{{class}}" data-orderno="{{orderNo}}" data-canrelet="{{canReletOrder}}">{{text}}</a>
+                                                            <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" class="{{class}}" 
+                                                                data-orderno="{{orderNo}}" data-canrelet="{{canReletOrder}}" data-statement="{{statementDate}}">{{text}}</a>
                                                         </li>
                                                         {{/rowActionButtons}}
                                                     </ul>
