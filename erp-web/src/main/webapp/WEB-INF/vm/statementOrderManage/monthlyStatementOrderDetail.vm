@@ -23,8 +23,8 @@
                                 <div class="col-md-4">
                                     <div id="headerInfo"></div>
                                     <script type="text/html" id="headerInfoTpl">
-                                        <h5>客户姓名：<small>{{customerName}}</small></h5>
-                                        <h5>客户编号：<small>{{customerNo}}</small></h5>
+                                        <h5>客户姓名：<small><a href="{{customerDetailUrl}}" target="_blank">{{customerName}}</a></small></h5>
+                                        <h5>客户编号：<small><a href="{{customerDetailUrl}}" target="_blank">{{customerNo}}</a></small></h5>
                                         <h5>月份：<small>{{#clockMonthTime}}{{monthTime}}{{/clockMonthTime}}</small></h5>
                                     </script>
                                 </div>
@@ -109,7 +109,7 @@
                                     {{#dataSource}}
                                     {{#listData}}
                                     <tr>
-                                        <td>{{orderNo}}</td>
+                                        <td><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></td>
                                         <td>{{orderItemTypeValue}}</td>
                                         <td>
                                             <div style="max-width:160px;">

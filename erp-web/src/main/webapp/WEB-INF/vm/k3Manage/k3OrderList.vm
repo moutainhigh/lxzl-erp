@@ -104,10 +104,10 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{orderNo}}</td>
+                                <td><a href="{{detailUrl}}" target="_blank">{{orderNo}}</a></td>
                                 <td>{{orderSubCompanyName}}</td>
                                 <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
-                                <td>{{buyerCustomerName}}</td>
+                                <td><a href="{{customerDetailUrl}}" target="_blank">{{buyerCustomerName}}</a></td>
                                 <td>
                                     {{orderItemName}}
                                 </td>

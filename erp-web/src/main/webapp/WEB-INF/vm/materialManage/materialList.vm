@@ -88,9 +88,7 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                <td>
-                                    {{materialNo}}
-                                </td>
+                                <td>{{materialNo}}</td>
                                 <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                 <td>{{materialName}}</td>
                                 <td>{{materialModelName}}</td>

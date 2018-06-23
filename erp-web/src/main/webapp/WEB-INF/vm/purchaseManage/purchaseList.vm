@@ -84,7 +84,7 @@
                                 {{#dataSource}}
                                 {{#listData}}
                                 <tr>
-                                    <td>{{purchaseNo}}</td>
+                                    <td><a href="{{detailUrl}}" target="_blank">{{purchaseNo}}</a></td>
                                     <td>￥{{#price}}{{purchaseOrderAmountTotal}}{{/price}}</td>
                                     <td>{{productSupplierName}}</td>
                                     <td>{{invoiceSupplierName}}</td>

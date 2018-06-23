@@ -99,8 +99,8 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{purchaseDeliveryNo}}</td>
-                                <td>{{purchaseOrderNo}}</td>
+                                <td><a href="{{detailUrl}}" target="_blank">{{purchaseDeliveryNo}}</a></td>
+                                <td><a href="{{purchaseDetailUrl}}" target="_blank">{{purchaseOrderNo}}</a></td>
                                 <td>{{warehouse}}</td>
                                 <td>{{isInvoiceStr}}</td>
                                 <td>{{isNewStr}}</td>
