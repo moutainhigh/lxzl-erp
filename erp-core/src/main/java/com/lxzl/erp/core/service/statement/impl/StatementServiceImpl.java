@@ -51,6 +51,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementPayOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.domain.changeOrder.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDO;
@@ -73,6 +74,7 @@ import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementPayOrderDO;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDO;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDetailDO;
+import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import com.lxzl.se.dataaccess.mysql.source.interceptor.SqlLogInterceptor;
@@ -4177,8 +4179,13 @@ public class StatementServiceImpl implements StatementService {
                 }
                 //如果有支付的期数，则认为认可原支付方式，只清除改变节点后的结算
                 if(hasPaidPhase){
-                    if(!orderStatementDateSplitDO.getBeforeStatementDate().equals(orderDO.getStatementDate())){
-                        filterSettledOrderDetailResult.setErrorCode(ErrorCode.BEFORE_STATEMENT_MODE_NOT_SAME, getStatementModeString(orderStatementDateSplitDO.getBeforeStatementDate()),getStatementModeString(orderDO.getStatementDate()));
+                    Integer statementDate=orderDO.getStatementDate();
+                    if (statementDate == null){
+                        DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
+                        statementDate = dataDictionaryDO==null?StatementMode.STATEMENT_MONTH_END:Integer.parseInt(dataDictionaryDO.getDataName());
+                    }
+                    if(!orderStatementDateSplitDO.getBeforeStatementDate().equals(statementDate)){
+                        filterSettledOrderDetailResult.setErrorCode(ErrorCode.BEFORE_STATEMENT_MODE_NOT_SAME, getStatementModeString(orderStatementDateSplitDO.getBeforeStatementDate()),getStatementModeString(statementDate));
                         return filterSettledOrderDetailResult;
                     }
                     statementOrderDetailDOList=canClearList;
@@ -5737,6 +5744,10 @@ public class StatementServiceImpl implements StatementService {
     }
 
     private String  getStatementModeString(Integer statementMode){
+        if (statementMode == null){
+            DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
+            statementMode = dataDictionaryDO==null?StatementMode.STATEMENT_MONTH_END:Integer.parseInt(dataDictionaryDO.getDataName());
+        }
         if(StatementMode.STATEMENT_MONTH_END.equals(statementMode))return "月底结算";
         if (StatementMode.STATEMENT_20.equals(statementMode))return  "二十号结算";
         if (StatementMode.STATEMENT_MONTH_NATURAL.equals(statementMode))return "自然日结算";
@@ -5858,5 +5869,7 @@ public class StatementServiceImpl implements StatementService {
     private OrderStatementDateSplitMapper orderStatementDateSplitMapper;
     @Autowired
     private OrderSupport orderSupport;
+    @Autowired
+    private DataDictionaryMapper dataDictionaryMapper;
 
 }
