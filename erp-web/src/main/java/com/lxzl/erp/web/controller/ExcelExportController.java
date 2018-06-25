@@ -4,7 +4,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
-import com.lxzl.erp.common.domain.dynamicSql.DynamicSql;
+import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
 import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
@@ -84,11 +84,11 @@ public class ExcelExportController {
     }
 
     @RequestMapping(value = "exportDynamicSql", method = RequestMethod.POST)
-    public Result exportDynamicSql(DynamicSql dynamicSql, HttpServletResponse response) throws Exception {
-        String sql  = URLDecoder.decode(dynamicSql.getSql(),"UTF-8");
-        dynamicSql.setSql(sql);
-        dynamicSql.setLimit(Integer.MAX_VALUE);
-        Result result = resultGenerator.generate(dynamicSqlService.selectBySql(dynamicSql));
+    public Result exportDynamicSql(DynamicSqlSelectParam dynamicSqlSelectParam, HttpServletResponse response) throws Exception {
+        String sql  = URLDecoder.decode(dynamicSqlSelectParam.getSql(),"UTF-8");
+        dynamicSqlSelectParam.setSql(sql);
+        dynamicSqlSelectParam.setLimit(Integer.MAX_VALUE);
+        Result result = resultGenerator.generate(dynamicSqlService.selectBySql(dynamicSqlSelectParam));
 
         ServiceResult<String, String> serviceResult = excelExportService.export(result,ExcelExportSupport.formatFileName("动态sql"),"sheet1" , response,5000);
         return resultGenerator.generate(serviceResult.getErrorCode());
