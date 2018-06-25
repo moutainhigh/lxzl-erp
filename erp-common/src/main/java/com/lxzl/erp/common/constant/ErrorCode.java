@@ -623,6 +623,7 @@ public class ErrorCode {
     public static final String ONLY_RENT_TYPE_MONTH_NEED_SPLIT_STATEMENT = "J500181";
     public static final String SPLIT_STATEMENT_CAN_NOT_SAME = "J500182";
     public static final String HAS_SPLIT_STATEMENT_CFG = "J500183";
+    public static final String SPLIT_STATEMENT_TIME_ERROR = "J500184";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1942,6 +1943,7 @@ public class ErrorCode {
         MAP.put(ONLY_RENT_TYPE_MONTH_NEED_SPLIT_STATEMENT, "短租不需要分段结算");
         MAP.put(SPLIT_STATEMENT_CAN_NOT_SAME, "分段前结算方式【%s 】与分段后结算方式【%s 】一致");
         MAP.put(HAS_SPLIT_STATEMENT_CFG, "该订单已进行过分段结算，请先进行指定结算日结算");
+        MAP.put(SPLIT_STATEMENT_TIME_ERROR, "分段重算时间必须在订单起租时间与订单预计归还时间之间");
     }
 
 
