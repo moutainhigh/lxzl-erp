@@ -981,6 +981,11 @@ public class ErrorCode {
 
     // 动态SQL查询
     public static final String DYNAMIC_SQL_ERROR = "J260000001";
+    public static final String SQL_TITLE_NOT_NULL = "J260000002";
+    public static final String SQL_CONTENT_NOT_NULL = "J260000003";
+    public static final String DYNAMIC_SQL_ID_NOT_NULL = "J260000004";
+    public static final String DYNAMIC_SQL_NOT_EXISTS = "J260000005";
+
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1930,6 +1935,10 @@ public class ErrorCode {
         MAP.put(QUARTZ_EXPRESSION_NOT_NULL, "定时任务的CRON表达式不能为空");
 
         MAP.put(DYNAMIC_SQL_ERROR, "动态SQL查询语句不正确");
+        MAP.put(SQL_TITLE_NOT_NULL, "动态SQL语句标题不能为空");
+        MAP.put(SQL_CONTENT_NOT_NULL, "动态SQL语句内容不能为空");
+        MAP.put(DYNAMIC_SQL_ID_NOT_NULL, "动态SQL的ID不能为空");
+        MAP.put(DYNAMIC_SQL_NOT_EXISTS, "动态SQL语句不存在");
 
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户已经为确认结算单状态");
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE, "客户为确认结算单状态时不允许重算结算单");
