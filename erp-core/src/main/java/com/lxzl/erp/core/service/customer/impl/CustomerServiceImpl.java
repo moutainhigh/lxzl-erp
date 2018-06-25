@@ -899,6 +899,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         List<Customer> customerList = ConverterUtil.convertList(customerDOList, Customer.class);
+        convertConfirmUserId2UserName(customerList); // 将确认人id转换为确认人姓名
         Page<Customer> page = new Page<>(customerList, totalCount, customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -926,6 +927,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
         List<Customer> customerPersonList = ConverterUtil.convertList(customerDOList, Customer.class);
+        convertConfirmUserId2UserName(customerPersonList); // 将确认人id转换为确认人姓名
         Page<Customer> page = new Page<>(customerPersonList, totalCount, customerPersonQueryParam.getPageNo(), customerPersonQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -1111,6 +1113,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
         }
 
+        convertConfirmUserId2UserName(customerResult);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
         return serviceResult;
@@ -1238,6 +1241,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
 
+        convertConfirmUserId2UserName(customerResult);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
         return serviceResult;
@@ -1574,6 +1578,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
         }
 
+        convertConfirmUserId2UserName(customerResult);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
         return serviceResult;
@@ -3358,6 +3363,26 @@ public class CustomerServiceImpl implements CustomerService {
         return serviceResult;
     }
 
+    /*
+    将customer中的确认用户id转换为名字
+     */
+    private void convertConfirmUserId2UserName(Customer customer) {
+        if (customer != null) {
+            Integer userId = customer.getConfirmStatementUser();
+            if (userId != null) {
+                User user = CommonCache.userMap.get(userId);
+                if (user != null) {
+                    customer.setConfirmStatementUserName(user.getRealName());
+                }
+            }
+        }
+    }
+
+    private void convertConfirmUserId2UserName(List<Customer> customerList) {
+        for (Customer customer : customerList) {
+            convertConfirmUserId2UserName(customer);
+        }
+    }
 
     @Autowired
     private UserMapper userMapper;
