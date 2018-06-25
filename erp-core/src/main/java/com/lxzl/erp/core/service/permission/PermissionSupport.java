@@ -184,7 +184,6 @@ public class PermissionSupport {
         if (permissionSet.contains(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS)) {
             permissionParam.setPermissionSubCompanyIdForDelivery(getCanAccessSubCompanyForBusinessAffairs(userId));
         }
-        permissionParam.setPermissionSubCompanyIdForDelivery(2);
         return permissionParam;
     }
 }

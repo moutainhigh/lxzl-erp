@@ -113,13 +113,13 @@
                                     <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
                                 </li>
                                 <li>
-                                    <a href="#statementOrderList" data-toggle="tab">结算单</a>
+                                    <a href="#statementOrderList" data-toggle="tab">结算单（共<span id="orderStatementCount">0</span>个）</a>
                                 </li>
                                 <li>
-                                    <a href="#returnOrderList" data-toggle="tab">退货单</a>
+                                    <a href="#returnOrderList" data-toggle="tab">退货单（共<span id="orderReturnCount">0</span>个）</a>
                                 </li>
                                 <li>
-                                    <a href="#reletOrderList" data-toggle="tab">续租单</a>
+                                    <a href="#reletOrderList" data-toggle="tab">续租单（共<span id="orderReletCount">0</span>个）</a>
                                 </li>
                                 <li>
                                     <a href="#orderPrintList" data-toggle="tab">打印记录（共<span id="printRecordCount">0</span>次）</a>

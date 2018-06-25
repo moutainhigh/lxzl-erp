@@ -88,14 +88,14 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                <td>{{customerNo}}</td>
-                                <td>{{customerName}}</td>
+                                <td><a href="{{customerDetailUrl}}" target="_blank">{{customerNo}}</a></td>
+                                <td><a href="{{customerDetailUrl}}" target="_blank">{{customerName}}</a></td>
                                 <td>{{rentLengthTypeValue}}</td>
                                 <td>{{subCompanyName}}</td>
                                 <td>{{orderSellerName}}</td>
                                 <td>￥{{#price}}{{unReceivable}}{{/price}}</td>
                                 <td>{{overduePhaseCount}}</td>
-                                <td>{{orderNo}}</td>
+                                <td><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></td>
 ##                                <td>{{orderItemTypeValue}}</td>
                             </tr>
                             {{/listData}}

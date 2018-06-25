@@ -87,7 +87,7 @@
                                 {{#dataSource}}
                                 {{#listData}}
                                 <tr>
-                                    <td>{{deploymentOrderNo}}</td>
+                                    <td><a href="{{detailUrl}}" target="_blank">{{deploymentOrderNo}}</a></td>
                                     <td>{{deploymentTypeValue}}</td>
                                     <td>{{srcWarehouseName}}</td>
                                     <td>{{targetWarehouseName}}</td>
