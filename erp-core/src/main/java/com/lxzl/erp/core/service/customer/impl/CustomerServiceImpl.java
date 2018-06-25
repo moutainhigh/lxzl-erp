@@ -3379,8 +3379,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private void convertConfirmUserId2UserName(List<Customer> customerList) {
-        for (Customer customer : customerList) {
-            convertConfirmUserId2UserName(customer);
+        if (CollectionUtil.isNotEmpty(customerList)) {
+            for (Customer customer : customerList) {
+                convertConfirmUserId2UserName(customer);
+            }
         }
     }
 
