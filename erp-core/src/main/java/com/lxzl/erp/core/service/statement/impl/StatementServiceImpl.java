@@ -424,14 +424,8 @@ public class StatementServiceImpl implements StatementService {
             addStatementOrderDetailDOList=generateReletStatementDetailListSplit(reletOrderDO,currentTime,loginUserId, orderStatementDateSplitDO);
         }else{
             //已结算部分(不在节点内的订单或续租结算要么全清，要么全保留)
-            List<Integer>reletItemReferIds=new ArrayList<>();
-            if(CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())){
-                for(ReletOrderProductDO reletOrderProductDO:reletOrderDO.getReletOrderProductDOList())reletItemReferIds.add(reletOrderProductDO.getId());
-            }
-            if(CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())){
-                for(ReletOrderMaterialDO reletOrderMaterialDO:reletOrderDO.getReletOrderMaterialDOList())reletItemReferIds.add(reletOrderMaterialDO.getId());
-            }
-            List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findRentByReletOrderItemReferIds(reletItemReferIds);
+            List<StatementOrderDetailDO> statementOrderDetailDOList = getReletOrderStatementDetails(reletOrderDO);
+
             Date lstPaidStatementEndTime=null;
             for(StatementOrderDetailDO orderDetailDO:statementOrderDetailDOList){
                 if(lstPaidStatementEndTime==null||lstPaidStatementEndTime.compareTo(orderDetailDO.getStatementEndTime())<0)lstPaidStatementEndTime=orderDetailDO.getStatementEndTime();
@@ -449,6 +443,24 @@ public class StatementServiceImpl implements StatementService {
             addStatementOrderDetailDOList = generateReletStatementDetailList(reletOrderDO, currentTime, statementDays, loginUserId);
         }
         return addStatementOrderDetailDOList;
+    }
+
+    private List<StatementOrderDetailDO> getReletOrderStatementDetails(ReletOrderDO reletOrderDO) {
+        List<StatementOrderDetailDO> statementOrderDetailDOList=new ArrayList<>();
+        List<Integer>reletItemReferIds=new ArrayList<>();
+        if(CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())){
+            for(ReletOrderProductDO reletOrderProductDO:reletOrderDO.getReletOrderProductDOList())reletItemReferIds.add(reletOrderProductDO.getId());
+            List<StatementOrderDetailDO> productStatementOrderDetailDOList = statementOrderDetailMapper.findProductRentByReletOrderItemReferIds(reletItemReferIds);
+            if(CollectionUtil.isNotEmpty(productStatementOrderDetailDOList))statementOrderDetailDOList.addAll(productStatementOrderDetailDOList);
+        }
+
+        if(CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())){
+            reletItemReferIds.clear();
+            for(ReletOrderMaterialDO reletOrderMaterialDO:reletOrderDO.getReletOrderMaterialDOList())reletItemReferIds.add(reletOrderMaterialDO.getId());
+            List<StatementOrderDetailDO> materialStatementOrderDetailDOList = statementOrderDetailMapper.findMaterialRentByReletOrderItemReferIds(reletItemReferIds);
+            if(CollectionUtil.isNotEmpty(materialStatementOrderDetailDOList))statementOrderDetailDOList.addAll(materialStatementOrderDetailDOList);
+        }
+        return statementOrderDetailDOList;
     }
 //    private List<StatementOrderDetailDO> getStatementReletOrderDetailDOS(ReletOrderDO reletOrderDO, Date currentTime, Date rentStartTime, Integer loginUserId) {
 //        //结算类型分界
@@ -792,7 +804,11 @@ public class StatementServiceImpl implements StatementService {
      */
     private void syncReletOrderStatementByOrder(OrderDO orderDO, ReletOrderDO reletOrderDO) {
         //同步订单结算类型
-        if(!orderDO.getStatementDate().equals(reletOrderDO.getStatementDate())){
+        Integer orderStatementDate=orderDO.getStatementDate();
+        if(orderStatementDate==null)orderStatementDate=StatementMode.STATEMENT_MONTH_END;
+        Integer reletOrderStatementDate=orderDO.getStatementDate();
+        if(reletOrderStatementDate==null)reletOrderStatementDate=StatementMode.STATEMENT_MONTH_END;
+        if(!orderStatementDate.equals(reletOrderStatementDate)){
             reletOrderDO.setStatementDate(orderDO.getStatementDate());
             reletOrderMapper.update(reletOrderDO);
         }
@@ -2142,11 +2158,6 @@ public class StatementServiceImpl implements StatementService {
         }
         if (!ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
             result.setErrorCode(ErrorCode.RETURN_ORDER_CAN_NOT_CREATE_STATEMENT);
-            return result;
-        }
-        List<StatementOrderDetailDO> statementOrderDetails = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_RETURN, k3ReturnOrderDO.getId());
-        if (CollectionUtil.isNotEmpty(statementOrderDetails)) {
-            result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
             return result;
         }
         Date currentTime = new Date();
@@ -4536,6 +4547,24 @@ public class StatementServiceImpl implements StatementService {
             serviceResult.setErrorCode(ErrorCode.RELET_ORDER_NOT_EXISTS);
             return serviceResult;
         }
+        List<K3ReturnOrderDetailDO> reletReturnOrderDetailDOList=new ArrayList<>();
+        //首先清除该续租下退货结算(有实际退货的)
+        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(reletOrderDO.getOrderNo());
+        if(CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOList)){
+            Map<Integer,K3ReturnOrderDO> k3ReturnOrderDOCatch=new HashMap<>();
+            for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDetailDOList) {
+                Integer returnOrderId=k3ReturnOrderDetailDO.getReturnOrderId();
+                if(!k3ReturnOrderDOCatch.containsKey(returnOrderId)){
+                    k3ReturnOrderDOCatch.put(returnOrderId,k3ReturnOrderMapper.findById(returnOrderId));
+                }
+                K3ReturnOrderDO k3ReturnOrderDO=k3ReturnOrderDOCatch.get(returnOrderId);
+                if(k3ReturnOrderDO!=null&&DateUtil.daysBetween(reletOrderDO.getRentStartTime(),k3ReturnOrderDO.getReturnTime())>=0&&DateUtil.daysBetween(reletOrderDO.getExpectReturnTime(),k3ReturnOrderDO.getReturnTime())<=0){
+                    reletReturnOrderDetailDOList.add(k3ReturnOrderDetailDO);
+                }
+            }
+            if(CollectionUtil.isNotEmpty(reletReturnOrderDetailDOList))clearReturnReturnOrderItems(reletReturnOrderDetailDOList,true);
+        }
+
 
         ServiceResult<String, AmountNeedReturn> result = clearReletOrderStatement(reletOrderDO);
         if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
@@ -4550,6 +4579,11 @@ public class StatementServiceImpl implements StatementService {
             return serviceResult;
         }
 
+        //退货重新结算到具体结算单
+        if(CollectionUtil.isNotEmpty(reletReturnOrderDetailDOList))statementReturnOrderItemRent(reletReturnOrderDetailDOList,false);
+
+        //修正结算单时间范围
+        fixCustomerStatementOrderStatementTime(reletOrderDO.getBuyerCustomerId());
         //最后退款
         AmountNeedReturn amountNeedReturn= result.getResult();
         if(amountNeedReturn!=null&&BigDecimalUtil.compare(amountNeedReturn.getRentPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(amountNeedReturn.getRentDepositPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(amountNeedReturn.getDepositPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(BigDecimalUtil.addAll(amountNeedReturn.getOtherPaidAmount(), amountNeedReturn.getOverduePaidAmount(), amountNeedReturn.getPenaltyPaidAmount()),BigDecimal.ZERO)!=0){
@@ -4584,16 +4618,7 @@ public class StatementServiceImpl implements StatementService {
 
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, AmountNeedReturn> clearReletOrderStatement(ReletOrderDO reletOrderDO) {
-        List<Integer> ids = new ArrayList<>();
-        List<ReletOrderMaterialDO> materialDOList = reletOrderDO.getReletOrderMaterialDOList();
-        if (CollectionUtil.isNotEmpty(materialDOList)) {
-            for (ReletOrderMaterialDO materialDO : materialDOList) ids.add(materialDO.getId());
-        }
-        List<ReletOrderProductDO> productDOList = reletOrderDO.getReletOrderProductDOList();
-        if (CollectionUtil.isNotEmpty(productDOList)) {
-            for (ReletOrderProductDO productDO : productDOList) ids.add(productDO.getId());
-        }
-        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByReletOrderItemReferIds(ids);
+        List<StatementOrderDetailDO> statementOrderDetailDOList =  getReletOrderStatementDetails(reletOrderDO);
 
         //处理已支付订单
         //boolean paid = PayStatus.PAY_STATUS_PAID_PART.equals(reletOrderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(reletOrderDO.getPayStatus());
@@ -5059,16 +5084,15 @@ public class StatementServiceImpl implements StatementService {
         if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
             List<ReletOrderProductDO> reletOrderProductDOS=reletOrderDO.getReletOrderProductDOList();
             for (ReletOrderProductDO reletOrderProductDO : reletOrderProductDOS) {
-                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByReletOrderItemReferId(reletOrderProductDO.getId());
+                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findPrdcByReletOrderItemReferIds(reletOrderProductDO.getId());
                 getSplitStatementReletProductDetails(reletOrderDO, currentTime, loginUserId, orderStatementDateSplitDO, addStatementOrderDetailDOList, rentStartTime, buyerCustomerId, orderId, expectReturnTime, reletOrderProductDO, statementOrderDetailDOList);
-
             }
         }
         // 物料生成结算单
         if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
             List<ReletOrderMaterialDO> reletOrderMaterialDOS=reletOrderDO.getReletOrderMaterialDOList();
             for (ReletOrderMaterialDO reletOrderMaterialDO : reletOrderMaterialDOS) {
-                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByReletOrderItemReferId(reletOrderMaterialDO.getId());
+                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findMtrByReletOrderItemReferIds(reletOrderMaterialDO.getId());
                 getSplitStatementReletMaterialDetails(reletOrderDO, currentTime, loginUserId, orderStatementDateSplitDO, addStatementOrderDetailDOList, rentStartTime, buyerCustomerId, orderId, expectReturnTime, reletOrderMaterialDO, statementOrderDetailDOList);
             }
         }
