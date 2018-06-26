@@ -1,17 +1,27 @@
 package com.lxzl.erp.core.service.dynamicSql.impl;
 
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.dynamicSql.DynamicSql;
+import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlQueryParam;
+import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
+import com.lxzl.erp.common.domain.dynamicSql.pojo.DynamicSql;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.IdCardCheckUtil;
 import com.lxzl.erp.core.service.dynamicSql.DynamicSqlService;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.jdbc.dynamicSql.DynamicSqlDao;
+import com.lxzl.erp.dataaccess.dao.mysql.dynamicSql.DynamicSqlMapper;
+import com.lxzl.erp.dataaccess.domain.dynamicSql.DynamicSqlDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.date.DateUtil;
+import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,18 +48,24 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     @Autowired
     private DynamicSqlDao dynamicSqlDao;
 
+    @Autowired
+    private DynamicSqlMapper dynamicSqlMapper;
+
+    @Autowired
+    private UserSupport userSupport;
+
     @Override
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
-    public ServiceResult<String, List<List<Object>>> selectBySql(DynamicSql dynamicSql) {
+    public ServiceResult<String, List<List<Object>>> selectBySql(DynamicSqlSelectParam dynamicSqlSelectParam) {
         ServiceResult<String, List<List<Object>>> serviceResult = new ServiceResult<>();
         List<List<Object>> listList;
 
-        if (dynamicSql.getLimit() == null || dynamicSql.getLimit() <= 0) {
-            dynamicSql.setLimit(totalReturnCount);
+        if (dynamicSqlSelectParam.getLimit() == null || dynamicSqlSelectParam.getLimit() <= 0) {
+            dynamicSqlSelectParam.setLimit(totalReturnCount);
         }
 
         try {
-            listList = dynamicSqlDao.selectBySql(dynamicSql.getSql(), dynamicSql.getLimit());
+            listList = dynamicSqlDao.selectBySql(dynamicSqlSelectParam.getSql(), dynamicSqlSelectParam.getLimit());
         } catch (SQLException e) {
             throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
@@ -61,6 +77,85 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(listList);
         return serviceResult;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> saveDynamicSql(DynamicSql dynamicSql) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date now = new Date();
+
+        DynamicSqlDO dynamicSqlDO = ConverterUtil.convert(dynamicSql,DynamicSqlDO.class);
+        dynamicSqlDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        dynamicSqlDO.setCreateTime(now);
+        dynamicSqlDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        dynamicSqlDO.setUpdateTime(now);
+        dynamicSqlDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        dynamicSqlMapper.save(dynamicSqlDO);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(dynamicSqlDO.getId().toString());
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> deleteDynamicSql(DynamicSql dynamicSql) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date now = new Date();
+
+        DynamicSqlDO dynamicSqlDO = dynamicSqlMapper.findById(dynamicSql.getDynamicSqlId());
+        if (dynamicSqlDO == null){
+            result.setErrorCode(ErrorCode.DYNAMIC_SQL_NOT_EXISTS);
+            return result;
+        }
+
+        dynamicSqlDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        dynamicSqlDO.setUpdateTime(now);
+        dynamicSqlDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        dynamicSqlMapper.update(dynamicSqlDO);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(dynamicSqlDO.getId().toString());
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, DynamicSql> detailDynamicSql(DynamicSql dynamicSql) {
+        ServiceResult<String, DynamicSql> result = new ServiceResult<>();
+
+        DynamicSqlDO dynamicSqlDO = dynamicSqlMapper.findById(dynamicSql.getDynamicSqlId());
+        if (dynamicSqlDO == null){
+            result.setErrorCode(ErrorCode.DYNAMIC_SQL_NOT_EXISTS);
+            return result;
+        }
+
+        DynamicSql dynamicSql1 = ConverterUtil.convert(dynamicSqlDO,DynamicSql.class);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(dynamicSql1);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Page<DynamicSql>> pageDynamicSql(DynamicSqlQueryParam dynamicSqlQueryParam) {
+        ServiceResult<String, Page<DynamicSql>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(dynamicSqlQueryParam.getPageNo(),dynamicSqlQueryParam.getPageSize());
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start",pageQuery.getStart());
+        maps.put("pageSize",pageQuery.getPageSize());
+        maps.put("dynamicSqlQueryParam",dynamicSqlQueryParam);
+
+        Integer totalCount = dynamicSqlMapper.findDynamicSqlCountByParams(maps);
+        List<DynamicSqlDO> dynamicSqlDOList = dynamicSqlMapper.findDynamicSqlByParams(maps);
+
+        List<DynamicSql> dynamicSqlList = ConverterUtil.convertList(dynamicSqlDOList,DynamicSql.class);
+        Page<DynamicSql> page = new Page<>(dynamicSqlList,totalCount,dynamicSqlQueryParam.getPageNo(),dynamicSqlQueryParam.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
     }
 
     private void filterSensitiveInfo(List<List<Object>> listList) {
