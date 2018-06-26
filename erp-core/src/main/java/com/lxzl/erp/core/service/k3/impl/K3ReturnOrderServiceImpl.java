@@ -261,6 +261,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             k3ReturnOrderDetailMapper.save(k3ReturnOrderDetailDO);
         }
         K3ReturnOrderDO newK3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
+        K3ReturnOrder newK3ReturnOrder = ConverterUtil.convert(newK3ReturnOrderDO,K3ReturnOrder.class);
         List<K3ReturnOrderDetailDO> newK3ReturnOrderDetailDOList = newK3ReturnOrderDO.getK3ReturnOrderDetailDOList();
         //退货日期校验(退货时间不能大于起租时间)
         Map<String, OrderDO> orderCatch = new HashMap<String, OrderDO>();
@@ -275,7 +276,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     erpOrderCount++;
                 }
                 //校验所选择的发货分公司必须要跟退货单对应的订单的发货分公司一致
-                if (verifyDeliverySubCompany(k3ReturnOrder, result, orderDO)) return result;
+                if (verifyDeliverySubCompany(newK3ReturnOrder, result, orderDO)) return result;
                 //校验退货时间不能小于起租时间
                 if (verifyReturnTimeAndRentStartTime(result, newK3ReturnOrderDO, orderDO)) return result;
                 orderCatch.put(k3ReturnOrderDetailDO.getOrderNo(), orderDO);
@@ -354,7 +355,11 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 if (processMaterialCount + nowMaterialCount - rentingMaterialCount > 0) {
                     OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(orderMaterialId);
                     Integer canReturnCount = rentingMaterialCount - processMaterialCount;
-                    result.setErrorCode(ErrorCode.K3_RETURN_ORDER_MATERIAL_COUNT_NOT_ENOUGH,orderMaterialDO.getMaterialName(),canReturnCount);
+                    if (canReturnCount < 0 ) {
+                        canReturnCount = 0;
+                    }
+                    OrderDO orderDO = orderMapper.findById(orderMaterialDO.getOrderId());
+                    result.setErrorCode(ErrorCode.K3_RETURN_ORDER_MATERIAL_COUNT_ERROR,orderDO.getOrderNo(),orderMaterialDO.getMaterialName(),canReturnCount);
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     return true;
                 }
@@ -1167,7 +1172,11 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 if (processProductCount + nowProductCount - rentingProductCount > 0) {
                     OrderProductDO orderProductDO = orderProductMapper.findById(orderProductId);
                     Integer canReturnCount = rentingProductCount - processProductCount;
-                    result.setErrorCode(ErrorCode.K3_RETURN_ORDER_PRODUCT_COUNT_ERROR,orderProductDO.getProductName(),canReturnCount);
+                    if (canReturnCount<0) {
+                        canReturnCount = 0;
+                    }
+                    OrderDO orderDO = orderMapper.findById(orderProductDO.getOrderId());
+                    result.setErrorCode(ErrorCode.K3_RETURN_ORDER_PRODUCT_COUNT_ERROR,orderDO.getOrderNo(),orderProductDO.getProductName(),canReturnCount);
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     return true;
                 }
