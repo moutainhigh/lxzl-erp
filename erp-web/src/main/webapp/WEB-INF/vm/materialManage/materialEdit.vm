@@ -4,6 +4,7 @@
     <title>凌雄ERP-配件管理-编辑配件</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/viewer/viewer.min.css">
     <script type="text/javascript">
         common_load_css('${staticCommon}/rental/css','dropzone.css');
     </script>
@@ -54,6 +55,7 @@
     #parse("layout/footer.vm")
 
     <script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.jq.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
 //                'manage.material.util.js',
