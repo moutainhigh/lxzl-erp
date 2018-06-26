@@ -274,7 +274,7 @@ public class K3ControllerTest extends ERPTransactionalTest {
     }
     @Test
     public void addReturnOrderJSON() throws Exception {
-        String str = "{\"returnOrderNo\":\"LXK3RO20180626101110713\",\"k3ReturnOrderDetailList\":[{\"orderNo\":\"LXO-20180625-027-00159\",\"orderEntry\":3591,\"productNo\":\"10.TPC.AP.IPADPRO-64G\",\"productName\":\"苹果IPADPRO-64G\",\"productCount\":\"5\",\"rentingCount\":5,\"k3CustomerNo\":\"LXCC-027-20180620-00135\",\"k3CustomerName\":\"分直结算十一号\",\"orderItemId\":3591,\"productId\":2000577,\"rentType\":2,\"rentLengthType\":2,\"rentTimeLength\":12,\"remark\":\"\",\"skuStr\":\"双核 | 64G | 银色 | 12.9\"}]}";
+        String str ="{\"returnOrderNo\":\"LXK3RO20180626152302027\",\"k3ReturnOrderDetailList\":[{\"orderNo\":\"LXO-20180626-027-00162\",\"orderEntry\":3595,\"productNo\":\"10.TPC.AP.IPADPRO-64G\",\"productName\":\"苹果IPADPRO-64G\",\"productCount\":\"5\",\"rentingCount\":5,\"canReturnCount\":5,\"k3CustomerNo\":\"LXCC-027-20180620-00135\",\"k3CustomerName\":\"分直结算十一号\",\"orderItemId\":3595,\"productId\":2000577,\"rentType\":2,\"rentLengthType\":2,\"rentTimeLength\":12,\"remark\":\"\",\"orderSubCompanyId\":8,\"orderSubCompanyName\":\"武汉分公司\",\"deliverySubCompanyName\":\"深圳分公司\",\"skuStr\":\"双核 | 64G | 银色 | 12.9\"}]}";
 
         K3ReturnOrder k3ReturnOrder = JSON.parseObject(str, K3ReturnOrder.class);
 
