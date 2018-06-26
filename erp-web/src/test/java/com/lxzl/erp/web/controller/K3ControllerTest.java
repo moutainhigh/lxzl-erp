@@ -556,8 +556,16 @@ public class K3ControllerTest extends ERPTransactionalTest {
     @Test
     public void queryOrderByNoForReturn() throws Exception {
         OrderForReturnQueryParam param = new OrderForReturnQueryParam();
-        param.setOrderNo("LXO-20180613-027-00101");
+        param.setOrderNo("LXSE2017122061");
         TestResult testResult = getJsonTestResult("/k3/queryOrderByNoForReturn", param);
+    }
+    @Test
+    public void createReturnOrderFromERPJson() throws Exception {
+        String str ="{\"k3CustomerNo\":\"LXCC-027-20180305-00082\",\"k3CustomerName\":\"武汉中清龙图科技有限公司\",\"returnTime\":1530057600000,\"returnAddress\":\"华中师范大学东门培训大楼4楼\",\"returnContacts\":\"阮春辉\",\"returnPhone\":\"13545143771\",\"returnMode\":\"1\",\"logisticsAmount\":\"12\",\"serviceAmount\":0,\"remark\":\"\",\"returnReasonType\":\"1\",\"deliverySubCompanyId\":\"2\",\"k3ReturnOrderDetailList\":[{\"orderNo\":\"LXSE2017122061\",\"orderEntry\":1,\"productNo\":\"10.LPC.TH.T430\",\"productName\":\"ThinkPad T430\",\"productCount\":\"26\",\"remark\":\"\",\"orderItemId\":3389}]}";
+        K3ReturnOrder k3ReturnOrder = JSON.parseObject(str, K3ReturnOrder.class);
+
+
+        TestResult testResult = getJsonTestResult("/k3/createReturnOrderFromERP", k3ReturnOrder);
     }
     @Test
     public void createReturnOrderFromERP() throws Exception {
