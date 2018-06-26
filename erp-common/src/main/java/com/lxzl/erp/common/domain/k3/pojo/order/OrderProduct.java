@@ -38,6 +38,7 @@ public class OrderProduct extends BasePO {
     private String brandName;                   // 品牌
 
     private Integer rentingProductCount;        // 在租商品数
+    private Integer canReturnProductCount;      // 可退数量
 
     private BigDecimal firstNeedPayAmount;      // 首付金额
     private List<ProductSkuProperty> productSkuPropertyList;
@@ -280,5 +281,13 @@ public class OrderProduct extends BasePO {
 
     public void setProductSkuPropertyList(List<ProductSkuProperty> productSkuPropertyList) {
         this.productSkuPropertyList = productSkuPropertyList;
+    }
+
+    public Integer getCanReturnProductCount() {
+        return canReturnProductCount;
+    }
+
+    public void setCanReturnProductCount(Integer canReturnProductCount) {
+        this.canReturnProductCount = canReturnProductCount;
     }
 }
