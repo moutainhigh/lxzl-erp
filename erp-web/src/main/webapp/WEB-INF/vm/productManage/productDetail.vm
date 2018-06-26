@@ -4,6 +4,7 @@
     <title>凌雄ERP-商品管理-商品列表-编辑商品</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/viewer/viewer.min.css">
     <script type="text/javascript">
         common_load_css('${staticCommon}/rental/css','dropzone.css');
     </script>
@@ -327,7 +328,7 @@
                                         <img data-dz-thumbnail="" alt="avatar" src="{{imgDomain}}{{imgUrl}}" class="img-responsive">
                                     </div>
                                     <div class="dz-success-mark">
-                                                                                                     <span>âœ?/span>
+                                        <span>âœ?/span>
                                     </div>
                                     <a class="dz-remove" href="#" data-dz-remove>删除</a>
                                 </div>
@@ -345,6 +346,7 @@
     #parse("layout/footer.vm")
 
 <script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
+<script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.jq.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'api.data.js',

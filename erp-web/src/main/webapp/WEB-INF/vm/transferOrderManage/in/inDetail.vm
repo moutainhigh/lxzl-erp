@@ -4,6 +4,7 @@
     <title>凌雄ERP-流转单管理-流入单详情</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/viewer/viewer.min.css">
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
@@ -226,6 +227,7 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.jq.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'manage.transfer.order.handle.mixin.js',

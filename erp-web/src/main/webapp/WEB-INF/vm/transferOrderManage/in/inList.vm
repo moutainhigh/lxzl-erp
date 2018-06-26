@@ -136,7 +136,7 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-    <script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.jq.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'api.data.js',
