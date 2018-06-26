@@ -92,7 +92,7 @@ public class K3Controller extends BaseController {
     @RequestMapping(value = "updateReturnOrderFromERP", method = RequestMethod.POST)
     public Result updateReturnOrderFromERP(@RequestBody @Validated(UpdateGroup.class) K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = k3ReturnOrderService.updateReturnOrderFromERP(k3ReturnOrder);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        return resultGenerator.generate(serviceResult);
     }
     @RequestMapping(value = "createReturnOrder", method = RequestMethod.POST)
     public Result createReturnOrder(@RequestBody @Validated(AddGroup.class) K3ReturnOrder k3ReturnOrder, BindingResult validResult) {

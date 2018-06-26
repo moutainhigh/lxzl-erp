@@ -261,6 +261,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             k3ReturnOrderDetailMapper.save(k3ReturnOrderDetailDO);
         }
         K3ReturnOrderDO newK3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
+        K3ReturnOrder newK3ReturnOrder = ConverterUtil.convert(newK3ReturnOrderDO,K3ReturnOrder.class);
         List<K3ReturnOrderDetailDO> newK3ReturnOrderDetailDOList = newK3ReturnOrderDO.getK3ReturnOrderDetailDOList();
         //退货日期校验(退货时间不能大于起租时间)
         Map<String, OrderDO> orderCatch = new HashMap<String, OrderDO>();
@@ -274,10 +275,10 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
                     erpOrderCount++;
                 }
-                if (orderDO.getRentStartTime().compareTo(newK3ReturnOrderDO.getReturnTime()) > 0) {
-                    result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
-                    return result;
-                }
+                //校验所选择的发货分公司必须要跟退货单对应的订单的发货分公司一致
+                if (verifyDeliverySubCompany(newK3ReturnOrder, result, orderDO)) return result;
+                //校验退货时间不能小于起租时间
+                if (verifyReturnTimeAndRentStartTime(result, newK3ReturnOrderDO, orderDO)) return result;
                 orderCatch.put(k3ReturnOrderDetailDO.getOrderNo(), orderDO);
             }
         }
@@ -292,9 +293,79 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 return result;
             }
         }
+        Map<Integer, Integer> rentingProductCountMap = new HashMap<>();
+        Map<Integer, Integer> rentingMaterialCountMap = new HashMap<>();
+        Map<Integer, Integer> nowProductCountMap = new HashMap<>();
+        Map<Integer, Integer> nowMaterialCountMap = new HashMap<>();
+        //得到商品退货数量以及对应的商品再租数量
+        if (getReturnCountAndRentingCount(result, k3ReturnOrderDO, rentingProductCountMap, rentingMaterialCountMap, nowProductCountMap, nowMaterialCountMap))
+            return result;
+
+        Map<Integer, Integer> productCountMap = new HashMap<>();
+        Map<Integer, Integer> materialCountMap = new HashMap<>();
+        List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findByCustomerNo(k3ReturnOrderDO.getK3CustomerNo());
+        //获取该用户处于待提交、审核中、处理中三种状态的商品或者配件的数量
+        getReturnCount(productCountMap, materialCountMap, k3ReturnOrderDOList);
+        //比较设备项
+        if (compareReturnProductCount(result, rentingProductCountMap, nowProductCountMap, productCountMap))
+            return result;
+        //比较物料项
+        if (compareReturnMaterialCount(result, rentingMaterialCountMap, nowMaterialCountMap, materialCountMap))
+            return result;
         result.setResult(k3ReturnOrderDO.getReturnOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    /**
+     * 获取该用户处于待提交、审核中、处理中三种状态的商品或者配件的数量
+     * @param productCountMap
+     * @param materialCountMap
+     * @param k3ReturnOrderDOList
+     */
+    private void getReturnCount(Map<Integer, Integer> productCountMap, Map<Integer, Integer> materialCountMap, List<K3ReturnOrderDO> k3ReturnOrderDOList) {
+        if (CollectionUtil.isNotEmpty(k3ReturnOrderDOList)) {
+            for (K3ReturnOrderDO dBK3ReturnOrderDO : k3ReturnOrderDOList) {
+                if (ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING.equals(dBK3ReturnOrderDO.getReturnOrderStatus())
+                        || ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(dBK3ReturnOrderDO.getReturnOrderStatus())
+                        || ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(dBK3ReturnOrderDO.getReturnOrderStatus())) {
+                    List<K3ReturnOrderDetailDO> dBK3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByReturnOrderId(dBK3ReturnOrderDO.getId());
+                    //获取商品和配件的退货数量和存入集合中
+                    getProductAndMaterialReturnCount(productCountMap, materialCountMap, dBK3ReturnOrderDetailDOList);
+                }
+            }
+        }
+    }
+
+    /**
+     * 比较配件项所退数量是否超过可退数量，如果超过给出提示并返回正确可退数量
+     * @param result
+     * @param rentingMaterialCountMap
+     * @param nowMaterialCountMap
+     * @param materialCountMap
+     * @return
+     */
+    private boolean compareReturnMaterialCount(ServiceResult<String, String> result, Map<Integer, Integer> rentingMaterialCountMap, Map<Integer, Integer> nowMaterialCountMap, Map<Integer, Integer> materialCountMap) {
+        if (nowMaterialCountMap.size() > 0) {
+            for (Integer orderMaterialId : rentingMaterialCountMap.keySet()) {
+                Integer rentingMaterialCount = rentingMaterialCountMap.get(orderMaterialId) == null ? 0 : rentingMaterialCountMap.get(orderMaterialId);//在租数
+                Integer processMaterialCount = materialCountMap.get(orderMaterialId) == null ? 0 : materialCountMap.get(orderMaterialId); //待提交、处理中和审核中数量
+                Integer nowMaterialCount = nowMaterialCountMap.get(orderMaterialId) == null ? 0 : nowMaterialCountMap.get(orderMaterialId); //退货数量
+
+                if (processMaterialCount + nowMaterialCount - rentingMaterialCount > 0) {
+                    OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(orderMaterialId);
+                    Integer canReturnCount = rentingMaterialCount - processMaterialCount;
+                    if (canReturnCount < 0 ) {
+                        canReturnCount = 0;
+                    }
+                    OrderDO orderDO = orderMapper.findById(orderMaterialDO.getOrderId());
+                    result.setErrorCode(ErrorCode.K3_RETURN_ORDER_MATERIAL_COUNT_ERROR,orderDO.getOrderNo(),orderMaterialDO.getMaterialName(),canReturnCount);
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private boolean varifyOrderItemId(List<K3ReturnOrderDetail> k3ReturnOrderDetailList) {
@@ -632,38 +703,9 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         Map<Integer, Integer> nowMaterialCountMap = new HashMap<>();
         Integer productId = 0;
         Integer materialId = 0;
-        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
-        for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList) {
-            OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
-            if (orderDO != null) {
-                //如果通过订单号查找到的订单状态是未发货状态的就不能进行提交
-                if (!OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())
-                        && !OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus())&&
-                        !OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus())) {
-                    result.setErrorCode(ErrorCode.K3_RETURN_ORDER_DETAIL_ORDER_STATUS_NOT_DELIVERED);
-                    return result;
-                }
-
-                //对退货单提交的数量进行判断
-                String productNo = k3ReturnOrderDetailDO.getProductNo();
-                if (productSupport.isMaterial(productNo)) {
-                    OrderMaterialDO orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
-                    if (orderMaterialDO != null ) {
-                        materialId = orderMaterialDO.getId();
-                        rentingMaterialCountMap.put(materialId, orderMaterialDO.getRentingMaterialCount());
-                        nowMaterialCountMap.put(materialId, k3ReturnOrderDetailDO.getProductCount());
-                    }
-                } else {
-                    //设备，查询数量的在租数量
-                    OrderProductDO orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
-                    if (orderProductDO != null ) {
-                        productId = orderProductDO.getId();
-                        rentingProductCountMap.put(productId, orderProductDO.getRentingProductCount());
-                        nowProductCountMap.put(productId, k3ReturnOrderDetailDO.getProductCount());
-                    }
-                }
-            }
-        }
+        //得到商品退货数量以及对应的商品再租数量
+        if (getReturnCountAndRentingCount(result, k3ReturnOrderDO, rentingProductCountMap, rentingMaterialCountMap, nowProductCountMap, nowMaterialCountMap))
+            return result;
 
         Map<Integer, Integer> productCountMap = new HashMap<>();
         Map<Integer, Integer> materialCountMap = new HashMap<>();
@@ -673,27 +715,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 if (ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING.equals(dBK3ReturnOrderDO.getReturnOrderStatus())
                         || ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(dBK3ReturnOrderDO.getReturnOrderStatus())) {
                     List<K3ReturnOrderDetailDO> dBK3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByReturnOrderId(dBK3ReturnOrderDO.getId());
-                    for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : dBK3ReturnOrderDetailDOList) {
-                        String productNo = k3ReturnOrderDetailDO.getProductNo();
-                        if (productSupport.isMaterial(productNo)) {
-                            //物料
-                            materialId = productSupport.getMaterialId(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
-                            if (materialCountMap.get(materialId) == null) {
-                                materialCountMap.put(materialId, k3ReturnOrderDetailDO.getProductCount());
-                            } else {
-                                materialCountMap.put(materialId, k3ReturnOrderDetailDO.getProductCount() + materialCountMap.get(materialId));
-                            }
-
-                        } else {
-                            //设备
-                            productId = productSupport.getProductId(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
-                            if (productCountMap.get(productId) == null) {
-                                productCountMap.put(productId, k3ReturnOrderDetailDO.getProductCount());
-                            } else {
-                                productCountMap.put(productId, k3ReturnOrderDetailDO.getProductCount() + productCountMap.get(productId));
-                            }
-                        }
-                    }
+                    //获取商品和配件的退货数量和存入集合中
+                    getProductAndMaterialReturnCount(productCountMap, materialCountMap, dBK3ReturnOrderDetailDOList);
                 }
             }
         }
@@ -761,6 +784,53 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             }
             return result;
         }
+    }
+
+    /**
+     * 得到商品退货数量以及对应的商品再租数量
+     * @param result
+     * @param k3ReturnOrderDO
+     * @param rentingProductCountMap
+     * @param rentingMaterialCountMap
+     * @param nowProductCountMap
+     * @param nowMaterialCountMap
+     * @return
+     */
+    private boolean getReturnCountAndRentingCount(ServiceResult<String, String> result, K3ReturnOrderDO k3ReturnOrderDO, Map<Integer, Integer> rentingProductCountMap, Map<Integer, Integer> rentingMaterialCountMap, Map<Integer, Integer> nowProductCountMap, Map<Integer, Integer> nowMaterialCountMap) {
+        Integer materialId;
+        Integer productId;List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
+        for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList) {
+            OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
+            if (orderDO != null) {
+                //如果通过订单号查找到的订单状态是未发货状态的就不能进行提交
+                if (!OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())
+                        && !OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus())&&
+                        !OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus())) {
+                    result.setErrorCode(ErrorCode.K3_RETURN_ORDER_DETAIL_ORDER_STATUS_NOT_DELIVERED);
+                    return true;
+                }
+
+                //对退货单提交的数量进行判断
+                String productNo = k3ReturnOrderDetailDO.getProductNo();
+                if (productSupport.isMaterial(productNo)) {
+                    OrderMaterialDO orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
+                    if (orderMaterialDO != null ) {
+                        materialId = orderMaterialDO.getId();
+                        rentingMaterialCountMap.put(materialId, orderMaterialDO.getRentingMaterialCount());
+                        nowMaterialCountMap.put(materialId, k3ReturnOrderDetailDO.getProductCount());
+                    }
+                } else {
+                    //设备，查询数量的在租数量
+                    OrderProductDO orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
+                    if (orderProductDO != null ) {
+                        productId = orderProductDO.getId();
+                        rentingProductCountMap.put(productId, orderProductDO.getRentingProductCount());
+                        nowProductCountMap.put(productId, k3ReturnOrderDetailDO.getProductCount());
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 
@@ -1039,12 +1109,10 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
                         erpOrderCount++;
                     }
+                    //校验所选择的发货分公司必须要跟退货单对应的订单的发货分公司一致
+                    if (verifyDeliverySubCompany(k3ReturnOrder, result, orderDO)) return result;
                     Order order = ConverterUtil.convert(orderDO, Order.class);
-                    if (orderDO.getRentStartTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
-                        result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
-                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                        return result;
-                    }
+                    if (verifyReturnTimeAndRentStartTime(result, k3ReturnOrderDO, orderDO)) return result;
                     orderCatch.put(k3ReturnOrderDetail.getOrderNo(), order);
                 }
                 K3ReturnOrderDetailDO k3ReturnOrderDetailDO = ConverterUtil.convert(k3ReturnOrderDetail, K3ReturnOrderDetailDO.class);
@@ -1057,7 +1125,106 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 k3ReturnOrderDetailMapper.save(k3ReturnOrderDetailDO);
             }
         }
+
+        Map<Integer, Integer> rentingProductCountMap = new HashMap<>();
+        Map<Integer, Integer> rentingMaterialCountMap = new HashMap<>();
+        Map<Integer, Integer> nowProductCountMap = new HashMap<>();
+        Map<Integer, Integer> nowMaterialCountMap = new HashMap<>();
+        //得到商品退货数量以及对应的商品再租数量
+        if (getReturnCountAndRentingCount(result, k3ReturnOrderDO, rentingProductCountMap, rentingMaterialCountMap, nowProductCountMap, nowMaterialCountMap))
+            return result;
+
+        Map<Integer, Integer> productCountMap = new HashMap<>();
+        Map<Integer, Integer> materialCountMap = new HashMap<>();
+        List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findByCustomerNo(k3ReturnOrderDO.getK3CustomerNo());
+        //获取该用户处于待提交、审核中、处理中三种状态的商品或者配件的数量
+        getReturnCount(productCountMap, materialCountMap, k3ReturnOrderDOList);
+
+        //比较设备项
+        if (compareReturnProductCount(result, rentingProductCountMap, nowProductCountMap, productCountMap))
+            return result;
+
+        //比较物料项
+        if (compareReturnMaterialCount(result, rentingMaterialCountMap, nowMaterialCountMap, materialCountMap))
+            return result;
         //不全部是K3老订单才校验退货日期不能小于三月五号，如果全部是老订单则不进行校验
+        if (verifyReturnTime(k3ReturnOrder, result, erpOrderCount)) return result;
+        result.setResult(k3ReturnOrderDO.getReturnOrderNo());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    /**
+     * 比较商品项所退数量是否超过可退数量，如果超过给出提示并返回正确可退数量
+     * @param result
+     * @param rentingProductCountMap
+     * @param nowProductCountMap
+     * @param productCountMap
+     * @return
+     */
+    private boolean compareReturnProductCount(ServiceResult<String, String> result, Map<Integer, Integer> rentingProductCountMap, Map<Integer, Integer> nowProductCountMap, Map<Integer, Integer> productCountMap) {
+        if (nowProductCountMap.size() > 0) {
+            for (Integer orderProductId : nowProductCountMap.keySet()) {
+                Integer rentingProductCount = rentingProductCountMap.get(orderProductId) == null ? 0 : rentingProductCountMap.get(orderProductId);//在租数
+                Integer processProductCount = productCountMap.get(orderProductId) == null ? 0 : productCountMap.get(orderProductId); //待提交、处理中和审核中数量
+                Integer nowProductCount = nowProductCountMap.get(orderProductId) == null ? 0 : nowProductCountMap.get(orderProductId); //退货数量
+
+                if (processProductCount + nowProductCount - rentingProductCount > 0) {
+                    OrderProductDO orderProductDO = orderProductMapper.findById(orderProductId);
+                    Integer canReturnCount = rentingProductCount - processProductCount;
+                    if (canReturnCount<0) {
+                        canReturnCount = 0;
+                    }
+                    OrderDO orderDO = orderMapper.findById(orderProductDO.getOrderId());
+                    result.setErrorCode(ErrorCode.K3_RETURN_ORDER_PRODUCT_COUNT_ERROR,orderDO.getOrderNo(),orderProductDO.getProductName(),canReturnCount);
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 获取商品和配件的退货数量和存入集合中
+     * @param productCountMap
+     * @param materialCountMap
+     * @param dBK3ReturnOrderDetailDOList
+     */
+    private void getProductAndMaterialReturnCount(Map<Integer, Integer> productCountMap, Map<Integer, Integer> materialCountMap, List<K3ReturnOrderDetailDO> dBK3ReturnOrderDetailDOList) {
+        Integer materialId;
+        Integer productId;
+        for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : dBK3ReturnOrderDetailDOList) {
+            String productNo = k3ReturnOrderDetailDO.getProductNo();
+            if (productSupport.isMaterial(productNo)) {
+                //物料
+                materialId = productSupport.getMaterialId(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
+                if (materialCountMap.get(materialId) == null) {
+                    materialCountMap.put(materialId, k3ReturnOrderDetailDO.getProductCount());
+                } else {
+                    materialCountMap.put(materialId, k3ReturnOrderDetailDO.getProductCount() + materialCountMap.get(materialId));
+                }
+
+            } else {
+                //设备
+                productId = productSupport.getProductId(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
+                if (productCountMap.get(productId) == null) {
+                    productCountMap.put(productId, k3ReturnOrderDetailDO.getProductCount());
+                } else {
+                    productCountMap.put(productId, k3ReturnOrderDetailDO.getProductCount() + productCountMap.get(productId));
+                }
+            }
+        }
+    }
+
+    /**
+     * 校验不全部是K3老订单才校验退货日期不能小于三月五号，如果全部是老订单则不进行校验
+     * @param k3ReturnOrder
+     * @param result
+     * @param erpOrderCount
+     * @return
+     */
+    private boolean verifyReturnTime(K3ReturnOrder k3ReturnOrder, ServiceResult<String, String> result, int erpOrderCount) {
         if (erpOrderCount!=0) {
             Calendar calendar = Calendar.getInstance();
             calendar.set(2018, 2, 5, 0, 0, 0);
@@ -1065,12 +1232,26 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             if (minDate.compareTo(k3ReturnOrder.getReturnTime()) > 0) {
                 result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                return result;
+                return true;
             }
         }
-        result.setResult(k3ReturnOrderDO.getReturnOrderNo());
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
+        return false;
+    }
+
+    /**
+     * 校验退货时间不能小于起租时间
+     * @param result
+     * @param k3ReturnOrderDO
+     * @param orderDO
+     * @return
+     */
+    private boolean verifyReturnTimeAndRentStartTime(ServiceResult<String, String> result, K3ReturnOrderDO k3ReturnOrderDO, OrderDO orderDO) {
+        if (orderDO.getRentStartTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
+            result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -1118,9 +1299,12 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
                         erpOrderCount++;
                     }
+                    //校验所选择的发货分公司必须要跟退货单对应的订单的发货分公司一致
+                    if (verifyDeliverySubCompany(k3ReturnOrder, result, orderDO)) return result;
                     Order order = ConverterUtil.convert(orderDO, Order.class);
                     if (order.getRentStartTime().compareTo(k3ReturnOrder.getReturnTime()) > 0) {
                         result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                         return result;
                     }
                     orderCatch.put(k3ReturnOrderDetail.getOrderNo(), order);
@@ -1128,16 +1312,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             }
         }
         //不全部是K3老订单才校验退货日期不能小于三月五号，如果全部是老订单则不进行校验
-        if (erpOrderCount!=0) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(2018, 2, 5, 0, 0, 0);
-            Date minDate = calendar.getTime();
-            if (minDate.compareTo(k3ReturnOrder.getReturnTime()) > 0) {
-                result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                return result;
-            }
-        }
+        if (verifyReturnTime(k3ReturnOrder, result, erpOrderCount)) return result;
         K3ReturnOrderDO k3ReturnOrderDO = ConverterUtil.convert(k3ReturnOrder, K3ReturnOrderDO.class);
         k3ReturnOrderDO.setId(dbK3ReturnOrderDO.getId());
         k3ReturnOrderDO.setUpdateTime(currentTime);
@@ -1148,6 +1323,27 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         result.setResult(k3ReturnOrderDO.getReturnOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    /**
+     * 校验所选择发货分公司是否和退货单里的所有的订单的发货分公司都是一张的
+     * @param k3ReturnOrder
+     * @param result
+     * @param orderDO
+     * @return
+     */
+    private boolean verifyDeliverySubCompany(K3ReturnOrder k3ReturnOrder, ServiceResult<String, String> result, OrderDO orderDO) {
+        if (!k3ReturnOrder.getDeliverySubCompanyId().equals(orderDO.getDeliverySubCompanyId())) {
+            if (orderDO.getDeliverySubCompanyName()!=null) {
+                result.setErrorCode(ErrorCode.RETURN_DELIVERY_SUB_COMPANY_ERROR,orderDO.getOrderNo(),orderDO.getDeliverySubCompanyName());
+            }else {
+                SubCompanyDO subCompanyDO = subCompanyMapper.findById(orderDO.getDeliverySubCompanyId());
+                result.setErrorCode(ErrorCode.RETURN_DELIVERY_SUB_COMPANY_ERROR,orderDO.getOrderNo(),subCompanyDO.getSubCompanyName());
+            }
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -1189,6 +1385,49 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             for (OrderMaterial orderMaterial:orderMaterialList) {
                 orderMaterial.setFNumber(fNumberMap.get(orderMaterial.getFEntryID()));
             }
+        }
+        Map<Integer, Integer> rentingProductCountMap = new HashMap<>();
+        Map<Integer, Integer> rentingMaterialCountMap = new HashMap<>();
+        //得到商品退货数量以及对应的商品再租数量
+        if (CollectionUtil.isNotEmpty(orderProductDOList)) {
+            for (OrderProductDO orderProductDO:orderProductDOList) {
+                rentingProductCountMap.put(orderProductDO.getId(),orderProductDO.getRentingProductCount());
+            }
+        }
+        if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
+            for (OrderMaterialDO orderMaterialDO:orderMaterialDOList) {
+                rentingMaterialCountMap.put(orderMaterialDO.getId(),orderMaterialDO.getRentingMaterialCount());
+            }
+        }
+
+        Map<Integer, Integer> productCountMap = new HashMap<>();
+        Map<Integer, Integer> materialCountMap = new HashMap<>();
+        List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findByCustomerNo(orderDO.getBuyerCustomerNo());
+        //获取该用户处于待提交、审核中、处理中三种状态的商品或者配件的数量
+        getReturnCount(productCountMap, materialCountMap, k3ReturnOrderDOList);
+
+        //比较设备项
+        List<OrderProduct> orderProductList = order.getOrderProductList();
+        for (OrderProduct orderProduct:orderProductList) {
+            Integer rentingProductCount = rentingProductCountMap.get(orderProduct.getOrderProductId()) == null ? 0 : rentingProductCountMap.get(orderProduct.getOrderProductId());//在租数
+            Integer processProductCount = productCountMap.get(orderProduct.getOrderProductId()) == null ? 0 : productCountMap.get(orderProduct.getOrderProductId()); //待提交、处理中和审核中数量
+            Integer canReturnProductCount = rentingProductCount-processProductCount;
+            if (canReturnProductCount<0) {
+                canReturnProductCount = 0;
+            }
+            orderProduct.setCanReturnProductCount(canReturnProductCount);
+
+        }
+
+        //比较物料项
+        for (OrderMaterial orderMaterial:orderMaterialList) {
+            Integer rentingMaterialCount = rentingMaterialCountMap.get(orderMaterial.getOrderMaterialId()) == null ? 0 : rentingMaterialCountMap.get(orderMaterial.getOrderMaterialId());//在租数
+            Integer processMaterialCount = materialCountMap.get(orderMaterial.getOrderMaterialId()) == null ? 0 : materialCountMap.get(orderMaterial.getOrderMaterialId()); //待提交、处理中和审核中数量
+            Integer canReturnMaterialCount = rentingMaterialCount-processMaterialCount;
+            if (canReturnMaterialCount<0) {
+                canReturnMaterialCount=0;
+            }
+            orderMaterial.setCanReturnMaterialCount(canReturnMaterialCount);
         }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);

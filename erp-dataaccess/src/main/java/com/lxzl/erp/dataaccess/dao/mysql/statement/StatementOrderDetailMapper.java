@@ -54,25 +54,26 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
     List<FinanceStatementOrderPayDetail> queryStatementOrderDetailByParam(@Param("maps") Map<String, Object> maps);
 
     /**
-     * 查找续租单项关联结算
+     * 查找续租单项关联结算(仅商品租金)
      * @param ids
      * @return
      */
-    List<StatementOrderDetailDO> findByReletOrderItemReferIds(@Param("ids")List<Integer> ids);
+    List<StatementOrderDetailDO> findProductRentByReletOrderItemReferIds(@Param("ids")List<Integer> ids);
 
     /**
-     * 查找续租单项关联结算(仅租金)
+     * 查找续租单项关联结算(仅物料租金)
      * @param ids
      * @return
      */
-    List<StatementOrderDetailDO> findRentByReletOrderItemReferIds(@Param("ids")List<Integer> ids);
+    List<StatementOrderDetailDO> findMaterialRentByReletOrderItemReferIds(@Param("ids")List<Integer> ids);
 
     /**
      * 续租单租金结算
      * @param id
      * @return
      */
-    List<StatementOrderDetailDO> findByReletOrderItemReferId(@Param("id")Integer id);
+    List<StatementOrderDetailDO> findPrdcByReletOrderItemReferIds(@Param("id")Integer id);
+    List<StatementOrderDetailDO> findMtrByReletOrderItemReferIds(@Param("id")Integer id);
 
     /**
      * 删除结算详情
