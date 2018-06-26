@@ -3830,16 +3830,16 @@ public class OrderServiceImpl implements OrderService {
             return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
         }
         //测试放开起租时间限制
-        try {
-            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
-                return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
-            }
-        } catch (Exception e) {
-            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
-        }
-        if (order.getExpectDeliveryTime() == null) {
-            return ErrorCode.ORDER_EXPECT_DELIVERY_TIME;
-        }
+//        try {
+//            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
+//                return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+//            }
+//        } catch (Exception e) {
+//            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+//        }
+//        if (order.getExpectDeliveryTime() == null) {
+//            return ErrorCode.ORDER_EXPECT_DELIVERY_TIME;
+//        }
         Integer deliveryBetweenDays = com.lxzl.erp.common.util.DateUtil.daysBetween(order.getExpectDeliveryTime(), order.getRentStartTime());
         if (deliveryBetweenDays < 0 || deliveryBetweenDays > 2) {
             return ErrorCode.ORDER_RENT_START_TIME_ERROR;
