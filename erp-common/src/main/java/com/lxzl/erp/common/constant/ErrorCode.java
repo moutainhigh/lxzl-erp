@@ -1788,8 +1788,8 @@ public class ErrorCode {
         MAP.put(K3_HISTORICAL_RETURN_CODE, "退货单处理成功【%s 】条，处理失败【%s 】条");
         MAP.put(K3_CONFIRM_ORDER_ERROR, "K3确认收货推送信息失败,【%s 】");
         MAP.put(K3_RELET_ORDER_ERROR, "K3订单续租推送信息失败,【%s 】");
-        MAP.put(K3_RETURN_ORDER_PRODUCT_COUNT_ERROR, "商品：【%s 】可退货数量为【%s 】台，超过可退数量");
-        MAP.put(K3_RETURN_ORDER_MATERIAL_COUNT_ERROR, "配件：【%s 】可退货数量为【%s 】台，超过可退数量");
+        MAP.put(K3_RETURN_ORDER_PRODUCT_COUNT_ERROR, "订单号：【%s 】，商品：【%s 】可退货数量为【%s 】台，超过可退数量");
+        MAP.put(K3_RETURN_ORDER_MATERIAL_COUNT_ERROR, "订单号：【%s 】，配件：【%s 】可退货数量为【%s 】台，超过可退数量");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
