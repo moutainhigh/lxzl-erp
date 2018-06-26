@@ -467,8 +467,8 @@ public class K3ControllerTest extends ERPTransactionalTest {
     @Test
     public void commitK3ReturnOrder() throws Exception {
         K3ReturnOrderCommitParam k3ReturnOrderCommitParam = new K3ReturnOrderCommitParam();
-        k3ReturnOrderCommitParam.setReturnOrderNo("LXK3RO20180626162358846");
-        k3ReturnOrderCommitParam.setVerifyUserId(500355);
+        k3ReturnOrderCommitParam.setReturnOrderNo("LXK3RO20180626172204382");
+        k3ReturnOrderCommitParam.setVerifyUserId(500013);
         TestResult testResult = getJsonTestResult("/k3/commitK3ReturnOrder", k3ReturnOrderCommitParam);
     }
 

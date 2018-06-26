@@ -775,7 +775,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 Integer processMaterialCount = materialCountMap.get(orderMaterialId) == null ? 0 : materialCountMap.get(orderMaterialId); //待提交、处理中和审核中数量
                 Integer nowMaterialCount = nowMaterialCountMap.get(orderMaterialId) == null ? 0 : nowMaterialCountMap.get(orderMaterialId); //处理中和审核中数量
 
-                if (processMaterialCount + nowMaterialCount - rentingMaterialCount > 0) {
+                if (processMaterialCount > rentingMaterialCount) {
                     OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(orderMaterialId);
                     OrderDO orderDO = orderMapper.findById(orderMaterialDO.getOrderId());
                     result.setErrorCode(ErrorCode.K3_RETURN_ORDER_MATERIAL_COUNT_NOT_ENOUGH,orderDO.getOrderNo(),orderMaterialDO.getMaterialName());
@@ -802,7 +802,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 Integer processProductCount = productCountMap.get(orderProductId) == null ? 0 : productCountMap.get(orderProductId); //待提交、处理中和审核中数量
                 Integer nowProductCount = nowProductCountMap.get(orderProductId) == null ? 0 : nowProductCountMap.get(orderProductId); //处理中和审核中数量
 
-                if (processProductCount + nowProductCount - rentingProductCount > 0) {
+                if (processProductCount > rentingProductCount) {
                     OrderProductDO orderProductDO = orderProductMapper.findById(orderProductId);
                     OrderDO orderDO = orderMapper.findById(orderProductDO.getOrderId());
                     result.setErrorCode(ErrorCode.K3_RETURN_ORDER_PRODUCT_COUNT_NOT_ENOUGH,orderDO.getOrderNo(),orderProductDO.getProductName());
