@@ -677,6 +677,10 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
+        if(!Arrays.asList(OrderStatus.ORDER_STATUS_WAIT_DELIVERY,OrderStatus.ORDER_STATUS_PROCESSING,OrderStatus.ORDER_STATUS_DELIVERED,OrderStatus.ORDER_STATUS_CONFIRM,OrderStatus.ORDER_STATUS_PART_RETURN,OrderStatus.ORDER_STATUS_RETURN_BACK).contains(orderDO.getOrderStatus())){
+            result.setErrorCode(ErrorCode.ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT);
+            return result;
+        }
         //续租不让重算
 //        ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderDO.getId());
 //        if (reletOrderDO != null) {
@@ -757,7 +761,7 @@ public class StatementServiceImpl implements StatementService {
 
         //资金最后退款（保证原子性）
         AmountNeedReturn amountNeedReturn= clearResult.getResult();
-        if(amountNeedReturn!=null&&BigDecimalUtil.compare(amountNeedReturn.getRentPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(amountNeedReturn.getRentDepositPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(amountNeedReturn.getDepositPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(BigDecimalUtil.addAll(amountNeedReturn.getOtherPaidAmount(), amountNeedReturn.getOverduePaidAmount(), amountNeedReturn.getPenaltyPaidAmount()),BigDecimal.ZERO)!=0){
+        if(amountNeedReturn!=null&&(BigDecimalUtil.compare(amountNeedReturn.getRentPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(amountNeedReturn.getRentDepositPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(amountNeedReturn.getDepositPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(BigDecimalUtil.addAll(amountNeedReturn.getOtherPaidAmount(), amountNeedReturn.getOverduePaidAmount(), amountNeedReturn.getPenaltyPaidAmount()),BigDecimal.ZERO)!=0)){
             String returnCode = paymentService.returnDepositExpand(customerDO.getCustomerNo(), amountNeedReturn.getRentPaidAmount(), BigDecimalUtil.addAll(amountNeedReturn.getOtherPaidAmount(), amountNeedReturn.getOverduePaidAmount(), amountNeedReturn.getPenaltyPaidAmount())
                     , amountNeedReturn.getRentDepositPaidAmount(), amountNeedReturn.getDepositPaidAmount(), "重算结算单，已支付金额退还到客户余额");
             if (!ErrorCode.SUCCESS.equals(returnCode)) {
@@ -806,7 +810,7 @@ public class StatementServiceImpl implements StatementService {
         //同步订单结算类型
         Integer orderStatementDate=orderDO.getStatementDate();
         if(orderStatementDate==null)orderStatementDate=StatementMode.STATEMENT_MONTH_END;
-        Integer reletOrderStatementDate=orderDO.getStatementDate();
+        Integer reletOrderStatementDate=reletOrderDO.getStatementDate();
         if(reletOrderStatementDate==null)reletOrderStatementDate=StatementMode.STATEMENT_MONTH_END;
         if(!orderStatementDate.equals(reletOrderStatementDate)){
             reletOrderDO.setStatementDate(orderDO.getStatementDate());
@@ -2152,8 +2156,9 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_IS_NOT_NULL);
             return result;
         }
-        if (CommonConstant.COMMON_CONSTANT_YES.equals(k3ReturnOrderDO.getSuccessStatus())) {
-            result.setErrorCode(ErrorCode.RETURN_ORDER_ALREADY_SUCCESS);
+        List<StatementOrderDetailDO> statementOrderDetails = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_RETURN, k3ReturnOrderDO.getId());
+        if (CollectionUtil.isNotEmpty(statementOrderDetails)) {
+            result.setErrorCode(ErrorCode.RETURN_STATEMENT_ORDER_CREATE_ERROR);
             return result;
         }
         if (!ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
@@ -4547,6 +4552,29 @@ public class StatementServiceImpl implements StatementService {
             serviceResult.setErrorCode(ErrorCode.RELET_ORDER_NOT_EXISTS);
             return serviceResult;
         }
+
+        // 客户为确认结算单状态时，不允许重算客户的订单
+        CustomerDO customerDO = customerMapper.findByNo(reletOrderDO.getBuyerCustomerNo());
+        if (customerDO != null && ConfirmStatementStatus.CONFIRM_STATUS_YES.equals(customerDO.getConfirmStatementStatus())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE);
+            return serviceResult;
+        }
+
+        if(!Arrays.asList(OrderStatus.ORDER_STATUS_WAIT_DELIVERY,OrderStatus.ORDER_STATUS_PROCESSING,OrderStatus.ORDER_STATUS_DELIVERED,OrderStatus.ORDER_STATUS_CONFIRM,OrderStatus.ORDER_STATUS_PART_RETURN,OrderStatus.ORDER_STATUS_RETURN_BACK).contains(reletOrderDO.getReletOrderStatus())){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            serviceResult.setErrorCode(ErrorCode.ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT);
+            return serviceResult;
+        }
+
+        OrderDO orderDO = orderMapper.findByOrderNo(reletOrderDO.getOrderNo());
+        if (orderDO == null) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            serviceResult.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        syncReletOrderStatementByOrder(orderDO,reletOrderDO);
+
         List<K3ReturnOrderDetailDO> reletReturnOrderDetailDOList=new ArrayList<>();
         //首先清除该续租下退货结算(有实际退货的)
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(reletOrderDO.getOrderNo());
@@ -4586,7 +4614,7 @@ public class StatementServiceImpl implements StatementService {
         fixCustomerStatementOrderStatementTime(reletOrderDO.getBuyerCustomerId());
         //最后退款
         AmountNeedReturn amountNeedReturn= result.getResult();
-        if(amountNeedReturn!=null&&BigDecimalUtil.compare(amountNeedReturn.getRentPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(amountNeedReturn.getRentDepositPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(amountNeedReturn.getDepositPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(BigDecimalUtil.addAll(amountNeedReturn.getOtherPaidAmount(), amountNeedReturn.getOverduePaidAmount(), amountNeedReturn.getPenaltyPaidAmount()),BigDecimal.ZERO)!=0){
+        if(amountNeedReturn!=null&&(BigDecimalUtil.compare(amountNeedReturn.getRentPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(amountNeedReturn.getRentDepositPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(amountNeedReturn.getDepositPaidAmount(),BigDecimal.ZERO)!=0||BigDecimalUtil.compare(BigDecimalUtil.addAll(amountNeedReturn.getOtherPaidAmount(), amountNeedReturn.getOverduePaidAmount(), amountNeedReturn.getPenaltyPaidAmount()),BigDecimal.ZERO)!=0)){
             String returnCode = paymentService.returnDepositExpand(reletOrderDO.getBuyerCustomerNo(), amountNeedReturn.getRentPaidAmount(), BigDecimalUtil.addAll(amountNeedReturn.getOtherPaidAmount(), amountNeedReturn.getOverduePaidAmount(), amountNeedReturn.getPenaltyPaidAmount())
                     , amountNeedReturn.getRentDepositPaidAmount(), amountNeedReturn.getDepositPaidAmount(), "重算结算单，已支付金额退还到客户余额");
             if (!ErrorCode.SUCCESS.equals(returnCode)) {
@@ -4961,6 +4989,16 @@ public class StatementServiceImpl implements StatementService {
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);
         if (k3ReturnOrderDO == null) {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_IS_NOT_NULL);
+            return result;
+        }
+        if(!CommonConstant.COMMON_CONSTANT_YES.equals(k3ReturnOrderDO.getSuccessStatus())){
+            result.setErrorCode(ErrorCode.ONLY_SUCCESS_RETURN_ORDER_ALLOW_RE_STATEMENT);
+            return result;
+        }
+        // 客户为确认结算单状态时，不允许重算客户的订单
+        CustomerDO customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
+        if (customerDO != null && ConfirmStatementStatus.CONFIRM_STATUS_YES.equals(customerDO.getConfirmStatementStatus())) {
+            result.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE);
             return result;
         }
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOS = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
@@ -5423,7 +5461,7 @@ public class StatementServiceImpl implements StatementService {
 
     private void getSplitStatementMaterialDetails(OrderDO orderDO, Date currentTime, Integer loginUserId, OrderStatementDateSplitDO orderStatementDateSplitDO, List<StatementOrderDetailDO> addStatementOrderDetailDOList, Date rentStartTime, Integer buyerCustomerId, Integer orderId, Date expectReturnTime, OrderMaterialDO orderMaterialDO, List<StatementOrderDetailDO> statementOrderDetailDOList) {
         //已有部分结算需留（已支付）
-        boolean isDepositStatemented=false;
+         boolean isDepositStatemented=false;
         Date lastStatementTime=null;
         int phase=0;
         BigDecimal hasStatementAmount=BigDecimal.ZERO;
