@@ -438,6 +438,7 @@ public class ErrorCode {
     public static final String RETURN_COUNT_MORE_THAN_RENTING_MATERIAL_COUNT = "J400159";
     public static final String RETURN_COUNT_MORE_THAN_RENTING_PRODUCT_COUNT = "J400160";
     public static final String RETURN_ORDER_HAVE_THE_SAME_PRODUCT_OR_MATERIAL = "J400161";
+    public static final String RETURN_DELIVERY_SUB_COMPANY_ERROR = "J400162";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -834,6 +835,8 @@ public class ErrorCode {
     public static final String K3_HISTORICAL_RETURN_CODE = "J17000032";
     public static final String K3_CONFIRM_ORDER_ERROR = "J17000033";
     public static final String K3_RELET_ORDER_ERROR = "J17000034";
+    public static final String K3_RETURN_ORDER_PRODUCT_COUNT_ERROR = "J17000035";
+    public static final String K3_RETURN_ORDER_MATERIAL_COUNT_ERROR = "J17000036";
 
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
@@ -1521,7 +1524,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_ADDRESS_NOT_NULL, "企业客户详细地址不能为空");
         MAP.put(CUSTOMER_PERSON_PHONE_NOT_NULL, "个人客户联系电话不能为空");
         MAP.put(CUSTOMER_PERSON_ADDRESS_NOT_NULL, "个人客户详细地址不能为空");
-        MAP.put(STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，因为该订单没有相应的结算单明细，不能生成结算单");
+        MAP.put(STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，该订单结算单详情已存在，不能重复生成结算单");
         MAP.put(STATEMENT_ORDER_STATUS_ERROR, "结算单状态异常，仔细查看该订单，或联系相关工作人员");
         MAP.put(STATEMENT_ORDER_NO_NOT_NULL, "结算单编号不能为空");
         MAP.put(STATEMENT_PAY_NOT_NULL, "结算单支付方式不能为空");
@@ -1579,6 +1582,7 @@ public class ErrorCode {
         MAP.put(RETURN_COUNT_MORE_THAN_RENTING_MATERIAL_COUNT, "所退配件超过该配件的再租数量");
         MAP.put(RETURN_COUNT_MORE_THAN_RENTING_PRODUCT_COUNT, "所退商品超过该商品的再租数量");
         MAP.put(RETURN_ORDER_HAVE_THE_SAME_PRODUCT_OR_MATERIAL, "该退货单存在相同的商品或配件，不能重复添加");
+        MAP.put(RETURN_DELIVERY_SUB_COMPANY_ERROR, "订单【%s 】发货分公司为【%s 】，与创建退货单时选取的发货分公司不一致");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
@@ -1780,8 +1784,8 @@ public class ErrorCode {
         MAP.put(HAS_SAME_PRODUCT, "不能有相同商品");
         MAP.put(PRODUCT_NO_IS_NULL, "商品编号不能为空");
         MAP.put(K3_RETURN_ORDER_DETAIL_ORDER_STATUS_NOT_DELIVERED, "K3退货单所属的订单有处于未发货的状态，不能进行此操作");
-        MAP.put(K3_RETURN_ORDER_PRODUCT_COUNT_NOT_ENOUGH, "K3退货单设备的数量超过了可以退货的数量，不能进行此操作");
-        MAP.put(K3_RETURN_ORDER_MATERIAL_COUNT_NOT_ENOUGH, "K3退货单物料的数量超过了可以退货的数量，不能进行此操作");
+        MAP.put(K3_RETURN_ORDER_PRODUCT_COUNT_NOT_ENOUGH, "订单号：【%s 】，商品：【%s 】存在于其他状态为【待提交/审核中/处理中】的退货单中，且总退货数量超过可退数量；请检查后再进行提交！");
+        MAP.put(K3_RETURN_ORDER_MATERIAL_COUNT_NOT_ENOUGH, "订单号：【%s 】，配件：【%s 】存在于其他状态为【待提交/审核中/处理中】的退货单中，且总退货数量超过可退数量；请检查后再进行提交！");
         MAP.put(PRODUCT_ITEM_ALL_DELETE, "退货单商品项不能全部删除");
         MAP.put(K3_RETURN_REASON_TYPE_ERROR, "退货原因出错");
         MAP.put(DELIVERY_COMPANY_NOT_EXIT, "发货分公司不存在");
@@ -1789,6 +1793,8 @@ public class ErrorCode {
         MAP.put(K3_HISTORICAL_RETURN_CODE, "退货单处理成功【%s 】条，处理失败【%s 】条");
         MAP.put(K3_CONFIRM_ORDER_ERROR, "K3确认收货推送信息失败,【%s 】");
         MAP.put(K3_RELET_ORDER_ERROR, "K3订单续租推送信息失败,【%s 】");
+        MAP.put(K3_RETURN_ORDER_PRODUCT_COUNT_ERROR, "订单号：【%s 】，商品：【%s 】可退货数量为【%s 】台，超过可退数量");
+        MAP.put(K3_RETURN_ORDER_MATERIAL_COUNT_ERROR, "订单号：【%s 】，配件：【%s 】可退货数量为【%s 】台，超过可退数量");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
