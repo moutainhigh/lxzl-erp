@@ -146,8 +146,8 @@
                                                     <th>商品名称</th>
                                                     <th>编号</th>
                                                     <th>商品参数（SKU）</th>
-                                                    <th>可退数量</th>
                                                     <th>在租数量</th>
+                                                    <th>可退数量</th>
                                                     <th>选择数量</th>
                                                     <th>备注</th>
                                                 </tr>
@@ -164,8 +164,8 @@
                                                     <td>{{productName}}</td>
                                                     <td>{{productNumber}}</td>
                                                     <td>{{propertiesToStr}}</td>
-                                                    <td>{{canReturnProductCount}}</td>
                                                     <td>{{rentingProductCount}}</td>
+                                                    <td>{{canReturnProductCount}}</td>
                                                     <td>
                                                         <input type="hidden" name="orderItemId" value="{{orderProductId}}" class="orderItemId" />
                                                         <input type="hidden" name="fEntryID" value="{{fEntryID}}" class="fEntryID" />
@@ -200,8 +200,8 @@
                                                     <th>配件名称</th>
                                                     <th>配件参数（SKU）</th>
                                                     <th>编号</th>
-                                                    <th>可退数量</th>
                                                     <th>在租数量</th>
+                                                    <th>可退数量</th>
                                                     <th>选择数量</th>
                                                     <th>备注</th>
                                                 </tr>
@@ -218,8 +218,8 @@
                                                     <td>{{materialName}}</td>
                                                     <td>{{propertiesToStr}}</td>
                                                     <td>{{fNumber}}</td>
-                                                    <td>{{canReturnMaterialCount}}</td>
                                                     <td>{{rentingMaterialCount}}</td>
+                                                    <td>{{canReturnMaterialCount}}</td>
                                                     <td>
                                                         <input type="hidden" name="orderItemId" value="{{orderMaterialId}}" class="orderItemId" />
                                                         <input type="hidden" name="fEntryID" value="{{fEntryID}}" class="fEntryID" />

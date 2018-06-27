@@ -4,9 +4,6 @@
     <title>凌雄ERP-配件管理-配件列表</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
-##    <script type="text/javascript">
-##        common_load_css('${staticCommon}/rental/css','dropzone.css');
-##    </script>
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
@@ -89,7 +86,7 @@
                             {{#listData}}
                             <tr>
                                 <td>{{materialNo}}</td>
-                                <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                                <td><a class="productImg open-img-popup" data-imgs="{{productImgJSON}}"><img src="{{mainImg}}" /></a></td>
                                 <td>{{materialName}}</td>
                                 <td>{{materialModelName}}</td>
                                 <td>{{materialTypeStr}}</td>

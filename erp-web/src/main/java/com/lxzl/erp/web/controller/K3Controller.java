@@ -109,7 +109,7 @@ public class K3Controller extends BaseController {
     @RequestMapping(value = "addReturnOrder", method = RequestMethod.POST)
     public Result addReturnOrder(@RequestBody @Validated(AddK3ReturnOrderGroup.class) K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = k3ReturnOrderService.addReturnOrder(k3ReturnOrder);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        return resultGenerator.generate(serviceResult);
     }
 
     @RequestMapping(value = "deleteReturnOrder", method = RequestMethod.POST)
@@ -143,7 +143,7 @@ public class K3Controller extends BaseController {
     @RequestMapping(value = "commitK3ReturnOrder", method = RequestMethod.POST)
     public Result commitK3ReturnOrder(@RequestBody K3ReturnOrderCommitParam k3ReturnOrderCommitParam, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = k3ReturnOrderService.commitK3ReturnOrder(k3ReturnOrderCommitParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        return resultGenerator.generate(serviceResult);
     }
 
     @RequestMapping(value = "sendToK3", method = RequestMethod.POST)
