@@ -1784,8 +1784,8 @@ public class ErrorCode {
         MAP.put(HAS_SAME_PRODUCT, "不能有相同商品");
         MAP.put(PRODUCT_NO_IS_NULL, "商品编号不能为空");
         MAP.put(K3_RETURN_ORDER_DETAIL_ORDER_STATUS_NOT_DELIVERED, "K3退货单所属的订单有处于未发货的状态，不能进行此操作");
-        MAP.put(K3_RETURN_ORDER_PRODUCT_COUNT_NOT_ENOUGH, "K3退货单设备的数量超过了可以退货的数量，不能进行此操作");
-        MAP.put(K3_RETURN_ORDER_MATERIAL_COUNT_NOT_ENOUGH, "K3退货单物料的数量超过了可以退货的数量，不能进行此操作");
+        MAP.put(K3_RETURN_ORDER_PRODUCT_COUNT_NOT_ENOUGH, "订单号：【%s 】，商品：【%s 】存在于其他状态为【待提交/审核中/处理中】的退货单中，且总退货数量超过可退数量；请检查后再进行提交！");
+        MAP.put(K3_RETURN_ORDER_MATERIAL_COUNT_NOT_ENOUGH, "订单号：【%s 】，配件：【%s 】存在于其他状态为【待提交/审核中/处理中】的退货单中，且总退货数量超过可退数量；请检查后再进行提交！");
         MAP.put(PRODUCT_ITEM_ALL_DELETE, "退货单商品项不能全部删除");
         MAP.put(K3_RETURN_REASON_TYPE_ERROR, "退货原因出错");
         MAP.put(DELIVERY_COMPANY_NOT_EXIT, "发货分公司不存在");
@@ -1793,8 +1793,8 @@ public class ErrorCode {
         MAP.put(K3_HISTORICAL_RETURN_CODE, "退货单处理成功【%s 】条，处理失败【%s 】条");
         MAP.put(K3_CONFIRM_ORDER_ERROR, "K3确认收货推送信息失败,【%s 】");
         MAP.put(K3_RELET_ORDER_ERROR, "K3订单续租推送信息失败,【%s 】");
-        MAP.put(K3_RETURN_ORDER_PRODUCT_COUNT_ERROR, "商品：【%s 】可退货数量为【%s 】台，超过可退数量");
-        MAP.put(K3_RETURN_ORDER_MATERIAL_COUNT_ERROR, "配件：【%s 】可退货数量为【%s 】台，超过可退数量");
+        MAP.put(K3_RETURN_ORDER_PRODUCT_COUNT_ERROR, "订单号：【%s 】，商品：【%s 】可退货数量为【%s 】台，超过可退数量");
+        MAP.put(K3_RETURN_ORDER_MATERIAL_COUNT_ERROR, "订单号：【%s 】，配件：【%s 】可退货数量为【%s 】台，超过可退数量");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
