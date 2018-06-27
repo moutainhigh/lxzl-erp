@@ -2156,8 +2156,9 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_IS_NOT_NULL);
             return result;
         }
-        if (CommonConstant.COMMON_CONSTANT_YES.equals(k3ReturnOrderDO.getSuccessStatus())) {
-            result.setErrorCode(ErrorCode.RETURN_ORDER_ALREADY_SUCCESS);
+        List<StatementOrderDetailDO> statementOrderDetails = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_RETURN, k3ReturnOrderDO.getId());
+        if (CollectionUtil.isNotEmpty(statementOrderDetails)) {
+            result.setErrorCode(ErrorCode.RETURN_STATEMENT_ORDER_CREATE_ERROR);
             return result;
         }
         if (!ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
