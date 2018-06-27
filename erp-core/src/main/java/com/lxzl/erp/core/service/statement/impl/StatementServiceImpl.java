@@ -806,7 +806,7 @@ public class StatementServiceImpl implements StatementService {
         //同步订单结算类型
         Integer orderStatementDate=orderDO.getStatementDate();
         if(orderStatementDate==null)orderStatementDate=StatementMode.STATEMENT_MONTH_END;
-        Integer reletOrderStatementDate=orderDO.getStatementDate();
+        Integer reletOrderStatementDate=reletOrderDO.getStatementDate();
         if(reletOrderStatementDate==null)reletOrderStatementDate=StatementMode.STATEMENT_MONTH_END;
         if(!orderStatementDate.equals(reletOrderStatementDate)){
             reletOrderDO.setStatementDate(orderDO.getStatementDate());
@@ -4560,6 +4560,14 @@ public class StatementServiceImpl implements StatementService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE);
             return serviceResult;
         }
+
+        OrderDO orderDO = orderMapper.findByOrderNo(reletOrderDO.getOrderNo());
+        if (orderDO == null) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            serviceResult.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        syncReletOrderStatementByOrder(orderDO,reletOrderDO);
 
         List<K3ReturnOrderDetailDO> reletReturnOrderDetailDOList=new ArrayList<>();
         //首先清除该续租下退货结算(有实际退货的)
