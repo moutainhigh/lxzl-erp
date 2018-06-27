@@ -998,6 +998,16 @@ public class PageController extends BaseController {
         return "/dataAnalysisManage/dynamicSql";
     }
 
+    @RequestMapping("/data-analysis/sql-list")
+    public String systemManageDynamicSqlList() {
+        return "/dataAnalysisManage/dynamicSqlList";
+    }
+
+    @RequestMapping("/data-analysis/sql-add")
+    public String systemManageDynamicAddSql() {
+        return "/dataAnalysisManage/addSqlModal";
+    }
+
 
     //上传附件
     @RequestMapping("/jurnal-attachment-list/file/upload")

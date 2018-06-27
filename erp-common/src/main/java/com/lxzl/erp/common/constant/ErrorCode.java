@@ -439,7 +439,8 @@ public class ErrorCode {
     public static final String RETURN_COUNT_MORE_THAN_RENTING_PRODUCT_COUNT = "J400160";
     public static final String RETURN_ORDER_HAVE_THE_SAME_PRODUCT_OR_MATERIAL = "J400161";
     public static final String RETURN_DELIVERY_SUB_COMPANY_ERROR = "J400162";
-
+    public static final String ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400162";
+    public static final String RELET_ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400163";
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
     public static final String CUSTOMER_PERSON_NOT_NULL = "J500003";
@@ -625,6 +626,7 @@ public class ErrorCode {
     public static final String SPLIT_STATEMENT_CAN_NOT_SAME = "J500182";
     public static final String HAS_SPLIT_STATEMENT_CFG = "J500183";
     public static final String SPLIT_STATEMENT_TIME_ERROR = "J500184";
+    public static final String RETURN_STATEMENT_ORDER_CREATE_ERROR = "J500185";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -837,6 +839,7 @@ public class ErrorCode {
     public static final String K3_RELET_ORDER_ERROR = "J17000034";
     public static final String K3_RETURN_ORDER_PRODUCT_COUNT_ERROR = "J17000035";
     public static final String K3_RETURN_ORDER_MATERIAL_COUNT_ERROR = "J17000036";
+    public static final String ONLY_SUCCESS_RETURN_ORDER_ALLOW_RE_STATEMENT = "J17000037";
 
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
@@ -1583,7 +1586,8 @@ public class ErrorCode {
         MAP.put(RETURN_COUNT_MORE_THAN_RENTING_PRODUCT_COUNT, "所退商品超过该商品的再租数量");
         MAP.put(RETURN_ORDER_HAVE_THE_SAME_PRODUCT_OR_MATERIAL, "该退货单存在相同的商品或配件，不能重复添加");
         MAP.put(RETURN_DELIVERY_SUB_COMPANY_ERROR, "订单【%s 】发货分公司为【%s 】，与创建退货单时选取的发货分公司不一致");
-
+        MAP.put(ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT, "订单当前状态不允许重算");
+        MAP.put(RELET_ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT, "续租单当前状态不允许重算");
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
         MAP.put(MESSAGE_RECEIVER_NOT_NULL, "站内信收件人不能为空");
@@ -1795,6 +1799,7 @@ public class ErrorCode {
         MAP.put(K3_RELET_ORDER_ERROR, "K3订单续租推送信息失败,【%s 】");
         MAP.put(K3_RETURN_ORDER_PRODUCT_COUNT_ERROR, "订单号：【%s 】，商品：【%s 】可退货数量为【%s 】台，超过可退数量");
         MAP.put(K3_RETURN_ORDER_MATERIAL_COUNT_ERROR, "订单号：【%s 】，配件：【%s 】可退货数量为【%s 】台，超过可退数量");
+        MAP.put(ONLY_SUCCESS_RETURN_ORDER_ALLOW_RE_STATEMENT, "仅处理成功的退货单允许重算");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
@@ -1959,6 +1964,7 @@ public class ErrorCode {
         MAP.put(SPLIT_STATEMENT_CAN_NOT_SAME, "分段前结算方式【%s 】与分段后结算方式【%s 】一致");
         MAP.put(HAS_SPLIT_STATEMENT_CFG, "该订单已进行过分段结算，请先进行指定结算日结算");
         MAP.put(SPLIT_STATEMENT_TIME_ERROR, "分段重算时间必须在订单起租时间与订单预计归还时间之间");
+        MAP.put(RETURN_STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，该退货单结算单详情已存在，不能重复生成结算单");
     }
 
 
