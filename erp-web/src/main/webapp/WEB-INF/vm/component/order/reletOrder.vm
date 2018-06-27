@@ -3,6 +3,7 @@
         <script type="text/html" id="reletOrderTpl">
             <thead>
             <tr class="bg-light">
+                <th class="nowrap">续租单编号</th>
                 <th class="nowrap">起租时间</th>
                 <th class="nowrap">租赁类型/期限</th>
                 <th class="nowrap">预计归还时间</th>
@@ -25,6 +26,7 @@
             {{#dataSource}}
             {{#listData}}
             <tr>  
+                <td class="nowrap"><a href="{{detailUrl}}" target="_blank">{{reletOrderNo}}</a></td>
                 <td class="nowrap">{{#clockShorTime}}{{rentStartTime}}{{/clockShorTime}}</td>
                 <td class="nowrap">
                     <p>{{rentLengthTypeValue}}</p>
@@ -61,7 +63,7 @@
             {{/listData}}
             {{^listData}}
             <tr>
-                <td valign="top" colspan="14" class="text-center">没有查询到续租单</td>
+                <td valign="top" colspan="15" class="text-center">没有查询到续租单</td>
             </tr>
             {{/listData}}
             {{/dataSource}}
