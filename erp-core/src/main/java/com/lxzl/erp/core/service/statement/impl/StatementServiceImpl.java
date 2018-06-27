@@ -677,6 +677,10 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
+        if(!Arrays.asList(OrderStatus.ORDER_STATUS_WAIT_DELIVERY,OrderStatus.ORDER_STATUS_PROCESSING,OrderStatus.ORDER_STATUS_DELIVERED,OrderStatus.ORDER_STATUS_CONFIRM,OrderStatus.ORDER_STATUS_PART_RETURN,OrderStatus.ORDER_STATUS_RETURN_BACK).contains(orderDO.getOrderStatus())){
+            result.setErrorCode(ErrorCode.ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT);
+            return result;
+        }
         //续租不让重算
 //        ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderDO.getId());
 //        if (reletOrderDO != null) {
@@ -4553,6 +4557,12 @@ public class StatementServiceImpl implements StatementService {
         if (customerDO != null && ConfirmStatementStatus.CONFIRM_STATUS_YES.equals(customerDO.getConfirmStatementStatus())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE);
+            return serviceResult;
+        }
+
+        if(!Arrays.asList(OrderStatus.ORDER_STATUS_WAIT_DELIVERY,OrderStatus.ORDER_STATUS_PROCESSING,OrderStatus.ORDER_STATUS_DELIVERED,OrderStatus.ORDER_STATUS_CONFIRM,OrderStatus.ORDER_STATUS_PART_RETURN,OrderStatus.ORDER_STATUS_RETURN_BACK).contains(reletOrderDO.getReletOrderStatus())){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            serviceResult.setErrorCode(ErrorCode.ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT);
             return serviceResult;
         }
 

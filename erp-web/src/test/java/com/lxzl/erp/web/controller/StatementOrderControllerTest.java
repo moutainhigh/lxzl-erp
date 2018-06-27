@@ -1,9 +1,9 @@
 package com.lxzl.erp.web.controller;
 
-import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.StatementOrderPayType;
+import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
@@ -11,11 +11,11 @@ import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.util.FastJsonUtil;
-import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -154,21 +154,34 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void reCreateOrderStatement() throws Exception {
         Order param = new Order();
-        param.setOrderNo("LXO-20180530-027-00179");
+        param.setOrderNo("LXO-20180622-027-00138");
         TestResult testResult = getJsonTestResult("/statementOrder/reCreateOrderStatement", param);
+    }
+
+    @Test
+    public void reCreateOrderStatementSplit() throws Exception {
+        OrderStatementDateSplit param = new OrderStatementDateSplit();
+        param.setOrderNo("LXO-20180622-027-00123");
+        param.setBeforeStatementDate(-1);
+        param.setAfterStatementDate(20);
+        param.setChangeType(0);
+        Calendar calendar=Calendar.getInstance();
+        calendar.set(2018,4,15);
+        param.setStatementDateChangeTime(calendar.getTime());
+        TestResult testResult = getJsonTestResult("/statementOrder/reCreateOrderStatementSplit", param);
     }
 
     @Test
     public void reCreateReletOrderStatement() throws Exception {
         ReletOrder param = new ReletOrder();
-        param.setReletOrderNo("LXR-20180606-027-00041");
+        param.setReletOrderNo("LXR-20180504-027-00006");
         TestResult testResult = getJsonTestResult("/statementOrder/reCreateReletOrderStatement", param);
     }
 
     @Test
     public void reStatementK3ReturnOrderRentOnly() throws Exception {
         K3ReturnOrder param = new K3ReturnOrder();
-        param.setReturnOrderNo("LXK3RO20180530171217169");
+        param.setReturnOrderNo("LXK3RO20180614173312950");
         TestResult testResult = getJsonTestResult("/statementOrder/reStatementK3ReturnOrderRentOnly", param);
     }
 
