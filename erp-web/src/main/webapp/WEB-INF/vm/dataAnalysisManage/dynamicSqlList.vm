@@ -49,11 +49,11 @@
                     <div class="panel-body pn">
                         <div class="table-responsive">
                             <script type="text/html" id="dataListTpl">
-                                <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" style="table-layout:fixed;">
+                                <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13">
                                 <thead>
                                 <tr>
                                     <th>sql语句标题</th>
-                                    <th style="width:70%;">sql语句内容</th>
+                                    <th>sql语句内容</th>
                                     <th>备注</th>
                                     <th>创建人</th>
                                     {{#hasRowActionButtons}}
@@ -82,10 +82,13 @@
                                     </td>
                                     {{/hasRowActionButtons}}
                                 </tr>
+                                <tr class="bn" style="height:0;">
+                                    <td colspan="5" style="height:0; padding:0;"><pre style="white-space:normal;margin:0; display:none;">{{sqlContent}}</pre></td>
+                                </tr>
                                 {{/listData}}
                                 {{^listData}}
                                 <tr>
-                                    <td valign="top" colspan="14" class="text-center">无数据</td>
+                                    <td valign="top" colspan="5" class="text-center">无数据</td>
                                 </tr>
                                 {{/listData}}
                                 {{/dataSource}}
