@@ -3,8 +3,12 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.constant.OrderRentType;
+import com.lxzl.erp.common.domain.Page;
+import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.messagethirdchannel.pojo.MessageThirdChannel;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
@@ -13,14 +17,25 @@ import com.lxzl.erp.common.domain.reletorder.ReletOrderQueryParam;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderMaterial;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderProduct;
+import com.lxzl.erp.common.domain.user.UserQueryParam;
+import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.util.BigDecimalUtil;
+import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.core.service.reletorder.ReletOrderService;
+import com.lxzl.erp.core.service.user.UserService;
+import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import org.junit.Test;
+import org.junit.experimental.theories.suppliers.TestedOn;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +45,7 @@ import java.util.List;
  * @author ZhaoZiXuan
  * @date 2018/4/24 9:53
  */
-public class ReletOrderTest extends ERPTransactionalTest {
+public class ReletOrderTest extends ERPUnTransactionalTest {
 
     @Autowired
     private ReletOrderMapper reletOrderMapper;
@@ -44,7 +59,7 @@ public class ReletOrderTest extends ERPTransactionalTest {
 //        order.setOrderNo("LXO-20180523-1000-00053");
         order.setOrderNo("LXO-20180529-027-00164");
 //        order.setOrderNo("LXSE2018010930");
-        order.setRentTimeLength(1);
+        order.setRentTimeLength(25);
 
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
@@ -102,7 +117,7 @@ public class ReletOrderTest extends ERPTransactionalTest {
     public void testUpdateReletByOrderNo() throws  Exception{
         ReletOrder reletOrder = new ReletOrder();
         reletOrder.setReletOrderNo("LXR-20180605-027-00028");
-        reletOrder.setRentTimeLength(1);
+        reletOrder.setRentTimeLength(90);
 
         List<ReletOrderProduct> orderProductList = new ArrayList<>();
         ReletOrderProduct orderProduct = new ReletOrderProduct();
@@ -146,15 +161,15 @@ public class ReletOrderTest extends ERPTransactionalTest {
     @Test
     public void testCommitReletByOrderNo() throws  Exception{
         ReletOrderCommitParam reletOrderCommitParam = new ReletOrderCommitParam();
-        reletOrderCommitParam.setReletOrderNo("LXR-20180604-027-00015");
-//        reletOrderCommitParam.setVerifyUser(500335);
+        reletOrderCommitParam.setReletOrderNo("LXR-20180619-027-00107");
+        reletOrderCommitParam.setVerifyUser(500359);
         TestResult testResult = getJsonTestResult("/reletOrder/commit", reletOrderCommitParam);
     }
 
     @Test
     public void testIsNeedVerify() throws  Exception{
         ReletOrder reletOrder = new ReletOrder();
-        reletOrder.setReletOrderNo("LXR-20180605-027-00028");
+        reletOrder.setReletOrderNo("LXR-20180619-027-00107");
         TestResult testResult = getJsonTestResult("/reletOrder/isNeedVerify", reletOrder);
     }
 
@@ -186,9 +201,20 @@ public class ReletOrderTest extends ERPTransactionalTest {
         System.out.println(reletOrder.getOrderId());
     }
 
-    private void testInteger(Integer orderId){
-        Integer a = new Integer(10020);
-        orderId = a;
+    @Test
+    public void testInteger() throws  Exception{
+        BigDecimal zeroValue = new BigDecimal(0.0000);
+        BigDecimal zeroValue1 = new BigDecimal(0);
+
+        if (BigDecimalUtil.compare(zeroValue, BigDecimal.ZERO) == 0) {
+            System.out.println("相等");
+        }
+        else if (BigDecimalUtil.compare(BigDecimal.ZERO, zeroValue1) < 0) {
+            System.out.println("小于");
+        }
+        else {
+            System.out.println("大于");
+        }
     }
 
     private void testObj(ReletOrder reletOrder){
@@ -197,6 +223,19 @@ public class ReletOrderTest extends ERPTransactionalTest {
         reletOrder = reletOrder1;
     }
 
+    @Test
+    public void testTime(){
+        Date currentTime = new Date();
+        Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(currentTime, 1);
+        Calendar statementEndTimeCalendar = Calendar.getInstance();
+        statementEndTimeCalendar.setTime(statementEndTime);
+//        int statementEndMonthDays = DateUtil.getActualMaximum(statementEndTime);
+
+        statementEndTimeCalendar.set(Calendar.DAY_OF_MONTH, 20);
+        statementEndTime = statementEndTimeCalendar.getTime();
+
+        System.out.println(statementEndTime);
+    }
 
     @Test
     public void testCreateOrder() throws Exception {
@@ -315,6 +354,7 @@ public class ReletOrderTest extends ERPTransactionalTest {
 //
 //        reletOrderQueryParam.setSubCompanyId(1);
 //        reletOrderQueryParam.setDeliverySubCompanyId(8);
+        reletOrderQueryParam.setOrderNo("LXO-20180623-027-00157");
         TestResult testResult = getJsonTestResult("/reletOrder/page", reletOrderQueryParam);
     }
 
@@ -327,5 +367,32 @@ public class ReletOrderTest extends ERPTransactionalTest {
 
         TestResult testResult = getJsonTestResult("/reletOrder/queryReletOrderByNo", reletOrderQueryParam);
     }
+
+    @Test
+    public void testReletDingDingMessage() throws Exception{
+        ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo("LXR-20180625-027-00111");
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String messageContent = "【" + reletOrderDO.getOrderSubCompanyName() + "】，业务员：" + reletOrderDO.getOrderSellerName()
+                + "，客户名称：" + reletOrderDO.getBuyerCustomerName() + "，订单：【" + reletOrderDO.getOrderNo()
+                + "】于 " + sdf.format(reletOrderDO.getUpdateTime())+ " 续租成功。";
+        System.out.println(messageContent);
+        UserQueryParam userQueryParam = new UserQueryParam();
+        userQueryParam.setDepartmentType(300006);
+        userQueryParam.setSubCompanyId(reletOrderDO.getOrderSubCompanyId());
+        ServiceResult<String, Page<User>> serviceResult = userService.userPage(userQueryParam);
+        if (ErrorCode.SUCCESS.equals(serviceResult.getErrorCode()) && serviceResult.getResult().getTotalCount() > 0){
+            for (User user : serviceResult.getResult().getItemList()) {
+
+                MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
+                messageThirdChannel.setReceiverUserId(user.getUserId());
+                messageThirdChannel.setMessageContent(messageContent);
+                messageThirdChannel.setMessageTitle("订单续租成功");
+
+            }
+        }
+    }
+
+    @Autowired
+    private UserService userService;
 
 }

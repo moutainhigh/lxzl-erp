@@ -17,6 +17,7 @@ import com.lxzl.erp.common.domain.reletorder.ReletOrderQueryParam;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderMaterial;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderProduct;
+import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
@@ -29,6 +30,7 @@ import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.reletorder.ReletOrderService;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
+import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
@@ -390,6 +392,28 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         return result;
     }
 
+    private void sendDingDingReletSuccessMessage(ReletOrderDO reletOrderDO){
+        if (reletOrderDO == null || reletOrderDO.getOrderSubCompanyId() == null){
+            return;
+        }
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        UserQueryParam userQueryParam = new UserQueryParam();
+        userQueryParam.setDepartmentType(DepartmentType.DEPARTMENT_TYPE_BUSINESS_AFFAIRS);//商务部
+        userQueryParam.setSubCompanyId(reletOrderDO.getOrderSubCompanyId());//订单分公司
+        ServiceResult<String, Page<User>> serviceResult = userService.userPage(userQueryParam);
+        if (ErrorCode.SUCCESS.equals(serviceResult.getErrorCode()) && serviceResult.getResult().getTotalCount() > 0){
+            for (User user : serviceResult.getResult().getItemList()) {
+                String messageContent = "分公司名称：" + reletOrderDO.getOrderSubCompanyName() + "业务员：" + reletOrderDO.getOrderSellerName()
+                        + "客户名称：" + reletOrderDO.getBuyerCustomerName() + "订单：" + reletOrderDO.getOrderNo()
+                        + "于" + sdf.format(reletOrderDO.getUpdateTime())+ "续租成功";
+                MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
+                messageThirdChannel.setReceiverUserId(user.getUserId());
+                messageThirdChannel.setMessageContent(messageContent);
+                messageThirdChannel.setMessageTitle("订单续租成功");
+//                messageThirdChannelService.sendMessage(messageThirdChannel);
+            }
+        }
+    }
 
     /**
      * 审核注意事项
@@ -1680,6 +1704,9 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
     @Autowired
     private StatementOrderSupport statementOrderSupport;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ProductService productService;
