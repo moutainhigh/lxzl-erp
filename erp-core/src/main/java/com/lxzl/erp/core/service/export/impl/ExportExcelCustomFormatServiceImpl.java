@@ -282,9 +282,20 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 String monthAndDays = DateUtil.getMonthAndDays(exportStatementOrderDetail.getStatementStartTime(), exportStatementOrderDetail.getStatementEndTime());
                 int month = monthAndDays.indexOf("月");
                 int day = monthAndDays.indexOf("天");
-                exportStatementOrderDetailBase.setStatementMonth(Integer.parseInt(monthAndDays.substring(0, month))); //月
-                exportStatementOrderDetailBase.setStatementDay(Integer.parseInt(monthAndDays.substring(month + 1, day))); //日
-                exportStatementOrderDetailBase.setRentTimeLength(monthAndDays);  //期限
+
+                if (OrderRentType.RENT_TYPE_DAY.equals(exportStatementOrderDetail.getOrderRentType())) {
+                    exportStatementOrderDetailBase.setRentTimeLength(exportStatementOrderDetail.getOrderRentTimeLength() + "天");  //期限
+                    exportStatementOrderDetailBase.setStatementMonth(0); //月
+                    exportStatementOrderDetailBase.setStatementDay(exportStatementOrderDetail.getOrderRentTimeLength()); //日
+                    exportStatementOrderDetailBase.setUnitAmountInfo(exportStatementOrderDetailBase.getUnitAmount() + "/日");
+                    exportStatementOrderDetail.setStatementStartTime(exportStatementOrderDetail.getOrderRentStartTime());
+                    exportStatementOrderDetail.setStatementEndTime(exportStatementOrderDetail.getOrderExpectReturnTime());
+                } else if (OrderRentType.RENT_TYPE_MONTH.equals(exportStatementOrderDetail.getOrderRentType())) {
+                    exportStatementOrderDetailBase.setStatementMonth(Integer.parseInt(monthAndDays.substring(0, month))); //月
+                    exportStatementOrderDetailBase.setStatementDay(Integer.parseInt(monthAndDays.substring(month + 1, day))); //日
+                    exportStatementOrderDetailBase.setUnitAmountInfo(exportStatementOrderDetailBase.getUnitAmount() + "/月");
+                    exportStatementOrderDetailBase.setRentTimeLength(monthAndDays);  //期限
+                }
                 exportStatementOrderDetailBase.setCurrentPeriodStartAndEnd(formatPeriodStartAndEnd(exportStatementOrderDetail.getStatementStartTime(), exportStatementOrderDetail.getStatementEndTime()) + exportStatementOrderDetailBase.getRentTimeLength());    //本期起止（当前期数起止）
                 //-------------------以上是本期结算单-----------------------------
 
