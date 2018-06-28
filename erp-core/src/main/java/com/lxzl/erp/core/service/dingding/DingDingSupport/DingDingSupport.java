@@ -2,14 +2,21 @@ package com.lxzl.erp.core.service.dingding.DingDingSupport;
 
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.ApplicationConfig;
+import com.lxzl.erp.common.domain.dingding.DingDingCommonMsg;
 import com.lxzl.erp.common.domain.dingding.DingdingSendTextMessageContent;
 import com.lxzl.erp.common.domain.dingding.DingdingSendTextMessageRequest;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.DingdingPropertiesUtil;
 import com.lxzl.erp.core.service.dingding.DingdingService;
+import com.lxzl.se.common.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
+
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -57,6 +64,22 @@ public class DingDingSupport {
         }
         return type;
     }
+    
+    public void dingDingSendMessage(List<DingDingCommonMsg> dingDingCommonMsgs,Object... args){
+        if(CollectionUtil.isEmpty(dingDingCommonMsgs))return;
+        for (DingDingCommonMsg dingDingCommonMsg:dingDingCommonMsgs)dingDingSendMessage(dingDingCommonMsg,args);
+    }
 
+    public void dingDingSendMessage(DingDingCommonMsg dingDingCommonMsg,Object... args){
+        if(dingDingCommonMsg==null|| StringUtil.isBlank(dingDingCommonMsg.getContent())|| StringUtil.isBlank(dingDingCommonMsg.getUserGroupUrl()))return;
+        DingdingSendTextMessageRequest request = new DingdingSendTextMessageRequest();
+        DingdingSendTextMessageContent content = new DingdingSendTextMessageContent();
+        request.setMsgtype("text");
+        String msgContent=dingDingCommonMsg.getContent();
+        if(!ObjectUtils.isEmpty(args))msgContent=String.format(msgContent,args);
+        content.setContent(msgContent);
+        request.setText(content);
+        dingdingService.sendUserGroupMessage(dingDingCommonMsg.getUserGroupUrl(), request);
+    }
 
 }
