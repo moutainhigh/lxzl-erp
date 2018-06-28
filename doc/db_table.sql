@@ -3687,3 +3687,21 @@ CREATE TABLE `erp_order_statement_date_change_log` (
 	PRIMARY KEY (`id`),
 	KEY `index_order_no` (`order_no`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单结算日修变更录表';
+
+DROP TABLE IF EXISTS `erp_dingding_group_message_config`;
+CREATE TABLE `erp_dingding_group_message_config` (
+	`id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+	`send_type` INT(11) NOT NULL COMMENT '发送类型：1-续租成功，2-结算单重算成功',
+	`message_title` VARCHAR(200) NOT NULL COMMENT '发送的信息标题',
+	`message_content` VARCHAR(500) NOT NULL COMMENT '发送的信息内容',
+	`sub_company_id` INT(20) NOT NULL COMMENT '所属分公司',
+	`dingding_group_url` VARCHAR(255) NOT NULL COMMENT '钉钉群URL',
+	`data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+	`remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+	`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+	`create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+	`update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+	PRIMARY KEY (`id`),
+	KEY `index_sub_company_id` (`sub_company_id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='钉钉群消息配置表';
