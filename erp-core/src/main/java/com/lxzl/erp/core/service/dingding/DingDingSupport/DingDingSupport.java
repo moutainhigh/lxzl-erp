@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -63,16 +64,20 @@ public class DingDingSupport {
         }
         return type;
     }
-    public void dingDingSendMessage(List<DingDingCommonMsg> dingDingCommonMsgs){
+    
+    public void dingDingSendMessage(List<DingDingCommonMsg> dingDingCommonMsgs,Object... args){
         if(CollectionUtil.isEmpty(dingDingCommonMsgs))return;
-        for (DingDingCommonMsg dingDingCommonMsg:dingDingCommonMsgs)dingDingSendMessage(dingDingCommonMsg);
+        for (DingDingCommonMsg dingDingCommonMsg:dingDingCommonMsgs)dingDingSendMessage(dingDingCommonMsg,args);
     }
-    public void dingDingSendMessage(DingDingCommonMsg dingDingCommonMsg){
+
+    public void dingDingSendMessage(DingDingCommonMsg dingDingCommonMsg,Object... args){
         if(dingDingCommonMsg==null|| StringUtil.isBlank(dingDingCommonMsg.getContent())|| StringUtil.isBlank(dingDingCommonMsg.getUserGroupUrl()))return;
         DingdingSendTextMessageRequest request = new DingdingSendTextMessageRequest();
         DingdingSendTextMessageContent content = new DingdingSendTextMessageContent();
         request.setMsgtype("text");
-        content.setContent(dingDingCommonMsg.getContent());
+        String msgContent=dingDingCommonMsg.getContent();
+        if(!ObjectUtils.isEmpty(args))msgContent=String.format(msgContent,args);
+        content.setContent(msgContent);
         request.setText(content);
         dingdingService.sendUserGroupMessage(dingDingCommonMsg.getUserGroupUrl(), request);
     }
