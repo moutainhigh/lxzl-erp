@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.reletorder.impl;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.dingding.DingDingCommonMsg;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.messagethirdchannel.pojo.MessageThirdChannel;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
@@ -21,6 +22,7 @@ import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.messagethirdchannel.MessageThirdChannelService;
@@ -36,6 +38,7 @@ import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.dingdingGroupMessageConfig.DingdingGroupMessageConfigMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
@@ -44,6 +47,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderProductMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
+import com.lxzl.erp.dataaccess.domain.dingdingGroupMessageConfig.DingdingGroupMessageConfigDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
@@ -339,6 +343,10 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             result.setErrorCode(isNeedVerfyResult.getErrorCode());
             return result;
         }
+        //更新续租单 时间和修改人
+        reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        reletOrderDO.setUpdateTime(currentTime);
+
         if (isNeedVerfyResult.getResult()) {
             String orderRemark = "续租";
             ServiceResult<String, String> verifyMattersResult = getVerifyMatters(reletOrderDO);
@@ -380,11 +388,10 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             //推送K3消息
             k3Service.sendReletOrderInfoToK3(reletOrderDO, orderDO);
 
-
+            //发送钉钉续租成功消息
+            sendDingDingReletSuccessMessage(reletOrderDO);
         }
 
-        reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
-        reletOrderDO.setUpdateTime(currentTime);
         reletOrderMapper.update(reletOrderDO);
 
         result.setResult(reletOrderNo);
@@ -392,15 +399,28 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         return result;
     }
 
+    /**
+     * 续租成功发送钉钉群消息
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/6/28 20:05
+     * @param
+     * @return
+     */
     private void sendDingDingReletSuccessMessage(ReletOrderDO reletOrderDO){
         if (reletOrderDO == null || reletOrderDO.getOrderSubCompanyId() == null){
             return;
         }
         DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        UserQueryParam userQueryParam = new UserQueryParam();
-        userQueryParam.setDepartmentType(DepartmentType.DEPARTMENT_TYPE_BUSINESS_AFFAIRS);//商务部
-        userQueryParam.setSubCompanyId(reletOrderDO.getOrderSubCompanyId());//订单分公司
-
+        List<DingdingGroupMessageConfigDO> dingdingGroupMessageConfigDOList = dingdingGroupMessageConfigMapper.findBySendTypeAndSubCompanyId(DingDingGroupMessageType.SEND_TYPE_RELET_SUCCESS,reletOrderDO.getOrderSubCompanyId());
+        for (DingdingGroupMessageConfigDO dingdingGroupMessageConfigDO : dingdingGroupMessageConfigDOList){
+            DingDingCommonMsg dingDingCommonMsg = new DingDingCommonMsg();
+            dingDingCommonMsg.setUserGroupUrl(dingdingGroupMessageConfigDO.getDingdingGroupUrl());
+            dingDingCommonMsg.setContent(dingdingGroupMessageConfigDO.getMessageContent());
+            dingDingSupport.dingDingSendMessage(dingDingCommonMsg, dingdingGroupMessageConfigDO.getMessageTitle(),
+                    reletOrderDO.getOrderSubCompanyName(), reletOrderDO.getOrderSellerName(), reletOrderDO.getBuyerCustomerName(),
+                    reletOrderDO.getOrderNo(), sdf.format(reletOrderDO.getUpdateTime()));
+        }
     }
 
     /**
@@ -492,6 +512,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             if (reletOrderDO == null || !ReletOrderStatus.RELET_ORDER_STATUS_VERIFYING.equals(reletOrderDO.getReletOrderStatus())) {
                 return ErrorCode.BUSINESS_EXCEPTION;
             }
+            reletOrderDO.setUpdateTime(currentTime);
+            reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
 
             if (verifyResult) {
 
@@ -526,14 +548,15 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                 //推送K3消息
                 k3Service.sendReletOrderInfoToK3(reletOrderDO, orderDO);
 
+                //发送钉钉续租成功消息
+                sendDingDingReletSuccessMessage(reletOrderDO);
+
                 reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELETTING);
 
             } else {
                 reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT);
             }
 
-            reletOrderDO.setUpdateTime(currentTime);
-            reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
             reletOrderMapper.update(reletOrderDO);
 
         } catch (Exception e) {
@@ -1722,6 +1745,12 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
     @Autowired
     private MessageThirdChannelService messageThirdChannelService;
+
+    @Autowired
+    private DingdingGroupMessageConfigMapper dingdingGroupMessageConfigMapper;
+
+    @Autowired
+    private DingDingSupport dingDingSupport;
 
     @Autowired
     private WorkflowService workflowService;
