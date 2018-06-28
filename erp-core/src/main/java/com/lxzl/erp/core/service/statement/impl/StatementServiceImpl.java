@@ -5362,7 +5362,8 @@ public class StatementServiceImpl implements StatementService {
                             OrderProductDO orderProductDO = orderProductMapper.findById(Integer.valueOf(k3ReturnOrderDetailDO.getOrderItemId()));
                             //存入商品名称
                             if (orderProductDO != null) {
-                                statementOrderDetail.setItemName(orderProductDO.getProductName() + orderProductDO.getProductSkuName());
+                                statementOrderDetail.setItemName(orderProductDO.getProductName() );
+                                statementOrderDetail.setItemSkuName(orderProductDO.getProductSkuName());
                                 //存入商品单价
                                 statementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
                                 //存入租赁方式，1按天租，2按月租
