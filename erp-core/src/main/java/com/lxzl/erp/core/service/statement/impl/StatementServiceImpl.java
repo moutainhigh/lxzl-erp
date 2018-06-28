@@ -5146,12 +5146,14 @@ public class StatementServiceImpl implements StatementService {
                             // 如果本期账单租金为0，则去找应该什么时候支付
                             if ((statementOrderDetail.getStatementDetailType() == null || StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetail.getStatementDetailType())) && BigDecimalUtil.compare(statementOrderDetail.getStatementDetailRentAmount(), BigDecimal.ZERO) == 0) {
                                 Map<String, Object> thisPeriodsByOrderInfoMap = statementOrderDetailMapper.findThisPeriodsByOrderInfo(statementOrderDetail.getOrderId(), statementOrderDetail.getOrderItemReferId(), statementOrderDetail.getStatementExpectPayTime(), payMode);
-                                statementOrderDetail.setStatementDetailRentEndAmount(new BigDecimal(thisPeriodsByOrderInfoMap.get("statementDetailRentAmount").toString()));
-                                statementOrderDetail.setStatementDetailEndAmount(new BigDecimal(thisPeriodsByOrderInfoMap.get("statementDetailAmount").toString()));
-                                try {
-                                    statementOrderDetail.setStatementExpectPayEndTime(new SimpleDateFormat("yyyy-MM-dd").parse(thisPeriodsByOrderInfoMap.get("statementExpectPayTime").toString()));
-                                } catch (Exception e) {
+                                if(thisPeriodsByOrderInfoMap != null && thisPeriodsByOrderInfoMap.size() != 0){
+                                    statementOrderDetail.setStatementDetailRentEndAmount(new BigDecimal(thisPeriodsByOrderInfoMap.get("statementDetailRentAmount").toString()));
+                                    statementOrderDetail.setStatementDetailEndAmount(new BigDecimal(thisPeriodsByOrderInfoMap.get("statementDetailAmount").toString()));
+                                    try {
+                                        statementOrderDetail.setStatementExpectPayEndTime(new SimpleDateFormat("yyyy-MM-dd").parse(thisPeriodsByOrderInfoMap.get("statementExpectPayTime").toString()));
+                                    } catch (Exception e) {
 
+                                    }
                                 }
                             }
                         }
