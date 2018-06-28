@@ -439,8 +439,8 @@ public class ErrorCode {
     public static final String RETURN_COUNT_MORE_THAN_RENTING_PRODUCT_COUNT = "J400160";
     public static final String RETURN_ORDER_HAVE_THE_SAME_PRODUCT_OR_MATERIAL = "J400161";
     public static final String RETURN_DELIVERY_SUB_COMPANY_ERROR = "J400162";
-    public static final String ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400162";
-    public static final String RELET_ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400163";
+    public static final String ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400163";
+    public static final String RELET_ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400164";
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
     public static final String CUSTOMER_PERSON_NOT_NULL = "J500003";
