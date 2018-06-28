@@ -24,8 +24,10 @@ import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.core.service.reletorder.ReletOrderService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.dingdingGroupMessageConfig.DingdingGroupMessageConfigMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.dingdingGroupMessageConfig.DingdingGroupMessageConfigDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import org.junit.Test;
 import org.junit.experimental.theories.suppliers.TestedOn;
@@ -49,6 +51,9 @@ public class ReletOrderTest extends ERPUnTransactionalTest {
 
     @Autowired
     private ReletOrderMapper reletOrderMapper;
+
+    @Autowired
+    private DingdingGroupMessageConfigMapper dingdingGroupMessageConfigMapper;
 
     @Autowired
     private ReletOrderService reletOrderService;
@@ -391,6 +396,14 @@ public class ReletOrderTest extends ERPUnTransactionalTest {
             }
         }
     }
+
+    @Test
+    public void testdingdingGroupMessageConfig() throws Exception{
+        ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo("LXR-20180625-027-00111");
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        List<DingdingGroupMessageConfigDO> dingdingGroupMessageConfigDOList = dingdingGroupMessageConfigMapper.findBySendTypeAndSubCompanyId(1,8);
+    }
+
 
     @Autowired
     private UserService userService;

@@ -400,19 +400,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         UserQueryParam userQueryParam = new UserQueryParam();
         userQueryParam.setDepartmentType(DepartmentType.DEPARTMENT_TYPE_BUSINESS_AFFAIRS);//商务部
         userQueryParam.setSubCompanyId(reletOrderDO.getOrderSubCompanyId());//订单分公司
-        ServiceResult<String, Page<User>> serviceResult = userService.userPage(userQueryParam);
-        if (ErrorCode.SUCCESS.equals(serviceResult.getErrorCode()) && serviceResult.getResult().getTotalCount() > 0){
-            for (User user : serviceResult.getResult().getItemList()) {
-                String messageContent = "分公司名称：" + reletOrderDO.getOrderSubCompanyName() + "业务员：" + reletOrderDO.getOrderSellerName()
-                        + "客户名称：" + reletOrderDO.getBuyerCustomerName() + "订单：" + reletOrderDO.getOrderNo()
-                        + "于" + sdf.format(reletOrderDO.getUpdateTime())+ "续租成功";
-                MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
-                messageThirdChannel.setReceiverUserId(user.getUserId());
-                messageThirdChannel.setMessageContent(messageContent);
-                messageThirdChannel.setMessageTitle("订单续租成功");
-//                messageThirdChannelService.sendMessage(messageThirdChannel);
-            }
-        }
+
     }
 
     /**
