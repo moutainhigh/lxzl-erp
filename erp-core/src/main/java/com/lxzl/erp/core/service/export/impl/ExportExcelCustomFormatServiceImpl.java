@@ -117,6 +117,10 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         statementOrderMonthQueryParam.setStatementOrderCustomerNo(customerNoParam);
 
         ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam);
+        if (!ErrorCode.SUCCESS.equals(stringListServiceResult.getErrorCode())) {
+            result.setErrorCode(stringListServiceResult.getErrorCode());
+            return result;
+        }
         List<CheckStatementOrder> checkStatementOrderList = stringListServiceResult.getResult();
         if (CollectionUtil.isEmpty(checkStatementOrderList)) {
             dingDingSupport.dingDingSendMessage(customerNoParam + "无对账单");
