@@ -62,7 +62,6 @@
                                             <select class="form-control input-sm bradius" name="isRent" id="isRent"></select>
                                         </div>
                                     </div>
-##                                    <select name="isRent" id="isRentMultiselect" class="hide"></select>
                                 </form>
                             </div>
                         </div>
@@ -93,7 +92,7 @@
                                         {{#listData}}
                                         <tr>
                                             <td>{{productId}}</td>
-                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                                            <td><a class="productImg open-img-popup" data-imgs="{{productImgJSON}}"><img src="{{mainImg}}" /></a></td>
                                             <td>{{productName}}</td>
                                             <td>{{subtitle}}</td>
                                             <td>{{categoryName}}</td>

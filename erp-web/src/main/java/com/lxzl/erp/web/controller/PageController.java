@@ -258,6 +258,11 @@ public class PageController extends BaseController {
         return "/orderManage/reletOrderDetail";
     }
 
+    @RequestMapping("/order-manage/section-settlement")
+    public String orderManageSectionSettlement() {
+        return "/component/order/sectionSettlementModal";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
@@ -991,6 +996,16 @@ public class PageController extends BaseController {
     @RequestMapping("/data-analysis/dynamicSql")
     public String systemManageDynamicSql() {
         return "/dataAnalysisManage/dynamicSql";
+    }
+
+    @RequestMapping("/data-analysis/sql-list")
+    public String systemManageDynamicSqlList() {
+        return "/dataAnalysisManage/dynamicSqlList";
+    }
+
+    @RequestMapping("/data-analysis/sql-add")
+    public String systemManageDynamicAddSql() {
+        return "/dataAnalysisManage/addSqlModal";
     }
 
 

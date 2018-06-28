@@ -131,6 +131,7 @@
         <result column="relet_order_item_refer_id" jdbcType="INTEGER" property="reletOrderItemReferId"/>
     </resultMap>
 
+
     <sql id="column_List">
 		esod.id,esod.statement_order_id,esod.customer_id,esod.order_type,esod.order_id,esod.order_item_type,esod.order_item_refer_id,esod.return_refer_id,esod.statement_detail_type,esod.statement_detail_phase,esod.statement_detail_amount,esod.statement_detail_other_amount,esod.statement_detail_other_paid_amount ,esod.statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount,esod.statement_detail_rent_deposit_return_amount,esod.statement_detail_rent_deposit_return_time,esod.statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount,esod.statement_detail_deposit_return_time,esod.statement_detail_rent_amount,esod.statement_detail_rent_paid_amount,esod.statement_detail_paid_time,esod.statement_detail_overdue_amount,esod.statement_detail_overdue_paid_amount,esod.statement_detail_overdue_days,esod.statement_detail_overdue_phase_count,esod.statement_detail_status,esod.statement_expect_pay_time,esod.statement_start_time,esod.statement_end_time,esod.data_status,esod.remark,esod.create_time,esod.create_user,esod.update_time,esod.update_user,esod.statement_detail_correct_amount,esod.statement_coupon_amount,esod.statement_detail_penalty_amount as statement_detail_penalty_amount,esod.statement_detail_penalty_paid_amount as statement_detail_penalty_paid_amount,esod.relet_order_item_refer_id
 	</sql>
@@ -943,14 +944,19 @@
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
 
-    <select id="findByReletOrderItemReferIds" resultMap="StatementOrderDetailDO">
+    <select id="findPrdcByReletOrderItemReferIds" resultMap="StatementOrderDetailDO">
         SELECT
         <include refid="column_List"/>
         FROM erp_statement_order_detail esod
-        WHERE esod.data_status = 1 AND esod.relet_order_item_refer_id in
-        <foreach collection="ids" item="item" index="index" separator="," open="(" close=")">
-            #{item}
-        </foreach>
+        WHERE esod.data_status = 1 AND esod.order_item_type=1 AND  esod.relet_order_item_refer_id = #{id}
+
+    </select>
+
+    <select id="findMtrByReletOrderItemReferIds" resultMap="StatementOrderDetailDO">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_statement_order_detail esod
+        WHERE esod.data_status = 1 AND esod.order_item_type=2 AND  esod.relet_order_item_refer_id = #{id}
     </select>
 
     <update id="deleteStatementOrderDetailList">
@@ -970,6 +976,7 @@
         #{orderItemId, jdbcType=INTEGER} AND order_type = 4 AND esod.data_status = 1
         ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC,esod.statement_order_id ASC
     </select>
+
     <select id="exportListPage" resultMap="CheckStatementOrderDetailDO" parameterType="map">
         select distinct t1.buyer_customer_id as customer_id,<![CDATA[ date_format(t0.month_config,'%Y-%m')]]> as monthTime,
         case when t4.order_id is null then t1.id else t4.order_id end as order_id,
@@ -988,9 +995,9 @@
         case when t4.id is null then t1.id else t4.id end as id,
         case when t4.statement_start_time is null then t0.month_start_config else t4.statement_start_time end as statement_start_time,
         case when t4.statement_end_time is null then t0.month_end_config else t4.statement_end_time end as statement_end_time,
---         case when t4.statement_detail_amount is null then t5.statement_detail_amount else t4.statement_detail_amount end as statementDetailEndAmount,
---         case when t4.statement_detail_amount is null then t5.statement_expect_pay_time else t4.statement_expect_pay_time end as statementExpectPayEndTime,
---         case when t4.statement_detail_rent_amount is null or t4.statement_detail_rent_amount = 0 then t5.statement_detail_rent_amount else t4.statement_detail_rent_amount end as statementDetailRentEndAmount,
+        --         case when t4.statement_detail_amount is null then t5.statement_detail_amount else t4.statement_detail_amount end as statementDetailEndAmount,
+        --         case when t4.statement_detail_amount is null then t5.statement_expect_pay_time else t4.statement_expect_pay_time end as statementExpectPayEndTime,
+        --         case when t4.statement_detail_rent_amount is null or t4.statement_detail_rent_amount = 0 then t5.statement_detail_rent_amount else t4.statement_detail_rent_amount end as statementDetailRentEndAmount,
         t4.*
         from erp_month_config t0 left join erp_order t1
         on t0.month_start_config between t1.rent_start_time and t1.expect_return_time or t0.month_end_config between t1.rent_start_time and t1.expect_return_time
@@ -1045,11 +1052,11 @@
         </where>
         ) t4 on t1.buyer_customer_id = t4.customer_id and t4.monthTime = date_format(t0.month_config,'%Y-%m')
         <!--left join (-->
-          <!--select m1.id,month_config,statement_detail_amount,statement_detail_rent_amount,statement_expect_pay_time from erp_month_config m0 left join erp_statement_order_detail m1 on m0.month_config BETWEEN statement_start_time and statement_end_time and m1.data_status = 1-->
+        <!--select m1.id,month_config,statement_detail_amount,statement_detail_rent_amount,statement_expect_pay_time from erp_month_config m0 left join erp_statement_order_detail m1 on m0.month_config BETWEEN statement_start_time and statement_end_time and m1.data_status = 1-->
         <!--<where>-->
-            <!--<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">-->
-                <!--and m1.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}-->
-            <!--</if>-->
+        <!--<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">-->
+        <!--and m1.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}-->
+        <!--</if>-->
         <!--</where>-->
         <!--) t5 on t4.id = t5.id-->
         where t1.order_status in (20,22,24,32)
@@ -1078,11 +1085,21 @@
         and statement_detail_amount > 0 limit 0,1;
     </select>
 
-    <select id="findRentByReletOrderItemReferIds" resultMap="StatementOrderDetailDO">
+    <select id="findProductRentByReletOrderItemReferIds" resultMap="StatementOrderDetailDO">
         SELECT
         <include refid="column_List"/>
         FROM erp_statement_order_detail esod
-        WHERE esod.data_status = 1 AND statement_detail_type=1 AND esod.relet_order_item_refer_id in
+        WHERE esod.data_status = 1 AND statement_detail_type=1 AND order_item_type =1 AND esod.relet_order_item_refer_id in
+        <foreach collection="ids" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="findMaterialRentByReletOrderItemReferIds" resultMap="StatementOrderDetailDO">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_statement_order_detail esod
+        WHERE esod.data_status = 1 AND statement_detail_type=1 AND order_item_type =2 AND esod.relet_order_item_refer_id in
         <foreach collection="ids" item="item" index="index" separator="," open="(" close=")">
             #{item}
         </foreach>

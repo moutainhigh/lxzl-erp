@@ -107,8 +107,8 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{customerNo}}</td>
-                                <td>{{customerName}}</td>
+                                <td><a href="{{customerDetailUrl}}" target="_blank">{{customerNo}}</a></td>
+                                <td><a href="{{customerDetailUrl}}" target="_blank">{{customerName}}</a></td>
                                 <td>{{ownerSubCompanyName}}</td>
                                 <td>{{ownerName}}</td>
                                 <td>{{#clockMonthTime}}{{monthTime}}{{/clockMonthTime}}</td>

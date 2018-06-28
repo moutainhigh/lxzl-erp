@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductProduct;
 import com.lxzl.erp.common.domain.k3.pojo.OrderMessage;
+import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.messagethirdchannel.pojo.MessageThirdChannel;
@@ -57,6 +58,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointProductProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.OrderStatementDateSplitMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
@@ -77,6 +79,7 @@ import com.lxzl.erp.dataaccess.domain.jointProduct.JointMaterialDO;
 import com.lxzl.erp.dataaccess.domain.jointProduct.JointProductDO;
 import com.lxzl.erp.dataaccess.domain.jointProduct.JointProductProductDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
+import com.lxzl.erp.dataaccess.domain.k3.OrderStatementDateSplitDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
@@ -1731,7 +1734,10 @@ public class OrderServiceImpl implements OrderService {
             if (orderConfirmChangeLogDO!=null) {
                 order.setChangeReason(orderConfirmChangeLogDO.getChangeReason());
             }
-        }        result.setErrorCode(ErrorCode.SUCCESS);
+        }
+        OrderStatementDateSplitDO orderStatementDateSplitDO=orderStatementDateSplitMapper.findByOrderNo(orderNo);
+        if(orderStatementDateSplitDO!=null)order.setOrderStatementDateSplit(ConverterUtil.convert(orderStatementDateSplitDO, OrderStatementDateSplit.class));
+        result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
     }
@@ -4335,4 +4341,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderSupport orderSupport;
+
+    @Autowired
+    private OrderStatementDateSplitMapper  orderStatementDateSplitMapper;
 }
