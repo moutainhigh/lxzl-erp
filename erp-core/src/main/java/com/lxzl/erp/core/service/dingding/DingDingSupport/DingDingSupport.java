@@ -9,6 +9,7 @@ import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.DingdingPropertiesUtil;
 import com.lxzl.erp.core.service.dingding.DingdingService;
 import com.lxzl.se.common.util.StringUtil;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,7 @@ public class DingDingSupport {
         }
         return type;
     }
-    
+
     public void dingDingSendMessage(List<DingDingCommonMsg> dingDingCommonMsgs,Object... args){
         if(CollectionUtil.isEmpty(dingDingCommonMsgs))return;
         for (DingDingCommonMsg dingDingCommonMsg:dingDingCommonMsgs)dingDingSendMessage(dingDingCommonMsg,args);
@@ -80,6 +81,20 @@ public class DingDingSupport {
         content.setContent(msgContent);
         request.setText(content);
         dingdingService.sendUserGroupMessage(dingDingCommonMsg.getUserGroupUrl(), request);
+    }
+
+    @Test
+    public void tt(){
+        String temp="【%s】，分公司：%s，业务员：%s，客户名称：%s，订单：【%s】相关结算单重算成功，续重新支付，请及时操作。";
+        String msgContent=String.format(temp,"结算单重算成功，续重新支付","武汉分公司","李量","利好","LXO-20180522-027-02675");
+
+        DingdingSendTextMessageRequest request = new DingdingSendTextMessageRequest();
+        DingdingSendTextMessageContent content = new DingdingSendTextMessageContent();
+        request.setMsgtype("text");
+
+        content.setContent(msgContent);
+        request.setText(content);
+        dingdingService.sendUserGroupMessage("https://oapi.dingtalk.com/robot/send?access_token=e31ffecf6018175f4f92e5a8a82848ba648db0dbbf50e66dab38bcb59a08f3b8", request);
     }
 
 }
