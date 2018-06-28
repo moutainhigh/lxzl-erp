@@ -18,6 +18,7 @@ import com.lxzl.erp.dataaccess.domain.bank.BankSlipClaimDO;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDO;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailOperationLogDO;
+import com.lxzl.se.common.util.StringUtil;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -190,6 +191,22 @@ public class BankSlipSupport {
             default:
                 return "Unknown Cell Type: " + cell.getCellType();
         }
+    }
+
+    public static  String verifyTradeTime(String tradeTime,Integer... stringLength){
+        tradeTime = StringUtil.trim(tradeTime);
+        boolean flag = false;
+        for (Integer integer : stringLength) {
+            if(integer.equals(tradeTime.length())){
+                flag = true;
+            }
+        }
+        if(flag){
+            return ErrorCode.SUCCESS;
+        }else {
+            return  ErrorCode.DATE_TRANSITION_IS_FAIL;
+        }
+
     }
 
 }
