@@ -372,6 +372,77 @@ public class DateUtil {
         return ca.getTime();
     }
 
+    /**
+     * 获取月份
+     *
+     * @param date  时间
+     * @return 月份
+     * @throws ParseException
+     */
+    public static Integer getMounth(Date date) {
+        if(date == null){
+            return null;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.MONTH)+1;
+    }
+
+    /**
+     * 获取年份
+     *
+     * @param date  时间
+     * @return 年份
+     * @throws ParseException
+     */
+    public static Integer getYear(Date date) {
+        if(date == null){
+            return null;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.YEAR);
+    }
+
+    /**
+     * 获取月份和剩余天数
+     *
+     * @param startDay  开始时间
+     * @param endDay  结束时间
+     * @return 月份和剩余天数
+     * @throws ParseException
+     */
+    public static String  getMonthAndDays(Date startDay,Date endDay) throws Exception {
+        List<Date> monthList = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");//格式化为年月
+
+        Calendar min = Calendar.getInstance();
+        Calendar max = Calendar.getInstance();
+        Date minDate = sdf.parse(sdf.format(startDay));
+        min.setTime(minDate);
+        Date newMinDate = min.getTime();
+
+        Date maxDate = sdf.parse(sdf.format(endDay));
+        max.setTime(maxDate);
+        max.add(Calendar.DATE,1);
+
+        Calendar curr = min;
+        while (curr.before(max)) {
+            monthList.add(curr.getTime());
+            curr.add(Calendar.MONTH, 1);
+        }
+
+        Date newMaxDate = max.getTime();
+        int monthLength = DateUtil.getMonthSpace(newMinDate, newMaxDate);
+        int allDay = DateUtil.daysBetween(newMinDate, newMaxDate);
+        int allMonthDays = 0;  //所有月的天数
+        for (int i = 0; i < monthLength; i++) {
+            Date date = monthList.get(i);
+            allMonthDays = DateUtil.getActualMaximum(date) + allMonthDays;
+        }
+
+        return monthLength+"月"+(allDay - allMonthDays )+"天";
+    }
     public static void main(String[] args) {
 //        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        List<Date> dateList = getCurrentYearPassedMonth();

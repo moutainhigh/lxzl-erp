@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.statement.pojo.CheckStatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
@@ -234,5 +235,10 @@ public interface StatementService extends BaseService {
      * @return
      */
     ServiceResult<String, String> reStatementK3ReturnOrderRentOnly(String returnOrderNo);
-
+    /**
+     * 导入对账单查询
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/6/21 9:32
+     */
+    ServiceResult<String, List<CheckStatementOrder>> exportQueryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam);
 }

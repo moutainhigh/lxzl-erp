@@ -261,4 +261,8 @@
 		ORDER BY esoc.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
+	<select id="findStatementOrderIdAndReferId" resultMap="StatementOrderCorrectDO" >
+		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc
+		WHERE esoc.statement_order_id = #{statementOrderId, jdbcType=INTEGER}  AND esoc.statement_order_refer_id = #{referId, jdbcType=INTEGER}  AND esoc.data_status = 1
+	</select>
 </mapper>

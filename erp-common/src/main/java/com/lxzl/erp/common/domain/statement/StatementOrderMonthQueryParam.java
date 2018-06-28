@@ -18,6 +18,7 @@ public class StatementOrderMonthQueryParam extends BasePageParam {
     private String statementOrderCustomerName;
     private Integer statementOrderCustomerId;
     private String statementOrderCustomerNo;
+    private String statementOrderSubCompanyName;
     private Date monthTime;
     private Integer subCompanyId;//分公司ID
     private String ownerName;//业务员
@@ -59,4 +60,12 @@ public class StatementOrderMonthQueryParam extends BasePageParam {
     public List<Integer> getPassiveUserIdList() { return passiveUserIdList; }
 
     public void setPassiveUserIdList(List<Integer> passiveUserIdList) { this.passiveUserIdList = passiveUserIdList; }
+
+    public String getStatementOrderSubCompanyName() {
+        return statementOrderSubCompanyName;
+    }
+
+    public void setStatementOrderSubCompanyName(String statementOrderSubCompanyName) {
+        this.statementOrderSubCompanyName = statementOrderSubCompanyName;
+    }
 }
