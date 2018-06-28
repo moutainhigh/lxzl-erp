@@ -87,7 +87,6 @@
                                                     </a>
                                                     {{/acitonCommonButtons}}
                                                 </script>
-                
                                                 <div class="btn-group" id="actionCommonButtons"></div>
                                             </div>
 
@@ -109,6 +108,7 @@
                         </div>
                     </div>
                     <div class="panel-body pn">
+                        <form id="exportForm" class="hide"></form>
                         <div class="table-responsive">
                             <script type="text/html" id="dataListTpl">
                                 <thead>
