@@ -164,6 +164,11 @@
 		<result column="ecci_cityName" jdbcType="VARCHAR" property="cityName" />
 		<result column="ecci_districtName" jdbcType="VARCHAR" property="districtName" />
 	</resultMap>
+	<resultMap id="CustomerRentCount" type="com.lxzl.erp.common.domain.customer.pojo.CustomerRentCount">
+		<result column="rentProductCount" jdbcType="INTEGER" property="rentProductCount" />
+		<result column="rentMaterialCount" jdbcType="INTEGER" property="rentMaterialCount" />
+		<result column="rentAmountMaterialCount" jdbcType="INTEGER" property="rentAmountMaterialCount" />
+	</resultMap>
 
 	<sql id="column_List">
 		ec.id,ec.customer_type,ec.customer_no,ec.customer_name,ec.is_disabled,ec.data_status,ec.remark,ec.create_time,ec.create_user,ec.update_time,ec.update_user,ec.owner,ec.union_user,ec.customer_status,ec.first_apply_amount,ec.later_apply_amount,ec.localization_time,ec.short_limit_receivable_amount,ec.statement_date,ec.pass_reason,ec.fail_reason,ec.delivery_mode,ec.owner_sub_company_id,ec.is_risk,ec.confirm_statement_status,ec.confirm_statement_user,ec.confirm_statement_time
@@ -627,4 +632,33 @@
 		SET ec.is_risk = 1;
 	</update>
 
+	<select id="queryRentCountByCustomerNo" resultMap="CustomerRentCount" parameterType="java.lang.String">
+		SELECT
+		IFNULL(t1.productCount,0) AS rentProductCount,
+		IFNULL(t2.materialCount,0) AS rentMaterialCount,
+		IFNULL(t3.materialCountForAmount,0) AS rentAmountMaterialCount
+		FROM erp_customer ec
+		LEFT JOIN (
+			SELECT ec.customer_no,IFNULL(SUM(eop.renting_product_count),0) as productCount
+			FROM erp_order eo
+			LEFT JOIN erp_order_product eop ON eo.id = eop.order_id AND eop.data_status = 1
+			INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+			WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND eo.data_status =1
+			)t1 on t1.customer_no = ec.customer_no
+		LEFT JOIN (
+			SELECT ec.customer_no,IFNULL(SUM(eom.renting_material_count),0) as materialCount
+			FROM erp_order eo
+			LEFT JOIN erp_order_material eom ON eo.id = eom.order_id AND eom.data_status = 1
+			INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+			WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND eo.data_status =1
+			)t2 on t2.customer_no = ec.customer_no
+		LEFT JOIN (
+			SELECT ec.customer_no, IFNULL(SUM(eom.renting_material_count),0) as materialCountForAmount
+			FROM erp_order eo
+			LEFT JOIN erp_order_material eom ON eo.id = eom.order_id AND eom.data_status = 1
+			INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+			WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND eo.data_status =1 AND eom.rent_deposit_amount > 0
+			)t3 on t3.customer_no = ec.customer_no
+		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
+	</select>
 </mapper>

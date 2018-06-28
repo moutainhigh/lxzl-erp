@@ -3363,6 +3363,41 @@ public class CustomerServiceImpl implements CustomerService {
         return serviceResult;
     }
 
+    /**
+     * 查询该用户在租商品、配件、付费配件数量
+     * @param customerNo
+     * @return
+     */
+    @Override
+    public ServiceResult<String, CustomerRentCount> queryRentCountByCustomerNo(String customerNo) {
+        ServiceResult<String, CustomerRentCount> serviceResult = new ServiceResult<>();
+        if (StringUtil.isNotEmpty(customerNo)) {
+            CustomerDO customerDO = customerMapper.findByNo(customerNo);
+            if (customerDO!= null) {
+                CustomerRentCount customerRentCount  =customerMapper.queryRentCountByCustomerNo(customerNo);
+                if (customerRentCount != null) {
+                    serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                    serviceResult.setResult(customerRentCount);
+                    return serviceResult;
+                }else {
+                    CustomerRentCount newCustomerRentCount = new CustomerRentCount();
+                    newCustomerRentCount.setRentAmountMaterialCount(CommonConstant.COMMON_ZERO);
+                    newCustomerRentCount.setRentMaterialCount(CommonConstant.COMMON_ZERO);
+                    newCustomerRentCount.setRentProductCount(CommonConstant.COMMON_ZERO);
+                    serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                    serviceResult.setResult(newCustomerRentCount);
+                    return serviceResult;
+                }
+            }else {
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+                return serviceResult;
+            }
+        }else {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NO_NOT_NULL);
+            return serviceResult;
+        }
+    }
+
     /*
     将customer中的确认用户id转换为名字
      */
