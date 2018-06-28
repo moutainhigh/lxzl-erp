@@ -285,7 +285,7 @@ public class ExcelExportSupport<T> {
             return true;
         }
     }
-    
+
     public static void setCellStyle(Workbook hssfWorkbook, Cell cell, short fontColor, short backGroupColor) {
         CellStyle style = hssfWorkbook.createCellStyle();
         style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 居中
