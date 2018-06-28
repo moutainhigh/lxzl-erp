@@ -769,6 +769,8 @@ public class StatementServiceImpl implements StatementService {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 return result;
             }
+            //发送钉钉消息
+            statementOrderSupport.sendOrderRestatementSuccess(orderDO);
         }
         return createResult;
     }
@@ -4623,7 +4625,9 @@ public class StatementServiceImpl implements StatementService {
                 serviceResult.setErrorCode(returnCode);
                 return serviceResult;
             }
+            statementOrderSupport.sendReletOrderRestatementSuccess(reletOrderDO);
         }
+
         return serviceResult;
     }
 
