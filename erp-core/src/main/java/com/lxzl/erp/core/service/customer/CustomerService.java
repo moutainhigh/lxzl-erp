@@ -225,4 +225,11 @@ public interface CustomerService extends VerifyReceiver {
      */
     ServiceResult<String, String> confirmStatement(String customerNo);
 
+    /**
+     * 查询该用户再租商品、配件、付费配件数量
+     * @param customerNo
+     * @return
+     */
+    ServiceResult<String,CustomerRentCount> queryRentCountByCustomerNo(String customerNo);
+
 }
