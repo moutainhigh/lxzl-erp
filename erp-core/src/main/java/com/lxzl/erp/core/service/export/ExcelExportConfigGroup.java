@@ -270,8 +270,8 @@ public class ExcelExportConfigGroup {
     }
 
     public static void initStatementOrderCheckConfig() {
-        statementOrderCheckConfig.addConfig(new ColConfig("orderNo", "租赁订单号", 14, HSSFColor.GREY_25_PERCENT.index))
-                .addConfig(new ColConfig("businessType", "业务类型", 8, HSSFColor.GREY_25_PERCENT.index, new ExcelExportView() {
+        statementOrderCheckConfig.addConfig(new ColConfig("orderNo", "租赁订单号", 10, HSSFColor.WHITE.index))
+                .addConfig(new ColConfig("businessType", "业务类型", 6, HSSFColor.WHITE.index, new ExcelExportView() {
             @Override
             public Object view(Object o) {
                 Integer businessType = (Integer) o;
@@ -283,7 +283,7 @@ public class ExcelExportConfigGroup {
                 return null;
             }
         }))
-                .addConfig(new ColConfig("orderType", " 订单项类型", 6, HSSFColor.GREY_25_PERCENT.index, new ExcelExportView() {
+                .addConfig(new ColConfig("orderType", " 订单项类型", 6, HSSFColor.WHITE.index, new ExcelExportView() {
 
                     @Override
                     public Object view(Object o) {
@@ -310,7 +310,9 @@ public class ExcelExportConfigGroup {
                         return "";
                     }
                 }))
-                .addConfig(new ColConfig("isNew", "新旧程度", 7, HSSFColor.GREY_25_PERCENT.index, new ExcelExportView() {
+                .addConfig(new ColConfig("itemName", "商品名", 16, HSSFColor.WHITE.index))
+                .addConfig(new ColConfig("itemSkuName", "配置", 23, HSSFColor.WHITE.index))
+                .addConfig(new ColConfig("isNew", "新旧程度", 6, HSSFColor.WHITE.index, new ExcelExportView() {
                     @Override
                     public Object view(Object o) {
                         Integer isNew = (Integer) o;
@@ -322,36 +324,52 @@ public class ExcelExportConfigGroup {
                         return "";
                     }
                 }))
-                .addConfig(new ColConfig("itemName", "商品名", 23, HSSFColor.GREY_25_PERCENT.index))
                 //-------------------以下是全部结算单-----------------------------
-                .addConfig(new ColConfig("rentStartTime", "租赁开始日期", 12, DateExcelExportView.getInstance()))
-                .addConfig(new ColConfig("expectReturnTime", "租赁结束日期", 12, DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("rentStartTime", "租赁开始日期", 10, DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("expectReturnTime", "租赁结束日期", 10, DateExcelExportView.getInstance()))
                 .addConfig(new ColConfig("month", "月", 3))
                 .addConfig(new ColConfig("day", "日", 3))
                 .addConfig(new ColConfig("allRentTimeLength", "租赁总期限", 8))
-                .addConfig(new ColConfig("allPeriodStartAndEnd", "租赁期限", 15, HSSFColor.GREY_25_PERCENT.index))
+                .addConfig(new ColConfig("allPeriodStartAndEnd", "租赁期限", 15, HSSFColor.WHITE.index))
                 //-------------------以上是全部结算单-----------------------------
 
                 //-------------------以下是本期结算单-----------------------------
-                .addConfig(new ColConfig("statementStartTime", "本期开始日期", 12, DateExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementEndTime", "本期结束日期", 12, DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementStartTime", "本期开始日期", 10, DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementEndTime", "本期结束日期", 10, DateExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementMonth", "月", 3))
                 .addConfig(new ColConfig("statementDay", "日", 3))
-                .addConfig(new ColConfig("rentTimeLength", "期限", 7))
-                .addConfig(new ColConfig("currentPeriodStartAndEnd", "本期费用起止", 15, HSSFColor.GREY_25_PERCENT.index))
+                .addConfig(new ColConfig("rentTimeLength", "租赁期限", 6))
+                .addConfig(new ColConfig("currentPeriodStartAndEnd", "本期费用起止", 12,HSSFColor.LEMON_CHIFFON.index))
+
+                .addConfig(new ColConfig("payMode", "支付方式", 7, HSSFColor.LEMON_CHIFFON.index, new ExcelExportView() {
+                    @Override
+                    public Object view(Object o) {
+                        Integer payMode = (Integer) o;
+                        if(OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)){
+                            return "先付后用";
+                        }else if(OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)){
+                            return "先用后付";
+                        }else if(OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(payMode)){
+                            return "首付30%";
+                        }
+                        return "";
+                    }
+                }))
                 //-------------------以下是全部结算单-----------------------------
-                .addConfig(new ColConfig("itemCount", "在租数量", 4, HSSFColor.GREY_25_PERCENT.index))
-                .addConfig(new ColConfig("unitAmount", "单价（元/台/月）", 11, HSSFColor.GREY_25_PERCENT.index, AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementRentAmount", " 租金小计", 8, HSSFColor.LEMON_CHIFFON.index, HSSFColor.LIGHT_BLUE.index, AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementRentDepositAmount", " 租金押金", 8, HSSFColor.GREY_25_PERCENT.index, HSSFColor.LIGHT_BLUE.index, HSSFColor.RED.index, AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementDepositAmount", " 设备押金", 8, HSSFColor.GREY_25_PERCENT.index, HSSFColor.LIGHT_BLUE.index, HSSFColor.RED.index, AmountExcelExportView.getInstance()))
-//                .addConfig(new ColConfig("statementDepositPaidAmount", " 支付押金", 8, HSSFColor.GREY_25_PERCENT.index, HSSFColor.LIGHT_BLUE.index, AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementOverdueAmount", " 逾期金额", 8, HSSFColor.GREY_25_PERCENT.index, HSSFColor.LIGHT_BLUE.index, AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementOtherAmount", " 其它费用", 7, HSSFColor.GREY_25_PERCENT.index, HSSFColor.LIGHT_BLUE.index, AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementCorrectAmount", " 冲正金额", 8, HSSFColor.GREY_25_PERCENT.index, HSSFColor.LIGHT_BLUE.index, AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementAmount", " 应付金额", 9, HSSFColor.LIGHT_GREEN.index, HSSFColor.GOLD.index, AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementExpectPayTime", " 应付日期", 10, HSSFColor.LIGHT_GREEN.index, HSSFColor.GOLD.index, DateExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementDetailStatus", " 状态", 8, new ExcelExportView() {
+                .addConfig(new ColConfig("rentProgramme", "租赁方案", 7, HSSFColor.LEMON_CHIFFON.index))
+                .addConfig(new ColConfig("itemCount", "租赁数量", 4, HSSFColor.LEMON_CHIFFON.index))
+                .addConfig(new ColConfig("unitAmount", "单价\n（元/台/月）", 10, HSSFColor.LEMON_CHIFFON.index, AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailRentEndAmount", "本期租金", 6, HSSFColor.TAN.index, AmountExcelExportView.getInstance()))
+//                .addConfig(new ColConfig("statementRentDepositAmount", " 租金押金", 6, HSSFColor.WHITE.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDepositAmount", " 押金", 6, HSSFColor.LEMON_CHIFFON.index,  AmountExcelExportView.getInstance()))
+//                .addConfig(new ColConfig("statementDepositPaidAmount", " 支付押金", 8, HSSFColor.WHITE.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementOverdueAmount", " 逾期金额", 6, HSSFColor.LEMON_CHIFFON.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementOtherAmount", " 其它费用", 6, HSSFColor.LEMON_CHIFFON.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementCorrectAmount", " 调整金额", 6, HSSFColor.LEMON_CHIFFON.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailEndAmount", " 本期应付金额", 10, HSSFColor.TAN.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementExpectPayEndTime", " 本期应付日期", 8, HSSFColor.TAN.index,  DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementAmount", " 本月应付金额", 10, HSSFColor.GOLD.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailStatus", " 状态", 6, new ExcelExportView() {
                     @Override
                     public Object view(Object o) {
                         Integer statementDetailStatus = (Integer) o;

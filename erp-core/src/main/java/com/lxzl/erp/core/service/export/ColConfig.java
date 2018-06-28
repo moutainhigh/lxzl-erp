@@ -23,6 +23,7 @@ public class ColConfig {
     private Short backGroupColor;
     private Short headlineFontColor;
     private Short headlineBackGroupColor;
+    private Integer fontSize;
 
     public Short getHeadlineFontColor() {
         return headlineFontColor;
@@ -88,6 +89,13 @@ public class ColConfig {
         this.fieldName = fieldName;
     }
 
+    public Integer getFontSize() {
+        return fontSize;
+    }
+
+    public void setFontSize(Integer fontSize) {
+        this.fontSize = fontSize;
+    }
 
     public ColConfig(String fieldName, String colName, Integer width, ExcelExportView excelExportView){
         this(fieldName,colName,width,excelExportView,DEFAULT_FONT_COLOR,DEFAULT_BACK_GROUP_COLOR,HEAD_LINE_DEFAULT_FONT_COLOR,HEAD_LINE_DEFAULT_BACK_GROUP_COLOR);

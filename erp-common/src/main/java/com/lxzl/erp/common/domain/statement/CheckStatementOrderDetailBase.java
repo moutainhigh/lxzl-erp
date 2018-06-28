@@ -13,6 +13,7 @@ public class CheckStatementOrderDetailBase extends BasePO {
     private String orderNo; //订单编号
     private Integer orderType;    // 单子类型，详见ORDER_TYPE
     private String itemName;  //商品名
+    private String itemSkuName;  //商品名
     private Integer itemCount;  //数量
     private BigDecimal unitAmount;  //"单价（元/台/月）"
     private BigDecimal statementRentAmount;             // 租金小计
@@ -45,7 +46,13 @@ public class CheckStatementOrderDetailBase extends BasePO {
     private String  returnReasonType;  //退还原因
     private String  statementCorrectNo;  //冲正单号
     private String  statementCorrectReason;  //冲正原因
-
+    private Integer payMode;            // 支付方式
+    private Integer depositCycle;            // 押金周期
+    private Integer paymentCycle;            // 付款周期
+    private String rentProgramme;           // 租赁方案
+    private Date statementExpectPayEndTime;            // 本期付款月数
+    private BigDecimal statementDetailEndAmount;            // 本期应付数
+    private BigDecimal statementDetailRentEndAmount;            // 本期应付租金
 
     public String getK3ReturnOrderDONo() {
         return k3ReturnOrderDONo;
@@ -309,5 +316,69 @@ public class CheckStatementOrderDetailBase extends BasePO {
 
     public void setStatementDepositPaidAmount(BigDecimal statementDepositPaidAmount) {
         this.statementDepositPaidAmount = statementDepositPaidAmount;
+    }
+
+    public Integer getPayMode() {
+        return payMode;
+    }
+
+    public void setPayMode(Integer payMode) {
+        this.payMode = payMode;
+    }
+
+    public Integer getDepositCycle() {
+        return depositCycle;
+    }
+
+    public void setDepositCycle(Integer depositCycle) {
+        this.depositCycle = depositCycle;
+    }
+
+    public Integer getPaymentCycle() {
+        return paymentCycle;
+    }
+
+    public void setPaymentCycle(Integer paymentCycle) {
+        this.paymentCycle = paymentCycle;
+    }
+
+    public String getItemSkuName() {
+        return itemSkuName;
+    }
+
+    public void setItemSkuName(String itemSkuName) {
+        this.itemSkuName = itemSkuName;
+    }
+
+    public String getRentProgramme() {
+        return rentProgramme;
+    }
+
+    public void setRentProgramme(String rentProgramme) {
+        this.rentProgramme = rentProgramme;
+    }
+
+    public Date getStatementExpectPayEndTime() {
+        return statementExpectPayEndTime;
+    }
+
+    public void setStatementExpectPayEndTime(Date statementExpectPayEndTime) {
+        this.statementExpectPayEndTime = statementExpectPayEndTime;
+    }
+
+    public BigDecimal getStatementDetailEndAmount() {
+        return statementDetailEndAmount;
+    }
+
+    public void setStatementDetailEndAmount(BigDecimal statementDetailEndAmount) {
+        this.statementDetailEndAmount = statementDetailEndAmount;
+    }
+
+    public BigDecimal getStatementDetailRentEndAmount() {
+        return statementDetailRentEndAmount;
+    }
+
+    public void setStatementDetailRentEndAmount(BigDecimal statementDetailRentEndAmount) {
+        this.statementDetailRentEndAmount = statementDetailRentEndAmount;
     }
 }

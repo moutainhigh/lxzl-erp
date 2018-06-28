@@ -971,13 +971,45 @@
         ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC,esod.statement_order_id ASC
     </select>
     <select id="exportListPage" resultMap="CheckStatementOrderDetailDO" parameterType="map">
+        select distinct t1.buyer_customer_id as customer_id,<![CDATA[ date_format(t0.month_config,'%Y-%m')]]> as monthTime,
+        case when t4.order_id is null then t1.id else t4.order_id end as order_id,
+        case when t4.order_item_refer_id is null then t2.id else t4.order_item_refer_id end as order_item_refer_id,
+        case when t4.order_type is null then 1 else t4.order_type end as order_type,
+        case when t4.order_item_type is null then 1 else t4.order_item_type end as order_item_type,
+        case when t4.orderRentType is null then t1.rent_type else t4.orderRentType end as orderRentType,
+        case when t4.orderRentStartTime is null then t1.rent_start_time else t4.orderRentStartTime end as orderRentStartTime,
+        case when t4.orderExpectReturnTime is null then t1.expect_return_time else t4.orderExpectReturnTime end as orderExpectReturnTime,
+        case when t4.orderRentTimeLength is null then t1.rent_time_length else t4.orderRentTimeLength end as orderRentTimeLength,
+        case when t4.isNew is null then t2.is_new_product else t4.isNew end as isNew,
+        case when t4.payMode is null then t2.pay_mode else t4.payMode end as payMode,
+        case when t4.depositCycle is null then t2.deposit_cycle else t4.depositCycle end as depositCycle,
+        case when t4.paymentCycle is null then t2.payment_cycle  else t4.paymentCycle end as paymentCycle,
+        case when t4.statement_expect_pay_time is null then t0.month_start_config else t4.statement_expect_pay_time end as statement_expect_pay_time,
+        case when t4.id is null then t1.id else t4.id end as id,
+        case when t4.statement_start_time is null then t0.month_start_config else t4.statement_start_time end as statement_start_time,
+        case when t4.statement_end_time is null then t0.month_end_config else t4.statement_end_time end as statement_end_time,
+--         case when t4.statement_detail_amount is null then t5.statement_detail_amount else t4.statement_detail_amount end as statementDetailEndAmount,
+--         case when t4.statement_detail_amount is null then t5.statement_expect_pay_time else t4.statement_expect_pay_time end as statementExpectPayEndTime,
+--         case when t4.statement_detail_rent_amount is null or t4.statement_detail_rent_amount = 0 then t5.statement_detail_rent_amount else t4.statement_detail_rent_amount end as statementDetailRentEndAmount,
+        t4.*
+        from erp_month_config t0 left join erp_order t1
+        on t0.month_start_config between t1.rent_start_time and t1.expect_return_time or t0.month_end_config between t1.rent_start_time and t1.expect_return_time
+        or date_format(t1.rent_start_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
+        or date_format(t1.expect_return_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
+        left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+        left join
+        (
         SELECT
+        <![CDATA[ date_format(esod.statement_expect_pay_time,'%Y-%m')]]> AS monthTime,
         <include refid="column_List"/>,
         eo.rent_type AS orderRentType,
         eo.rent_start_time AS orderRentStartTime,
         eo.expect_return_time AS orderExpectReturnTime,
         eo.rent_time_length AS orderRentTimeLength,
-        (CASE WHEN eop.id is NULL THEN eom.is_new_material ELSE eop.is_new_product END ) AS isNew
+        (CASE WHEN eop.id is NULL THEN eom.is_new_material ELSE eop.is_new_product END ) AS isNew,
+        (CASE WHEN eop.id is NULL THEN eom.pay_mode ELSE eop.pay_mode END ) AS payMode,
+        (CASE WHEN eop.id is NULL THEN eom.deposit_cycle ELSE eop.deposit_cycle END ) AS depositCycle,
+        (CASE WHEN eop.id is NULL THEN eom.payment_cycle ELSE eop.payment_cycle END ) AS paymentCycle
         FROM erp_statement_order_detail esod
         LEFT JOIN erp_order_product eop ON esod.order_item_refer_id = eop.id AND esod.order_item_type = 1
         LEFT JOIN erp_order_material eom ON esod.order_item_refer_id = eom.id AND esod.order_item_type = 2
@@ -1011,6 +1043,20 @@
                 AND esod.data_status = 1
             </if>
         </where>
+        ) t4 on t1.buyer_customer_id = t4.customer_id and t4.monthTime = date_format(t0.month_config,'%Y-%m')
+        <!--left join (-->
+          <!--select m1.id,month_config,statement_detail_amount,statement_detail_rent_amount,statement_expect_pay_time from erp_month_config m0 left join erp_statement_order_detail m1 on m0.month_config BETWEEN statement_start_time and statement_end_time and m1.data_status = 1-->
+        <!--<where>-->
+            <!--<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">-->
+                <!--and m1.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}-->
+            <!--</if>-->
+        <!--</where>-->
+        <!--) t5 on t4.id = t5.id-->
+        where t1.order_status in (20,22,24,32)
+        <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
+            and t1.buyer_customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
+        </if>
+        and t1.id is not null order by monthTime DESC, orderRentStartTime ASC
     </select>
 
     <select id="findByReletOrderItemReferId" resultMap="StatementOrderDetailDO">
@@ -1018,6 +1064,18 @@
         <include refid="column_List"/>
         FROM erp_statement_order_detail esod
         WHERE esod.data_status = 1 AND esod.relet_order_item_refer_id = #{id, jdbcType=INTEGER} AND statement_detail_type=1
+    </select>
+
+    <select id="findThisPeriodsByOrderInfo" resultType="java.util.Map">
+        select statement_detail_amount as statementDetailAmount,statement_detail_rent_amount as statementDetailRentAmount, statement_expect_pay_time as statementExpectPayTime from erp_statement_order_detail
+        where data_status = 1 and order_id =  #{orderId, jdbcType=INTEGER} and order_item_refer_id =  #{orderItemReferId, jdbcType=INTEGER}
+        <if test="payMode != null &amp;&amp; payMode == 2">
+            <![CDATA[ AND statement_expect_pay_time >= #{expectPayTime, jdbcType=TIMESTAMP} ]]>
+        </if>
+        <if test="payMode != null &amp;&amp; payMode == 1">
+            <![CDATA[ AND statement_expect_pay_time <= #{expectPayTime, jdbcType=TIMESTAMP} ]]>
+        </if>
+        and statement_detail_amount > 0 limit 0,1;
     </select>
 
     <select id="findRentByReletOrderItemReferIds" resultMap="StatementOrderDetailDO">

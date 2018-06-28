@@ -13,6 +13,7 @@ import com.lxzl.erp.common.domain.statement.pojo.CheckStatementOrderDetail;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.DateUtil;
+import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.export.AmountExcelExportView;
 import com.lxzl.erp.core.service.export.ExportExcelCustomFormatService;
 import com.lxzl.erp.core.service.export.ExcelExportConfigGroup;
@@ -33,21 +34,22 @@ import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDO;
+import com.lxzl.se.common.util.StringUtil;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
+import org.apache.tools.zip.ZipEntry;
+import org.apache.tools.zip.ZipOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.OutputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author : XiaoLuYu
@@ -67,6 +69,9 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
     @Autowired
     private AmountExcelExportView amountExcelExportView;
+
+    @Autowired
+    private DingDingSupport dingDingSupport;
 
     @Autowired
     private StatementOrderMapper statementOrderMapper;
@@ -92,47 +97,104 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
     @Override
     public ServiceResult<String, String> queryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam, HttpServletResponse response) throws Exception {
 
+//        String dir = statementOrderMonthQueryParam.getStatementOrderSubCompanyName();
+//        File zip = new File("D:\\statement\\bj.zip");
+
+//        String[] customerNameStr = statementOrderMonthQueryParam.getStatementOrderCustomerName().split(",");
+
         ServiceResult<String, String> result = new ServiceResult<>();
+
+        List<String> fileNames = new ArrayList();// 用于存放生成的文件名称s
+
+//        for (int i = 0; i < customerNameStr.length; i++) {
+        String customerNoParam = statementOrderMonthQueryParam.getStatementOrderCustomerNo();
         //todo 获取有的预计支付时间
         XSSFWorkbook hssfWorkbook = null;
         BigDecimal beforePeriodUnpaid = new BigDecimal(0);
         BigDecimal allPeriodUnpaid = new BigDecimal(0);
+
+        statementOrderMonthQueryParam = new StatementOrderMonthQueryParam();
+        statementOrderMonthQueryParam.setStatementOrderCustomerNo(customerNoParam);
+
         ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam);
         List<CheckStatementOrder> checkStatementOrderList = stringListServiceResult.getResult();
+        if (CollectionUtil.isEmpty(checkStatementOrderList)) {
+            dingDingSupport.dingDingSendMessage(customerNoParam + "无对账单");
+            return result;
+        }
+
+        Map<String, BigDecimal> totalEverPeriodAmountMap = new HashMap<>();
+        Map<String, BigDecimal> totalEverPeriodPaidAmountMap = new HashMap<>();
 
         //算出总的未付
         for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+            totalEverPeriodAmountMap.put(checkStatementOrder.getMonthTime(), BigDecimalUtil.add(totalEverPeriodAmountMap.get(checkStatementOrder.getMonthTime()), checkStatementOrder.getStatementAmount()));
+            totalEverPeriodPaidAmountMap.put(checkStatementOrder.getMonthTime(), BigDecimalUtil.add(totalEverPeriodPaidAmountMap.get(checkStatementOrder.getMonthTime()), checkStatementOrder.getStatementPaidAmount()));
             allPeriodUnpaid = BigDecimalUtil.add(allPeriodUnpaid, BigDecimalUtil.sub(checkStatementOrder.getStatementAmount(), checkStatementOrder.getStatementPaidAmount()));
         }
 
+        String previousSheetName = "";
+        String customerName = "";
+
         for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-            List<CheckStatementOrderDetail> ExportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+            if (checkStatementOrder.getStatementExpectPayTime().getTime() > DateUtil.getEndMonthDate(new Date()).getTime()) {
+                continue;
+            }
+            if (StringUtil.isBlank(customerName)) {
+                customerName = checkStatementOrder.getCustomerName();
+            }
+            List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
             //要保存到额集合
             List<CheckStatementOrderDetailBase> exportList = new ArrayList<>();
-            //本期未付
-            BigDecimal currentPeriodUnpaid = BigDecimalUtil.sub(checkStatementOrder.getStatementAmount(), checkStatementOrder.getStatementPaidAmount());
-            for (CheckStatementOrderDetail exportStatementOrderDetail : ExportStatementOrderDetailList) {
+            for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
                 //todo 分装对象来处理
                 CheckStatementOrderDetailBase exportStatementOrderDetailBase = new CheckStatementOrderDetailBase();
                 exportStatementOrderDetailBase.setOrderNo(exportStatementOrderDetail.getOrderNo()); //订单编号
                 exportStatementOrderDetailBase.setOrderType(exportStatementOrderDetail.getOrderItemType());    // 单子类型，详见ORDER_TYPE
                 exportStatementOrderDetailBase.setItemName(exportStatementOrderDetail.getItemName());  //商品名
+                exportStatementOrderDetailBase.setItemSkuName(exportStatementOrderDetail.getItemSkuName());  //配置
                 exportStatementOrderDetailBase.setItemCount(exportStatementOrderDetail.getItemCount());  //数量
-                exportStatementOrderDetailBase.setUnitAmount(exportStatementOrderDetail.getUnitAmount());  //"单价（元/台/月）"
+                exportStatementOrderDetailBase.setUnitAmount(BigDecimalUtil.round(exportStatementOrderDetail.getUnitAmount(), BigDecimalUtil.STANDARD_SCALE));  //"单价（元/台/月）"
                 exportStatementOrderDetailBase.setStatementRentAmount(exportStatementOrderDetail.getStatementDetailRentAmount());             // 租金小计
                 exportStatementOrderDetailBase.setStatementRentDepositAmount(exportStatementOrderDetail.getStatementDetailRentDepositAmount());      // 租金押金
-                exportStatementOrderDetailBase.setStatementDepositAmount(exportStatementOrderDetail.getStatementDetailDepositAmount());      // 设备押金
+                exportStatementOrderDetailBase.setStatementDepositAmount(BigDecimalUtil.add(exportStatementOrderDetail.getStatementDetailDepositAmount(), exportStatementOrderDetail.getStatementDetailRentDepositAmount()));      // 设备押金
                 exportStatementOrderDetailBase.setStatementOverdueAmount(exportStatementOrderDetail.getStatementDetailOverdueAmount());      // 逾期金额
                 exportStatementOrderDetailBase.setStatementOtherAmount(exportStatementOrderDetail.getStatementDetailOtherAmount());      // 其它费用
                 exportStatementOrderDetailBase.setStatementCorrectAmount(exportStatementOrderDetail.getStatementDetailCorrectAmount());      // 冲正金额
-                exportStatementOrderDetailBase.setStatementAmount(BigDecimalUtil.sub(exportStatementOrderDetail.getStatementDetailAmount(), exportStatementOrderDetail.getStatementDetailPaidAmount()));      // 应付金额
-                exportStatementOrderDetailBase.setStatementExpectPayTime(exportStatementOrderDetail.getStatementExpectPayTime());      // 应付日期
+                exportStatementOrderDetailBase.setStatementAmount(exportStatementOrderDetail.getStatementDetailAmount());      // 应付金额
+                exportStatementOrderDetailBase.setStatementExpectPayEndTime(exportStatementOrderDetail.getStatementExpectPayEndTime());      // 应付日期
+
+                exportStatementOrderDetailBase.setStatementDetailEndAmount(exportStatementOrderDetail.getStatementDetailEndAmount());      // 本期应付金额
+                exportStatementOrderDetailBase.setStatementDetailRentEndAmount(exportStatementOrderDetail.getStatementDetailRentEndAmount());      // 本期应付金额
+
+                if (BigDecimalUtil.compare(exportStatementOrderDetailBase.getStatementDetailEndAmount(), BigDecimal.ZERO) == 0) {
+                    exportStatementOrderDetailBase.setStatementDetailEndAmount(exportStatementOrderDetail.getStatementDetailAmount());      // 本期应付金额
+                }
+                if (BigDecimalUtil.compare(exportStatementOrderDetailBase.getStatementDetailRentEndAmount(), BigDecimal.ZERO) == 0) {
+                    exportStatementOrderDetailBase.setStatementDetailRentEndAmount(exportStatementOrderDetail.getStatementDetailRentAmount());      // 本期应付租金金额
+                }
+                if (BigDecimalUtil.compare(exportStatementOrderDetailBase.getStatementAmount(), BigDecimal.ZERO) != 0) {
+                    exportStatementOrderDetailBase.setStatementExpectPayTime(exportStatementOrderDetail.getStatementExpectPayTime());      // 应付日期
+                }
+                if (exportStatementOrderDetailBase.getStatementExpectPayEndTime() == null) {
+                    exportStatementOrderDetailBase.setStatementExpectPayEndTime(exportStatementOrderDetail.getStatementExpectPayTime());      // 应付日期
+                }
+
                 exportStatementOrderDetailBase.setStatementDepositPaidAmount(exportStatementOrderDetail.getStatementDetailDepositPaidAmount());      // 支付押金
                 exportStatementOrderDetailBase.setStatementDetailStatus(exportStatementOrderDetail.getStatementDetailStatus());      // 状态
                 exportStatementOrderDetailBase.setIsNew(exportStatementOrderDetail.getIsNew());  //是否全新
                 //获取订单类型  月或者天租
                 exportStatementOrderDetailBase.setBusinessType(exportStatementOrderDetail.getOrderType());    //业务类型
-
+                exportStatementOrderDetailBase.setPayMode(exportStatementOrderDetail.getPayMode());    //支付方式
+                if (exportStatementOrderDetail.getDepositCycle() == null) {
+                    exportStatementOrderDetail.setDepositCycle(0);
+                }
+                if (exportStatementOrderDetail.getPaymentCycle() == null) {
+                    exportStatementOrderDetail.setPaymentCycle(0);
+                }
+                exportStatementOrderDetailBase.setDepositCycle(exportStatementOrderDetail.getDepositCycle());    //押金期数
+                exportStatementOrderDetailBase.setPaymentCycle(exportStatementOrderDetail.getPaymentCycle());    //付款期数
+                exportStatementOrderDetailBase.setRentProgramme("押" + exportStatementOrderDetail.getDepositCycle() + "付" + exportStatementOrderDetail.getPaymentCycle());
 
                 //冲正单单号和原因保存
                 List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderIdAndItemId(exportStatementOrderDetail.getStatementOrderId(), exportStatementOrderDetail.getOrderId(), exportStatementOrderDetail.getOrderItemReferId());
@@ -143,7 +205,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                         statementCorrectNo.append(statementOrderCorrectDO.getStatementCorrectNo() + "/n");
                         statementCorrectReason.append(statementOrderCorrectDO.getStatementCorrectReason() + "/n");
                     }
-                    exportStatementOrderDetailBase.setStatementCorrectNo(String.valueOf(statementCorrectNo));
+                    exportStatementOrderDetailBase.setStatementCorrectNo(statementCorrectNo.toString());
                     exportStatementOrderDetailBase.setStatementCorrectReason(String.valueOf(statementCorrectReason));
                 }
 
@@ -158,7 +220,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                         returnReasonType.append(formatReturnReasonType(k3ReturnOrderDO.getReturnReasonType()));
                         //订单
                         K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(exportStatementOrderDetail.getOrderItemReferId());
-                        if(k3ReturnOrderDetailDO != null){
+                        if (k3ReturnOrderDetailDO != null) {
                             OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
                             exportStatementOrderDetailBase.setOrderNo(orderDO.getOrderNo());
                             exportStatementOrderDetail.setOrderRentStartTime(orderDO.getRentStartTime());//租赁开始日期
@@ -175,7 +237,6 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                                 exportStatementOrderDetailBase.setIsNew(isNewMaterial);
                             }
                         }
-
 
 
                         //冲正单单号和原因保存
@@ -244,23 +305,37 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 XSSFRow rowNo1 = hssfSheet.createRow(0);
                 rowNo1.setHeightInPoints(39);
                 XSSFCell cellNo1 = rowNo1.createCell(0);
-                cellNo1.setCellValue(checkStatementOrder.getCustomerName());
+                cellNo1.setCellValue(customerName);
                 rowNo1.setHeightInPoints(30);
                 XSSFCellStyle cellStyle = hssfWorkbook.createCellStyle();
                 Font font = hssfWorkbook.createFont();
-                font.setFontName("微软雅黑");//字体格式
-                font.setFontHeightInPoints((short) 14);//字体大小
+                font.setFontName("宋体");//字体格式
+                font.setFontHeightInPoints((short) 9);//字体大小
                 font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);//粗体显示
                 cellStyle.setFont(font);
                 cellStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER); // 居中
                 cellStyle.setVerticalAlignment(XSSFCellStyle.VERTICAL_CENTER);//垂直居中
                 cellNo1.setCellStyle(cellStyle);
             }
+            if (hssfSheet == null || CollectionUtil.isEmpty(exportList)) {
+                continue;
+            }
 
             ServiceResult<String, XSSFWorkbook> serviceResult = excelExportService.getXSSFWorkbook(hssfWorkbook, hssfSheet, exportList, ExcelExportConfigGroup.statementOrderCheckConfig, sheetName, 2, 40, 63);
             hssfWorkbook = serviceResult.getResult();
             XSSFSheet sheetAt = hssfWorkbook.getSheet(sheetName);
             int lastRowNum = sheetAt.getLastRowNum();
+
+            sheetAt.setColumnHidden(6, true);
+            sheetAt.setColumnHidden(7, true);
+            sheetAt.setColumnHidden(8, true);
+            sheetAt.setColumnHidden(9, true);
+            sheetAt.setColumnHidden(10, true);
+            sheetAt.setColumnHidden(12, true);
+            sheetAt.setColumnHidden(13, true);
+            sheetAt.setColumnHidden(14, true);
+            sheetAt.setColumnHidden(15, true);
+            sheetAt.setColumnHidden(16, true);
 
             XSSFRow hssfRow1 = sheetAt.createRow(lastRowNum + 2);
             XSSFRow hssfRow2 = sheetAt.createRow(lastRowNum + 3);
@@ -273,27 +348,39 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             hssfRow4.setHeightInPoints(30);
             hssfRow5.setHeightInPoints(30);
 
+
             XSSFCell cell201 = hssfRow1.createCell(25);
             XSSFCell cell202 = hssfRow2.createCell(25);
             XSSFCell cell203 = hssfRow3.createCell(25);
             XSSFCell cell204 = hssfRow4.createCell(25);
             XSSFCell cell205 = hssfRow5.createCell(25);
 
-            cell201.setCellValue(amountExcelExportView.view(checkStatementOrder.getStatementAmount()).toString());
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell201, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
-            cell202.setCellValue(amountExcelExportView.view(checkStatementOrder.getStatementPaidAmount()).toString());
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell202, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
-            cell203.setCellValue(currentPeriodUnpaid.toString());
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell203, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
-            if (beforePeriodUnpaid != null) {
-                cell204.setCellValue(beforePeriodUnpaid.toString());
-                ExcelExportSupport.setCellStyle(hssfWorkbook, cell204, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
-            }
-            //这是上一期
-            beforePeriodUnpaid = currentPeriodUnpaid;
+            // 本期应付
+            cell201.setCellValue(Double.parseDouble(amountExcelExportView.view(totalEverPeriodAmountMap.get(checkStatementOrder.getMonthTime())).toString()));
+            ExcelExportSupport.setCellStyle(hssfWorkbook, cell201, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
+            // 本期已付
+            cell202.setCellValue(Double.parseDouble(amountExcelExportView.view(totalEverPeriodPaidAmountMap.get(checkStatementOrder.getMonthTime())).toString()));
+            ExcelExportSupport.setCellStyle(hssfWorkbook, cell202, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
+            // 本期未付
+            BigDecimal currentPeriodUnpaid = BigDecimalUtil.sub(totalEverPeriodAmountMap.get(checkStatementOrder.getMonthTime()), totalEverPeriodPaidAmountMap.get(checkStatementOrder.getMonthTime()));
+            cell203.setCellValue(currentPeriodUnpaid.setScale(2, BigDecimal.ROUND_DOWN).doubleValue());
+            ExcelExportSupport.setCellStyle(hssfWorkbook, cell203, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
 
-            cell205.setCellValue(allPeriodUnpaid.toString());
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell205, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
+            if (StringUtil.isNotBlank(previousSheetName) || !sheetName.equals(previousSheetName)) {
+                beforePeriodUnpaid = BigDecimalUtil.sub(allPeriodUnpaid, currentPeriodUnpaid);
+            }
+
+            // 截止上期未付
+            cell204.setCellValue(beforePeriodUnpaid.setScale(2, BigDecimal.ROUND_DOWN).doubleValue());
+            ExcelExportSupport.setCellStyle(hssfWorkbook, cell204, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
+
+            // 累计未付
+            cell205.setCellValue(allPeriodUnpaid.doubleValue());
+            ExcelExportSupport.setCellStyle(hssfWorkbook, cell205, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
+
+            if (StringUtil.isNotBlank(previousSheetName) || !sheetName.equals(previousSheetName)) {
+                allPeriodUnpaid = BigDecimalUtil.sub(allPeriodUnpaid, currentPeriodUnpaid);
+            }
 
             XSSFCell cell151 = hssfRow1.createCell(20);
             XSSFCell cell152 = hssfRow2.createCell(20);
@@ -307,42 +394,98 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             createCell(hssfWorkbook, hssfRow4, 21, 4);
             createCell(hssfWorkbook, hssfRow5, 21, 4);
 
-            cell151.setCellValue("本期应付");
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell151, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
-            cell152.setCellValue("本期已付");
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell152, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
-            cell153.setCellValue("本期未付");
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell153, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
-            cell154.setCellValue("上期未付");
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell154, HSSFColor.GREY_80_PERCENT.index, HSSFColor.SEA_GREEN.index);
+            cell151.setCellValue("本月应付");
+            ExcelExportSupport.setCellStyle(hssfWorkbook, cell151, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
+            cell152.setCellValue("本月已付");
+            ExcelExportSupport.setCellStyle(hssfWorkbook, cell152, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
+            cell153.setCellValue("本月未付");
+            ExcelExportSupport.setCellStyle(hssfWorkbook, cell153, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
+            cell154.setCellValue("逾期金额");
+            ExcelExportSupport.setCellStyle(hssfWorkbook, cell154, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
             cell155.setCellValue("累计未付");
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell155, HSSFColor.GREY_80_PERCENT.index, HSSFColor.SEA_GREEN.index);
+            ExcelExportSupport.setCellStyle(hssfWorkbook, cell155, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
 
             hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 2, lastRowNum + 2, 20, 24));
             hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 3, lastRowNum + 3, 20, 24));
             hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 4, lastRowNum + 4, 20, 24));
             hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 5, lastRowNum + 5, 20, 24));
             hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 6, lastRowNum + 6, 20, 24));
+
+            if (StringUtil.isBlank(previousSheetName) || !previousSheetName.equals(sheetName)) {
+                previousSheetName = sheetName;
+            }
         }
 
+
+//            String file = "D:\\statement\\20180628\\" + dir + "\\" + (customerName + "对账单") + ".xlsx";
+//            fileNames.add(file);
+//            FileOutputStream o = new FileOutputStream(file);
+//            hssfWorkbook.write(o);
+//        }
+
         response.reset();
-        response.setHeader("Content-disposition", "attachment; filename=" + new String("对账单".getBytes("GB2312"), "ISO_8859_1") + ".xlsx");
+        response.setHeader("Content-disposition", "attachment; filename=" + new String((customerName + "对账单").getBytes("GB2312"), "ISO_8859_1") + ".xlsx");
         response.setContentType("application/json;charset=utf-8");
         OutputStream stream = response.getOutputStream();
         hssfWorkbook.write(stream);
         stream.flush();
         stream.close();
+
+//        File srcfile[] = new File[fileNames.size()];
+//        for (int i = 0, n1 = fileNames.size(); i < n1; i++) {
+//            srcfile[i] = new File(fileNames.get(i));
+//        }
+//
+//        ZipFiles(srcfile, zip);
+//        FileInputStream inStream = new FileInputStream(zip);
+//        byte[] buf = new byte[4096];
+//        int readLength;
+//        while (((readLength = inStream.read(buf)) != -1)) {
+//            response.getOutputStream().write(buf, 0, readLength);
+//        }
+//
+//        inStream.close();
+//        response.getOutputStream().close();
+
+
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
+
+    //压缩文件
+    public static void ZipFiles(java.io.File[] srcfile, java.io.File zipfile) {
+        byte[] buf = new byte[1024];
+        try {
+            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(
+                    zipfile));
+            for (int i = 0; i < srcfile.length; i++) {
+                FileInputStream in = new FileInputStream(srcfile[i]);
+                out.putNextEntry(new ZipEntry(srcfile[i].getName()));
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                out.closeEntry();
+                in.close();
+            }
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        System.out.println("对账单");
+    }
+
 
     private String formatPeriodStartAndEnd(Date periodStart, Date periodEnd) {
         if (periodStart == null || periodEnd == null) {
             return "";
         }
         return "开始:" + new SimpleDateFormat("yyyy-MM-dd").format(periodStart) +
-                "开始:" + new SimpleDateFormat("yyyy-MM-dd").format(periodEnd) +
-                "期限:";
+                "\n结束:" + new SimpleDateFormat("yyyy-MM-dd").format(periodEnd) +
+                "\n期限:";
     }
 
     private void createCell(XSSFWorkbook hssfWorkbook, XSSFRow hssfRow, Integer startColumn, Integer several) {
