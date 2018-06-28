@@ -657,7 +657,7 @@
 			FROM erp_order eo
 			LEFT JOIN erp_order_material eom ON eo.id = eom.order_id AND eom.data_status = 1
 			INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
-			WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND eo.data_status =1 AND eom.rent_deposit_amount > 0
+			WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND eo.data_status =1 AND (eom.deposit_amount > 0 OR eom.material_unit_amount>0)
 			)t3 on t3.customer_no = ec.customer_no
 		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>
