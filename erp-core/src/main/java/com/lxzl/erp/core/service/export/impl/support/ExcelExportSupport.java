@@ -277,14 +277,15 @@ public class ExcelExportSupport<T> {
 
     //方法四：
     public final static boolean isNumeric(String  str) {
-        Pattern pattern = Pattern.compile("-?[0-9]+.?[0-9]+");
-        Matcher isNum = pattern.matcher(str);
-        if (!isNum.matches()) {
+        Pattern pattern=Pattern.compile("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$"); // 判断小数点后2位的数字的正则表达式
+        Matcher match=pattern.matcher(str);
+        if(match.matches()==false){
             return false;
+        }else{
+            return true;
         }
-        return true;
     }
-
+    
     public static void setCellStyle(Workbook hssfWorkbook, Cell cell, short fontColor, short backGroupColor) {
         CellStyle style = hssfWorkbook.createCellStyle();
         style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 居中
