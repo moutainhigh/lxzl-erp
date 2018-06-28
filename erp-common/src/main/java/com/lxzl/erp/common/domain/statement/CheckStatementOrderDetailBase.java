@@ -53,6 +53,7 @@ public class CheckStatementOrderDetailBase extends BasePO {
     private Date statementExpectPayEndTime;            // 本期付款月数
     private BigDecimal statementDetailEndAmount;            // 本期应付数
     private BigDecimal statementDetailRentEndAmount;            // 本期应付租金
+    private String unitAmountInfo;
 
     public String getK3ReturnOrderDONo() {
         return k3ReturnOrderDONo;
@@ -380,5 +381,13 @@ public class CheckStatementOrderDetailBase extends BasePO {
 
     public void setStatementDetailRentEndAmount(BigDecimal statementDetailRentEndAmount) {
         this.statementDetailRentEndAmount = statementDetailRentEndAmount;
+    }
+
+    public String getUnitAmountInfo() {
+        return unitAmountInfo;
+    }
+
+    public void setUnitAmountInfo(String unitAmountInfo) {
+        this.unitAmountInfo = unitAmountInfo;
     }
 }
