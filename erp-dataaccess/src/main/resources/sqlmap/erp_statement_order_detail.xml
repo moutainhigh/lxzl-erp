@@ -1050,7 +1050,7 @@
                 AND esod.data_status = 1
             </if>
         </where>
-        ) t4 on t1.buyer_customer_id = t4.customer_id and t4.monthTime = date_format(t0.month_config,'%Y-%m')
+        ) t4 on t1.buyer_customer_id = t4.customer_id and t4.monthTime = date_format(t0.month_config,'%Y-%m') and t1.id = t4.order_id
         <!--left join (-->
         <!--select m1.id,month_config,statement_detail_amount,statement_detail_rent_amount,statement_expect_pay_time from erp_month_config m0 left join erp_statement_order_detail m1 on m0.month_config BETWEEN statement_start_time and statement_end_time and m1.data_status = 1-->
         <!--<where>-->
