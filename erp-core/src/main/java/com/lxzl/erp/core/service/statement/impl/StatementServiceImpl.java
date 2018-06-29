@@ -5094,6 +5094,7 @@ public class StatementServiceImpl implements StatementService {
                                 }
                             }
                         }
+                        statementOrderDetail.setItemCount(statementOrderDetail.getItemCount() == null? 0 : statementOrderDetail.getItemCount() * -1);
                     }
                     if (OrderType.ORDER_TYPE_CHANGE.equals(statementOrderDetail.getOrderType())) {
                         if (OrderType.ORDER_TYPE_CHANGE.equals(statementOrderDetail.getOrderType())) {
