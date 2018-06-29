@@ -27,6 +27,16 @@ CREATE TABLE `erp_user` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=500001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='管理系统用户信息表';
 
+DROP TABLE if exists `erp_month_config`;
+CREATE TABLE `erp_month_config` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `month_config` datetime COMMENT '月份开始',
+  `month_start_config` datetime COMMENT '月份开始',
+  `month_end_config` datetime COMMENT '月份结束',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_month` (`month_config`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='月份配置';
+
 DROP TABLE if exists `erp_user_login_log`;
 CREATE TABLE `erp_user_login_log` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
@@ -3705,3 +3715,18 @@ CREATE TABLE `erp_dingding_group_message_config` (
 	PRIMARY KEY (`id`),
 	KEY `index_sub_company_id` (`sub_company_id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='钉钉群消息配置表';
+
+DROP TABLE IF EXISTS `erp_customer_statement_date_change_log`;
+CREATE TABLE `erp_customer_statement_date_change_log` (
+	`id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+	`statement_date` int(20) NOT NULL COMMENT '结算时间（天），-1,20和31三种情况',
+	`customer_no` VARCHAR(100) NOT NULL COMMENT '客户编号',
+	`data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+	`remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+	`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+	`create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+	`update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+	PRIMARY KEY (`id`),
+	KEY `index_customer_no` (`customer_no`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户结算日修变更录表';

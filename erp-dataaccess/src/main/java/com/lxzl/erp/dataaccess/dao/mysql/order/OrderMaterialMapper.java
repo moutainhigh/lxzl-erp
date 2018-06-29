@@ -23,4 +23,5 @@ public interface OrderMaterialMapper extends BaseMysqlDAO<OrderMaterialDO> {
     List<OrderMaterialDO> findOrderMaterialByName(@Param("materialName") String materialName);
 
     Integer findTotalRentingMaterialCountByOrderId(@Param("orderId") Integer orderId);
+    OrderMaterialDO findK3OrderMaterial(@Param("orderId") Integer orderId,@Param("FEntryId") Integer FEntryId);
 }
