@@ -4929,6 +4929,12 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
+        List<CheckStatementOrderDetailDO> returnListPage = statementOrderDetailMapper.exportReturnListPage(maps);
+        if (CollectionUtil.isNotEmpty(returnListPage)) {
+            for (CheckStatementOrderDetailDO checkStatementOrderDetailDO : returnListPage) {
+                listPage.add(checkStatementOrderDetailDO);
+            }
+        }
 
         for (CheckStatementOrderDO exportStatementOrderDO : statementOrderDOList) {
             List<CheckStatementOrderDetailDO> checkStatementOrderDetailDOList = exportStatementOrderDO.getCheckStatementOrderDetailDOList();
@@ -4975,6 +4981,7 @@ public class StatementServiceImpl implements StatementService {
             if (statementOrder != null && CollectionUtil.isNotEmpty(statementOrder.getStatementOrderDetailList())) {
                 Map<Integer, CheckStatementOrderDetail> statementOrderDetailMap = ListUtil.listToMap(statementOrder.getStatementOrderDetailList(), "statementOrderDetailId");
 
+                Map<String, Date[]> statementTimeMap = new HashMap<>();
                 for (CheckStatementOrderDetail statementOrderDetail : statementOrder.getStatementOrderDetailList()) {
                     if (statementOrderDetail.getReturnReferId() != null) {
                         returnReferStatementOrderDetail = statementOrderDetailMap.get(statementOrderDetail.getReturnReferId());
@@ -5007,6 +5014,7 @@ public class StatementServiceImpl implements StatementService {
                         if ((OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType())
                                 || OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType()))
                                 && payMode != 0) {
+
                             // 查询本期订单 只处理商品和配件
                             // 如果本期账单租金为0，则去找应该什么时候支付
                             if ((statementOrderDetail.getStatementDetailType() == null || StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetail.getStatementDetailType())) && BigDecimalUtil.compare(statementOrderDetail.getStatementDetailRentAmount(), BigDecimal.ZERO) == 0) {
@@ -5018,9 +5026,24 @@ public class StatementServiceImpl implements StatementService {
                                         statementOrderDetail.setStatementExpectPayEndTime(new SimpleDateFormat("yyyy-MM-dd").parse(thisPeriodsByOrderInfoMap.get("statementExpectPayTime").toString()));
                                         statementOrderDetail.setStatementStartTime(new SimpleDateFormat("yyyy-MM-dd").parse(thisPeriodsByOrderInfoMap.get("statementStartTime").toString()));
                                         statementOrderDetail.setStatementEndTime(new SimpleDateFormat("yyyy-MM-dd").parse(thisPeriodsByOrderInfoMap.get("statementEndTime").toString()));
+
+                                        if (statementTimeMap.get(statementOrderDetail.getOrderId().toString()) == null) {
+                                            Date[] dateArr = new Date[2];
+                                            dateArr[0] = statementOrderDetail.getStatementStartTime();
+                                            dateArr[1] = statementOrderDetail.getStatementEndTime();
+                                            statementTimeMap.put(statementOrderDetail.getOrderId().toString(), dateArr);
+                                        }
                                     } catch (Exception e) {
 
                                     }
+                                }
+                            }
+                            if ((statementOrderDetail.getStatementStartTime() == null
+                                    || statementOrderDetail.getStatementEndTime() == null) && statementTimeMap.get(statementOrderDetail.getOrderId().toString()) != null) {
+                                Date[] dateArr = statementTimeMap.get(statementOrderDetail.getOrderId().toString());
+                                if (dateArr != null && dateArr.length >= 2) {
+                                    statementOrderDetail.setStatementStartTime(dateArr[0]);
+                                    statementOrderDetail.setStatementEndTime(dateArr[1]);
                                 }
                             }
                         }
