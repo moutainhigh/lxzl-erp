@@ -415,7 +415,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell152, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
             cell153.setCellValue("本月未付");
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell153, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
-            cell154.setCellValue("逾期金额");
+            cell154.setCellValue("截止上期未付");
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell154, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
             cell155.setCellValue("累计未付");
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell155, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
