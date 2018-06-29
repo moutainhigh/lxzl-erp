@@ -165,9 +165,17 @@
 
     <select id="findByOrderId" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
         SELECT
+        <include refid="column_List"/>
+        FROM erp_statement_order_detail esod
+        WHERE esod.order_id = #{orderId, jdbcType=INTEGER} AND order_type = 1 AND esod.data_status = 1
+        ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC
+    </select>
+
+    <select id="findByOrderIdForOrderDetail" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
+        SELECT
         <include refid="column_List"/>,eso.statement_order_no
         FROM erp_statement_order_detail esod
-        LEFT JOIN erp_statement_order eso ON esod.statement_order_id = eso.id
+        LEFT JOIN erp_statement_order eso ON esod.statement_order_id = eso.id AND eso.data_status = 1
         WHERE esod.order_id = #{orderId, jdbcType=INTEGER} AND order_type = 1 AND esod.data_status = 1
         ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC
     </select>
