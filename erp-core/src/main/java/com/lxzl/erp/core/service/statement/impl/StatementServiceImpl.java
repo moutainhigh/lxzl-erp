@@ -5175,6 +5175,8 @@ public class StatementServiceImpl implements StatementService {
                                     statementOrderDetail.setStatementDetailEndAmount(new BigDecimal(thisPeriodsByOrderInfoMap.get("statementDetailAmount").toString()));
                                     try {
                                         statementOrderDetail.setStatementExpectPayEndTime(new SimpleDateFormat("yyyy-MM-dd").parse(thisPeriodsByOrderInfoMap.get("statementExpectPayTime").toString()));
+                                        statementOrderDetail.setStatementStartTime(new SimpleDateFormat("yyyy-MM-dd").parse(thisPeriodsByOrderInfoMap.get("statementStartTime").toString()));
+                                        statementOrderDetail.setStatementEndTime(new SimpleDateFormat("yyyy-MM-dd").parse(thisPeriodsByOrderInfoMap.get("statementEndTime").toString()));
                                     } catch (Exception e) {
 
                                     }
