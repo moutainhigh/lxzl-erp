@@ -341,78 +341,6 @@ public class StatementServiceImpl implements StatementService {
         return lastPhaseList;
     }
 
-    private double getOrderPercent(Integer rentTimeLength, Integer rentType, Date rentStartTime, OrderStatementDateSplitDO orderStatementDateSplitDO, Date expectReturnTime, Date statementDateChangeTime) {
-        if (rentType.equals(OrderRentType.RENT_TYPE_DAY)) {
-            return DateUtil.daysBetween(rentStartTime, statementDateChangeTime) / (double) DateUtil.daysBetween(rentStartTime, expectReturnTime) * CommonConstant.PROPORTION_MAX;
-        } else {
-            double phaseCout = 0;
-            boolean isFirst = true;
-            if (orderStatementDateSplitDO.getBeforeStatementDate() == StatementMode.STATEMENT_MONTH_END) {
-                Date nextStartTime = rentStartTime;
-
-                while (DateUtil.daysBetween(nextStartTime, statementDateChangeTime) > 0) {
-                    Calendar endCalandar = Calendar.getInstance();
-                    endCalandar.setTime(nextStartTime);
-                    endCalandar.set(Calendar.DAY_OF_MONTH, endCalandar.getActualMaximum(Calendar.DAY_OF_MONTH));
-                    Date endTime = endCalandar.getTime();
-                    //首尾算比例
-                    if (endTime.compareTo(statementDateChangeTime) > 0 || isFirst) {
-                        isFirst = false;
-                        if (endTime.compareTo(statementDateChangeTime) > 0) endTime = statementDateChangeTime;
-                        phaseCout += DateUtil.daysBetween(nextStartTime, endTime) / (double) endCalandar.getActualMaximum(Calendar.DAY_OF_MONTH);
-                    } else phaseCout += 1;
-
-                    nextStartTime = endTime;
-                }
-            } else if (orderStatementDateSplitDO.getBeforeStatementDate() == StatementMode.STATEMENT_20) {
-                Date nextStartTime = rentStartTime;
-                while (DateUtil.daysBetween(nextStartTime, statementDateChangeTime) > 0) {
-                    Calendar endCalandar = Calendar.getInstance();
-                    endCalandar.setTime(nextStartTime);
-                    endCalandar.set(Calendar.DAY_OF_MONTH, StatementMode.STATEMENT_20);
-                    Date endTime = endCalandar.getTime();
-                    if (endTime.compareTo(nextStartTime) <= 0) {
-                        endCalandar.add(Calendar.MONTH, 1);
-                        endTime = endCalandar.getTime();
-                    }
-                    endCalandar.add(Calendar.MONTH, -1);
-                    Date beforeEndTime = endCalandar.getTime();
-                    if (endTime.compareTo(statementDateChangeTime) > 0 || isFirst) {
-                        isFirst = false;
-                        if (endTime.compareTo(statementDateChangeTime) > 0) endTime = statementDateChangeTime;
-                        phaseCout += DateUtil.daysBetween(nextStartTime, endTime) / (double) DateUtil.daysBetween(beforeEndTime, endTime);
-                    } else phaseCout += 1;
-
-                    nextStartTime = endTime;
-                }
-            } else if (orderStatementDateSplitDO.getBeforeStatementDate() == StatementMode.STATEMENT_MONTH_NATURAL) {
-                Calendar rentStartCalendar = Calendar.getInstance();
-                rentStartCalendar.setTime(rentStartTime);
-                int actualStatementDate = rentStartCalendar.get(Calendar.DAY_OF_MONTH);
-                Date nextStartTime = rentStartTime;
-                while (DateUtil.daysBetween(nextStartTime, statementDateChangeTime) > 0) {
-                    Calendar endCalandar = Calendar.getInstance();
-                    endCalandar.setTime(nextStartTime);
-                    endCalandar.set(Calendar.DAY_OF_MONTH, actualStatementDate);
-                    Date endTime = endCalandar.getTime();
-                    if (endTime.compareTo(nextStartTime) <= 0) {
-                        endCalandar.add(Calendar.MONTH, 1);
-                        endTime = endCalandar.getTime();
-                    }
-                    endCalandar.add(Calendar.MONTH, -1);
-                    Date beforeEndTime = endCalandar.getTime();
-                    if (endTime.compareTo(statementDateChangeTime) > 0 || isFirst) {
-                        isFirst = false;
-                        if (endTime.compareTo(statementDateChangeTime) > 0) endTime = statementDateChangeTime;
-                        phaseCout += DateUtil.daysBetween(nextStartTime, endTime) / (double) DateUtil.daysBetween(beforeEndTime, endTime);
-                    } else phaseCout += 1;
-                    nextStartTime = endTime;
-                }
-            }
-            return phaseCout / rentTimeLength * CommonConstant.PROPORTION_MAX;
-        }
-    }
-
     private List<StatementOrderDetailDO> getStatementReletOrderDetailDOS(ReletOrderDO reletOrderDO, Date currentTime, Date rentStartTime, Integer loginUserId) {
         //结算类型分界
         OrderStatementDateSplitDO orderStatementDateSplitDO = orderStatementDateSplitMapper.findByOrderNo(reletOrderDO.getOrderNo());
@@ -473,93 +401,6 @@ public class StatementServiceImpl implements StatementService {
                 statementOrderDetailDOList.addAll(materialStatementOrderDetailDOList);
         }
         return statementOrderDetailDOList;
-    }
-//    private List<StatementOrderDetailDO> getStatementReletOrderDetailDOS(ReletOrderDO reletOrderDO, Date currentTime, Date rentStartTime, Integer loginUserId) {
-//        //结算类型分界
-//        OrderStatementDateSplitDO k3StatementDateChangeDO= k3StatementDateChangeMapper.findByOrderNo(reletOrderDO.getOrderNo());
-//        //是否订单在租期间改变结算日（前后两部分结算日不一样）
-//        List<StatementOrderDetailDO> addStatementOrderDetailDOList=new ArrayList<>();
-//        //Date expectReturnTime=orderDO.getExpectReturnTime();
-//        //考虑到续租会覆盖原订单的归还时间
-//        Date expectReturnTime=reletOrderDO.getExpectReturnTime();
-//        boolean isStatementDateChangeInOrderRentTime=k3StatementDateChangeDO!=null&&k3StatementDateChangeDO.getAfterStatementDate()!=null&&k3StatementDateChangeDO.getBeforeStatementDate()!=null&&!k3StatementDateChangeDO.getBeforeStatementDate().equals(k3StatementDateChangeDO.getAfterStatementDate())&&k3StatementDateChangeDO.getStatementDateChangeTime().compareTo(reletOrderDO.getRentStartTime())>0&&k3StatementDateChangeDO.getStatementDateChangeTime().compareTo(expectReturnTime)<0;
-//        if(isStatementDateChangeInOrderRentTime){
-//            //获取分割点
-//            Date statementDateChangeTime=getStatementChangeDate(rentStartTime,k3StatementDateChangeDO);
-//
-//            Integer beforeStatementDays = statementOrderSupport.getCustomerStatementDate(k3StatementDateChangeDO.getBeforeStatementDate(), rentStartTime);
-//            reletOrderDO.setRentStartTime(rentStartTime);
-//            reletOrderDO.setExpectReturnTime(DateUtil.getDayByOffset(statementDateChangeTime,-1));
-//
-//            double percent=getOrderPercent(reletOrderDO.getRentTimeLength(),reletOrderDO.getRentType(), rentStartTime, k3StatementDateChangeDO, expectReturnTime, statementDateChangeTime);
-//
-//            Integer rentLenth=reletOrderDO.getRentTimeLength();
-//            int beforeLength=(int)(rentLenth*percent/CommonConstant.PROPORTION_MAX);
-//            reletOrderDO.setRentTimeLength(beforeLength);
-//            reletOrderDO.setStatementDate(k3StatementDateChangeDO.getBeforeStatementDate());
-//            List<StatementOrderDetailDO> beforeStatementOrderDetailDOList = generateReletStatementDetailList(reletOrderDO, currentTime, beforeStatementDays, loginUserId,percent);
-//            for (StatementOrderDetailDO statementOrderDetailDO:beforeStatementOrderDetailDOList)if(statementOrderDetailDO.getStatementDetailPhase().equals(beforeLength))statementOrderDetailDO.setStatementEndTime(DateUtil.getDayByOffset(statementDateChangeTime,-1));
-//
-//            reletOrderDO.setRentStartTime(statementDateChangeTime);
-//            reletOrderDO.setExpectReturnTime(expectReturnTime);
-//            Integer afterStatementDays = statementOrderSupport.getCustomerStatementDate(k3StatementDateChangeDO.getAfterStatementDate(),statementDateChangeTime);
-//            reletOrderDO.setRentTimeLength(rentLenth-beforeLength);
-//
-//            List<StatementOrderDetailDO> afterStatementOrderDetailDOList = generateReletStatementDetailList(reletOrderDO, currentTime, afterStatementDays, loginUserId,CommonConstant.PROPORTION_MAX-percent);
-//            for(StatementOrderDetailDO statementOrderDetailDO:afterStatementOrderDetailDOList)if(statementOrderDetailDO.getStatementDetailPhase().equals(reletOrderDO.getRentTimeLength()))statementOrderDetailDO.setStatementEndTime(expectReturnTime);
-//
-//            //过滤第二部分重算的押金
-//            if(CollectionUtil.isNotEmpty(beforeStatementOrderDetailDOList))addStatementOrderDetailDOList.addAll(beforeStatementOrderDetailDOList);
-//            if(CollectionUtil.isNotEmpty(afterStatementOrderDetailDOList))
-//                for (StatementOrderDetailDO statementOrderDetailDO:afterStatementOrderDetailDOList){
-//                    if(!StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType()))addStatementOrderDetailDOList.add(statementOrderDetailDO);
-//                }
-//        }else{
-//            //如果结算日配置存在则以配置为准（不是用原订单结算日）
-//            if(k3StatementDateChangeDO!=null){
-//                if(k3StatementDateChangeDO.getStatementDateChangeTime().compareTo(reletOrderDO.getExpectReturnTime())>=0)reletOrderDO.setStatementDate(k3StatementDateChangeDO.getBeforeStatementDate());
-//                if(k3StatementDateChangeDO.getStatementDateChangeTime().compareTo(reletOrderDO.getRentStartTime())<=0)reletOrderDO.setStatementDate(k3StatementDateChangeDO.getAfterStatementDate());
-//            }
-//            //统一拿订单结算日
-//            Integer statementDays = statementOrderSupport.getCustomerStatementDate(reletOrderDO.getStatementDate(), rentStartTime);
-//            addStatementOrderDetailDOList = generateReletStatementDetailList(reletOrderDO, currentTime, statementDays, loginUserId);
-//        }
-//        return addStatementOrderDetailDOList;
-//    }
-
-    /**
-     * 获取分段日
-     *
-     * @param rentStartTime
-     * @param orderStatementDateSplitDO
-     * @return
-     * @description 获取最近小于分段日的结算日
-     */
-    private Date getStatementChangeDate(Date rentStartTime, OrderStatementDateSplitDO orderStatementDateSplitDO) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(orderStatementDateSplitDO.getStatementDateChangeTime());
-        if (orderStatementDateSplitDO.getBeforeStatementDate() == StatementMode.STATEMENT_MONTH_END) {
-            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-            if (DateUtil.daysBetween(calendar.getTime(), orderStatementDateSplitDO.getStatementDateChangeTime()) < 0) {
-                calendar.add(Calendar.MONTH, -1);
-                calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-            }
-        } else if (orderStatementDateSplitDO.getBeforeStatementDate() == StatementMode.STATEMENT_20) {
-            calendar.set(Calendar.DAY_OF_MONTH, StatementMode.STATEMENT_20);
-            if (DateUtil.daysBetween(calendar.getTime(), orderStatementDateSplitDO.getStatementDateChangeTime()) < 0) {
-                calendar.add(Calendar.MONTH, -1);
-            }
-        } else if (orderStatementDateSplitDO.getBeforeStatementDate() == StatementMode.STATEMENT_MONTH_NATURAL) {
-            Calendar startRentC = Calendar.getInstance();
-            startRentC.setTime(rentStartTime);
-            calendar.set(Calendar.DAY_OF_MONTH, startRentC.get(Calendar.DAY_OF_MONTH));
-            if (DateUtil.daysBetween(calendar.getTime(), orderStatementDateSplitDO.getStatementDateChangeTime()) < 0) {
-                calendar.add(Calendar.MONTH, -1);
-                calendar.set(Calendar.DAY_OF_MONTH, startRentC.get(Calendar.DAY_OF_MONTH));
-            }
-        }
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-        return calendar.getTime();
     }
 
     @Override
@@ -5852,11 +5693,10 @@ public class StatementServiceImpl implements StatementService {
         if (CommonConstant.COMMON_ZERO.equals(orderStatementDateSplitDO.getChangeType())) {//截止到月底（单独一期）
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(lastCalculateDate);
-            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-            Date phaseEndTime = calendar.getTime();
-            if (DateUtil.daysBetween(lastCalculateDate, phaseEndTime) > 0) {
-                statementOrderDetailDO = calculateStatementOrderDetailByActualTime(reletOrderDO.getRentType(), reletOrderProductDO.getPayMode(), lastCalculateDate, phaseEndTime, reletOrderProductDO.getProductUnitAmount(), reletOrderProductDO.getProductCount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, reletOrderProductDO.getOrderProductId(), currentTime, loginUserId, reletOrderProductDO.getId());
-                if (statementOrderDetailDO != null) {
+            calendar.set(Calendar.DAY_OF_MONTH,calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+            Date phaseEndTime=calendar.getTime();
+            if(DateUtil.daysBetween(lastCalculateDate,phaseEndTime)>0){
+                statementOrderDetailDO=calculateStatementOrderDetailByActualTime(reletOrderDO.getRentType(), reletOrderProductDO.getPayMode(), lastCalculateDate,phaseEndTime,reletOrderProductDO.getProductUnitAmount(), reletOrderProductDO.getRentingProductCount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, reletOrderProductDO.getOrderProductId(), currentTime, loginUserId, reletOrderProductDO.getId());                if (statementOrderDetailDO != null) {
                     statementOrderDetailDO.setItemName(reletOrderProductDO.getProductName() + reletOrderProductDO.getProductSkuName());
                     statementOrderDetailDO.setItemIsNew(reletOrderProductDO.getIsNewProduct());
                     statementOrderDetailDO.setStatementDetailPhase(++phase);
@@ -5873,10 +5713,9 @@ public class StatementServiceImpl implements StatementService {
             }
         }
         //使用第二种结算日(第一期)
-        statementDays = statementOrderSupport.getCustomerStatementDate(orderStatementDateSplitDO.getAfterStatementDate(), DateUtil.getDayByOffset(lastCalculateDate, 1));
-        if (DateUtil.daysBetween(lastCalculateDate, expectReturnTime) > 0) {
-            statementOrderDetailDO = calculateFirstStatementOrderDetail(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), statementDays, reletOrderProductDO.getPaymentCycle(), reletOrderProductDO.getPayMode(), DateUtil.getDayByOffset(lastCalculateDate, 1), reletOrderProductDO.getProductUnitAmount(), reletOrderProductDO.getProductCount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, reletOrderProductDO.getOrderProductId(), currentTime, loginUserId, orderStatementDateSplitDO.getAfterStatementDate(), reletOrderProductDO.getId());
-            if (statementOrderDetailDO != null) {
+            statementDays = statementOrderSupport.getCustomerStatementDate(orderStatementDateSplitDO.getAfterStatementDate(), DateUtil.getDayByOffset(lastCalculateDate,1));
+            if(DateUtil.daysBetween(lastCalculateDate,expectReturnTime)>0){
+            statementOrderDetailDO = calculateFirstStatementOrderDetail(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), statementDays, reletOrderProductDO.getPaymentCycle(), reletOrderProductDO.getPayMode(), DateUtil.getDayByOffset(lastCalculateDate,1), reletOrderProductDO.getProductUnitAmount(), reletOrderProductDO.getRentingProductCount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, reletOrderProductDO.getOrderProductId(), currentTime, loginUserId, orderStatementDateSplitDO.getAfterStatementDate(), reletOrderProductDO.getId());            if (statementOrderDetailDO != null) {
                 statementOrderDetailDO.setItemName(reletOrderProductDO.getProductName() + reletOrderProductDO.getProductSkuName());
                 statementOrderDetailDO.setItemIsNew(reletOrderProductDO.getIsNewProduct());
                 statementOrderDetailDO.setStatementDetailPhase(++phase);
@@ -5892,7 +5731,7 @@ public class StatementServiceImpl implements StatementService {
             }
         }
         while (DateUtil.daysBetween(lastCalculateDate, expectReturnTime) > 0) {
-            statementOrderDetailDO = calculateMiddleStatementOrderDetail(reletOrderDO.getRentType(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, reletOrderProductDO.getOrderProductId(), lastCalculateDate, reletOrderProductDO.getPaymentCycle(), reletOrderProductDO.getProductUnitAmount(), reletOrderProductDO.getProductCount(), statementDays, reletOrderProductDO.getPayMode(), currentTime, loginUserId, reletOrderProductDO.getId());
+            statementOrderDetailDO = calculateMiddleStatementOrderDetail(reletOrderDO.getRentType(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, reletOrderProductDO.getOrderProductId(), lastCalculateDate, reletOrderProductDO.getPaymentCycle(), reletOrderProductDO.getProductUnitAmount(), reletOrderProductDO.getRentingProductCount(), statementDays, reletOrderProductDO.getPayMode(), currentTime, loginUserId, reletOrderProductDO.getId());
             if (statementOrderDetailDO != null) {
                 statementOrderDetailDO.setItemName(reletOrderProductDO.getProductName() + reletOrderProductDO.getProductSkuName());
                 statementOrderDetailDO.setItemIsNew(reletOrderProductDO.getIsNewProduct());
@@ -6133,7 +5972,7 @@ public class StatementServiceImpl implements StatementService {
         Date lastCalculateDate = lastStatementTime == null ? rentStartTime : DateUtil.getDayByOffset(lastStatementTime, 1);
         BigDecimal alreadyPaidAmount = BigDecimal.ZERO;
         Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderStatementDateSplitDO.getBeforeStatementDate(), lastCalculateDate);
-        StatementOrderDetailDO statementOrderDetailDO = calculateFirstStatementOrderDetail(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), statementDays, reletOrderMaterialDO.getPaymentCycle(), reletOrderMaterialDO.getPayMode(), lastCalculateDate, reletOrderMaterialDO.getMaterialUnitAmount(), reletOrderMaterialDO.getMaterialCount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, reletOrderMaterialDO.getOrderMaterialId(), currentTime, loginUserId, orderStatementDateSplitDO.getBeforeStatementDate(), reletOrderMaterialDO.getId());
+        StatementOrderDetailDO statementOrderDetailDO = calculateFirstStatementOrderDetail(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), statementDays, reletOrderMaterialDO.getPaymentCycle(), reletOrderMaterialDO.getPayMode(), lastCalculateDate, reletOrderMaterialDO.getMaterialUnitAmount(), reletOrderMaterialDO.getRentingMaterialCount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, reletOrderMaterialDO.getOrderMaterialId(), currentTime, loginUserId, orderStatementDateSplitDO.getBeforeStatementDate(), reletOrderMaterialDO.getId());
         if (statementOrderDetailDO != null) {
             statementOrderDetailDO.setItemName(reletOrderMaterialDO.getMaterialName());
             statementOrderDetailDO.setItemIsNew(reletOrderMaterialDO.getIsNewMaterial());
@@ -6150,7 +5989,7 @@ public class StatementServiceImpl implements StatementService {
         }
         while (DateUtil.daysBetween(lastCalculateDate, orderStatementDateSplitDO.getStatementDateChangeTime()) > 0) {
             // 中间期数
-            statementOrderDetailDO = calculateMiddleStatementOrderDetail(reletOrderDO.getRentType(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, reletOrderMaterialDO.getOrderMaterialId(), lastCalculateDate, reletOrderMaterialDO.getPaymentCycle(), reletOrderMaterialDO.getMaterialUnitAmount(), reletOrderMaterialDO.getMaterialCount(), statementDays, reletOrderMaterialDO.getPayMode(), currentTime, loginUserId, reletOrderMaterialDO.getId());
+            statementOrderDetailDO = calculateMiddleStatementOrderDetail(reletOrderDO.getRentType(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, reletOrderMaterialDO.getOrderMaterialId(), lastCalculateDate, reletOrderMaterialDO.getPaymentCycle(), reletOrderMaterialDO.getMaterialUnitAmount(), reletOrderMaterialDO.getRentingMaterialCount(), statementDays, reletOrderMaterialDO.getPayMode(), currentTime, loginUserId, reletOrderMaterialDO.getId());
             if (statementOrderDetailDO != null) {
                 statementOrderDetailDO.setItemName(reletOrderMaterialDO.getMaterialName());
                 statementOrderDetailDO.setItemIsNew(reletOrderMaterialDO.getIsNewMaterial());
@@ -6178,11 +6017,10 @@ public class StatementServiceImpl implements StatementService {
         if (CommonConstant.COMMON_ZERO.equals(orderStatementDateSplitDO.getChangeType())) {//截止到月底（单独一期）
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(lastCalculateDate);
-            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-            Date phaseEndTime = calendar.getTime();
-            if (DateUtil.daysBetween(lastCalculateDate, phaseEndTime) > 0) {
-                statementOrderDetailDO = calculateStatementOrderDetailByActualTime(reletOrderDO.getRentType(), reletOrderMaterialDO.getPayMode(), lastCalculateDate, phaseEndTime, reletOrderMaterialDO.getMaterialUnitAmount(), reletOrderMaterialDO.getMaterialCount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, reletOrderMaterialDO.getOrderMaterialId(), currentTime, loginUserId, reletOrderMaterialDO.getId());
-                if (statementOrderDetailDO != null) {
+            calendar.set(Calendar.DAY_OF_MONTH,calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+            Date phaseEndTime=calendar.getTime();
+            if(DateUtil.daysBetween(lastCalculateDate,phaseEndTime)>0){
+                statementOrderDetailDO=calculateStatementOrderDetailByActualTime(reletOrderDO.getRentType(), reletOrderMaterialDO.getPayMode(), lastCalculateDate,phaseEndTime,reletOrderMaterialDO.getMaterialUnitAmount(), reletOrderMaterialDO.getRentingMaterialCount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, reletOrderMaterialDO.getOrderMaterialId(), currentTime, loginUserId, reletOrderMaterialDO.getId());                if (statementOrderDetailDO != null) {
                     statementOrderDetailDO.setItemName(reletOrderMaterialDO.getMaterialName());
                     statementOrderDetailDO.setItemIsNew(reletOrderMaterialDO.getIsNewMaterial());
                     statementOrderDetailDO.setStatementDetailPhase(++phase);
@@ -6199,10 +6037,9 @@ public class StatementServiceImpl implements StatementService {
             }
         }
         //使用第二种结算日(第一期)
-        statementDays = statementOrderSupport.getCustomerStatementDate(orderStatementDateSplitDO.getAfterStatementDate(), DateUtil.getDayByOffset(lastCalculateDate, 1));
-        if (DateUtil.daysBetween(lastCalculateDate, expectReturnTime) > 0) {
-            statementOrderDetailDO = calculateFirstStatementOrderDetail(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), statementDays, reletOrderMaterialDO.getPaymentCycle(), reletOrderMaterialDO.getPayMode(), DateUtil.getDayByOffset(lastCalculateDate, 1), reletOrderMaterialDO.getMaterialUnitAmount(), reletOrderMaterialDO.getMaterialCount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, reletOrderMaterialDO.getOrderMaterialId(), currentTime, loginUserId, orderStatementDateSplitDO.getAfterStatementDate(), reletOrderMaterialDO.getId());
-            if (statementOrderDetailDO != null) {
+        statementDays = statementOrderSupport.getCustomerStatementDate(orderStatementDateSplitDO.getAfterStatementDate(), DateUtil.getDayByOffset(lastCalculateDate,1));
+        if(DateUtil.daysBetween(lastCalculateDate,expectReturnTime)>0){
+            statementOrderDetailDO = calculateFirstStatementOrderDetail(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), statementDays, reletOrderMaterialDO.getPaymentCycle(), reletOrderMaterialDO.getPayMode(), DateUtil.getDayByOffset(lastCalculateDate,1), reletOrderMaterialDO.getMaterialUnitAmount(), reletOrderMaterialDO.getRentingMaterialCount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, reletOrderMaterialDO.getOrderMaterialId(), currentTime, loginUserId, orderStatementDateSplitDO.getAfterStatementDate(), reletOrderMaterialDO.getId());            if (statementOrderDetailDO != null) {
                 statementOrderDetailDO.setItemName(reletOrderMaterialDO.getMaterialName());
                 statementOrderDetailDO.setItemIsNew(reletOrderMaterialDO.getIsNewMaterial());
                 statementOrderDetailDO.setStatementDetailPhase(++phase);
@@ -6218,7 +6055,7 @@ public class StatementServiceImpl implements StatementService {
             }
         }
         while (DateUtil.daysBetween(lastCalculateDate, expectReturnTime) > 0) {
-            statementOrderDetailDO = calculateMiddleStatementOrderDetail(reletOrderDO.getRentType(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, reletOrderMaterialDO.getOrderMaterialId(), lastCalculateDate, reletOrderMaterialDO.getPaymentCycle(), reletOrderMaterialDO.getMaterialUnitAmount(), reletOrderMaterialDO.getMaterialCount(), statementDays, reletOrderMaterialDO.getPayMode(), currentTime, loginUserId, reletOrderMaterialDO.getId());
+            statementOrderDetailDO = calculateMiddleStatementOrderDetail(reletOrderDO.getRentType(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, reletOrderMaterialDO.getOrderMaterialId(), lastCalculateDate, reletOrderMaterialDO.getPaymentCycle(), reletOrderMaterialDO.getMaterialUnitAmount(), reletOrderMaterialDO.getRentingMaterialCount(), statementDays, reletOrderMaterialDO.getPayMode(), currentTime, loginUserId, reletOrderMaterialDO.getId());
             if (statementOrderDetailDO != null) {
                 statementOrderDetailDO.setItemName(reletOrderMaterialDO.getMaterialName());
                 statementOrderDetailDO.setItemIsNew(reletOrderMaterialDO.getIsNewMaterial());
@@ -6285,10 +6122,9 @@ public class StatementServiceImpl implements StatementService {
             DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
             statementMode = dataDictionaryDO == null ? StatementMode.STATEMENT_MONTH_END : Integer.parseInt(dataDictionaryDO.getDataName());
         }
-        if (StatementMode.STATEMENT_MONTH_END.equals(statementMode)) return "月底结算";
-        if (StatementMode.STATEMENT_20.equals(statementMode)) return "二十号结算";
-        if (StatementMode.STATEMENT_MONTH_NATURAL.equals(statementMode)) return "自然日结算";
-        return "";
+        if(StatementMode.STATEMENT_MONTH_END.equals(statementMode)){return "月底结算";}
+        if (StatementMode.STATEMENT_20.equals(statementMode)){return  "二十号结算";}
+        if (StatementMode.STATEMENT_MONTH_NATURAL.equals(statementMode)){return "自然日结算";}        return "";
     }
 
     @Autowired
