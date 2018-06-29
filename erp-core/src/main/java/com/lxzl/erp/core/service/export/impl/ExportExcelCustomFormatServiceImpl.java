@@ -294,7 +294,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 if (exportStatementOrderDetail.getStatementStartTime() == null) {
                     exportStatementOrderDetail.setStatementStartTime(exportStatementOrderDetail.getOrderRentStartTime());
                 }
-                if (exportStatementOrderDetail.getStatementStartTime() == null) {
+                if (exportStatementOrderDetail.getStatementEndTime() == null) {
                     exportStatementOrderDetail.setStatementEndTime(exportStatementOrderDetail.getOrderExpectReturnTime());
                 }
                 exportStatementOrderDetailBase.setStatementStartTime(exportStatementOrderDetail.getStatementStartTime());     //结算开始日期
