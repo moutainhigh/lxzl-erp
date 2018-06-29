@@ -993,11 +993,8 @@
         case when t4.paymentCycle is null then t2.payment_cycle  else t4.paymentCycle end as paymentCycle,
         case when t4.statement_expect_pay_time is null then t0.month_start_config else t4.statement_expect_pay_time end as statement_expect_pay_time,
         case when t4.id is null then t1.id else t4.id end as id,
-        case when t4.statement_start_time is null then t0.month_start_config else t4.statement_start_time end as statement_start_time,
-        case when t4.statement_end_time is null then t0.month_end_config else t4.statement_end_time end as statement_end_time,
-        --         case when t4.statement_detail_amount is null then t5.statement_detail_amount else t4.statement_detail_amount end as statementDetailEndAmount,
-        --         case when t4.statement_detail_amount is null then t5.statement_expect_pay_time else t4.statement_expect_pay_time end as statementExpectPayEndTime,
-        --         case when t4.statement_detail_rent_amount is null or t4.statement_detail_rent_amount = 0 then t5.statement_detail_rent_amount else t4.statement_detail_rent_amount end as statementDetailRentEndAmount,
+        t4.statement_start_time as statement_start_time,
+        t4.statement_end_time as statement_end_time,
         t4.*
         from erp_month_config t0 left join erp_order t1
         on t0.month_start_config between t1.rent_start_time and t1.expect_return_time or t0.month_end_config between t1.rent_start_time and t1.expect_return_time
@@ -1051,19 +1048,55 @@
             </if>
         </where>
         ) t4 on t1.buyer_customer_id = t4.customer_id and t4.monthTime = date_format(t0.month_config,'%Y-%m') and t1.id = t4.order_id
-        <!--left join (-->
-        <!--select m1.id,month_config,statement_detail_amount,statement_detail_rent_amount,statement_expect_pay_time from erp_month_config m0 left join erp_statement_order_detail m1 on m0.month_config BETWEEN statement_start_time and statement_end_time and m1.data_status = 1-->
-        <!--<where>-->
-        <!--<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">-->
-        <!--and m1.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}-->
-        <!--</if>-->
-        <!--</where>-->
-        <!--) t5 on t4.id = t5.id-->
         where t1.order_status in (20,22,24,32)
         <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
             and t1.buyer_customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
         </if>
         and t1.id is not null order by monthTime DESC, orderRentStartTime ASC, order_item_refer_id ASC
+    </select>
+
+    <select id="exportReturnListPage" resultMap="CheckStatementOrderDetailDO" parameterType="map">
+        SELECT
+        <include refid="column_List"/>,
+        eo.rent_type AS orderRentType,
+        eo.rent_start_time AS orderRentStartTime,
+        eo.expect_return_time AS orderExpectReturnTime,
+        eo.rent_time_length AS orderRentTimeLength,
+        (CASE WHEN eop.id is NULL THEN eom.is_new_material ELSE eop.is_new_product END ) AS isNew
+        FROM erp_statement_order_detail esod
+        LEFT JOIN erp_order_product eop ON esod.order_item_refer_id = eop.id AND esod.order_item_type = 1
+        LEFT JOIN erp_order_material eom ON esod.order_item_refer_id = eom.id AND esod.order_item_type = 2
+        LEFT JOIN erp_customer ec ON esod.customer_id = ec.id
+        LEFT JOIN erp_order eo on eo.id = esod.order_id and esod.order_type = 1
+        <where>
+            <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.rentLengthType != null">
+                and (eop.rent_length_type = #{maps.statementOrderDetailQueryParam.rentLengthType, jdbcType=INTEGER} OR
+                eom.rent_length_type = #{maps.statementOrderDetailQueryParam.rentLengthType, jdbcType=INTEGER} OR
+                eo.rent_length_type = #{maps.statementOrderDetailQueryParam.rentLengthType, jdbcType=INTEGER})
+            </if>
+            <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
+                and esod.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.subCompanyId != null">
+                and eo.order_sub_company_id = #{maps.statementOrderDetailQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderDetailQueryParam.isNeedToPay == 1">
+                and esod.statement_detail_status = 0
+            </if>
+            <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.isOverdue != null &amp;&amp; maps.statementOrderDetailQueryParam.isOverdue == 1">
+                <![CDATA[ and esod.statement_detail_overdue_amount > 0 ]]>
+            </if>
+            <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.createStartTime != null">
+                <![CDATA[ AND eso.create_time >= #{maps.statementOrderQueryParam.createStartTime} ]]>
+            </if>
+            <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.createEndTime != null">
+                <![CDATA[ AND eso.create_time <= #{maps.statementOrderQueryParam.createEndTime} ]]>
+            </if>
+            <if test="true">
+                AND esod.data_status = 1
+                AND esod.order_type = 4
+            </if>
+        </where>
     </select>
 
     <select id="findByReletOrderItemReferId" resultMap="StatementOrderDetailDO">
