@@ -984,8 +984,8 @@
         case when t4.order_type is null then 1 else t4.order_type end as order_type,
         case when t4.order_item_type is null then 1 else t4.order_item_type end as order_item_type,
         case when t4.orderRentType is null then t1.rent_type else t4.orderRentType end as orderRentType,
-        case when t4.orderRentStartTime is null or t4.orderRentStartTime = '0000-00-00 00:00:00' then t1.rent_start_time else t4.orderRentStartTime end as orderRentStartTime,
-        case when t4.orderExpectReturnTime is null or t4.orderExpectReturnTime = '0000-00-00 00:00:00' then t1.expect_return_time else t4.orderExpectReturnTime end as orderExpectReturnTime,
+        case when order_type = 4 then t4.orderRentStartTime when t4.orderRentStartTime is null or t4.orderRentStartTime = '0000-00-00 00:00:00' then t1.rent_start_time else t4.orderRentStartTime end as orderRentStartTime,
+        case when order_type = 4 then t4.orderRentStartTime when t4.orderExpectReturnTime is null or t4.orderExpectReturnTime = '0000-00-00 00:00:00' then t1.expect_return_time else t4.orderExpectReturnTime end as orderExpectReturnTime,
         case when t4.orderRentTimeLength is null then t1.rent_time_length else t4.orderRentTimeLength end as orderRentTimeLength,
         case when t4.isNew is null then t2.is_new_product else t4.isNew end as isNew,
         case when t4.payMode is null then t2.pay_mode else t4.payMode end as payMode,
@@ -1050,7 +1050,7 @@
                 AND esod.data_status = 1
             </if>
         </where>
-        ) t4 on t1.buyer_customer_id = t4.customer_id and t4.monthTime = date_format(t0.month_config,'%Y-%m')
+        ) t4 on t1.buyer_customer_id = t4.customer_id and t4.monthTime = date_format(t0.month_config,'%Y-%m') and t1.id = t4.order_id
         <!--left join (-->
         <!--select m1.id,month_config,statement_detail_amount,statement_detail_rent_amount,statement_expect_pay_time from erp_month_config m0 left join erp_statement_order_detail m1 on m0.month_config BETWEEN statement_start_time and statement_end_time and m1.data_status = 1-->
         <!--<where>-->
@@ -1063,7 +1063,7 @@
         <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
             and t1.buyer_customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
         </if>
-        and t1.id is not null order by monthTime DESC, orderRentStartTime ASC
+        and t1.id is not null order by monthTime DESC, orderRentStartTime ASC, order_item_refer_id ASC
     </select>
 
     <select id="findByReletOrderItemReferId" resultMap="StatementOrderDetailDO">
@@ -1074,7 +1074,7 @@
     </select>
 
     <select id="findThisPeriodsByOrderInfo" resultType="java.util.Map">
-        select statement_detail_amount as statementDetailAmount,statement_detail_rent_amount as statementDetailRentAmount, statement_expect_pay_time as statementExpectPayTime from erp_statement_order_detail
+        select sum(statement_detail_amount) as statementDetailAmount,sum(statement_detail_rent_amount) as statementDetailRentAmount,min(statement_start_time) as statementStartTime, max(statement_end_time) as statementEndTime, statement_expect_pay_time as statementExpectPayTime from erp_statement_order_detail
         where data_status = 1 and order_id =  #{orderId, jdbcType=INTEGER} and order_item_refer_id =  #{orderItemReferId, jdbcType=INTEGER}
         <if test="payMode != null &amp;&amp; payMode == 2">
             <![CDATA[ AND statement_expect_pay_time >= #{expectPayTime, jdbcType=TIMESTAMP} ]]>
@@ -1082,7 +1082,7 @@
         <if test="payMode != null &amp;&amp; payMode == 1">
             <![CDATA[ AND statement_expect_pay_time <= #{expectPayTime, jdbcType=TIMESTAMP} ]]>
         </if>
-        and statement_detail_amount > 0 limit 0,1;
+        and statement_detail_amount > 0 group by statementExpectPayTime limit 0,1;
     </select>
 
     <select id="findProductRentByReletOrderItemReferIds" resultMap="StatementOrderDetailDO">

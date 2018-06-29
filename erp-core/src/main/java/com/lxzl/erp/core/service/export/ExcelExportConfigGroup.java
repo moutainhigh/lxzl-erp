@@ -118,7 +118,7 @@ public class ExcelExportConfigGroup {
                 .addConfig(new ColConfig("statementDetailRentDepositAmount", "租金押金", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailDepositAmount", "押金", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailOtherAmount", "其它费用", AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementDetailOverdueAmount", "逾期金额", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailOverdueAmount", "截止上期未付", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailPaidAmount", "已付金额", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailRentPaidAmount", "已付租金", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailRentDepositPaidAmount", "已付租金押金", AmountExcelExportView.getInstance()))
@@ -358,7 +358,7 @@ public class ExcelExportConfigGroup {
                 //-------------------以下是全部结算单-----------------------------
                 .addConfig(new ColConfig("rentProgramme", "租赁方案", 7, HSSFColor.LEMON_CHIFFON.index))
                 .addConfig(new ColConfig("itemCount", "租赁数量", 4, HSSFColor.LEMON_CHIFFON.index))
-                .addConfig(new ColConfig("unitAmount", "单价\n（元/台/月）", 10, HSSFColor.LEMON_CHIFFON.index, AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("unitAmountInfo", "单价\n（元/台）", 10, HSSFColor.LEMON_CHIFFON.index))
                 .addConfig(new ColConfig("statementDetailRentEndAmount", "本期租金", 6, HSSFColor.TAN.index, AmountExcelExportView.getInstance()))
 //                .addConfig(new ColConfig("statementRentDepositAmount", " 租金押金", 6, HSSFColor.WHITE.index,  AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDepositAmount", " 押金", 6, HSSFColor.LEMON_CHIFFON.index,  AmountExcelExportView.getInstance()))

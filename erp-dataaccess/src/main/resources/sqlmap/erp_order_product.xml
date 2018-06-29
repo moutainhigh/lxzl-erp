@@ -230,4 +230,7 @@
     <select id="findTotalRentingProductCountByOrderId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
         SELECT sum(renting_product_count) FROM erp_order_product WHERE order_id = #{orderId} AND data_status = 1
     </select>
+    <select id="findK3OrderProduct" resultType="OrderProductDO" parameterType="java.util.Map">
+        SELECT <include refid="column_List"/> FROM erp_order_product eop WHERE order_id = #{orderId} AND FEntry_id = #{FEntryId} AND data_status = 1
+    </select>
 </mapper>

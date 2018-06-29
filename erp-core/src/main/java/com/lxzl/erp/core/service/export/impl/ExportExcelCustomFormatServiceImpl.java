@@ -1,9 +1,6 @@
 package com.lxzl.erp.core.service.export.impl;
 
-import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.OrderItemType;
-import com.lxzl.erp.common.constant.OrderRentType;
-import com.lxzl.erp.common.constant.OrderType;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.ReturnReasonType;
 import com.lxzl.erp.common.domain.statement.CheckStatementOrderDetailBase;
@@ -232,13 +229,30 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                             exportStatementOrderDetail.setOrderRentType(orderDO.getRentType());
                             exportStatementOrderDetail.setOrderRentTimeLength(orderDO.getRentTimeLength());
                             if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())) {
-                                OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
-                                Integer isNewProduct = orderProductDO.getIsNewProduct();
-                                exportStatementOrderDetailBase.setIsNew(isNewProduct);
+                                OrderProductDO orderProductDO = null;
+                                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()) && k3ReturnOrderDetailDO.getOrderEntry() != null) {
+                                    orderProductDO = orderProductMapper.findK3OrderProduct(orderDO.getId(), Integer.parseInt(k3ReturnOrderDetailDO.getOrderEntry()));
+                                } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
+                                    String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
+                                    orderProductDO = orderProductMapper.findById(Integer.parseInt(orderItemId));
+                                }
+                                if(orderProductDO != null){
+                                    Integer isNewProduct = orderProductDO.getIsNewProduct();
+                                    exportStatementOrderDetailBase.setIsNew(isNewProduct);
+                                }
                             } else if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType())) {
-                                OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
-                                Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
-                                exportStatementOrderDetailBase.setIsNew(isNewMaterial);
+                                OrderMaterialDO orderMaterialDO = null;
+                                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()) && k3ReturnOrderDetailDO.getOrderEntry() != null) {
+                                    orderMaterialDO = orderMaterialMapper.findK3OrderMaterial(orderDO.getId(), Integer.parseInt(k3ReturnOrderDetailDO.getOrderEntry()));
+                                } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
+                                    String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
+                                    orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(orderItemId));
+                                }
+
+                                if (orderMaterialDO != null) {
+                                    Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
+                                    exportStatementOrderDetailBase.setIsNew(isNewMaterial);
+                                }
                             }
                         }
 
@@ -282,9 +296,20 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 String monthAndDays = DateUtil.getMonthAndDays(exportStatementOrderDetail.getStatementStartTime(), exportStatementOrderDetail.getStatementEndTime());
                 int month = monthAndDays.indexOf("月");
                 int day = monthAndDays.indexOf("天");
-                exportStatementOrderDetailBase.setStatementMonth(Integer.parseInt(monthAndDays.substring(0, month))); //月
-                exportStatementOrderDetailBase.setStatementDay(Integer.parseInt(monthAndDays.substring(month + 1, day))); //日
-                exportStatementOrderDetailBase.setRentTimeLength(monthAndDays);  //期限
+
+                if (OrderRentType.RENT_TYPE_DAY.equals(exportStatementOrderDetail.getOrderRentType())) {
+                    exportStatementOrderDetailBase.setRentTimeLength(exportStatementOrderDetail.getOrderRentTimeLength() + "天");  //期限
+                    exportStatementOrderDetailBase.setStatementMonth(0); //月
+                    exportStatementOrderDetailBase.setStatementDay(exportStatementOrderDetail.getOrderRentTimeLength()); //日
+                    exportStatementOrderDetailBase.setUnitAmountInfo(exportStatementOrderDetailBase.getUnitAmount() + "/日");
+                    exportStatementOrderDetail.setStatementStartTime(exportStatementOrderDetail.getOrderRentStartTime());
+                    exportStatementOrderDetail.setStatementEndTime(exportStatementOrderDetail.getOrderExpectReturnTime());
+                } else if (OrderRentType.RENT_TYPE_MONTH.equals(exportStatementOrderDetail.getOrderRentType())) {
+                    exportStatementOrderDetailBase.setStatementMonth(Integer.parseInt(monthAndDays.substring(0, month))); //月
+                    exportStatementOrderDetailBase.setStatementDay(Integer.parseInt(monthAndDays.substring(month + 1, day))); //日
+                    exportStatementOrderDetailBase.setUnitAmountInfo(exportStatementOrderDetailBase.getUnitAmount() + "/月");
+                    exportStatementOrderDetailBase.setRentTimeLength(monthAndDays);  //期限
+                }
                 exportStatementOrderDetailBase.setCurrentPeriodStartAndEnd(formatPeriodStartAndEnd(exportStatementOrderDetail.getStatementStartTime(), exportStatementOrderDetail.getStatementEndTime()) + exportStatementOrderDetailBase.getRentTimeLength());    //本期起止（当前期数起止）
                 //-------------------以上是本期结算单-----------------------------
 
@@ -404,7 +429,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell152, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
             cell153.setCellValue("本月未付");
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell153, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
-            cell154.setCellValue("逾期金额");
+            cell154.setCellValue("截止上期未付");
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell154, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
             cell155.setCellValue("累计未付");
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell155, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
