@@ -236,7 +236,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                                     String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
                                     orderProductDO = orderProductMapper.findById(Integer.parseInt(orderItemId));
                                 }
-                                if(orderProductDO != null){
+                                if (orderProductDO != null) {
                                     Integer isNewProduct = orderProductDO.getIsNewProduct();
                                     exportStatementOrderDetailBase.setIsNew(isNewProduct);
                                 }
@@ -291,6 +291,12 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 //-------------------以上是全部结算单-----------------------------
 
                 //-------------------以下是本期结算单-----------------------------
+                if (exportStatementOrderDetail.getStatementStartTime() == null) {
+                    exportStatementOrderDetail.setStatementStartTime(exportStatementOrderDetail.getOrderRentStartTime());
+                }
+                if (exportStatementOrderDetail.getStatementStartTime() == null) {
+                    exportStatementOrderDetail.setStatementEndTime(exportStatementOrderDetail.getOrderExpectReturnTime());
+                }
                 exportStatementOrderDetailBase.setStatementStartTime(exportStatementOrderDetail.getStatementStartTime());     //结算开始日期
                 exportStatementOrderDetailBase.setStatementEndTime(exportStatementOrderDetail.getStatementEndTime());  //结算结束日期
                 String monthAndDays = DateUtil.getMonthAndDays(exportStatementOrderDetail.getStatementStartTime(), exportStatementOrderDetail.getStatementEndTime());
