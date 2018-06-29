@@ -1,9 +1,6 @@
 package com.lxzl.erp.core.service.export.impl;
 
-import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.OrderItemType;
-import com.lxzl.erp.common.constant.OrderRentType;
-import com.lxzl.erp.common.constant.OrderType;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.ReturnReasonType;
 import com.lxzl.erp.common.domain.statement.CheckStatementOrderDetailBase;
@@ -232,13 +229,30 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                             exportStatementOrderDetail.setOrderRentType(orderDO.getRentType());
                             exportStatementOrderDetail.setOrderRentTimeLength(orderDO.getRentTimeLength());
                             if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())) {
-                                OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
-                                Integer isNewProduct = orderProductDO.getIsNewProduct();
-                                exportStatementOrderDetailBase.setIsNew(isNewProduct);
+                                OrderProductDO orderProductDO = null;
+                                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()) && k3ReturnOrderDetailDO.getOrderEntry() != null) {
+                                    orderProductDO = orderProductMapper.findK3OrderProduct(orderDO.getId(), Integer.parseInt(k3ReturnOrderDetailDO.getOrderEntry()));
+                                } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
+                                    String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
+                                    orderProductDO = orderProductMapper.findById(Integer.parseInt(orderItemId));
+                                }
+                                if(orderProductDO != null){
+                                    Integer isNewProduct = orderProductDO.getIsNewProduct();
+                                    exportStatementOrderDetailBase.setIsNew(isNewProduct);
+                                }
                             } else if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType())) {
-                                OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
-                                Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
-                                exportStatementOrderDetailBase.setIsNew(isNewMaterial);
+                                OrderMaterialDO orderMaterialDO = null;
+                                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()) && k3ReturnOrderDetailDO.getOrderEntry() != null) {
+                                    orderMaterialDO = orderMaterialMapper.findK3OrderMaterial(orderDO.getId(), Integer.parseInt(k3ReturnOrderDetailDO.getOrderEntry()));
+                                } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
+                                    String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
+                                    orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(orderItemId));
+                                }
+
+                                if (orderMaterialDO != null) {
+                                    Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
+                                    exportStatementOrderDetailBase.setIsNew(isNewMaterial);
+                                }
                             }
                         }
 
