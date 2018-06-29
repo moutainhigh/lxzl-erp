@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
 import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
+import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
@@ -14,8 +15,9 @@ import com.lxzl.erp.common.domain.statistics.StatisticsSalesmanPageParam;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesman;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
-import com.lxzl.erp.core.service.dynamicSql.DynamicSqlService;
 import com.lxzl.erp.core.service.bank.BankSlipService;
+import com.lxzl.erp.core.service.dynamicSql.DynamicSqlService;
+import com.lxzl.erp.core.service.export.ExportExcelCustomFormatService;
 import com.lxzl.erp.core.service.export.ExcelExportConfigGroup;
 import com.lxzl.erp.core.service.export.ExcelExportService;
 import com.lxzl.erp.core.service.export.impl.support.ExcelExportSupport;
@@ -49,6 +51,8 @@ public class ExcelExportController {
     private StatisticsService statisticsService;
     @Autowired
     private DynamicSqlService dynamicSqlService;
+    @Autowired
+    private ExportExcelCustomFormatService exportExcelCustomFormatService;
     @RequestMapping(value = "exportPageBankSlipDetail", method = RequestMethod.POST)
     public Result exportPageBankSlip(BankSlipDetailQueryParam bankSlipDetailQueryParam, HttpServletResponse response) throws Exception {
         bankSlipDetailQueryParam.setPayerName(ExcelExportSupport.decode(bankSlipDetailQueryParam.getPayerName()));
@@ -93,4 +97,11 @@ public class ExcelExportController {
         ServiceResult<String, String> serviceResult = excelExportService.export(result,ExcelExportSupport.formatFileName("动态sql"),"sheet1" , response,5000);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
+
+    @RequestMapping(value = "exportStatementOrderCheck", method = RequestMethod.POST)
+    public Result exportDynamicSql(StatementOrderMonthQueryParam statementOrderMonthQueryParam, HttpServletResponse response) throws Exception {
+        ServiceResult<String, String> serviceResult = exportExcelCustomFormatService.queryStatementOrderCheckParam(statementOrderMonthQueryParam, response);
+        return resultGenerator.generate(serviceResult.getErrorCode());
+    }
+
 }
