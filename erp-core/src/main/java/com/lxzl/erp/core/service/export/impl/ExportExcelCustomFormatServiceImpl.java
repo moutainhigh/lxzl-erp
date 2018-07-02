@@ -105,6 +105,8 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
 //        for (int i = 0; i < customerNameStr.length; i++) {
         String customerNoParam = statementOrderMonthQueryParam.getStatementOrderCustomerNo();
+        Date statementOrderStartTime = statementOrderMonthQueryParam.getStatementOrderStartTime();
+        Date statementOrderEndTime = statementOrderMonthQueryParam.getStatementOrderEndTime();
         //todo 获取有的预计支付时间
         XSSFWorkbook hssfWorkbook = null;
         BigDecimal beforePeriodUnpaid = new BigDecimal(0);
@@ -112,8 +114,8 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
         statementOrderMonthQueryParam = new StatementOrderMonthQueryParam();
         statementOrderMonthQueryParam.setStatementOrderCustomerNo(customerNoParam);
-        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderMonthQueryParam.getStatementOrderStartTime());
-        statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderMonthQueryParam.getStatementOrderStartTime());
+        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderStartTime);
+        statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderEndTime);
 
         ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam);
         if (!ErrorCode.SUCCESS.equals(stringListServiceResult.getErrorCode())) {
