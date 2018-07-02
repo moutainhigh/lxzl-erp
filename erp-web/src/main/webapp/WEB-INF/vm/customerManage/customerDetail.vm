@@ -167,6 +167,7 @@
                 'manage.customer.mixin.js',
                 'manage.customer.handle.mixin.js',
                 'manage.customer.detail.js',
+                'manage.customer.confirm.statement.js',
                 'manage.customer.risk.js',
                 'manage.customer.address.js',
                 'manage.customer.address.add.js',
