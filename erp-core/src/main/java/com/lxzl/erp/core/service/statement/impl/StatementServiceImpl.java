@@ -4910,12 +4910,14 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
+        Date statementOrderStartTime = statementOrderMonthQueryParam.getStatementOrderStartTime();
+        Date statementOrderEndTime = statementOrderMonthQueryParam.getStatementOrderEndTime();
         statementOrderMonthQueryParam = new StatementOrderMonthQueryParam();
         statementOrderMonthQueryParam.setStatementOrderCustomerId(customerDO.getId());
+        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderStartTime);
+        statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderEndTime);
         Map<String, Object> maps = new HashMap<>();
         maps.put("statementOrderMonthQueryParam", statementOrderMonthQueryParam);
-        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderMonthQueryParam.getStatementOrderStartTime());
-        statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderMonthQueryParam.getStatementOrderEndTime());
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
         //todo 查处结算单总表
         List<CheckStatementOrderDO> statementOrderDOList = statementOrderMapper.exportListMonthPage(maps);
