@@ -654,13 +654,20 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setRemark(customer.getRemark());
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        //保存客户修改结算日记录
+        if (!customer.getStatementDate().equals(customerDO.getStatementDate())){
+            saveCustomerStatementDateChange(customer.getStatementDate(),customerDO,now);
+        }
         customerDO.setStatementDate(customer.getStatementDate());
+
         customerMapper.update(customerDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
     }
+
+
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
@@ -748,6 +755,12 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerDO.setRemark(customer.getRemark());
+        //保存客户修改结算日记录
+        if (!customer.getStatementDate().equals(customerDO.getStatementDate())){
+            saveCustomerStatementDateChange(customer.getStatementDate(),customerDO,now);
+        }
+        customerDO.setStatementDate(customer.getStatementDate());
+
         customerMapper.update(customerDO);
 
 //        //如果客户选择了将详细地址作为收货地址
@@ -858,6 +871,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult<String, String> addStatementDate(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date now = new Date();
 
         CustomerDO customerDO = customerMapper.findByNo(customer.getCustomerNo());
         if (customerDO == null) {
@@ -865,9 +879,13 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
+        //保存客户修改结算日记录
+        if (!customer.getStatementDate().equals(customerDO.getStatementDate())){
+            saveCustomerStatementDateChange(customer.getStatementDate(),customerDO,now);
+        }
         customerDO.setStatementDate(customer.getStatementDate());
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        customerDO.setUpdateTime(new Date());
+        customerDO.setUpdateTime(now);
         customerMapper.update(customerDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -3421,6 +3439,18 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
+    private void saveCustomerStatementDateChange(Integer newCustomerStatement,CustomerDO customerDO,Date now) {
+        CustomerStatementDateChangeLogDO customerStatementDateChangeLogDO = new CustomerStatementDateChangeLogDO();
+        customerStatementDateChangeLogDO.setCustomerNo(customerDO.getCustomerNo());
+        customerStatementDateChangeLogDO.setStatementDate(newCustomerStatement);
+        customerStatementDateChangeLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        customerStatementDateChangeLogDO.setCreateTime(now);
+        customerStatementDateChangeLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        customerStatementDateChangeLogDO.setUpdateTime(now);
+        customerStatementDateChangeLogDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerStatementDateChangeLogMapper.save(customerStatementDateChangeLogDO);
+    }
+
     @Autowired
     private UserMapper userMapper;
 
@@ -3486,4 +3516,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private CustomerStatementDateChangeLogMapper customerStatementDateChangeLogMapper;
 }
