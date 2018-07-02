@@ -5190,7 +5190,10 @@ public class StatementServiceImpl implements StatementService {
             }
 
             List<CheckStatementOrderDetail> statementOrderDetailList = ListUtil.mapToList(hashMap);
-            statementOrder.setStatementOrderDetailList(statementOrderDetailList);
+            if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
+                checkStatementOrderList.add(statementOrder);
+                statementOrder.setStatementOrderDetailList(statementOrderDetailList);
+            }
         }
         result.setResult(checkStatementOrderList);
         result.setErrorCode(ErrorCode.SUCCESS);
