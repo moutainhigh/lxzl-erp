@@ -5,31 +5,31 @@
                 <a href="#rentingInfo" data-toggle="tab" aria-expanded="false">客户在租情况</a>
             </li>
             <li class="">
-                <a href="#productFirstNeed" data-toggle="tab" aria-expanded="false">首次所需设备</a>
+                <a href="#productFirstNeed" data-toggle="tab" aria-expanded="false">首次所需设备（共<span id="firstNeedCount">0</span>件）</a>
             </li>
             <li>
-                <a href="#productLastNeed" data-toggle="tab" aria-expanded="false">后续所需设备</a>
+                <a href="#productLastNeed" data-toggle="tab" aria-expanded="false">后续所需设备（共<span id="lastNeedCount">0</span>件）</a>
             </li>
             <li>
-                <a href="#orderList" data-toggle="tab" aria-expanded="false">订单</a>
+                <a href="#orderList" data-toggle="tab" aria-expanded="false">订单（共<span id="orderCount">0</span>个）</a>
             </li>
             <li>
-                <a href="#returnOrder" data-toggle="tab" aria-expanded="true">退货单</a>
+                <a href="#returnOrder" data-toggle="tab" aria-expanded="true">退货单（共<span id="returnOrderCount">0</span>个）</a>
             </li>
             <li>
-                <a href="#rechargeList" data-toggle="tab" aria-expanded="true">充值记录</a>
+                <a href="#rechargeList" data-toggle="tab" aria-expanded="true">充值记录（共<span id="rechargeCount">0</span>条）</a>
             </li>
             <li>
-                <a href="#accountList" data-toggle="tab" aria-expanded="true">账户流水</a>
+                <a href="#accountList" data-toggle="tab" aria-expanded="true">账户流水（共<span id="accountCount">0</span>条）</a>
             </li>
             <li>
-                <a href="#riskHistory" data-toggle="tab" aria-expanded="true">风控历史记录</a>
+                <a href="#riskHistory" data-toggle="tab" aria-expanded="true">风控历史记录（共<span id="riskCount">0</span>条）</a>
             </li>
             <li>
-                <a href="#returnVisitRecord" data-toggle="tab" aria-expanded="true">客户回访记录</a>
+                <a href="#returnVisitRecord" data-toggle="tab" aria-expanded="true">客户回访记录（共<span id="returnVistCount">0</span>条）</a>
             </li>
             <li>
-                <a href="#couponList" data-toggle="tab" aria-expanded="true">优惠券</a>
+                <a href="#couponList" data-toggle="tab" aria-expanded="true">优惠券（共<span id="couponCount">0</span>张）</a>
             </li>
         </ul>
     </div>
@@ -204,7 +204,7 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{orderNo}}</td>
+                                <td><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></td>
                                 <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
                                 <td>
                                     <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
@@ -281,7 +281,7 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{returnOrderNo}}</td>
+                                <td><a href="{{returnOrderUrl}}" target="_blank">{{returnOrderNo}}</a></td>
                                 <td>{{isChargingStr}}</td>
                                 <td>￥{{#price}}{{totalRentCost}}{{/price}}</td>
                                 <td>￥{{#price}}{{serviceCost}}{{/price}}</td>
