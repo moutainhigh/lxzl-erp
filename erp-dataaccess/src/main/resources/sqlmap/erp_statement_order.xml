@@ -785,7 +785,7 @@
 		GROUP BY eso.customer_id, eso.statement_expect_pay_time,<![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m')]]>
 		ORDER BY eso.statement_expect_pay_time
 		) t2 on t1.buyer_customer_id = t2.customer_id and t2.monthTime = date_format(t0.month_config,'%Y-%m')
-		where t1.order_status in (20,22,24,32)
+		where t1.order_status in (8,12,16,20,22,24,32)
 		<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderStartTime != null ">
 			<![CDATA[ AND t0.month_config >= #{maps.statementOrderMonthQueryParam.statementOrderStartTime} ]]>
 		</if>
