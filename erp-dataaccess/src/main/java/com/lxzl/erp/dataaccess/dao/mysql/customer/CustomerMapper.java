@@ -40,5 +40,5 @@ public interface CustomerMapper extends BaseMysqlDAO<CustomerDO> {
 
     CustomerRentCount queryRentCountByCustomerNo(@Param("customerNo") String customerNo);
 
-    CustomerDO findByCustomerNo(@Param("customerNo") String businessCustomerNo);
+    List<CustomerDO> findByCustomerNoList(@Param("customerNoList") List<String> customerNoList);
 }
