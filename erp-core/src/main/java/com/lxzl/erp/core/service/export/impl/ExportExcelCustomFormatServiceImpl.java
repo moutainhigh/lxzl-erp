@@ -149,6 +149,9 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 customerName = checkStatementOrder.getCustomerName();
             }
             List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+            if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
+                continue;
+            }
             //要保存到额集合
             List<CheckStatementOrderDetailBase> exportList = new ArrayList<>();
             for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
