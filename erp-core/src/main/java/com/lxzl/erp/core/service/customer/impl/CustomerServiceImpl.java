@@ -654,13 +654,20 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setRemark(customer.getRemark());
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        //保存客户修改结算日记录
+        if (!customer.getStatementDate().equals(customerDO.getStatementDate())){
+            saveCustomerStatementDateChange(customer.getStatementDate(),customerDO,now);
+        }
         customerDO.setStatementDate(customer.getStatementDate());
+
         customerMapper.update(customerDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
     }
+
+
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
@@ -748,6 +755,12 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerDO.setRemark(customer.getRemark());
+        //保存客户修改结算日记录
+        if (!customer.getStatementDate().equals(customerDO.getStatementDate())){
+            saveCustomerStatementDateChange(customer.getStatementDate(),customerDO,now);
+        }
+        customerDO.setStatementDate(customer.getStatementDate());
+
         customerMapper.update(customerDO);
 
 //        //如果客户选择了将详细地址作为收货地址
@@ -764,6 +777,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> commitCustomer(Customer customer) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -797,6 +811,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> verifyCustomer(String customerNo, Integer customerStatus, String verifyRemark) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -836,6 +851,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> addShortReceivableAmount(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
@@ -856,8 +872,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> addStatementDate(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date now = new Date();
 
         CustomerDO customerDO = customerMapper.findByNo(customer.getCustomerNo());
         if (customerDO == null) {
@@ -865,9 +883,13 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
+        //保存客户修改结算日记录
+        if (!customer.getStatementDate().equals(customerDO.getStatementDate())){
+            saveCustomerStatementDateChange(customer.getStatementDate(),customerDO,now);
+        }
         customerDO.setStatementDate(customer.getStatementDate());
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        customerDO.setUpdateTime(new Date());
+        customerDO.setUpdateTime(now);
         customerMapper.update(customerDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -1585,6 +1607,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateRisk(CustomerRiskManagement customerRiskManagement) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         CustomerDO customerDO = customerMapper.findByNo(customerRiskManagement.getCustomerNo());
@@ -1600,11 +1623,11 @@ public class CustomerServiceImpl implements CustomerService {
 
         Date now = new Date();
         //判断客户审核状态(如果为驳回状态则不可修改创建分控信息)
-        if (customerDO.getCustomerStatus() == 3) {
+        if (CustomerStatus.STATUS_REJECT.equals(customerDO.getCustomerStatus())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_REJECT_CAN_NOT_EDIT_RISK_MANAGEMENT);
             return serviceResult;
         }
-        if (customerDO.getCustomerStatus() == 0) {
+        if (CustomerStatus.STATUS_INIT.equals(customerDO.getCustomerStatus())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_UNCOMMITTED_CAN_NOT_EDIT_RISK_MANAGEMENT);
             return serviceResult;
         }
@@ -1625,8 +1648,6 @@ public class CustomerServiceImpl implements CustomerService {
             customerRiskManagementHistoryDO.setCustomerNo(customerDO.getCustomerNo());
             customerRiskManagementHistoryMapper.save(customerRiskManagementHistoryDO);
 
-            customerDO.setIsRisk(CommonConstant.COMMON_CONSTANT_YES);
-            customerMapper.update(customerDO);
         } else {//有风控信息则修改
             //在执行更改方法前，进行原数据和更改传入数据的不同判断
             CustomerRiskManagementDO customerRiskManagementDO = ConverterUtil.convert(customerRiskManagement, CustomerRiskManagementDO.class);
@@ -1655,6 +1676,11 @@ public class CustomerServiceImpl implements CustomerService {
 //            customerDO.setCustomerStatus(CustomerStatus.STATUS_PASS);
 //            customerMapper.update(customerDO);
 //        }
+        //更新客户风控授信状态为 已授信
+        if (!CommonConstant.COMMON_CONSTANT_YES.equals(customerDO.getIsRisk())){
+            customerDO.setIsRisk(CommonConstant.COMMON_CONSTANT_YES);
+            customerMapper.update(customerDO);
+        }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
@@ -1663,6 +1689,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateRiskCreditAmountUsed(CustomerRiskManagement customerRiskManagement) {
 
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
@@ -1836,6 +1863,7 @@ public class CustomerServiceImpl implements CustomerService {
      * @return
      */
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> deleteCustomerConsignInfo(CustomerConsignInfo customerConsignInfo) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -1922,6 +1950,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> updateAddressIsMain(CustomerConsignInfo customerConsignInfo) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -1947,6 +1976,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void updateLastUseTime(Integer customerConsignInfoId) {
         try {
             CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfoId);
@@ -1960,6 +1990,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> disabledCustomer(Customer customer) {
         ServiceResult<String, String> result = new ServiceResult<>();
         String currentUserId = userSupport.getCurrentUserId().toString();
@@ -1982,6 +2013,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> enableCustomer(Customer customer) {
         ServiceResult<String, String> result = new ServiceResult<>();
         String currentUserId = userSupport.getCurrentUserId().toString();
@@ -3421,6 +3453,18 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
+    private void saveCustomerStatementDateChange(Integer newCustomerStatement,CustomerDO customerDO,Date now) {
+        CustomerStatementDateChangeLogDO customerStatementDateChangeLogDO = new CustomerStatementDateChangeLogDO();
+        customerStatementDateChangeLogDO.setCustomerNo(customerDO.getCustomerNo());
+        customerStatementDateChangeLogDO.setStatementDate(newCustomerStatement);
+        customerStatementDateChangeLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        customerStatementDateChangeLogDO.setCreateTime(now);
+        customerStatementDateChangeLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        customerStatementDateChangeLogDO.setUpdateTime(now);
+        customerStatementDateChangeLogDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerStatementDateChangeLogMapper.save(customerStatementDateChangeLogDO);
+    }
+
     @Autowired
     private UserMapper userMapper;
 
@@ -3486,4 +3530,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private CustomerStatementDateChangeLogMapper customerStatementDateChangeLogMapper;
 }

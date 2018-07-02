@@ -83,7 +83,7 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
         ChargeRecordPageParam param = new ChargeRecordPageParam();
         param.setPageNo(1);
         param.setPageSize(10);
-//        param.setBusinessCustomerNo("LXCC10002018010500023");
+        param.setBusinessCustomerNo("LXCC-027-20180702-00002");
 //        param.setCustomerName("腾讯");
 //        param.setChargeType(2);
 //        param.setChargeBodyId("2");

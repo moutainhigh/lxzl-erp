@@ -3719,7 +3719,7 @@ CREATE TABLE `erp_dingding_group_message_config` (
 DROP TABLE IF EXISTS `erp_customer_statement_date_change_log`;
 CREATE TABLE `erp_customer_statement_date_change_log` (
 	`id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-	`statement_date` int(20) NOT NULL COMMENT '结算时间（天），-1,20和31三种情况',
+	`statement_date` int(20) COMMENT '结算时间（天），-1,20和31三种情况',
 	`customer_no` VARCHAR(100) NOT NULL COMMENT '客户编号',
 	`data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
 	`remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',

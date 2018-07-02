@@ -65,6 +65,8 @@
         <result column="salesman_id" jdbcType="INTEGER" property="salesmanId" />
         <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
         <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+
+        <result column="statement_order_no" jdbcType="VARCHAR" property="statementOrderNo"/>
     </resultMap>
 
     <resultMap id="FinanceStatementOrderPayDetail" type="com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail">
@@ -165,6 +167,15 @@
         SELECT
         <include refid="column_List"/>
         FROM erp_statement_order_detail esod
+        WHERE esod.order_id = #{orderId, jdbcType=INTEGER} AND order_type = 1 AND esod.data_status = 1
+        ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC
+    </select>
+
+    <select id="findByOrderIdForOrderDetail" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="column_List"/>,eso.statement_order_no
+        FROM erp_statement_order_detail esod
+        LEFT JOIN erp_statement_order eso ON esod.statement_order_id = eso.id AND eso.data_status = 1
         WHERE esod.order_id = #{orderId, jdbcType=INTEGER} AND order_type = 1 AND esod.data_status = 1
         ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC
     </select>
@@ -1000,6 +1011,7 @@
         on t0.month_start_config between t1.rent_start_time and t1.expect_return_time or t0.month_end_config between t1.rent_start_time and t1.expect_return_time
         or date_format(t1.rent_start_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
         or date_format(t1.expect_return_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
+        LEFT JOIN erp_k3_order_statement_config ekosc on t1.id = ekosc.order_id
         left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
         left join
         (
@@ -1048,10 +1060,17 @@
             </if>
         </where>
         ) t4 on t1.buyer_customer_id = t4.customer_id and t4.monthTime = date_format(t0.month_config,'%Y-%m') and t1.id = t4.order_id
-        where t1.order_status in (20,22,24,32)
+        where t1.order_status in (8,12,16,20,22,24,32)
         <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
             and t1.buyer_customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
         </if>
+        <if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderStartTime != null ">
+            <![CDATA[ AND t0.month_config >= #{maps.statementOrderMonthQueryParam.statementOrderStartTime} ]]>
+        </if>
+        <if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderEndTime != null ">
+            <![CDATA[ AND t0.month_config <= #{maps.statementOrderMonthQueryParam.statementOrderEndTime} ]]>
+        </if>
+        AND ((ekosc.order_id is not null and <![CDATA[date_format(t0.month_config, '%Y-%m') >= date_format(ekosc.rent_start_time, '%Y-%m')]]> ) or ekosc.order_id is null )
         and t1.id is not null order by monthTime DESC, orderRentStartTime ASC, order_item_refer_id ASC
     </select>
 
