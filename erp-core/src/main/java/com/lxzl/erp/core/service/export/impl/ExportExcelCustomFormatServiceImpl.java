@@ -112,6 +112,8 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
         statementOrderMonthQueryParam = new StatementOrderMonthQueryParam();
         statementOrderMonthQueryParam.setStatementOrderCustomerNo(customerNoParam);
+        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderMonthQueryParam.getStatementOrderStartTime());
+        statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderMonthQueryParam.getStatementOrderStartTime());
 
         ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam);
         if (!ErrorCode.SUCCESS.equals(stringListServiceResult.getErrorCode())) {
@@ -236,7 +238,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                                     String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
                                     orderProductDO = orderProductMapper.findById(Integer.parseInt(orderItemId));
                                 }
-                                if(orderProductDO != null){
+                                if (orderProductDO != null) {
                                     Integer isNewProduct = orderProductDO.getIsNewProduct();
                                     exportStatementOrderDetailBase.setIsNew(isNewProduct);
                                 }
@@ -291,6 +293,12 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 //-------------------以上是全部结算单-----------------------------
 
                 //-------------------以下是本期结算单-----------------------------
+                if (exportStatementOrderDetail.getStatementStartTime() == null) {
+                    exportStatementOrderDetail.setStatementStartTime(exportStatementOrderDetail.getOrderRentStartTime());
+                }
+                if (exportStatementOrderDetail.getStatementEndTime() == null) {
+                    exportStatementOrderDetail.setStatementEndTime(exportStatementOrderDetail.getOrderExpectReturnTime());
+                }
                 exportStatementOrderDetailBase.setStatementStartTime(exportStatementOrderDetail.getStatementStartTime());     //结算开始日期
                 exportStatementOrderDetailBase.setStatementEndTime(exportStatementOrderDetail.getStatementEndTime());  //结算结束日期
                 String monthAndDays = DateUtil.getMonthAndDays(exportStatementOrderDetail.getStatementStartTime(), exportStatementOrderDetail.getStatementEndTime());
@@ -321,6 +329,9 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             if (checkStatementOrder.getMonthTime() != null) {
                 sheetName = checkStatementOrder.getMonthTime().replace("-", "年") + "月";
             }
+            if(CollectionUtil.isEmpty(exportList)){
+                continue;
+            }
 
 
             XSSFSheet hssfSheet = null;
@@ -346,7 +357,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 cellStyle.setVerticalAlignment(XSSFCellStyle.VERTICAL_CENTER);//垂直居中
                 cellNo1.setCellStyle(cellStyle);
             }
-            if (hssfSheet == null || CollectionUtil.isEmpty(exportList)) {
+            if (hssfSheet == null) {
                 continue;
             }
 

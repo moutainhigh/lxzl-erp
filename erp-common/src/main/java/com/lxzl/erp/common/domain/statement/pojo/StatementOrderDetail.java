@@ -61,6 +61,7 @@ public class StatementOrderDetail extends BasePO {
     private Integer itemCount;
     private BigDecimal unitAmount;
     private Integer itemRentType;
+    private String statementOrderNo;  //结算单编号
 
     public Integer getStatementOrderDetailId() {
         return statementOrderDetailId;
@@ -452,5 +453,13 @@ public class StatementOrderDetail extends BasePO {
 
     public void setReletOrderItemReferId(Integer reletOrderItemReferId) {
         this.reletOrderItemReferId = reletOrderItemReferId;
+    }
+
+    public String getStatementOrderNo() {
+        return statementOrderNo;
+    }
+
+    public void setStatementOrderNo(String statementOrderNo) {
+        this.statementOrderNo = statementOrderNo;
     }
 }
