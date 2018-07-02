@@ -71,6 +71,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private BankSlipSupport bankSlipSupport;
 
+
     @Override
     public CustomerAccount queryCustomerAccountNoLogin(String customerNo) {
         CustomerAccountQueryParam param = new CustomerAccountQueryParam();
@@ -509,6 +510,7 @@ public class PaymentServiceImpl implements PaymentService {
 
                 Page<ChargeRecord> chargeRecordPage = new Page<>();
                 List<ChargeRecord> chargeRecordList = new ArrayList<>();
+                List<String> customerNoList = new ArrayList<>();
                 for (JSONObject jsonObject : paymentChargeRecordPageList) {
                     ChargeRecord chargeRecord = JSON.parseObject(jsonObject.toJSONString(), ChargeRecord.class);
                     if (jsonObject.get("chargeBodyId") != null) {
@@ -524,6 +526,9 @@ public class PaymentServiceImpl implements PaymentService {
 //                    PaymentChargeRecord paymentChargeRecordPojo = JSONUtil.parseObject(paymentChargeRecord, PaymentChargeRecord.class);
 //                    ChargeRecord chargeRecord = ConverterUtil.convert(paymentChargeRecordPojo,ChargeRecord.class);
                     chargeRecordList.add(chargeRecord);
+                    if (chargeRecord.getBusinessCustomerNo().startsWith("LX")) {
+                        customerNoList.add(chargeRecord.getBusinessCustomerNo());
+                    }
                 }
 
 //                for (int i = 0; i < paymentChargeRecordPageList.size(); i++) {
@@ -539,7 +544,20 @@ public class PaymentServiceImpl implements PaymentService {
 //                        chargeRecord.setCustomerName(chargeRecord.getBusinessCustomerName());
 //                    }
 //                }
-
+                List<CustomerDO> customerDOList=customerMapper.findByCustomerNoList(customerNoList);
+                if (CollectionUtil.isNotEmpty(customerDOList)) {
+                    Map<Object, CustomerDO> customerMap = ListUtil.listToMap(customerDOList, "customerNo");
+                    if (CollectionUtil.isNotEmpty(chargeRecordList)) {
+                        for (ChargeRecord chargeRecord:chargeRecordList) {
+                            if (customerMap.get(chargeRecord.getBusinessCustomerNo())!=null) {
+                                CustomerDO customerDO = customerMap.get(chargeRecord.getBusinessCustomerNo());
+                                chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
+                                chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
+                                chargeRecord.setCustomerName(customerDO.getCustomerName());
+                            }
+                        }
+                    }
+                }
                 chargeRecordPage.setItemList(chargeRecordList);
                 chargeRecordPage.setPageSize(paymentChargeRecordPage.getPageSize());
                 chargeRecordPage.setPageCount(paymentChargeRecordPage.getPageCount());
