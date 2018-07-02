@@ -1585,6 +1585,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> updateRisk(CustomerRiskManagement customerRiskManagement) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         CustomerDO customerDO = customerMapper.findByNo(customerRiskManagement.getCustomerNo());
