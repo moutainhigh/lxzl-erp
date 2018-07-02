@@ -434,6 +434,11 @@ public class PageController extends BaseController {
         return "redirect:/error";
     }
 
+    @RequestMapping("/customer-statement/list-export")
+    public String customerStatementListExport() {
+        return "/component/customer/exportModal";
+    }
+
     //采购管理
     @RequestMapping("/purchase-manage/list")
     public String purchaseManageList() {
