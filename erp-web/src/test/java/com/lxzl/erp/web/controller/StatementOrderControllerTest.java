@@ -185,4 +185,19 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/statementOrder/reStatementK3ReturnOrderRentOnly", param);
     }
 
+    @Test
+    public void exportQueryStatementOrderCheckParam() throws Exception {
+//        String str = "2018-1-15";
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        Date rentStartTime = sdf.parse(str);
+        StatementOrderMonthQueryParam param = new StatementOrderMonthQueryParam();
+//        param.setPageNo(1);
+//        param.setPageSize(10);
+//        param.setOwnerName("来春");
+//        param.setSubCompanyId(2);
+//        param.setStatementOrderCustomerName("庄凯麟勿动");
+        param.setStatementOrderCustomerNo("LXCC-027-20180305-00063");
+//        param.setMonthTime(rentStartTime);
+        TestResult testResult = getJsonTestResult("/statementOrder/exportQueryStatementOrderCheckParam", param);
+    }
 }
