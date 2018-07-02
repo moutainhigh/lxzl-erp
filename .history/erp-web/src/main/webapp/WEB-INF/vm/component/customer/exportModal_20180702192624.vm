@@ -1,0 +1,35 @@
+<div id="submitAuditModal" class="popup-basic admin-form mfp-with-anim "> ##mfp-hide
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i>财务导出</span>
+        </div>
+        <form method="post" id="chooseForm" description="结算单导出">
+            <div class="panel-body p25">
+                <div class="row">
+                    <label for="startAt" class="field-label text-right col-md-3">开始时间</label>
+                    <div class="col-md-9">
+                        <div class="input-group date" id="" style="height:40px;">
+                            <input type="text" name="statementExpectPayStartTime" id="statementExpectPayStartTime" class="form-control bradiusL"  style="height:40px;" autocomplete="off" placeholder="开始时间">
+                            <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="startAt" class="field-label text-right col-md-3">开始时间</label>
+                    <div class="col-md-9">
+                        <div class="input-group date" id="" style="height:40px;">
+                            <input type="text" name="statementExpectPayEndTime" id="statementExpectPayEndTime" class="form-control bradiusL"  style="height:40px;" autocomplete="off" placeholder="结束时间">
+                            <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-footer text-right">
+                <button type="submit" class="button btn-primary exportBtn">确定</button>
+                <button type="button" class="button btn-default cancelButton">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
