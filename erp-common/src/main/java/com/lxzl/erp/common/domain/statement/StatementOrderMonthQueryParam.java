@@ -19,7 +19,9 @@ public class StatementOrderMonthQueryParam extends BasePageParam {
     private String statementOrderCustomerName;
     private Integer statementOrderCustomerId;
     private String statementOrderCustomerNo;
+    @DateTimeFormat(pattern="yyyy-MM")
     private Date statementOrderStartTime;
+    @DateTimeFormat(pattern="yyyy-MM")
     private Date statementOrderEndTime;
     private String statementOrderSubCompanyName;
     @DateTimeFormat(pattern="yyyy-MM-dd")
