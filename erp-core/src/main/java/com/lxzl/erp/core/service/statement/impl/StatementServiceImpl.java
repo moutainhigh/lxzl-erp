@@ -5667,7 +5667,7 @@ public class StatementServiceImpl implements StatementService {
             Date partTime=k3OrderStatementConfigDO.getRentStartTime();
             if(CollectionUtil.isNotEmpty(statementOrderDetailDOS)){
                 for(StatementOrderDetailDO orderDetailDO:statementOrderDetailDOS){
-                    if(DateUtil.daysBetween(orderDetailDO.getStatementEndTime(),partTime)>0){
+                    if(DateUtil.daysBetween(orderDetailDO.getStatementEndTime(),partTime)>0&&StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(orderDetailDO.getStatementDetailType())){
                         k3PartRemoveAmount=BigDecimalUtil.add(k3PartRemoveAmount,orderDetailDO.getStatementDetailAmount());
                     }
                 }
@@ -5687,7 +5687,7 @@ public class StatementServiceImpl implements StatementService {
             Date partTime=k3OrderStatementConfigDO.getRentStartTime();
             if(CollectionUtil.isNotEmpty(statementOrderDetailDOS)){
                 for(StatementOrderDetailDO orderDetailDO:statementOrderDetailDOS){
-                    if(DateUtil.daysBetween(orderDetailDO.getStatementEndTime(),partTime)>0){
+                    if(DateUtil.daysBetween(orderDetailDO.getStatementEndTime(),partTime)>0&&StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(orderDetailDO.getStatementDetailType())){
                         k3PartRemoveAmount=BigDecimalUtil.add(k3PartRemoveAmount,orderDetailDO.getStatementDetailAmount());
                     }
                 }
@@ -5858,7 +5858,7 @@ public class StatementServiceImpl implements StatementService {
             Date partTime=k3OrderStatementConfigDO.getRentStartTime();
             if(CollectionUtil.isNotEmpty(statementOrderDetailDOS)){
                 for(StatementOrderDetailDO orderDetailDO:statementOrderDetailDOS){
-                    if(DateUtil.daysBetween(orderDetailDO.getStatementEndTime(),partTime)>0){
+                    if(DateUtil.daysBetween(orderDetailDO.getStatementEndTime(),partTime)>0&&StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(orderDetailDO.getStatementDetailType())){
                         k3PartRemoveAmount=BigDecimalUtil.add(k3PartRemoveAmount,orderDetailDO.getStatementDetailAmount());
                     }
                 }
@@ -6055,7 +6055,7 @@ public class StatementServiceImpl implements StatementService {
             Date partTime=k3OrderStatementConfigDO.getRentStartTime();
             if(CollectionUtil.isNotEmpty(statementOrderDetailDOS)){
                 for(StatementOrderDetailDO orderDetailDO:statementOrderDetailDOS){
-                    if(DateUtil.daysBetween(orderDetailDO.getStatementEndTime(),partTime)>0){
+                    if(DateUtil.daysBetween(orderDetailDO.getStatementEndTime(),partTime)>0&&StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(orderDetailDO.getStatementDetailType())){
                         k3PartRemoveAmount=BigDecimalUtil.add(k3PartRemoveAmount,orderDetailDO.getStatementDetailAmount());
                     }
                 }
