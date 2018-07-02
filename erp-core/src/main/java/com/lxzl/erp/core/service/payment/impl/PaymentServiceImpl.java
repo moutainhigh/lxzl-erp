@@ -71,6 +71,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private BankSlipSupport bankSlipSupport;
 
+
     @Override
     public CustomerAccount queryCustomerAccountNoLogin(String customerNo) {
         CustomerAccountQueryParam param = new CustomerAccountQueryParam();
@@ -511,14 +512,25 @@ public class PaymentServiceImpl implements PaymentService {
                 List<ChargeRecord> chargeRecordList = new ArrayList<>();
                 for (JSONObject jsonObject : paymentChargeRecordPageList) {
                     ChargeRecord chargeRecord = JSON.parseObject(jsonObject.toJSONString(), ChargeRecord.class);
+                    CustomerDO customerDO = new CustomerDO();
                     if (jsonObject.get("chargeBodyId") != null) {
                         chargeRecord.setSubCompanyId(Integer.parseInt(jsonObject.get("chargeBodyId").toString()));
+                    }else {
+                        CustomerDO dbCustomerDO = customerMapper.findByCustomerNo(chargeRecord.getBusinessCustomerNo());
+                        if (dbCustomerDO != null) {
+                            customerDO =dbCustomerDO;
+                            chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
+                        }
                     }
                     if (jsonObject.get("chargeBodyName") != null) {
                         chargeRecord.setSubCompanyName(jsonObject.get("chargeBodyName").toString());
+                    }else {
+                        chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
                     }
                     if (jsonObject.get("businessCustomerName") != null) {
                         chargeRecord.setCustomerName(jsonObject.get("businessCustomerName").toString());
+                    }else {
+                        chargeRecord.setCustomerName(customerDO.getCustomerName());
                     }
 //                    ChargeRecord chargeRecord = JSON.parseObject(JSON.toJSONString(paymentChargeRecord),ChargeRecord.class);
 //                    PaymentChargeRecord paymentChargeRecordPojo = JSONUtil.parseObject(paymentChargeRecord, PaymentChargeRecord.class);
