@@ -112,6 +112,8 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
         statementOrderMonthQueryParam = new StatementOrderMonthQueryParam();
         statementOrderMonthQueryParam.setStatementOrderCustomerNo(customerNoParam);
+        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderMonthQueryParam.getStatementOrderStartTime());
+        statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderMonthQueryParam.getStatementOrderStartTime());
 
         ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam);
         if (!ErrorCode.SUCCESS.equals(stringListServiceResult.getErrorCode())) {
@@ -327,6 +329,9 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             if (checkStatementOrder.getMonthTime() != null) {
                 sheetName = checkStatementOrder.getMonthTime().replace("-", "年") + "月";
             }
+            if(CollectionUtil.isEmpty(exportList)){
+                continue;
+            }
 
 
             XSSFSheet hssfSheet = null;
@@ -352,7 +357,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 cellStyle.setVerticalAlignment(XSSFCellStyle.VERTICAL_CENTER);//垂直居中
                 cellNo1.setCellStyle(cellStyle);
             }
-            if (hssfSheet == null || CollectionUtil.isEmpty(exportList)) {
+            if (hssfSheet == null) {
                 continue;
             }
 

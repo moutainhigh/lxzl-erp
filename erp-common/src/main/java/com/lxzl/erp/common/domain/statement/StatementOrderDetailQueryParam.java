@@ -24,6 +24,8 @@ public class StatementOrderDetailQueryParam extends BasePageParam {
     private Date createStartTime;
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date createEndTime;
+    private Date statementOrderStartTime;
+    private Date statementOrderEndTime;
 
     public Date getCreateStartTime() {
         return createStartTime;
@@ -79,5 +81,21 @@ public class StatementOrderDetailQueryParam extends BasePageParam {
 
     public void setSubCompanyId(Integer subCompanyId) {
         this.subCompanyId = subCompanyId;
+    }
+
+    public Date getStatementOrderStartTime() {
+        return statementOrderStartTime;
+    }
+
+    public void setStatementOrderStartTime(Date statementOrderStartTime) {
+        this.statementOrderStartTime = statementOrderStartTime;
+    }
+
+    public Date getStatementOrderEndTime() {
+        return statementOrderEndTime;
+    }
+
+    public void setStatementOrderEndTime(Date statementOrderEndTime) {
+        this.statementOrderEndTime = statementOrderEndTime;
     }
 }

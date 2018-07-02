@@ -19,6 +19,8 @@ public class StatementOrderMonthQueryParam extends BasePageParam {
     private String statementOrderCustomerName;
     private Integer statementOrderCustomerId;
     private String statementOrderCustomerNo;
+    private Date statementOrderStartTime;
+    private Date statementOrderEndTime;
     private String statementOrderSubCompanyName;
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date monthTime;
@@ -69,5 +71,21 @@ public class StatementOrderMonthQueryParam extends BasePageParam {
 
     public void setStatementOrderSubCompanyName(String statementOrderSubCompanyName) {
         this.statementOrderSubCompanyName = statementOrderSubCompanyName;
+    }
+
+    public Date getStatementOrderStartTime() {
+        return statementOrderStartTime;
+    }
+
+    public void setStatementOrderStartTime(Date statementOrderStartTime) {
+        this.statementOrderStartTime = statementOrderStartTime;
+    }
+
+    public Date getStatementOrderEndTime() {
+        return statementOrderEndTime;
+    }
+
+    public void setStatementOrderEndTime(Date statementOrderEndTime) {
+        this.statementOrderEndTime = statementOrderEndTime;
     }
 }
