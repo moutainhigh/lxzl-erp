@@ -14,11 +14,27 @@
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
             <section id="content" class="pn animated fadeIn">
-
+                <form id="exportForm" class="hide"></form>
                 #parse("component/loading.vm")
                 
                 <form id="customerDetail">
                     <div class="pv30 ph40 bg-light dark br-b br-grey posr">
+                        <div class="text-right br-b br-grey mb20">
+                            <script type="text/html" id="actionButtonsTpl">
+                                {{#acitonButtons}}
+                                <a href="${ctx}{{menuUrl}}?no={{customerNo}}"
+                                    class="btn btn-primary btn-sm ml5 bradius {{class}}" 
+                                    data-customerno="{{customerNo}}"
+                                    data-customername="{{customerName}}"
+                                    data-statementdate="{{statementDate}}"
+                                    data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
+                                    data-customertype="{{customerType}}"
+                                    data-ownerSubCompanyId="{{ownerSubCompanyId}}">{{text}}</a>
+                                {{/acitonButtons}}
+                            </script>
+                            <div class="btn-group mb20" id="actionButtons"></div>
+                        </div>
+
                         <script type="text/html" id="customerHeadTpl">
                             {{#customer}}
                             <div class="va-t m30">

@@ -14,7 +14,6 @@
         <script type="text/html" id="returnVisitTpl">
             <thead>
             <tr class="bg-light">
-                <th>客户编号</th>
                 <th>图片</th>
                 <th>回访描述</th>
                 <th>备注</th>
@@ -27,8 +26,7 @@
             {{#dataSource}}
             {{#listData}}
             <tr>
-                <td>{{customerNo}}</td>
-                <td><a class="returnVisitImg open-img-popup productImg" data-imgs={{returnVisitImgJSON}}><img src="{{mainImg}}" /></a></td>
+                <td><a class="returnVisitImg open-img-popup productImg" data-imgs="{{returnVisitImgJSON}}"><img src="{{mainImg}}" /></a></td>
                 <td>{{returnVisitDescribe}}</td>
                 <td>{{remark}}</td>
                 <td>

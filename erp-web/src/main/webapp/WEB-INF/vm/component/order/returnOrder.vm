@@ -9,6 +9,7 @@
                 <th>商品代码</th>
                 <th>退货数量</th>
                 <th>实际退货数量</th>
+                <th>退货时间</th>
                 <th>备注</th>
             </tr>
             </thead>
@@ -16,12 +17,13 @@
             {{#dataSource}}
             {{#listData}}
             <tr>
-                <td>{{returnOrderNo}}</td>
+                <td><a href="{{returnOrderUrl}}" target="_blank">{{returnOrderNo}}</a></td>
                 <td>{{orderNo}}</td>
                 <td>{{productName}}</td>
                 <td>{{productNo}}</td>
                 <td>{{productCount}}</td>
                 <td>{{realProductCount}}</td>
+                <td>{{#shorTime}}{{returnTime}}{{/shorTime}}</td>
                 <td>{{remark}}</td>
             </tr>
             {{/listData}}
