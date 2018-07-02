@@ -43,8 +43,8 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
-                                        <dt class="mb10">客户：</dt><dd>{{k3CustomerName}}</dd>
-                                        <dt class="mb10">客户编号：</dt><dd>{{k3CustomerNo}}</dd>
+                                        <dt class="mb10">客户：</dt><dd><a href="{{customerDetailUrl}}" target="_blank">{{k3CustomerName}}</a></dd>
+                                        <dt class="mb10">客户编号：</dt><dd><a href="{{customerDetailUrl}}" target="_blank">{{k3CustomerNo}}</a></dd>
                                         <dt class="mb10">联系人：</dt><dd>{{returnContacts}}</dd>
                                         <dt class="mb10">联系电话：</dt><dd>{{returnPhone}}</dd>
                                         <dt class="mb10">收货地址：</dt><dd>{{returnAddress}}</dd>
@@ -149,7 +149,7 @@
 ##                                                    <span class="checkbox mn"></span>
 ##                                                </label>
 ##                                            </td>
-                                            <td>{{orderNo}}</td>
+                                            <td><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></td>
                                             <td>{{productNo}}</td>
                                             <td>{{productName}}</td>
                                             <td>{{propertiesToStr}}</td>

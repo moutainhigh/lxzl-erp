@@ -1813,7 +1813,7 @@ public class StatementServiceImpl implements StatementService {
         }
 
         StatementOrder statementOrder = new StatementOrder();
-        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderIdForOrderDetail(orderDO.getId());
         List<StatementOrderDetail> statementOrderDetailList = ConverterUtil.convertList(statementOrderDetailDOList, StatementOrderDetail.class);
 
         Integer customerId = null;
