@@ -1064,6 +1064,12 @@
         <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
             and t1.buyer_customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
         </if>
+        <if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderStartTime != null ">
+            <![CDATA[ AND t0.month_config >= #{maps.statementOrderMonthQueryParam.statementOrderStartTime} ]]>
+        </if>
+        <if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderEndTime != null ">
+            <![CDATA[ AND t0.month_config <= #{maps.statementOrderMonthQueryParam.statementOrderEndTime} ]]>
+        </if>
         AND ((ekosc.order_id is not null and (<![CDATA[ monthTime >= date_format(ekosc.rent_start_time,'%Y-%m')]]> )) or ekosc.order_id is null )
         and t1.id is not null order by monthTime DESC, orderRentStartTime ASC, order_item_refer_id ASC
     </select>

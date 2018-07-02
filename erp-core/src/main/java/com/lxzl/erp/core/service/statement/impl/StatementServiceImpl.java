@@ -4914,12 +4914,16 @@ public class StatementServiceImpl implements StatementService {
         statementOrderMonthQueryParam.setStatementOrderCustomerId(customerDO.getId());
         Map<String, Object> maps = new HashMap<>();
         maps.put("statementOrderMonthQueryParam", statementOrderMonthQueryParam);
+        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderMonthQueryParam.getStatementOrderStartTime());
+        statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderMonthQueryParam.getStatementOrderEndTime());
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
         //todo 查处结算单总表
         List<CheckStatementOrderDO> statementOrderDOList = statementOrderMapper.exportListMonthPage(maps);
         //todo 查处结算单详情
         StatementOrderDetailQueryParam statementOrderDetailQueryParam = new StatementOrderDetailQueryParam();
         statementOrderDetailQueryParam.setCustomerId(customerDO.getId());
+        statementOrderDetailQueryParam.setStatementOrderStartTime(statementOrderMonthQueryParam.getStatementOrderStartTime());
+        statementOrderDetailQueryParam.setStatementOrderEndTime(statementOrderMonthQueryParam.getStatementOrderEndTime());
         maps.put("start", 0);
         maps.put("pageSize", Integer.MAX_VALUE);
         maps.put("statementOrderDetailQueryParam", statementOrderDetailQueryParam);
