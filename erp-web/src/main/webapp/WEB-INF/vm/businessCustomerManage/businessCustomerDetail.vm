@@ -341,6 +341,7 @@
             'manage.customer.handle.mixin.js',
             'manage.customer.business.detail.js',
             'manage.customer.risk.js',
+            'manage.customer.confirm.statement.js',
             'manage.customer.address.js',
             'manage.customer.address.add.js',
             'manage.customer.address.edit.js',
