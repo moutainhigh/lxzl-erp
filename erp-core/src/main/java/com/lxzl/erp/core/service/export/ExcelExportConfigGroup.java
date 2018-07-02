@@ -118,7 +118,7 @@ public class ExcelExportConfigGroup {
                 .addConfig(new ColConfig("statementDetailRentDepositAmount", "租金押金", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailDepositAmount", "押金", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailOtherAmount", "其它费用", AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementDetailOverdueAmount", "逾期金额", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailOverdueAmount", "截止上期未付", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailPaidAmount", "已付金额", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailRentPaidAmount", "已付租金", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailRentDepositPaidAmount", "已付租金押金", AmountExcelExportView.getInstance()))
