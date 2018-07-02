@@ -23,7 +23,7 @@
                 <td>{{productNo}}</td>
                 <td>{{productCount}}</td>
                 <td>{{realProductCount}}</td>
-                <td>{{#shorTime}}{{returnTime}}{{/shorTime}}</td>
+                <td>{{#shortTime}}{{returnTime}}{{/shortTime}}</td>
                 <td>{{remark}}</td>
             </tr>
             {{/listData}}
