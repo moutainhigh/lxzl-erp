@@ -14,7 +14,6 @@
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
             <section id="content" class="pn animated fadeIn">
-                <form id="exportForm" class="hide"></form>
                 #parse("component/loading.vm")
                 
                 <form id="customerDetail">
@@ -162,6 +161,7 @@
         #parse("layout/sidebarRight.vm")
     </div>
     #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}assets/admin-tools/admin-forms/js/jquery-tcm-month.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'manage.customer.mixin.js',
