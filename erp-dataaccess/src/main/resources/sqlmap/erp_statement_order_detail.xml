@@ -1011,6 +1011,7 @@
         on t0.month_start_config between t1.rent_start_time and t1.expect_return_time or t0.month_end_config between t1.rent_start_time and t1.expect_return_time
         or date_format(t1.rent_start_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
         or date_format(t1.expect_return_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
+        LEFT JOIN erp_k3_order_statement_config ekosc on t1.id = ekosc.order_id
         left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
         left join
         (
@@ -1063,6 +1064,7 @@
         <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
             and t1.buyer_customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
         </if>
+        AND ((ekosc.order_id is not null and (<![CDATA[t4.statement_start_time >= ekosc.rent_start_time]]> or (<![CDATA[t4.statement_start_time < ekosc.rent_start_time]]> AND <![CDATA[ t4.statement_end_time> ekosc.rent_start_time ]]>))) or ekosc.order_id is null )
         and t1.id is not null order by monthTime DESC, orderRentStartTime ASC, order_item_refer_id ASC
     </select>
 
