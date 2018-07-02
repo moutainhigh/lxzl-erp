@@ -544,16 +544,18 @@ public class PaymentServiceImpl implements PaymentService {
 //                        chargeRecord.setCustomerName(chargeRecord.getBusinessCustomerName());
 //                    }
 //                }
-                List<CustomerDO> customerDOList=customerMapper.findByCustomerNoList(customerNoList);
-                if (CollectionUtil.isNotEmpty(customerDOList)) {
-                    Map<Object, CustomerDO> customerMap = ListUtil.listToMap(customerDOList, "customerNo");
-                    if (CollectionUtil.isNotEmpty(chargeRecordList)) {
-                        for (ChargeRecord chargeRecord:chargeRecordList) {
-                            if (customerMap.get(chargeRecord.getBusinessCustomerNo())!=null) {
-                                CustomerDO customerDO = customerMap.get(chargeRecord.getBusinessCustomerNo());
-                                chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
-                                chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
-                                chargeRecord.setCustomerName(customerDO.getCustomerName());
+                if (CollectionUtil.isNotEmpty(customerNoList)) {
+                    List<CustomerDO> customerDOList=customerMapper.findByCustomerNoList(customerNoList);
+                    if (CollectionUtil.isNotEmpty(customerDOList)) {
+                        Map<Object, CustomerDO> customerMap = ListUtil.listToMap(customerDOList, "customerNo");
+                        if (CollectionUtil.isNotEmpty(chargeRecordList)) {
+                            for (ChargeRecord chargeRecord:chargeRecordList) {
+                                if (customerMap.get(chargeRecord.getBusinessCustomerNo())!=null) {
+                                    CustomerDO customerDO = customerMap.get(chargeRecord.getBusinessCustomerNo());
+                                    chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
+                                    chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
+                                    chargeRecord.setCustomerName(customerDO.getCustomerName());
+                                }
                             }
                         }
                     }
