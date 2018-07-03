@@ -5102,52 +5102,6 @@ public class StatementServiceImpl implements StatementService {
                         }
                         statementOrderDetail.setItemCount(statementOrderDetail.getItemCount() == null? 0 : statementOrderDetail.getItemCount() * -1);
                     }
-                    if (OrderType.ORDER_TYPE_CHANGE.equals(statementOrderDetail.getOrderType())) {
-                        if (OrderType.ORDER_TYPE_CHANGE.equals(statementOrderDetail.getOrderType())) {
-                            //为换商品时
-                            K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findById(statementOrderDetail.getOrderId());
-                            K3ChangeOrderDetailDO k3ChangeOrderDetailDO = k3ChangeOrderDetailMapper.findById(statementOrderDetail.getOrderItemReferId());
-                            if (OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT.equals(statementOrderDetail.getOrderItemType())) {
-                                if (k3ChangeOrderDetailDO != null) {
-                                    String orderItemId = k3ChangeOrderDetailDO.getOrderItemId();
-                                    OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(orderItemId));
-                                    statementOrderDetail.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT);
-                                    statementOrderDetail.setItemName(k3ChangeOrderDetailDO.getProductName());
-                                    statementOrderDetail.setItemCount(k3ChangeOrderDetailDO.getProductCount());
-                                    statementOrderDetail.setItemRentType(k3ChangeOrderDetailDO.getRentType());
-                                    if (orderProductDO != null) {
-                                        Integer productId = orderProductDO.getProductId();
-                                        Integer isNewProduct = orderProductDO.getIsNewProduct();
-                                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
-                                    }
-                                }
-                            }
-                            //为换物料时
-                            if (OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL.equals(statementOrderDetail.getOrderItemType())) {
-                                if (k3ChangeOrderDetailDO != null) {
-                                    String orderItemId = k3ChangeOrderDetailDO.getOrderItemId();
-                                    OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(orderItemId));
-                                    statementOrderDetail.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL);
-                                    statementOrderDetail.setItemName(k3ChangeOrderDetailDO.getProductName());
-                                    statementOrderDetail.setItemCount(k3ChangeOrderDetailDO.getProductCount());
-                                    statementOrderDetail.setItemRentType(k3ChangeOrderDetailDO.getRentType());
-                                    if (orderMaterialDO != null) {
-                                        Integer materialId = orderMaterialDO.getMaterialId();
-                                        Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
-                                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
-                                    }
-                                }
-                            }
-                            //为换货其他费用时
-                            if (OrderItemType.ORDER_ITEM_TYPE_CHANGE_OTHER.equals(statementOrderDetail.getOrderItemType())) {
-                                if (k3ChangeOrderDO != null) {
-                                    statementOrderDetail.setOrderNo(k3ChangeOrderDO.getChangeOrderNo());
-                                }
-                                key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
-                            }
-                        }
-                    }
-
                     if (key == null) {
                         continue;
                     }
@@ -5197,7 +5151,6 @@ public class StatementServiceImpl implements StatementService {
 
             List<CheckStatementOrderDetail> statementOrderDetailList = ListUtil.mapToList(hashMap);
             if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
-                checkStatementOrderList.add(statementOrder);
                 statementOrder.setStatementOrderDetailList(statementOrderDetailList);
             }
         }
