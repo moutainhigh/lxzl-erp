@@ -1134,7 +1134,14 @@
         <if test="payMode != null &amp;&amp; payMode == 1">
             <![CDATA[ AND statement_expect_pay_time <= #{expectPayTime, jdbcType=TIMESTAMP} ]]>
         </if>
-        and statement_detail_amount > 0 group by statementExpectPayTime limit 0,1;
+        and statement_detail_amount > 0 group by statementExpectPayTime
+        <if test="payMode != null &amp;&amp; payMode == 2">
+            order by statementExpectPayTime ASC
+        </if>
+        <if test="payMode != null &amp;&amp; payMode == 1">
+            order by statementExpectPayTime desc
+        </if>
+        limit 0,1;
     </select>
 
     <select id="findProductRentByReletOrderItemReferIds" resultMap="StatementOrderDetailDO">
