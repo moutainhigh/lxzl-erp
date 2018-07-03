@@ -4973,6 +4973,10 @@ public class StatementServiceImpl implements StatementService {
                 List<CheckStatementOrderDetail> list = new ArrayList<>();
                 for (CheckStatementOrderDetailDO checkStatementOrderDetailDO : checkStatementOrderDetailDOList) {
                     CheckStatementOrderDetail checkStatementOrderDetail = ConverterUtil.convert(checkStatementOrderDetailDO, CheckStatementOrderDetail.class);
+                    checkStatementOrderDetail.setStatementOrderDetailId(checkStatementOrderDetailDO.getId());
+                    checkStatementOrderDetail.setStatementOrderId(checkStatementOrderDetailDO.getStatementOrderId());
+                    checkStatementOrderDetail.setOrderItemReferId(checkStatementOrderDetailDO.getOrderItemReferId());
+                    checkStatementOrderDetail.setReturnReferId(checkStatementOrderDetailDO.getReturnReferId());
                     list.add(checkStatementOrderDetail);
                 }
                 statementOrder.setStatementOrderDetailList(list);
@@ -5150,13 +5154,56 @@ public class StatementServiceImpl implements StatementService {
             }
 
             List<CheckStatementOrderDetail> statementOrderDetailList = ListUtil.mapToList(hashMap);
+            //排序
             if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
+                statementOrderDetailList = sortingCheckStatementOrderDetail(statementOrderDetailList);
+                checkStatementOrderList.add(statementOrder);
                 statementOrder.setStatementOrderDetailList(statementOrderDetailList);
             }
         }
         result.setResult(checkStatementOrderList);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+    private List<CheckStatementOrderDetail> sortingCheckStatementOrderDetail(List<CheckStatementOrderDetail> statementOrderDetailList) {
+        //存放非退货单结算单详情项
+//        List<StatementOrderDetail> notReturnOrderList = new ArrayList<>();
+        Map<Integer, CheckStatementOrderDetail> notReturnOrderMap = new TreeMap<>();
+        //存放最终结果
+        List<CheckStatementOrderDetail> allList = new ArrayList<>();
+        //存放退货结算单详情项其它费用项
+        List<CheckStatementOrderDetail> returnOrderOtherList = new ArrayList<>();
+        //存放退货结算单商品、配件项
+        Map<Integer, List<CheckStatementOrderDetail>> returnOrderProudctAndMaterialMap = new HashMap<>();
+        for (CheckStatementOrderDetail statementOrderDetail : statementOrderDetailList) {
+            if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
+                notReturnOrderMap.put(statementOrderDetail.getStatementOrderDetailId(), statementOrderDetail);
+            } else {
+                if (null == statementOrderDetail.getReturnReferId()) {
+                    returnOrderOtherList.add(statementOrderDetail);
+                } else {
+                    if (null != returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId())) {
+                        returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId()).add(statementOrderDetail);
+                    } else {
+                        List<CheckStatementOrderDetail> returnOrderProudctAndMaterialList = new ArrayList<>();
+                        returnOrderProudctAndMaterialList.add(statementOrderDetail);
+                        returnOrderProudctAndMaterialMap.put(statementOrderDetail.getReturnReferId(), returnOrderProudctAndMaterialList);
+                    }
+                }
+            }
+        }
+        if (CollectionUtil.isNotEmpty(returnOrderOtherList)) {
+            allList.addAll(returnOrderOtherList);
+        }
+        for (Integer statementOrderDetailId : notReturnOrderMap.keySet()) {
+            CheckStatementOrderDetail statementOrderDetail = notReturnOrderMap.get(statementOrderDetailId);
+            allList.add(statementOrderDetail);
+            List<CheckStatementOrderDetail> statementOrderDetails = returnOrderProudctAndMaterialMap.get(statementOrderDetail.getStatementOrderDetailId());
+            if (CollectionUtil.isNotEmpty(statementOrderDetails)) {
+                allList.addAll(statementOrderDetails);
+            }
+        }
+        return allList;
     }
 
     private void exportConvertStatementOrderDetailOtherInfo(CheckStatementOrderDetail statementOrderDetail, CheckStatementOrderDetail returnReferStatementOrderDetail, OrderDO orderDO) {
