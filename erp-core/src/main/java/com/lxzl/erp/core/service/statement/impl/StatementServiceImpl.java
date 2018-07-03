@@ -4967,7 +4967,6 @@ public class StatementServiceImpl implements StatementService {
                 continue;
             }
             CheckStatementOrder statementOrder = ConverterUtil.convert(exportStatementOrderDO, CheckStatementOrder.class);
-            checkStatementOrderList.add(statementOrder);
             List<CheckStatementOrderDetailDO> checkStatementOrderDetailDOList = exportStatementOrderDO.getCheckStatementOrderDetailDOList();
             if (CollectionUtil.isNotEmpty(exportStatementOrderDO.getCheckStatementOrderDetailDOList())) {
                 List<CheckStatementOrderDetail> list = new ArrayList<>();
