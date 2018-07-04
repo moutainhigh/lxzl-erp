@@ -945,7 +945,7 @@ CREATE TABLE `erp_dingding_group_message_config` (
 	PRIMARY KEY (`id`),
 	KEY `index_sub_company_id` (`sub_company_id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='钉钉群消息配置表';
--------------------------------未执行-----------------------------
+
 
 DROP TABLE IF EXISTS `erp_customer_statement_date_change_log`;
 CREATE TABLE `erp_customer_statement_date_change_log` (
@@ -961,3 +961,9 @@ CREATE TABLE `erp_customer_statement_date_change_log` (
 	PRIMARY KEY (`id`),
 	KEY `index_customer_no` (`customer_no`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户结算日修变更录表';
+
+-------------------------------未执行-----------------------------
+
+
+ALTER TABLE erp_k3_return_order_detail ADD order_item_type INT(11) NOT NULL DEFAULT 1 COMMENT '商品类型,1-商品,2-配件';
+UPDATE erp_k3_return_order_detail SET order_item_type = 2 WHERE LEFT(product_no, 2)<>'10' AND LEFT(product_no, 2)<>'90';
