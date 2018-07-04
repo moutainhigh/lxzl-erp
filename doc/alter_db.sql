@@ -965,5 +965,5 @@ CREATE TABLE `erp_customer_statement_date_change_log` (
 -------------------------------未执行-----------------------------
 
 
-ALTER TABLE erp_k3_return_order_detail ADD product_type INT(11) NOT NULL DEFAULT 1 COMMENT '商品类型,1-商品,2-配件';
-UPDATE erp_k3_return_order_detail SET product_type = 2 WHERE LEFT(product_no, 2)<>'10' AND LEFT(product_no, 2)<>'90';
+ALTER TABLE erp_k3_return_order_detail ADD order_item_type INT(11) NOT NULL DEFAULT 1 COMMENT '商品类型,1-商品,2-配件';
+UPDATE erp_k3_return_order_detail SET order_item_type = 2 WHERE LEFT(product_no, 2)<>'10' AND LEFT(product_no, 2)<>'90';
