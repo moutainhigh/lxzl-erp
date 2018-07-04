@@ -88,9 +88,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -4943,6 +4943,22 @@ public class StatementServiceImpl implements StatementService {
                 listPage.add(checkStatementOrderDetailDO);
             }
         }
+        //退货
+        List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findByCustomerNo(customerDO.getCustomerNo());
+        Map<Integer,Map<String,Integer>> returnDetailIdMap = new HashMap<>();
+        Map<String,Integer> returnDataMap = new HashMap<>();
+        for(K3ReturnOrderDO k3ReturnOrderDO:k3ReturnOrderDOList){
+            if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
+                for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+                    Date returnTime = k3ReturnOrderDO.getReturnTime();
+                    String returnTimeString = simpleDateFormat.format(returnTime);
+                    returnDataMap.put(returnTimeString,k3ReturnOrderDetailDO.getProductCount());
+                    returnDetailIdMap.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),returnDataMap);
+                }
+            }
+        }
+
         List<CheckStatementOrderDetailDO> firstReturnListPage = statementOrderDetailMapper.exportFirstReturnListPage(maps);
         if (CollectionUtil.isNotEmpty(firstReturnListPage)) {
             for (CheckStatementOrderDetailDO checkStatementOrderDetailDO : firstReturnListPage) {
@@ -5191,6 +5207,25 @@ public class StatementServiceImpl implements StatementService {
                 statementOrder.setStatementOrderDetailList(statementOrderDetailList);
             }
         }
+        for ( CheckStatementOrder checkStatementOrder:checkStatementOrderList) {
+            for (CheckStatementOrderDetail checkStatementOrderDetail:checkStatementOrder.getStatementOrderDetailList()) {
+                if (returnDetailIdMap.get(checkStatementOrderDetail.getOrderItemReferId())!= null) {
+                    for (String returnTimeString :returnDetailIdMap.get(checkStatementOrderDetail.getOrderItemReferId()).keySet()) {
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+                        try {
+                            Date returnStartTime = simpleDateFormat.parse(returnTimeString);
+                            Date monthTime = simpleDateFormat.parse(checkStatementOrder.getMonthTime());
+                            if (monthTime.after(returnStartTime)) {
+                                checkStatementOrderDetail.setItemCount(checkStatementOrderDetail.getItemCount()-returnDataMap.get(returnTimeString));
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            }
+        }
         result.setResult(checkStatementOrderList);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -5234,7 +5269,6 @@ public class StatementServiceImpl implements StatementService {
             List<CheckStatementOrderDetail> statementOrderDetails = returnOrderProudctAndMaterialMap.get(statementOrderDetail.getStatementOrderDetailId());
             if (CollectionUtil.isNotEmpty(statementOrderDetails)) {
                 // TODO: 2018\7\3 0003 这里添加退货单合并逻辑
-                Integer itemCount = 0;
                 BigDecimal statementDetailAmount = BigDecimal.ZERO;
                 BigDecimal statementDetailRentAmount = BigDecimal.ZERO;
                 BigDecimal statementDetailDepositAmount = BigDecimal.ZERO;
@@ -5249,7 +5283,6 @@ public class StatementServiceImpl implements StatementService {
                         list.add(checkStatementOrderDetail);
                     }else {
                         // TODO: 2018\7\3 0003 如果金额不为0，将数量进行累加，然后跟最外层的订单对账单进行相减，金额相加，之后退货单不存储
-                        itemCount += checkStatementOrderDetail.getItemCount();
                         statementDetailAmount = BigDecimalUtil.add(statementDetailAmount,checkStatementOrderDetail.getStatementDetailAmount());
                         statementDetailRentAmount = BigDecimalUtil.add(statementDetailRentAmount,checkStatementOrderDetail.getStatementDetailRentAmount());
                         statementDetailDepositAmount = BigDecimalUtil.add(statementDetailDepositAmount,checkStatementOrderDetail.getStatementDetailDepositAmount());
@@ -5260,7 +5293,6 @@ public class StatementServiceImpl implements StatementService {
                         statementDetailRentDepositAmount = BigDecimalUtil.add(statementDetailRentDepositAmount,checkStatementOrderDetail.getStatementDetailRentDepositAmount());
                     }
                 }
-                statementOrderDetail.setItemCount(itemCount+statementOrderDetail.getItemCount());
                 statementOrderDetail.setStatementDetailAmount(BigDecimalUtil.add(statementDetailAmount,statementOrderDetail.getStatementDetailAmount()));
                 statementOrderDetail.setStatementDetailRentAmount(BigDecimalUtil.add(statementDetailRentAmount,statementOrderDetail.getStatementDetailRentAmount()));
                 statementOrderDetail.setStatementDetailDepositAmount(BigDecimalUtil.add(statementDetailDepositAmount,statementOrderDetail.getStatementDetailDepositAmount()));
