@@ -3067,6 +3067,7 @@ CREATE TABLE `erp_k3_return_order_detail` (
   `product_name` varchar(64) NOT NULL COMMENT '产品名称',
   `product_count` int(11) NOT NULL COMMENT '退货数量',
   `real_product_count` int(11) NOT NULL DEFAULT 0 COMMENT '实际退货数量',
+  `product_type` INT(11) NOT NULL DEFAULT 1 COMMENT '商品类型,1-商品,2-配件',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
