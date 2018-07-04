@@ -1069,7 +1069,7 @@
         <if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderEndTime != null ">
             <![CDATA[ AND t0.month_config <= #{maps.statementOrderMonthQueryParam.statementOrderEndTime} ]]>
         </if>
-        and t1.id is not null order by monthTime DESC, orderRentStartTime ASC, order_item_refer_id ASC
+        and t1.id is not null and t2.product_amount > 0 order by monthTime DESC, orderRentStartTime ASC, order_item_refer_id ASC
     </select>
 
     <select id="exportReturnListPage" resultMap="CheckStatementOrderDetailDO" parameterType="map">
