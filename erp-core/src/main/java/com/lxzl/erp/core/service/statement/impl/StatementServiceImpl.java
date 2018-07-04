@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
+import com.lxzl.erp.common.domain.k3.pojo.K3OrderStatementConfig;
 import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.pojo.Order;
@@ -89,6 +90,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -4941,7 +4943,37 @@ public class StatementServiceImpl implements StatementService {
                 listPage.add(checkStatementOrderDetailDO);
             }
         }
+        //退货
+        List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findByCustomerNo(customerDO.getCustomerNo());
+        Map<Integer,Map<String,Integer>> returnDetailIdMap = new HashMap<>();
+        Map<String,Integer> returnDataMap = new HashMap<>();
+        for(K3ReturnOrderDO k3ReturnOrderDO:k3ReturnOrderDOList){
+            if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
+                for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+                    Date returnTime = k3ReturnOrderDO.getReturnTime();
+                    String returnTimeString = simpleDateFormat.format(returnTime);
+                    returnDataMap.put(returnTimeString,k3ReturnOrderDetailDO.getProductCount());
+                    returnDetailIdMap.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),returnDataMap);
+                }
+            }
+        }
 
+        List<CheckStatementOrderDetailDO> firstReturnListPage = statementOrderDetailMapper.exportFirstReturnListPage(maps);
+        if (CollectionUtil.isNotEmpty(firstReturnListPage)) {
+            for (CheckStatementOrderDetailDO checkStatementOrderDetailDO : firstReturnListPage) {
+                StatementOrderDetailDO byStatementOrderId = statementOrderDetailMapper.findById(checkStatementOrderDetailDO.getReturnReferId());
+                List<CheckStatementOrderDetailDO>  byStatementOrder = statementOrderDetailMapper.findByOrderItemReferIdAndTime(byStatementOrderId.getOrderItemReferId(),checkStatementOrderDetailDO.getStatementExpectPayTime());
+                if (byStatementOrder.size()==1) {
+                    CheckStatementOrderDetailDO checkStatementOrderDetailDO1 = byStatementOrder.get(0);
+                    checkStatementOrderDetailDO.setReturnReferId(checkStatementOrderDetailDO1.getId());
+                    checkStatementOrderDetailDO.setStatementDetailAmount(BigDecimal.ZERO);
+                    listPage.add(checkStatementOrderDetailDO);
+                }
+            }
+        }
+        List<K3OrderStatementConfigDO> k3OrderStatementConfigList = k3OrderStatementConfigMapper.findByCustomerId(customerDO.getId());
+        Map<Integer,K3OrderStatementConfigDO> k3k3OrderStatementConfigMap = ListUtil.listToMap(k3OrderStatementConfigList,"orderId");
         for (CheckStatementOrderDO exportStatementOrderDO : statementOrderDOList) {
             List<CheckStatementOrderDetailDO> checkStatementOrderDetailDOList = exportStatementOrderDO.getCheckStatementOrderDetailDOList();
             if (checkStatementOrderDetailDOList == null) {
@@ -4954,7 +4986,15 @@ public class StatementServiceImpl implements StatementService {
                     String statementOrderDetailExpectPayTimeString = simpleDateFormat.format(statementOrderDetailExpectPayTime);
                     String monthTime = exportStatementOrderDO.getMonthTime();
                     if (monthTime.equals(statementOrderDetailExpectPayTimeString)) {
-                        checkStatementOrderDetailDOList.add(checkStatementOrderDetailDO);
+                        K3OrderStatementConfigDO k3OrderStatementConfigDO = k3k3OrderStatementConfigMap.get(checkStatementOrderDetailDO.getOrderId());
+                        if (k3OrderStatementConfigDO != null) {
+                            if (k3OrderStatementConfigDO.getRentStartTime().before(checkStatementOrderDetailDO.getStatementEndTime())
+                                    || k3OrderStatementConfigDO.getRentStartTime().equals(checkStatementOrderDetailDO.getStatementEndTime())) {
+                                checkStatementOrderDetailDOList.add(checkStatementOrderDetailDO);
+                            }
+                        }else {
+                            checkStatementOrderDetailDOList.add(checkStatementOrderDetailDO);
+                        }
                     }
                 }
             }
@@ -5103,6 +5143,10 @@ public class StatementServiceImpl implements StatementService {
                                 }
                             }
                         }
+                        //为退还物料时
+                        if (OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER.equals(statementOrderDetail.getOrderItemType())) {
+                            key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType() + "-" + statementOrderDetail.getOrderItemReferId();
+                        }
                         statementOrderDetail.setItemCount(statementOrderDetail.getItemCount() == null? 0 : statementOrderDetail.getItemCount() * -1);
                     }
                     if (key == null) {
@@ -5112,6 +5156,9 @@ public class StatementServiceImpl implements StatementService {
                     //各商品物料
                     CheckStatementOrderDetail newStatementOrderDetail = hashMap.get(key);
                     if (newStatementOrderDetail != null) {
+                        if (StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetail.getStatementDetailType())) {
+                            newStatementOrderDetail.setStatementOrderDetailId(statementOrderDetail.getStatementOrderDetailId());
+                        }
                         newStatementOrderDetail.setStatementDetailRentAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailRentAmount(), statementOrderDetail.getStatementDetailRentAmount()));
                         newStatementOrderDetail.setStatementDetailRentPaidAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailRentPaidAmount(), statementOrderDetail.getStatementDetailRentPaidAmount()));
                         newStatementOrderDetail.setStatementDetailRentDepositAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailRentDepositAmount(), statementOrderDetail.getStatementDetailRentDepositAmount()));
@@ -5160,6 +5207,25 @@ public class StatementServiceImpl implements StatementService {
                 statementOrder.setStatementOrderDetailList(statementOrderDetailList);
             }
         }
+        for ( CheckStatementOrder checkStatementOrder:checkStatementOrderList) {
+            for (CheckStatementOrderDetail checkStatementOrderDetail:checkStatementOrder.getStatementOrderDetailList()) {
+                if (returnDetailIdMap.get(checkStatementOrderDetail.getOrderItemReferId())!= null) {
+                    for (String returnTimeString :returnDetailIdMap.get(checkStatementOrderDetail.getOrderItemReferId()).keySet()) {
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+                        try {
+                            Date returnStartTime = simpleDateFormat.parse(returnTimeString);
+                            Date monthTime = simpleDateFormat.parse(checkStatementOrder.getMonthTime());
+                            if (monthTime.after(returnStartTime)) {
+                                checkStatementOrderDetail.setItemCount(checkStatementOrderDetail.getItemCount()-returnDataMap.get(returnTimeString));
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            }
+        }
         result.setResult(checkStatementOrderList);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -5195,11 +5261,50 @@ public class StatementServiceImpl implements StatementService {
             allList.addAll(returnOrderOtherList);
         }
         for (Integer statementOrderDetailId : notReturnOrderMap.keySet()) {
+
+            List list = new ArrayList();
             CheckStatementOrderDetail statementOrderDetail = notReturnOrderMap.get(statementOrderDetailId);
-            allList.add(statementOrderDetail);
+            list.add(statementOrderDetail);
+
             List<CheckStatementOrderDetail> statementOrderDetails = returnOrderProudctAndMaterialMap.get(statementOrderDetail.getStatementOrderDetailId());
             if (CollectionUtil.isNotEmpty(statementOrderDetails)) {
-                allList.addAll(statementOrderDetails);
+                // TODO: 2018\7\3 0003 这里添加退货单合并逻辑
+                BigDecimal statementDetailAmount = BigDecimal.ZERO;
+                BigDecimal statementDetailRentAmount = BigDecimal.ZERO;
+                BigDecimal statementDetailDepositAmount = BigDecimal.ZERO;
+                BigDecimal statementDetailOtherAmount = BigDecimal.ZERO;
+                BigDecimal statementDetailPaidAmount = BigDecimal.ZERO;
+                BigDecimal statementDetailPenaltyAmount = BigDecimal.ZERO;
+                BigDecimal statementDetailPenaltyPaidAmount = BigDecimal.ZERO;
+                BigDecimal statementDetailRentDepositAmount = BigDecimal.ZERO;
+                for (CheckStatementOrderDetail checkStatementOrderDetail:statementOrderDetails){
+                    if (BigDecimalUtil.compare(checkStatementOrderDetail.getStatementDetailAmount(), BigDecimal.ZERO) == 0) {
+                        // TODO: 2018\7\3 0003 判断金额，如果金额为0，则直接保存
+                        list.add(checkStatementOrderDetail);
+                    }else {
+                        // TODO: 2018\7\3 0003 如果金额不为0，将数量进行累加，然后跟最外层的订单对账单进行相减，金额相加，之后退货单不存储
+                        statementDetailAmount = BigDecimalUtil.add(statementDetailAmount,checkStatementOrderDetail.getStatementDetailAmount());
+                        statementDetailRentAmount = BigDecimalUtil.add(statementDetailRentAmount,checkStatementOrderDetail.getStatementDetailRentAmount());
+                        statementDetailDepositAmount = BigDecimalUtil.add(statementDetailDepositAmount,checkStatementOrderDetail.getStatementDetailDepositAmount());
+                        statementDetailOtherAmount = BigDecimalUtil.add(statementDetailOtherAmount,checkStatementOrderDetail.getStatementDetailOtherAmount());
+                        statementDetailPaidAmount = BigDecimalUtil.add(statementDetailPaidAmount,checkStatementOrderDetail.getStatementDetailPaidAmount());
+                        statementDetailPenaltyAmount = BigDecimalUtil.add(statementDetailPenaltyAmount,checkStatementOrderDetail.getStatementDetailPenaltyAmount());
+                        statementDetailPenaltyPaidAmount = BigDecimalUtil.add(statementDetailPenaltyPaidAmount,checkStatementOrderDetail.getStatementDetailPenaltyPaidAmount());
+                        statementDetailRentDepositAmount = BigDecimalUtil.add(statementDetailRentDepositAmount,checkStatementOrderDetail.getStatementDetailRentDepositAmount());
+                    }
+                }
+                statementOrderDetail.setStatementDetailAmount(BigDecimalUtil.add(statementDetailAmount,statementOrderDetail.getStatementDetailAmount()));
+                statementOrderDetail.setStatementDetailRentAmount(BigDecimalUtil.add(statementDetailRentAmount,statementOrderDetail.getStatementDetailRentAmount()));
+                statementOrderDetail.setStatementDetailDepositAmount(BigDecimalUtil.add(statementDetailDepositAmount,statementOrderDetail.getStatementDetailDepositAmount()));
+                statementOrderDetail.setStatementDetailOtherAmount(BigDecimalUtil.add(statementDetailOtherAmount,statementOrderDetail.getStatementDetailOtherAmount()));
+                statementOrderDetail.setStatementDetailPaidAmount(BigDecimalUtil.add(statementDetailPaidAmount,statementOrderDetail.getStatementDetailPaidAmount()));
+                statementOrderDetail.setStatementDetailRentAmount(BigDecimalUtil.add(statementDetailPenaltyAmount,statementOrderDetail.getStatementDetailPenaltyAmount()));
+                statementOrderDetail.setStatementDetailPenaltyPaidAmount(BigDecimalUtil.add(statementDetailPenaltyPaidAmount,statementOrderDetail.getStatementDetailPenaltyPaidAmount()));
+                statementOrderDetail.setStatementDetailRentDepositAmount(BigDecimalUtil.add(statementDetailRentDepositAmount,statementOrderDetail.getStatementDetailRentDepositAmount()));
+            }
+            // TODO: 2018\7\3 0003 判断相减之后最外层的对账单商品数或配件数是否为0，如果为0，则直接不存储
+            if (statementOrderDetail.getItemCount() != 0 || BigDecimalUtil.compare(statementOrderDetail.getStatementDetailAmount(), BigDecimal.ZERO) != 0) {
+                allList.addAll(list);
             }
         }
         return allList;

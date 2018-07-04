@@ -441,6 +441,8 @@ public class ErrorCode {
     public static final String RETURN_DELIVERY_SUB_COMPANY_ERROR = "J400162";
     public static final String ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400163";
     public static final String RELET_ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400164";
+    public static final String EXPECT_RTURN_TIME_LESS_RETURN_TIME = "J400165";
+
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
     public static final String CUSTOMER_PERSON_NOT_NULL = "J500003";
@@ -1588,6 +1590,7 @@ public class ErrorCode {
         MAP.put(RETURN_DELIVERY_SUB_COMPANY_ERROR, "订单【%s 】发货分公司为【%s 】，与创建退货单时选取的发货分公司不一致");
         MAP.put(ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT, "订单当前状态不允许重算");
         MAP.put(RELET_ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT, "续租单当前状态不允许重算");
+        MAP.put(EXPECT_RTURN_TIME_LESS_RETURN_TIME, "退货时间不能大于订单预计退货时间,如符合真实情况请尝试【退租】");
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
         MAP.put(MESSAGE_RECEIVER_NOT_NULL, "站内信收件人不能为空");

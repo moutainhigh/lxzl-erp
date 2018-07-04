@@ -1011,7 +1011,6 @@
         on t0.month_start_config between t1.rent_start_time and t1.expect_return_time or t0.month_end_config between t1.rent_start_time and t1.expect_return_time
         or date_format(t1.rent_start_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
         or date_format(t1.expect_return_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
-        LEFT JOIN erp_k3_order_statement_config ekosc on t1.id = ekosc.order_id
         left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
         left join
         (
@@ -1070,8 +1069,7 @@
         <if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderEndTime != null ">
             <![CDATA[ AND t0.month_config <= #{maps.statementOrderMonthQueryParam.statementOrderEndTime} ]]>
         </if>
-        AND ((ekosc.order_id is not null and <![CDATA[date_format(t0.month_config, '%Y-%m') >= date_format(ekosc.rent_start_time, '%Y-%m')]]> ) or ekosc.order_id is null )
-        and t1.id is not null order by monthTime DESC, orderRentStartTime ASC, order_item_refer_id ASC
+        and t1.id is not null and t2.product_amount > 0 order by monthTime DESC, orderRentStartTime ASC, order_item_refer_id ASC
     </select>
 
     <select id="exportReturnListPage" resultMap="CheckStatementOrderDetailDO" parameterType="map">
@@ -1117,7 +1115,67 @@
             </if>
         </where>
     </select>
+    <select id="exportFirstReturnListPage" resultMap="CheckStatementOrderDetailDO" parameterType="map">
+        SELECT DISTINCT
+        esod.id,esod.statement_order_id,esod.customer_id,esod.order_type,esod.order_id,esod.order_item_type,esod.order_item_refer_id,esod.return_refer_id,
+        esod.statement_detail_type,esod.statement_detail_phase,esod.statement_detail_amount,esod.statement_detail_other_amount,esod.statement_detail_other_paid_amount,
+        esod.statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount,esod.statement_detail_rent_deposit_return_amount,
+        esod.statement_detail_rent_deposit_return_time,esod.statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount,
+        esod.statement_detail_deposit_return_time,esod.statement_detail_rent_amount,esod.statement_detail_rent_paid_amount,esod.statement_detail_paid_time,
+        esod.statement_detail_overdue_amount,esod.statement_detail_overdue_paid_amount,esod.statement_detail_overdue_days,esod.statement_detail_overdue_phase_count,
+        esod.statement_detail_status,ekro.return_time AS statement_expect_pay_time,ekro.return_time AS statement_start_time,ekro.return_time AS statement_end_time,
+        esod.data_status,esod.remark,esod.create_time,esod.create_user,esod.update_time,esod.update_user,esod.statement_detail_correct_amount,
+        esod.statement_coupon_amount,esod.statement_detail_penalty_amount AS statement_detail_penalty_amount,esod.statement_detail_penalty_paid_amount AS statement_detail_penalty_paid_amount,
+        esod.relet_order_item_refer_id,eo.rent_type AS orderRentType,eo.rent_start_time AS orderRentStartTime,eo.expect_return_time AS orderExpectReturnTime,
+        eo.rent_time_length AS orderRentTimeLength,
+        (CASE WHEN eop.id is NULL THEN eom.is_new_material ELSE eop.is_new_product END ) AS isNew
+        FROM erp_statement_order_detail esod
+        LEFT JOIN erp_k3_return_order ekro on esod.order_id = ekro.id
+        LEFT JOIN erp_k3_return_order_detail ekrod on  ekro.id = ekrod.return_order_id
+        LEFT JOIN erp_order eo ON ekrod.order_no = eo.order_no
+        LEFT JOIN erp_order_product eop ON ekrod.order_item_id = eop.id AND esod.order_item_type = 1
+        LEFT JOIN erp_order_material eom ON ekrod.order_item_id  = eom.id AND esod.order_item_type = 2
+        LEFT JOIN erp_customer ec ON esod.customer_id = ec.id AND esod.order_type = 1
+        <where>
+            <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
+                and esod.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                AND esod.data_status = 1
+                AND esod.order_type = 4
+                AND esod.statement_expect_pay_time in
+                (SELECT min(a.statement_expect_pay_time) FROM (SELECT
+                esod.order_item_refer_id,
+                esod.statement_expect_pay_time
+                FROM
+                erp_statement_order_detail esod
+                LEFT JOIN erp_k3_return_order ekro on esod.order_id = ekro.id
+                LEFT JOIN erp_k3_return_order_detail ekrod on  ekro.id = ekrod.return_order_id
+                LEFT JOIN erp_order eo ON ekrod.order_no = eo.order_no
+                LEFT JOIN erp_order_product eop ON ekrod.order_item_id = eop.id AND esod.order_item_type = 1
+                LEFT JOIN erp_order_material eom ON ekrod.order_item_id  = eom.id AND esod.order_item_type = 2
+                LEFT JOIN erp_customer ec ON esod.customer_id = ec.id AND esod.order_type = 1
+                AND esod.order_type = 1
+                <where>
+                    <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
+                        and esod.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
+                    </if>
+                </where>
+                AND esod.data_status = 1
+                AND esod.order_type = 4 ) a GROUP BY a.order_item_refer_id )
+                AND esod.order_item_type in (5,6)
+            </if>
+        </where>
+    </select>
 
+    <select id="findByOrderItemReferIdAndTime" resultMap="CheckStatementOrderDetailDO">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_statement_order_detail esod
+        WHERE esod.data_status = 1 AND esod.order_item_refer_id = #{orderItemReferId, jdbcType=INTEGER}
+        AND date_format(esod.statement_expect_pay_time,'%Y-%m') = date_format(#{statementExpectPayTime, jdbcType=INTEGER},'%Y-%m')
+        AND esod.statement_detail_type = 1
+    </select>
     <select id="findByReletOrderItemReferId" resultMap="StatementOrderDetailDO">
         SELECT
         <include refid="column_List"/>
