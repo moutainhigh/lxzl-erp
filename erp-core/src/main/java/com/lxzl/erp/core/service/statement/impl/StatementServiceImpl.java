@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
+import com.lxzl.erp.common.domain.k3.pojo.K3OrderStatementConfig;
 import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.pojo.Order;
@@ -87,6 +88,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
@@ -4954,7 +4956,8 @@ public class StatementServiceImpl implements StatementService {
                 }
             }
         }
-
+        List<K3OrderStatementConfigDO> k3OrderStatementConfigList = k3OrderStatementConfigMapper.findByCustomerId(customerDO.getId());
+        Map<Integer,K3OrderStatementConfigDO> k3k3OrderStatementConfigMap = ListUtil.listToMap(k3OrderStatementConfigList,"orderId");
         for (CheckStatementOrderDO exportStatementOrderDO : statementOrderDOList) {
             List<CheckStatementOrderDetailDO> checkStatementOrderDetailDOList = exportStatementOrderDO.getCheckStatementOrderDetailDOList();
             if (checkStatementOrderDetailDOList == null) {
@@ -4967,7 +4970,15 @@ public class StatementServiceImpl implements StatementService {
                     String statementOrderDetailExpectPayTimeString = simpleDateFormat.format(statementOrderDetailExpectPayTime);
                     String monthTime = exportStatementOrderDO.getMonthTime();
                     if (monthTime.equals(statementOrderDetailExpectPayTimeString)) {
-                        checkStatementOrderDetailDOList.add(checkStatementOrderDetailDO);
+                        K3OrderStatementConfigDO k3OrderStatementConfigDO = k3k3OrderStatementConfigMap.get(checkStatementOrderDetailDO.getOrderId());
+                        if (k3OrderStatementConfigDO != null) {
+                            if (k3OrderStatementConfigDO.getRentStartTime().before(checkStatementOrderDetailDO.getStatementEndTime())
+                                    || k3OrderStatementConfigDO.getRentStartTime().equals(checkStatementOrderDetailDO.getStatementEndTime())) {
+                                checkStatementOrderDetailDOList.add(checkStatementOrderDetailDO);
+                            }
+                        }else {
+                            checkStatementOrderDetailDOList.add(checkStatementOrderDetailDO);
+                        }
                     }
                 }
             }
@@ -5118,10 +5129,6 @@ public class StatementServiceImpl implements StatementService {
                         }
                         //为退还物料时
                         if (OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER.equals(statementOrderDetail.getOrderItemType())) {
-                            K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(statementOrderDetail.getOrderId());
-                            if (k3ReturnOrderDO != null) {
-                                statementOrderDetail.setOrderNo(k3ReturnOrderDO.getReturnOrderNo());
-                            }
                             key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType() + "-" + statementOrderDetail.getOrderItemReferId();
                         }
                         statementOrderDetail.setItemCount(statementOrderDetail.getItemCount() == null? 0 : statementOrderDetail.getItemCount() * -1);
@@ -5133,6 +5140,9 @@ public class StatementServiceImpl implements StatementService {
                     //各商品物料
                     CheckStatementOrderDetail newStatementOrderDetail = hashMap.get(key);
                     if (newStatementOrderDetail != null) {
+                        if (StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetail.getStatementDetailType())) {
+                            newStatementOrderDetail.setStatementOrderDetailId(statementOrderDetail.getStatementOrderDetailId());
+                        }
                         newStatementOrderDetail.setStatementDetailRentAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailRentAmount(), statementOrderDetail.getStatementDetailRentAmount()));
                         newStatementOrderDetail.setStatementDetailRentPaidAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailRentPaidAmount(), statementOrderDetail.getStatementDetailRentPaidAmount()));
                         newStatementOrderDetail.setStatementDetailRentDepositAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailRentDepositAmount(), statementOrderDetail.getStatementDetailRentDepositAmount()));
