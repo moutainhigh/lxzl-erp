@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-配件管理-配件详情</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/viewer/viewer.min.css">
+    <script type="text/javascript">
+        common_load_css('${staticCommon}/rental/css','dropzone.css');
+    </script>
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+
+            <div class="row">
+                <div class="col-md-12 center-block">
+                    <div class="admin-form theme-primary">
+
+                        <div class="panel panel-primary panel-border top">
+
+                            <form method="post" id="detailMaterialForm">
+                                <div class="panel-body">
+                                    <div class="section-divider mb40 mt20"><span> 基本信息 </span></div>
+                                    <div class="section row">
+                                        <div class="col-md-9">
+                                            <div class="section row">
+                                                <div class="col-md-4">
+                                                    <label for="userName" class="field-label">配件类型</label>
+                                                    <label class="field select">
+                                                        <select id="materialType" name="materialType" class="required">
+                                                            <option value="">请选择</option>
+                                                        </select>
+                                                        <i class="arrow double"></i>
+                                                    </label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="userName" class="field-label">配件型号</label>
+                                                    <div class="smart-widget sm-right smr-50">
+                                                        <label class="field">
+                                                            <input type="hidden" value="" name="materialModelId" />
+                                                            <input type="text" name="materialModelName" id="materialModelName" class="gui-input" placeholder="请选择配件型号" readonly />
+                                                        </label>
+                                                        <button type="button" class="button btn-primary bradiusN chooseMaterialModalButton"><i class="fa fa-search"></i></button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="userName" class="field-label">配件型号(生成配件编号)</label>
+                                                    <label for="materialModel" class="field prepend-icon">
+                                                        <input type="text" name="materialModel" id="materialModel" class="gui-input required letterOrNumber2" placeholder="数字、英文字母、横杠" />
+                                                        <label for="materialModel" class="field-icon"><i class="fa fa-tag"></i></label>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="section row">
+                                                <div class="col-md-4">
+                                                    <label for="userName" class="field-label">配件名称</label>
+                                                    <label for="materialName" class="field prepend-icon">
+                                                        <input type="text" name="materialName" id="materialName" class="gui-input required" />
+                                                        <label for="materialName" class="field-icon"><i class="fa fa-tag"></i></label>
+                                                    </label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="userName" class="field-label">配件值(单位：G)</label>
+                                                    <label for="materialCapacityValue" class="field prepend-icon">
+                                                        <input type="text" name="materialCapacityValue" id="materialCapacityValue number" class="gui-input" />
+                                                        <label for="materialCapacityValue" class="field-icon"><i class="fa fa-tag"></i></label>
+                                                    </label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="isRent" class="field-label">品牌</label>
+                                                    <label class="field select">
+                                                        <select id="brandId" name="brandId" class="required">
+                                                            <option value="">请选择</option>
+                                                        </select>
+                                                        <i class="arrow"></i>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="section row">
+                                                <div class="col-md-4">
+                                                    <label for="materialPrice" class="field-label">次新价值</label>
+                                                    <label for="materialPrice" class="field select prepend-icon">
+                                                        <input type="text" name="materialPrice" id="materialPrice" class="gui-input required moneyNumber" />
+                                                        <label for="materialPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                    </label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="userName" class="field-label">次新日租价</label>
+                                                    <label for="dayRentPrice" class="field prepend-icon">
+                                                        <input type="text" name="dayRentPrice" id="dayRentPrice" class="gui-input required moneyNumber" />
+                                                        <label for="dayRentPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                    </label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="monthRentPrice" class="field-label">次新月租价</label>
+                                                    <label for="monthRentPrice" class="field prepend-icon">
+                                                        <input type="text" name="monthRentPrice" id="monthRentPrice" class="gui-input required moneyNumber" />
+                                                        <label for="monthRentPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="section row">
+                                                <div class="col-md-4">
+                                                    <label for="newMaterialPrice" class="field-label">全新价值</label>
+                                                    <label for="newMaterialPrice" class="field select prepend-icon">
+                                                        <input type="text" name="newMaterialPrice" id="newMaterialPrice" class="gui-input required moneyNumber" />
+                                                        <label for="newMaterialPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                    </label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="newDayRentPrice" class="field-label">全新日租价</label>
+                                                    <label for="newDayRentPrice" class="field prepend-icon">
+                                                        <input type="text" name="newDayRentPrice" id="newDayRentPrice" class="gui-input required moneyNumber" />
+                                                        <label for="newDayRentPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                    </label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="newMonthRentPrice" class="field-label">全新月租价</label>
+                                                    <label for="newMonthRentPrice" class="field prepend-icon">
+                                                        <input type="text" name="newMonthRentPrice" id="newMonthRentPrice" class="gui-input required moneyNumber" />
+                                                        <label for="newMonthRentPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="section row">
+                                                <div class="col-md-4">
+                                                    <label for="k3MaterialNo" class="field-label">K3物料编号</label>
+                                                    <label for="k3MaterialNo" class="field prepend-icon">
+                                                        <input type="text" name="k3MaterialNo" id="k3MaterialNo" class="gui-input required" />
+                                                        <label for="k3MaterialNo" class="field-icon"><i class="fa fa-tag"></i></label>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="section">
+                                                <label for="userName" class="field-label">是否上架</label>
+                                                <label class="field select">
+                                                    <select id="isRent" name="isRent">
+                                                        <option value="1">是</option>
+                                                        <option value="0">否</option>
+                                                    </select>
+                                                    <i class="arrow"></i>
+                                                </label>
+                                            </div>
+                                            <div class="section">
+                                                <label for="isRent" class="field-label">允许随时归还</label>
+                                                <label class="field select">
+                                                    <select id="isReturnAnyTime" name="isReturnAnyTime">
+                                                        <option value="1">是</option>
+                                                        <option value="0">否</option>
+                                                    </select>
+                                                    <i class="arrow"></i>
+                                                </label>
+                                            </div>
+                                            <div class="section">
+                                                <label for="materialDesc" class="field-label">描述</label>
+                                                <label for="materialDesc" class="field prepend-icon">
+                                                    <textarea class="gui-textarea" id="materialDesc" name="materialDesc" style="height: 130px"></textarea>
+                                                    <label for="materialDesc" class="field-icon"><i class="fa fa-comments"></i></label>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <script type="text/html" id="examplePreviewTpl">
+                                        {{#imgs}}
+                                        <div class="dz-preview dz-processing dz-error dz-image-preview hidden example-preview" data-img="{{dataImg}}">
+                                            <div class="dz-details">
+                                                <div class="dz-filename">
+                                                    <span data-dz-name="">{{originalName}}</span>
+                                                </div>
+                                                <img data-dz-thumbnail="" alt="avatar" src="{{imgDomain}}{{imgUrl}}" class="img-responsive">
+                                            </div>
+                                            <div class="dz-success-mark">
+                                                    <span>âœ?/span>
+                                            </div>
+                                        </div>
+                                        {{/imgs}}
+                                    </script>
+
+                                    <div class="section-divider mv40"><span> 图片  </span></div>
+                                    <div class="tray-bin">
+                                        <div class="atl-dropzone dropzoneImg" id="dropzoneMaterialImg">
+                                            <div class="dz-default dz-message" >
+                                                    <span>
+                                                        <i class="fa fa-cloud-upload"></i>
+                                                        <span class="sub-text">将图片拖入或点击</span>
+                                                    </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <script type="text/html" id="materialPropertiesTpl">
+                                        <div class="section-divider mv40"><span> 配件属性  </span></div>
+                                        {{#properties}}
+                                        <div class="col-md-3 pad-r40 border-right">
+                                            <div class="panel">
+                                                <div class="panel-heading pn ph8">
+                                                    <span>{{propertyName}}</span>
+                                                </div>
+                                                <div class="panel-body nano nano-default affix rtlnao" style="height: 200px">
+                                                    <div class="nano-content">
+                                                        <div class="option-group field p10">
+                                                            {{#propertyValueList}}
+                                                            {{#list}}
+                                                            <label class="option option-primary mb10 block">
+                                                                <input type="radio" name="materialPropertyRido" class="materialPropertyRido" value="{{categoryPropertyValueId}}" data-property="{{property}}" {{#checked}}checked{{/checked}} disabled />
+                                                                <span class="radio"></span> {{propertyValueName}}
+                                                            </label>
+                                                            {{/list}}
+                                                            {{/propertyValueList}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{/properties}}
+
+                                    </script>
+
+
+                                    <div class="section row mn">
+                                        <div class="col-md-12" id="materialPropertiesContainer"></div>
+                                    </div>
+
+                                </div>
+                                <div class="panel-footer text-right">
+                                    <button type="reset" class="button goBack"> 返回 </button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.jq.js"></script>
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js',
+                'api.data.js',
+                'manage.material.mixin.js',
+                'manage.material.detail.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        MaterialDetial.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+
+    </script>
+</body>
+</html>
