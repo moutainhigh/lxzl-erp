@@ -83,6 +83,11 @@
 						 separator="," close=")">
 					#{item}
 				</foreach>
+				OR ero.order_seller_id in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
 				OR ec.union_user in
 				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
 						 separator="," close=")">

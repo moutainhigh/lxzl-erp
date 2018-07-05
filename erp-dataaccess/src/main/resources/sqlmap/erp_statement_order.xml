@@ -720,9 +720,17 @@
 	</delete>
 
 	<select id="exportListMonthPage" resultMap="CheckStatementOrderDO">
+		select distinct t1.buyer_customer_id as customer_id,
+		case when t2.customer_name is null then t1.buyer_customer_name else t2.customer_name end as customer_name,
+		<![CDATA[ date_format(t0.month_config,'%Y-%m')]]>  as monthTime,case when t2.statementExpectPayTime is null then t0.month_start_config else t2.statementExpectPayTime end as statementExpectPayTime,t2.*
+		from erp_month_config t0 left join erp_order t1 on t0.month_start_config between t1.rent_start_time and t1.expect_return_time or t0.month_end_config between t1.rent_start_time and t1.expect_return_time
+		or date_format(t1.rent_start_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
+		or date_format(t1.expect_return_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
+		left join (
 		SELECT
 		eso.customer_id,
 		<![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m')]]> AS monthTime,
+		eso.statement_expect_pay_time as statementExpectPayTime,
 		SUM(eso.statement_amount) as statement_amount,
 		SUM(eso.statement_rent_deposit_amount) as statement_rent_deposit_amount,
 		SUM(eso.statement_rent_deposit_paid_amount) as statement_rent_deposit_paid_amount,
@@ -774,6 +782,19 @@
 			</if>
 			<include refid="permission_sql.month_statement_order_control"/>
 		</where>
-		GROUP BY eso.customer_id,<![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m')]]>
+		GROUP BY eso.customer_id, eso.statement_expect_pay_time,<![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m')]]>
+		ORDER BY eso.statement_expect_pay_time
+		) t2 on t1.buyer_customer_id = t2.customer_id and t2.monthTime = date_format(t0.month_config,'%Y-%m')
+		where t1.order_status in (8,12,16,20,22,24,32)
+		<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderStartTime != null ">
+			<![CDATA[ AND t0.month_config >= #{maps.statementOrderMonthQueryParam.statementOrderStartTime} ]]>
+		</if>
+		<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderEndTime != null ">
+			<![CDATA[ AND t0.month_config <= #{maps.statementOrderMonthQueryParam.statementOrderEndTime} ]]>
+		</if>
+		<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerId != null">
+			and t1.buyer_customer_id = #{maps.statementOrderMonthQueryParam.statementOrderCustomerId, jdbcType=INTEGER}
+		</if>
+		and t1.id is not null order by monthTime desc
 	</select>
 </mapper>

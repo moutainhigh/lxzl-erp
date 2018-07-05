@@ -40,6 +40,7 @@ public class OrderMaterial extends BasePO {
 	private String brandName;                   // 品牌
 
 	private Integer rentingMaterialCount;        // 在租配件数
+	private Integer canReturnMaterialCount; 	//可退配件数量
 
 	private String FNumber;	// 配件代码
 
@@ -292,5 +293,13 @@ public class OrderMaterial extends BasePO {
 
 	public void setRentingMaterialCount(Integer rentingMaterialCount) {
 		this.rentingMaterialCount = rentingMaterialCount;
+	}
+
+	public Integer getCanReturnMaterialCount() {
+		return canReturnMaterialCount;
+	}
+
+	public void setCanReturnMaterialCount(Integer canReturnMaterialCount) {
+		this.canReturnMaterialCount = canReturnMaterialCount;
 	}
 }

@@ -27,6 +27,8 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @Author : XiaoLuYu
@@ -48,6 +50,7 @@ public class ExcelExportSupport<T> {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
         HSSFSheet hssSheet = hssfWorkbook.createSheet(sheetName);
+        hssSheet.setActive(false);//取消受保护的视图
         HSSFRow hssfRow = hssSheet.createRow(0);
         int count = 0;
         List<ColConfig> colConfigList = config.getConfigList();
@@ -200,7 +203,7 @@ public class ExcelExportSupport<T> {
      * @Date : Created in 2018/4/14 17:55
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>
      */
-    public static <T> ServiceResult<String, String> export(List<List<T>> list,String fileName, String sheetName, HttpServletResponse response,Integer width) throws Exception {
+    public static <T> ServiceResult<String, String> export(List<List<T>> list, String fileName, String sheetName, HttpServletResponse response, Integer width) throws Exception {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
         XSSFSheet xssSheet = xssfWorkbook.createSheet(sheetName);
@@ -235,7 +238,7 @@ public class ExcelExportSupport<T> {
      * @Date : Created in 2018/4/14 17:55
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>
      */
-    public static <T> XSSFWorkbook getXSSFWorkbook(XSSFWorkbook hssfWorkbook,XSSFSheet hssSheet,List<T> list, ExcelExportConfig config, String sheetName,Integer rowNo,Integer headlineHeight,Integer rowHeight) throws Exception {
+    public static <T> XSSFWorkbook getXSSFWorkbook(XSSFWorkbook hssfWorkbook, XSSFSheet hssSheet, List<T> list, ExcelExportConfig config, String sheetName, Integer rowNo, Integer headlineHeight, Integer rowHeight) throws Exception {
         XSSFRow hssfRow = hssSheet.createRow(rowNo);
         hssfRow.setHeightInPoints(headlineHeight);
         int count = 0;
@@ -245,11 +248,11 @@ public class ExcelExportSupport<T> {
             XSSFCell hssfCell = hssfRow.createCell(count++);
             hssfCell.setCellValue(colConfig.getColName());
             hssSheet.setColumnWidth(i, colConfig.getWidth());
-            setCellStyle( hssfWorkbook,hssfCell,colConfig.getHeadlineFontColor(),colConfig.getHeadlineBackGroupColor());
+            setCellStyle(hssfWorkbook, hssfCell, colConfig.getHeadlineFontColor(), colConfig.getHeadlineBackGroupColor());
         }
 
         for (int i = 0; i < list.size(); i++) {
-            XSSFRow newXssfRow = hssSheet.createRow(rowNo+i+1);
+            XSSFRow newXssfRow = hssSheet.createRow(rowNo + i + 1);
             newXssfRow.setHeightInPoints(rowHeight);
             T t = list.get(i);
             for (int j = 0; j < colConfigList.size(); j++) {
@@ -260,15 +263,30 @@ public class ExcelExportSupport<T> {
                 Object value = method.invoke(t);
                 hssSheet.setColumnWidth(j, colConfig.getWidth());
                 Cell cell = newXssfRow.createCell(j);
-                cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
-                setCellStyle(hssfWorkbook,cell,colConfig.getFontColor(),colConfig.getBackGroupColor());
+                if (isNumeric(String.valueOf(colConfig.getExcelExportView().view(value)))) {
+                    cell.setCellValue(Double.parseDouble(String.valueOf(colConfig.getExcelExportView().view(value))));
+                } else {
+                    cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
+                }
+
+                setCellStyle(hssfWorkbook, cell, colConfig.getFontColor(), colConfig.getBackGroupColor());
             }
         }
         return hssfWorkbook;
     }
 
+    //方法四：
+    public final static boolean isNumeric(String  str) {
+        Pattern pattern=Pattern.compile("^[-\\\\+]?(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$"); // 判断小数点后2位的数字的正则表达式
+        Matcher match=pattern.matcher(str);
+        if(match.matches()==false){
+            return false;
+        }else{
+            return true;
+        }
+    }
 
-    public static void setCellStyle(Workbook hssfWorkbook, Cell cell, short fontColor, short backGroupColor){
+    public static void setCellStyle(Workbook hssfWorkbook, Cell cell, short fontColor, short backGroupColor) {
         CellStyle style = hssfWorkbook.createCellStyle();
         style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 居中
         style.setWrapText(true);// 自动换行
@@ -289,6 +307,7 @@ public class ExcelExportSupport<T> {
 
         Font font = hssfWorkbook.createFont();
         font.setColor(fontColor); //字体颜色
+        font.setFontHeightInPoints((short) 9);
         style.setFont(font);
         cell.setCellStyle(style);
     }

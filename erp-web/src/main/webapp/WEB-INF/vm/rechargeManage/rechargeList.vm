@@ -23,48 +23,62 @@
             <div class="panel panel-primary panel-border top">
                 <div class="panel-menu p12">
                     <div class="row">
-                        <div class="col-md-3">
-                            <script type="text/html" id="actionCommonButtonsTpl">
-                                <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
-                                {{#acitonCommonButtons}}
-                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
-                                    <i class="{{iClass}}"></i> {{text}}
-                                </a>
-                                {{/acitonCommonButtons}}
-                            </script>
-                            <div class="btn-group" id="actionCommonButtons"></div>
-                        </div>
-                        <div class="col-md-9 text-right">
+                        <div class="col-lg-12">
                             <form id="searchForm" class="form-horizontal">
-                                <div class="pull-right">
-                                    <button type="submit" class="btn btn-primary btn-sm">查询</button>
-                                    <button type="reset" class="btn btn-default btn-sm">重置</button>
-                                </div>
-                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                    <input type="text" name="businessCustomerNo" id="businessCustomerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户编号">
-                                </div>
-                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                    <input type="text" name="customerName" id="customerName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户名">
-                                </div>
-                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                    <input type="text" name="subCompanyId" id="subCompanyId" class="form-control input-sm bradius" autocomplete="off" placeholder="输入分公司ID">
-                                </div>
-                                <div class="form-group pull-right mn mr10">
-                                    <div class="input-group">
-                                        <select class="form-control input-sm bradius" name="chargeType" id="chargeType"></select>
+                                <div class="section row">
+                                    <div class="col-md-2">
+                                        <div class="field form-group mn" >
+                                            <input type="hidden" name="queryStartTime" id="queryStartTime" />
+                                            <input type="hidden" name="queryEndTime" id="queryEndTime" />
+                                            <div class="input-group date" id="timePicker">
+                                                <input type="text" name="timePickerInput" id="timePickerInput" class="nopram form-control input-sm bradiusL" autocomplete="off" placeholder="请选择时间范围">
+                                                <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="field form-group mn" >
+                                            <select class="form-control input-sm bradius" name="chargeStatus" id="chargeStatus"></select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="field form-group mn" >
+                                            <select class="form-control input-sm bradius" name="chargeType" id="chargeType"></select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="field form-group mn" >
+                                            <input type="text" name="subCompanyId" id="subCompanyId" class="form-control input-sm bradius" autocomplete="off" placeholder="输入分公司ID">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="field form-group mn" >
+                                            <input type="text" name="customerName" id="customerName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户名">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="field form-group mn" >
+                                            <input type="text" name="businessCustomerNo" id="businessCustomerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户编号">
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="form-group pull-right mn mr10">
-                                    <div class="input-group">
-                                        <select class="form-control input-sm bradius" name="chargeStatus" id="chargeStatus"></select>
-                                    </div>
-                                </div>
-                                <div class="form-group pull-right mn mr10" style="width: 210px;">
-                                    <input type="hidden" name="queryStartTime" id="queryStartTime" />
-                                    <input type="hidden" name="queryEndTime" id="queryEndTime" />
-                                    <div class="input-group date" id="timePicker">
-                                        <input type="text" name="timePickerInput" id="timePickerInput" class="nopram form-control input-sm bradiusL" autocomplete="off" placeholder="请选择时间范围">
-                                        <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                <hr class="short alt">
+                                <div class="section row">
+                                    <div class="col-md-12">
+                                        <script type="text/html" id="actionCommonButtonsTpl">
+                                            <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                            {{#acitonCommonButtons}}
+                                            <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
+                                                <i class="{{iClass}}"></i> {{text}}
+                                            </a>
+                                            {{/acitonCommonButtons}}
+                                        </script>
+                                        <div class="btn-group" id="actionCommonButtons"></div>
+
+                                        <div class="pull-right">
+                                            <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                            <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -96,8 +110,8 @@
                             {{#listData}}
                             <tr>
                                 <td>{{chargeOrderNo}}</td>
-                                <td>{{businessCustomerNo}}</td>
-                                <td>{{customerName}}</td>
+                                <td><a href="{{customerDetailUrl}}" target="_blank">{{businessCustomerNo}}</a></td>
+                                <td><a href="{{customerDetailUrl}}" target="_blank">{{customerName}}</a></td>
 ##                                <td>{{subCompanyId}}</td>
                                 <td>{{subCompanyName}}</td>
                                 <td>{{thirdPartyPayOrderId}}</td>

@@ -58,6 +58,7 @@ public class CheckStatementOrderDetail extends BasePO {
 
     private String orderNo;
     private String itemName;
+    private String itemSkuName;
     private Integer itemCount;
     private BigDecimal unitAmount;
     private Integer itemRentType;
@@ -67,6 +68,14 @@ public class CheckStatementOrderDetail extends BasePO {
     private Date orderExpectReturnTime;  //订单预计支付时间
     private Integer orderRentTimeLength;  //订单时长
     private Integer isNew;  //是否全新
+
+    private Integer payMode;            // 支付方式
+    private Integer depositCycle;            // 押金周期
+    private Integer paymentCycle;            // 付款周期
+
+    private Date statementExpectPayEndTime;            // 本期付款月数
+    private BigDecimal statementDetailEndAmount;            // 本期应付数
+    private BigDecimal statementDetailRentEndAmount;            // 本期应付租金
 
     public Integer getIsNew() {
         return isNew;
@@ -498,5 +507,61 @@ public class CheckStatementOrderDetail extends BasePO {
 
     public void setReletOrderItemReferId(Integer reletOrderItemReferId) {
         this.reletOrderItemReferId = reletOrderItemReferId;
+    }
+
+    public Integer getPayMode() {
+        return payMode;
+    }
+
+    public void setPayMode(Integer payMode) {
+        this.payMode = payMode;
+    }
+
+    public Integer getDepositCycle() {
+        return depositCycle;
+    }
+
+    public void setDepositCycle(Integer depositCycle) {
+        this.depositCycle = depositCycle;
+    }
+
+    public Integer getPaymentCycle() {
+        return paymentCycle;
+    }
+
+    public void setPaymentCycle(Integer paymentCycle) {
+        this.paymentCycle = paymentCycle;
+    }
+
+    public String getItemSkuName() {
+        return itemSkuName;
+    }
+
+    public void setItemSkuName(String itemSkuName) {
+        this.itemSkuName = itemSkuName;
+    }
+
+    public Date getStatementExpectPayEndTime() {
+        return statementExpectPayEndTime;
+    }
+
+    public void setStatementExpectPayEndTime(Date statementExpectPayEndTime) {
+        this.statementExpectPayEndTime = statementExpectPayEndTime;
+    }
+
+    public BigDecimal getStatementDetailEndAmount() {
+        return statementDetailEndAmount;
+    }
+
+    public void setStatementDetailEndAmount(BigDecimal statementDetailEndAmount) {
+        this.statementDetailEndAmount = statementDetailEndAmount;
+    }
+
+    public BigDecimal getStatementDetailRentEndAmount() {
+        return statementDetailRentEndAmount;
+    }
+
+    public void setStatementDetailRentEndAmount(BigDecimal statementDetailRentEndAmount) {
+        this.statementDetailRentEndAmount = statementDetailRentEndAmount;
     }
 }

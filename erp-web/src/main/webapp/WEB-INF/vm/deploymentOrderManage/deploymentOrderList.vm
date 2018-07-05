@@ -87,7 +87,7 @@
                                 {{#dataSource}}
                                 {{#listData}}
                                 <tr>
-                                    <td>{{deploymentOrderNo}}</td>
+                                    <td><a href="{{detailUrl}}" target="_blank">{{deploymentOrderNo}}</a></td>
                                     <td>{{deploymentTypeValue}}</td>
                                     <td>{{srcWarehouseName}}</td>
                                     <td>{{targetWarehouseName}}</td>
@@ -135,7 +135,7 @@
         #parse("layout/sidebarRight.vm")
     </div>
     #parse("layout/footer.vm")
-    <script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.jq.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'api.data.js',

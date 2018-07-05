@@ -1,9 +1,9 @@
 package com.lxzl.erp.web.controller;
 
-import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.StatementOrderPayType;
+import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
@@ -11,11 +11,11 @@ import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.util.FastJsonUtil;
-import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -154,22 +154,52 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void reCreateOrderStatement() throws Exception {
         Order param = new Order();
-        param.setOrderNo("LXO-20180530-027-00179");
+        param.setOrderNo("LXO-20180620-027-00115");
         TestResult testResult = getJsonTestResult("/statementOrder/reCreateOrderStatement", param);
+    }
+
+    @Test
+    public void reCreateOrderStatementSplit() throws Exception {
+        OrderStatementDateSplit param = new OrderStatementDateSplit();
+        param.setOrderNo("LXSE2018012256");
+        param.setBeforeStatementDate(31);
+        param.setAfterStatementDate(20);
+        param.setChangeType(0);
+        Calendar calendar=Calendar.getInstance();
+        calendar.set(2018,4,4);
+        param.setStatementDateChangeTime(calendar.getTime());
+        TestResult testResult = getJsonTestResult("/statementOrder/reCreateOrderStatementSplit", param);
     }
 
     @Test
     public void reCreateReletOrderStatement() throws Exception {
         ReletOrder param = new ReletOrder();
-        param.setReletOrderNo("LXR-20180606-027-00041");
+        param.setReletOrderNo("LXR-20180620-027-00108");
         TestResult testResult = getJsonTestResult("/statementOrder/reCreateReletOrderStatement", param);
     }
 
     @Test
     public void reStatementK3ReturnOrderRentOnly() throws Exception {
         K3ReturnOrder param = new K3ReturnOrder();
-        param.setReturnOrderNo("LXK3RO20180530171217169");
+        param.setReturnOrderNo("LXK3RO20180626172311506");
         TestResult testResult = getJsonTestResult("/statementOrder/reStatementK3ReturnOrderRentOnly", param);
     }
 
+    @Test
+    public void exportQueryStatementOrderCheckParam() throws Exception {
+        String str = "2018-03";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+        Date rentStartTime = sdf.parse(str);
+        StatementOrderMonthQueryParam param = new StatementOrderMonthQueryParam();
+//        param.setPageNo(1);
+//        param.setPageSize(10);
+//        param.setOwnerName("来春");
+//        param.setSubCompanyId(2);
+//        param.setStatementOrderCustomerName("庄凯麟勿动");
+        param.setStatementOrderCustomerNo("LXCC-027-20180620-00141");
+//        param.setStatementOrderStartTime(rentStartTime);
+//        param.setStatementOrderEndTime(rentStartTime);
+//        param.setMonthTime(rentStartTime);
+        TestResult testResult = getJsonTestResult("/statementOrder/exportQueryStatementOrderCheckParam", param);
+    }
 }

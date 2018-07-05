@@ -24,7 +24,7 @@
 
                 {{#rentTypeByMonth}}
                 <dt><label style="letter-spacing: 0.67em;">结算日</label><span class="mr5">：</span></dt>
-                <dd class="mb5" id="statementDate"></dd>
+                <dd class="mb5" id="statementDate">{{statementDateValue}}</dd>
                 {{/rentTypeByMonth}}
 
                 <dt><label>购买人备注</label><span class="mr5">：</span></dt>

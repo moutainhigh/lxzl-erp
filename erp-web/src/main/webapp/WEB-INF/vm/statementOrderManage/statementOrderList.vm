@@ -127,6 +127,7 @@
                                     <th>逾期金额</th>
                                     <th>冲正金额</th>
                                     <th>结算状态</th>
+                                    <th>确认人</th>
                                     {{#hasRowActionButtons}}
                                     <th class="text-right">操作</th>
                                     {{/hasRowActionButtons}}
@@ -163,6 +164,7 @@
                                     <td>￥{{#price}}{{statementOverdueAmount}}{{/price}}</td>
                                     <td>￥{{#price}}{{statementCorrectAmount}}{{/price}}</td>
                                     <td class="{{statementOrderStatusClass}}">{{statementOrderStatusValue}}</td>
+                                    <td>{{confirmStatementUserName}}</td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
                                         <div class="btn-group text-right">
