@@ -15,6 +15,7 @@ import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductImageConverter;
+import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
@@ -754,6 +755,14 @@ public class ProductServiceImpl implements ProductService {
             return ErrorCode.PRODUCT_SKU_NOT_NULL;
         }
 
+        if (product.getK3ProductNo() == null){
+            return ErrorCode.PRODUCT_K3_PRODUCT_NO_NOT_NULL;
+        }
+
+        if (!productSupport.isProduct(product.getK3ProductNo())){
+            return ErrorCode.PRODUCT_K3_PRODUCT_NO_IS_ERROR;
+        }
+
         ProductDO productDO = productMapper.findExistsProduct(product.getBrandId(), product.getCategoryId(), product.getProductModel());
         if (productDO != null) {
             if (!productDO.getId().equals(product.getProductId())) {
@@ -1198,4 +1207,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private WebServiceHelper webServiceHelper;
+
+    @Autowired
+    private ProductSupport productSupport;
 }

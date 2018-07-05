@@ -19,6 +19,7 @@ import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.MaterialImageConverter;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
+import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.material.*;
@@ -110,6 +111,9 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Autowired
     private WebServiceHelper webServiceHelper;
+
+    @Autowired
+    private ProductSupport productSupport;
 
     @Override
     public ServiceResult<String, List<MaterialImg>> uploadImage(MultipartFile[] files) {
@@ -379,8 +383,13 @@ public class MaterialServiceImpl implements MaterialService {
                 || material.getMonthRentPrice() == null
                 || material.getNewMaterialPrice() == null
                 || material.getNewDayRentPrice() == null
-                || material.getNewMonthRentPrice() == null) {
+                || material.getNewMonthRentPrice() == null
+                || material.getK3MaterialNo() == null) {
             return ErrorCode.PARAM_IS_NOT_ENOUGH;
+        }
+
+        if (!productSupport.isProduct(material.getK3MaterialNo())){
+            return ErrorCode.MATERIAL_K3_MATERIAL_NO_IS_ERROR;
         }
 
         MaterialTypeDO materialTypeDO = materialTypeMapper.findById(material.getMaterialType());
