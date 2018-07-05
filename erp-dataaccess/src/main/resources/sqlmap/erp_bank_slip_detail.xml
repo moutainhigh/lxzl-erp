@@ -466,7 +466,9 @@
 	</update>
 
 	<select id="findLocalizationBankSlipDetailDO" resultMap="BankSlipDetailDO">
-		  SELECT <include refid="column_List"/> FROM erp_bank_slip_detail ebsd WHERE ebsd.is_localization = 1 AND ebsd.data_status = 1
+		  SELECT <include refid="column_List"/>,esc.sub_company_name AS subCompanyName FROM erp_bank_slip_detail ebsd
+		  LEFT JOIN erp_sub_company esc ON ebsd.sub_company_id = esc.id AND esc.data_status = 1
+		  WHERE ebsd.is_localization = 1 AND ebsd.data_status = 1
 	</select>
 
 	<update id="updateSubCompanyAndIsLocalization" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List">

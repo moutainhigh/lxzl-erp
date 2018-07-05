@@ -162,7 +162,7 @@ public interface PaymentService extends BaseService {
      * @param : itemList
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    ServiceResult<String,String> exportHistoryChargeRecord(ExportChargeRecordPageParam exportChargeRecordPageParam) throws ParseException;
+    ServiceResult<String,String> addOnlineHistoryBankSlip(AddOnlineBankSlipQueryParam addOnlineBankSlipQueryParam) throws ParseException;
     /**
      * 时时导入快付通数据到银行流水
      * @Author : XiaoLuYu
@@ -170,7 +170,7 @@ public interface PaymentService extends BaseService {
      * @param : itemList
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    ServiceResult<String,String> constantlyExportQueryChargeRecord(ExportChargeRecordPageParam exportChargeRecordPageParam) throws ParseException;
+    ServiceResult<String,String> addOnlineBankSlip(AddOnlineBankSlipQueryParam addOnlineBankSlipQueryParam) throws ParseException;
     /**
      * 导入当天丢失快付通数据到银行流水
      * @Author : XiaoLuYu
@@ -178,7 +178,6 @@ public interface PaymentService extends BaseService {
      * @param : itemList
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    ServiceResult<String,String> exportTodayLeaveOutChargeRecord() throws ParseException;
-
+    ServiceResult<String,String> onlineTodayLeaveOutChargeRecord() throws ParseException;
 
 }
