@@ -21,6 +21,7 @@ public class K3ReturnOrderDetailDO extends BaseDO {
     private Integer realProductCount;
     private Integer dataStatus;
     private String remark;
+    private Integer orderItemType;
 
     @Transient
     private Date returnTime;
@@ -127,5 +128,13 @@ public class K3ReturnOrderDetailDO extends BaseDO {
 
     public void setReturnTime(Date returnTime) {
         this.returnTime = returnTime;
+    }
+
+    public Integer getOrderItemType() {
+        return orderItemType;
+    }
+
+    public void setOrderItemType(Integer orderItemType) {
+        this.orderItemType = orderItemType;
     }
 }
