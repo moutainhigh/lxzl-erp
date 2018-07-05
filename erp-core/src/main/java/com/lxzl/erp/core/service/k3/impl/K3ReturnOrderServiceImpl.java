@@ -1284,7 +1284,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             Date returnTime = simpleDateFormat.parse(returnTimeString);
             Date expectReturnTime = simpleDateFormat.parse(expectReturnTimeString);
             if (returnTime.after(expectReturnTime)) {
-                result.setErrorCode(ErrorCode.EXPECT_RTURN_TIME_LESS_RETURN_TIME);
+                result.setErrorCode(ErrorCode.EXPECT_RTURN_TIME_LESS_RETURN_TIME,returnTimeString,orderDO.getOrderNo(),expectReturnTimeString);
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 return true;
             }
@@ -1358,7 +1358,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                         Date returnTime = simpleDateFormat.parse(returnTimeString);
                         Date expectReturnTime = simpleDateFormat.parse(expectReturnTimeString);
                         if (returnTime.after(expectReturnTime)) {
-                            result.setErrorCode(ErrorCode.EXPECT_RTURN_TIME_LESS_RETURN_TIME);
+                            result.setErrorCode(ErrorCode.EXPECT_RTURN_TIME_LESS_RETURN_TIME,returnTimeString,orderDO.getOrderNo(),expectReturnTimeString);
                             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                             return result;
                         }
