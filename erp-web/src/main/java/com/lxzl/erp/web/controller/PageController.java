@@ -439,6 +439,11 @@ public class PageController extends BaseController {
         return "/component/customer/exportModal";
     }
 
+    @RequestMapping("/customer-manage/bad-debt-customer")
+    public String customerManageBadDebtCustomer() {
+        return "/component/customer/badDebtCustomer";
+    }
+
     //采购管理
     @RequestMapping("/purchase-manage/list")
     public String purchaseManageList() {

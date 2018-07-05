@@ -85,7 +85,11 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
-                                        <dt class="mb10">客户编号：</dt>
+                                        <dt class="mb10">
+                                            {{#isBadDebtCustomer}}
+                                            <span class="label label-danger" title="坏账客户">坏账</span>
+                                            {{/isBadDebtCustomer}}
+                                            客户编号：</dt>
                                         <dd>{{customerNo}}</dd>
 
                                         <dt class="mb10">公司名：</dt>
