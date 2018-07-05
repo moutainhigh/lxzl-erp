@@ -22,8 +22,17 @@ public class CustomerPersonQueryParam extends BasePageParam {
     private String ownerName; //业务员姓名
     private Integer isRisk; //是否授信
     private Integer confirmStatementStatus; // 是否确认结算单
+    private Integer confirmBadAccountStatus; // 是否确认坏账状态
 
     private List<Integer> passiveUserIdList;
+
+    public Integer getConfirmBadAccountStatus() {
+        return confirmBadAccountStatus;
+    }
+
+    public void setConfirmBadAccountStatus(Integer confirmBadAccountStatus) {
+        this.confirmBadAccountStatus = confirmBadAccountStatus;
+    }
 
     public Integer getConfirmStatementStatus() {
         return confirmStatementStatus;
