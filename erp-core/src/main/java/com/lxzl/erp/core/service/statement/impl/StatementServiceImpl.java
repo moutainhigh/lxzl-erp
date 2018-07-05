@@ -4944,17 +4944,30 @@ public class StatementServiceImpl implements StatementService {
             }
         }
         //退货
-        List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findByCustomerNo(customerDO.getCustomerNo());
+        List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findByCustomerNoForExport(customerDO.getCustomerNo());
         Map<Integer,Map<String,Integer>> returnDetailIdMap = new HashMap<>();
-        Map<String,Integer> returnDataMap = new HashMap<>();
-        for(K3ReturnOrderDO k3ReturnOrderDO:k3ReturnOrderDOList){
-            if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
-                for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
+
+        if (CollectionUtil.isNotEmpty(k3ReturnOrderDOList)) {
+            for(K3ReturnOrderDO k3ReturnOrderDO:k3ReturnOrderDOList){
+                if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
                     Date returnTime = k3ReturnOrderDO.getReturnTime();
                     String returnTimeString = simpleDateFormat.format(returnTime);
-                    returnDataMap.put(returnTimeString,k3ReturnOrderDetailDO.getProductCount());
-                    returnDetailIdMap.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),returnDataMap);
+                    for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
+                        if (!returnDetailIdMap.containsKey(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()))) {
+                            Map<String,Integer>  returnDataMap = new HashMap<>();
+                            returnDataMap.put(returnTimeString,k3ReturnOrderDetailDO.getProductCount());
+                            returnDetailIdMap.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),returnDataMap);
+                        }else {
+                            Map<String,Integer>  returnDataMap = returnDetailIdMap.get(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
+                            if (!returnDataMap.containsKey(returnTimeString)) {
+                                returnDataMap.put(returnTimeString,k3ReturnOrderDetailDO.getProductCount());
+                            }else {
+                                Integer count = k3ReturnOrderDetailDO.getProductCount() + returnDataMap.get(returnTimeString);
+                                returnDataMap.put(returnTimeString,count);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -4972,8 +4985,6 @@ public class StatementServiceImpl implements StatementService {
                 }
             }
         }
-        List<K3OrderStatementConfigDO> k3OrderStatementConfigList = k3OrderStatementConfigMapper.findByCustomerId(customerDO.getId());
-        Map<Integer,K3OrderStatementConfigDO> k3k3OrderStatementConfigMap = ListUtil.listToMap(k3OrderStatementConfigList,"orderId");
         for (CheckStatementOrderDO exportStatementOrderDO : statementOrderDOList) {
             List<CheckStatementOrderDetailDO> checkStatementOrderDetailDOList = exportStatementOrderDO.getCheckStatementOrderDetailDOList();
             if (checkStatementOrderDetailDOList == null) {
@@ -4986,15 +4997,7 @@ public class StatementServiceImpl implements StatementService {
                     String statementOrderDetailExpectPayTimeString = simpleDateFormat.format(statementOrderDetailExpectPayTime);
                     String monthTime = exportStatementOrderDO.getMonthTime();
                     if (monthTime.equals(statementOrderDetailExpectPayTimeString)) {
-                        K3OrderStatementConfigDO k3OrderStatementConfigDO = k3k3OrderStatementConfigMap.get(checkStatementOrderDetailDO.getOrderId());
-                        if (k3OrderStatementConfigDO != null) {
-                            if (k3OrderStatementConfigDO.getRentStartTime().before(checkStatementOrderDetailDO.getStatementEndTime())
-                                    || k3OrderStatementConfigDO.getRentStartTime().equals(checkStatementOrderDetailDO.getStatementEndTime())) {
-                                checkStatementOrderDetailDOList.add(checkStatementOrderDetailDO);
-                            }
-                        }else {
-                            checkStatementOrderDetailDOList.add(checkStatementOrderDetailDO);
-                        }
+                        checkStatementOrderDetailDOList.add(checkStatementOrderDetailDO);
                     }
                 }
             }
@@ -5210,13 +5213,18 @@ public class StatementServiceImpl implements StatementService {
         for ( CheckStatementOrder checkStatementOrder:checkStatementOrderList) {
             for (CheckStatementOrderDetail checkStatementOrderDetail:checkStatementOrder.getStatementOrderDetailList()) {
                 if (returnDetailIdMap.get(checkStatementOrderDetail.getOrderItemReferId())!= null) {
-                    for (String returnTimeString :returnDetailIdMap.get(checkStatementOrderDetail.getOrderItemReferId()).keySet()) {
+                    Map<String,Integer> returnDataMap = returnDetailIdMap.get(checkStatementOrderDetail.getOrderItemReferId());
+                    for (String returnTimeString :returnDataMap.keySet()) {
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
                         try {
                             Date returnStartTime = simpleDateFormat.parse(returnTimeString);
                             Date monthTime = simpleDateFormat.parse(checkStatementOrder.getMonthTime());
                             if (monthTime.after(returnStartTime)) {
-                                checkStatementOrderDetail.setItemCount(checkStatementOrderDetail.getItemCount()-returnDataMap.get(returnTimeString));
+                                Integer count = checkStatementOrderDetail.getItemCount()-returnDataMap.get(returnTimeString);
+                                if (count < 0) {
+                                    count = 0;
+                                }
+                                checkStatementOrderDetail.setItemCount(count);
                             }
                         } catch (ParseException e) {
                             e.printStackTrace();
@@ -5292,6 +5300,30 @@ public class StatementServiceImpl implements StatementService {
                         statementDetailPenaltyPaidAmount = BigDecimalUtil.add(statementDetailPenaltyPaidAmount,checkStatementOrderDetail.getStatementDetailPenaltyPaidAmount());
                         statementDetailRentDepositAmount = BigDecimalUtil.add(statementDetailRentDepositAmount,checkStatementOrderDetail.getStatementDetailRentDepositAmount());
                     }
+                }
+                if (BigDecimalUtil.compare(statementDetailAmount, BigDecimal.ZERO) == -1) {
+                    statementDetailAmount = BigDecimal.ZERO;
+                }
+                if (BigDecimalUtil.compare(statementDetailRentAmount, BigDecimal.ZERO) == -1) {
+                    statementDetailRentAmount = BigDecimal.ZERO;
+                }
+                if (BigDecimalUtil.compare(statementDetailDepositAmount, BigDecimal.ZERO) == -1) {
+                    statementDetailDepositAmount = BigDecimal.ZERO;
+                }
+                if (BigDecimalUtil.compare(statementDetailOtherAmount, BigDecimal.ZERO) == -1) {
+                    statementDetailOtherAmount = BigDecimal.ZERO;
+                }
+                if (BigDecimalUtil.compare(statementDetailPaidAmount, BigDecimal.ZERO) == -1) {
+                    statementDetailPaidAmount = BigDecimal.ZERO;
+                }
+                if (BigDecimalUtil.compare(statementDetailPenaltyAmount, BigDecimal.ZERO) == -1) {
+                    statementDetailPenaltyAmount = BigDecimal.ZERO;
+                }
+                if (BigDecimalUtil.compare(statementDetailPenaltyPaidAmount, BigDecimal.ZERO) == -1) {
+                    statementDetailPenaltyPaidAmount = BigDecimal.ZERO;
+                }
+                if (BigDecimalUtil.compare(statementDetailRentDepositAmount, BigDecimal.ZERO) == -1) {
+                    statementDetailRentDepositAmount = BigDecimal.ZERO;
                 }
                 statementOrderDetail.setStatementDetailAmount(BigDecimalUtil.add(statementDetailAmount,statementOrderDetail.getStatementDetailAmount()));
                 statementOrderDetail.setStatementDetailRentAmount(BigDecimalUtil.add(statementDetailRentAmount,statementOrderDetail.getStatementDetailRentAmount()));
