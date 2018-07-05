@@ -4976,12 +4976,16 @@ public class StatementServiceImpl implements StatementService {
         if (CollectionUtil.isNotEmpty(firstReturnListPage)) {
             for (CheckStatementOrderDetailDO checkStatementOrderDetailDO : firstReturnListPage) {
                 StatementOrderDetailDO byStatementOrderId = statementOrderDetailMapper.findById(checkStatementOrderDetailDO.getReturnReferId());
-                List<CheckStatementOrderDetailDO> byStatementOrder = statementOrderDetailMapper.findByOrderItemReferIdAndTime(byStatementOrderId.getOrderItemReferId(), checkStatementOrderDetailDO.getStatementExpectPayTime());
-                if (byStatementOrder.size() == 1) {
-                    CheckStatementOrderDetailDO checkStatementOrderDetailDO1 = byStatementOrder.get(0);
-                    checkStatementOrderDetailDO.setReturnReferId(checkStatementOrderDetailDO1.getId());
-                    checkStatementOrderDetailDO.setStatementDetailAmount(BigDecimal.ZERO);
-                    listPage.add(checkStatementOrderDetailDO);
+                if (byStatementOrderId != null) {
+                    List<CheckStatementOrderDetailDO> byStatementOrder = statementOrderDetailMapper.findByOrderItemReferIdAndTime(byStatementOrderId.getOrderItemReferId(), checkStatementOrderDetailDO.getStatementExpectPayTime());
+                    if (byStatementOrder.size() == 1) {
+                        CheckStatementOrderDetailDO checkStatementOrderDetailDO1 = byStatementOrder.get(0);
+                        checkStatementOrderDetailDO.setReturnReferId(checkStatementOrderDetailDO1.getId());
+                        checkStatementOrderDetailDO.setStatementDetailAmount(BigDecimal.ZERO);
+                        listPage.add(checkStatementOrderDetailDO);
+                    }
+                }else {
+                    logger.error("【对账单导出无法根据创造的退货单结算单的ReturnReferId：】"+checkStatementOrderDetailDO.getReturnReferId()+"找到对应的结算单项");
                 }
             }
         }
@@ -5203,6 +5207,8 @@ public class StatementServiceImpl implements StatementService {
             }
 
             List<CheckStatementOrderDetail> statementOrderDetailList = ListUtil.mapToList(hashMap);
+           
+
             //排序
             if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
                 statementOrderDetailList = sortingCheckStatementOrderDetail(statementOrderDetailList);
@@ -5320,8 +5326,12 @@ public class StatementServiceImpl implements StatementService {
                 statementOrderDetail.setStatementDetailRentDepositAmount(BigDecimalUtil.compare(statementOrderDetail.getStatementDetailRentDepositAmount(), BigDecimal.ZERO) == -1 ? BigDecimal.ZERO : statementOrderDetail.getStatementDetailRentDepositAmount());
             }
             // TODO: 2018\7\3 0003 判断相减之后最外层的对账单商品数或配件数是否为0，如果为0，则直接不存储
-            if (statementOrderDetail.getItemCount() != 0 || BigDecimalUtil.compare(statementOrderDetail.getStatementDetailAmount(), BigDecimal.ZERO) != 0) {
+            if (OrderItemType.ORDER_ITEM_TYPE_OTHER.equals(statementOrderDetail.getOrderItemType())) {
                 allList.addAll(list);
+            }else {
+                if (statementOrderDetail.getItemCount() != 0 || BigDecimalUtil.compare(statementOrderDetail.getStatementDetailAmount(), BigDecimal.ZERO) != 0) {
+                    allList.addAll(list);
+                }
             }
         }
         return allList;
