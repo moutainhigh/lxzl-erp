@@ -250,6 +250,7 @@
     <select id="findByCustomerNo" resultMap="K3ReturnOrderDO" resultType="java.lang.String">
         SELECT
         <include refid="column_List"/>
+        from erp_k3_return_order ekro
         WHERE
         ekro.k3_customer_no = #{k3CustomerNo,jdbcType=VARCHAR} AND ekro.data_status = 1
     </select>
