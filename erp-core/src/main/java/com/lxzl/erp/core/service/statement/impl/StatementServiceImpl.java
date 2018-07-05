@@ -4973,7 +4973,23 @@ public class StatementServiceImpl implements StatementService {
                 }
             }
         }
-
+        List<OrderDO> orderDOList = orderMapper.findByCustomerId(customerDO.getId());
+        Map<Integer,OrderProductDO> orderProductDOMap= new HashMap<>();
+        Map<Integer,OrderMaterialDO> orderMaterialDOMap= new HashMap<>();
+        if (CollectionUtil.isNotEmpty(orderDOList)) {
+            for (OrderDO orderDO:orderDOList){
+                List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
+                List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
+                if (CollectionUtil.isNotEmpty(orderProductDOList)) {
+                    for (OrderProductDO orderProductDO:orderProductDOList)
+                    orderProductDOMap.put(orderProductDO.getId(),orderProductDO);
+                }
+                if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
+                    for (OrderMaterialDO orderMaterialDO:orderMaterialDOList)
+                        orderMaterialDOMap.put(orderMaterialDO.getId(),orderMaterialDO);
+                }
+            }
+        }
         List<CheckStatementOrderDetailDO> firstReturnListPage = statementOrderDetailMapper.exportFirstReturnListPage(maps);
         // TODO: 2018\7\5 0005 新逻辑  将所有第一次创建的放到里面
         Map<String,Map<Integer,List<CheckStatementOrderDetailDO>>> firstReturnMonthMap = new HashMap<>();
@@ -5222,34 +5238,6 @@ public class StatementServiceImpl implements StatementService {
             }
 
             List<CheckStatementOrderDetail> statementOrderDetailList = ListUtil.mapToList(hashMap);
-            //k3老订单支付截止时间限制
-            List<K3OrderStatementConfigDO> k3OrderStatementConfigList = k3OrderStatementConfigMapper.findByCustomerId(customerDO.getId());
-            if (CollectionUtil.isNotEmpty(k3OrderStatementConfigList)) {
-                Map<Integer,K3OrderStatementConfigDO> k3OrderStatementConfigMap = ListUtil.listToMap(k3OrderStatementConfigList,"orderId");
-                List<CheckStatementOrderDetail> notK3k3OrderStatementConfigList = new ArrayList<>();
-                for (CheckStatementOrderDetail checkStatementOrderDetail : statementOrderDetailList) {
-                    K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMap.get(checkStatementOrderDetail.getOrderId());
-                    if (k3OrderStatementConfigDO != null) {
-                        //统一日期格式进行比较
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        String k3RentStartTimeString = simpleDateFormat.format(k3OrderStatementConfigDO.getRentStartTime());
-                        String statementEndTimeString = simpleDateFormat.format(checkStatementOrderDetail.getStatementEndTime());
-                        try {
-                            Date k3RentStartTime = simpleDateFormat.parse(k3RentStartTimeString);
-                            Date statementEndTime = simpleDateFormat.parse(statementEndTimeString);
-                            if (k3RentStartTime.before(statementEndTime) || k3RentStartTime.equals(statementEndTime)) {
-                                notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
-                            }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                            logger.error("【导出对账单功能————筛选K3老订单支付截止时间之前结算单出错，错误原因对比结算单结束时间和K3老订单支付截止时间出错】，结算单id:【"+checkStatementOrderDetail.getStatementOrderDetailId()+"】,k3老订单(erp_k3_order_statement_config)订单编号：【"+k3OrderStatementConfigDO.getOrderNo()+"】",e);
-                        }
-                    }else {
-                        notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
-                    }
-                }
-                statementOrderDetailList = notK3k3OrderStatementConfigList;
-            }
 
             //排序
             if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
@@ -5296,31 +5284,68 @@ public class StatementServiceImpl implements StatementService {
                             List<CheckStatementOrderDetailDO> returnCheckStatementOrderDetailDOList = itemIdMap.get(checkStatementOrderDetail.getOrderItemReferId());
                             List<CheckStatementOrderDetail> returnCheckStatementOrderDetailList = ConverterUtil.convertList(returnCheckStatementOrderDetailDOList,CheckStatementOrderDetail.class);
                             for (CheckStatementOrderDetail detail:returnCheckStatementOrderDetailList) {
+                                detail.setStatementStartTime(detail.getStatementExpectPayTime());
+                                detail.setStatementEndTime(detail.getStatementExpectPayTime());
+                                detail.setOrderExpectReturnTime(detail.getStatementExpectPayTime());
+                                detail.setStatementDetailPaidTime(detail.getStatementExpectPayTime());
+                                detail.setOrderRentStartTime(detail.getStatementExpectPayTime());
+                                detail.setOrderRentTimeLength(null);
+                                detail.setItemName(checkStatementOrderDetail.getItemName());
+                                detail.setItemSkuName(checkStatementOrderDetail.getItemSkuName());
                                 detail.setUnitAmount(checkStatementOrderDetail.getUnitAmount());
                                 detail.setStatementDetailAmount(BigDecimal.ZERO);
                             }
                             newList.addAll(returnCheckStatementOrderDetailList);
                         }
                     }
-                    checkStatementOrder.setStatementOrderDetailList(newList);
+                    if (CollectionUtil.isNotEmpty(newList)) {
+                        checkStatementOrder.setStatementOrderDetailList(null);
+                        checkStatementOrder.setStatementOrderDetailList(newList);
+                    }
                 }
             }
-
             for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
                 List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
                 if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
                     for (CheckStatementOrderDetail checkStatementOrderDetail:statementOrderDetailList){
-                        if (!OrderType.ORDER_TYPE_RETURN.equals(checkStatementOrderDetail.getOrderType())) {
+                        if (OrderType.ORDER_TYPE_RETURN.equals(checkStatementOrderDetail.getOrderType())) {
                             if (returnCountMap.containsKey(checkStatementOrderDetail.getOrderItemReferId())) {
-                                checkStatementOrderDetail.setItemCount(0-returnCountMap.get(checkStatementOrderDetail.getOrderItemReferId()));
+                                Integer count = 0-returnCountMap.get(checkStatementOrderDetail.getOrderItemReferId());
+                                checkStatementOrderDetail.setItemCount(count);
                             }
                         }
                     }
                 }
             }
-
         }
-
+        if (!orderProductDOMap.isEmpty()) {
+            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+                List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+                if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
+                    for (CheckStatementOrderDetail checkStatementOrderDetail:statementOrderDetailList){
+                        if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(checkStatementOrderDetail.getOrderItemType())) {
+                            if (orderProductDOMap.containsKey(checkStatementOrderDetail.getOrderItemReferId())) {
+                                checkStatementOrderDetail.setUnitAmount(orderProductDOMap.get(checkStatementOrderDetail.getOrderItemReferId()).getProductUnitAmount());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (!orderMaterialDOMap.isEmpty()) {
+            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+                List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+                if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
+                    for (CheckStatementOrderDetail checkStatementOrderDetail:statementOrderDetailList){
+                        if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(checkStatementOrderDetail.getOrderItemType())) {
+                            if (orderMaterialDOMap.containsKey(checkStatementOrderDetail.getOrderItemReferId())) {
+                                checkStatementOrderDetail.setUnitAmount(orderMaterialDOMap.get(checkStatementOrderDetail.getOrderItemReferId()).getMaterialUnitAmount());
+                            }
+                        }
+                    }
+                }
+            }
+        }
         result.setResult(checkStatementOrderList);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
