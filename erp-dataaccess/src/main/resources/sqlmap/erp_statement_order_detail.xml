@@ -1011,6 +1011,7 @@
         on t0.month_start_config between t1.rent_start_time and t1.expect_return_time or t0.month_end_config between t1.rent_start_time and t1.expect_return_time
         or date_format(t1.rent_start_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
         or date_format(t1.expect_return_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
+        or date_format(date_add(t1.expect_return_time,interval 1 DAY ),'%Y-%m') = date_format(t0.month_config,'%Y-%m')
         left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
         left join
         (
