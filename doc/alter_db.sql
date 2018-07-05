@@ -962,8 +962,11 @@ CREATE TABLE `erp_customer_statement_date_change_log` (
 	KEY `index_customer_no` (`customer_no`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户结算日修变更录表';
 
--------------------------------未执行-----------------------------
-
-
 ALTER TABLE erp_k3_return_order_detail ADD order_item_type INT(11) NOT NULL DEFAULT 1 COMMENT '商品类型,1-商品,2-配件';
 UPDATE erp_k3_return_order_detail SET order_item_type = 2 WHERE LEFT(product_no, 2)<>'10' AND LEFT(product_no, 2)<>'90';
+
+-------------------------------未执行-----------------------------
+
+ALTER TABLE erp_customer ADD COLUMN `confirm_bad_account_status` INT(11) NOT NULL DEFAULT '0' COMMENT '是否为坏账客户 0否1是 默认为0';
+ALTER TABLE erp_customer ADD COLUMN `confirm_bad_account_user` INT(20) COMMENT '坏账客户确认人';
+ALTER TABLE erp_customer ADD COLUMN `confirm_bad_account_time` DATETIME COMMENT '坏账客户确认时间';
