@@ -185,7 +185,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 }else{
                     k3ReturnOrderDetailDO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_MATERIAL);
                 }
-
                 k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
                 k3ReturnOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 k3ReturnOrderDetailDO.setCreateTime(currentTime);
