@@ -179,7 +179,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 }
 
                 K3ReturnOrderDetailDO k3ReturnOrderDetailDO = ConverterUtil.convert(k3ReturnOrderDetail, K3ReturnOrderDetailDO.class);
-                if (k3ReturnOrderDetailDO.getProductNo().startsWith("10.") || k3ReturnOrderDetailDO.getProductNo().startsWith("90.") ){
+                if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())){
                     k3ReturnOrderDetailDO.setOrderItemType(1);
                 }else{
                     k3ReturnOrderDetailDO.setOrderItemType(2);
