@@ -188,7 +188,7 @@
                                     </script>
 
                                     <div class="section-divider mv40"><span> 图片  </span></div>
-                                    <div class="tray-bin">
+                                    <div class="tray-bin mn">
                                         <div class="atl-dropzone dropzoneImg" id="dropzoneMaterialImg">
                                             <div class="dz-default dz-message" >
                                                     <span>
@@ -228,7 +228,7 @@
                                     </script>
 
 
-                                    <div class="section row mn">
+                                    <div class="section row">
                                         <div class="col-md-12" id="materialPropertiesContainer"></div>
                                     </div>
 
