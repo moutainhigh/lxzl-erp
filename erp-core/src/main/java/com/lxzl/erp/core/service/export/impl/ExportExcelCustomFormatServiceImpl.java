@@ -292,6 +292,8 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                     exportStatementOrderDetailBase.setDay(0);   //日
                     exportStatementOrderDetailBase.setMonth(exportStatementOrderDetail.getOrderRentTimeLength());  //月
                 }
+                exportStatementOrderDetailBase.setMonth(exportStatementOrderDetailBase.getMonth() == null ? 0 : exportStatementOrderDetailBase.getMonth());
+                exportStatementOrderDetailBase.setDay(exportStatementOrderDetailBase.getDay() == null ? 0 : exportStatementOrderDetailBase.getDay());
                 String allRentTimeLength = exportStatementOrderDetailBase.getMonth() + "月" + exportStatementOrderDetailBase.getDay() + "天";
                 exportStatementOrderDetailBase.setAllRentTimeLength(allRentTimeLength);    //租赁总期限
                 exportStatementOrderDetailBase.setAllPeriodStartAndEnd(formatPeriodStartAndEnd(exportStatementOrderDetail.getOrderRentStartTime(), exportStatementOrderDetail.getOrderExpectReturnTime()) + allRentTimeLength);    //本期起止（总的期数起止）
@@ -323,6 +325,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                     exportStatementOrderDetailBase.setUnitAmountInfo(exportStatementOrderDetailBase.getUnitAmount() + "/月");
                     exportStatementOrderDetailBase.setRentTimeLength(monthAndDays);  //期限
                 }
+                exportStatementOrderDetailBase.setRentTimeLength(exportStatementOrderDetailBase.getRentTimeLength() == null ? "无" : exportStatementOrderDetailBase.getRentTimeLength());
                 exportStatementOrderDetailBase.setCurrentPeriodStartAndEnd(formatPeriodStartAndEnd(exportStatementOrderDetail.getStatementStartTime(), exportStatementOrderDetail.getStatementEndTime()) + exportStatementOrderDetailBase.getRentTimeLength());    //本期起止（当前期数起止）
                 //-------------------以上是本期结算单-----------------------------
 
