@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
 import com.lxzl.erp.common.domain.k3.pojo.K3OrderStatementConfig;
 import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
@@ -4946,7 +4947,7 @@ public class StatementServiceImpl implements StatementService {
         //退货
         List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findByCustomerNoForExport(customerDO.getCustomerNo());
         Map<Integer, Map<String, Integer>> returnDetailIdMap = new HashMap<>();
-
+        Map<Integer,Integer> returnCountMap = new HashMap<>();
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDOList)) {
             for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOList) {
                 if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
@@ -4954,6 +4955,7 @@ public class StatementServiceImpl implements StatementService {
                     Date returnTime = k3ReturnOrderDO.getReturnTime();
                     String returnTimeString = simpleDateFormat.format(returnTime);
                     for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
+                        returnCountMap.put(k3ReturnOrderDetailDO.getId(),k3ReturnOrderDetailDO.getRealProductCount());
                         if (!returnDetailIdMap.containsKey(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()))) {
                             Map<String, Integer> returnDataMap = new HashMap<>();
                             returnDataMap.put(returnTimeString, k3ReturnOrderDetailDO.getProductCount());
@@ -4971,24 +4973,53 @@ public class StatementServiceImpl implements StatementService {
                 }
             }
         }
-
-        List<CheckStatementOrderDetailDO> firstReturnListPage = statementOrderDetailMapper.exportFirstReturnListPage(maps);
-        if (CollectionUtil.isNotEmpty(firstReturnListPage)) {
-            for (CheckStatementOrderDetailDO checkStatementOrderDetailDO : firstReturnListPage) {
-                StatementOrderDetailDO byStatementOrderId = statementOrderDetailMapper.findById(checkStatementOrderDetailDO.getReturnReferId());
-                if (byStatementOrderId != null) {
-                    List<CheckStatementOrderDetailDO> byStatementOrder = statementOrderDetailMapper.findByOrderItemReferIdAndTime(byStatementOrderId.getOrderItemReferId(), checkStatementOrderDetailDO.getStatementExpectPayTime());
-                    if (byStatementOrder.size() == 1) {
-                        CheckStatementOrderDetailDO checkStatementOrderDetailDO1 = byStatementOrder.get(0);
-                        checkStatementOrderDetailDO.setReturnReferId(checkStatementOrderDetailDO1.getId());
-                        checkStatementOrderDetailDO.setStatementDetailAmount(BigDecimal.ZERO);
-                        listPage.add(checkStatementOrderDetailDO);
-                    }
-                }else {
-                    logger.error("【对账单导出无法根据创造的退货单结算单的ReturnReferId：】"+checkStatementOrderDetailDO.getReturnReferId()+"找到对应的结算单项");
+        List<OrderDO> orderDOList = orderMapper.findByCustomerId(customerDO.getId());
+        Map<Integer,OrderProductDO> orderProductDOMap= new HashMap<>();
+        Map<Integer,OrderMaterialDO> orderMaterialDOMap= new HashMap<>();
+        if (CollectionUtil.isNotEmpty(orderDOList)) {
+            for (OrderDO orderDO:orderDOList){
+                List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
+                List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
+                if (CollectionUtil.isNotEmpty(orderProductDOList)) {
+                    for (OrderProductDO orderProductDO:orderProductDOList)
+                    orderProductDOMap.put(orderProductDO.getId(),orderProductDO);
+                }
+                if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
+                    for (OrderMaterialDO orderMaterialDO:orderMaterialDOList)
+                        orderMaterialDOMap.put(orderMaterialDO.getId(),orderMaterialDO);
                 }
             }
         }
+        List<CheckStatementOrderDetailDO> firstReturnListPage = statementOrderDetailMapper.exportFirstReturnListPage(maps);
+        // TODO: 2018\7\5 0005 新逻辑  将所有第一次创建的放到里面
+        Map<String,Map<Integer,List<CheckStatementOrderDetailDO>>> firstReturnMonthMap = new HashMap<>();
+        if (CollectionUtil.isNotEmpty(firstReturnListPage)) {
+            for (CheckStatementOrderDetailDO checkStatementOrderDetailDO : firstReturnListPage) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+                Date statementExpectPayTime = checkStatementOrderDetailDO.getStatementExpectPayTime();
+                String monthTimeString = simpleDateFormat.format(statementExpectPayTime);
+                if (!firstReturnMonthMap.containsKey(monthTimeString)) {
+                    Map<Integer,List<CheckStatementOrderDetailDO>> itemIdMap = new HashMap<>();
+                    List<CheckStatementOrderDetailDO> returnCheckStatementOrderDetailDOList = new ArrayList<>();
+                    returnCheckStatementOrderDetailDOList.add(checkStatementOrderDetailDO);
+                    StatementOrderDetailDO byStatementOrderId = statementOrderDetailMapper.findById(checkStatementOrderDetailDO.getReturnReferId());
+                    itemIdMap.put(byStatementOrderId.getOrderItemReferId(),returnCheckStatementOrderDetailDOList);
+                    firstReturnMonthMap.put(monthTimeString,itemIdMap);
+                }else {
+                    Map<Integer,List<CheckStatementOrderDetailDO>> itemIdMap = firstReturnMonthMap.get(monthTimeString);
+                    StatementOrderDetailDO byStatementOrderId = statementOrderDetailMapper.findById(checkStatementOrderDetailDO.getReturnReferId());
+                    if (!itemIdMap.containsKey(byStatementOrderId.getOrderItemReferId())) {
+                        List<CheckStatementOrderDetailDO> returnCheckStatementOrderDetailDOList = new ArrayList<>();
+                        returnCheckStatementOrderDetailDOList.add(checkStatementOrderDetailDO);
+                        itemIdMap.put(byStatementOrderId.getOrderItemReferId(),returnCheckStatementOrderDetailDOList);
+                    }else {
+                        List<CheckStatementOrderDetailDO> returnCheckStatementOrderDetailDOList = itemIdMap.get(byStatementOrderId.getOrderItemReferId());
+                        returnCheckStatementOrderDetailDOList.add(checkStatementOrderDetailDO);
+                    }
+                }
+            }
+        }
+        
         for (CheckStatementOrderDO exportStatementOrderDO : statementOrderDOList) {
             List<CheckStatementOrderDetailDO> checkStatementOrderDetailDOList = exportStatementOrderDO.getCheckStatementOrderDetailDOList();
             if (checkStatementOrderDetailDOList == null) {
@@ -5207,7 +5238,6 @@ public class StatementServiceImpl implements StatementService {
             }
 
             List<CheckStatementOrderDetail> statementOrderDetailList = ListUtil.mapToList(hashMap);
-           
 
             //排序
             if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
@@ -5236,6 +5266,82 @@ public class StatementServiceImpl implements StatementService {
                             e.printStackTrace();
                         }
 
+                    }
+                }
+            }
+        }
+        if (!firstReturnMonthMap.isEmpty()) {
+            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+                if (firstReturnMonthMap.containsKey(checkStatementOrder.getMonthTime())) {
+                    Map<Integer, List<CheckStatementOrderDetailDO>> itemIdMap = firstReturnMonthMap.get(checkStatementOrder.getMonthTime());
+                    List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+                    List<CheckStatementOrderDetail> newList = new ArrayList<>();
+                    for (CheckStatementOrderDetail checkStatementOrderDetail:statementOrderDetailList){
+                        if (!itemIdMap.containsKey(checkStatementOrderDetail.getOrderItemReferId())) {
+                            newList.add(checkStatementOrderDetail);
+                        }else {
+                            newList.add(checkStatementOrderDetail);
+                            List<CheckStatementOrderDetailDO> returnCheckStatementOrderDetailDOList = itemIdMap.get(checkStatementOrderDetail.getOrderItemReferId());
+                            List<CheckStatementOrderDetail> returnCheckStatementOrderDetailList = ConverterUtil.convertList(returnCheckStatementOrderDetailDOList,CheckStatementOrderDetail.class);
+                            for (CheckStatementOrderDetail detail:returnCheckStatementOrderDetailList) {
+                                detail.setStatementStartTime(detail.getStatementExpectPayTime());
+                                detail.setStatementEndTime(detail.getStatementExpectPayTime());
+                                detail.setOrderExpectReturnTime(detail.getStatementExpectPayTime());
+                                detail.setStatementDetailPaidTime(detail.getStatementExpectPayTime());
+                                detail.setOrderRentStartTime(detail.getStatementExpectPayTime());
+                                detail.setOrderRentTimeLength(null);
+                                detail.setItemName(checkStatementOrderDetail.getItemName());
+                                detail.setItemSkuName(checkStatementOrderDetail.getItemSkuName());
+                                detail.setUnitAmount(checkStatementOrderDetail.getUnitAmount());
+                                detail.setStatementDetailAmount(BigDecimal.ZERO);
+                            }
+                            newList.addAll(returnCheckStatementOrderDetailList);
+                        }
+                    }
+                    if (CollectionUtil.isNotEmpty(newList)) {
+                        checkStatementOrder.setStatementOrderDetailList(null);
+                        checkStatementOrder.setStatementOrderDetailList(newList);
+                    }
+                }
+            }
+            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+                List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+                if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
+                    for (CheckStatementOrderDetail checkStatementOrderDetail:statementOrderDetailList){
+                        if (OrderType.ORDER_TYPE_RETURN.equals(checkStatementOrderDetail.getOrderType())) {
+                            if (returnCountMap.containsKey(checkStatementOrderDetail.getOrderItemReferId())) {
+                                Integer count = 0-returnCountMap.get(checkStatementOrderDetail.getOrderItemReferId());
+                                checkStatementOrderDetail.setItemCount(count);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (!orderProductDOMap.isEmpty()) {
+            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+                List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+                if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
+                    for (CheckStatementOrderDetail checkStatementOrderDetail:statementOrderDetailList){
+                        if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(checkStatementOrderDetail.getOrderItemType())) {
+                            if (orderProductDOMap.containsKey(checkStatementOrderDetail.getOrderItemReferId())) {
+                                checkStatementOrderDetail.setUnitAmount(orderProductDOMap.get(checkStatementOrderDetail.getOrderItemReferId()).getProductUnitAmount());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (!orderMaterialDOMap.isEmpty()) {
+            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+                List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+                if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
+                    for (CheckStatementOrderDetail checkStatementOrderDetail:statementOrderDetailList){
+                        if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(checkStatementOrderDetail.getOrderItemType())) {
+                            if (orderMaterialDOMap.containsKey(checkStatementOrderDetail.getOrderItemReferId())) {
+                                checkStatementOrderDetail.setUnitAmount(orderMaterialDOMap.get(checkStatementOrderDetail.getOrderItemReferId()).getMaterialUnitAmount());
+                            }
+                        }
                     }
                 }
             }
