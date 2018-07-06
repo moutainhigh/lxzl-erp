@@ -4637,6 +4637,7 @@ public class StatementServiceImpl implements StatementService {
         if (CollectionUtil.isEmpty(statementOrderDetailDOList)) return;
 
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findReturnOrderById(k3ReturnOrderDetailDO.getReturnOrderId());
+        if(!CommonConstant.COMMON_CONSTANT_YES.equals(k3ReturnOrderDO.getSuccessStatus()))return;
         CustomerDO customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
         Integer buyerCustomerId = customerDO.getId();
         Date statementDetailStartTime;
