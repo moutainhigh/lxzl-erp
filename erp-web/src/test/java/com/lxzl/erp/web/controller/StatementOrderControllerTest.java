@@ -187,7 +187,7 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void exportQueryStatementOrderCheckParam() throws Exception {
-        String str = "2018-03";
+        String str = "2017-09";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
         Date rentStartTime = sdf.parse(str);
         StatementOrderMonthQueryParam param = new StatementOrderMonthQueryParam();
@@ -202,4 +202,5 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
 //        param.setMonthTime(rentStartTime);
         TestResult testResult = getJsonTestResult("/statementOrder/exportQueryStatementOrderCheckParam", param);
     }
+
 }
