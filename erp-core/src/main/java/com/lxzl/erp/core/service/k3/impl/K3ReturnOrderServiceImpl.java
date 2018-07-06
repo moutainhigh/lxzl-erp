@@ -178,7 +178,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     orderCatch.put(k3ReturnOrderDetail.getOrderNo(), order);
                 }
 
-
                 K3ReturnOrderDetailDO k3ReturnOrderDetailDO = ConverterUtil.convert(k3ReturnOrderDetail, K3ReturnOrderDetailDO.class);
                 if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())){
                     k3ReturnOrderDetailDO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT);

@@ -182,9 +182,7 @@ public class StatementOrderSupport {
             }
             for (Integer key : statementCache.keySet()) {
                 StatementOrderDO statementOrderDO = statementCache.get(key);
-                if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) == 0) {
-                    statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                }else  if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), statementOrderDO.getStatementPaidAmount()) <= 0){
+                if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), statementOrderDO.getStatementPaidAmount()) <= 0){
                     statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
                 }
                 statementOrderDO.setUpdateTime(currentTime);
@@ -221,16 +219,6 @@ public class StatementOrderSupport {
             }
             for (Integer key : statementOrderDOMap.keySet()) {
                 StatementOrderDO statementOrderDO = statementOrderDOMap.get(key);
-               // 金额为零结算单删除
-                if(BigDecimalUtil.compare(statementOrderDO.getStatementAmount(),BigDecimal.ZERO)==0){
-                    statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                }else if(BigDecimalUtil.compare(statementOrderDO.getStatementPaidAmount(),statementOrderDO.getStatementAmount())==0){
-                    statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
-                }else if(BigDecimalUtil.compare(statementOrderDO.getStatementPaidAmount(),BigDecimal.ZERO)>0){
-                    statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
-                }else{
-                    statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
-                }
                 statementOrderMapper.update(statementOrderDO);
             }
         }

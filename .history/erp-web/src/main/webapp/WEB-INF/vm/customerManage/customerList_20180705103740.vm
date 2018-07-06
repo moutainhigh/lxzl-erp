@@ -65,13 +65,6 @@
                                                 <input type="text" name="ownerName" id="ownerName" class="form-control input-sm bradius" autocomplete="off" placeholder="业务员姓名">
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="field form-group mn" >
-                                                <select class="form-control input-sm bradius" name="confirmBadAccountStatus" id="confirmBadAccountStatus">
-                                                    <option value="">全部 （是否为坏账客户）</option>
-                                                </select>
-                                            </div>
-                                        </div>
                                     </div>
                                     <hr class="short alt">
                                     <div class="section row">
@@ -132,7 +125,7 @@
                                 <tr data-rowdata="{{rowData}}">
                                     <td>
                                         {{#isBadDebtCustomer}}
-                                        <span class="label label-danger" title="坏账客户">坏账</span>
+                                        <span class="label label-primary" title="续租单">续</span>
                                         {{/isBadDebtCustomer}}
                                         <a href="{{detailUrl}}" target="_blank">{{customerNo}}</a>
                                     </td>

@@ -36,6 +36,10 @@ public class CustomerDO  extends BaseDO {
 	private Integer confirmStatementUser; // 客户结算单确认人
 	private Date confirmStatementTime; // 客户结算单确认时间
 
+	private Integer confirmBadAccountStatus; // 客户是否为坏账状态 0否1是
+	private Integer confirmBadAccountUser; // 客户坏账确认人
+	private Date confirmBadAccountTime; // 客户坏账确认时间
+
 	@Transient
 	private CustomerCompanyDO customerCompanyDO;
 	@Transient
@@ -299,5 +303,29 @@ public class CustomerDO  extends BaseDO {
 
 	public void setConfirmStatementTime(Date confirmStatementTime) {
 		this.confirmStatementTime = confirmStatementTime;
+	}
+
+	public Integer getConfirmBadAccountStatus() {
+		return confirmBadAccountStatus;
+	}
+
+	public void setConfirmBadAccountStatus(Integer confirmBadAccountStatus) {
+		this.confirmBadAccountStatus = confirmBadAccountStatus;
+	}
+
+	public Integer getConfirmBadAccountUser() {
+		return confirmBadAccountUser;
+	}
+
+	public void setConfirmBadAccountUser(Integer confirmBadAccountUser) {
+		this.confirmBadAccountUser = confirmBadAccountUser;
+	}
+
+	public Date getConfirmBadAccountTime() {
+		return confirmBadAccountTime;
+	}
+
+	public void setConfirmBadAccountTime(Date confirmBadAccountTime) {
+		this.confirmBadAccountTime = confirmBadAccountTime;
 	}
 }

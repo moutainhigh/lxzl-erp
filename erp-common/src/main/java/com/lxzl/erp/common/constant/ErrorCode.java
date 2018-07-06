@@ -630,6 +630,8 @@ public class ErrorCode {
     public static final String SPLIT_STATEMENT_TIME_ERROR = "J500184";
     public static final String RETURN_STATEMENT_ORDER_CREATE_ERROR = "J500185";
 
+    public static final String CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST = "J500186";
+
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
     public static final String MESSAGE_RECEIVER_NOT_NULL = "J600003";
@@ -1968,6 +1970,7 @@ public class ErrorCode {
         MAP.put(HAS_SPLIT_STATEMENT_CFG, "该订单已进行过分段结算，请先进行指定结算日结算");
         MAP.put(SPLIT_STATEMENT_TIME_ERROR, "分段重算时间必须在订单起租时间与订单预计归还时间之间");
         MAP.put(RETURN_STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，该退货单结算单详情已存在，不能重复生成结算单");
+        MAP.put(CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST, "客户为已经为确认坏账状态");
     }
 
 
