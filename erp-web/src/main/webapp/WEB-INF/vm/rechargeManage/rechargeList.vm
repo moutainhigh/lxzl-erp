@@ -110,8 +110,8 @@
                             {{#listData}}
                             <tr>
                                 <td>{{chargeOrderNo}}</td>
-                                <td><a href="{{customerDetailUrl}}" target="_blank">{{businessCustomerNo}}</a></td>
-                                <td><a href="{{customerDetailUrl}}" target="_blank">{{customerName}}</a></td>
+                                <td>{{businessCustomerNo}}</td>
+                                <td>{{customerName}}</td>
 ##                                <td>{{subCompanyId}}</td>
                                 <td>{{subCompanyName}}</td>
                                 <td>{{thirdPartyPayOrderId}}</td>
