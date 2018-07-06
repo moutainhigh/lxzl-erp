@@ -655,20 +655,27 @@ public class StatementServiceImpl implements StatementService {
                 }
             }
 
-            boolean isNeedUpdate=false;
             if(DateUtil.daysBetween(minStartTime,statementOrderDO.getStatementStartTime())!=0||DateUtil.daysBetween(maxEndTime,statementOrderDO.getStatementEndTime())!=0){
-                isNeedUpdate=true;
                 statementOrderDO.setStatementStartTime(minStartTime);
                 statementOrderDO.setStatementEndTime(maxEndTime);
             }
 
             if(BigDecimalUtil.compare(BigDecimal.ZERO,statementOrderDO.getStatementAmount())==0){
-                isNeedUpdate=true;
-                statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                if(CollectionUtil.isEmpty(statementOrderDetailDOList)){
+                    statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                }else{
+                    statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
+                }
             }
-            if(isNeedUpdate){
-                statementOrderMapper.update(statementOrderDO);
-             }
+            else if(BigDecimalUtil.compare(statementOrderDO.getStatementPaidAmount(),statementOrderDO.getStatementAmount())==0){
+                statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
+            }else if(BigDecimalUtil.compare(statementOrderDO.getStatementPaidAmount(),BigDecimal.ZERO)>0){
+                statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
+            }else{
+                statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
+            }
+
+            statementOrderMapper.update(statementOrderDO);
         }
     }
 
@@ -4606,9 +4613,6 @@ public class StatementServiceImpl implements StatementService {
 
             statementOrderDO.setStatementRentAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementRentAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.STANDARD_SCALE)));
             statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.STANDARD_SCALE)));
-            //已结算将改为部分结算（当退货结算金额正常为负时)
-            if (statementOrderDO.getStatementStatus().equals(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED) && BigDecimal.ZERO.compareTo(statementOrderDO.getStatementRentAmount()) > 0)
-                statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
             statementOrderMapper.update(statementOrderDO);
             needDeleteList.add(statementOrderDetailDO);
         }
