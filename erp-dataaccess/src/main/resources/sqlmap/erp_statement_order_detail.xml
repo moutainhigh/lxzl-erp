@@ -1011,6 +1011,7 @@
         on t0.month_start_config between t1.rent_start_time and t1.expect_return_time or t0.month_end_config between t1.rent_start_time and t1.expect_return_time
         or date_format(t1.rent_start_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
         or date_format(t1.expect_return_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
+        or date_format(date_add(t1.expect_return_time,interval 1 DAY ),'%Y-%m') = date_format(t0.month_config,'%Y-%m')
         left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
         left join
         (
@@ -1116,56 +1117,33 @@
         </where>
     </select>
     <select id="exportFirstReturnListPage" resultMap="CheckStatementOrderDetailDO" parameterType="map">
-        SELECT DISTINCT
-        esod.id,esod.statement_order_id,esod.customer_id,esod.order_type,esod.order_id,esod.order_item_type,esod.order_item_refer_id,esod.return_refer_id,
-        esod.statement_detail_type,esod.statement_detail_phase,esod.statement_detail_amount,esod.statement_detail_other_amount,esod.statement_detail_other_paid_amount,
-        esod.statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount,esod.statement_detail_rent_deposit_return_amount,
-        esod.statement_detail_rent_deposit_return_time,esod.statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount,
-        esod.statement_detail_deposit_return_time,esod.statement_detail_rent_amount,esod.statement_detail_rent_paid_amount,esod.statement_detail_paid_time,
-        esod.statement_detail_overdue_amount,esod.statement_detail_overdue_paid_amount,esod.statement_detail_overdue_days,esod.statement_detail_overdue_phase_count,
-        esod.statement_detail_status,ekro.return_time AS statement_expect_pay_time,ekro.return_time AS statement_start_time,ekro.return_time AS statement_end_time,
-        esod.data_status,esod.remark,esod.create_time,esod.create_user,esod.update_time,esod.update_user,esod.statement_detail_correct_amount,
-        esod.statement_coupon_amount,esod.statement_detail_penalty_amount AS statement_detail_penalty_amount,esod.statement_detail_penalty_paid_amount AS statement_detail_penalty_paid_amount,
-        esod.relet_order_item_refer_id,eo.rent_type AS orderRentType,eo.rent_start_time AS orderRentStartTime,eo.expect_return_time AS orderExpectReturnTime,
-        eo.rent_time_length AS orderRentTimeLength,
-        (CASE WHEN eop.id is NULL THEN eom.is_new_material ELSE eop.is_new_product END ) AS isNew
-        FROM erp_statement_order_detail esod
-        LEFT JOIN erp_k3_return_order ekro on esod.order_id = ekro.id
-        LEFT JOIN erp_k3_return_order_detail ekrod on  ekro.id = ekrod.return_order_id
-        LEFT JOIN erp_order eo ON ekrod.order_no = eo.order_no
-        LEFT JOIN erp_order_product eop ON ekrod.order_item_id = eop.id AND esod.order_item_type = 1
-        LEFT JOIN erp_order_material eom ON ekrod.order_item_id  = eom.id AND esod.order_item_type = 2
-        LEFT JOIN erp_customer ec ON esod.customer_id = ec.id AND esod.order_type = 1
-        <where>
-            <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
-                and esod.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
-            </if>
-            <if test="true">
-                AND esod.data_status = 1
-                AND esod.order_type = 4
-                AND esod.statement_expect_pay_time in
-                (SELECT min(a.statement_expect_pay_time) FROM (SELECT
-                esod.order_item_refer_id,
-                esod.statement_expect_pay_time
-                FROM
-                erp_statement_order_detail esod
-                LEFT JOIN erp_k3_return_order ekro on esod.order_id = ekro.id
-                LEFT JOIN erp_k3_return_order_detail ekrod on  ekro.id = ekrod.return_order_id
-                LEFT JOIN erp_order eo ON ekrod.order_no = eo.order_no
-                LEFT JOIN erp_order_product eop ON ekrod.order_item_id = eop.id AND esod.order_item_type = 1
-                LEFT JOIN erp_order_material eom ON ekrod.order_item_id  = eom.id AND esod.order_item_type = 2
-                LEFT JOIN erp_customer ec ON esod.customer_id = ec.id AND esod.order_type = 1
-                AND esod.order_type = 1
-                <where>
-                    <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
-                        and esod.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
-                    </if>
-                </where>
-                AND esod.data_status = 1
-                AND esod.order_type = 4 ) a GROUP BY a.order_item_refer_id )
-                AND esod.order_item_type in (5,6)
-            </if>
-        </where>
+        select t3.return_time as statement_expect_pay_time,t1.* from erp_statement_order_detail t1
+        inner join (
+        select esod.order_item_refer_id,min(statement_expect_pay_time) as min_statement_expect_pay_time from erp_statement_order_detail esod
+        where 1=1
+        <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
+            AND esod.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
+        </if>
+        AND esod.data_status = 1 AND esod.order_type = 4
+        <![CDATA[ and esod.order_item_refer_id <> 0  ]]>
+        group by esod.order_item_refer_id) t2 on t1.order_item_refer_id = t2.order_item_refer_id and t1.statement_expect_pay_time = t2.min_statement_expect_pay_time
+        left join (
+        select t2.id,min(t1.return_time) as return_time from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t1.id = t2.return_order_id and t2.data_status = 1
+        left join erp_customer t3 on t1.k3_customer_no = t3.customer_no
+        where 1=1
+        <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
+            AND t3.id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
+        </if>
+        and t1.return_order_status = 20 group by t2.id) t3 on t1.order_item_refer_id = t3.id
+        INNER JOIN (SELECT esod.id, esod.data_status FROM erp_statement_order_detail esod
+        where 1=1
+        <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
+            AND esod.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
+        </if>
+        AND esod.order_type = 1
+        AND esod.data_status = 1
+        ) t4 on t1.return_refer_id = t4.id
+        WHERE t1.order_type = 4
     </select>
 
     <select id="findByOrderItemReferIdAndTime" resultMap="CheckStatementOrderDetailDO">

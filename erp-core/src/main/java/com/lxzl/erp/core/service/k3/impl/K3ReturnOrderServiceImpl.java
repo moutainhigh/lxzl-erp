@@ -180,6 +180,11 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 
 
                 K3ReturnOrderDetailDO k3ReturnOrderDetailDO = ConverterUtil.convert(k3ReturnOrderDetail, K3ReturnOrderDetailDO.class);
+                if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())){
+                    k3ReturnOrderDetailDO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
+                }else{
+                    k3ReturnOrderDetailDO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_MATERIAL);
+                }
                 k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
                 k3ReturnOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 k3ReturnOrderDetailDO.setCreateTime(currentTime);
@@ -1276,10 +1281,22 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
      * @return
      */
     private boolean verifyReturnTimeAndRentStartTime(ServiceResult<String, String> result, K3ReturnOrderDO k3ReturnOrderDO, OrderDO orderDO) {
-        //退货时间不能大于订单预计退货时间
-        if (k3ReturnOrderDO.getReturnTime().after(orderDO.getExpectReturnTime()) ) {
-            result.setErrorCode(ErrorCode.EXPECT_RTURN_TIME_LESS_RETURN_TIME);
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+        //订单预计退货时间不能小于退货时间
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String returnTimeString = simpleDateFormat.format(k3ReturnOrderDO.getReturnTime());
+        String expectReturnTimeString = simpleDateFormat.format(orderDO.getExpectReturnTime());
+        try {
+            Date returnTime = simpleDateFormat.parse(returnTimeString);
+            Date expectReturnTime = simpleDateFormat.parse(expectReturnTimeString);
+            if (returnTime.after(expectReturnTime)) {
+                result.setErrorCode(ErrorCode.EXPECT_RTURN_TIME_LESS_RETURN_TIME,returnTimeString,orderDO.getOrderNo(),expectReturnTimeString);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return true;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            logger.error("【创建退货单,退货时间或订单预计退货时间parse出错】",e);
+            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
             return true;
         }
         if (orderDO.getRentStartTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
@@ -1339,9 +1356,21 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     if (verifyDeliverySubCompany(k3ReturnOrder, result, orderDO)) return result;
                     Order order = ConverterUtil.convert(orderDO, Order.class);
                     //退货时间不能大于订单预计退货时间
-                    if (k3ReturnOrder.getReturnTime().after(orderDO.getExpectReturnTime()) ) {
-                        result.setErrorCode(ErrorCode.EXPECT_RTURN_TIME_LESS_RETURN_TIME);
-                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    String returnTimeString = simpleDateFormat.format(k3ReturnOrder.getReturnTime());
+                    String expectReturnTimeString = simpleDateFormat.format(orderDO.getExpectReturnTime());
+                    try {
+                        Date returnTime = simpleDateFormat.parse(returnTimeString);
+                        Date expectReturnTime = simpleDateFormat.parse(expectReturnTimeString);
+                        if (returnTime.after(expectReturnTime)) {
+                            result.setErrorCode(ErrorCode.EXPECT_RTURN_TIME_LESS_RETURN_TIME,returnTimeString,orderDO.getOrderNo(),expectReturnTimeString);
+                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                            return result;
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        logger.error("【创建退货单,退货时间或订单预计退货时间parse出错】",e);
+                        result.setErrorCode(ErrorCode.SYSTEM_ERROR);
                         return result;
                     }
                     if (order.getRentStartTime().compareTo(k3ReturnOrder.getReturnTime()) > 0) {
