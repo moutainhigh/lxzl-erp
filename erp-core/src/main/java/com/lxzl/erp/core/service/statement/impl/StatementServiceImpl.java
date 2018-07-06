@@ -640,24 +640,25 @@ public class StatementServiceImpl implements StatementService {
         if (CollectionUtil.isEmpty(customerStatementOrderList)) return;
         for (StatementOrderDO statementOrderDO : customerStatementOrderList) {
             List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByStatementOrderId(statementOrderDO.getId());
-            if (CollectionUtil.isEmpty(statementOrderDetailDOList)) continue;
-            Date minStartTime = null, maxEndTime = null;
-            for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
-                StatementOrderDetailDO orderDetailDO = statementOrderDetailDOList.get(i);
-                if (i == 0) {
-                    minStartTime = orderDetailDO.getStatementStartTime();
-                    maxEndTime = orderDetailDO.getStatementEndTime();
-                } else {
-                    if (minStartTime.compareTo(orderDetailDO.getStatementStartTime()) > 0)
-                        minStartTime = orderDetailDO.getStatementStartTime();
-                    if (maxEndTime.compareTo(orderDetailDO.getStatementEndTime()) < 0)
-                        maxEndTime = orderDetailDO.getStatementEndTime();
-                }
-            }
 
-            if(DateUtil.daysBetween(minStartTime,statementOrderDO.getStatementStartTime())!=0||DateUtil.daysBetween(maxEndTime,statementOrderDO.getStatementEndTime())!=0){
-                statementOrderDO.setStatementStartTime(minStartTime);
-                statementOrderDO.setStatementEndTime(maxEndTime);
+            if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)){
+                Date minStartTime = null, maxEndTime = null;
+                for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
+                    StatementOrderDetailDO orderDetailDO = statementOrderDetailDOList.get(i);
+                    if (i == 0) {
+                        minStartTime = orderDetailDO.getStatementStartTime();
+                        maxEndTime = orderDetailDO.getStatementEndTime();
+                    } else {
+                        if (minStartTime.compareTo(orderDetailDO.getStatementStartTime()) > 0)
+                            minStartTime = orderDetailDO.getStatementStartTime();
+                        if (maxEndTime.compareTo(orderDetailDO.getStatementEndTime()) < 0)
+                            maxEndTime = orderDetailDO.getStatementEndTime();
+                    }
+                }
+                if(DateUtil.daysBetween(minStartTime,statementOrderDO.getStatementStartTime())!=0||DateUtil.daysBetween(maxEndTime,statementOrderDO.getStatementEndTime())!=0){
+                    statementOrderDO.setStatementStartTime(minStartTime);
+                    statementOrderDO.setStatementEndTime(maxEndTime);
+                }
             }
 
             if(BigDecimalUtil.compare(BigDecimal.ZERO,statementOrderDO.getStatementAmount())==0){
@@ -674,8 +675,8 @@ public class StatementServiceImpl implements StatementService {
             }else{
                 statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
             }
-
             statementOrderMapper.update(statementOrderDO);
+
         }
     }
 
