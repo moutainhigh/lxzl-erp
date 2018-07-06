@@ -388,7 +388,7 @@ public class MaterialServiceImpl implements MaterialService {
             return ErrorCode.PARAM_IS_NOT_ENOUGH;
         }
 
-        if (!productSupport.isProduct(material.getK3MaterialNo())){
+        if (!productSupport.isMaterial(material.getK3MaterialNo())){
             return ErrorCode.MATERIAL_K3_MATERIAL_NO_IS_ERROR;
         }
 
