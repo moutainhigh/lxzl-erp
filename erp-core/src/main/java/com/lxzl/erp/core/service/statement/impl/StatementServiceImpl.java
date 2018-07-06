@@ -654,9 +654,21 @@ public class StatementServiceImpl implements StatementService {
                         maxEndTime = orderDetailDO.getStatementEndTime();
                 }
             }
-            statementOrderDO.setStatementStartTime(minStartTime);
-            statementOrderDO.setStatementEndTime(maxEndTime);
-            statementOrderMapper.update(statementOrderDO);
+
+            boolean isNeedUpdate=false;
+            if(DateUtil.daysBetween(minStartTime,statementOrderDO.getStatementStartTime())!=0||DateUtil.daysBetween(maxEndTime,statementOrderDO.getStatementEndTime())!=0){
+                isNeedUpdate=true;
+                statementOrderDO.setStatementStartTime(minStartTime);
+                statementOrderDO.setStatementEndTime(maxEndTime);
+            }
+
+            if(BigDecimalUtil.compare(BigDecimal.ZERO,statementOrderDO.getStatementAmount())==0){
+                isNeedUpdate=true;
+                statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            }
+            if(isNeedUpdate){
+                statementOrderMapper.update(statementOrderDO);
+             }
         }
     }
 
@@ -4597,9 +4609,6 @@ public class StatementServiceImpl implements StatementService {
             //已结算将改为部分结算（当退货结算金额正常为负时)
             if (statementOrderDO.getStatementStatus().equals(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED) && BigDecimal.ZERO.compareTo(statementOrderDO.getStatementRentAmount()) > 0)
                 statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
-            //更新结算单
-            if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) == 0)
-                statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
             statementOrderMapper.update(statementOrderDO);
             needDeleteList.add(statementOrderDetailDO);
         }
@@ -5909,7 +5918,7 @@ public class StatementServiceImpl implements StatementService {
     private void getSplitStatementProductDetails(OrderDO orderDO, Date currentTime, Integer loginUserId, OrderStatementDateSplitDO orderStatementDateSplitDO, List<StatementOrderDetailDO> addStatementOrderDetailDOList, Date rentStartTime, Integer buyerCustomerId, Integer orderId, Date expectReturnTime, OrderProductDO orderProductDO, List<StatementOrderDetailDO> statementOrderDetailDOList, K3OrderStatementConfigDO k3OrderStatementConfigDO) {
         BigDecimal k3PartRemoveAmount = BigDecimal.ZERO;
         boolean isK3PartRemove = k3OrderStatementConfigDO != null && k3OrderStatementConfigDO.getRentStartTime() != null && DateUtil.daysBetween(orderDO.getRentStartTime(), k3OrderStatementConfigDO.getRentStartTime()) > 0 && DateUtil.daysBetween(expectReturnTime, k3OrderStatementConfigDO.getRentStartTime()) < 0;
-        if (isK3PartRemove) {
+        if (isK3PartRemove&&CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
             List<StatementOrderDetailDO> statementOrderDetailDOS = getSplitStatementProductDetails(orderDO, currentTime, loginUserId, orderStatementDateSplitDO, rentStartTime, buyerCustomerId, orderId, expectReturnTime, orderProductDO, null, BigDecimal.ZERO);
             Date partTime = k3OrderStatementConfigDO.getRentStartTime();
             if (CollectionUtil.isNotEmpty(statementOrderDetailDOS)) {
@@ -5930,7 +5939,7 @@ public class StatementServiceImpl implements StatementService {
         //处理k3抛弃部分金额
         BigDecimal k3PartRemoveAmount = BigDecimal.ZERO;
         boolean isK3PartRemove = k3OrderStatementConfigDO != null && k3OrderStatementConfigDO.getRentStartTime() != null && DateUtil.daysBetween(reletOrderDO.getRentStartTime(), k3OrderStatementConfigDO.getRentStartTime()) > 0 && DateUtil.daysBetween(expectReturnTime, k3OrderStatementConfigDO.getRentStartTime()) < 0;
-        if (isK3PartRemove) {
+        if (isK3PartRemove&&CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
             List<StatementOrderDetailDO> statementOrderDetailDOS = getSplitStatementReletProductDetails(reletOrderDO, currentTime, loginUserId, orderStatementDateSplitDO, rentStartTime, buyerCustomerId, orderId, expectReturnTime, reletOrderProductDO, null, BigDecimal.ZERO);
             Date partTime = k3OrderStatementConfigDO.getRentStartTime();
             if (CollectionUtil.isNotEmpty(statementOrderDetailDOS)) {
@@ -6105,7 +6114,7 @@ public class StatementServiceImpl implements StatementService {
     private void getSplitStatementMaterialDetails(OrderDO orderDO, Date currentTime, Integer loginUserId, OrderStatementDateSplitDO orderStatementDateSplitDO, List<StatementOrderDetailDO> addStatementOrderDetailDOList, Date rentStartTime, Integer buyerCustomerId, Integer orderId, Date expectReturnTime, OrderMaterialDO orderMaterialDO, List<StatementOrderDetailDO> statementOrderDetailDOList, K3OrderStatementConfigDO k3OrderStatementConfigDO) {
         BigDecimal k3PartRemoveAmount = BigDecimal.ZERO;
         boolean isK3PartRemove = k3OrderStatementConfigDO != null && k3OrderStatementConfigDO.getRentStartTime() != null && DateUtil.daysBetween(orderDO.getRentStartTime(), k3OrderStatementConfigDO.getRentStartTime()) > 0 && DateUtil.daysBetween(expectReturnTime, k3OrderStatementConfigDO.getRentStartTime()) < 0;
-        if (isK3PartRemove) {
+        if (isK3PartRemove&&CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
             List<StatementOrderDetailDO> statementOrderDetailDOS = getSplitStatementMaterialDetails(orderDO, currentTime, loginUserId, orderStatementDateSplitDO, rentStartTime, buyerCustomerId, orderId, expectReturnTime, orderMaterialDO, null, BigDecimal.ZERO);
             Date partTime = k3OrderStatementConfigDO.getRentStartTime();
             if (CollectionUtil.isNotEmpty(statementOrderDetailDOS)) {
@@ -6305,7 +6314,7 @@ public class StatementServiceImpl implements StatementService {
     private void getSplitStatementReletMaterialDetails(ReletOrderDO reletOrderDO, Date currentTime, Integer loginUserId, OrderStatementDateSplitDO orderStatementDateSplitDO, List<StatementOrderDetailDO> addStatementOrderDetailDOList, Date rentStartTime, Integer buyerCustomerId, Integer orderId, Date expectReturnTime, ReletOrderMaterialDO reletOrderMaterialDO, List<StatementOrderDetailDO> statementOrderDetailDOList, K3OrderStatementConfigDO k3OrderStatementConfigDO) {
         BigDecimal k3PartRemoveAmount = BigDecimal.ZERO;
         boolean isK3PartRemove = k3OrderStatementConfigDO != null && k3OrderStatementConfigDO.getRentStartTime() != null && DateUtil.daysBetween(reletOrderDO.getRentStartTime(), k3OrderStatementConfigDO.getRentStartTime()) > 0 && DateUtil.daysBetween(expectReturnTime, k3OrderStatementConfigDO.getRentStartTime()) < 0;
-        if (isK3PartRemove) {
+        if (isK3PartRemove&&CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
             List<StatementOrderDetailDO> statementOrderDetailDOS = getSplitStatementReletMaterialDetails(reletOrderDO, currentTime, loginUserId, orderStatementDateSplitDO, rentStartTime, buyerCustomerId, orderId, expectReturnTime, reletOrderMaterialDO, null, BigDecimal.ZERO);
             Date partTime = k3OrderStatementConfigDO.getRentStartTime();
             if (CollectionUtil.isNotEmpty(statementOrderDetailDOS)) {
