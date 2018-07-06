@@ -4986,23 +4986,6 @@ public class StatementServiceImpl implements StatementService {
                 }
             }
         }
-        List<OrderDO> orderDOList = orderMapper.findByCustomerId(customerDO.getId());
-        Map<Integer,OrderProductDO> orderProductDOMap= new HashMap<>();
-        Map<Integer,OrderMaterialDO> orderMaterialDOMap= new HashMap<>();
-        if (CollectionUtil.isNotEmpty(orderDOList)) {
-            for (OrderDO orderDO:orderDOList){
-                List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
-                List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
-                if (CollectionUtil.isNotEmpty(orderProductDOList)) {
-                    for (OrderProductDO orderProductDO:orderProductDOList)
-                    orderProductDOMap.put(orderProductDO.getId(),orderProductDO);
-                }
-                if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
-                    for (OrderMaterialDO orderMaterialDO:orderMaterialDOList)
-                        orderMaterialDOMap.put(orderMaterialDO.getId(),orderMaterialDO);
-                }
-            }
-        }
         List<CheckStatementOrderDetailDO> firstReturnListPage = statementOrderDetailMapper.exportFirstReturnListPage(maps);
         // TODO: 2018\7\5 0005 新逻辑  将所有第一次创建的放到里面
         Map<String,Map<Integer,List<CheckStatementOrderDetailDO>>> firstReturnMonthMap = new HashMap<>();
@@ -5252,6 +5235,42 @@ public class StatementServiceImpl implements StatementService {
 
             List<CheckStatementOrderDetail> statementOrderDetailList = ListUtil.mapToList(hashMap);
 
+            //k3老订单支付截止时间限制
+            List<K3OrderStatementConfigDO> k3OrderStatementConfigList = k3OrderStatementConfigMapper.findByCustomerId(customerDO.getId());
+            if (CollectionUtil.isNotEmpty(k3OrderStatementConfigList)) {
+                Map<Integer,K3OrderStatementConfigDO> k3OrderStatementConfigMap = ListUtil.listToMap(k3OrderStatementConfigList,"orderId");
+                List<CheckStatementOrderDetail> notK3k3OrderStatementConfigList = new ArrayList<>();
+                for (CheckStatementOrderDetail checkStatementOrderDetail : statementOrderDetailList) {
+                    //是订单进行查询
+                    if (OrderType.ORDER_TYPE_ORDER.equals(checkStatementOrderDetail.getOrderType())) {
+                        K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMap.get(checkStatementOrderDetail.getOrderId());
+                        if (k3OrderStatementConfigDO != null) {
+                            //统一日期格式进行比较
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+                            String k3RentStartTimeString = simpleDateFormat.format(k3OrderStatementConfigDO.getRentStartTime());
+                            String monthTimeString = statementOrder.getMonthTime();
+                            try {
+                                Date k3RentStartTime = simpleDateFormat.parse(k3RentStartTimeString);
+                                Date monthTime = simpleDateFormat.parse(monthTimeString);
+                                if (monthTime.after(k3RentStartTime)) {
+                                    notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
+                                } else if (k3RentStartTime.equals(monthTime)) {
+                                    checkStatementOrderDetail.setStatementStartTime(k3OrderStatementConfigDO.getRentStartTime());
+                                    notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                                logger.error("【导出对账单功能————筛选K3老订单支付截止时间之前结算单出错，错误原因对比结算单结束时间和K3老订单支付截止时间出错】，结算单id:【"+checkStatementOrderDetail.getStatementOrderDetailId()+"】,k3老订单(erp_k3_order_statement_config)订单编号：【"+k3OrderStatementConfigDO.getOrderNo()+"】",e);
+                            }
+                        }else {
+                            notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
+                        }
+                    }else {
+                        notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
+                    }
+                }
+                statementOrderDetailList = notK3k3OrderStatementConfigList;
+            }
             //排序
             if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
                 statementOrderDetailList = sortingCheckStatementOrderDetail(statementOrderDetailList);
@@ -5259,31 +5278,34 @@ public class StatementServiceImpl implements StatementService {
                 checkStatementOrderList.add(statementOrder);
             }
         }
-        for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-            for (CheckStatementOrderDetail checkStatementOrderDetail : checkStatementOrder.getStatementOrderDetailList()) {
-                if (returnDetailIdMap.get(checkStatementOrderDetail.getOrderItemReferId()) != null) {
-                    Map<String, Integer> returnDataMap = returnDetailIdMap.get(checkStatementOrderDetail.getOrderItemReferId());
-                    for (String returnTimeString : returnDataMap.keySet()) {
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
-                        try {
-                            Date returnStartTime = simpleDateFormat.parse(returnTimeString);
-                            Date monthTime = simpleDateFormat.parse(checkStatementOrder.getMonthTime());
-                            if (monthTime.after(returnStartTime)) {
-                                Integer count = checkStatementOrderDetail.getItemCount() - returnDataMap.get(returnTimeString);
-                                if (count < 0) {
-                                    count = 0;
+        //退货日期之后减数量
+        if (CollectionUtil.isNotEmpty(checkStatementOrderList)) {
+            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+                for (CheckStatementOrderDetail checkStatementOrderDetail : checkStatementOrder.getStatementOrderDetailList()) {
+                    if (returnDetailIdMap.get(checkStatementOrderDetail.getOrderItemReferId()) != null) {
+                        Map<String, Integer> returnDataMap = returnDetailIdMap.get(checkStatementOrderDetail.getOrderItemReferId());
+                        for (String returnTimeString : returnDataMap.keySet()) {
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+                            try {
+                                Date returnStartTime = simpleDateFormat.parse(returnTimeString);
+                                Date monthTime = simpleDateFormat.parse(checkStatementOrder.getMonthTime());
+                                if (monthTime.after(returnStartTime)) {
+                                    Integer count = checkStatementOrderDetail.getItemCount() - returnDataMap.get(returnTimeString);
+                                    if (count < 0) {
+                                        count = 0;
+                                    }
+                                    checkStatementOrderDetail.setItemCount(count);
                                 }
-                                checkStatementOrderDetail.setItemCount(count);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
                             }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
                         }
-
                     }
                 }
             }
         }
         if (!firstReturnMonthMap.isEmpty()) {
+            //插入退货的第一期
             for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
                 if (firstReturnMonthMap.containsKey(checkStatementOrder.getMonthTime())) {
                     Map<Integer, List<CheckStatementOrderDetailDO>> itemIdMap = firstReturnMonthMap.get(checkStatementOrder.getMonthTime());
@@ -5312,11 +5334,11 @@ public class StatementServiceImpl implements StatementService {
                         }
                     }
                     if (CollectionUtil.isNotEmpty(newList)) {
-                        checkStatementOrder.setStatementOrderDetailList(null);
                         checkStatementOrder.setStatementOrderDetailList(newList);
                     }
                 }
             }
+            //存储生成的第一期的退货数量
             for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
                 List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
                 if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
@@ -5325,34 +5347,6 @@ public class StatementServiceImpl implements StatementService {
                             if (returnCountMap.containsKey(checkStatementOrderDetail.getOrderItemReferId())) {
                                 Integer count = 0-returnCountMap.get(checkStatementOrderDetail.getOrderItemReferId());
                                 checkStatementOrderDetail.setItemCount(count);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (!orderProductDOMap.isEmpty()) {
-            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-                List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
-                if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
-                    for (CheckStatementOrderDetail checkStatementOrderDetail:statementOrderDetailList){
-                        if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(checkStatementOrderDetail.getOrderItemType())) {
-                            if (orderProductDOMap.containsKey(checkStatementOrderDetail.getOrderItemReferId())) {
-                                checkStatementOrderDetail.setUnitAmount(orderProductDOMap.get(checkStatementOrderDetail.getOrderItemReferId()).getProductUnitAmount());
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (!orderMaterialDOMap.isEmpty()) {
-            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-                List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
-                if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
-                    for (CheckStatementOrderDetail checkStatementOrderDetail:statementOrderDetailList){
-                        if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(checkStatementOrderDetail.getOrderItemType())) {
-                            if (orderMaterialDOMap.containsKey(checkStatementOrderDetail.getOrderItemReferId())) {
-                                checkStatementOrderDetail.setUnitAmount(orderMaterialDOMap.get(checkStatementOrderDetail.getOrderItemReferId()).getMaterialUnitAmount());
                             }
                         }
                     }
