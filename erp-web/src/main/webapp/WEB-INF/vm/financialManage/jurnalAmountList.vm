@@ -35,7 +35,7 @@
                             <script type="text/html" id="exportButtonsTpl">
                                 {{#exportButtons}}
                                 <div style="display: inline-block">
-                                    <form action="${ctx}{{menuUrl}}exportExcel/exportPageBankSlipDetail" method="post" id="exportForm" target="exportFrame">
+                                    <form action="${ctx}{{menuUrl}}exportExcel/exportPageBankSlipDetail" method="post" id="exportForm">
                                         <input type="hidden" name="pageSize" value="1000000000">
                                         <input type="hidden" name="pageNo" value="1">
                                         <input type="hidden" name="loanSign" value="1">

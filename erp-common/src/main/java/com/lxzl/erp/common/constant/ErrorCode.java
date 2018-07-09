@@ -441,6 +441,8 @@ public class ErrorCode {
     public static final String RETURN_DELIVERY_SUB_COMPANY_ERROR = "J400162";
     public static final String ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400163";
     public static final String RELET_ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400164";
+    public static final String EXPECT_RTURN_TIME_LESS_RETURN_TIME = "J400165";
+
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
     public static final String CUSTOMER_PERSON_NOT_NULL = "J500003";
@@ -627,6 +629,8 @@ public class ErrorCode {
     public static final String HAS_SPLIT_STATEMENT_CFG = "J500183";
     public static final String SPLIT_STATEMENT_TIME_ERROR = "J500184";
     public static final String RETURN_STATEMENT_ORDER_CREATE_ERROR = "J500185";
+
+    public static final String CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST = "J500186";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1588,6 +1592,7 @@ public class ErrorCode {
         MAP.put(RETURN_DELIVERY_SUB_COMPANY_ERROR, "订单【%s 】发货分公司为【%s 】，与创建退货单时选取的发货分公司不一致");
         MAP.put(ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT, "订单当前状态不允许重算");
         MAP.put(RELET_ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT, "续租单当前状态不允许重算");
+        MAP.put(EXPECT_RTURN_TIME_LESS_RETURN_TIME, "所选退货时间为【%s 】，订单【%s 】预计退货时间为【%s 】，所选退货时间不能超过订单预计归还时间,如符合真实情况请尝试【续租】");
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
         MAP.put(MESSAGE_RECEIVER_NOT_NULL, "站内信收件人不能为空");
@@ -1965,6 +1970,7 @@ public class ErrorCode {
         MAP.put(HAS_SPLIT_STATEMENT_CFG, "该订单已进行过分段结算，请先进行指定结算日结算");
         MAP.put(SPLIT_STATEMENT_TIME_ERROR, "分段重算时间必须在订单起租时间与订单预计归还时间之间");
         MAP.put(RETURN_STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，该退货单结算单详情已存在，不能重复生成结算单");
+        MAP.put(CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST, "客户为已经为确认坏账状态");
     }
 
 

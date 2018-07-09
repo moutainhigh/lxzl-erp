@@ -925,7 +925,6 @@ CREATE TABLE `erp_order_statement_date_change_log` (
 	KEY `index_order_no` (`order_no`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单结算日修变更录表';
 
--------------------------------未执行-----------------------------
 
 ALTER TABLE erp_statement_order_detail ADD INDEX index_relet_order_item_refer_id (relet_order_item_refer_id);
 
@@ -946,3 +945,28 @@ CREATE TABLE `erp_dingding_group_message_config` (
 	PRIMARY KEY (`id`),
 	KEY `index_sub_company_id` (`sub_company_id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='钉钉群消息配置表';
+
+
+DROP TABLE IF EXISTS `erp_customer_statement_date_change_log`;
+CREATE TABLE `erp_customer_statement_date_change_log` (
+	`id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+	`statement_date` int(20) NOT NULL COMMENT '结算时间（天），-1,20和31三种情况',
+	`customer_no` VARCHAR(100) NOT NULL COMMENT '客户编号',
+	`data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+	`remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+	`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+	`create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+	`update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+	PRIMARY KEY (`id`),
+	KEY `index_customer_no` (`customer_no`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户结算日修变更录表';
+
+ALTER TABLE erp_k3_return_order_detail ADD order_item_type INT(11) NOT NULL DEFAULT 1 COMMENT '商品类型,1-商品,2-配件';
+UPDATE erp_k3_return_order_detail SET order_item_type = 2 WHERE LEFT(product_no, 2)<>'10' AND LEFT(product_no, 2)<>'90';
+
+-------------------------------未执行-----------------------------
+
+ALTER TABLE erp_customer ADD COLUMN `confirm_bad_account_status` INT(11) NOT NULL DEFAULT '0' COMMENT '是否为坏账客户 0否1是 默认为0';
+ALTER TABLE erp_customer ADD COLUMN `confirm_bad_account_user` INT(20) COMMENT '坏账客户确认人';
+ALTER TABLE erp_customer ADD COLUMN `confirm_bad_account_time` DATETIME COMMENT '坏账客户确认时间';

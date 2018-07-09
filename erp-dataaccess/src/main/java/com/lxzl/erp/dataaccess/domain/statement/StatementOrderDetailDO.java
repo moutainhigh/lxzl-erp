@@ -67,6 +67,9 @@ public class StatementOrderDetailDO extends BaseDO {
     private String itemName;
     private Integer itemIsNew;
 
+    @Transient
+    private String statementOrderNo;
+
     public Integer getId() {
         return id;
     }
@@ -445,5 +448,13 @@ public class StatementOrderDetailDO extends BaseDO {
 
     public void setReletOrderItemReferId(Integer reletOrderItemReferId) {
         this.reletOrderItemReferId = reletOrderItemReferId;
+    }
+
+    public String getStatementOrderNo() {
+        return statementOrderNo;
+    }
+
+    public void setStatementOrderNo(String statementOrderNo) {
+        this.statementOrderNo = statementOrderNo;
     }
 }
