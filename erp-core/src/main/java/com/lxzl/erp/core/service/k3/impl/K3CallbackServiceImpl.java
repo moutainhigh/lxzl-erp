@@ -294,9 +294,9 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                     continue;
                 }
                 //如果訂單有未支付的就將標記改成false
-                if (isCreateReturnStatement && !PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
-                    isCreateReturnStatement = false;
-                }
+//                if (isCreateReturnStatement && !PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
+//                    isCreateReturnStatement = false;
+//                }
                 if (totalRentingProductCount==0 && totalRentingMaterialCount==0) {
                     //处理最后一件商品退还时间
                     List<K3ReturnOrderDetailDO> list = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
