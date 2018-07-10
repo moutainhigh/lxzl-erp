@@ -505,7 +505,7 @@ public class StatementServiceImpl implements StatementService {
         addStatementSplit.setUpdateTime(currentTime);
         orderStatementDateSplitMapper.save(addStatementSplit);
 
-        ServiceResult<String, BigDecimal> serviceResult = reCreateOrderStatement(k3StatementDateChange.getOrderNo(), null, false);
+        ServiceResult<String, BigDecimal> serviceResult = reCreateOrderStatement(k3StatementDateChange.getOrderNo(), null, false,false);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             result.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
@@ -517,11 +517,17 @@ public class StatementServiceImpl implements StatementService {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> reCreateOrderStatement(String orderNo, Integer statementDate) {
-        return reCreateOrderStatement(orderNo, statementDate, true);
+        return reCreateOrderStatement(orderNo, statementDate, true,false);
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, BigDecimal> reCreateOrderStatementAllowConfirmCustommer(String orderNo) {
+        return reCreateOrderStatement(orderNo, null, true,true);
     }
 
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    ServiceResult<String, BigDecimal> reCreateOrderStatement(String orderNo, Integer statementDate, boolean clearStatementDateSplitCfg) {
+    ServiceResult<String, BigDecimal> reCreateOrderStatement(String orderNo, Integer statementDate, boolean clearStatementDateSplitCfg,boolean allowConfirmCustomer) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         if (StringUtil.isEmpty(orderNo)) {
             result.setErrorCode(ErrorCode.ORDER_NO_NOT_NULL);
@@ -536,25 +542,21 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT);
             return result;
         }
-        //续租不让重算
-//        ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderDO.getId());
-//        if (reletOrderDO != null) {
-//            result.setErrorCode(ErrorCode.RELET_ORDER_NOT_ALLOW_RE_STATEMENT);
-//            return result;
-//        }
-        //目前仅允许未支付和支付失败订单重新结算
-//        if (!(PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_FAILED.equals(orderDO.getPayStatus()))) {
-//            result.setErrorCode(ErrorCode.ORDER_PAY_STATUS_CAN_NOT_RESETTLE);
-//            return result;
-//        }
 
-
-        // 客户为确认结算单状态时，不允许重算客户的订单
         CustomerDO customerDO = customerMapper.findByNo(orderDO.getBuyerCustomerNo());
-        if (customerDO != null && ConfirmStatementStatus.CONFIRM_STATUS_YES.equals(customerDO.getConfirmStatementStatus())) {
-            result.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE);
+        if(customerDO==null){
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
+
         }
+        // 客户为确认结算单状态时，不允许重算客户的订单
+        if(!allowConfirmCustomer){
+            if (ConfirmStatementStatus.CONFIRM_STATUS_YES.equals(customerDO.getConfirmStatementStatus())) {
+                result.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE);
+                return result;
+            }
+        }
+
         //用户手动修改结算日
         if (statementDate != null) {
             if (!Arrays.asList(StatementMode.STATEMENT_MONTH_END, StatementMode.STATEMENT_20, StatementMode.STATEMENT_MONTH_NATURAL).contains(statementDate)) {
