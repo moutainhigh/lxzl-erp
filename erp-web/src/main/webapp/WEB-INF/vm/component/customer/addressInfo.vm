@@ -14,48 +14,44 @@
     <div class="panel-body pb5 admin-form">
 
         {{#listData}}
-        <div class="row mn">
-            {{#addressGroup}}
-            <div class="col-md-4">
-                <div class="well" data-consigninfoid="{{customerConsignInfoId}}" id="consigninfoid{{customerConsignInfoId}}">
-                    <p>
-                        <span class="fs11 mr5 {{verifyStatusClass}}"><i class="fa fa-circle {{verifyStatusClass}} fs12 pr5"></i>{{verifyStatusValue}}</span>
-                        {{#isDefault}}
-                        <span class="fs11 text-muted"><i class="fa fa-circle text-info fs12 pr5"></i>默认地址</span>
-                        {{/isDefault}}
-                        {{#checkbox}}
-                        <label class="radio-inline mr10 pull-right">
-                            <input type="radio" name="customerConsignInfoId" value="{{customerConsignInfoId}}" {{#isDefault}}checked{{/isDefault}} data-address="{{addressJson}}"  />
-                        </label>
-                        {{/checkbox}}
-                    </p>
-                    <address class="mn">
-                        <strong>{{consigneeName}}</strong>
-                        <br>
-                        {{provinceName}}{{cityName}}{{districtName}}{{address}}
-                        <br>
-                        <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{consigneePhone}}
-                    </address>
-                    <p class="pv10">
-                        {{#deleteAuthor}}
-                        <button class="btn btn-xs btn-default pull-right {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
-                        {{/deleteAuthor}}
+        <div class="col-md-4">
+            <div class="well" data-consigninfoid="{{customerConsignInfoId}}" id="consigninfoid{{customerConsignInfoId}}">
+                <p>
+                    <span class="fs11 mr5 {{verifyStatusClass}}"><i class="fa fa-circle {{verifyStatusClass}} fs12 pr5"></i>{{verifyStatusValue}}</span>
+                    {{#isDefault}}
+                    <span class="fs11 text-muted"><i class="fa fa-circle text-info fs12 pr5"></i>默认地址</span>
+                    {{/isDefault}}
+                    {{#checkbox}}
+                    <label class="radio-inline mr10 pull-right">
+                        <input type="radio" name="customerConsignInfoId" value="{{customerConsignInfoId}}" {{#isDefault}}checked{{/isDefault}} data-address="{{addressJson}}"  />
+                    </label>
+                    {{/checkbox}}
+                </p>
+                <address class="mn">
+                    <strong>{{consigneeName}}</strong>
+                    <br>
+                    {{provinceName}}{{cityName}}{{districtName}}{{address}}
+                    <br>
+                    <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{consigneePhone}}
+                </address>
+                <p class="pv10">
+                    {{#deleteAuthor}}
+                    <button class="btn btn-xs btn-default pull-right {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
+                    {{/deleteAuthor}}
 
-                        {{#editButton}}
-                        <button class="btn btn-xs btn-default pull-right mr5 {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
-                        {{/editButton}}
+                    {{#editButton}}
+                    <button class="btn btn-xs btn-default pull-right mr5 {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
+                    {{/editButton}}
 
-                        {{#auditAuthor}}
-                        <button class="btn btn-xs btn-default pull-right mr5 {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
-                        {{/auditAuthor}}
+                    {{#auditAuthor}}
+                    <button class="btn btn-xs btn-default pull-right mr5 {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
+                    {{/auditAuthor}}
 
-                        {{#viewWorkFlowAuthor}}
-                        <button class="btn btn-xs btn-default pull-right mr5 {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
-                        {{/viewWorkFlowAuthor}}
-                    </p>
-                </div>
+                    {{#viewWorkFlowAuthor}}
+                    <button class="btn btn-xs btn-default pull-right mr5 {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
+                    {{/viewWorkFlowAuthor}}
+                </p>
             </div>
-            {{/addressGroup}}
         </div>
         {{/listData}}
         {{^listData}}
