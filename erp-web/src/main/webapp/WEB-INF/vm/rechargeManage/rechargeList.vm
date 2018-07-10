@@ -48,7 +48,9 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="field form-group mn" >
-                                            <input type="text" name="subCompanyId" id="subCompanyId" class="form-control input-sm bradius" autocomplete="off" placeholder="输入分公司ID">
+                                            <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId">
+                                                <option value="">请选择客户所属公司</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
@@ -94,7 +96,6 @@
                                 <th>编号</th>
                                 <th>客户编号</th>
                                 <th>客户名</th>
-##                                <th>分公司ID</th>
                                 <th>分公司名称</th>
                                 <th>第三方订单编号</th>
                                 <th>预充值金额</th>
@@ -112,7 +113,6 @@
                                 <td>{{chargeOrderNo}}</td>
                                 <td>{{businessCustomerNo}}</td>
                                 <td>{{customerName}}</td>
-##                                <td>{{subCompanyId}}</td>
                                 <td>{{subCompanyName}}</td>
                                 <td>{{thirdPartyPayOrderId}}</td>
                                 <td>￥{{#price}}{{chargeAmountExpect}}{{/price}}</td>

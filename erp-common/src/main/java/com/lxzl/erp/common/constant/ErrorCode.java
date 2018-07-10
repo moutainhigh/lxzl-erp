@@ -893,12 +893,15 @@ public class ErrorCode {
     public static final String BANK_SLIP_DETAIL_IS_UNKNOWN = "J18000047";
     public static final String BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT = "J18000048";
     public static final String IMPORT_BANK_SLIP_DETAILS_IS_EXIST = "J18000049";
-    public static final String CHARGE_RECORD_IS_NULL = "J18000050";
+    public static final String CHARGE_RECORD_NOT_EXISTS = "J18000050";
     public static final String CHARGE_ORDER_NO_IS_NULL = "J18000051";
     public static final String EXPORT_CHARGE_RECORD_IS_FAIL = "J18000052";
     public static final String CHARGE_RECORD_IS_EXIST = "J18000053";
     public static final String BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED = "J18000054";
     public static final String BANK_SLIP_DETAIL_STATUS_CAN_NOT_CONFIRM = "J18000055";
+    public static final String CHARGE_TYPE_IS_MANUAL_CHARGE_OR_PUBLIC_TRANSFER_PLUS = "J18000056";
+    public static final String CHARGE_RECORD_DATA_FAIL = "J18000057";
+    public static final String BINDING_CUSTOMER_NO = "J18000058";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1854,12 +1857,15 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_IS_UNKNOWN, "银行对公流水是未知状态,");
         MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT, "填写金额大于银行对公流水记录项金额");
         MAP.put(IMPORT_BANK_SLIP_DETAILS_IS_EXIST, "导入银行对公流水记录已存在");
-        MAP.put(CHARGE_RECORD_IS_NULL, "快付通充值记录为空");
+        MAP.put(CHARGE_RECORD_NOT_EXISTS, "充值记录不存在");
         MAP.put(CHARGE_ORDER_NO_IS_NULL, "支付系统充值订单号为空");
         MAP.put(EXPORT_CHARGE_RECORD_IS_FAIL, "充值记录导入银行流水失败");
-        MAP.put(CHARGE_RECORD_IS_EXIST, "快付通充值记录以存在");
+        MAP.put(CHARGE_RECORD_IS_EXIST, "充值记录已存在");
         MAP.put(BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED, "该条银行对公流水记录项为已认领状态，需商务或创建人取消认领后才能重新认领");
         MAP.put(BANK_SLIP_DETAIL_STATUS_CAN_NOT_CONFIRM, "该条银行对公流水记录不允许确认");
+        MAP.put(CHARGE_TYPE_IS_MANUAL_CHARGE_OR_PUBLIC_TRANSFER_PLUS, "充值记录是手动加款或者对公转账加款");
+        MAP.put(CHARGE_RECORD_DATA_FAIL, "充值记录数据有误");
+        MAP.put(BINDING_CUSTOMER_NO, "是绑定用户且已经充值过");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");

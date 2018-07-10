@@ -3,6 +3,7 @@ package com.lxzl.erp.common.domain.statistics;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePageParam;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -16,7 +17,9 @@ import java.util.Date;
 public class StatisticsSalesmanPageParam extends BasePageParam {
 
 	@NotNull(message = ErrorCode.START_TIME_NOT_NULL)
+	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date startTime; // 查询开始时间
+	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date endTime;
 	private Integer subCompanyId; //所属分公司id
 	private String salesmanName; //业务员姓名模糊查询
