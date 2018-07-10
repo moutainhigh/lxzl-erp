@@ -34,8 +34,8 @@ public class ExcelExportConfigGroup {
 
 
     public static void initStatisticsSalesmanDetailConfig() {
-        statisticsSalesmanDetailConfig.addConfig(new ColConfig("salesmanId", "业务员id", 8000))
-                .addConfig(new ColConfig("salesmanName", "业务员姓名", 8000))
+        statisticsSalesmanDetailConfig.addConfig(new ColConfig("salesmanId", "业务员id" ))
+                .addConfig(new ColConfig("salesmanName", "业务员姓名"))
                 .addConfig(new ColConfig("rentLengthType", "长租短租", new ExcelExportView() {
                     @Override
                     public Object view(Object o) {
@@ -50,7 +50,7 @@ public class ExcelExportConfigGroup {
                         return null;
                     }
                 }))
-                .addConfig(new ColConfig("subCompanyName", "分公司名", 8000))
+                .addConfig(new ColConfig("subCompanyName", "分公司名", 31))
                 .addConfig(new ColConfig("dealsCount", "成交单数"))
                 .addConfig(new ColConfig("dealsProductCount", "成交台数"))
                 .addConfig(new ColConfig("dealsAmount", "成交金额", AmountExcelExportView.getInstance()))
@@ -223,11 +223,11 @@ public class ExcelExportConfigGroup {
                 return "";
             }
         }))
-                .addConfig(new ColConfig("tradeTime", "交易日期", 3000, DateExcelExportView.getInstance()))
-                .addConfig(new ColConfig("payerName", "付款人名称", 8000))
+                .addConfig(new ColConfig("tradeTime", "交易日期", 11, DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("payerName", "付款人名称", 31))
                 .addConfig(new ColConfig("tradeAmount", "交易金额(元)"))
-                .addConfig(new ColConfig("merchantOrderNo", "商户订单号", 10000))
-                .addConfig(new ColConfig("bankSlipClaimList", "K3客户编码", 10000, new ExcelExportView() {
+                .addConfig(new ColConfig("merchantOrderNo", "商户订单号", 39))
+                .addConfig(new ColConfig("bankSlipClaimList", "K3客户编码", 39, new ExcelExportView() {
                     @Override
                     public Object view(Object o) {
                         List<BankSlipClaim> bankSlipClaimList = (List<BankSlipClaim>) o;
@@ -239,7 +239,7 @@ public class ExcelExportConfigGroup {
                         return k3CustomerNo.toString().trim();
                     }
                 }))
-                .addConfig(new ColConfig("bankSlipClaimList", "对应公司名称", 10000, new ExcelExportView() {
+                .addConfig(new ColConfig("bankSlipClaimList", "对应公司名称", 39, new ExcelExportView() {
                     @Override
                     public Object view(Object o) {
                         List<BankSlipClaim> bankSlipClaimList = (List<BankSlipClaim>) o;
@@ -253,17 +253,17 @@ public class ExcelExportConfigGroup {
                     }
                 }))
                 .addConfig(new ColConfig("subCompanyName", "客户归属地"))
-                .addConfig(new ColConfig("tradeSerialNo", "交易流水号"));
+                .addConfig(new ColConfig("tradeSerialNo", "交易流水号",39));
     }
 
     public static void initStatementOrderPayDetailConfig() {
-        statementOrderPayDetailConfig.addConfig(new ColConfig("orderNo", "订单号", 8000))
-                .addConfig(new ColConfig("customerName", "客户名称", 8000))
-                .addConfig(new ColConfig("customerNo", "客户编码", 8000))
-                .addConfig(new ColConfig("k3CustomerCode", "K3客户编码", 8000))
-                .addConfig(new ColConfig("customerCompany", "客户分公司", 5000))
-                .addConfig(new ColConfig("orderCompany", "订单分公司", 5000))
-                .addConfig(new ColConfig("deliveryCompany", "发货分公司", 5000))
+        statementOrderPayDetailConfig.addConfig(new ColConfig("orderNo", "订单号", 31))
+                .addConfig(new ColConfig("customerName", "客户名称", 31))
+                .addConfig(new ColConfig("customerNo", "客户编码", 31))
+                .addConfig(new ColConfig("k3CustomerCode", "K3客户编码", 31))
+                .addConfig(new ColConfig("customerCompany", "客户分公司", 19))
+                .addConfig(new ColConfig("orderCompany", "订单分公司", 19))
+                .addConfig(new ColConfig("deliveryCompany", "发货分公司", 19))
                 .addConfig(new ColConfig("rentPaidAmount", "租金", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("depositPaidAmount", "押金", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("totalPaidAmount", "合计", AmountExcelExportView.getInstance()));

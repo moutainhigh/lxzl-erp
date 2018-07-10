@@ -2,9 +2,7 @@ package com.lxzl.erp.core.service.bank.impl.importSlip.support;
 
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.payment.ChargeRequestParam;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
-import com.lxzl.erp.common.domain.payment.PublicTransferPlusChargeParam;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.bank.impl.BankSlipServiceImpl;
@@ -26,6 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -52,7 +53,7 @@ public class BankSlipSupport {
     private BankSlipDetailOperationLogMapper bankSlipDetailOperationLogMapper;
     @Autowired
     private BankSlipDetailMapper bankSlipDetailMapper;
-
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public BankSlipDO formatBankSlipDetail(BankSlipDO bankSlipDO, List<BankSlipDetailDO> bankSlipDetailDOList) {
 
         //查询出导入时间的所有本公司的所有导入数据
@@ -207,6 +208,60 @@ public class BankSlipSupport {
             return  ErrorCode.DATE_TRANSITION_IS_FAIL;
         }
 
+    }
+
+    /**
+     * 获取银行名称
+     *
+     * @param : bankType
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/5/26 14:34
+     * @Return : java.lang.String
+     */
+    public static String getBankTypeName(Integer bankType) {
+        String bankName = "";
+        switch (bankType) {
+            case 1:
+                bankName = "支付宝";
+                break;
+            case 2:
+                bankName = "中国银行";
+                break;
+            case 3:
+                bankName = "交通银行";
+                break;
+            case 4:
+                bankName = "南京银行";
+                break;
+            case 5:
+                bankName = "农业银行";
+                break;
+            case 6:
+                bankName = "工商银行";
+                break;
+            case 7:
+                bankName = "建设银行";
+                break;
+            case 8:
+                bankName = "平安银行";
+                break;
+            case 9:
+                bankName = "招商银行";
+                break;
+            case 10:
+                bankName = "浦发银行";
+                break;
+            case 11:
+                bankName = "汉口银行";
+                break;
+            case 12:
+                bankName = "快付通";
+                break;
+            case 13:
+                bankName = "库存现金";
+                break;
+        }
+        return bankName;
     }
 
 }

@@ -22,8 +22,9 @@
 	<import resource="spring/spring-aop.xml" />
 	<import resource="spring/spring-mysql.xml" />
     <import resource="spring/spring-fastdfs.xml" />
-	<import resource="spring/spring-contant-properties.xml" />
+	<!--<import resource="spring/spring-contant-properties.xml" />-->
 	<import resource="spring/spring-quartz.xml" />
+	<import resource="classpath*:spring/spring-contant-properties.xml" />
 
 
 	<!--<bean id="propertyConfigurer"

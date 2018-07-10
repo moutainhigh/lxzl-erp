@@ -59,19 +59,20 @@ public class ExcelExportSupport<T> {
             hssfRow.createCell(count++).setCellValue(colConfig.getColName());
             hssSheet.setColumnWidth(i, colConfig.getWidth());
         }
-
-        for (int i = 0; i < list.size(); i++) {
-            HSSFRow newXssfRow = hssSheet.createRow(i + 1);
-            Object o = list.get(i);
-            for (int j = 0; j < colConfigList.size(); j++) {
-                ColConfig colConfig = colConfigList.get(j);
-                //开始set值到表里面
-                String methodName = "get" + StringUtil.toUpperCaseFirstChar(colConfig.getFieldName());
-                Method method = o.getClass().getMethod(methodName);
-                Object value = method.invoke(o);
-                hssSheet.setColumnWidth(j, colConfig.getWidth());
-                Cell cell = newXssfRow.createCell(j);
-                cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
+        if(CollectionUtil.isNotEmpty(list)){
+            for (int i = 0; i < list.size(); i++) {
+                HSSFRow newXssfRow = hssSheet.createRow(i + 1);
+                Object o = list.get(i);
+                for (int j = 0; j < colConfigList.size(); j++) {
+                    ColConfig colConfig = colConfigList.get(j);
+                    //开始set值到表里面
+                    String methodName = "get" + StringUtil.toUpperCaseFirstChar(colConfig.getFieldName());
+                    Method method = o.getClass().getMethod(methodName);
+                    Object value = method.invoke(o);
+                    hssSheet.setColumnWidth(j, colConfig.getWidth());
+                    Cell cell = newXssfRow.createCell(j);
+                    cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
+                }
             }
         }
 
@@ -106,18 +107,20 @@ public class ExcelExportSupport<T> {
             hssfRow.createCell(count++).setCellValue(colConfig.getColName());
             hssSheet.setColumnWidth(i, colConfig.getWidth());
         }
-
-        HSSFRow newXssfRow = hssSheet.createRow(1);
-        for (int j = 0; j < colConfigList.size(); j++) {
-            ColConfig colConfig = colConfigList.get(j);
-            //开始set值到表里面
-            String methodName = "get" + StringUtil.toUpperCaseFirstChar(colConfig.getFieldName());
-            Method method = t.getClass().getMethod(methodName);
-            Object value = method.invoke(t);
-            hssSheet.setColumnWidth(j, colConfig.getWidth());
-            Cell cell = newXssfRow.createCell(j);
-            cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
+        if(t != null){
+            HSSFRow newXssfRow = hssSheet.createRow(1);
+            for (int j = 0; j < colConfigList.size(); j++) {
+                ColConfig colConfig = colConfigList.get(j);
+                //开始set值到表里面
+                String methodName = "get" + StringUtil.toUpperCaseFirstChar(colConfig.getFieldName());
+                Method method = t.getClass().getMethod(methodName);
+                Object value = method.invoke(t);
+                hssSheet.setColumnWidth(j, colConfig.getWidth());
+                Cell cell = newXssfRow.createCell(j);
+                cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
+            }
         }
+
         return hssfWorkbook;
     }
 
