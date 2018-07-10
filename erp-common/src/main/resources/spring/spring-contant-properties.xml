@@ -15,15 +15,6 @@
 		http://www.springframework.org/schema/cache 
     	http://www.springframework.org/schema/cache/spring-cache.xsd">
 
-    <bean id="constantConfig" class="com.lxzl.erp.common.domain.ConstantConfig">
-        <property name="uploadFileUrl" value="${upload.file.url}"/>
-        <property name="imageDomain" value="${image.domain}"/>
-        <property name="baseDomain" value="${base.domain}"/>
-        <property name="staticCommonDomain" value="${static.common.domain}"/>
-        <property name="staticDomain" value="${static.domain}"/>
-        <property name="serviceDomain" value="${service.domain}"/>
-    </bean>
-
     <bean id="paymentSystemConfig" class="com.lxzl.erp.common.domain.PaymentSystemConfig">
         <property name="paymentSystemQueryCustomerAccountURL" value="${PAYMENT_SYSTEM_QUERY_CUSTOMER_ACCOUNT_URL}"/>
         <property name="paymentSystemManualChargeURL" value="${PAYMENT_SYSTEM_MANUAL_CHARGE_URL}"/>
