@@ -5380,6 +5380,24 @@ public class StatementServiceImpl implements StatementService {
                 }
             }
         }
+        //去掉商品数量为零，钱也为零的项
+        for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+            List<CheckStatementOrderDetail> lastList = new ArrayList<>();
+            for (CheckStatementOrderDetail checkStatementOrderDetail : checkStatementOrder.getStatementOrderDetailList()) {
+                if (checkStatementOrderDetail.getItemCount()!= 0) {
+                    lastList.add(checkStatementOrderDetail);
+                }else if(BigDecimalUtil.compare(checkStatementOrderDetail.getStatementDetailAmount(),BigDecimal.ZERO) != 0 ||
+                        BigDecimalUtil.compare(checkStatementOrderDetail.getStatementDetailRentDepositAmount(),BigDecimal.ZERO) != 0 ||
+                        BigDecimalUtil.compare(checkStatementOrderDetail.getStatementDetailRentAmount(),BigDecimal.ZERO) != 0 ||
+                        BigDecimalUtil.compare(checkStatementOrderDetail.getStatementDetailEndAmount(),BigDecimal.ZERO) != 0 ||
+                        BigDecimalUtil.compare(checkStatementOrderDetail.getStatementDetailRentEndAmount(),BigDecimal.ZERO) != 0 ||
+                        BigDecimalUtil.compare(checkStatementOrderDetail.getStatementDetailCorrectAmount(),BigDecimal.ZERO) != 0 ||
+                        BigDecimalUtil.compare(checkStatementOrderDetail.getStatementDetailOtherAmount(),BigDecimal.ZERO) != 0){
+                    lastList.add(checkStatementOrderDetail);
+                }
+            }
+            checkStatementOrder.setStatementOrderDetailList(lastList);
+        }
         result.setResult(checkStatementOrderList);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
