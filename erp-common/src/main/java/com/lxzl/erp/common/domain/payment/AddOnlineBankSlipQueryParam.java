@@ -15,23 +15,16 @@ import java.util.Date;
  * @Modified By:
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ExportChargeRecordPageParam extends BasePageParam {
+public class AddOnlineBankSlipQueryParam extends BasePageParam {
     private String customerNo;
     private Date startTime;
     private Date endTime;
 
     private Integer subCompanyId;
+    private String channelNo;  //充值渠道编号 1:快付通 其他待拓展
     @NotNull(message = ErrorCode.CHARGE_ORDER_NO_IS_NULL, groups = {QueryGroup.class})
     private String chargeOrderNo;  //支付系统充值订单号
-    private String channelNo;  //充值渠道编号 1:快付通 其他待拓展
 
-    public String getChannelNo() {
-        return channelNo;
-    }
-
-    public void setChannelNo(String channelNo) {
-        this.channelNo = channelNo;
-    }
 
     public String getChargeOrderNo() {
         return chargeOrderNo;
@@ -71,5 +64,13 @@ public class ExportChargeRecordPageParam extends BasePageParam {
 
     public void setSubCompanyId(Integer subCompanyId) {
         this.subCompanyId = subCompanyId;
+    }
+
+    public String getChannelNo() {
+        return channelNo;
+    }
+
+    public void setChannelNo(String channelNo) {
+        this.channelNo = channelNo;
     }
 }

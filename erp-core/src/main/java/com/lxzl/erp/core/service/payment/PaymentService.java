@@ -156,29 +156,12 @@ public interface PaymentService extends BaseService {
     String returnDepositExpand(String customerNo,BigDecimal businessReturnRentAmount,BigDecimal businessReturnOtherAmount,BigDecimal businessReturnRentDepositAmount,
                                BigDecimal businessReturnDepositAmount,String remark) ;
     /**
-     * 导入历史快付通数据到银行流水
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/5/21 17:48
-     * @param : itemList
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
-     */
-    ServiceResult<String,String> exportHistoryChargeRecord(ExportChargeRecordPageParam exportChargeRecordPageParam) throws ParseException;
-    /**
      * 时时导入快付通数据到银行流水
      * @Author : XiaoLuYu
      * @Date : Created in 2018/5/21 17:48
      * @param : itemList
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    ServiceResult<String,String> constantlyExportQueryChargeRecord(ExportChargeRecordPageParam exportChargeRecordPageParam) throws ParseException;
-    /**
-     * 导入当天丢失快付通数据到银行流水
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/5/21 17:48
-     * @param : itemList
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
-     */
-    ServiceResult<String,String> exportTodayLeaveOutChargeRecord() throws ParseException;
-
+    ServiceResult<String,String> addOnlineBankSlip(AddOnlineBankSlipQueryParam addOnlineBankSlipQueryParam) throws ParseException;
 
 }

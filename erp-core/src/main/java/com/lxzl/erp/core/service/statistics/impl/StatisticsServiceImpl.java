@@ -546,10 +546,12 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         // 格式化查询时间
         Date startTime = statisticsSalesmanPageParam.getStartTime();
-        Date start = DateUtil.getStartMonthDate(startTime);
-        Date end = DateUtil.getEndMonthDate(startTime);
-        statisticsSalesmanPageParam.setStartTime(start);
-        statisticsSalesmanPageParam.setEndTime(end);
+        if(startTime != null){
+            Date start = DateUtil.getStartMonthDate(startTime);
+            Date end = DateUtil.getEndMonthDate(startTime);
+            statisticsSalesmanPageParam.setStartTime(start);
+            statisticsSalesmanPageParam.setEndTime(end);
+        }
 
         PageQuery pageQuery = new PageQuery(statisticsSalesmanPageParam.getPageNo(), statisticsSalesmanPageParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
