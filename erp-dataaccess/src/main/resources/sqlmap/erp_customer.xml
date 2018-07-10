@@ -679,7 +679,7 @@
 			LEFT JOIN erp_order_product eop ON eo.id = eop.order_id AND eop.data_status = 1
 			INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
 			WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND eo.data_status =1
-			and eo.order_status in (20,22)
+			and eo.order_status in (16,20,22)
 			)t1 on t1.customer_no = ec.customer_no
 		LEFT JOIN (
 			SELECT ec.customer_no,IFNULL(SUM(eom.renting_material_count),0)as materialCount
@@ -687,7 +687,7 @@
 			LEFT JOIN erp_order_material eom ON eo.id = eom.order_id AND eom.data_status = 1
 			INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
 			WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND eo.data_status =1
-			and eo.order_status in (20,22)
+			and eo.order_status in (16,20,22)
 			)t2 on t2.customer_no = ec.customer_no
 		LEFT JOIN (
 			SELECT ec.customer_no, IFNULL(SUM(eom.renting_material_count),0) as materialCountForAmount
@@ -696,7 +696,7 @@
 			INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
 			WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND eo.data_status =1 AND eom.material_unit_amount > 0
 			AND eo.relet_order_id IS NULL
-			and eo.order_status in (20,22)
+			and eo.order_status in (16,20,22)
 			)t3 on t3.customer_no = ec.customer_no
 		LEFT JOIN (
 			SELECT ec.customer_no, IFNULL(SUM(eom.renting_material_count),0) as materialCountForAmount
@@ -706,7 +706,7 @@
 			INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
 			WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND eo.data_status =1 AND erom.material_unit_amount>0
 			AND eo.relet_order_id IS NOT NULL
-			and eo.order_status in (20,22)
+			and eo.order_status in (16,20,22)
 			)t4 on t4.customer_no = ec.customer_no
 		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>

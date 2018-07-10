@@ -10,7 +10,7 @@ import org.apache.poi.hssf.util.HSSFColor;
  */
 public class ColConfig {
 
-    private static Integer DEFAULT_WIDTH = 4000;
+    private static Integer DEFAULT_WIDTH = 15;
     private static Short DEFAULT_FONT_COLOR = HSSFColor.BLACK.index;
     private static Short DEFAULT_BACK_GROUP_COLOR = HSSFColor.WHITE.index;
     private static Short HEAD_LINE_DEFAULT_FONT_COLOR = HSSFColor.WHITE.index;
