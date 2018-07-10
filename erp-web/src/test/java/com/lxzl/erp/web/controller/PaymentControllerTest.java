@@ -7,7 +7,6 @@ import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerAccountLogParam;
 import com.lxzl.erp.common.domain.payment.ChargeRecordPageParam;
 import com.lxzl.erp.common.domain.payment.CustomerAccountLogParam;
-import com.lxzl.erp.common.domain.payment.ExportChargeRecordPageParam;
 import com.lxzl.erp.common.domain.payment.WeixinChargeParam;
 import org.junit.Test;
 
@@ -21,9 +20,10 @@ import java.math.BigDecimal;
 public class PaymentControllerTest extends ERPUnTransactionalTest {
     @Test
     public void constantlyExportQueryChargeRecord1() throws Exception {
-        ExportChargeRecordPageParam param =  new ExportChargeRecordPageParam();
-        param.setChargeOrderNo("CO201804101732343301061");
-        TestResult testResult = getJsonTestResult("/payment/constantlyExportQueryChargeRecord", param);
+//        AddOnlineHistoryBankSlipQueryParam param =  new AddOnlineHistoryBankSlipQueryParam();
+//        param.setChargeOrderNo("CO201807030901537631101");
+//        param.s
+//        TestResult testResult = getJsonTestResult("/payment/constantlyExportQueryChargeRecord", param);
     }
 
     @Test

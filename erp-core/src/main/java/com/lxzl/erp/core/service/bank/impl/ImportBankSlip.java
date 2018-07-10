@@ -27,6 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.io.IOException;
@@ -114,6 +117,7 @@ public class ImportBankSlip {
      * @Date : Created in 2018/5/26 14:33
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.dataaccess.domain.bank.BankSlipDO>
      */
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, BankSlipDO> saveBankSlip(BankSlip bankSlip, InputStream inputStream, Integer bankType) throws Exception {
         ServiceResult<String, BankSlipDO> serviceResult = new ServiceResult<>();
         BankSlipDO bankSlipDO = null;
@@ -259,7 +263,8 @@ public class ImportBankSlip {
      * @Date : Created in 2018/5/26 11:31
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    private void automaticClaimAndLocalization(ServiceResult<String, BankSlipDO> result) {
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    void automaticClaimAndLocalization(ServiceResult<String, BankSlipDO> result) {
         Date now = new Date();
         if (ErrorCode.SUCCESS.equals(result.getErrorCode())) {
             //跟新 需要认领数据
@@ -322,7 +327,7 @@ public class ImportBankSlip {
                     BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
                     bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
                     bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.MOTION_CLAIM);
-                    bankSlipDetailOperationLogDO.setOperationContent("自动认领(已有的认领数据过滤)(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + ",银行：" + getBankTypeName(bankSlipDO.getBankType()) + "）--银行对公流水明细id：" + id + ",认领人：" + userSupport.getCurrentUserCompany().getSubCompanyName() + "  " + userSupport.getCurrentUser().getRoleList().get(0).getDepartmentName() + "  " + userSupport.getCurrentUser().getRealName() + "，认领时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",客户编号：" + bankSlipClaimDO.getCustomerNo() + ",认领：" + newBankSlipClaimDO.getClaimAmount() + "元");
+                    bankSlipDetailOperationLogDO.setOperationContent("自动认领(已有的认领数据过滤)(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + ",银行：" + BankSlipSupport.getBankTypeName(bankSlipDO.getBankType()) + "）--银行对公流水明细id：" + id + ",认领人：" + userSupport.getCurrentUserCompany().getSubCompanyName() + "  " + userSupport.getCurrentUser().getRoleList().get(0).getDepartmentName() + "  " + userSupport.getCurrentUser().getRealName() + "，认领时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",客户编号：" + bankSlipClaimDO.getCustomerNo() + ",认领：" + newBankSlipClaimDO.getClaimAmount() + "元");
                     bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                     bankSlipDetailOperationLogDO.setCreateTime(now);
                     bankSlipDetailOperationLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
@@ -451,57 +456,5 @@ public class ImportBankSlip {
         }
     }
 
-    /**
-     * 获取银行名称
-     *
-     * @param : bankType
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/5/26 14:34
-     * @Return : java.lang.String
-     */
-    private String getBankTypeName(Integer bankType) {
-        String bankName = "";
-        switch (bankType) {
-            case 1:
-                bankName = "支付宝";
-                break;
-            case 2:
-                bankName = "中国银行";
-                break;
-            case 3:
-                bankName = "交通银行";
-                break;
-            case 4:
-                bankName = "南京银行";
-                break;
-            case 5:
-                bankName = "农业银行";
-                break;
-            case 6:
-                bankName = "工商银行";
-                break;
-            case 7:
-                bankName = "建设银行";
-                break;
-            case 8:
-                bankName = "平安银行";
-                break;
-            case 9:
-                bankName = "招商银行";
-                break;
-            case 10:
-                bankName = "浦发银行";
-                break;
-            case 11:
-                bankName = "汉口银行";
-                break;
-            case 12:
-                bankName = "快付通";
-                break;
-            case 13:
-                bankName = "库存现金";
-                break;
-        }
-        return bankName;
-    }
+
 }
