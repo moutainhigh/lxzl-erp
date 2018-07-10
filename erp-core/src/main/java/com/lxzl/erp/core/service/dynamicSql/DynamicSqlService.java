@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
 import com.lxzl.erp.common.domain.dynamicSql.pojo.DynamicSql;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>Description: </p>
@@ -16,13 +17,20 @@ import java.util.List;
  */
 public interface DynamicSqlService {
 
-    ServiceResult<String, List<List<Object>>> selectBySql(DynamicSqlSelectParam dynamicSqlSelectParam);
 
-    ServiceResult<String,String> saveDynamicSql(DynamicSql dynamicSql);
+    ServiceResult<String, List<Map>> executeBySql(DynamicSqlSelectParam dynamicSqlSelectParam);
 
-    ServiceResult<String,String> deleteDynamicSql(DynamicSql dynamicSql);
+    ServiceResult<String, List<Map>> selectBySql(DynamicSqlSelectParam dynamicSqlSelectParam);
 
-    ServiceResult<String,DynamicSql> detailDynamicSql(DynamicSql dynamicSql);
+    ServiceResult<String, List<Map>> updateBySql(DynamicSqlSelectParam dynamicSqlSelectParam);
 
-    ServiceResult<String,Page<DynamicSql>> pageDynamicSql(DynamicSqlQueryParam dynamicSqlQueryParam);
+    ServiceResult<String, List<Map>> insertBySql(DynamicSqlSelectParam dynamicSqlSelectParam);
+
+    ServiceResult<String, String> saveDynamicSql(DynamicSql dynamicSql);
+
+    ServiceResult<String, String> deleteDynamicSql(DynamicSql dynamicSql);
+
+    ServiceResult<String, DynamicSql> detailDynamicSql(DynamicSql dynamicSql);
+
+    ServiceResult<String, Page<DynamicSql>> pageDynamicSql(DynamicSqlQueryParam dynamicSqlQueryParam);
 }

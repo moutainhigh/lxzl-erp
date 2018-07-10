@@ -1,24 +1,12 @@
 package com.lxzl.erp.dataaccess.dao.jdbc.dynamicSql.impl;
 
-import com.lxzl.erp.common.util.DBUtil;
-import com.lxzl.erp.dataaccess.dao.jdbc.dynamicSql.DynamicSqlDao;
-import com.lxzl.se.dataaccess.mysql.source.DynamicDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.stereotype.Repository;
-
-import java.sql.*;
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * <p>Description: </p>
  *
  * @Auther: huahongbin
  * @Date: 2018/5/28
  */
+/*
 @Repository
 public class DynamicSqlDaoImpl implements DynamicSqlDao {
 
@@ -69,3 +57,4 @@ public class DynamicSqlDaoImpl implements DynamicSqlDao {
         return  result;
     }
 }
+*/

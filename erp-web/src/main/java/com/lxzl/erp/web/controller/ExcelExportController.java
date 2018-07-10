@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
@@ -33,6 +34,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 import java.util.List;
+import java.util.Map;
+
+import static com.lxzl.erp.web.util.ResultMapUtils.toLists;
 
 @RequestMapping("/exportExcel")
 @Controller
@@ -92,9 +96,14 @@ public class ExcelExportController {
         String sql  = URLDecoder.decode(dynamicSqlSelectParam.getSql(),"UTF-8");
         dynamicSqlSelectParam.setSql(sql);
         dynamicSqlSelectParam.setLimit(Integer.MAX_VALUE);
-        Result result = resultGenerator.generate(dynamicSqlService.selectBySql(dynamicSqlSelectParam));
-
-        ServiceResult<String, String> serviceResult = excelExportService.export(result,ExcelExportSupport.formatFileName("动态sql"),"sheet1" , response,5000);
+        ServiceResult<String, List<Map>> result = dynamicSqlService.executeBySql(dynamicSqlSelectParam);
+        ServiceResult<String, List<List<Object>>> serviceResult = new ServiceResult<>();
+        serviceResult.setErrorCode(result.getErrorCode());
+        if (serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+            List<Map> maps = result.getResult();
+            List<List<Object>> results = toLists(maps);
+            return resultGenerator.generate(ExcelExportSupport.export(results,ExcelExportSupport.formatFileName("动态sql"),"sheet1" , response,5000).getErrorCode());
+        }
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
 
