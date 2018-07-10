@@ -1209,7 +1209,7 @@ public class OrderServiceImpl implements OrderService {
         orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId());
 
         // 重算结算单
-        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(orderDO.getOrderNo());
+        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatementAllowConfirmCustommer(orderDO.getOrderNo());
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             result.setErrorCode(serviceResult.getErrorCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚

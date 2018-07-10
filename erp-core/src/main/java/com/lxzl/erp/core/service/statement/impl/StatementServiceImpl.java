@@ -4949,7 +4949,17 @@ public class StatementServiceImpl implements StatementService {
         maps.put("start", 0);
         maps.put("pageSize", Integer.MAX_VALUE);
         maps.put("statementOrderDetailQueryParam", statementOrderDetailQueryParam);
+        //查出有结算单的订单商品
         List<CheckStatementOrderDetailDO> listPage = statementOrderDetailMapper.exportListPage(maps);
+        //查出有结算单的订单配件
+        List<CheckStatementOrderDetailDO> listPage1 = statementOrderDetailMapper.exportListPage1(maps);
+        //查出没有结算单的订单商品
+        List<CheckStatementOrderDetailDO> listPage2 = statementOrderDetailMapper.exportListPage2(maps);
+        //查出没有结算单的订单配件
+        List<CheckStatementOrderDetailDO> listPage3 = statementOrderDetailMapper.exportListPage3(maps);
+        listPage.addAll(listPage1);
+        listPage.addAll(listPage2);
+        listPage.addAll(listPage3);
 
         if (statementOrderDOList == null || CollectionUtil.isEmpty(statementOrderDOList)) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);

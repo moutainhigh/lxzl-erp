@@ -94,6 +94,9 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
     List<StatementOrderDetailDO> findReturnByOrderItemTypeAndId(@Param("orderItemType") Integer orderItemType, @Param("orderItemId") Integer orderItemId);
 
     List<CheckStatementOrderDetailDO> exportListPage(@Param("maps") Map<String, Object> maps);
+    List<CheckStatementOrderDetailDO> exportListPage1(@Param("maps") Map<String, Object> maps);
+    List<CheckStatementOrderDetailDO> exportListPage2(@Param("maps") Map<String, Object> maps);
+    List<CheckStatementOrderDetailDO> exportListPage3(@Param("maps") Map<String, Object> maps);
     List<CheckStatementOrderDetailDO> exportReturnListPage(@Param("maps") Map<String, Object> maps);
     List<CheckStatementOrderDetailDO> exportFirstReturnListPage(@Param("maps") Map<String, Object> maps);
     List<CheckStatementOrderDetailDO> findByOrderItemReferIdAndTime(@Param("orderItemReferId") Integer orderItemReferId,@Param("statementExpectPayTime") Date statementExpectPayTime);
