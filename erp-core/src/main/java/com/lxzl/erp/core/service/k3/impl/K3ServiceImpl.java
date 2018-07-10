@@ -20,7 +20,10 @@ import com.lxzl.erp.common.domain.order.ChangeOrderItemParam;
 import com.lxzl.erp.common.domain.order.OrderConfirmChangeToK3Param;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.common.util.FastJsonUtil;
+import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderConfirml;
@@ -61,7 +64,6 @@ import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
-import com.lxzl.se.common.util.secret.MD5Util;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,10 +91,10 @@ public class K3ServiceImpl implements K3Service {
 
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
 
-    private String k3OrderUrl = "http://103.239.207.170:9090/order/list";
-    private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/order";
+    private String k3OrderUrl = K3Config.k3Server + "/order/list";
+    private String k3OrderDetailUrl = K3Config.k3Server + "/order/order";
     // k3历史退货单url
-    private String k3HistoricalRefundListUrl = "http://103.239.207.170:9090/SEOutstock/list";
+    private String k3HistoricalRefundListUrl = K3Config.k3Server + "/SEOutstock/list";
     String pw = "5113f85e846056594bed8e2ece8b1cbd";
 
 //    private static final String k3ReletOrderUrl = "http://103.239.207.170:9090/OrderConfirml/OeletOrder";
