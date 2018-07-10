@@ -762,7 +762,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         if (CollectionUtil.isEmpty(result.getResult().getItemList())) {
-            serviceResult.setErrorCode(ErrorCode.CHARGE_RECORD_IS_NULL);
+            serviceResult.setErrorCode(ErrorCode.CHARGE_RECORD_NOT_EXISTS);
             return serviceResult;
         }
 
@@ -789,7 +789,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         if (chargeRecord == null) {
-            serviceResult.setErrorCode(ErrorCode.CHARGE_RECORD_IS_NULL);
+            serviceResult.setErrorCode(ErrorCode.CHARGE_RECORD_NOT_EXISTS);
             return serviceResult;
         }
         //更改支付方式验证
@@ -811,7 +811,7 @@ public class PaymentServiceImpl implements PaymentService {
         Date chargeTime = simpleDateFormat.parse(format);
 
         //保存流水总纪录
-        BankSlipDO bankSlipDO = bankSlipMapper.findBySubCompanyIdAndDayAndBankType(chargeRecord.getSubCompanyId(), BankType.LYCHEE_PAY, chargeTime);
+        BankSlipDO bankSlipDO = bankSlipMapper.findBySubCompanyIdAndDayAndBankType(chargeRecord.getSubCompanyId(), BankType.SWIFT_PASS, chargeTime);
         if (bankSlipDO != null) {
             bankSlipDO.setInCount(bankSlipDO.getInCount() + 1);   //进款笔数
             bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() + 1);   //需认领笔数
@@ -822,7 +822,7 @@ public class PaymentServiceImpl implements PaymentService {
             bankSlipDO = new BankSlipDO();
             bankSlipDO.setSubCompanyId(chargeRecord.getSubCompanyId());   //分公司ID
             bankSlipDO.setSubCompanyName(chargeRecord.getSubCompanyName());   //分公司名称
-            bankSlipDO.setBankType(BankType.LYCHEE_PAY);   //银行类型，1-支付宝，2-中国银行，3-交通银行，4-南京银行，5-农业银行，6-工商银行，7-建设银行，8-平安银行，9-招商银行，10-浦发银行
+            bankSlipDO.setBankType(BankType.SWIFT_PASS);   //银行类型，1-支付宝，2-中国银行，3-交通银行，4-南京银行，5-农业银行，6-工商银行，7-建设银行，8-平安银行，9-招商银行，10-浦发银行
             bankSlipDO.setSlipDay(chargeTime);   //导入日期
             bankSlipDO.setInCount(CommonConstant.COMMON_ONE);   //进款笔数
             bankSlipDO.setNeedClaimCount(CommonConstant.COMMON_ONE);

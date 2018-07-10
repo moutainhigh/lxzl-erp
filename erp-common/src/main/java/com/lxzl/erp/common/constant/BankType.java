@@ -20,5 +20,5 @@ public class BankType {
     public static final Integer HAN_KOU_BANK = 11; //汉口银行
     public static final Integer LYCHEE_PAY = 12; //快付通
     public static final Integer STOCK_CASH = 13; //库存现金
-
+    public static final Integer SWIFT_PASS = 14; //威富通
 }
