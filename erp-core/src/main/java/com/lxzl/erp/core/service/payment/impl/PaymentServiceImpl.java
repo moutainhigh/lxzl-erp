@@ -40,7 +40,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -747,67 +746,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> addOnlineHistoryBankSlip(AddOnlineBankSlipQueryParam addOnlineBankSlipQueryParam) throws ParseException {
-        //传入查询参数
-        ChargeRecordPageParam param = new ChargeRecordPageParam();
-        param.setChannelNo(addOnlineBankSlipQueryParam.getChannelNo());
-        param.setPageNo(CommonConstant.COMMON_ONE);
-        param.setPageSize(Integer.MAX_VALUE);
-        param.setChargeStatus(ChargeStatus.PAY_SUCCESS);
-        param.setQueryStartTime(addOnlineBankSlipQueryParam.getStartTime());
-        param.setQueryEndTime(addOnlineBankSlipQueryParam.getEndTime());
-        param.setSubCompanyId(addOnlineBankSlipQueryParam.getSubCompanyId());
-        param.setBusinessCustomerNo(addOnlineBankSlipQueryParam.getCustomerNo());
-        //调接口查询结果
-        ServiceResult<String, Page<ChargeRecord>> result = queryChargeRecordParamPage(param);
-        List<ChargeRecord> itemList = result.getResult().getItemList();
-
-        ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        if (CollectionUtil.isEmpty(itemList)) {
-            serviceResult.setErrorCode(ErrorCode.CHARGE_RECORD_IS_NULL);
-            return serviceResult;
-        }
-        //过滤已有的数据
-        Map<String, ChargeRecord> chargeRecordMap = new HashMap<>();
-        for (ChargeRecord chargeRecord : itemList) {
-            if (!CommonConstant.COMMON_MINUS_ONE.equals(chargeRecord.getChargeType()) && !CommonConstant.COMMON_HUNDRED.equals(chargeRecord.getChargeType())) {
-                chargeRecordMap.put(chargeRecord.getThirdPartyPayOrderId(), chargeRecord);
-            }
-        }
-
-        List<BankSlipDetailDO> bankSlipDetailDOList;
-        if (chargeRecordMap.size() > 0) {
-            bankSlipDetailDOList = bankSlipDetailMapper.findBankSlipDetailByTradeSerialNoList(new ArrayList<>(chargeRecordMap.keySet()));
-        } else {
-            serviceResult.setErrorCode(ErrorCode.CHARGE_RECORD_IS_NULL);
-            return serviceResult;
-        }
-
-        if (CollectionUtil.isNotEmpty(bankSlipDetailDOList)) {
-            for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
-                if (chargeRecordMap.containsKey(bankSlipDetailDO.getTradeSerialNo())) {
-                    chargeRecordMap.remove(bankSlipDetailDO.getTradeSerialNo());
-                }
-            }
-        }
-
-        if (chargeRecordMap.size() <= 0) {
-            serviceResult.setErrorCode(ErrorCode.CHARGE_RECORD_IS_NULL);
-            return serviceResult;
-        }
-        itemList = ListUtil.mapToList(chargeRecordMap);
-
-        //保存过滤完成的数据
-        for (ChargeRecord chargeRecord : itemList) {
-            saveConstantlyExportQueryChargeRecordToBankSlip(chargeRecord);
-        }
-
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        return serviceResult;
-    }
-
-    @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addOnlineBankSlip(AddOnlineBankSlipQueryParam addOnlineBankSlipQueryParam) throws ParseException {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
@@ -833,22 +771,29 @@ public class PaymentServiceImpl implements PaymentService {
             return serviceResult;
         }
 
-        return saveConstantlyExportQueryChargeRecordToBankSlip(result.getResult().getItemList().get(0));
+        return saveChargeRecordToBankSlip(result.getResult().getItemList().get(0));
 
     }
 
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
-    ServiceResult<String, String> saveConstantlyExportQueryChargeRecordToBankSlip(ChargeRecord chargeRecord) throws ParseException {
+    ServiceResult<String, String> saveChargeRecordToBankSlip(ChargeRecord chargeRecord) throws ParseException {
 
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         String userId = CommonConstant.SUPER_USER_ID.toString();
+
+        CustomerDO customerDO = customerMapper.findByNo(chargeRecord.getBusinessCustomerNo());
+        if (customerDO != null) {
+            serviceResult.setErrorCode(ErrorCode.BINDING_CUSTOMER_NO);
+            return serviceResult;
+        }
+
         if (chargeRecord == null) {
             serviceResult.setErrorCode(ErrorCode.CHARGE_RECORD_IS_NULL);
             return serviceResult;
         }
         //更改支付方式验证
-        if (CommonConstant.COMMON_MINUS_ONE.equals(chargeRecord.getChargeType()) || CommonConstant.COMMON_HUNDRED.equals(chargeRecord.getChargeType())) {
+        if (ChargeType.MANUAL_CHARGE.equals(chargeRecord.getChargeType()) || ChargeType.BALANCE_PAID.equals(chargeRecord.getChargeType()) || ChargeType.BANK_SLIP_CHARGE.equals(chargeRecord.getChargeType())) {
             serviceResult.setErrorCode(ErrorCode.CHARGE_TYPE_IS_MANUAL_CHARGE_OR_PUBLIC_TRANSFER_PLUS);
             return serviceResult;
         }
@@ -900,7 +845,7 @@ public class PaymentServiceImpl implements PaymentService {
         bankSlipDetailDO.setTradeSerialNo(chargeRecord.getThirdPartyPayOrderId());       //交易流水号
         bankSlipDetailDO.setTradeTime(chargeTime);       //交易日期
         bankSlipDetailDO.setTradeMessage(chargeRecord.getRemark());       //交易附言
-        bankSlipDetailDO.setOtherSideAccountNo(chargeRecord.getOpenId());       //对方账号
+        bankSlipDetailDO.setOtherSideAccountNo(chargeRecord.getBusinessCustomerNo());       //对方账号
         bankSlipDetailDO.setMerchantOrderNo(null);       //商户订单号
         bankSlipDetailDO.setLoanSign(LoanSignType.INCOME);       //借贷标志,1-贷（收入），2-借（支出）
         bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);       //明细状态，1-未认领，2-已认领，3-已确定，4-忽略
@@ -924,15 +869,6 @@ public class PaymentServiceImpl implements PaymentService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
-
-    @Override
-    public ServiceResult<String, String> onlineTodayLeaveOutChargeRecord() throws ParseException {
-        AddOnlineBankSlipQueryParam addOnlineBankSlipQueryParam = new AddOnlineBankSlipQueryParam ();
-        addOnlineBankSlipQueryParam.setStartTime(DateUtil.getDayByCurrentOffset(CommonConstant.COMMON_ZERO));
-        addOnlineBankSlipQueryParam.setEndTime(DateUtil.getDayByCurrentOffset(CommonConstant.COMMON_ONE));
-        return addOnlineHistoryBankSlip(addOnlineBankSlipQueryParam);
-    }
-
 
     /**
      * 自动认领和自动归属化

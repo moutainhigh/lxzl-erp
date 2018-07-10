@@ -101,16 +101,9 @@ public class PaymentController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "addOnlineHistoryBankSlip", method = RequestMethod.POST)
-    public Result addOnlineHistoryBankSlip(@RequestBody AddOnlineBankSlipQueryParam addOnlineBankSlipQueryParam, BindingResult validResult) throws Exception {
-        ServiceResult<String, String> serviceResult = paymentService.addOnlineHistoryBankSlip(addOnlineBankSlipQueryParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
-    }
-
     @RequestMapping(value = "addOnlineBankSlip", method = RequestMethod.POST)
     public Result addOnlineBankSlip(@RequestBody @Validated(QueryGroup.class) AddOnlineBankSlipQueryParam addOnlineBankSlipQueryParam, BindingResult validResult) throws Exception {
         ServiceResult<String, String> serviceResult = paymentService.addOnlineBankSlip(addOnlineBankSlipQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
-
 }

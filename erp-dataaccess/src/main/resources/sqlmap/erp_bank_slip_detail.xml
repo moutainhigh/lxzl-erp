@@ -676,14 +676,14 @@
 	</select>
 
 	<select id="findBankSlipDetailByTradeSerialNoList" resultMap="BankSlipDetailDO" parameterType="java.util.List">
-		SELECT  <include refid="column_List"/> FROM erp_bank_slip_detail ebsd WHERE  ebsd.trade_serial_no IN
+		SELECT  <include refid="column_List"/> FROM erp_bank_slip_detail ebsd WHERE ebsd.data_status = 1 AND ebsd.trade_serial_no IN
 		<foreach collection="list" close=")" open="(" separator="," item="tradeSerialNo" index="index">
 			#{tradeSerialNo,jdbcType=VARCHAR}
 		</foreach>
 	</select>
 
 	<select id="findBankSlipDetailByTradeSerialNo" resultMap="BankSlipDetailDO">
-		SELECT  <include refid="column_List"/> FROM erp_bank_slip_detail ebsd WHERE  ebsd.trade_serial_no = #{thirdPartyPayOrderId,jdbcType=VARCHAR}
+		SELECT  <include refid="column_List"/> FROM erp_bank_slip_detail ebsd WHERE  ebsd.trade_serial_no = #{thirdPartyPayOrderId,jdbcType=VARCHAR} AND ebsd.data_status = 1
 	</select>
 
 </mapper>
