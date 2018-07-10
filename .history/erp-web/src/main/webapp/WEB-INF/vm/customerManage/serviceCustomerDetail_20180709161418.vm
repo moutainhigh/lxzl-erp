@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-客户管理-个人客户列表-客户详细</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="profile-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="pn animated fadeIn">
+                #parse("component/loading.vm")
+                
+                <form id="customerDetail">
+
+                    <div class="p25 pt">
+                        <div class="row">
+                            #parse("component/customer/riskInfo.vm")
+                        </div>
+                    </div>
+
+                    <div class="p25 ptn">
+                        <div class="row">
+                            <div class="col-md-12">
+                                #parse("component/customer/addressInfo.vm")
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p25 ptn">
+                        <div class="row">
+                            <div class="col-md-12">
+                                #parse("component/customer/personOrders.vm")
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </section>
+        </section>
+        #parse("layout/sidebarRight.vm")
+    </div>
+    #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}assets/admin-tools/admin-forms/js/jquery-tcm-month.js"></script>
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js',
+                'manage.customer.mixin.js',
+                'manage.customer.handle.mixin.js',
+                'manage.customer.detail.js',
+                'manage.customer.confirm.statement.js',
+                'manage.customer.risk.js',
+                'manage.customer.address.js',
+                'manage.customer.address.add.js',
+                'manage.customer.address.edit.js',
+                'manage.customer.orders.js',
+                'manage.customer.riskHistory.js',
+                'modal.input.js',
+                'modal.submit.audit.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        CustomerDetail.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+    </script>
+</body>
+</html>
