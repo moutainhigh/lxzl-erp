@@ -23,28 +23,4 @@
         <property name="staticDomain" value="${static.domain}"/>
         <property name="serviceDomain" value="${service.domain}"/>
     </bean>
-
-    <bean id="paymentSystemConfig" class="com.lxzl.erp.common.domain.PaymentSystemConfig">
-        <property name="paymentSystemQueryCustomerAccountURL" value="${PAYMENT_SYSTEM_QUERY_CUSTOMER_ACCOUNT_URL}"/>
-        <property name="paymentSystemManualChargeURL" value="${PAYMENT_SYSTEM_MANUAL_CHARGE_URL}"/>
-        <property name="paymentSystemManualDeductURL" value="${PAYMENT_SYSTEM_MANUAL_DEDUCT_URL}"/>
-        <property name="paymentSystemBalancePayURL" value="${PAYMENT_SYSTEM_BALANCE_PAY_URL}"/>
-        <property name="paymentSystemWeixinPayURL" value="${PAYMENT_SYSTEM_WEIXIN_PAY_URL}"/>
-        <property name="paymentSystemWeixinPayCallbackURL" value="${PAYMENT_SYSTEM_WEIXIN_PAY_CALLBACK_URL}"/>
-        <property name="paymentSystemReturnDepositURL" value="${PAYMENT_SYSTEM_RETURN_DEPOSIT_URL}"/>
-        <property name="paymentSystemAppId" value="${PAYMENT_SYSTEM_APP_ID}"/>
-        <property name="paymentSystemAppSecret" value="${PAYMENT_SYSTEM_APP_SECRET}"/>
-        <property name="paymentSystemWeixinChargeURL" value="${PAYMENT_SYSTEM_WEIXIN_CHARGE_URL}"/>
-        <property name="paymentSystemQueryChargeRecordPageURL" value="${PAYMENT_SYSTEM_QUERY_CHARGE_RECORD_PAGE_URL}"/>
-        <property name="paymentSystemQueryPayResultURL" value="${PAYMENT_SYSTEM_QUERY_PAY_RESULT_URL}"/>
-        <property name="paymentSystemQueryCustomerAccountLogPageURL" value="${PAYMENT_SYSTEM_QUERY_CUSTOMER_ACCOUNT_LOG_PAGE_URL}"/>
-        <property name="paymentSystemReturnDepositExpandURL" value="${PAYMENT_SYSTEM_RETURN_DEPOSIT_EXPAND_URL}"/>
-        <property name="paymentSystemPublicTransferPlusChargeURL" value="${PAYMENT_SYSTEM_PUBLIC_TRANSFER_PLUS_CHARGE_URL}"/>
-    </bean>
-
-    <bean id="dingDingConfig" class="com.lxzl.erp.common.domain.DingDingConfig">
-        <property name="dingDingGatewayUrl" value="${DINGDING-GATEWAY-URL}"/>
-        <property name="dingdingSecret" value="${DINGDING-SECRET}"/>
-        <property name="applyApprovingWorkflowCallBackUrl" value="${DINGDING-APPLY-APPROVING_WORKFLOW-CALLBACK-URL}"/>
-    </bean>
 </beans>
