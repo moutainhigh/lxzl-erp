@@ -151,6 +151,7 @@
                 <a href="javascript:;" id="printButton" class="btn btn-xs btn-default btn-gradient mr5"> <i class="fa fa-print fs13"></i> </a>
             </div>
         </div>
+        #parse("component/loading.vm")
     </div>
 
     <script type="text/html" id="orderBaseInfoTpl">
@@ -262,6 +263,7 @@
     </script>
 
     <div class="book" id="renturnOrderPagers">
+        #parse("component/loading.vm")
         <div class="page">
             <div class="printHead">
                 <div class="print-col">
