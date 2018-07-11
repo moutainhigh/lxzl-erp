@@ -242,6 +242,15 @@ public class MaterialServiceImpl implements MaterialService {
         } else {
             material.setMaterialCapacityValue(null);
         }
+        if (StringUtil.isEmpty(material.getK3MaterialNo())){
+            result.setErrorCode(ErrorCode.MATERIAL_K3_MATERIAL_NO_NOT_NULL);
+            return result;
+        }
+
+        if (!productSupport.isMaterial(material.getK3MaterialNo())){
+            result.setErrorCode(ErrorCode.MATERIAL_K3_MATERIAL_NO_IS_ERROR);
+            return result;
+        }
 
         MaterialDO materialDO = ConverterUtil.convert(material, MaterialDO.class);
         // 以下两个值不能改
