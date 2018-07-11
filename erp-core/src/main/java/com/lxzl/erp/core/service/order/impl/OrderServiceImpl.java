@@ -1199,10 +1199,6 @@ public class OrderServiceImpl implements OrderService {
         }
         //为了不影响之前的订单逻辑，这里暂时使用修改的方式
         setOrderProductSummary(orderDO);
-        orderMapper.update(orderDO);
-
-        // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId());
 
         // 重算结算单
         ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatementAllowConfirmCustommer(orderDO);
@@ -1217,6 +1213,9 @@ public class OrderServiceImpl implements OrderService {
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
         }
         orderMapper.update(orderDO);
+
+        // 记录订单时间轴
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId());
 
         Integer newTotalProductCount = orderDO.getTotalProductCount();
         Integer newTotalMaterialCount = orderDO.getTotalMaterialCount();
