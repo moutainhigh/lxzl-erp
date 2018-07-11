@@ -522,12 +522,12 @@ public class StatementServiceImpl implements StatementService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, BigDecimal> reCreateOrderStatementAllowConfirmCustommer(String orderNo) {
-        return reCreateOrderStatement(orderNo, null, true,true);
+    public ServiceResult<String, BigDecimal> reCreateOrderStatementAllowConfirmCustommer(OrderDO orderDO) {
+        return reCreateOrderStatement(orderDO, null, true,true);
     }
 
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    ServiceResult<String, BigDecimal> reCreateOrderStatement(String orderNo, Integer statementDate, boolean clearStatementDateSplitCfg,boolean allowConfirmCustomer) {
+    ServiceResult<String, BigDecimal> reCreateOrderStatement(String orderNo, Integer statementDate, boolean clearStatementDateSplitCfg,boolean allowConfirmCustomer){
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         if (StringUtil.isEmpty(orderNo)) {
             result.setErrorCode(ErrorCode.ORDER_NO_NOT_NULL);
@@ -535,6 +535,15 @@ public class StatementServiceImpl implements StatementService {
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (orderDO == null) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        return reCreateOrderStatement(orderDO,statementDate,clearStatementDateSplitCfg,allowConfirmCustomer);
+    }
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    ServiceResult<String, BigDecimal> reCreateOrderStatement(OrderDO orderDO, Integer statementDate, boolean clearStatementDateSplitCfg,boolean allowConfirmCustomer) {
+        ServiceResult<String, BigDecimal> result = new ServiceResult<>();
+        if(orderDO==null){
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
@@ -565,7 +574,7 @@ public class StatementServiceImpl implements StatementService {
             }
             orderDO.setStatementDate(statementDate);
             orderMapper.update(orderDO);
-            statementOrderSupport.recordStatementDateLog(orderNo, statementDate);
+            statementOrderSupport.recordStatementDateLog(orderDO.getOrderNo(), statementDate);
         }
         //首先清除退货结算(有实际退货的)
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
@@ -619,7 +628,7 @@ public class StatementServiceImpl implements StatementService {
         AmountNeedReturn amountNeedReturn = clearResult.getResult();
         if (amountNeedReturn != null && (BigDecimalUtil.compare(amountNeedReturn.getRentPaidAmount(), BigDecimal.ZERO) != 0 || BigDecimalUtil.compare(amountNeedReturn.getRentDepositPaidAmount(), BigDecimal.ZERO) != 0 || BigDecimalUtil.compare(amountNeedReturn.getDepositPaidAmount(), BigDecimal.ZERO) != 0 || BigDecimalUtil.compare(BigDecimalUtil.addAll(amountNeedReturn.getOtherPaidAmount(), amountNeedReturn.getOverduePaidAmount(), amountNeedReturn.getPenaltyPaidAmount()), BigDecimal.ZERO) != 0)) {
             String returnCode = paymentService.returnDepositExpand(customerDO.getCustomerNo(), amountNeedReturn.getRentPaidAmount(), BigDecimalUtil.addAll(amountNeedReturn.getOtherPaidAmount(), amountNeedReturn.getOverduePaidAmount(), amountNeedReturn.getPenaltyPaidAmount())
-                    , amountNeedReturn.getRentDepositPaidAmount(), amountNeedReturn.getDepositPaidAmount(), "订单【" + orderNo + "】重算结算单，已支付金额退还到客户余额");
+                    , amountNeedReturn.getRentDepositPaidAmount(), amountNeedReturn.getDepositPaidAmount(), "订单【" + orderDO.getOrderNo() + "】重算结算单，已支付金额退还到客户余额");
             if (!ErrorCode.SUCCESS.equals(returnCode)) {
                 result.setErrorCode(returnCode);
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -5356,6 +5365,7 @@ public class StatementServiceImpl implements StatementService {
                                 detail.setItemSkuName(checkStatementOrderDetail.getItemSkuName());
                                 detail.setUnitAmount(checkStatementOrderDetail.getUnitAmount());
                                 detail.setStatementDetailAmount(BigDecimal.ZERO);
+                                detail.setReturnReferId(checkStatementOrderDetail.getStatementOrderDetailId());
                             }
                             newList.addAll(returnCheckStatementOrderDetailList);
                         }
@@ -5532,7 +5542,7 @@ public class StatementServiceImpl implements StatementService {
                         if (reletOrderProductDO != null) {
                             statementOrderDetail.setItemName(reletOrderProductDO.getProductName());
                             statementOrderDetail.setItemSkuName(reletOrderProductDO.getProductSkuName());
-                            statementOrderDetail.setItemCount(reletOrderProductDO.getRentingProductCount());
+                            statementOrderDetail.setItemCount(reletOrderProductDO.getProductCount());
                             statementOrderDetail.setUnitAmount(reletOrderProductDO.getProductUnitAmount());
                             statementOrderDetail.setItemRentType(orderDO.getRentType());
                         }
@@ -5542,7 +5552,7 @@ public class StatementServiceImpl implements StatementService {
                         if (reletOrderMaterialDO != null) {
                             statementOrderDetail.setItemName(reletOrderMaterialDO.getMaterialName());
                             statementOrderDetail.setItemSkuName("无");
-                            statementOrderDetail.setItemCount(reletOrderMaterialDO.getRentingMaterialCount());
+                            statementOrderDetail.setItemCount(reletOrderMaterialDO.getMaterialCount());
                             statementOrderDetail.setUnitAmount(reletOrderMaterialDO.getMaterialUnitAmount());
                             statementOrderDetail.setItemRentType(orderDO.getRentType());
                         }

@@ -1161,11 +1161,7 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderMaterialInfo(orderMaterialDOList, orderDO);
 
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
-        if (count==0) {
-            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_COLSE);
-        } else {
-            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
-        }
+
         orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         orderDO.setUpdateTime(date);
         orderDO.setConfirmDeliveryTime(date);
@@ -1203,18 +1199,24 @@ public class OrderServiceImpl implements OrderService {
         }
         //为了不影响之前的订单逻辑，这里暂时使用修改的方式
         setOrderProductSummary(orderDO);
-        orderMapper.update(orderDO);
-
-        // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId());
 
         // 重算结算单
-        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatementAllowConfirmCustommer(orderDO.getOrderNo());
+        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatementAllowConfirmCustommer(orderDO);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             result.setErrorCode(serviceResult.getErrorCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             return result;
         }
+        if (count==0) {
+            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_COLSE);
+        } else {
+            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
+        }
+        orderMapper.update(orderDO);
+
+        // 记录订单时间轴
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId());
+
         Integer newTotalProductCount = orderDO.getTotalProductCount();
         Integer newTotalMaterialCount = orderDO.getTotalMaterialCount();
         //是否有退货标记，true为有退货，false为全部收货
