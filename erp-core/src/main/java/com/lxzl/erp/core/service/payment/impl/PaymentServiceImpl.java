@@ -551,60 +551,59 @@ public class PaymentServiceImpl implements PaymentService {
 //                        chargeRecord.setCustomerName(chargeRecord.getBusinessCustomerName());
 //                    }
 //                }
-                if (CollectionUtil.isNotEmpty(customerNoList)) {
-                    List<CustomerDO> customerDOList = customerMapper.findByCustomerNoList(customerNoList);
-                    if (CollectionUtil.isNotEmpty(customerDOList)) {
-                        Map<Object, CustomerDO> customerMap = ListUtil.listToMap(customerDOList, "customerNo");
+                if (CollectionUtil.isNotEmpty(customerNoList) && CollectionUtil.isNotEmpty(customerNameList)) {
+                    List<CustomerDO> customerDONoList = customerMapper.findByCustomerNoList(customerNoList);
+                    List<CustomerDO> customerDONameList = customerMapper.findByCustomerNameList(customerNameList);
+                    if (CollectionUtil.isNotEmpty(customerDONoList) && CollectionUtil.isEmpty(customerDONoList)) {
+                        Map<Object, CustomerDO> customerNoMap = ListUtil.listToMap(customerDONoList, "customerNo");
                         if (CollectionUtil.isNotEmpty(chargeRecordList)) {
                             for (ChargeRecord chargeRecord : chargeRecordList) {
-                                if (customerMap.get(chargeRecord.getBusinessCustomerNo()) != null) {
-                                    CustomerDO customerDO = customerMap.get(chargeRecord.getBusinessCustomerNo());
-                                    chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
-                                    chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
-                                    chargeRecord.setCustomerName(customerDO.getCustomerName());
-                                    chargeRecord.setIsErpCustomer(1);
-                                } else {
-                                    chargeRecord.setIsErpCustomer(0);
-                                }
+                                setCustomerMessageByNo(chargeRecord,customerNoMap);
                             }
                         }
-                    } else {
-                        if (CollectionUtil.isNotEmpty(customerNameList)) {
-                            //如果客户编号查询不到数据，就通过用户名进行erp客户查询
-                            List<CustomerDO> customerDONameList = customerMapper.findByCustomerNameList(customerNoList);
-                            if (CollectionUtil.isNotEmpty(customerDONameList)) {
-                                Map<Object, CustomerDO> customerMap = ListUtil.listToMap(customerDONameList, "customerName");
-                                if (CollectionUtil.isNotEmpty(chargeRecordList)) {
-                                    for (ChargeRecord chargeRecord : chargeRecordList) {
-                                        if (customerMap.get(chargeRecord.getCustomerName()) != null) {
-                                            chargeRecord.setIsErpCustomer(1);
-                                        } else {
-                                            chargeRecord.setIsErpCustomer(0);
-                                        }
-                                    }
-                                }
-                            } else {
-                                if (CollectionUtil.isNotEmpty(chargeRecordList)) {
-                                    for (ChargeRecord chargeRecord : chargeRecordList) {
-                                        chargeRecord.setIsErpCustomer(0);
-                                    }
-                                }
+                    } else if (CollectionUtil.isEmpty(customerDONoList) && CollectionUtil.isNotEmpty(customerDONameList)) {
+                        Map<Object, CustomerDO> customerNameMap = ListUtil.listToMap(customerDONameList, "customerName");
+                        if (CollectionUtil.isNotEmpty(chargeRecordList)) {
+                            for (ChargeRecord chargeRecord : chargeRecordList) {
+                                setCustomerMessageByName(chargeRecord,customerNameMap);
                             }
-                        } else {
-                            if (CollectionUtil.isNotEmpty(chargeRecordList)) {
-                                for (ChargeRecord chargeRecord : chargeRecordList) {
-                                    chargeRecord.setIsErpCustomer(0);
-                                }
+                        }
+                    } else if (CollectionUtil.isNotEmpty(customerDONoList) && CollectionUtil.isNotEmpty(customerDONameList)) {
+                        Map<Object, CustomerDO> customerNoMap = ListUtil.listToMap(customerDONoList, "customerNo");
+                        Map<Object, CustomerDO> customerNameMap = ListUtil.listToMap(customerDONameList, "customerName");
+                        for (ChargeRecord chargeRecord : chargeRecordList) {
+                            if (customerNoMap.get(chargeRecord.getBusinessCustomerNo()) != null) {
+                                CustomerDO customerDO = customerNoMap.get(chargeRecord.getBusinessCustomerNo());
+                                chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
+                                chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
+                                chargeRecord.setCustomerName(customerDO.getCustomerName());
+                                chargeRecord.setIsErpCustomer(CommonConstant.YES);
+                            } else {
+                                setCustomerMessageByName(chargeRecord,customerNameMap);
                             }
                         }
                     }
-                }
-
-                //客户编号和客户名称都是都没有的情况
-                if (CollectionUtil.isEmpty(customerNoList) && CollectionUtil.isEmpty(customerNameList)) {
+                }else if(CollectionUtil.isNotEmpty(customerNoList) && CollectionUtil.isEmpty(customerNameList)){
+                    List<CustomerDO> customerDONoList = customerMapper.findByCustomerNoList(customerNoList);
+                    if (CollectionUtil.isNotEmpty(customerDONoList)){
+                        Map<Object, CustomerDO> customerNoMap = ListUtil.listToMap(customerDONoList, "customerNo");
+                        for (ChargeRecord chargeRecord : chargeRecordList) {
+                             setCustomerMessageByNo(chargeRecord,customerNoMap);
+                        }
+                    }
+                }else if (CollectionUtil.isEmpty(customerNoList) && CollectionUtil.isNotEmpty(customerNameList)){
+                    List<CustomerDO> customerDONameList = customerMapper.findByCustomerNameList(customerNameList);
+                    if (CollectionUtil.isNotEmpty(customerDONameList)){
+                        Map<Object, CustomerDO> customerNameMap = ListUtil.listToMap(customerDONameList, "customerName");
+                        for (ChargeRecord chargeRecord : chargeRecordList) {
+                            setCustomerMessageByName(chargeRecord,customerNameMap);
+                        }
+                    }
+                }else{
+                    //客户编号和客户名称都是都没有的情况
                     if (CollectionUtil.isNotEmpty(chargeRecordList)) {
                         for (ChargeRecord chargeRecord : chargeRecordList) {
-                            chargeRecord.setIsErpCustomer(0);
+                            chargeRecord.setIsErpCustomer(CommonConstant.NO);
                         }
                     }
                 }
@@ -1117,6 +1116,30 @@ public class PaymentServiceImpl implements PaymentService {
         // 保存日志list
         if (CollectionUtil.isNotEmpty(bankSlipDetailOperationLogDOList)) {
             bankSlipDetailOperationLogMapper.saveBankSlipDetailOperationLogDOList(bankSlipDetailOperationLogDOList);
+        }
+    }
+
+    private void setCustomerMessageByNo(ChargeRecord chargeRecord,Map<Object,CustomerDO> customerNoMap){
+        if (customerNoMap.get(chargeRecord.getBusinessCustomerNo()) != null) {
+            CustomerDO customerDO = customerNoMap.get(chargeRecord.getBusinessCustomerNo());
+            chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
+            chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
+            chargeRecord.setCustomerName(customerDO.getCustomerName());
+            chargeRecord.setIsErpCustomer(CommonConstant.YES);
+        } else {
+            chargeRecord.setIsErpCustomer(CommonConstant.NO);
+        }
+    }
+
+    private void setCustomerMessageByName(ChargeRecord chargeRecord,Map<Object,CustomerDO> customerNameMap){
+        if (customerNameMap.get(chargeRecord.getCustomerName()) != null) {
+            CustomerDO customerDO = customerNameMap.get(chargeRecord.getCustomerName());
+            chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
+            chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
+            chargeRecord.setCustomerName(customerDO.getCustomerName());
+            chargeRecord.setIsErpCustomer(CommonConstant.YES);
+        } else {
+            chargeRecord.setIsErpCustomer(CommonConstant.NO);
         }
     }
 
