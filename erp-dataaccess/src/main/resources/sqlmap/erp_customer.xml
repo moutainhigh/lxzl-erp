@@ -227,6 +227,16 @@
 		AND ec.data_status = 1
 	</select>
 
+	<select id="findByCustomerNameList" resultMap="CustomerDO" >
+		SELECT <include refid="column_List"/>,esc.sub_company_name AS ownerSubCompanyName FROM erp_customer ec
+		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id
+		WHERE ec.customer_name in
+		<foreach collection="customerNameList" index="index" item="customerName" separator="," open="(" close=")">
+			#{customerName,jdbcType=VARCHAR}
+		</foreach>
+		AND ec.data_status = 1
+	</select>
+
 	<select id="findByName" resultMap="CustomerDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> FROM erp_customer ec
 		WHERE ec.customer_name = #{customerName, jdbcType=VARCHAR} AND ec.data_status = 1

@@ -426,7 +426,7 @@ public class PaymentServiceImpl implements PaymentService {
                 paymentChargeRecordPageParam.setBusinessCustomerNo(null);
             }
 
-            requestJson = JSON.toJSONString(paymentChargeRecordPageParam);
+
 
 
 //            if ((chargeRecordPageParam.getCustomerName() != null && chargeRecordPageParam.getCustomerName() != "") && (chargeRecordPageParam.getBusinessCustomerNo() != null && chargeRecordPageParam.getBusinessCustomerNo() != "")) {
@@ -502,6 +502,9 @@ public class PaymentServiceImpl implements PaymentService {
 //                    }
 //                }
 //            }
+
+            requestJson = JSON.toJSONString(paymentChargeRecordPageParam);
+
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
@@ -511,6 +514,7 @@ public class PaymentServiceImpl implements PaymentService {
                 Page<ChargeRecord> chargeRecordPage = new Page<>();
                 List<ChargeRecord> chargeRecordList = new ArrayList<>();
                 List<String> customerNoList = new ArrayList<>();
+                List<String> customerNameList = new ArrayList<>();
                 for (JSONObject jsonObject : paymentChargeRecordPageList) {
                     ChargeRecord chargeRecord = JSON.parseObject(jsonObject.toJSONString(), ChargeRecord.class);
                     if (jsonObject.get("chargeBodyId") != null) {
@@ -521,6 +525,7 @@ public class PaymentServiceImpl implements PaymentService {
                     }
                     if (jsonObject.get("businessCustomerName") != null) {
                         chargeRecord.setCustomerName(jsonObject.get("businessCustomerName").toString());
+                        customerNameList.add(jsonObject.get("businessCustomerName").toString());
                     }
 //                    ChargeRecord chargeRecord = JSON.parseObject(JSON.toJSONString(paymentChargeRecord),ChargeRecord.class);
 //                    PaymentChargeRecord paymentChargeRecordPojo = JSONUtil.parseObject(paymentChargeRecord, PaymentChargeRecord.class);
@@ -529,6 +534,8 @@ public class PaymentServiceImpl implements PaymentService {
                     if (chargeRecord.getBusinessCustomerNo().startsWith("LX")) {
                         customerNoList.add(chargeRecord.getBusinessCustomerNo());
                     }
+
+
                 }
 
 //                for (int i = 0; i < paymentChargeRecordPageList.size(); i++) {
@@ -544,22 +551,63 @@ public class PaymentServiceImpl implements PaymentService {
 //                        chargeRecord.setCustomerName(chargeRecord.getBusinessCustomerName());
 //                    }
 //                }
-                if (CollectionUtil.isNotEmpty(customerNoList)) {
-                    List<CustomerDO> customerDOList = customerMapper.findByCustomerNoList(customerNoList);
-                    if (CollectionUtil.isNotEmpty(customerDOList)) {
-                        Map<Object, CustomerDO> customerMap = ListUtil.listToMap(customerDOList, "customerNo");
+                if (CollectionUtil.isNotEmpty(customerNoList) && CollectionUtil.isNotEmpty(customerNameList)) {
+                    List<CustomerDO> customerDONoList = customerMapper.findByCustomerNoList(customerNoList);
+                    List<CustomerDO> customerDONameList = customerMapper.findByCustomerNameList(customerNameList);
+                    if (CollectionUtil.isNotEmpty(customerDONoList) && CollectionUtil.isEmpty(customerDONoList)) {
+                        Map<Object, CustomerDO> customerNoMap = ListUtil.listToMap(customerDONoList, "customerNo");
                         if (CollectionUtil.isNotEmpty(chargeRecordList)) {
                             for (ChargeRecord chargeRecord : chargeRecordList) {
-                                if (customerMap.get(chargeRecord.getBusinessCustomerNo()) != null) {
-                                    CustomerDO customerDO = customerMap.get(chargeRecord.getBusinessCustomerNo());
-                                    chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
-                                    chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
-                                    chargeRecord.setCustomerName(customerDO.getCustomerName());
-                                }
+                                setCustomerMessageByNo(chargeRecord,customerNoMap);
+                            }
+                        }
+                    } else if (CollectionUtil.isEmpty(customerDONoList) && CollectionUtil.isNotEmpty(customerDONameList)) {
+                        Map<Object, CustomerDO> customerNameMap = ListUtil.listToMap(customerDONameList, "customerName");
+                        if (CollectionUtil.isNotEmpty(chargeRecordList)) {
+                            for (ChargeRecord chargeRecord : chargeRecordList) {
+                                setCustomerMessageByName(chargeRecord,customerNameMap);
+                            }
+                        }
+                    } else if (CollectionUtil.isNotEmpty(customerDONoList) && CollectionUtil.isNotEmpty(customerDONameList)) {
+                        Map<Object, CustomerDO> customerNoMap = ListUtil.listToMap(customerDONoList, "customerNo");
+                        Map<Object, CustomerDO> customerNameMap = ListUtil.listToMap(customerDONameList, "customerName");
+                        for (ChargeRecord chargeRecord : chargeRecordList) {
+                            if (customerNoMap.get(chargeRecord.getBusinessCustomerNo()) != null) {
+                                CustomerDO customerDO = customerNoMap.get(chargeRecord.getBusinessCustomerNo());
+                                chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
+                                chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
+                                chargeRecord.setCustomerName(customerDO.getCustomerName());
+                                chargeRecord.setIsErpCustomer(CommonConstant.YES);
+                            } else {
+                                setCustomerMessageByName(chargeRecord,customerNameMap);
                             }
                         }
                     }
+                }else if(CollectionUtil.isNotEmpty(customerNoList) && CollectionUtil.isEmpty(customerNameList)){
+                    List<CustomerDO> customerDONoList = customerMapper.findByCustomerNoList(customerNoList);
+                    if (CollectionUtil.isNotEmpty(customerDONoList)){
+                        Map<Object, CustomerDO> customerNoMap = ListUtil.listToMap(customerDONoList, "customerNo");
+                        for (ChargeRecord chargeRecord : chargeRecordList) {
+                             setCustomerMessageByNo(chargeRecord,customerNoMap);
+                        }
+                    }
+                }else if (CollectionUtil.isEmpty(customerNoList) && CollectionUtil.isNotEmpty(customerNameList)){
+                    List<CustomerDO> customerDONameList = customerMapper.findByCustomerNameList(customerNameList);
+                    if (CollectionUtil.isNotEmpty(customerDONameList)){
+                        Map<Object, CustomerDO> customerNameMap = ListUtil.listToMap(customerDONameList, "customerName");
+                        for (ChargeRecord chargeRecord : chargeRecordList) {
+                            setCustomerMessageByName(chargeRecord,customerNameMap);
+                        }
+                    }
+                }else{
+                    //客户编号和客户名称都是都没有的情况
+                    if (CollectionUtil.isNotEmpty(chargeRecordList)) {
+                        for (ChargeRecord chargeRecord : chargeRecordList) {
+                            chargeRecord.setIsErpCustomer(CommonConstant.NO);
+                        }
+                    }
                 }
+
                 chargeRecordPage.setItemList(chargeRecordList);
                 chargeRecordPage.setPageSize(paymentChargeRecordPage.getPageSize());
                 chargeRecordPage.setPageCount(paymentChargeRecordPage.getPageCount());
@@ -1068,6 +1116,30 @@ public class PaymentServiceImpl implements PaymentService {
         // 保存日志list
         if (CollectionUtil.isNotEmpty(bankSlipDetailOperationLogDOList)) {
             bankSlipDetailOperationLogMapper.saveBankSlipDetailOperationLogDOList(bankSlipDetailOperationLogDOList);
+        }
+    }
+
+    private void setCustomerMessageByNo(ChargeRecord chargeRecord,Map<Object,CustomerDO> customerNoMap){
+        if (customerNoMap.get(chargeRecord.getBusinessCustomerNo()) != null) {
+            CustomerDO customerDO = customerNoMap.get(chargeRecord.getBusinessCustomerNo());
+            chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
+            chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
+            chargeRecord.setCustomerName(customerDO.getCustomerName());
+            chargeRecord.setIsErpCustomer(CommonConstant.YES);
+        } else {
+            chargeRecord.setIsErpCustomer(CommonConstant.NO);
+        }
+    }
+
+    private void setCustomerMessageByName(ChargeRecord chargeRecord,Map<Object,CustomerDO> customerNameMap){
+        if (customerNameMap.get(chargeRecord.getCustomerName()) != null) {
+            CustomerDO customerDO = customerNameMap.get(chargeRecord.getCustomerName());
+            chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
+            chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
+            chargeRecord.setCustomerName(customerDO.getCustomerName());
+            chargeRecord.setIsErpCustomer(CommonConstant.YES);
+        } else {
+            chargeRecord.setIsErpCustomer(CommonConstant.NO);
         }
     }
 

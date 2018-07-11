@@ -127,6 +127,14 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             dingDingSupport.dingDingSendMessage(customerNoParam + "无对账单");
             return result;
         }
+//        //处理没单价产品结算日期时间
+//        Map<String,Map<Integer,CheckStatementOrderDetail>> monthMap = new HashMap<>();
+//        for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+//            List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+//
+//        }
+
+
 
         Map<String, BigDecimal> totalEverPeriodAmountMap = new HashMap<>();
         Map<String, BigDecimal> totalEverPeriodPaidAmountMap = new HashMap<>();
@@ -283,14 +291,17 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 }
 
                 //-------------------以下是全部结算单-----------------------------
-                exportStatementOrderDetailBase.setRentStartTime(exportStatementOrderDetail.getOrderRentStartTime());    //租赁开始日期
-                exportStatementOrderDetailBase.setExpectReturnTime(exportStatementOrderDetail.getOrderExpectReturnTime());    //租赁结束日期
+                Date orderRentStartTime = exportStatementOrderDetail.getOrderRentStartTime();    //租赁开始日期
+                Date orderExpectReturnTime = exportStatementOrderDetail.getOrderExpectReturnTime();    //租赁结束日期
+                exportStatementOrderDetailBase.setRentStartTime(orderRentStartTime);    //租赁开始日期
+                exportStatementOrderDetailBase.setExpectReturnTime(orderExpectReturnTime);    //租赁结束日期
                 if (OrderRentType.RENT_TYPE_DAY.equals(exportStatementOrderDetail.getOrderRentType())) {
-                    exportStatementOrderDetailBase.setDay(exportStatementOrderDetail.getOrderRentTimeLength());  //日
+                    exportStatementOrderDetailBase.setDay((DateUtil.daysBetween(orderRentStartTime,orderExpectReturnTime) + 1));  //日
                     exportStatementOrderDetailBase.setMonth(0);  //月
                 } else if (OrderRentType.RENT_TYPE_MONTH.equals(exportStatementOrderDetail.getOrderRentType())) {
-                    exportStatementOrderDetailBase.setDay(0);   //日
-                    exportStatementOrderDetailBase.setMonth(exportStatementOrderDetail.getOrderRentTimeLength());  //月
+                    int[] diff = DateUtil.getDiff(orderRentStartTime,orderExpectReturnTime);
+                    exportStatementOrderDetailBase.setDay(diff[1]);   //日
+                    exportStatementOrderDetailBase.setMonth(diff[0]);  //月
                 }
                 exportStatementOrderDetailBase.setMonth(exportStatementOrderDetailBase.getMonth() == null ? 0 : exportStatementOrderDetailBase.getMonth());
                 exportStatementOrderDetailBase.setDay(exportStatementOrderDetailBase.getDay() == null ? 0 : exportStatementOrderDetailBase.getDay());
@@ -306,22 +317,25 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 if (exportStatementOrderDetail.getStatementEndTime() == null) {
                     exportStatementOrderDetail.setStatementEndTime(exportStatementOrderDetail.getOrderExpectReturnTime());
                 }
-                exportStatementOrderDetailBase.setStatementStartTime(exportStatementOrderDetail.getStatementStartTime());     //结算开始日期
-                exportStatementOrderDetailBase.setStatementEndTime(exportStatementOrderDetail.getStatementEndTime());  //结算结束日期
-                String monthAndDays = DateUtil.getMonthAndDays(exportStatementOrderDetail.getStatementStartTime(), exportStatementOrderDetail.getStatementEndTime());
-                int month = monthAndDays.indexOf("月");
-                int day = monthAndDays.indexOf("天");
+                Date statementStartTime = exportStatementOrderDetail.getStatementStartTime();     //结算开始日期
+                Date statementEndTime = exportStatementOrderDetail.getStatementEndTime();  //结算结束日期
+                exportStatementOrderDetailBase.setStatementStartTime(statementStartTime);     //结算开始日期
+                exportStatementOrderDetailBase.setStatementEndTime(statementEndTime);  //结算结束日期
+                int[] diff = DateUtil.getDiff(statementStartTime,statementEndTime);
+                int month = diff[0];
+                int day = diff[1];
+                String monthAndDays = month + "月" + day + "天";
 
                 if (OrderRentType.RENT_TYPE_DAY.equals(exportStatementOrderDetail.getOrderRentType())) {
                     exportStatementOrderDetailBase.setRentTimeLength(exportStatementOrderDetail.getOrderRentTimeLength() + "天");  //期限
                     exportStatementOrderDetailBase.setStatementMonth(0); //月
-                    exportStatementOrderDetailBase.setStatementDay(exportStatementOrderDetail.getOrderRentTimeLength()); //日
+                    exportStatementOrderDetailBase.setStatementDay((DateUtil.daysBetween(statementStartTime,statementEndTime) + 1)); //日
                     exportStatementOrderDetailBase.setUnitAmountInfo(exportStatementOrderDetailBase.getUnitAmount() + "/日");
                     exportStatementOrderDetail.setStatementStartTime(exportStatementOrderDetail.getOrderRentStartTime());
                     exportStatementOrderDetail.setStatementEndTime(exportStatementOrderDetail.getOrderExpectReturnTime());
                 } else if (OrderRentType.RENT_TYPE_MONTH.equals(exportStatementOrderDetail.getOrderRentType())) {
-                    exportStatementOrderDetailBase.setStatementMonth(Integer.parseInt(monthAndDays.substring(0, month))); //月
-                    exportStatementOrderDetailBase.setStatementDay(Integer.parseInt(monthAndDays.substring(month + 1, day))); //日
+                    exportStatementOrderDetailBase.setStatementMonth(month); //月
+                    exportStatementOrderDetailBase.setStatementDay(day); //日
                     exportStatementOrderDetailBase.setUnitAmountInfo(exportStatementOrderDetailBase.getUnitAmount() + "/月");
                     exportStatementOrderDetailBase.setRentTimeLength(monthAndDays);  //期限
                 }
@@ -332,6 +346,25 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
                 exportList.add(exportStatementOrderDetailBase);
             }
+
+            //按照租赁日期进行排序
+            List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+            Collections.sort(exportList, new Comparator<CheckStatementOrderDetailBase>() {
+                @Override
+                public int compare(CheckStatementOrderDetailBase o1, CheckStatementOrderDetailBase o2) {
+                    // 返回值为int类型，大于0表示正序，小于0表示逆序
+                    if (o1.getRentStartTime() == null && o2.getRentStartTime()!=null) {
+                        return 1;
+                    } else if (o1.getRentStartTime() != null && o2.getRentStartTime()==null) {
+                        return -1;
+                    } else if (o1.getRentStartTime() == null && o2.getRentStartTime()==null) {
+                        return 1;
+                    }else {
+                        int i = Integer.valueOf(String.valueOf(o1.getRentStartTime().getTime()/1000 - o2.getRentStartTime().getTime()/1000));
+                        return i;
+                    }
+                }
+            });
 
             String sheetName = "";
             if (checkStatementOrder.getMonthTime() != null) {
@@ -570,5 +603,5 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         }
         return "";
     }
-
+    
 }
