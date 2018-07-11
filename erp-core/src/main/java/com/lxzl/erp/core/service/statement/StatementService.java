@@ -78,7 +78,7 @@ public interface StatementService extends BaseService {
      * @return
      */
     ServiceResult<String, BigDecimal> reCreateOrderStatement(OrderStatementDateSplit k3StatementDateChange);
-    ServiceResult<String, BigDecimal> reCreateOrderStatementAllowConfirmCustommer(String orderNo);
+    ServiceResult<String, BigDecimal> reCreateOrderStatementAllowConfirmCustommer(OrderDO orderDO);
 
 
     /**
