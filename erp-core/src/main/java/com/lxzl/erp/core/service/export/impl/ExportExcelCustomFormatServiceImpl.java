@@ -127,20 +127,13 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             dingDingSupport.dingDingSendMessage(customerNoParam + "无对账单");
             return result;
         }
-        //按照租赁日期进行排序
-        for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-            List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
-            Collections.sort(statementOrderDetailList, new Comparator<CheckStatementOrderDetail>() {
-                @Override
-                public int compare(CheckStatementOrderDetail o1, CheckStatementOrderDetail o2) {
-                    // 返回值为int类型，大于0表示正序，小于0表示逆序
-                    int i = Integer.valueOf(String.valueOf(o1.getOrderRentStartTime().getTime()/1000 - o2.getOrderRentStartTime().getTime()/1000));
-                    return i;
-                }
-            });
-            statementOrderDetailList = sortingCheckStatementOrderDetail(statementOrderDetailList);
-            checkStatementOrder.setStatementOrderDetailList(statementOrderDetailList);
-        }
+//        //处理没单价产品结算日期时间
+//        Map<String,Map<Integer,CheckStatementOrderDetail>> monthMap = new HashMap<>();
+//        for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+//            List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+//
+//        }
+
 
 
         Map<String, BigDecimal> totalEverPeriodAmountMap = new HashMap<>();
@@ -353,6 +346,25 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
                 exportList.add(exportStatementOrderDetailBase);
             }
+
+            //按照租赁日期进行排序
+            List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+            Collections.sort(exportList, new Comparator<CheckStatementOrderDetailBase>() {
+                @Override
+                public int compare(CheckStatementOrderDetailBase o1, CheckStatementOrderDetailBase o2) {
+                    // 返回值为int类型，大于0表示正序，小于0表示逆序
+                    if (o1.getRentStartTime() == null && o2.getRentStartTime()!=null) {
+                        return 1;
+                    } else if (o1.getRentStartTime() != null && o2.getRentStartTime()==null) {
+                        return -1;
+                    } else if (o1.getRentStartTime() == null && o2.getRentStartTime()==null) {
+                        return 1;
+                    }else {
+                        int i = Integer.valueOf(String.valueOf(o1.getRentStartTime().getTime()/1000 - o2.getRentStartTime().getTime()/1000));
+                        return i;
+                    }
+                }
+            });
 
             String sheetName = "";
             if (checkStatementOrder.getMonthTime() != null) {
@@ -591,43 +603,5 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         }
         return "";
     }
-    private List<CheckStatementOrderDetail> sortingCheckStatementOrderDetail(List<CheckStatementOrderDetail> statementOrderDetailList) {
-
-        //存放非退货单结算单详情项
-        List<CheckStatementOrderDetail> notReturnOrderList = new ArrayList<>();
-        //存放最终结果
-        List<CheckStatementOrderDetail> allList = new ArrayList<>();
-        //存放退货结算单详情项其它费用项
-        List<CheckStatementOrderDetail> returnOrderOtherList = new ArrayList<>();
-        //存放退货结算单商品、配件项
-        Map<Integer, List<CheckStatementOrderDetail>> returnOrderProudctAndMaterialMap = new HashMap<>();
-        for (CheckStatementOrderDetail statementOrderDetail : statementOrderDetailList) {
-            if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
-                notReturnOrderList.add(statementOrderDetail);
-            } else {
-                if (null == statementOrderDetail.getReturnReferId()) {
-                    returnOrderOtherList.add(statementOrderDetail);
-                } else {
-                    if (null != returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId())) {
-                        returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId()).add(statementOrderDetail);
-                    } else {
-                        List<CheckStatementOrderDetail> returnOrderProudctAndMaterialList = new ArrayList<>();
-                        returnOrderProudctAndMaterialList.add(statementOrderDetail);
-                        returnOrderProudctAndMaterialMap.put(statementOrderDetail.getReturnReferId(), returnOrderProudctAndMaterialList);
-                    }
-                }
-            }
-        }
-        if (CollectionUtil.isNotEmpty(returnOrderOtherList)) {
-            allList.addAll(returnOrderOtherList);
-        }
-        for (CheckStatementOrderDetail checkStatementOrderDetail:notReturnOrderList) {
-            allList.add(checkStatementOrderDetail);
-            List<CheckStatementOrderDetail> statementOrderDetails = returnOrderProudctAndMaterialMap.get(checkStatementOrderDetail.getStatementOrderDetailId());
-            if (CollectionUtil.isNotEmpty(statementOrderDetails)) {
-                allList.addAll(statementOrderDetails);
-            }
-        }
-        return allList;
-    }
+    
 }

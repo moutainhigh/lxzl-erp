@@ -187,8 +187,8 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void exportQueryStatementOrderCheckParam() throws Exception {
-        String str = "2018-05";
-        String str1 = "2018-05";
+        String str = "2017-01";
+        String str1 = "2018-07";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
         Date rentStartTime = sdf.parse(str);
         Date rentStartTime1 = sdf.parse(str1);
@@ -198,7 +198,7 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
 //        param.setOwnerName("来春");
 //        param.setSubCompanyId(2);
 //        param.setStatementOrderCustomerName("庄凯麟勿动");
-        param.setStatementOrderCustomerNo("LXCC-2000-20180212-02986");
+        param.setStatementOrderCustomerNo("LXCC-027-20180710-00034");
         param.setStatementOrderStartTime(rentStartTime1);
         param.setStatementOrderEndTime(rentStartTime);
 //        param.setMonthTime(rentStartTime);
