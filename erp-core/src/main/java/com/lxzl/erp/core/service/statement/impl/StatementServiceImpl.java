@@ -5365,6 +5365,7 @@ public class StatementServiceImpl implements StatementService {
                                 detail.setItemSkuName(checkStatementOrderDetail.getItemSkuName());
                                 detail.setUnitAmount(checkStatementOrderDetail.getUnitAmount());
                                 detail.setStatementDetailAmount(BigDecimal.ZERO);
+                                detail.setReturnReferId(checkStatementOrderDetail.getStatementOrderDetailId());
                             }
                             newList.addAll(returnCheckStatementOrderDetailList);
                         }
@@ -5541,7 +5542,7 @@ public class StatementServiceImpl implements StatementService {
                         if (reletOrderProductDO != null) {
                             statementOrderDetail.setItemName(reletOrderProductDO.getProductName());
                             statementOrderDetail.setItemSkuName(reletOrderProductDO.getProductSkuName());
-                            statementOrderDetail.setItemCount(reletOrderProductDO.getRentingProductCount());
+                            statementOrderDetail.setItemCount(reletOrderProductDO.getProductCount());
                             statementOrderDetail.setUnitAmount(reletOrderProductDO.getProductUnitAmount());
                             statementOrderDetail.setItemRentType(orderDO.getRentType());
                         }
@@ -5551,7 +5552,7 @@ public class StatementServiceImpl implements StatementService {
                         if (reletOrderMaterialDO != null) {
                             statementOrderDetail.setItemName(reletOrderMaterialDO.getMaterialName());
                             statementOrderDetail.setItemSkuName("无");
-                            statementOrderDetail.setItemCount(reletOrderMaterialDO.getRentingMaterialCount());
+                            statementOrderDetail.setItemCount(reletOrderMaterialDO.getMaterialCount());
                             statementOrderDetail.setUnitAmount(reletOrderMaterialDO.getMaterialUnitAmount());
                             statementOrderDetail.setItemRentType(orderDO.getRentType());
                         }

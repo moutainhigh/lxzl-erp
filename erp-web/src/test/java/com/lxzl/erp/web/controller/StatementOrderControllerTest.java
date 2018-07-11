@@ -198,7 +198,7 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
 //        param.setOwnerName("来春");
 //        param.setSubCompanyId(2);
 //        param.setStatementOrderCustomerName("庄凯麟勿动");
-        param.setStatementOrderCustomerNo("LXCC-020-20180212-00132");
+        param.setStatementOrderCustomerNo("LXCC-2000-20180212-02986");
         param.setStatementOrderStartTime(rentStartTime1);
         param.setStatementOrderEndTime(rentStartTime);
 //        param.setMonthTime(rentStartTime);
