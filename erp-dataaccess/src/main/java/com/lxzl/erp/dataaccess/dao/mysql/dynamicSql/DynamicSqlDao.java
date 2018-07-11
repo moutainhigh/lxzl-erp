@@ -12,8 +12,8 @@ import java.util.Map;
 @Mapper
 public interface DynamicSqlDao {
 
-    @SelectProvider(type = DynamicSqlDaoProvider.class, method = "executeSql")
-    List<Map> selectBySql(String sql) throws SQLException;
+//    @SelectProvider(type = DynamicSqlDaoProvider.class, method = "executeSql")
+//    List<Map> selectBySql(String sql) throws SQLException;
 
     @InsertProvider(type = DynamicSqlDaoProvider.class, method = "executeSql")
     int insertBySql(String sql) throws SQLException;

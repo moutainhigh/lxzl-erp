@@ -4,17 +4,20 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.base.BasePageParam;
+import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlParam;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlQueryParam;
-import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
 import com.lxzl.erp.common.domain.dynamicSql.pojo.DynamicSql;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.IdCardCheckUtil;
 import com.lxzl.erp.core.service.dynamicSql.DynamicSqlService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.dataaccess.dao.jdbc.dynamicSql.impl.DynamicSqlDaoImpl;
 import com.lxzl.erp.dataaccess.dao.mysql.dynamicSql.DynamicSqlDao;
 import com.lxzl.erp.dataaccess.dao.mysql.dynamicSql.DynamicSqlHolderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.dynamicSql.DynamicSqlMapper;
 import com.lxzl.erp.dataaccess.domain.dynamicSql.DynamicSqlDO;
+import com.lxzl.erp.dataaccess.domain.dynamicSql.DynamicSqlHolderDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
@@ -54,23 +57,23 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     @Autowired
     private DynamicSqlHolderMapper dynamicSqlHolderMapper;
 
+    @Autowired
+    private DynamicSqlDaoImpl dynamicSqlDaoImpl;
+
     @Override
-    public ServiceResult<String, List<Map>> executeBySql(DynamicSqlSelectParam dynamicSqlSelectParam) {
-        ServiceResult<String, List<Map>> serviceResult = new ServiceResult<>();
-        if (dynamicSqlSelectParam.getLimit() == null || dynamicSqlSelectParam.getLimit() <= 0) {
-            dynamicSqlSelectParam.setLimit(totalReturnCount);
+    public ServiceResult<String, List<List<Object>>> executeBySql(DynamicSqlParam dynamicSqlParam) {
+        ServiceResult<String, List<List<Object>>> serviceResult = new ServiceResult<>();
+        if (dynamicSqlParam.getLimit() == null || dynamicSqlParam.getLimit() <= 0) {
+            dynamicSqlParam.setLimit(totalReturnCount);
         }
 
-        String sql = dynamicSqlSelectParam.getSql().trim();
-
+        String sql = dynamicSqlParam.getSql().trim();
         StringBuilder word = new StringBuilder();
         String upperCaseSql = sql.toUpperCase();
-
 
         boolean checkKeyWork = false;
         boolean isString = false;
         boolean isString2 = false;
-
         boolean hasSelect = false;
         boolean hasUpdate = false;
         boolean hasDelete = false;
@@ -168,36 +171,66 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         if (hasDelete) {
             throw new BusinessException(ErrorCode.DELETE_PROTECTION);
         } else if (hasInsertInto) {
-            dynamicSqlSelectParam.setSql(sql);
-            serviceResult = insertBySql(dynamicSqlSelectParam);
+            dynamicSqlParam.setSql(sql);
+            DynamicSqlHolderDO dynamicSqlHolderDO = new DynamicSqlHolderDO();
+            dynamicSqlHolderDO.setSqlContent(sql);
+            dynamicSqlHolderDO.setSqlTpye("INSERTINTO");
+            dynamicSqlHolderDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            dynamicSqlHolderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            dynamicSqlHolderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            int affectedRows = dynamicSqlHolderMapper.save(dynamicSqlHolderDO);
+            List<List<Object>> arrayList = new ArrayList<>();
+            List<Object> list = new ArrayList<>();
+            arrayList.add(list);
+            serviceResult.setResult(arrayList);
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            if (affectedRows >= 1)
+                list.add("INSERT INTO 操作需要被审核才可执行");
+            else
+                list.add("申请 INSERT INTO 操作失败");
         } else if (hasUpdate) {
-            dynamicSqlSelectParam.setSql(sql);
-            serviceResult = updateBySql(dynamicSqlSelectParam);
+            dynamicSqlParam.setSql(sql);
+            DynamicSqlHolderDO dynamicSqlHolderDO = new DynamicSqlHolderDO();
+            dynamicSqlHolderDO.setSqlContent(sql);
+            dynamicSqlHolderDO.setSqlTpye("UPDATE");
+            dynamicSqlHolderDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            dynamicSqlHolderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            dynamicSqlHolderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            int affectedRows = dynamicSqlHolderMapper.save(dynamicSqlHolderDO);
+            List<List<Object>> arrayList = new ArrayList<>();
+            List<Object> list = new ArrayList<>();
+            arrayList.add(list);
+            serviceResult.setResult(arrayList);
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            if (affectedRows >= 1)
+                list.add("UPDATE 操作需要被审核才可执行");
+            else
+                list.add("申请 UPDATE 操作失败");
         } else if (hasSelect) {
             if (!hasLimit)
-                sql = sql + " LIMIT " + dynamicSqlSelectParam.getLimit();
-            dynamicSqlSelectParam.setSql(sql);
-            serviceResult = selectBySql(dynamicSqlSelectParam);
+                sql = sql + " LIMIT " + dynamicSqlParam.getLimit();
+            dynamicSqlParam.setSql(sql);
+            serviceResult = selectBySql(dynamicSqlParam);
         }
 
         return serviceResult;
     }
 
     @Override
-    public ServiceResult<String, List<Map>> selectBySql(DynamicSqlSelectParam dynamicSqlSelectParam) {
-        ServiceResult<String, List<Map>> serviceResult = new ServiceResult<>();
-        List<Map> results;
+    public ServiceResult<String, List<List<Object>>> selectBySql(DynamicSqlParam dynamicSqlParam) {
+        ServiceResult<String, List<List<Object>>> serviceResult = new ServiceResult<>();
+        List<List<Object>> results;
         try {
-            results = dynamicSqlDao.selectBySql(dynamicSqlSelectParam.getSql());
+            results = dynamicSqlDaoImpl.selectBySql(dynamicSqlParam.getSql());
         } catch (SQLException e) {
             throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
 
         if (results.size() == 0) {
-            HashMap hashMap = new HashMap<String, String>() {{
-                put("result", "Data is not found");
+            List list = new ArrayList() {{
+                add("Data is not found");
             }};
-            results.add(hashMap);
+            results.add(list);
         }
         serviceResult.setResult(results);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -205,11 +238,11 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     }
 
     @Override
-    public ServiceResult<String, List<Map>> updateBySql(DynamicSqlSelectParam dynamicSqlSelectParam) {
+    public ServiceResult<String, List<Map>> updateBySql(DynamicSqlParam dynamicSqlParam) {
         ServiceResult<String, List<Map>> serviceResult = new ServiceResult<>();
         final int mark;
         try {
-            mark = dynamicSqlDao.updateBySql(dynamicSqlSelectParam.getSql());
+            mark = dynamicSqlDao.updateBySql(dynamicSqlParam.getSql());
         } catch (SQLException e) {
             throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
@@ -224,11 +257,11 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     }
 
     @Override
-    public ServiceResult<String, List<Map>> insertBySql(DynamicSqlSelectParam dynamicSqlSelectParam) {
+    public ServiceResult<String, List<Map>> insertBySql(DynamicSqlParam dynamicSqlParam) {
         ServiceResult<String, List<Map>> serviceResult = new ServiceResult<>();
         final int mark;
         try {
-            mark = dynamicSqlDao.insertBySql(dynamicSqlSelectParam.getSql());
+            mark = dynamicSqlDao.insertBySql(dynamicSqlParam.getSql());
         } catch (SQLException e) {
             throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
@@ -240,12 +273,37 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
             add(hashMap);
         }});
         return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, List<DynamicSqlHolderDO>> pageDynamicSqlHolder(BasePageParam basePageParam) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("pageNo", basePageParam.getPageNo());
+        map.put("pageSize", basePageParam.getPageSize());
+        ServiceResult<String, List<DynamicSqlHolderDO>> serviceResult = new ServiceResult<>();
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(dynamicSqlHolderMapper.listPage(map));
+        return serviceResult;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, DynamicSqlHolderDO> adoptDynamicSqlHolder(Integer dynamicSqlHolderId) {
+        DynamicSqlHolderDO dynamicSqlHolderDO = dynamicSqlHolderMapper.findById(dynamicSqlHolderId);
+        String sqlTpye = dynamicSqlHolderDO.getSqlTpye();
+        switch (sqlTpye) {
+            case "UPDATE":
+                break;
+            case "INSERTINTO":
+                break;
+        }
+        return null;
     }
 
     /*
     @Override
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
-    public ServiceResult<String, List<List<Object>>> selectBySql(DynamicSqlSelectParam dynamicSqlSelectParam) {
+    public ServiceResult<String, List<List<Object>>> selectBySql(DynamicSqlParam dynamicSqlSelectParam) {
         ServiceResult<String, List<List<Object>>> serviceResult = new ServiceResult<>();
         List<List<Object>> listList;
 

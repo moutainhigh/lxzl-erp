@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * @Date: 2018/5/26
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DynamicSqlSelectParam extends BasePageParam {
+public class DynamicSqlParam extends BasePageParam {
 
     @NotBlank(message = ErrorCode.PARAM_IS_NOT_NULL)
     private String sql;

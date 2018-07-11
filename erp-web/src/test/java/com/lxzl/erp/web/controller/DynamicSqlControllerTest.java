@@ -1,10 +1,9 @@
 package com.lxzl.erp.web.controller;
 
-import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlParam;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlQueryParam;
-import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
 import com.lxzl.erp.common.domain.dynamicSql.pojo.DynamicSql;
 import org.junit.Test;
 
@@ -27,9 +26,9 @@ public class DynamicSqlControllerTest extends ERPUnTransactionalTest {
         String sql6 = "select * from erp_customer";
 
 
-        DynamicSqlSelectParam dynamicSqlSelectParam = new DynamicSqlSelectParam();
-        dynamicSqlSelectParam.setSql(sql6);
-        TestResult result = getJsonTestResult("/dynamicSql/select", dynamicSqlSelectParam);
+        DynamicSqlParam dynamicSqlParam = new DynamicSqlParam();
+        dynamicSqlParam.setSql(sql6);
+        TestResult result = getJsonTestResult("/dynamicSql/select", dynamicSqlParam);
     }
 
     @Test

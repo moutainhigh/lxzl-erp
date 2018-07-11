@@ -1,10 +1,10 @@
 package com.lxzl.erp.web.controller;
 
-import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.base.BasePageParam;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlQueryParam;
-import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
+import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlParam;
 import com.lxzl.erp.common.domain.dynamicSql.pojo.DynamicSql;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
@@ -21,11 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.List;
-import java.util.Map;
-
-import static com.lxzl.erp.web.util.ResultMapUtils.toLists;
-
 /**
  * <p>Description: </p>
  *
@@ -38,18 +33,19 @@ import static com.lxzl.erp.web.util.ResultMapUtils.toLists;
 public class DynamicSqlController extends BaseController {
 
     @RequestMapping(value = "select", method = RequestMethod.POST)
-    public Result executeBySql(@RequestBody DynamicSqlSelectParam dynamicSqlSelectParam) {
-        ServiceResult<String, List<Map>> result = dynamicSqlService.executeBySql(dynamicSqlSelectParam);
-        ServiceResult<String, List<List<Object>>> serviceResult = new ServiceResult<>();
-        serviceResult.setErrorCode(result.getErrorCode());
-        if (serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
-            List<Map> maps = result.getResult();
-            List<List<Object>> results = toLists(maps);
-            serviceResult.setResult(results);
-        }
-        return resultGenerator.generate(serviceResult);
+    public Result executeBySql(@RequestBody DynamicSqlParam dynamicSqlParam) {
+        return resultGenerator.generate(dynamicSqlService.executeBySql(dynamicSqlParam));
     }
 
+    @RequestMapping(value = "list", method = RequestMethod.POST)
+    public Result listExecuteBySql(BasePageParam basePageParam) {
+        return resultGenerator.generate(dynamicSqlService.pageDynamicSqlHolder(basePageParam));
+    }
+
+    @RequestMapping(value = "adopt", method = RequestMethod.POST)
+    public Result adoptExecuteBySql(Integer dynamicSqlHolderId) {
+        return resultGenerator.generate(dynamicSqlService.adoptDynamicSqlHolder(dynamicSqlHolderId));
+    }
 
 
     @RequestMapping(value = "create", method = RequestMethod.POST)

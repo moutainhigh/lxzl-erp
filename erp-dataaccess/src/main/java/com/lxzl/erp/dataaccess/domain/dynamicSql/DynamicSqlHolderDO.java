@@ -13,7 +13,7 @@ public class DynamicSqlHolderDO extends BaseDO {
     private String sqlTpye;
     private Integer status;
     private String results;
-    private Integer data_status;
+    private Integer dataStatus;
 
     public Integer getId() {
         return id;
@@ -55,11 +55,11 @@ public class DynamicSqlHolderDO extends BaseDO {
         this.results = results;
     }
 
-    public Integer getData_status() {
-        return data_status;
+    public Integer getDataStatus() {
+        return dataStatus;
     }
 
-    public void setData_status(Integer data_status) {
-        this.data_status = data_status;
+    public void setDataStatus(Integer dataStatus) {
+        this.dataStatus = dataStatus;
     }
 }
