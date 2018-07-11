@@ -426,7 +426,7 @@ public class PaymentServiceImpl implements PaymentService {
                 paymentChargeRecordPageParam.setBusinessCustomerNo(null);
             }
 
-            requestJson = JSON.toJSONString(paymentChargeRecordPageParam);
+
 
 
 //            if ((chargeRecordPageParam.getCustomerName() != null && chargeRecordPageParam.getCustomerName() != "") && (chargeRecordPageParam.getBusinessCustomerNo() != null && chargeRecordPageParam.getBusinessCustomerNo() != "")) {
@@ -502,6 +502,9 @@ public class PaymentServiceImpl implements PaymentService {
 //                    }
 //                }
 //            }
+
+            requestJson = JSON.toJSONString(paymentChargeRecordPageParam);
+
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
@@ -511,6 +514,7 @@ public class PaymentServiceImpl implements PaymentService {
                 Page<ChargeRecord> chargeRecordPage = new Page<>();
                 List<ChargeRecord> chargeRecordList = new ArrayList<>();
                 List<String> customerNoList = new ArrayList<>();
+                List<String> customerNameList = new ArrayList<>();
                 for (JSONObject jsonObject : paymentChargeRecordPageList) {
                     ChargeRecord chargeRecord = JSON.parseObject(jsonObject.toJSONString(), ChargeRecord.class);
                     if (jsonObject.get("chargeBodyId") != null) {
@@ -521,6 +525,7 @@ public class PaymentServiceImpl implements PaymentService {
                     }
                     if (jsonObject.get("businessCustomerName") != null) {
                         chargeRecord.setCustomerName(jsonObject.get("businessCustomerName").toString());
+                        customerNameList.add(jsonObject.get("businessCustomerName").toString());
                     }
 //                    ChargeRecord chargeRecord = JSON.parseObject(JSON.toJSONString(paymentChargeRecord),ChargeRecord.class);
 //                    PaymentChargeRecord paymentChargeRecordPojo = JSONUtil.parseObject(paymentChargeRecord, PaymentChargeRecord.class);
@@ -529,6 +534,8 @@ public class PaymentServiceImpl implements PaymentService {
                     if (chargeRecord.getBusinessCustomerNo().startsWith("LX")) {
                         customerNoList.add(chargeRecord.getBusinessCustomerNo());
                     }
+
+
                 }
 
 //                for (int i = 0; i < paymentChargeRecordPageList.size(); i++) {
@@ -555,11 +562,53 @@ public class PaymentServiceImpl implements PaymentService {
                                     chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
                                     chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
                                     chargeRecord.setCustomerName(customerDO.getCustomerName());
+                                    chargeRecord.setIsErpCustomer(1);
+                                } else {
+                                    chargeRecord.setIsErpCustomer(0);
+                                }
+                            }
+                        }
+                    } else {
+                        if (CollectionUtil.isNotEmpty(customerNameList)) {
+                            //如果客户编号查询不到数据，就通过用户名进行erp客户查询
+                            List<CustomerDO> customerDONameList = customerMapper.findByCustomerNameList(customerNoList);
+                            if (CollectionUtil.isNotEmpty(customerDONameList)) {
+                                Map<Object, CustomerDO> customerMap = ListUtil.listToMap(customerDONameList, "customerName");
+                                if (CollectionUtil.isNotEmpty(chargeRecordList)) {
+                                    for (ChargeRecord chargeRecord : chargeRecordList) {
+                                        if (customerMap.get(chargeRecord.getCustomerName()) != null) {
+                                            chargeRecord.setIsErpCustomer(1);
+                                        } else {
+                                            chargeRecord.setIsErpCustomer(0);
+                                        }
+                                    }
+                                }
+                            } else {
+                                if (CollectionUtil.isNotEmpty(chargeRecordList)) {
+                                    for (ChargeRecord chargeRecord : chargeRecordList) {
+                                        chargeRecord.setIsErpCustomer(0);
+                                    }
+                                }
+                            }
+                        } else {
+                            if (CollectionUtil.isNotEmpty(chargeRecordList)) {
+                                for (ChargeRecord chargeRecord : chargeRecordList) {
+                                    chargeRecord.setIsErpCustomer(0);
                                 }
                             }
                         }
                     }
                 }
+
+                //客户编号和客户名称都是都没有的情况
+                if (CollectionUtil.isEmpty(customerNoList) && CollectionUtil.isEmpty(customerNameList)) {
+                    if (CollectionUtil.isNotEmpty(chargeRecordList)) {
+                        for (ChargeRecord chargeRecord : chargeRecordList) {
+                            chargeRecord.setIsErpCustomer(0);
+                        }
+                    }
+                }
+
                 chargeRecordPage.setItemList(chargeRecordList);
                 chargeRecordPage.setPageSize(paymentChargeRecordPage.getPageSize());
                 chargeRecordPage.setPageCount(paymentChargeRecordPage.getPageCount());
