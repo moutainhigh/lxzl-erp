@@ -262,6 +262,7 @@
     </script>
 
     <div class="book" id="renturnOrderPagers">
+        #parse("component/loading.vm")
         <div class="page">
             <div class="printHead">
                 <div class="print-col">

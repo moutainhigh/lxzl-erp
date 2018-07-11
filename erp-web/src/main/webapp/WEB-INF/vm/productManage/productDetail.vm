@@ -19,6 +19,9 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
+
+            #parse("component/loading.vm")
+
             <div class="row">
                 <div class="col-md-12 center-block">
                     <div class="admin-form theme-primary">
