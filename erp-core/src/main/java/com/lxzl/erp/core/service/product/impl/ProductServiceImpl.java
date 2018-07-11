@@ -759,7 +759,7 @@ public class ProductServiceImpl implements ProductService {
             return ErrorCode.PRODUCT_K3_PRODUCT_NO_NOT_NULL;
         }
 
-        if (productSupport.isProduct(product.getK3ProductNo())){
+        if (!productSupport.isProduct(product.getK3ProductNo())){
             return ErrorCode.PRODUCT_K3_PRODUCT_NO_IS_ERROR;
         }
 
