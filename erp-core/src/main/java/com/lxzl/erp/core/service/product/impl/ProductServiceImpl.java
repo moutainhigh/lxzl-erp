@@ -755,7 +755,7 @@ public class ProductServiceImpl implements ProductService {
             return ErrorCode.PRODUCT_SKU_NOT_NULL;
         }
 
-        if (product.getK3ProductNo() == null){
+        if (StringUtil.isEmpty(product.getK3ProductNo())){
             return ErrorCode.PRODUCT_K3_PRODUCT_NO_NOT_NULL;
         }
 

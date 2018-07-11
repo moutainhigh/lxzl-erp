@@ -384,7 +384,7 @@ public class MaterialServiceImpl implements MaterialService {
                 || material.getNewMaterialPrice() == null
                 || material.getNewDayRentPrice() == null
                 || material.getNewMonthRentPrice() == null
-                || material.getK3MaterialNo() == null) {
+                || StringUtil.isEmpty(material.getK3MaterialNo())) {
             return ErrorCode.PARAM_IS_NOT_ENOUGH;
         }
 
