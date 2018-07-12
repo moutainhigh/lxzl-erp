@@ -24,4 +24,7 @@ public interface K3CallbackService extends BaseService {
     ServiceResult<String,String> callbackReturnOrder(K3ReturnOrder k3ReturnOrder);
 
     ServiceResult<String, String> callbackReturnDetail(K3ReturnOrder k3ReturnOrder,K3ReturnOrderDO k3ReturnOrderDO);
+
+    /** 手动回调退货单 */
+    ServiceResult<String, String> callbackManualReturnOrder(String returnOrderNo);
 }

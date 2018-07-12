@@ -32,7 +32,7 @@ public class K3CallbackControllerTest extends ERPTransactionalTest {
     @Test
     public void callbackReturnOrder() throws Exception {
         K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
-        k3ReturnOrder.setReturnOrderNo("LXK3RO20180328035118307");
+        k3ReturnOrder.setReturnOrderNo("LXK3RO20180626135449862");
         k3ReturnOrder.setUpdateUserRealName("喻晓艳");
 
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = new ArrayList<>();
@@ -44,6 +44,13 @@ public class K3CallbackControllerTest extends ERPTransactionalTest {
 
         k3ReturnOrder.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         TestResult testResult = getJsonTestResult("/k3Callback/callbackReturnOrder",k3ReturnOrder);
+    }
+
+    @Test
+    public void callbackManualReturnOrder() throws Exception {
+        K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
+        k3ReturnOrder.setReturnOrderNo("LXK3RO20180615110256198");
+        TestResult testResult = getJsonTestResult("/k3Callback/callbackManualReturnOrder",k3ReturnOrder);
     }
 
 
