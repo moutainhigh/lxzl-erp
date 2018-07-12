@@ -127,14 +127,6 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             dingDingSupport.dingDingSendMessage(customerNoParam + "无对账单");
             return result;
         }
-//        //处理没单价产品结算日期时间
-//        Map<String,Map<Integer,CheckStatementOrderDetail>> monthMap = new HashMap<>();
-//        for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-//            List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
-//
-//        }
-
-
 
         Map<String, BigDecimal> totalEverPeriodAmountMap = new HashMap<>();
         Map<String, BigDecimal> totalEverPeriodPaidAmountMap = new HashMap<>();
@@ -346,9 +338,31 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
                 exportList.add(exportStatementOrderDetailBase);
             }
+            //对订单中有单价且有结算时间的商品进行存储
+            Map<String,String> orderProductMap = new HashMap<>();
+            if (CollectionUtil.isNotEmpty(exportList)) {
+                for (CheckStatementOrderDetailBase checkStatementOrderDetailBase: exportList) {
+                    if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(checkStatementOrderDetailBase.getOrderType())
+                            && BigDecimalUtil.compare(checkStatementOrderDetailBase.getUnitAmount(),BigDecimal.ZERO)>0) {
+                        if (!orderProductMap.containsKey(checkStatementOrderDetailBase.getOrderNo())
+                                && StringUtil.isNotEmpty(checkStatementOrderDetailBase.getCurrentPeriodStartAndEnd())) {
+                            orderProductMap.put(checkStatementOrderDetailBase.getOrderNo(), checkStatementOrderDetailBase.getCurrentPeriodStartAndEnd());
+                        }
+                    }
+                }
+            }
+            //对没有单价的商品处理时间
+            for (CheckStatementOrderDetailBase checkStatementOrderDetailBase: exportList) {
+                if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(checkStatementOrderDetailBase.getOrderType())
+                        && BigDecimalUtil.compare(checkStatementOrderDetailBase.getUnitAmount(),BigDecimal.ZERO)==0) {
+                    if (!orderProductMap.isEmpty() && orderProductMap.containsKey(checkStatementOrderDetailBase.getOrderNo())) {
+                        String currentPeriodStartAndEnd = orderProductMap.get(checkStatementOrderDetailBase.getOrderNo());
+                        checkStatementOrderDetailBase.setCurrentPeriodStartAndEnd(currentPeriodStartAndEnd);
+                    }
+                }
+            }
 
             //按照租赁日期进行排序
-            List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
             Collections.sort(exportList, new Comparator<CheckStatementOrderDetailBase>() {
                 @Override
                 public int compare(CheckStatementOrderDetailBase o1, CheckStatementOrderDetailBase o2) {
