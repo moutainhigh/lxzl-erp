@@ -2497,7 +2497,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     // k3退货回调使用
-    public ServiceResult<String, BigDecimal> createK3ReturnOrderStatementThrowException(String returnOrderNo) {
+    public ServiceResult<String, BigDecimal> createK3ReturnOrderStatementNoTransaction(String returnOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);
         if (k3ReturnOrderDO == null) {

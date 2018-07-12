@@ -346,7 +346,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                 // 设置事务回滚点
                 Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
                 try{
-                    ServiceResult<String,BigDecimal> result = statementService.createK3ReturnOrderStatementThrowException(k3ReturnOrderDO.getReturnOrderNo());
+                    ServiceResult<String,BigDecimal> result = statementService.createK3ReturnOrderStatementNoTransaction(k3ReturnOrderDO.getReturnOrderNo());
                     if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
                         // 创建结算单部分回滚
                         TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
