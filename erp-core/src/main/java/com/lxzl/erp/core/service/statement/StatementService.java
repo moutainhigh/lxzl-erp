@@ -164,6 +164,7 @@ public interface StatementService extends BaseService {
      */
     ServiceResult<String, BigDecimal> createReturnOrderStatement(String returnOrderNo);
     ServiceResult<String, BigDecimal> createK3ReturnOrderStatement(String returnOrderNo);
+    ServiceResult<String, BigDecimal> createK3ReturnOrderStatementThrowException(String returnOrderNo);
 
     /**
      * 创建换货单结算单
