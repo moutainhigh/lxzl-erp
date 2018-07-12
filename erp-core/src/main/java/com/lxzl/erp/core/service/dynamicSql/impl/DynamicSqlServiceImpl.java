@@ -111,11 +111,11 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         try {
             results = jdbcDynamicSqlDao.selectBySql(dynamicSqlSelectParam.getSql());
         } catch (SQLException | BadSqlGrammarException e) {
-//            List<Object> list = new ArrayList<Object>() {{
-//                add("动态SQL查询语句不正确");
-//            }};
-//            results.add(list);
-            throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
+            List<Object> list = new ArrayList<Object>() {{
+                add(e.getMessage());
+            }};
+            results.add(list);
+//            throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
 
         if (results.size() == 0) {
