@@ -16,12 +16,15 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
+<<<<<<< HEAD
 
             #parse("component/loading.vm")
             
+=======
+            #parse("component/loading.vm")
+>>>>>>> 5c76fc026689153944019d8082a456db37165e55
             <form class="" id="detailOrderForm">
                 <div class="panel panel-primary panel-border top mb35">
-
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-4">

@@ -19,7 +19,10 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5c76fc026689153944019d8082a456db37165e55
             #parse("component/loading.vm")
             <div class="row">
                 <div class="col-md-12 center-block">

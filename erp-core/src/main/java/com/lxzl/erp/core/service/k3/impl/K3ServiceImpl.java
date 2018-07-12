@@ -91,10 +91,10 @@ public class K3ServiceImpl implements K3Service {
 
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
 
-    private String k3OrderUrl = K3Config.k3Server + "/order/list";
-    private String k3OrderDetailUrl = K3Config.k3Server + "/order/order";
-    // k3历史退货单url
-    private String k3HistoricalRefundListUrl = K3Config.k3Server + "/SEOutstock/list";
+//    private String k3OrderUrl = K3Config.k3Server + "/order/list";
+//    private String k3OrderDetailUrl = K3Config.k3Server + "/order/order";
+//    // k3历史退货单url
+//    private String k3HistoricalRefundListUrl = K3Config.k3Server + "/SEOutstock/list";
     String pw = "5113f85e846056594bed8e2ece8b1cbd";
 
 //    private static final String k3ReletOrderUrl = "http://103.239.207.170:9090/OrderConfirml/OeletOrder";
@@ -169,7 +169,7 @@ public class K3ServiceImpl implements K3Service {
             }
             jsonObject.put("pw", pw);
             requestJson = jsonObject.toJSONString();
-            String response = HttpClientUtil.post(k3OrderUrl, requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(K3Config.k3Server + "/order/list", requestJson, headerBuilder, "UTF-8");
             logger.info("query k3 order page response:{}", response);
             JSONObject postResult = JSON.parseObject(response);
 
@@ -303,7 +303,7 @@ public class K3ServiceImpl implements K3Service {
             jsonObject.put("orderNo", orderNo);
             jsonObject.put("pw", pw);
             String requestJson = jsonObject.toJSONString();
-            String response = HttpClientUtil.post(k3OrderDetailUrl, requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(K3Config.k3Server + "/order/order", requestJson, headerBuilder, "UTF-8");
 
             logger.info("query k3 order page response:{}", response);
             JSONObject postResult = JSON.parseObject(response);
@@ -749,7 +749,7 @@ public class K3ServiceImpl implements K3Service {
         HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
         headerBuilder.contentType("application/json");
         try {
-            String response = HttpClientUtil.post(k3HistoricalRefundListUrl, requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(K3Config.k3Server + "/SEOutstock/list", requestJson, headerBuilder, "UTF-8");
             result.setResult(response);
             return result;
         } catch (UnsupportedEncodingException e) {

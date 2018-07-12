@@ -78,7 +78,7 @@ public interface StatementService extends BaseService {
      * @return
      */
     ServiceResult<String, BigDecimal> reCreateOrderStatement(OrderStatementDateSplit k3StatementDateChange);
-    ServiceResult<String, BigDecimal> reCreateOrderStatementAllowConfirmCustommer(String orderNo);
+    ServiceResult<String, BigDecimal> reCreateOrderStatementAllowConfirmCustommer(OrderDO orderDO);
 
 
     /**
@@ -164,6 +164,13 @@ public interface StatementService extends BaseService {
      */
     ServiceResult<String, BigDecimal> createReturnOrderStatement(String returnOrderNo);
     ServiceResult<String, BigDecimal> createK3ReturnOrderStatement(String returnOrderNo);
+
+    /**
+     * 创建k3退货结算单，不添加事务（事务嵌套部分回滚有问题），只在k3退货回调时调用
+     * @param returnOrderNo
+     * @return
+     */
+    ServiceResult<String, BigDecimal> createK3ReturnOrderStatementNoTransaction(String returnOrderNo);
 
     /**
      * 创建换货单结算单
