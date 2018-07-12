@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.reletorder.impl;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.dingding.DingDingCommonMsg;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.messagethirdchannel.pojo.MessageThirdChannel;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
@@ -17,9 +18,11 @@ import com.lxzl.erp.common.domain.reletorder.ReletOrderQueryParam;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderMaterial;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderProduct;
+import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.messagethirdchannel.MessageThirdChannelService;
@@ -29,11 +32,13 @@ import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.reletorder.ReletOrderService;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
+import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.dingdingGroupMessageConfig.DingdingGroupMessageConfigMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
@@ -42,6 +47,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderProductMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
+import com.lxzl.erp.dataaccess.domain.dingdingGroupMessageConfig.DingdingGroupMessageConfigDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
@@ -75,7 +81,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
     private static Logger logger = LoggerFactory.getLogger(ReletOrderServiceImpl.class);
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, ReletOrderCreateResult> createReletOrder(Order order) {
         ServiceResult<String, ReletOrderCreateResult> result = new ServiceResult<>();
         ReletOrderCreateResult reletOrderCreateResult = new ReletOrderCreateResult();
@@ -98,9 +104,13 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             result.setErrorCode(orderServiceResult.getErrorCode());
             return result;
         }
-        //如果按天租的订单，续租时长不允许超过89天
+        //如果按天租的订单，续租时长不允许超过89天   //按月租的订单，续租时长不允许超过2年
         if(OrderRentType.RENT_TYPE_DAY.equals(orderServiceResult.getResult().getRentType())&&order.getRentTimeLength()>89){
             result.setErrorCode(ErrorCode.RELET_ORDER_RENT_TYPE_DAY_CAN_NOT_RENT_TOO_LONG);
+            return result;
+        }
+        else if(OrderRentType.RENT_TYPE_MONTH.equals(orderServiceResult.getResult().getRentType())&&order.getRentTimeLength()>24){
+            result.setErrorCode(ErrorCode.RELET_ORDER_RENT_TYPE_MONTH_CAN_NOT_RENT_TOO_LONG);
             return result;
         }
         //查询是否有续租单信息
@@ -213,7 +223,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, ReletOrderCreateResult> updateReletOrder(ReletOrder reletOrder) {
         ServiceResult<String, ReletOrderCreateResult> result = new ServiceResult<>();
         ReletOrderCreateResult reletOrderCreateResult = new ReletOrderCreateResult();
@@ -232,6 +242,16 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrder.getReletOrderNo());
         if (reletOrderDO == null || !ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT.equals(reletOrderDO.getReletOrderStatus())) {
             result.setErrorCode(ErrorCode.RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_UPDATE);
+            return result;
+        }
+
+        //如果按天租的订单，续租时长不允许超过89天   //按月租的订单，续租时长不允许超过2年
+        if(OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType()) && reletOrder.getRentTimeLength()>89){
+            result.setErrorCode(ErrorCode.RELET_ORDER_RENT_TYPE_DAY_CAN_NOT_RENT_TOO_LONG);
+            return result;
+        }
+        else if(OrderRentType.RENT_TYPE_MONTH.equals(reletOrderDO.getRentType()) && reletOrder.getRentTimeLength()>24){
+            result.setErrorCode(ErrorCode.RELET_ORDER_RENT_TYPE_MONTH_CAN_NOT_RENT_TOO_LONG);
             return result;
         }
 
@@ -281,7 +301,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> commitReletOrder(ReletOrderCommitParam reletOrderCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -323,6 +343,10 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             result.setErrorCode(isNeedVerfyResult.getErrorCode());
             return result;
         }
+        //更新续租单 时间和修改人
+        reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        reletOrderDO.setUpdateTime(currentTime);
+
         if (isNeedVerfyResult.getResult()) {
             String orderRemark = "续租";
             ServiceResult<String, String> verifyMattersResult = getVerifyMatters(reletOrderDO);
@@ -364,11 +388,10 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             //推送K3消息
             k3Service.sendReletOrderInfoToK3(reletOrderDO, orderDO);
 
-
+            //发送钉钉续租成功消息
+            sendDingDingReletSuccessMessage(reletOrderDO);
         }
 
-        reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
-        reletOrderDO.setUpdateTime(currentTime);
         reletOrderMapper.update(reletOrderDO);
 
         result.setResult(reletOrderNo);
@@ -376,6 +399,29 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         return result;
     }
 
+    /**
+     * 续租成功发送钉钉群消息
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/6/28 20:05
+     * @param
+     * @return
+     */
+    private void sendDingDingReletSuccessMessage(ReletOrderDO reletOrderDO){
+        if (reletOrderDO == null || reletOrderDO.getOrderSubCompanyId() == null){
+            return;
+        }
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        List<DingdingGroupMessageConfigDO> dingdingGroupMessageConfigDOList = dingdingGroupMessageConfigMapper.findBySendTypeAndSubCompanyId(DingDingGroupMessageType.SEND_TYPE_RELET_SUCCESS,reletOrderDO.getOrderSubCompanyId());
+        for (DingdingGroupMessageConfigDO dingdingGroupMessageConfigDO : dingdingGroupMessageConfigDOList){
+            DingDingCommonMsg dingDingCommonMsg = new DingDingCommonMsg();
+            dingDingCommonMsg.setUserGroupUrl(dingdingGroupMessageConfigDO.getDingdingGroupUrl());
+            dingDingCommonMsg.setContent(dingdingGroupMessageConfigDO.getMessageContent());
+            dingDingSupport.dingDingSendMessage(dingDingCommonMsg, dingdingGroupMessageConfigDO.getMessageTitle(),
+                    reletOrderDO.getOrderSubCompanyName(), reletOrderDO.getOrderSellerName(), reletOrderDO.getBuyerCustomerName(),
+                    reletOrderDO.getOrderNo(), sdf.format(reletOrderDO.getUpdateTime()));
+        }
+    }
 
     /**
      * 审核注意事项
@@ -457,7 +503,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
             Date currentTime = new Date();
@@ -466,6 +512,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             if (reletOrderDO == null || !ReletOrderStatus.RELET_ORDER_STATUS_VERIFYING.equals(reletOrderDO.getReletOrderStatus())) {
                 return ErrorCode.BUSINESS_EXCEPTION;
             }
+            reletOrderDO.setUpdateTime(currentTime);
+            reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
 
             if (verifyResult) {
 
@@ -500,14 +548,15 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                 //推送K3消息
                 k3Service.sendReletOrderInfoToK3(reletOrderDO, orderDO);
 
+                //发送钉钉续租成功消息
+                sendDingDingReletSuccessMessage(reletOrderDO);
+
                 reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELETTING);
 
             } else {
                 reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT);
             }
 
-            reletOrderDO.setUpdateTime(currentTime);
-            reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
             reletOrderMapper.update(reletOrderDO);
 
         } catch (Exception e) {
@@ -1668,6 +1717,9 @@ public class ReletOrderServiceImpl implements ReletOrderService {
     private StatementOrderSupport statementOrderSupport;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private ProductService productService;
 
     @Autowired
@@ -1693,6 +1745,12 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
     @Autowired
     private MessageThirdChannelService messageThirdChannelService;
+
+    @Autowired
+    private DingdingGroupMessageConfigMapper dingdingGroupMessageConfigMapper;
+
+    @Autowired
+    private DingDingSupport dingDingSupport;
 
     @Autowired
     private WorkflowService workflowService;

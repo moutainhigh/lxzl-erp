@@ -92,8 +92,8 @@
                                 {{#dataSource}}
                                 {{#listData}}
                                 <tr>
-                                    <td>{{customerNo}}</td>
-                                    <td>{{customerName}}</td>
+                                    <td><a href="{{customerDetailUrl}}" target="_blank">{{customerNo}}</a></td>
+                                    <td><a href="{{customerDetailUrl}}" target="_blank">{{customerName}}</a></td>
                                     <td>{{rentLengthTypeValue}}</td>
                                     <td>{{subCompanyName}}</td>
                                     <td>{{orderSellerName}}</td>

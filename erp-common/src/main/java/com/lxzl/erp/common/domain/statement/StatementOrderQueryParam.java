@@ -37,6 +37,15 @@ public class StatementOrderQueryParam extends BasePageParam {
 
     private Integer owner;		//数据归属人，跟单员
     private String ownerName; //业务员姓名
+    private Integer subCompanyId; //分公司ID
+
+    public Integer getSubCompanyId() {
+        return subCompanyId;
+    }
+
+    public void setSubCompanyId(Integer subCompanyId) {
+        this.subCompanyId = subCompanyId;
+    }
 
     //控制数据权限
     private List<Integer> passiveUserIdList;

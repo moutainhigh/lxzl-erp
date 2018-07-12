@@ -4,6 +4,7 @@
     <title>凌雄ERP-配件管理-配件详情</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/viewer/viewer.min.css">
     <script type="text/javascript">
         common_load_css('${staticCommon}/rental/css','dropzone.css');
     </script>
@@ -18,7 +19,7 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
-
+            #parse("component/loading.vm")
             <div class="row">
                 <div class="col-md-12 center-block">
                     <div class="admin-form theme-primary">
@@ -227,7 +228,7 @@
                                     </script>
 
 
-                                    <div class="section row">
+                                    <div class="section row mn">
                                         <div class="col-md-12" id="materialPropertiesContainer"></div>
                                     </div>
 
@@ -248,6 +249,7 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.jq.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'api.data.js',

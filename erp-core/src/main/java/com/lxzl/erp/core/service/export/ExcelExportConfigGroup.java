@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.export;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import com.lxzl.erp.common.util.BigDecimalUtil;
+import org.apache.poi.hssf.util.HSSFColor;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,6 +21,7 @@ public class ExcelExportConfigGroup {
     public static ExcelExportConfig statementOrderDetailConfig = new ExcelExportConfig();
     public static ExcelExportConfig statisticsSalesmanDetailConfig = new ExcelExportConfig();
     public static ExcelExportConfig statementOrderPayDetailConfig = new ExcelExportConfig();
+    public static ExcelExportConfig statementOrderCheckConfig = new ExcelExportConfig();
 
     static {
         initBankSlipDetailConfig();
@@ -27,33 +29,34 @@ public class ExcelExportConfigGroup {
         initStatementOrderDetailConfig();
         initStatisticsSalesmanDetailConfig();
         initStatementOrderPayDetailConfig();
+        initStatementOrderCheckConfig();
     }
 
 
     public static void initStatisticsSalesmanDetailConfig() {
-        statisticsSalesmanDetailConfig.addConfig(new ColConfig("salesmanId","业务员id",8000))
-                .addConfig(new ColConfig("salesmanName","业务员姓名",8000))
+        statisticsSalesmanDetailConfig.addConfig(new ColConfig("salesmanId", "业务员id" ))
+                .addConfig(new ColConfig("salesmanName", "业务员姓名"))
                 .addConfig(new ColConfig("rentLengthType", "长租短租", new ExcelExportView() {
                     @Override
                     public Object view(Object o) {
-                        if(o != null){
+                        if (o != null) {
                             Integer rentLengthType = (Integer) o;
-                            if(RentLengthType.RENT_LENGTH_TYPE_SHORT == rentLengthType){
+                            if (RentLengthType.RENT_LENGTH_TYPE_SHORT == rentLengthType) {
                                 return "短租";
-                            }else if(RentLengthType.RENT_LENGTH_TYPE_LONG == rentLengthType){
+                            } else if (RentLengthType.RENT_LENGTH_TYPE_LONG == rentLengthType) {
                                 return "长租";
                             }
                         }
                         return null;
                     }
                 }))
-                .addConfig(new ColConfig("subCompanyName","分公司名",8000))
-                .addConfig(new ColConfig("dealsCount","成交单数"))
-                .addConfig(new ColConfig("dealsProductCount","成交台数"))
-                .addConfig(new ColConfig("dealsAmount","成交金额", AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("income","本期回款（已收）", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("subCompanyName", "分公司名", 31))
+                .addConfig(new ColConfig("dealsCount", "成交单数"))
+                .addConfig(new ColConfig("dealsProductCount", "成交台数"))
+                .addConfig(new ColConfig("dealsAmount", "成交金额", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("income", "本期回款（已收）", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("receive", "应收", AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("pureIncrease","净增台数", AmountExcelExportView.getInstance()));
+                .addConfig(new ColConfig("pureIncrease", "净增台数", AmountExcelExportView.getInstance()));
     }
 
 
@@ -90,7 +93,7 @@ public class ExcelExportConfigGroup {
                     }
                 }))
                 .addConfig(new ColConfig("itemName", "商品名"))
-                .addConfig(new ColConfig("unitAmount", "单价",AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("unitAmount", "单价", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("itemCount", "商品数量"))
                 .addConfig(new ColConfig("itemRentType", "租赁类型", new ExcelExportView() {
                     @Override
@@ -107,18 +110,18 @@ public class ExcelExportConfigGroup {
                     }
                 }))
                 .addConfig(new ColConfig("statementDetailPhase", "期数"))
-                .addConfig(new ColConfig("statementExpectPayTime", "预计支付时间",DateExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementDetailPaidTime", "结算支付时间",DateExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementDetailAmount", "结算单金额",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementCouponAmount", "抵扣金额",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementDetailRentAmount", "租金",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementDetailRentDepositAmount", "租金押金",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementDetailDepositAmount", "押金",AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementExpectPayTime", "预计支付时间", DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailPaidTime", "结算支付时间", DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailAmount", "结算单金额", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementCouponAmount", "抵扣金额", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailRentAmount", "租金", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailRentDepositAmount", "租金押金", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailDepositAmount", "押金", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailOtherAmount", "其它费用", AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementDetailOverdueAmount", "逾期金额",AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailOverdueAmount", "截止上期未付", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailPaidAmount", "已付金额", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailRentPaidAmount", "已付租金", AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementDetailRentDepositPaidAmount", "已付租金押金",AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailRentDepositPaidAmount", "已付租金押金", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailDepositPaidAmount", "已付押金", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailRentDepositReturnAmount", "退还租金押金", AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailDepositReturnAmount", "退还押金", AmountExcelExportView.getInstance()))
@@ -141,8 +144,8 @@ public class ExcelExportConfigGroup {
                         return "";
                     }
                 }))
-                .addConfig(new ColConfig("statementStartTime", "结算开始时间",DateExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementEndTime", "结算结束时间",DateExcelExportView.getInstance()));
+                .addConfig(new ColConfig("statementStartTime", "结算开始时间", DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementEndTime", "结算结束时间", DateExcelExportView.getInstance()));
 
     }
 
@@ -168,23 +171,23 @@ public class ExcelExportConfigGroup {
                 }))
                 .addConfig(new ColConfig("ownerName", "业务员"))
                 .addConfig(new ColConfig("customerName", "客户名"))
-                .addConfig(new ColConfig("statementExpectPayTime", "预计支付时间",DateExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementPaidTime", "实际支付时间",DateExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementStartTime", "结算开始日期",DateExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementEndTime", "结算结束日期",DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementExpectPayTime", "预计支付时间", DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementPaidTime", "实际支付时间", DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementStartTime", "结算开始日期", DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementEndTime", "结算结束日期", DateExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementRentDepositAmount", "租金押金", AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementRentDepositPaidAmount", "已付租金押金",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementRentDepositReturnAmount", "已退租金押金",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementDepositAmount", "设备押金",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementDepositPaidAmount", "已付设备押金",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementDepositReturnAmount", "已退设备押金",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementRentAmount", "租金",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementRentPaidAmount", "已付租金",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementAmount", "结算单总金额",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementPaidAmount", "已付总金额",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementOverdueAmount", "逾期金额",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementOtherAmount", "其它费用",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("statementCorrectAmount", "冲正金额",AmountExcelExportView.getInstance()));
+                .addConfig(new ColConfig("statementRentDepositPaidAmount", "已付租金押金", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementRentDepositReturnAmount", "已退租金押金", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDepositAmount", "设备押金", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDepositPaidAmount", "已付设备押金", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDepositReturnAmount", "已退设备押金", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementRentAmount", "租金", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementRentPaidAmount", "已付租金", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementAmount", "结算单总金额", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementPaidAmount", "已付总金额", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementOverdueAmount", "逾期金额", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementOtherAmount", "其它费用", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementCorrectAmount", "冲正金额", AmountExcelExportView.getInstance()));
 
     }
 
@@ -220,11 +223,11 @@ public class ExcelExportConfigGroup {
                 return "";
             }
         }))
-                .addConfig(new ColConfig("tradeTime", "交易日期",3000,DateExcelExportView.getInstance()))
-                .addConfig(new ColConfig("payerName", "付款人名称",8000))
+                .addConfig(new ColConfig("tradeTime", "交易日期", 11, DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("payerName", "付款人名称", 31))
                 .addConfig(new ColConfig("tradeAmount", "交易金额(元)"))
-                .addConfig(new ColConfig("merchantOrderNo", "商户订单号", 10000))
-                .addConfig(new ColConfig("bankSlipClaimList", "K3客户编码",10000, new ExcelExportView() {
+                .addConfig(new ColConfig("merchantOrderNo", "商户订单号", 39))
+                .addConfig(new ColConfig("bankSlipClaimList", "K3客户编码", 39, new ExcelExportView() {
                     @Override
                     public Object view(Object o) {
                         List<BankSlipClaim> bankSlipClaimList = (List<BankSlipClaim>) o;
@@ -236,7 +239,7 @@ public class ExcelExportConfigGroup {
                         return k3CustomerNo.toString().trim();
                     }
                 }))
-                .addConfig(new ColConfig("bankSlipClaimList", "对应公司名称",10000, new ExcelExportView() {
+                .addConfig(new ColConfig("bankSlipClaimList", "对应公司名称", 39, new ExcelExportView() {
                     @Override
                     public Object view(Object o) {
                         List<BankSlipClaim> bankSlipClaimList = (List<BankSlipClaim>) o;
@@ -244,25 +247,149 @@ public class ExcelExportConfigGroup {
                         for (BankSlipClaim bankSlipClaim : bankSlipClaimList) {
                             String dbCustomerName = bankSlipClaim.getCustomerName();
                             String claimAmount = String.valueOf(AmountExcelExportView.getInstance().view(bankSlipClaim.getClaimAmount()));
-                            customerName.append(dbCustomerName + "("+claimAmount+"元)"+"\r\n");
+                            customerName.append(dbCustomerName + "(" + claimAmount + "元)" + "\r\n");
                         }
                         return customerName.toString().trim();
                     }
                 }))
                 .addConfig(new ColConfig("subCompanyName", "客户归属地"))
-                .addConfig(new ColConfig("tradeSerialNo", "交易流水号"));
+                .addConfig(new ColConfig("tradeSerialNo", "交易流水号",39));
     }
 
     public static void initStatementOrderPayDetailConfig() {
-        statementOrderPayDetailConfig.addConfig(new ColConfig("orderNo", "订单号",8000))
-                .addConfig(new ColConfig("customerName", "客户名称",8000))
-                .addConfig(new ColConfig("customerNo", "客户编码",8000))
-                .addConfig(new ColConfig("k3CustomerCode", "K3客户编码",8000))
-                .addConfig(new ColConfig("customerCompany", "客户分公司",5000))
-                .addConfig(new ColConfig("orderCompany", "订单分公司", 5000))
-                .addConfig(new ColConfig("deliveryCompany", "发货分公司",5000))
-                .addConfig(new ColConfig("rentPaidAmount", "租金",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("depositPaidAmount", "押金",AmountExcelExportView.getInstance()))
-                .addConfig(new ColConfig("totalPaidAmount", "合计",AmountExcelExportView.getInstance()));
+        statementOrderPayDetailConfig.addConfig(new ColConfig("orderNo", "订单号", 31))
+                .addConfig(new ColConfig("customerName", "客户名称", 31))
+                .addConfig(new ColConfig("customerNo", "客户编码", 31))
+                .addConfig(new ColConfig("k3CustomerCode", "K3客户编码", 31))
+                .addConfig(new ColConfig("customerCompany", "客户分公司", 19))
+                .addConfig(new ColConfig("orderCompany", "订单分公司", 19))
+                .addConfig(new ColConfig("deliveryCompany", "发货分公司", 19))
+                .addConfig(new ColConfig("rentPaidAmount", "租金", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("depositPaidAmount", "押金", AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("totalPaidAmount", "合计", AmountExcelExportView.getInstance()));
+    }
+
+    public static void initStatementOrderCheckConfig() {
+        statementOrderCheckConfig.addConfig(new ColConfig("orderNo", "租赁订单号", 10, HSSFColor.WHITE.index))
+                .addConfig(new ColConfig("businessType", "业务类型", 6, HSSFColor.WHITE.index, new ExcelExportView() {
+            @Override
+            public Object view(Object o) {
+                Integer businessType = (Integer) o;
+                if (OrderType.ORDER_TYPE_ORDER.equals(businessType)) {
+                    return "租赁";
+                } else if (OrderType.ORDER_TYPE_RETURN.equals(businessType)) {
+                    return "退货";
+                }
+                return null;
+            }
+        }))
+                .addConfig(new ColConfig("orderType", " 订单项类型", 6, HSSFColor.WHITE.index, new ExcelExportView() {
+
+                    @Override
+                    public Object view(Object o) {
+                        Integer orderType = (Integer) o;
+                        if(OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(orderType)){
+                            return "商品";
+                        }else if(OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(orderType)){
+                            return "物料";
+                        }else if(OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT.equals(orderType)){
+                            return "换货商品";
+                        }else if(OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL.equals(orderType)){
+                            return "换货物料";
+                        }else if(OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(orderType)){
+                            return "退货商品";
+                        }else if(OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(orderType)){
+                            return "退货物料";
+                        }else if(OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER.equals(orderType)){
+                            return "退货其他";
+                        }else if(OrderItemType.ORDER_ITEM_TYPE_CHANGE_OTHER.equals(orderType)){
+                            return "换货其他";
+                        }else if(OrderItemType.ORDER_ITEM_TYPE_OTHER.equals(orderType)){
+                            return "其他";
+                        }
+                        return "";
+                    }
+                }))
+                .addConfig(new ColConfig("itemName", "商品名", 16, HSSFColor.WHITE.index))
+                .addConfig(new ColConfig("itemSkuName", "配置", 23, HSSFColor.WHITE.index))
+                .addConfig(new ColConfig("isNew", "新旧程度", 6, HSSFColor.WHITE.index, new ExcelExportView() {
+                    @Override
+                    public Object view(Object o) {
+                        Integer isNew = (Integer) o;
+                        if(CommonConstant.COMMON_CONSTANT_NO.equals(isNew)){
+                            return "次新";
+                        }else if(CommonConstant.COMMON_CONSTANT_YES.equals(isNew)){
+                            return "全新";
+                        }
+                        return "";
+                    }
+                }))
+                //-------------------以下是全部结算单-----------------------------
+                .addConfig(new ColConfig("rentStartTime", "租赁开始日期", 10, DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("expectReturnTime", "租赁结束日期", 10, DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("month", "月", 3))
+                .addConfig(new ColConfig("day", "日", 3))
+                .addConfig(new ColConfig("allRentTimeLength", "租赁总期限", 8))
+                .addConfig(new ColConfig("allPeriodStartAndEnd", "租赁期限", 15, HSSFColor.WHITE.index))
+                //-------------------以上是全部结算单-----------------------------
+
+                //-------------------以下是本期结算单-----------------------------
+                .addConfig(new ColConfig("statementStartTime", "本期开始日期", 10, DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementEndTime", "本期结束日期", 10, DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementMonth", "月", 3))
+                .addConfig(new ColConfig("statementDay", "日", 3))
+                .addConfig(new ColConfig("rentTimeLength", "租赁期限", 6))
+                .addConfig(new ColConfig("currentPeriodStartAndEnd", "本期费用起止", 12,HSSFColor.LEMON_CHIFFON.index))
+
+                .addConfig(new ColConfig("payMode", "支付方式", 7, HSSFColor.LEMON_CHIFFON.index, new ExcelExportView() {
+                    @Override
+                    public Object view(Object o) {
+                        Integer payMode = (Integer) o;
+                        if(OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)){
+                            return "先付后用";
+                        }else if(OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)){
+                            return "先用后付";
+                        }else if(OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(payMode)){
+                            return "首付30%";
+                        }
+                        return "";
+                    }
+                }))
+                //-------------------以下是全部结算单-----------------------------
+                .addConfig(new ColConfig("rentProgramme", "租赁方案", 7, HSSFColor.LEMON_CHIFFON.index))
+                .addConfig(new ColConfig("itemCount", "租赁数量", 4, HSSFColor.LEMON_CHIFFON.index))
+                .addConfig(new ColConfig("unitAmountInfo", "单价\n（元/台）", 10, HSSFColor.LEMON_CHIFFON.index))
+                .addConfig(new ColConfig("statementDetailRentEndAmount", "本期租金", 6, HSSFColor.TAN.index, AmountExcelExportView.getInstance()))
+//                .addConfig(new ColConfig("statementRentDepositAmount", " 租金押金", 6, HSSFColor.WHITE.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDepositAmount", " 押金", 6, HSSFColor.LEMON_CHIFFON.index,  AmountExcelExportView.getInstance()))
+//                .addConfig(new ColConfig("statementDepositPaidAmount", " 支付押金", 8, HSSFColor.WHITE.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementOverdueAmount", " 逾期金额", 6, HSSFColor.LEMON_CHIFFON.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementOtherAmount", " 其它费用", 6, HSSFColor.LEMON_CHIFFON.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementCorrectAmount", " 调整金额", 6, HSSFColor.LEMON_CHIFFON.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailEndAmount", " 本期应付金额", 10, HSSFColor.TAN.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementExpectPayEndTime", " 本期应付日期", 8, HSSFColor.TAN.index,  DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementAmount", " 本月应付金额", 10, HSSFColor.GOLD.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailStatus", " 状态", 6, new ExcelExportView() {
+                    @Override
+                    public Object view(Object o) {
+                        Integer statementDetailStatus = (Integer) o;
+                        if(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementDetailStatus)){
+                            return "未支付";
+                        }else  if(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART.equals(statementDetailStatus)){
+                            return "部分结算完成";
+                        }else if(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementDetailStatus)){
+                            return "支付完成";
+                        }else if(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementDetailStatus)){
+                            return "无需结算";
+                        }else if(StatementOrderStatus.STATEMENT_ORDER_STATUS_CORRECTED.equals(statementDetailStatus)){
+                            return "已冲正";
+                        }
+
+                        return "";
+                    }
+                })).addConfig(new ColConfig("k3ReturnOrderDONo", " 退租订单号", 9))
+                .addConfig(new ColConfig("returnReasonType", " 退货原因", 9))
+                .addConfig(new ColConfig("statementCorrectNo", " 冲正订单号", 9))
+                .addConfig(new ColConfig("statementCorrectReason", " 冲正原因", 9));
     }
 }

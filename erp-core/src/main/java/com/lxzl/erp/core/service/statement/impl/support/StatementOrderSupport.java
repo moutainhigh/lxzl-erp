@@ -1,24 +1,30 @@
 package com.lxzl.erp.core.service.statement.impl.support;
 
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.dingding.DingDingCommonMsg;
 import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.DateUtil;
+import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerPersonMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.dingdingGroupMessageConfig.DingdingGroupMessageConfigMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderStatementDateChangeLogMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.domain.dingdingGroupMessageConfig.DingdingGroupMessageConfigDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderStatementDateChangeLogDO;
+import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
@@ -176,9 +182,7 @@ public class StatementOrderSupport {
             }
             for (Integer key : statementCache.keySet()) {
                 StatementOrderDO statementOrderDO = statementCache.get(key);
-                if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) == 0) {
-                    statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                }else  if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), statementOrderDO.getStatementPaidAmount()) <= 0){
+                if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), statementOrderDO.getStatementPaidAmount()) <= 0){
                     statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
                 }
                 statementOrderDO.setUpdateTime(currentTime);
@@ -215,16 +219,6 @@ public class StatementOrderSupport {
             }
             for (Integer key : statementOrderDOMap.keySet()) {
                 StatementOrderDO statementOrderDO = statementOrderDOMap.get(key);
-               // 金额为零结算单删除
-                if(BigDecimalUtil.compare(statementOrderDO.getStatementAmount(),BigDecimal.ZERO)==0){
-                    statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                }else if(BigDecimalUtil.compare(statementOrderDO.getStatementPaidAmount(),statementOrderDO.getStatementAmount())==0){
-                    statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
-                }else if(BigDecimalUtil.compare(statementOrderDO.getStatementPaidAmount(),BigDecimal.ZERO)>0){
-                    statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
-                }else{
-                    statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
-                }
                 statementOrderMapper.update(statementOrderDO);
             }
         }
@@ -245,6 +239,10 @@ public class StatementOrderSupport {
     }
 
     public void recordStatementDateLog(String orderNo, Integer statementDate) {
+        if (statementDate == null){
+            DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
+            statementDate = dataDictionaryDO==null?StatementMode.STATEMENT_MONTH_END:Integer.parseInt(dataDictionaryDO.getDataName());
+        }
         Date now = new Date();
         OrderStatementDateChangeLogDO orderStatementDateChangeLogDO = new OrderStatementDateChangeLogDO();
         orderStatementDateChangeLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -257,10 +255,44 @@ public class StatementOrderSupport {
         orderStatementDateChangeLogMapper.save(orderStatementDateChangeLogDO);
     }
 
+    /**
+     * 订单重算成功钉钉消息
+     * @param orderDO
+     */
+    public void sendOrderRestatementSuccess(OrderDO orderDO){
+        if(orderDO==null)return;
+        sendReStatementDdMsg(orderDO.getOrderSellerName(), orderDO.getOrderSubCompanyName(), orderDO.getBuyerCustomerName(), orderDO.getOrderNo(),orderDO.getOrderSubCompanyId());
+
+    }
+
+    /**
+     * 续租单重算成功
+     * @param reletOrderDO
+     */
+    public void sendReletOrderRestatementSuccess(ReletOrderDO reletOrderDO){
+        if(reletOrderDO==null)return;
+        sendReStatementDdMsg(reletOrderDO.getOrderSellerName(), reletOrderDO.getOrderSellerName(), reletOrderDO.getBuyerCustomerName(), reletOrderDO.getOrderNo(),reletOrderDO.getOrderSubCompanyId());
+    }
+
+    private void sendReStatementDdMsg(String salemanName, String subCompanyName, String customerName, String orderNo, Integer subCompanyId) {
+        List<DingdingGroupMessageConfigDO> dingdingGroupMessageConfigDOS=dingdingGroupMessageConfigMapper.findBySendTypeAndSubCompanyId(DingDingGroupMessageType.SEND_TYPE_STATEMENT_RECALCU,subCompanyId);
+        if(CollectionUtil.isEmpty(dingdingGroupMessageConfigDOS))return;
+        for (DingdingGroupMessageConfigDO dingdingGroupMessageConfigDO:dingdingGroupMessageConfigDOS){
+            DingDingCommonMsg dingDingCommonMsg =new DingDingCommonMsg();
+            dingDingCommonMsg.setUserGroupUrl(dingdingGroupMessageConfigDO.getDingdingGroupUrl());
+            dingDingCommonMsg.setContent(dingdingGroupMessageConfigDO.getMessageContent());
+            dingDingSupport.dingDingSendMessage(dingDingCommonMsg,dingdingGroupMessageConfigDO.getMessageTitle(),subCompanyName,salemanName,customerName,orderNo);
+        }
+    }
+
     @Autowired
     private UserSupport userSupport;
     @Autowired
     private OrderStatementDateChangeLogMapper orderStatementDateChangeLogMapper;
+    @Autowired
+    private DingdingGroupMessageConfigMapper dingdingGroupMessageConfigMapper;
+    @Autowired
+    private DingDingSupport dingDingSupport;
 
 
 }

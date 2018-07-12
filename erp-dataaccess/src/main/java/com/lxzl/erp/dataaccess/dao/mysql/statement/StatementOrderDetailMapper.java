@@ -1,12 +1,14 @@
 package com.lxzl.erp.dataaccess.dao.mysql.statement;
 
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
+import com.lxzl.erp.dataaccess.domain.statement.CheckStatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +16,8 @@ import java.util.Map;
 public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderDetailDO> {
 
     List<StatementOrderDetailDO> findByOrderId(@Param("orderId") Integer orderId);
+
+    List<StatementOrderDetailDO> findByOrderIdForOrderDetail(@Param("orderId") Integer orderId);
 
     List<StatementOrderDetailDO> findByOrderIdAndOrderItemType(@Param("orderId") Integer orderId, @Param("orderItemType") Integer orderItemType, @Param("orderItemReferId") Integer orderItemReferId);
 
@@ -54,11 +58,26 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
     List<FinanceStatementOrderPayDetail> queryStatementOrderDetailByParam(@Param("maps") Map<String, Object> maps);
 
     /**
-     * 查找续租单项关联结算
+     * 查找续租单项关联结算(仅商品租金)
      * @param ids
      * @return
      */
-    List<StatementOrderDetailDO> findByReletOrderItemReferIds(@Param("ids")List<Integer> ids);
+    List<StatementOrderDetailDO> findProductRentByReletOrderItemReferIds(@Param("ids")List<Integer> ids);
+
+    /**
+     * 查找续租单项关联结算(仅物料租金)
+     * @param ids
+     * @return
+     */
+    List<StatementOrderDetailDO> findMaterialRentByReletOrderItemReferIds(@Param("ids")List<Integer> ids);
+
+    /**
+     * 续租单租金结算
+     * @param id
+     * @return
+     */
+    List<StatementOrderDetailDO> findPrdcByReletOrderItemReferIds(@Param("id")Integer id);
+    List<StatementOrderDetailDO> findMtrByReletOrderItemReferIds(@Param("id")Integer id);
 
     /**
      * 删除结算详情
@@ -73,4 +92,14 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
      * @return
      */
     List<StatementOrderDetailDO> findReturnByOrderItemTypeAndId(@Param("orderItemType") Integer orderItemType, @Param("orderItemId") Integer orderItemId);
+
+    List<CheckStatementOrderDetailDO> exportListPage(@Param("maps") Map<String, Object> maps);
+    List<CheckStatementOrderDetailDO> exportListPage1(@Param("maps") Map<String, Object> maps);
+    List<CheckStatementOrderDetailDO> exportListPage2(@Param("maps") Map<String, Object> maps);
+    List<CheckStatementOrderDetailDO> exportListPage3(@Param("maps") Map<String, Object> maps);
+    List<CheckStatementOrderDetailDO> exportReturnListPage(@Param("maps") Map<String, Object> maps);
+    List<CheckStatementOrderDetailDO> exportFirstReturnListPage(@Param("maps") Map<String, Object> maps);
+    List<CheckStatementOrderDetailDO> findByOrderItemReferIdAndTime(@Param("orderItemReferId") Integer orderItemReferId,@Param("statementExpectPayTime") Date statementExpectPayTime);
+
+    Map<String,Object> findThisPeriodsByOrderInfo(@Param("orderId") Integer orderId, @Param("orderItemReferId") Integer orderItemReferId, @Param("expectPayTime") Date expectPayTime, @Param("payMode") Integer payMode);
 }

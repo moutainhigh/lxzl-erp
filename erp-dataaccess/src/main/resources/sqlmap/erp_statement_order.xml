@@ -38,6 +38,8 @@
 		<result column="statement_coupon_amount" jdbcType="DECIMAL" property="statementCouponAmount" />
 		<result column="statement_penalty_amount" jdbcType="DECIMAL" property="statementPenaltyAmount" />
 		<result column="statement_penalty_paid_amount" jdbcType="DECIMAL" property="statementPenaltyPaidAmount" />
+		<result column="ownerSubCompanyId" jdbcType="INTEGER" property="ownerSubCompanyId" />
+		<result column="ownerSubCompanyName" jdbcType="VARCHAR" property="ownerSubCompanyName" />
 		<collection property="statementOrderDetailDOList" resultMap="StatementOrderDetailDO" />
 	</resultMap>
 
@@ -85,6 +87,46 @@
 		<result column="statement_detail_penalty_amount" jdbcType="DECIMAL" property="statementDetailPenaltyAmount" />
 		<result column="statement_detail_penalty_paid_amount" jdbcType="DECIMAL" property="statementDetailPenaltyPaidAmount" />
 		<result column="relet_order_item_refer_id" jdbcType="INTEGER" property="reletOrderItemReferId"/>
+	</resultMap>
+
+
+	<resultMap id="CheckStatementOrderDO" type="com.lxzl.erp.dataaccess.domain.statement.CheckStatementOrderDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="statement_order_no" jdbcType="VARCHAR" property="statementOrderNo" />
+		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
+		<result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+		<result column="statement_expect_pay_time" jdbcType="TIMESTAMP" property="statementExpectPayTime" />
+		<result column="statement_amount" jdbcType="DECIMAL" property="statementAmount" />
+		<result column="statement_other_amount" jdbcType="DECIMAL" property="statementOtherAmount" />
+		<result column="statement_other_paid_amount" jdbcType="DECIMAL" property="statementOtherPaidAmount" />
+		<result column="statement_rent_deposit_amount" jdbcType="DECIMAL" property="statementRentDepositAmount" />
+		<result column="statement_rent_deposit_paid_amount" jdbcType="DECIMAL" property="statementRentDepositPaidAmount" />
+		<result column="statement_rent_deposit_return_amount" jdbcType="DECIMAL" property="statementRentDepositReturnAmount" />
+		<result column="statement_deposit_amount" jdbcType="DECIMAL" property="statementDepositAmount" />
+		<result column="statement_deposit_paid_amount" jdbcType="DECIMAL" property="statementDepositPaidAmount" />
+		<result column="statement_deposit_return_amount" jdbcType="DECIMAL" property="statementDepositReturnAmount" />
+		<result column="statement_rent_amount" jdbcType="DECIMAL" property="statementRentAmount" />
+		<result column="statement_rent_paid_amount" jdbcType="DECIMAL" property="statementRentPaidAmount" />
+		<result column="statement_paid_time" jdbcType="TIMESTAMP" property="statementPaidTime" />
+		<result column="statement_overdue_amount" jdbcType="DECIMAL" property="statementOverdueAmount" />
+		<result column="statement_overdue_paid_amount" jdbcType="DECIMAL" property="statementOverduePaidAmount" />
+		<result column="statement_status" jdbcType="INTEGER" property="statementStatus" />
+		<result column="statement_start_time" jdbcType="TIMESTAMP" property="statementStartTime" />
+		<result column="statement_end_time" jdbcType="TIMESTAMP" property="statementEndTime" />
+		<result column="statement_correct_amount" jdbcType="DECIMAL" property="statementCorrectAmount" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="owner" jdbcType="INTEGER" property="owner" />
+		<result column="ownerName" jdbcType="VARCHAR" property="ownerName" />
+		<result column="statement_coupon_amount" jdbcType="DECIMAL" property="statementCouponAmount" />
+		<result column="statement_penalty_amount" jdbcType="DECIMAL" property="statementPenaltyAmount" />
+		<result column="statement_penalty_paid_amount" jdbcType="DECIMAL" property="statementPenaltyPaidAmount" />
+		<result column="monthTime" jdbcType="VARCHAR" property="monthTime" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -327,6 +369,9 @@
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.ownerName != null &amp;&amp; maps.statementOrderQueryParam.ownerName != ''">
 				and owner_user.real_name like CONCAT('%','${maps.statementOrderQueryParam.ownerName}','%' )
 			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.subCompanyId != null">
+				and ec.owner_sub_company_id = #{maps.statementOrderQueryParam.subCompanyId, jdbcType=INTEGER}
+			</if>
 			<if test="maps.isQueryAll == null">
 				and eso.data_status = 1
 			</if>
@@ -345,9 +390,16 @@
 		<trim prefix=",">
 			owner_user.real_name AS ownerName
 		</trim>
+		<trim prefix=",">
+			ec.owner_sub_company_id AS ownerSubCompanyId
+		</trim>
+		<trim prefix=",">
+			esc.sub_company_name AS ownerSubCompanyName
+		</trim>
 		FROM erp_statement_order eso
 		INNER JOIN erp_customer ec on eso.customer_id = ec.id
 		INNER JOIN  erp_user owner_user on ec.owner = owner_user.id
+		INNER JOIN erp_sub_company esc ON esc.id = ec.owner_sub_company_id AND esc.data_status = 1
 		<where>
 			<if test="maps.statementOrderIdList != null">
 				AND eso.id IN
@@ -395,6 +447,9 @@
 			</if>
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.ownerName != null &amp;&amp; maps.statementOrderQueryParam.ownerName != ''">
 				and owner_user.real_name like CONCAT('%','${maps.statementOrderQueryParam.ownerName}','%' )
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.subCompanyId != null">
+				and ec.owner_sub_company_id = #{maps.statementOrderQueryParam.subCompanyId, jdbcType=INTEGER}
 			</if>
 			<if test="maps.isQueryAll == null">
 				and eso.data_status = 1
@@ -516,7 +571,7 @@
 		FROM
 		erp_statement_order eso
 		INNER JOIN erp_customer ec on eso.customer_id = ec.id
-
+		INNER JOIN  erp_user owner_user on ec.owner = owner_user.id
 		<where>
 			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != ''">
 				and ec.customer_no like CONCAT('%','${maps.statementOrderMonthQueryParam.statementOrderCustomerNo}','%' )
@@ -535,6 +590,12 @@
 				and	 <![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( now(), '%Y-%m') ]]>
 				</otherwise>
 			</choose>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.ownerName != null &amp;&amp; maps.statementOrderMonthQueryParam.ownerName != ''">
+				and owner_user.real_name like CONCAT('%','${maps.statementOrderMonthQueryParam.ownerName}','%' )
+			</if>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.subCompanyId != null">
+				and ec.owner_sub_company_id = #{maps.statementOrderMonthQueryParam.subCompanyId, jdbcType=INTEGER}
+			</if>
 			<if test="maps.isQueryAll == null">
 				and eso.data_status = 1
 			</if>
@@ -563,8 +624,19 @@
 		SUM(eso.statement_overdue_paid_amount) as statement_overdue_paid_amount,
 		ec.customer_name AS customer_name,
 		ec.customer_no AS customer_no
+		<trim prefix=",">
+			owner_user.real_name AS ownerName
+		</trim>
+		<trim prefix=",">
+			ec.owner_sub_company_id AS ownerSubCompanyId
+		</trim>
+		<trim prefix=",">
+			esc.sub_company_name AS ownerSubCompanyName
+		</trim>
 		FROM erp_statement_order eso
 		INNER JOIN erp_customer ec on eso.customer_id = ec.id
+		INNER JOIN  erp_user owner_user on ec.owner = owner_user.id
+		INNER JOIN erp_sub_company esc ON esc.id = ec.owner_sub_company_id AND esc.data_status = 1
 		<where>
 			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != ''">
 				and ec.customer_no like CONCAT('%','${maps.statementOrderMonthQueryParam.statementOrderCustomerNo}','%' )
@@ -585,6 +657,12 @@
 					and <![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( now(), '%Y-%m') ]]>
 				</otherwise>
 			</choose>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.ownerName != null &amp;&amp; maps.statementOrderMonthQueryParam.ownerName != ''">
+				and owner_user.real_name like CONCAT('%','${maps.statementOrderMonthQueryParam.ownerName}','%' )
+			</if>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.subCompanyId != null">
+				and ec.owner_sub_company_id = #{maps.statementOrderMonthQueryParam.subCompanyId, jdbcType=INTEGER}
+			</if>
 			<if test="maps.isQueryAll == null">
 				and eso.data_status = 1
 			</if>
@@ -640,4 +718,83 @@
 			#{item.id,jdbcType=INTEGER}
 		</foreach>
 	</delete>
+
+	<select id="exportListMonthPage" resultMap="CheckStatementOrderDO">
+		select distinct t1.buyer_customer_id as customer_id,
+		case when t2.customer_name is null then t1.buyer_customer_name else t2.customer_name end as customer_name,
+		<![CDATA[ date_format(t0.month_config,'%Y-%m')]]>  as monthTime,case when t2.statementExpectPayTime is null then t0.month_start_config else t2.statementExpectPayTime end as statementExpectPayTime,t2.*
+		from erp_month_config t0 left join erp_order t1 on t0.month_start_config between t1.rent_start_time and t1.expect_return_time or t0.month_end_config between t1.rent_start_time and t1.expect_return_time
+		or date_format(t1.rent_start_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
+		or date_format(t1.expect_return_time,'%Y-%m') = date_format(t0.month_config,'%Y-%m')
+		left join (
+		SELECT
+		eso.customer_id,
+		<![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m')]]> AS monthTime,
+		eso.statement_expect_pay_time as statementExpectPayTime,
+		SUM(eso.statement_amount) as statement_amount,
+		SUM(eso.statement_rent_deposit_amount) as statement_rent_deposit_amount,
+		SUM(eso.statement_rent_deposit_paid_amount) as statement_rent_deposit_paid_amount,
+		SUM(eso.statement_rent_deposit_return_amount) as statement_rent_deposit_return_amount,
+		SUM(eso.statement_deposit_amount) as statement_deposit_amount,
+		SUM(eso.statement_deposit_paid_amount) as statement_deposit_paid_amount,
+		SUM(eso.statement_deposit_return_amount) as statement_deposit_return_amount,
+		SUM(eso.statement_rent_amount) as statement_rent_amount,
+		SUM(eso.statement_rent_paid_amount) as statement_rent_paid_amount,
+		SUM(eso.statement_overdue_amount) as statement_overdue_amount,
+		SUM(eso.statement_other_amount) as statement_other_amount,
+		SUM(eso.statement_other_paid_amount) as statement_other_paid_amount,
+		SUM(eso.statement_correct_amount) as statement_correct_amount,
+		SUM(eso.statement_overdue_paid_amount) as statement_overdue_paid_amount,
+		ec.customer_name AS customer_name,
+		ec.customer_no AS customer_no
+		<trim prefix=",">
+			owner_user.real_name AS ownerName
+		</trim>
+		<trim prefix=",">
+			ec.owner_sub_company_id AS ownerSubCompanyId
+		</trim>
+		<trim prefix=",">
+			esc.sub_company_name AS ownerSubCompanyName
+		</trim>
+		FROM erp_statement_order eso
+		INNER JOIN erp_customer ec on eso.customer_id = ec.id
+		INNER JOIN  erp_user owner_user on ec.owner = owner_user.id
+		INNER JOIN erp_sub_company esc ON esc.id = ec.owner_sub_company_id AND esc.data_status = 1
+		<where>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != ''">
+				and ec.customer_no like CONCAT('%','${maps.statementOrderMonthQueryParam.statementOrderCustomerNo}','%' )
+			</if>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerId != null">
+				and eso.customer_id = #{maps.statementOrderMonthQueryParam.statementOrderCustomerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerName != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerName != ''">
+				and ec.customer_name like
+				CONCAT('%','${maps.statementOrderMonthQueryParam.statementOrderCustomerName}','%' )
+			</if>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.ownerName != null &amp;&amp; maps.statementOrderMonthQueryParam.ownerName != ''">
+				and owner_user.real_name like CONCAT('%','${maps.statementOrderMonthQueryParam.ownerName}','%' )
+			</if>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.subCompanyId != null">
+				and ec.owner_sub_company_id = #{maps.statementOrderMonthQueryParam.subCompanyId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.isQueryAll == null">
+				and eso.data_status = 1
+			</if>
+			<include refid="permission_sql.month_statement_order_control"/>
+		</where>
+		GROUP BY eso.customer_id, eso.statement_expect_pay_time,<![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m')]]>
+		ORDER BY eso.statement_expect_pay_time
+		) t2 on t1.buyer_customer_id = t2.customer_id and t2.monthTime = date_format(t0.month_config,'%Y-%m')
+		where t1.order_status in (8,12,16,20,22,24,32)
+		<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderStartTime != null ">
+			<![CDATA[ AND t0.month_config >= #{maps.statementOrderMonthQueryParam.statementOrderStartTime} ]]>
+		</if>
+		<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderEndTime != null ">
+			<![CDATA[ AND t0.month_config <= #{maps.statementOrderMonthQueryParam.statementOrderEndTime} ]]>
+		</if>
+		<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerId != null">
+			and t1.buyer_customer_id = #{maps.statementOrderMonthQueryParam.statementOrderCustomerId, jdbcType=INTEGER}
+		</if>
+		and t1.id is not null order by monthTime desc
+	</select>
 </mapper>

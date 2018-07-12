@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductProduct;
 import com.lxzl.erp.common.domain.k3.pojo.OrderMessage;
+import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.messagethirdchannel.pojo.MessageThirdChannel;
@@ -57,6 +58,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointProductProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.OrderStatementDateSplitMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
@@ -67,6 +69,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
@@ -76,6 +79,7 @@ import com.lxzl.erp.dataaccess.domain.jointProduct.JointMaterialDO;
 import com.lxzl.erp.dataaccess.domain.jointProduct.JointProductDO;
 import com.lxzl.erp.dataaccess.domain.jointProduct.JointProductProductDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
+import com.lxzl.erp.dataaccess.domain.k3.OrderStatementDateSplitDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
@@ -87,6 +91,7 @@ import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
 import com.lxzl.se.common.exception.BusinessException;
@@ -113,7 +118,7 @@ public class OrderServiceImpl implements OrderService {
     private static Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> createOrder(Order order) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -190,7 +195,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> createOrderNew(Order order) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -418,7 +423,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateOrder(Order order) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -512,7 +517,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateOrderNew(Order order) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -615,7 +620,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> commitOrder(OrderCommitParam orderCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -894,7 +899,7 @@ public class OrderServiceImpl implements OrderService {
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> confirmChangeOrder(OrderConfirmChangeParam orderConfirmChangeParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
         // TODO: 2018\5\22 0022   1.保存订单确认收货变更记录详情
@@ -925,7 +930,7 @@ public class OrderServiceImpl implements OrderService {
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> supperUserChangeOrder(OrderConfirmChangeParam orderConfirmChangeParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
         // TODO: 2018\5\22 0022   1.保存订单确认收货变更记录详情
@@ -955,7 +960,7 @@ public class OrderServiceImpl implements OrderService {
      * @param orderConfirmChangeParam
      * @return
      */
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> changeOrderMethod(OrderConfirmChangeParam orderConfirmChangeParam,ServiceResult<String, String> result,OrderDO orderDO){
         Date date = new Date();
         List<OrderItemParam> orderItemParamList = orderConfirmChangeParam.getOrderItemParamList();
@@ -1156,11 +1161,7 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderMaterialInfo(orderMaterialDOList, orderDO);
 
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
-        if (count==0) {
-            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_COLSE);
-        } else {
-            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
-        }
+
         orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         orderDO.setUpdateTime(date);
         orderDO.setConfirmDeliveryTime(date);
@@ -1198,18 +1199,24 @@ public class OrderServiceImpl implements OrderService {
         }
         //为了不影响之前的订单逻辑，这里暂时使用修改的方式
         setOrderProductSummary(orderDO);
-        orderMapper.update(orderDO);
-
-        // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId());
 
         // 重算结算单
-        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(orderDO.getOrderNo());
+        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatementAllowConfirmCustommer(orderDO);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             result.setErrorCode(serviceResult.getErrorCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             return result;
         }
+        if (count==0) {
+            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_COLSE);
+        } else {
+            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
+        }
+        orderMapper.update(orderDO);
+
+        // 记录订单时间轴
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId());
+
         Integer newTotalProductCount = orderDO.getTotalProductCount();
         Integer newTotalMaterialCount = orderDO.getTotalMaterialCount();
         //是否有退货标记，true为有退货，false为全部收货
@@ -1344,7 +1351,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> returnEquipment(String orderNo, String returnEquipmentNo, String changeEquipmentNo, Date returnDate) {
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
@@ -1415,7 +1422,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> returnBulkMaterial(String orderNo, String returnNBulkMaterialNo, String changeBulkMaterialNo, Date returnDate) {
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
@@ -1544,7 +1551,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
             Date currentTime = new Date();
@@ -1611,6 +1618,9 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
+        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
+        orderDO.setCustomerRiskManagementDO(customerRiskManagementDO);
+
         List<OrderTimeAxisDO> orderTimeAxisDOList = orderTimeAxisSupport.getOrderTimeAxis(orderDO.getId());
         orderDO.setOrderTimeAxisDOList(orderTimeAxisDOList);
 
@@ -1618,6 +1628,14 @@ public class OrderServiceImpl implements OrderService {
 //        orderDO.setReletOrderDOList(reletOrderDOList);
 
         Order order = ConverterUtil.convert(orderDO, Order.class);
+
+        if (orderDO.getOrderUnionSellerId() != null){
+            UserDO unionUser = userMapper.findByUserId(orderDO.getOrderUnionSellerId());
+            if(unionUser != null){
+                order.setOrderUnionSellerName(unionUser.getRealName());
+                order.setOrderUnionSellerPhone(unionUser.getPhone());
+            }
+        }
 
         ServiceResult<String, StatementOrder> statementOrderResult = statementService.queryStatementOrderDetailByOrderId(order.getOrderNo());
         if (ErrorCode.SUCCESS.equals(statementOrderResult.getErrorCode())) {
@@ -1718,7 +1736,10 @@ public class OrderServiceImpl implements OrderService {
             if (orderConfirmChangeLogDO!=null) {
                 order.setChangeReason(orderConfirmChangeLogDO.getChangeReason());
             }
-        }        result.setErrorCode(ErrorCode.SUCCESS);
+        }
+        OrderStatementDateSplitDO orderStatementDateSplitDO=orderStatementDateSplitMapper.findByOrderNo(orderNo);
+        if(orderStatementDateSplitDO!=null)order.setOrderStatementDateSplit(ConverterUtil.convert(orderStatementDateSplitDO, OrderStatementDateSplit.class));
+        result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
     }
@@ -1991,7 +2012,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> cancelOrder(String orderNo, Integer cancelOrderReasonType) {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
@@ -2037,7 +2058,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> forceCancelOrder(String orderNo, Integer cancelOrderReasonType) {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
@@ -2203,7 +2224,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> processStatementOrderByCancel(String orderNo) {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
@@ -2565,7 +2586,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> processOrder(ProcessOrderParam param) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -2897,7 +2918,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> deliveryOrder(Order order) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -3811,16 +3832,16 @@ public class OrderServiceImpl implements OrderService {
             return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
         }
         //测试放开起租时间限制
-//        try {
-//            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
-//                return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
-//            }
-//        } catch (Exception e) {
-//            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
-//        }
-//        if (order.getExpectDeliveryTime() == null) {
-//            return ErrorCode.ORDER_EXPECT_DELIVERY_TIME;
-//        }
+        try {
+            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
+                return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+            }
+        } catch (Exception e) {
+            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+        }
+        if (order.getExpectDeliveryTime() == null) {
+            return ErrorCode.ORDER_EXPECT_DELIVERY_TIME;
+        }
         Integer deliveryBetweenDays = com.lxzl.erp.common.util.DateUtil.daysBetween(order.getExpectDeliveryTime(), order.getRentStartTime());
         if (deliveryBetweenDays < 0 || deliveryBetweenDays > 2) {
             return ErrorCode.ORDER_RENT_START_TIME_ERROR;
@@ -4178,6 +4199,9 @@ public class OrderServiceImpl implements OrderService {
     private AmountSupport amountSupport;
 
     @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
     private OrderMapper orderMapper;
 
     @Autowired
@@ -4319,4 +4343,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderSupport orderSupport;
+
+    @Autowired
+    private OrderStatementDateSplitMapper  orderStatementDateSplitMapper;
 }

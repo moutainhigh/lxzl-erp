@@ -258,6 +258,11 @@ public class PageController extends BaseController {
         return "/orderManage/reletOrderDetail";
     }
 
+    @RequestMapping("/order-manage/section-settlement")
+    public String orderManageSectionSettlement() {
+        return "/component/order/sectionSettlementModal";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
@@ -384,6 +389,16 @@ public class PageController extends BaseController {
         return "/businessCustomerManage/businessCustomerEditAfterPass";
     }
 
+    @RequestMapping("/customer-business-manage/service-list")
+    public String customerBusinessManageServiceList() {
+        return "/businessCustomerManage/serviceBusinessCustomerList";
+    }
+
+    @RequestMapping("/customer-business-manage/service-detail")
+    public String customerBusinessManageServiceDetail() {
+        return "/businessCustomerManage/serviceBusinessCustomerDetail";
+    }
+
     @RequestMapping("/customer-manage/confirm-statement")
     public String customerManageConfirmStatement() {
         return "/component/customer/confirmStatementModal";
@@ -427,6 +442,26 @@ public class PageController extends BaseController {
             return "redirect:/customer-business-manage/detail?no="+customerNo+"&consigninfoid="+id;
         }
         return "redirect:/error";
+    }
+
+    @RequestMapping("/customer-statement/list-export")
+    public String customerStatementListExport() {
+        return "/component/customer/exportModal";
+    }
+
+    @RequestMapping("/customer-manage/bad-debt-customer")
+    public String customerManageBadDebtCustomer() {
+        return "/component/customer/badDebtCustomer";
+    }
+
+    @RequestMapping("/customer-manage/service-list")
+    public String customerManageServiceList() {
+        return "/customerManage/serviceCustomerList";
+    }
+
+    @RequestMapping("/customer-manage/service-detail")
+    public String customerManageServiceDetail() {
+        return "/customerManage/serviceCustomerDetail";
     }
 
     //采购管理
@@ -993,6 +1028,16 @@ public class PageController extends BaseController {
         return "/dataAnalysisManage/dynamicSql";
     }
 
+    @RequestMapping("/data-analysis/sql-list")
+    public String systemManageDynamicSqlList() {
+        return "/dataAnalysisManage/dynamicSqlList";
+    }
+
+    @RequestMapping("/data-analysis/sql-add")
+    public String systemManageDynamicAddSql() {
+        return "/dataAnalysisManage/addSqlModal";
+    }
+
 
     //上传附件
     @RequestMapping("/jurnal-attachment-list/file/upload")
@@ -1135,14 +1180,14 @@ public class PageController extends BaseController {
         return "/component/address/inputAddressModal";
     }
 
-    //输入地址
+    //添加备注
     @RequestMapping("/common-modal/remark")
     public String commonModalRemark() {
         return "/component/common/remarkModal";
     }
 
 
-    //输入地址
+    //查看工作流
     @RequestMapping("/view-work-flow/modal")
     public String viewWorkFlowModal() {
         return "/component/workFlow/viewWorkFlow";

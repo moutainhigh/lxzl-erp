@@ -7,7 +7,11 @@ import com.lxzl.erp.core.service.export.ExcelExportConfig;
 import com.lxzl.erp.core.service.export.ExcelExportService;
 import com.lxzl.erp.core.service.export.impl.support.ExcelExportSupport;
 import com.lxzl.se.common.domain.Result;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -95,4 +99,19 @@ public class ExcelExportServiceImpl<T> implements ExcelExportService<T> {
         }
         return serviceResult;
     }
+
+    @Override
+    public ServiceResult<String, XSSFWorkbook> getXSSFWorkbook(XSSFWorkbook hssfWorkbook, XSSFSheet hssSheet, List<T> list, ExcelExportConfig config, String sheetName, Integer rowNo, Integer headlineHeight, Integer rowHeight) {
+        ServiceResult<String, XSSFWorkbook> serviceResult = new ServiceResult<>();
+        try {
+            //导出设计表格
+            XSSFWorkbook newHSSFWorkbook = ExcelExportSupport.getXSSFWorkbook(hssfWorkbook,hssSheet,list, config,sheetName,rowNo,headlineHeight,rowHeight);
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            serviceResult.setResult(newHSSFWorkbook);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return serviceResult;
+    }
+
 }

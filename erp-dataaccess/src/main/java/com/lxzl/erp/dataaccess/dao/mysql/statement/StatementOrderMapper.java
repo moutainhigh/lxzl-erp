@@ -1,7 +1,8 @@
 package com.lxzl.erp.dataaccess.dao.mysql.statement;
 
-import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
+import com.lxzl.erp.dataaccess.domain.statement.CheckStatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
+import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -35,4 +36,5 @@ public interface StatementOrderMapper extends BaseMysqlDAO<StatementOrderDO> {
 
     void realDeleteStatementOrderList(List<StatementOrderDO> statementOrderDOList);
 
+    List<CheckStatementOrderDO> exportListMonthPage(@Param("maps") Map<String, Object> paramMap);
 }

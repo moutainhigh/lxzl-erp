@@ -126,7 +126,7 @@
         </trim>
         FROM (
         SELECT
-        <include refid="column_List"/>
+          DISTINCT ekro.id,ekro.return_order_no,ekro.k3_customer_no,ekro.k3_customer_name,ekro.return_time,ekro.return_address,ekro.return_contacts,ekro.return_phone,ekro.return_mode,ekro.return_order_status,ekro.logistics_amount,ekro.service_amount,ekro.return_reason_type,ekro.data_status,ekro.remark,ekro.create_time,ekro.create_user,ekro.update_time,ekro.update_user,ekro.delivery_sub_company_id,success_status
         FROM erp_k3_return_order ekro
         <if test="maps.k3ReturnOrderQueryParam.orderNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.orderNo != ''">
             INNER JOIN erp_k3_return_order_detail ekrod ON ekrod.return_order_id = ekro.id and ekrod.data_status = 1
@@ -250,8 +250,21 @@
     <select id="findByCustomerNo" resultMap="K3ReturnOrderDO" resultType="java.lang.String">
         SELECT
         <include refid="column_List"/>
-        from erp_k3_return_order ekro WHERE
+        from erp_k3_return_order ekro
+        WHERE
         ekro.k3_customer_no = #{k3CustomerNo,jdbcType=VARCHAR} AND ekro.data_status = 1
+    </select>
+    <select id="findByCustomerNoForExport" resultMap="K3ReturnOrderDO" resultType="java.lang.String">
+        SELECT
+        <include refid="column_List"/>
+        <trim prefix=",">
+            <include refid="detail_column_List"/>
+        </trim>
+        from erp_k3_return_order ekro
+        LEFT JOIN erp_k3_return_order_detail ekrod ON ekro.id = ekrod.return_order_id and ekrod.data_status = 1
+        WHERE
+        ekro.k3_customer_no = #{k3CustomerNo,jdbcType=VARCHAR} AND ekro.data_status = 1
+        AND ekro.return_order_status = 20
     </select>
 
     <select id="listByReturnOrderNos" resultMap="K3ReturnOrderDO">

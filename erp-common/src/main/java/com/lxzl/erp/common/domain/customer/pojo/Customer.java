@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.*;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.data.annotation.Transient;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -54,6 +55,15 @@ public class Customer extends BasePO {
 	private Integer confirmStatementStatus; // 客户结算单确认状态 0否1是
 	private Integer confirmStatementUser; // 客户结算单确认人
 	private Date confirmStatementTime; // 客户结算单确认时间
+
+	private Integer confirmBadAccountStatus; // 客户是否为坏账状态 0否1是
+	private Integer confirmBadAccountUser; // 客户坏账确认人
+	private Date confirmBadAccountTime; // 客户坏账确认时间
+
+	@Transient
+	private String confirmStatementUserName; // 客户结算单确认人姓名，不存储
+	@Transient
+	private String confirmBadAccountUserName; // 客户坏账确认人姓名
 
 	private String ownerName; //业务员姓名
 	private String unionUserName; //联合业务员姓名
@@ -443,5 +453,45 @@ public class Customer extends BasePO {
 
 	public void setConfirmStatementTime(Date confirmStatementTime) {
 		this.confirmStatementTime = confirmStatementTime;
+	}
+
+	public String getConfirmStatementUserName() {
+		return confirmStatementUserName;
+	}
+
+	public void setConfirmStatementUserName(String confirmStatementUserName) {
+		this.confirmStatementUserName = confirmStatementUserName;
+	}
+
+	public Integer getConfirmBadAccountStatus() {
+		return confirmBadAccountStatus;
+	}
+
+	public void setConfirmBadAccountStatus(Integer confirmBadAccountStatus) {
+		this.confirmBadAccountStatus = confirmBadAccountStatus;
+	}
+
+	public Integer getConfirmBadAccountUser() {
+		return confirmBadAccountUser;
+	}
+
+	public void setConfirmBadAccountUser(Integer confirmBadAccountUser) {
+		this.confirmBadAccountUser = confirmBadAccountUser;
+	}
+
+	public Date getConfirmBadAccountTime() {
+		return confirmBadAccountTime;
+	}
+
+	public void setConfirmBadAccountTime(Date confirmBadAccountTime) {
+		this.confirmBadAccountTime = confirmBadAccountTime;
+	}
+
+	public String getConfirmBadAccountUserName() {
+		return confirmBadAccountUserName;
+	}
+
+	public void setConfirmBadAccountUserName(String confirmBadAccountUserName) {
+		this.confirmBadAccountUserName = confirmBadAccountUserName;
 	}
 }

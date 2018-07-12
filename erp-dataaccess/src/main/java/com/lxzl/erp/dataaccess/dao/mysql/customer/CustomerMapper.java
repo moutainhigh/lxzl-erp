@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.customer;
 
+import com.lxzl.erp.common.domain.customer.pojo.CustomerRentCount;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
@@ -37,4 +38,9 @@ public interface CustomerMapper extends BaseMysqlDAO<CustomerDO> {
 
 	List<CustomerDO>  findCustomer();
 
+    CustomerRentCount queryRentCountByCustomerNo(@Param("customerNo") String customerNo);
+
+    List<CustomerDO> findByCustomerNoList(@Param("customerNoList") List<String> customerNoList);
+
+    List<CustomerDO> findByCustomerNameList(@Param("customerNameList")List<String> customerNameList);
 }

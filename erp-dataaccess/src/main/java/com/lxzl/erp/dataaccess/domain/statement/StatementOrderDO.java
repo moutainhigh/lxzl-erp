@@ -48,6 +48,26 @@ public class StatementOrderDO extends BaseDO {
     private Integer owner;        //数据归属人，跟单员
     @Transient
     private String ownerName; //业务员姓名
+    @Transient
+    private Integer ownerSubCompanyId; //业务员所属分公司ID
+    @Transient
+    private String ownerSubCompanyName; //分公司名称
+
+    public Integer getOwnerSubCompanyId() {
+        return ownerSubCompanyId;
+    }
+
+    public void setOwnerSubCompanyId(Integer ownerSubCompanyId) {
+        this.ownerSubCompanyId = ownerSubCompanyId;
+    }
+
+    public String getOwnerSubCompanyName() {
+        return ownerSubCompanyName;
+    }
+
+    public void setOwnerSubCompanyName(String ownerSubCompanyName) {
+        this.ownerSubCompanyName = ownerSubCompanyName;
+    }
 
     public Integer getId() {
         return id;

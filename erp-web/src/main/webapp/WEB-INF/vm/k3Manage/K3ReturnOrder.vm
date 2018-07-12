@@ -4,6 +4,7 @@
     <title>凌雄ERP-K3数据-退货单</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/viewer/viewer.min.css">
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
@@ -89,9 +90,9 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                <td>{{returnOrderNo}}</td>
-                                <td>{{k3CustomerNo}}</td>
-                                <td>{{k3CustomerName}}</td>
+                                <td><a href="{{detailUrl}}" target="_blank">{{returnOrderNo}}</a></td>
+                                <td><a href="{{customerDetailUrl}}" target="_blank">{{k3CustomerNo}}</a></td>
+                                <td><a href="{{customerDetailUrl}}" target="_blank">{{k3CustomerName}}</a></td>
                                 <td>
                                     <p class="mn">{{returnContacts}}</p>
                                     <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{returnPhone}}</p>
@@ -114,10 +115,15 @@
                                 </td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
-                                    <div class="btn-group text-right">
-                                        {{#rowActionButtons}}
-                                        <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{returnOrderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-no="{{returnOrderNo}}">{{text}}</a>
-                                        {{/rowActionButtons}}
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-expanded="false">操作<span class="caret ml5"></span></button>
+                                        <ul class="dropdown-menu pull-right" role="menu">
+                                            {{#rowActionButtons}}
+                                            <li>
+                                                <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{returnOrderNo}}" class="{{class}}" data-no="{{returnOrderNo}}">{{text}}</a>
+                                            </li>
+                                            {{/rowActionButtons}}
+                                        </ul>
                                     </div>
                                 </td>
                                 {{/hasRowActionButtons}}
@@ -149,6 +155,7 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.jq.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'manage.k3.return.order.handle.mixin.js',

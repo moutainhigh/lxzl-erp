@@ -3,10 +3,13 @@ package com.lxzl.erp.common.domain.k3.pojo.returnOrder;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.k3.group.AddK3ReturnOrderGroup;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import org.hibernate.validator.constraints.NotBlank;
+
+import java.beans.Transient;
 import java.util.Date;
 
 
@@ -16,12 +19,13 @@ public class K3ReturnOrderDetail extends BasePO {
     private Integer k3ReturnOrderDetailId;   //唯一标识
     private Integer returnOrderId;   //K3退货单ID
     private String returnOrderNo;//K3退货单号
-    @NotBlank(message = ErrorCode.ORDER_NO_NOT_NULL, groups = {AddGroup.class})
+    @NotBlank(message = ErrorCode.ORDER_NO_NOT_NULL, groups = {AddGroup.class , AddK3ReturnOrderGroup.class})
     private String orderNo;   //订单号
-    @NotBlank(message = ErrorCode.ORDER_ITEM_ID_NOT_NULL, groups = {AddGroup.class})
+    @NotBlank(message = ErrorCode.ORDER_ITEM_ID_NOT_NULL, groups = {AddGroup.class, AddK3ReturnOrderGroup.class})
     private String orderItemId;    // 订单项ID
+    @NotBlank(message = ErrorCode.ORDER_ROW_ID_NOT_NULL, groups = {AddK3ReturnOrderGroup.class})
     private String orderEntry;   //订单行号
-    @NotBlank(message = ErrorCode.PRODUCT_NO_IS_NULL, groups = {AddGroup.class})
+    @NotBlank(message = ErrorCode.PRODUCT_NO_IS_NULL, groups = {AddGroup.class, AddK3ReturnOrderGroup.class})
     private String productNo;   //产品代码
     private String productName;   //产品名称
     private Integer productCount;   //退货数量
@@ -35,6 +39,8 @@ public class K3ReturnOrderDetail extends BasePO {
     private OrderProduct orderProduct;//关联订单商品
     private OrderMaterial orderMaterial;//关联商品物料
 
+    private Date returnTime;  //退货时间
+    private Integer orderItemType;//商品类型,1-商品,2-配件
 
     public Integer getK3ReturnOrderDetailId() {
         return k3ReturnOrderDetailId;
@@ -178,5 +184,21 @@ public class K3ReturnOrderDetail extends BasePO {
 
     public void setOrderMaterial(OrderMaterial orderMaterial) {
         this.orderMaterial = orderMaterial;
+    }
+
+    public Date getReturnTime() {
+        return returnTime;
+    }
+
+    public void setReturnTime(Date returnTime) {
+        this.returnTime = returnTime;
+    }
+
+    public Integer getOrderItemType() {
+        return orderItemType;
+    }
+
+    public void setOrderItemType(Integer orderItemType) {
+        this.orderItemType = orderItemType;
     }
 }

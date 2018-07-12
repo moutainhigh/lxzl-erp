@@ -4,6 +4,7 @@
     <title>凌雄ERP-采购管理-收料通知-详细</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/viewer/viewer.min.css">
 </head>
 <body class="invoice-page">
     #parse("layout/toolbox.vm")
@@ -15,8 +16,9 @@
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
             <section id="content" class="animated fadeIn noprint">
+                #parse("component/loading.vm")
                 <form class="" id="detailPurchaseReceiveForm">
-                    <div class="panel panel-primary panel-border top mb35 invoice-panel"">
+                    <div class="panel panel-primary panel-border top mb35 invoice-panel">
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-md-4">
@@ -295,6 +297,7 @@
         #parse("layout/sidebarRight.vm")
     </div>
     #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.jq.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'manage.purchase.receive.handle.mixin.js',

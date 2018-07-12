@@ -2,37 +2,71 @@
     <div class="panel-heading">
         <ul class="nav panel-tabs-border panel-tabs panel-tabs-left" id="modalTab">
             <li class="active">
-                <a href="#productFirstNeed" data-toggle="tab" aria-expanded="false">首次所需设备</a>
+                <a href="#rentingInfo" data-toggle="tab" aria-expanded="false">客户在租情况</a>
+            </li>
+            <li class="">
+                <a href="#productFirstNeed" data-toggle="tab" aria-expanded="false">首次所需设备（共<span id="firstNeedCount">0</span>件）</a>
             </li>
             <li>
-                <a href="#productLastNeed" data-toggle="tab" aria-expanded="false">后续所需设备</a>
+                <a href="#productLastNeed" data-toggle="tab" aria-expanded="false">后续所需设备（共<span id="lastNeedCount">0</span>件）</a>
             </li>
             <li>
-                <a href="#orderList" data-toggle="tab" aria-expanded="false">订单</a>
+                <a href="#orderList" data-toggle="tab" aria-expanded="false">订单（共<span id="orderCount">0</span>个）</a>
             </li>
             <li>
-                <a href="#returnOrder" data-toggle="tab" aria-expanded="true">退货单</a>
+                <a href="#returnOrder" data-toggle="tab" aria-expanded="true">退货单（共<span id="returnOrderCount">0</span>个）</a>
             </li>
             <li>
-                <a href="#rechargeList" data-toggle="tab" aria-expanded="true">充值记录</a>
+                <a href="#rechargeList" data-toggle="tab" aria-expanded="true">充值记录（共<span id="rechargeCount">0</span>条）</a>
             </li>
             <li>
-                <a href="#accountList" data-toggle="tab" aria-expanded="true">账户流水</a>
+                <a href="#accountList" data-toggle="tab" aria-expanded="true">账户流水（共<span id="accountCount">0</span>条）</a>
             </li>
             <li>
-                <a href="#riskHistory" data-toggle="tab" aria-expanded="true">风控历史记录</a>
+                <a href="#riskHistory" data-toggle="tab" aria-expanded="true">风控历史记录（共<span id="riskCount">0</span>条）</a>
             </li>
             <li>
-                <a href="#returnVisitRecord" data-toggle="tab" aria-expanded="true">客户回访记录</a>
+                <a href="#returnVisitRecord" data-toggle="tab" aria-expanded="true">客户回访记录（共<span id="returnVistCount">0</span>条）</a>
             </li>
             <li>
-                <a href="#couponList" data-toggle="tab" aria-expanded="true">优惠券</a>
+                <a href="#couponList" data-toggle="tab" aria-expanded="true">优惠券（共<span id="couponCount">0</span>张）</a>
             </li>
         </ul>
     </div>
     <div class="panel-body pn">
         <div class="tab-content br-n">
-            <div id="productFirstNeed" class="tab-pane active">
+            <div id="rentingInfo" class="tab-pane active">
+                <div class="table-responsive">
+                    <script type="text/html" id="rentingInfoTpl">
+                        <thead>
+                        <tr class="bg-light">
+                            <th class="text-center" style="width:160px;">在租商品总数</th>
+                            <th><div class="text-center" style="width:160px;">在租配件总数</div></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#rentingData}}
+                        <tr>
+                            <td class="text-center">{{rentProductCount}}</td>
+                            <td>
+                                <div class="text-center" style="width:160px;">
+                                    <span>{{rentMaterialCount}}</span>
+                                    {{#rentAmountMaterialCount}}<span class="rechargeable">({{rentAmountMaterialCount}}) <span class="tips">收费的在租配件总数</span></span>{{/rentAmountMaterialCount}}
+                                </div>
+                            </td>
+                        </tr>
+                        {{/rentingData}}
+                        {{^rentingData}}
+                        <tr>
+                            <td valign="top" colspan="2"><div class="text-center" style="width:320px;">没有查询到客户在租情况</div></td>
+                        </tr>
+                        {{/rentingData}}
+                        </tbody>
+                    </script>
+                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="rentingInfoTable"></table>
+                </div>
+            </div>
+            <div id="productFirstNeed" class="tab-pane">
                 <div class="table-responsive">
                     <script type="text/html" id="productFirstNeedTpl">
                         <thead>
@@ -170,7 +204,7 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{orderNo}}</td>
+                                <td><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></td>
                                 <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
                                 <td>
                                     <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
@@ -247,7 +281,7 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{returnOrderNo}}</td>
+                                <td><a href="{{returnOrderUrl}}" target="_blank">{{returnOrderNo}}</a></td>
                                 <td>{{isChargingStr}}</td>
                                 <td>￥{{#price}}{{totalRentCost}}{{/price}}</td>
                                 <td>￥{{#price}}{{serviceCost}}{{/price}}</td>

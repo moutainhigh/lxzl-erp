@@ -372,6 +372,127 @@ public class DateUtil {
         return ca.getTime();
     }
 
+    /**
+     * 获取月份
+     *
+     * @param date  时间
+     * @return 月份
+     * @throws ParseException
+     */
+    public static Integer getMounth(Date date) {
+        if(date == null){
+            return null;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.MONTH)+1;
+    }
+
+    /**
+     * 获取年份
+     *
+     * @param date  时间
+     * @return 年份
+     * @throws ParseException
+     */
+    public static Integer getYear(Date date) {
+        if(date == null){
+            return null;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.YEAR);
+    }
+
+    /**
+     * 获取月份和剩余天数
+     *
+     * @param startDay  开始时间
+     * @param endDay  结束时间
+     * @return 月份和剩余天数
+     * @throws ParseException
+     */
+    public static String  getMonthAndDays(Date startDay,Date endDay) throws Exception {
+        List<Date> monthList = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");//格式化为年月
+
+        Calendar min = Calendar.getInstance();
+        Calendar max = Calendar.getInstance();
+        Date minDate = sdf.parse(sdf.format(startDay));
+        min.setTime(minDate);
+        Date newMinDate = min.getTime();
+
+        Date maxDate = sdf.parse(sdf.format(endDay));
+        max.setTime(maxDate);
+        max.add(Calendar.DATE,1);
+
+        Calendar curr = min;
+        while (curr.before(max)) {
+            monthList.add(curr.getTime());
+            curr.add(Calendar.MONTH, 1);
+        }
+
+        Date newMaxDate = max.getTime();
+        int monthLength = DateUtil.getMonthSpace(newMinDate, newMaxDate);
+        int allDay = DateUtil.daysBetween(newMinDate, newMaxDate);
+        int allMonthDays = 0;  //所有月的天数
+        for (int i = 0; i < monthLength; i++) {
+            Date date = monthList.get(i);
+            allMonthDays = DateUtil.getActualMaximum(date) + allMonthDays;
+        }
+
+        return monthLength+"月"+(allDay - allMonthDays )+"天";
+    }
+
+    /**
+     * 通过两个日期获取时间间隔数组（0索引位置为月，1索引位置为日）
+     * @param start
+     * @param end
+     * @return
+     */
+    public static int[] getDiff(Date start, Date end) {
+        Calendar startCalendar = Calendar.getInstance();
+        startCalendar.setTime(start);
+
+        int startYear = startCalendar.get(Calendar.YEAR);
+        int startMonth = startCalendar.get(Calendar.MONTH);
+        int startDay = startCalendar.get(Calendar.DAY_OF_MONTH);
+
+        Calendar endCalendar = Calendar.getInstance();
+        endCalendar.setTime(end);
+        endCalendar.add(Calendar.DATE, 1);
+        int endYear = endCalendar.get(Calendar.YEAR);
+        int endMonthValue = endCalendar.get(Calendar.MONTH);
+        int endDayOfMonth = endCalendar.get(Calendar.DAY_OF_MONTH);
+
+        int yearDiff = endYear - startYear;     // yearDiff >= 0
+        int monthDiff = endMonthValue - startMonth;
+
+        int dayDiff = endDayOfMonth - startDay;
+
+        if (dayDiff < 0) {
+            Calendar endMinusOneCalendar = Calendar.getInstance();   // end 的上一个月
+            endMinusOneCalendar.setTime(endCalendar.getTime());
+            int monthDays = endMinusOneCalendar.getActualMaximum(Calendar.DATE);  // 该月的天数
+
+            dayDiff += monthDays;  // 用上一个月的天数补上这个月差掉的日子
+
+            if (monthDiff > 0) {   // eg. start is 2018-04-03, end is 2018-08-01
+                monthDiff--;
+
+            } else {  // eg. start is 2018-04-03, end is 2019-02-01
+                monthDiff += 11;
+                yearDiff--;
+
+            }
+        }
+        int[] diff = new int[2];
+
+        diff[0] = yearDiff * 12 + monthDiff;
+        diff[1] = dayDiff;
+        return diff;
+    }
+
     public static void main(String[] args) {
 //        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        List<Date> dateList = getCurrentYearPassedMonth();

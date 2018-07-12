@@ -19,6 +19,7 @@ import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.MaterialImageConverter;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
+import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.material.*;
@@ -111,6 +112,9 @@ public class MaterialServiceImpl implements MaterialService {
     @Autowired
     private WebServiceHelper webServiceHelper;
 
+    @Autowired
+    private ProductSupport productSupport;
+
     @Override
     public ServiceResult<String, List<MaterialImg>> uploadImage(MultipartFile[] files) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -170,7 +174,7 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> addMaterial(Material material) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -220,7 +224,7 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateMaterial(Material material) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -237,6 +241,15 @@ public class MaterialServiceImpl implements MaterialService {
             material.setMaterialModelId(null);
         } else {
             material.setMaterialCapacityValue(null);
+        }
+        if (StringUtil.isEmpty(material.getK3MaterialNo())){
+            result.setErrorCode(ErrorCode.MATERIAL_K3_MATERIAL_NO_NOT_NULL);
+            return result;
+        }
+
+        if (!productSupport.isMaterial(material.getK3MaterialNo())){
+            result.setErrorCode(ErrorCode.MATERIAL_K3_MATERIAL_NO_IS_ERROR);
+            return result;
         }
 
         MaterialDO materialDO = ConverterUtil.convert(material, MaterialDO.class);
@@ -379,8 +392,13 @@ public class MaterialServiceImpl implements MaterialService {
                 || material.getMonthRentPrice() == null
                 || material.getNewMaterialPrice() == null
                 || material.getNewDayRentPrice() == null
-                || material.getNewMonthRentPrice() == null) {
+                || material.getNewMonthRentPrice() == null
+                || StringUtil.isEmpty(material.getK3MaterialNo())) {
             return ErrorCode.PARAM_IS_NOT_ENOUGH;
+        }
+
+        if (!productSupport.isMaterial(material.getK3MaterialNo())){
+            return ErrorCode.MATERIAL_K3_MATERIAL_NO_IS_ERROR;
         }
 
         MaterialTypeDO materialTypeDO = materialTypeMapper.findById(material.getMaterialType());

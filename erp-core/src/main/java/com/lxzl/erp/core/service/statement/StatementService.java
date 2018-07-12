@@ -4,12 +4,13 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
-import com.lxzl.erp.common.domain.k3.pojo.K3StatementDateChange;
+import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.statement.pojo.CheckStatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
@@ -76,7 +77,8 @@ public interface StatementService extends BaseService {
      * @param k3StatementDateChange
      * @return
      */
-    ServiceResult<String, BigDecimal> reCreateOrderStatement(K3StatementDateChange k3StatementDateChange);
+    ServiceResult<String, BigDecimal> reCreateOrderStatement(OrderStatementDateSplit k3StatementDateChange);
+    ServiceResult<String, BigDecimal> reCreateOrderStatementAllowConfirmCustommer(OrderDO orderDO);
 
 
     /**
@@ -234,5 +236,10 @@ public interface StatementService extends BaseService {
      * @return
      */
     ServiceResult<String, String> reStatementK3ReturnOrderRentOnly(String returnOrderNo);
-
+    /**
+     * 导入对账单查询
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/6/21 9:32
+     */
+    ServiceResult<String, List<CheckStatementOrder>> exportQueryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam);
 }
