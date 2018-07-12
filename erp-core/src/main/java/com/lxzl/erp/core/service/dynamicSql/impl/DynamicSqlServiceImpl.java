@@ -1,6 +1,7 @@
 package com.lxzl.erp.core.service.dynamicSql.impl;
 
 import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.DynamicSqlTpye;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -68,10 +69,10 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
             dynamicSqlSelectParam.setLimit(totalReturnCount);
         }
 
-        SqlTpye sqlTpye = analysisAndRebuildDynamicSql(dynamicSqlSelectParam);
+        DynamicSqlTpye dynamicSqlTpye = analysisAndRebuildDynamicSql(dynamicSqlSelectParam);
         String sql = dynamicSqlSelectParam.getSql();
 
-        switch (sqlTpye) {
+        switch (dynamicSqlTpye) {
             case DELETE:
                 throw new BusinessException(ErrorCode.DELETE_PROTECTION);
             case INSERT:
@@ -79,7 +80,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
                     add(new ArrayList<>());
                 }});
                 serviceResult.setErrorCode(ErrorCode.SUCCESS);
-                if (dynamicSqlHolderMapper.save(initDynamicSqlHolderDO(sql, sqlTpye)) >= 1)
+                if (dynamicSqlHolderMapper.save(initDynamicSqlHolderDO(sql, dynamicSqlTpye)) >= 1)
                     serviceResult.getResult().get(0).add("INSERT 操作需要被审核才可执行");
                 else
                     serviceResult.getResult().get(0).add("申请 INSERT 操作失败");
@@ -89,7 +90,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
                     add(new ArrayList<>());
                 }});
                 serviceResult.setErrorCode(ErrorCode.SUCCESS);
-                if (dynamicSqlHolderMapper.save(initDynamicSqlHolderDO(sql, sqlTpye)) >= 1)
+                if (dynamicSqlHolderMapper.save(initDynamicSqlHolderDO(sql, dynamicSqlTpye)) >= 1)
                     serviceResult.getResult().get(0).add("UPDATE 操作需要被审核才可执行");
                 else
                     serviceResult.getResult().get(0).add("申请 UPDATE 操作失败");
@@ -189,10 +190,10 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         if (dynamicSqlHolderId == null)
             throw new BusinessException(ErrorCode.DYNAMICSQLHOLDERID_NOT_NULL);
         DynamicSqlHolderDO dynamicSqlHolderDO = dynamicSqlHolderMapper.findById(dynamicSqlHolderId);
-        SqlTpye sqlTpye = SqlTpye.valueOf(dynamicSqlHolderDO.getSqlTpye());
+        DynamicSqlTpye dynamicSqlTpye = DynamicSqlTpye.valueOf(dynamicSqlHolderDO.getSqlTpye());
         ServiceResult<String, String> sqlResult = new ServiceResult<>();
         final String sql = dynamicSqlHolderDO.getSqlContent();
-        switch (sqlTpye) {
+        switch (dynamicSqlTpye) {
             case UPDATE:
                 sqlResult = updateBySql(new DynamicSqlSelectParam() {{
                     setSql(sql);
@@ -351,12 +352,12 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         }
     }
 
-    private SqlTpye analysisAndRebuildDynamicSql(DynamicSqlSelectParam dynamicSqlSelectParam) {
+    private DynamicSqlTpye analysisAndRebuildDynamicSql(DynamicSqlSelectParam dynamicSqlSelectParam) {
         StringBuilder word = new StringBuilder();
 
         String sql = dynamicSqlSelectParam.getSql().trim();
         String upperCaseSql = sql.toUpperCase();
-        SqlTpye sqlTpye = SqlTpye.DEFAULT;
+        DynamicSqlTpye dynamicSqlTpye = DynamicSqlTpye.DEFAULT;
 
         boolean initialMark = true;
         boolean checkKeyWork = false;
@@ -383,9 +384,9 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
 
                     if (initialMark) {
                         initialMark = false;
-                        for (SqlTpye sqlTpye1 : SqlTpye.values()) {
-                            if (sqlTpye1.sqlTpyeName.equals(word.toString()))
-                                sqlTpye = sqlTpye1;
+                        for (DynamicSqlTpye dynamicSqlTpye1 : DynamicSqlTpye.values()) {
+                            if (dynamicSqlTpye1.getSqlTpyeName().equals(word.toString()))
+                                dynamicSqlTpye = dynamicSqlTpye1;
                         }
                     }
 
@@ -465,49 +466,34 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
             }
         }
 
-        if (sqlTpye != SqlTpye.DEFAULT) {
+        if (dynamicSqlTpye != DynamicSqlTpye.DEFAULT) {
             if (hasDelete) {
-                sqlTpye = SqlTpye.DELETE;
+                dynamicSqlTpye = DynamicSqlTpye.DELETE;
             } else if (hasInsertInto) {
-                sqlTpye = SqlTpye.INSERT;
+                dynamicSqlTpye = DynamicSqlTpye.INSERT;
             } else if (hasUpdate) {
-                sqlTpye = SqlTpye.UPDATE;
+                dynamicSqlTpye = DynamicSqlTpye.UPDATE;
             } else if (hasSelect) {
                 if (!hasLimit)
                     dynamicSqlSelectParam.setSql(sql + " LIMIT " + dynamicSqlSelectParam.getLimit());
-                sqlTpye = SqlTpye.SELECT;
+                dynamicSqlTpye = DynamicSqlTpye.SELECT;
             }
         }
 
-        return sqlTpye;
+        return dynamicSqlTpye;
 
     }
 
-    private DynamicSqlHolderDO initDynamicSqlHolderDO(String sql, SqlTpye sqlTpye) {
+    private DynamicSqlHolderDO initDynamicSqlHolderDO(String sql, DynamicSqlTpye dynamicSqlTpye) {
         DynamicSqlHolderDO dynamicSqlHolderDO = new DynamicSqlHolderDO();
         dynamicSqlHolderDO.setSqlContent(sql);
-        dynamicSqlHolderDO.setSqlTpye(sqlTpye.getSqlTpyeName());
+        dynamicSqlHolderDO.setSqlTpye(dynamicSqlTpye.getSqlTpyeName());
         dynamicSqlHolderDO.setCreateUser(userSupport.getCurrentUserId().toString());
         dynamicSqlHolderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         dynamicSqlHolderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         return dynamicSqlHolderDO;
     }
 
-    private enum SqlTpye {
-        SELECT("SELECT"), UPDATE("UPDATE"), DELETE("DELETE"), INSERT("INSERT"), DEFAULT("DEFAULT");
-        String sqlTpyeName;
 
-        SqlTpye(String sqlTpyeName) {
-            this.sqlTpyeName = sqlTpyeName;
-        }
-
-        public String getSqlTpyeName() {
-            return sqlTpyeName;
-        }
-
-        public void setSqlTpyeName(String sqlTpyeName) {
-            this.sqlTpyeName = sqlTpyeName;
-        }
-    }
 
 }
