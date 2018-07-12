@@ -1,38 +1,23 @@
 package com.lxzl.erp.web.controller;
 
-import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
-import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
-import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlParam;
-import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
+import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
-import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
-import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.statistics.StatisticsSalesmanPageParam;
-import com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesman;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
-import com.lxzl.erp.core.service.bank.BankSlipService;
-import com.lxzl.erp.core.service.dynamicSql.DynamicSqlService;
+import com.lxzl.erp.core.service.export.DisposeExportDataService;
 import com.lxzl.erp.core.service.export.ExportExcelCustomFormatService;
-import com.lxzl.erp.core.service.export.ExcelExportConfigGroup;
-import com.lxzl.erp.core.service.export.ExcelExportService;
-import com.lxzl.erp.core.service.export.impl.support.ExcelExportSupport;
-import com.lxzl.erp.core.service.statement.StatementService;
-import com.lxzl.erp.core.service.statistics.StatisticsService;
 import com.lxzl.se.common.domain.Result;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletResponse;
-import java.net.URLDecoder;
-import java.util.List;
 
 @RequestMapping("/exportExcel")
 @Controller
@@ -66,8 +51,8 @@ public class ExcelExportController {
     }
 
     @RequestMapping(value = "exportDynamicSql", method = RequestMethod.POST)
-    public Result exportDynamicSql(DynamicSqlParam dynamicSqlParam, HttpServletResponse response) throws Exception {
-        return resultGenerator.generate(disposeExportDataService.disposeDynamicSql(dynamicSqlParam, response).getErrorCode());
+    public Result exportDynamicSql(DynamicSqlSelectParam dynamicSqlSelectParam, HttpServletResponse response) throws Exception {
+        return resultGenerator.generate(disposeExportDataService.disposeDynamicSql(dynamicSqlSelectParam, response).getErrorCode());
     }
 
     @RequestMapping(value = "exportStatementOrderCheck", method = RequestMethod.POST)

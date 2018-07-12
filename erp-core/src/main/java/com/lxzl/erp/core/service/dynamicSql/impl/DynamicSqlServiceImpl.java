@@ -4,7 +4,7 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlParam;
+import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlQueryParam;
 import com.lxzl.erp.common.domain.dynamicSql.pojo.DynamicSql;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -61,14 +61,14 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
 
 
     @Override
-    public ServiceResult<String, List<List<Object>>> executeBySql(DynamicSqlParam dynamicSqlParam) {
+    public ServiceResult<String, List<List<Object>>> executeBySql(DynamicSqlSelectParam dynamicSqlSelectParam) {
         ServiceResult<String, List<List<Object>>> serviceResult = new ServiceResult<>();
-        if (dynamicSqlParam.getLimit() == null || dynamicSqlParam.getLimit() <= 0) {
-            dynamicSqlParam.setLimit(totalReturnCount);
+        if (dynamicSqlSelectParam.getLimit() == null || dynamicSqlSelectParam.getLimit() <= 0) {
+            dynamicSqlSelectParam.setLimit(totalReturnCount);
         }
 
-        SqlTpye sqlTpye = analysisAndRebuildDynamicSql(dynamicSqlParam);
-        String sql = dynamicSqlParam.getSql();
+        SqlTpye sqlTpye = analysisAndRebuildDynamicSql(dynamicSqlSelectParam);
+        String sql = dynamicSqlSelectParam.getSql();
 
         switch (sqlTpye) {
             case DELETE:
@@ -94,8 +94,8 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
                     serviceResult.getResult().get(0).add("申请 UPDATE 操作失败");
                 break;
             case SELECT:
-                dynamicSqlParam.setSql(sql);
-                serviceResult = selectBySql(dynamicSqlParam);
+                dynamicSqlSelectParam.setSql(sql);
+                serviceResult = selectBySql(dynamicSqlSelectParam);
                 break;
             case DEFAULT:
                 break;
@@ -104,11 +104,11 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     }
 
     @Override
-    public ServiceResult<String, List<List<Object>>> selectBySql(DynamicSqlParam dynamicSqlParam) {
+    public ServiceResult<String, List<List<Object>>> selectBySql(DynamicSqlSelectParam dynamicSqlSelectParam) {
         ServiceResult<String, List<List<Object>>> serviceResult = new ServiceResult<>();
         List<List<Object>> results;
         try {
-            results = jdbcDynamicSqlDao.selectBySql(dynamicSqlParam.getSql());
+            results = jdbcDynamicSqlDao.selectBySql(dynamicSqlSelectParam.getSql());
         } catch (SQLException e) {
             throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
@@ -125,11 +125,11 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     }
 
     @Override
-    public ServiceResult<String, String> updateBySql(DynamicSqlParam dynamicSqlParam) {
+    public ServiceResult<String, String> updateBySql(DynamicSqlSelectParam dynamicSqlSelectParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         final int mark;
         try {
-            mark = dynamicSqlDao.updateBySql(dynamicSqlParam.getSql());
+            mark = dynamicSqlDao.updateBySql(dynamicSqlSelectParam.getSql());
         } catch (SQLException e) {
             throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
@@ -139,11 +139,11 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     }
 
     @Override
-    public ServiceResult<String, String> insertBySql(DynamicSqlParam dynamicSqlParam) {
+    public ServiceResult<String, String> insertBySql(DynamicSqlSelectParam dynamicSqlSelectParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         final int mark;
         try {
-            mark = dynamicSqlDao.insertBySql(dynamicSqlParam.getSql());
+            mark = dynamicSqlDao.insertBySql(dynamicSqlSelectParam.getSql());
         } catch (SQLException e) {
             throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
@@ -186,12 +186,12 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         final String sql = dynamicSqlHolderDO.getSqlContent();
         switch (sqlTpye) {
             case UPDATE:
-                sqlResult = updateBySql(new DynamicSqlParam() {{
+                sqlResult = updateBySql(new DynamicSqlSelectParam() {{
                     setSql(sql);
                 }});
                 break;
             case INSERT_INTO:
-                sqlResult = insertBySql(new DynamicSqlParam() {{
+                sqlResult = insertBySql(new DynamicSqlSelectParam() {{
                     setSql(sql);
                 }});
                 break;
@@ -343,10 +343,10 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         }
     }
 
-    private SqlTpye analysisAndRebuildDynamicSql(DynamicSqlParam dynamicSqlParam) {
+    private SqlTpye analysisAndRebuildDynamicSql(DynamicSqlSelectParam dynamicSqlSelectParam) {
         StringBuilder word = new StringBuilder();
 
-        String sql = dynamicSqlParam.getSql().trim();
+        String sql = dynamicSqlSelectParam.getSql().trim();
         String upperCaseSql = sql.toUpperCase();
 
         boolean checkKeyWork = false;
@@ -454,7 +454,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
             return SqlTpye.UPDATE;
         } else if (hasSelect) {
             if (!hasLimit)
-                dynamicSqlParam.setSql(sql + " LIMIT " + dynamicSqlParam.getLimit());
+                dynamicSqlSelectParam.setSql(sql + " LIMIT " + dynamicSqlSelectParam.getLimit());
             return SqlTpye.SELECT;
         }
         return SqlTpye.DEFAULT;
