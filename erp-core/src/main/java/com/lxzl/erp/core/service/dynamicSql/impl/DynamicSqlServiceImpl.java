@@ -22,7 +22,7 @@ import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.BadSqlGrammarException;
+import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -110,7 +110,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         List<List<Object>> results = new ArrayList<>();
         try {
             results = jdbcDynamicSqlDao.selectBySql(dynamicSqlSelectParam.getSql());
-        } catch (SQLException | BadSqlGrammarException e) {
+        } catch (SQLException | NonTransientDataAccessException e) {
             List<Object> list = new ArrayList<Object>() {{
                 add(e.getMessage());
             }};
@@ -137,7 +137,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         try {
             mark = dynamicSqlDao.updateBySql(dynamicSqlSelectParam.getSql());
             serviceResult.setResult("Affected rows:" + mark);
-        } catch (SQLException | BadSqlGrammarException e) {
+        } catch (SQLException | NonTransientDataAccessException e) {
             serviceResult.setResult(e.getMessage());
 //            throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
@@ -152,7 +152,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         try {
             mark = dynamicSqlDao.insertBySql(dynamicSqlSelectParam.getSql());
             serviceResult.setResult("Affected rows:" + mark);
-        } catch (SQLException | BadSqlGrammarException e) {
+        } catch (SQLException | NonTransientDataAccessException e) {
             serviceResult.setResult(e.getMessage());
 //            throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
