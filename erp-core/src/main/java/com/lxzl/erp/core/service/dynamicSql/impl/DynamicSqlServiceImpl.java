@@ -4,7 +4,6 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.base.BasePageParam;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlParam;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlQueryParam;
 import com.lxzl.erp.common.domain.dynamicSql.pojo.DynamicSql;
@@ -12,7 +11,7 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.IdCardCheckUtil;
 import com.lxzl.erp.core.service.dynamicSql.DynamicSqlService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
-import com.lxzl.erp.dataaccess.dao.jdbc.dynamicSql.impl.DynamicSqlDaoImpl;
+import com.lxzl.erp.dataaccess.dao.jdbc.dynamicSql.impl.JdbcDynamicSqlDao;
 import com.lxzl.erp.dataaccess.dao.mysql.dynamicSql.DynamicSqlDao;
 import com.lxzl.erp.dataaccess.dao.mysql.dynamicSql.DynamicSqlHolderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.dynamicSql.DynamicSqlMapper;
@@ -58,7 +57,8 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     private DynamicSqlHolderMapper dynamicSqlHolderMapper;
 
     @Autowired
-    private DynamicSqlDaoImpl dynamicSqlDaoImpl;
+    private JdbcDynamicSqlDao jdbcDynamicSqlDao;
+
 
     @Override
     public ServiceResult<String, List<List<Object>>> executeBySql(DynamicSqlParam dynamicSqlParam) {
@@ -67,152 +67,39 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
             dynamicSqlParam.setLimit(totalReturnCount);
         }
 
-        String sql = dynamicSqlParam.getSql().trim();
-        StringBuilder word = new StringBuilder();
-        String upperCaseSql = sql.toUpperCase();
+        SqlTpye sqlTpye = analysisAndRebuildDynamicSql(dynamicSqlParam);
+        String sql = dynamicSqlParam.getSql();
 
-        boolean checkKeyWork = false;
-        boolean isString = false;
-        boolean isString2 = false;
-        boolean hasSelect = false;
-        boolean hasUpdate = false;
-        boolean hasDelete = false;
-        boolean hasInsertInto = false;
-        boolean hasLimit = false;
-
-        for (int i = 0; i < upperCaseSql.length(); i++) {
-            char ch = upperCaseSql.charAt(i);
-            switch (ch) {
-                case ')':
-                    if (!isString && !isString2)
-                        if (hasLimit)
-                            hasLimit = false;
-                    break;
-
-                case ' ':
-                    if (!isString && !isString2)
-                        checkKeyWork = true;
-                    break;
-
-                case '\'':
-                    isString = !isString;
-                    break;
-
-                case '\"':
-                    isString2 = !isString2;
-                    break;
-                default:
-                    word.append(ch);
-                    break;
-            }
-
-
-            if (checkKeyWork) {
-                switch ((word.toString())) {
-                    case "SELECT":
-                        hasSelect = true;
-                        //do something
-                        break;
-
-                    case "UPDATE":
-                        hasUpdate = true;
-                        //do something
-                        break;
-
-                    case "DELETE":
-                        hasDelete = true;
-                        //do something
-                        break;
-
-                    case "INSERT":
-                        int m = i + 1;
-                        for (; m < upperCaseSql.length(); m++)
-                            if (upperCaseSql.charAt(m) != ' ')
-                                break;
-
-                        for (; m < upperCaseSql.length(); m++) {
-                            char c = upperCaseSql.charAt(m);
-                            if (c != ' ')
-                                word.append(c);
-                            else
-                                break;
-                        }
-                        if (word.toString().equals("INSERTINTO")) {
-                            hasInsertInto = true;
-                            i = m;
-                            //do something
-                        }
-                        break;
-
-                    case "FROM":
-                        //do something
-                        break;
-
-                    case "WHERE":
-                        //do something
-                        break;
-
-                    case "LIMIT":
-                        hasLimit = true;
-                        //do something
-                        break;
-
-                    case "OFFSET":
-                        //do something
-                        break;
-                    default:
-                        break;
-                }
-                checkKeyWork = false;
-                word = new StringBuilder();
-            }
+        switch (sqlTpye) {
+            case DELETE:
+                throw new BusinessException(ErrorCode.DELETE_PROTECTION);
+            case INSERT_INTO:
+                serviceResult.setResult(new ArrayList<List<Object>>() {{
+                    add(new ArrayList<>());
+                }});
+                serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                if (dynamicSqlHolderMapper.save(initDynamicSqlHolderDO(sql,sqlTpye)) >= 1)
+                    serviceResult.getResult().get(0).add("INSERT INTO 操作需要被审核才可执行");
+                else
+                    serviceResult.getResult().get(0).add("申请 INSERT INTO 操作失败");
+                break;
+            case UPDATE:
+                serviceResult.setResult(new ArrayList<List<Object>>() {{
+                    add(new ArrayList<>());
+                }});
+                serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                if (dynamicSqlHolderMapper.save(initDynamicSqlHolderDO(sql,sqlTpye)) >= 1)
+                    serviceResult.getResult().get(0).add("UPDATE 操作需要被审核才可执行");
+                else
+                    serviceResult.getResult().get(0).add("申请 UPDATE 操作失败");
+                break;
+            case SELECT:
+                dynamicSqlParam.setSql(sql);
+                serviceResult = selectBySql(dynamicSqlParam);
+                break;
+            case DEFAULT:
+                break;
         }
-
-        if (hasDelete) {
-            throw new BusinessException(ErrorCode.DELETE_PROTECTION);
-        } else if (hasInsertInto) {
-            dynamicSqlParam.setSql(sql);
-            DynamicSqlHolderDO dynamicSqlHolderDO = new DynamicSqlHolderDO();
-            dynamicSqlHolderDO.setSqlContent(sql);
-            dynamicSqlHolderDO.setSqlTpye("INSERTINTO");
-            dynamicSqlHolderDO.setCreateUser(userSupport.getCurrentUserId().toString());
-            dynamicSqlHolderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            dynamicSqlHolderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            int affectedRows = dynamicSqlHolderMapper.save(dynamicSqlHolderDO);
-            List<List<Object>> arrayList = new ArrayList<>();
-            List<Object> list = new ArrayList<>();
-            arrayList.add(list);
-            serviceResult.setResult(arrayList);
-            serviceResult.setErrorCode(ErrorCode.SUCCESS);
-            if (affectedRows >= 1)
-                list.add("INSERT INTO 操作需要被审核才可执行");
-            else
-                list.add("申请 INSERT INTO 操作失败");
-        } else if (hasUpdate) {
-            dynamicSqlParam.setSql(sql);
-            DynamicSqlHolderDO dynamicSqlHolderDO = new DynamicSqlHolderDO();
-            dynamicSqlHolderDO.setSqlContent(sql);
-            dynamicSqlHolderDO.setSqlTpye("UPDATE");
-            dynamicSqlHolderDO.setCreateUser(userSupport.getCurrentUserId().toString());
-            dynamicSqlHolderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            dynamicSqlHolderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            int affectedRows = dynamicSqlHolderMapper.save(dynamicSqlHolderDO);
-            List<List<Object>> arrayList = new ArrayList<>();
-            List<Object> list = new ArrayList<>();
-            arrayList.add(list);
-            serviceResult.setResult(arrayList);
-            serviceResult.setErrorCode(ErrorCode.SUCCESS);
-            if (affectedRows >= 1)
-                list.add("UPDATE 操作需要被审核才可执行");
-            else
-                list.add("申请 UPDATE 操作失败");
-        } else if (hasSelect) {
-            if (!hasLimit)
-                sql = sql + " LIMIT " + dynamicSqlParam.getLimit();
-            dynamicSqlParam.setSql(sql);
-            serviceResult = selectBySql(dynamicSqlParam);
-        }
-
         return serviceResult;
     }
 
@@ -221,13 +108,13 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         ServiceResult<String, List<List<Object>>> serviceResult = new ServiceResult<>();
         List<List<Object>> results;
         try {
-            results = dynamicSqlDaoImpl.selectBySql(dynamicSqlParam.getSql());
+            results = jdbcDynamicSqlDao.selectBySql(dynamicSqlParam.getSql());
         } catch (SQLException e) {
             throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
 
         if (results.size() == 0) {
-            List list = new ArrayList() {{
+            List<Object> list = new ArrayList<Object>() {{
                 add("Data is not found");
             }};
             results.add(list);
@@ -238,48 +125,45 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     }
 
     @Override
-    public ServiceResult<String, List<Map>> updateBySql(DynamicSqlParam dynamicSqlParam) {
-        ServiceResult<String, List<Map>> serviceResult = new ServiceResult<>();
+    public ServiceResult<String, String> updateBySql(DynamicSqlParam dynamicSqlParam) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
         final int mark;
         try {
             mark = dynamicSqlDao.updateBySql(dynamicSqlParam.getSql());
         } catch (SQLException e) {
             throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
-        final HashMap hashMap = new HashMap<String, Integer>() {{
-            put("Affected rows", mark);
-        }};
-
-        serviceResult.setResult(new ArrayList<Map>() {{
-            add(hashMap);
-        }});
+        serviceResult.setResult("Affected rows:" + mark);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
 
     @Override
-    public ServiceResult<String, List<Map>> insertBySql(DynamicSqlParam dynamicSqlParam) {
-        ServiceResult<String, List<Map>> serviceResult = new ServiceResult<>();
+    public ServiceResult<String, String> insertBySql(DynamicSqlParam dynamicSqlParam) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
         final int mark;
         try {
             mark = dynamicSqlDao.insertBySql(dynamicSqlParam.getSql());
         } catch (SQLException e) {
             throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
-        final HashMap hashMap = new HashMap<String, Integer>() {{
-            put("Affected rows", mark);
-        }};
-
-        serviceResult.setResult(new ArrayList<Map>() {{
-            add(hashMap);
-        }});
+        serviceResult.setResult("Affected rows:" + mark);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
 
     @Override
-    public ServiceResult<String, List<DynamicSqlHolderDO>> pageDynamicSqlHolder(BasePageParam basePageParam) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("pageNo", basePageParam.getPageNo());
-        map.put("pageSize", basePageParam.getPageSize());
+    public ServiceResult<String, List<DynamicSqlHolderDO>> pageDynamicSqlHolder(PageQuery pageQuery) {
+        final PageQuery finalPageQuery = new PageQuery(pageQuery.getPageNo(), pageQuery.getPageSize());
+        Map<String, Object> map = new HashMap<String, Object>() {{
+            put("start", finalPageQuery.getPageNo());
+            put("pageSize", finalPageQuery.getPageSize() == 0 ? 10 : finalPageQuery.getPageSize());
+        }};
+
+        if (!userSupport.isSuperUser()) {
+            map.put("createUser", userSupport.getCurrentUserId().toString());
+        }
+
         ServiceResult<String, List<DynamicSqlHolderDO>> serviceResult = new ServiceResult<>();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(dynamicSqlHolderMapper.listPage(map));
@@ -287,49 +171,48 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, DynamicSqlHolderDO> adoptDynamicSqlHolder(Integer dynamicSqlHolderId) {
+        ServiceResult<String, DynamicSqlHolderDO> serviceResult = new ServiceResult<>();
+        if (!userSupport.isSuperUser()) {
+            serviceResult.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
+            return serviceResult;
+        }
+        if (dynamicSqlHolderId == null)
+            throw new BusinessException(ErrorCode.DYNAMICSQLHOLDERID_NOT_NULL);
         DynamicSqlHolderDO dynamicSqlHolderDO = dynamicSqlHolderMapper.findById(dynamicSqlHolderId);
-        String sqlTpye = dynamicSqlHolderDO.getSqlTpye();
+        SqlTpye sqlTpye = SqlTpye.valueOf(dynamicSqlHolderDO.getSqlTpye());
+        ServiceResult<String, String> sqlResult = new ServiceResult<>();
+        final String sql = dynamicSqlHolderDO.getSqlContent();
         switch (sqlTpye) {
-            case "UPDATE":
+            case UPDATE:
+                sqlResult = updateBySql(new DynamicSqlParam() {{
+                    setSql(sql);
+                }});
                 break;
-            case "INSERTINTO":
+            case INSERT_INTO:
+                sqlResult = insertBySql(new DynamicSqlParam() {{
+                    setSql(sql);
+                }});
                 break;
         }
-        return null;
-    }
 
-    /*
-    @Override
-    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
-    public ServiceResult<String, List<List<Object>>> selectBySql(DynamicSqlParam dynamicSqlSelectParam) {
-        ServiceResult<String, List<List<Object>>> serviceResult = new ServiceResult<>();
-        List<List<Object>> listList;
-
-        if (dynamicSqlSelectParam.getLimit() == null || dynamicSqlSelectParam.getLimit() <= 0) {
-            dynamicSqlSelectParam.setLimit(totalReturnCount);
+        serviceResult.setErrorCode(sqlResult.getErrorCode());
+        if (ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            DynamicSqlHolderDO updateDynamicSqlHolderDO = new DynamicSqlHolderDO();
+            updateDynamicSqlHolderDO.setId(dynamicSqlHolderDO.getId());
+            updateDynamicSqlHolderDO.setStatus(DynamicSqlHolderDO.Status.CHECKED.value);
+            updateDynamicSqlHolderDO.setResults(sqlResult.getResult());
+            updateDynamicSqlHolderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            dynamicSqlHolderMapper.update(updateDynamicSqlHolderDO);
+            serviceResult.setResult(updateDynamicSqlHolderDO);
         }
 
-        try {
-            listList = dynamicSqlDao.selectBySql(dynamicSqlSelectParam.getSql(), dynamicSqlSelectParam.getLimit());
-        } catch (SQLException e) {
-            throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
-        }
-
-        if (CollectionUtil.isNotEmpty(listList)) {
-            filterSensitiveInfo(listList); // 过滤敏感信息
-            formatResult(listList);
-        }
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(listList);
         return serviceResult;
     }
-    */
-
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> saveDynamicSql(DynamicSql dynamicSql) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date now = new Date();
@@ -348,7 +231,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> deleteDynamicSql(DynamicSql dynamicSql) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date now = new Date();
@@ -457,6 +340,150 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
                     objList.set(i, numberStr);
                 }
             }
+        }
+    }
+
+    private SqlTpye analysisAndRebuildDynamicSql(DynamicSqlParam dynamicSqlParam) {
+        StringBuilder word = new StringBuilder();
+
+        String sql = dynamicSqlParam.getSql().trim();
+        String upperCaseSql = sql.toUpperCase();
+
+        boolean checkKeyWork = false;
+        boolean isString = false;
+        boolean isString2 = false;
+        boolean hasSelect = false;
+        boolean hasUpdate = false;
+        boolean hasDelete = false;
+        boolean hasInsertInto = false;
+        boolean hasLimit = false;
+
+        for (int i = 0; i < upperCaseSql.length(); i++) {
+            char ch = upperCaseSql.charAt(i);
+            switch (ch) {
+                case ')':
+                    if (!isString && !isString2)
+                        if (hasLimit)
+                            hasLimit = false;
+                    break;
+
+                case ' ':
+                    if (!isString && !isString2)
+                        checkKeyWork = true;
+                    break;
+
+                case '\'':
+                    isString = !isString;
+                    break;
+
+                case '\"':
+                    isString2 = !isString2;
+                    break;
+                default:
+                    word.append(ch);
+                    break;
+            }
+
+
+            if (checkKeyWork) {
+                switch ((word.toString())) {
+                    case "SELECT":
+                        hasSelect = true;
+                        //do something
+                        break;
+
+                    case "UPDATE":
+                        hasUpdate = true;
+                        //do something
+                        break;
+
+                    case "DELETE":
+                        hasDelete = true;
+                        //do something
+                        break;
+
+                    case "INSERT":
+                        int m = i + 1;
+                        for (; m < upperCaseSql.length(); m++)
+                            if (upperCaseSql.charAt(m) != ' ')
+                                break;
+
+                        for (; m < upperCaseSql.length(); m++) {
+                            char c = upperCaseSql.charAt(m);
+                            if (c != ' ')
+                                word.append(c);
+                            else
+                                break;
+                        }
+                        if (word.toString().equals("INSERTINTO")) {
+                            hasInsertInto = true;
+                            i = m;
+                            //do something
+                        }
+                        break;
+
+                    case "FROM":
+                        //do something
+                        break;
+
+                    case "WHERE":
+                        //do something
+                        break;
+
+                    case "LIMIT":
+                        hasLimit = true;
+                        //do something
+                        break;
+
+                    case "OFFSET":
+                        //do something
+                        break;
+                    default:
+                        break;
+                }
+                checkKeyWork = false;
+                word = new StringBuilder();
+            }
+        }
+
+        if (hasDelete) {
+            return SqlTpye.DELETE;
+        } else if (hasInsertInto) {
+            return SqlTpye.INSERT_INTO;
+        } else if (hasUpdate) {
+            return SqlTpye.UPDATE;
+        } else if (hasSelect) {
+            if (!hasLimit)
+                dynamicSqlParam.setSql(sql + " LIMIT " + dynamicSqlParam.getLimit());
+            return SqlTpye.SELECT;
+        }
+        return SqlTpye.DEFAULT;
+    }
+
+    private DynamicSqlHolderDO initDynamicSqlHolderDO(String sql,SqlTpye sqlTpye){
+        DynamicSqlHolderDO dynamicSqlHolderDO = new DynamicSqlHolderDO();
+        dynamicSqlHolderDO.setSqlContent(sql);
+        dynamicSqlHolderDO.setSqlTpye(sqlTpye.getSqlTpyeName());
+        dynamicSqlHolderDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        dynamicSqlHolderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        dynamicSqlHolderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        return dynamicSqlHolderDO;
+    }
+
+    private enum SqlTpye {
+        SELECT("SELECT"), UPDATE("UPDATE"), DELETE("DELETE"), INSERT_INTO("INSERTINTO"), DEFAULT("SELECT");
+        String sqlTpyeName;
+
+        SqlTpye(String sqlTpyeName) {
+            this.sqlTpyeName = sqlTpyeName;
+        }
+
+        public String getSqlTpyeName() {
+            return sqlTpyeName;
+        }
+
+        public void setSqlTpyeName(String sqlTpyeName) {
+            this.sqlTpyeName = sqlTpyeName;
         }
     }
 

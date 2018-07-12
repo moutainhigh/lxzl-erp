@@ -2,7 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.base.BasePageParam;
+import com.lxzl.erp.common.domain.dynamicSql.AdoptExecuteParam;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlQueryParam;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlParam;
 import com.lxzl.erp.common.domain.dynamicSql.pojo.DynamicSql;
@@ -12,6 +12,7 @@ import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.dynamicSql.DynamicSqlService;
 import com.lxzl.se.common.domain.Result;
+import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,16 +38,15 @@ public class DynamicSqlController extends BaseController {
         return resultGenerator.generate(dynamicSqlService.executeBySql(dynamicSqlParam));
     }
 
-    @RequestMapping(value = "list", method = RequestMethod.POST)
-    public Result listExecuteBySql(BasePageParam basePageParam) {
-        return resultGenerator.generate(dynamicSqlService.pageDynamicSqlHolder(basePageParam));
+    @RequestMapping(value = "adoptList", method = RequestMethod.POST)
+    public Result listExecuteBySql(@RequestBody PageQuery pageQuery) {
+        return resultGenerator.generate(dynamicSqlService.pageDynamicSqlHolder(pageQuery));
     }
 
     @RequestMapping(value = "adopt", method = RequestMethod.POST)
-    public Result adoptExecuteBySql(Integer dynamicSqlHolderId) {
-        return resultGenerator.generate(dynamicSqlService.adoptDynamicSqlHolder(dynamicSqlHolderId));
+    public Result adoptExecuteBySql(@RequestBody @Validated({AddGroup.class})AdoptExecuteParam adoptExecuteParam) {
+        return resultGenerator.generate(dynamicSqlService.adoptDynamicSqlHolder(adoptExecuteParam.getDynamicSqlHolderId()));
     }
-
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public Result saveDynamicSql(@RequestBody @Validated({AddGroup.class}) DynamicSql dynamicSql, BindingResult validResult) {

@@ -54,6 +54,9 @@
             <if test="true">
                 AND data_status = 1
             </if>
+            <if test="maps.createUser != null">
+                AND create_user = #{maps.createUser}
+            </if>
         </where>
         LIMIT #{maps.start},#{maps.pageSize}
     </select>

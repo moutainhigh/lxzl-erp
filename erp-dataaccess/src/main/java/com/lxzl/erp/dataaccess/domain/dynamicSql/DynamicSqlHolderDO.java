@@ -62,4 +62,13 @@ public class DynamicSqlHolderDO extends BaseDO {
     public void setDataStatus(Integer dataStatus) {
         this.dataStatus = dataStatus;
     }
+
+    public enum Status {
+        UNCHECK(0), CHECKED(1);
+        public int value;
+
+        Status(int value) {
+            this.value = value;
+        }
+    }
 }
