@@ -22,6 +22,7 @@ import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -73,22 +74,22 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         switch (sqlTpye) {
             case DELETE:
                 throw new BusinessException(ErrorCode.DELETE_PROTECTION);
-            case INSERT_INTO:
+            case INSERT:
                 serviceResult.setResult(new ArrayList<List<Object>>() {{
                     add(new ArrayList<>());
                 }});
                 serviceResult.setErrorCode(ErrorCode.SUCCESS);
-                if (dynamicSqlHolderMapper.save(initDynamicSqlHolderDO(sql,sqlTpye)) >= 1)
-                    serviceResult.getResult().get(0).add("INSERT INTO 操作需要被审核才可执行");
+                if (dynamicSqlHolderMapper.save(initDynamicSqlHolderDO(sql, sqlTpye)) >= 1)
+                    serviceResult.getResult().get(0).add("INSERT 操作需要被审核才可执行");
                 else
-                    serviceResult.getResult().get(0).add("申请 INSERT INTO 操作失败");
+                    serviceResult.getResult().get(0).add("申请 INSERT 操作失败");
                 break;
             case UPDATE:
                 serviceResult.setResult(new ArrayList<List<Object>>() {{
                     add(new ArrayList<>());
                 }});
                 serviceResult.setErrorCode(ErrorCode.SUCCESS);
-                if (dynamicSqlHolderMapper.save(initDynamicSqlHolderDO(sql,sqlTpye)) >= 1)
+                if (dynamicSqlHolderMapper.save(initDynamicSqlHolderDO(sql, sqlTpye)) >= 1)
                     serviceResult.getResult().get(0).add("UPDATE 操作需要被审核才可执行");
                 else
                     serviceResult.getResult().get(0).add("申请 UPDATE 操作失败");
@@ -98,7 +99,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
                 serviceResult = selectBySql(dynamicSqlSelectParam);
                 break;
             case DEFAULT:
-                break;
+                throw new BusinessException(ErrorCode.DYNAMIC_SQL_ILLEGAL_OPERATION);
         }
         return serviceResult;
     }
@@ -106,10 +107,14 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     @Override
     public ServiceResult<String, List<List<Object>>> selectBySql(DynamicSqlSelectParam dynamicSqlSelectParam) {
         ServiceResult<String, List<List<Object>>> serviceResult = new ServiceResult<>();
-        List<List<Object>> results;
+        List<List<Object>> results = new ArrayList<>();
         try {
             results = jdbcDynamicSqlDao.selectBySql(dynamicSqlSelectParam.getSql());
-        } catch (SQLException e) {
+        } catch (SQLException | BadSqlGrammarException e) {
+//            List<Object> list = new ArrayList<Object>() {{
+//                add("动态SQL查询语句不正确");
+//            }};
+//            results.add(list);
             throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
 
@@ -119,6 +124,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
             }};
             results.add(list);
         }
+
         serviceResult.setResult(results);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
@@ -130,10 +136,11 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         final int mark;
         try {
             mark = dynamicSqlDao.updateBySql(dynamicSqlSelectParam.getSql());
-        } catch (SQLException e) {
-            throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
+            serviceResult.setResult("Affected rows:" + mark);
+        } catch (SQLException | BadSqlGrammarException e) {
+            serviceResult.setResult("动态SQL查询语句不正确");
+//            throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
-        serviceResult.setResult("Affected rows:" + mark);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -144,10 +151,11 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         final int mark;
         try {
             mark = dynamicSqlDao.insertBySql(dynamicSqlSelectParam.getSql());
-        } catch (SQLException e) {
-            throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
+            serviceResult.setResult("Affected rows:" + mark);
+        } catch (SQLException | BadSqlGrammarException e) {
+            serviceResult.setResult("动态SQL查询语句不正确");
+//            throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
-        serviceResult.setResult("Affected rows:" + mark);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -190,7 +198,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
                     setSql(sql);
                 }});
                 break;
-            case INSERT_INTO:
+            case INSERT:
                 sqlResult = insertBySql(new DynamicSqlSelectParam() {{
                     setSql(sql);
                 }});
@@ -348,7 +356,9 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
 
         String sql = dynamicSqlSelectParam.getSql().trim();
         String upperCaseSql = sql.toUpperCase();
+        SqlTpye sqlTpye = SqlTpye.DEFAULT;
 
+        boolean initialMark = true;
         boolean checkKeyWork = false;
         boolean isString = false;
         boolean isString2 = false;
@@ -370,6 +380,15 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
                 case ' ':
                     if (!isString && !isString2)
                         checkKeyWork = true;
+
+                    if (initialMark) {
+                        initialMark = false;
+                        for (SqlTpye sqlTpye1 : SqlTpye.values()) {
+                            if (sqlTpye1.sqlTpyeName.equals(word.toString()))
+                                sqlTpye = sqlTpye1;
+                        }
+                    }
+
                     break;
 
                 case '\'':
@@ -446,21 +465,25 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
             }
         }
 
-        if (hasDelete) {
-            return SqlTpye.DELETE;
-        } else if (hasInsertInto) {
-            return SqlTpye.INSERT_INTO;
-        } else if (hasUpdate) {
-            return SqlTpye.UPDATE;
-        } else if (hasSelect) {
-            if (!hasLimit)
-                dynamicSqlSelectParam.setSql(sql + " LIMIT " + dynamicSqlSelectParam.getLimit());
-            return SqlTpye.SELECT;
+        if (sqlTpye != SqlTpye.DEFAULT) {
+            if (hasDelete) {
+                sqlTpye = SqlTpye.DELETE;
+            } else if (hasInsertInto) {
+                sqlTpye = SqlTpye.INSERT;
+            } else if (hasUpdate) {
+                sqlTpye = SqlTpye.UPDATE;
+            } else if (hasSelect) {
+                if (!hasLimit)
+                    dynamicSqlSelectParam.setSql(sql + " LIMIT " + dynamicSqlSelectParam.getLimit());
+                sqlTpye = SqlTpye.SELECT;
+            }
         }
-        return SqlTpye.DEFAULT;
+
+        return sqlTpye;
+
     }
 
-    private DynamicSqlHolderDO initDynamicSqlHolderDO(String sql,SqlTpye sqlTpye){
+    private DynamicSqlHolderDO initDynamicSqlHolderDO(String sql, SqlTpye sqlTpye) {
         DynamicSqlHolderDO dynamicSqlHolderDO = new DynamicSqlHolderDO();
         dynamicSqlHolderDO.setSqlContent(sql);
         dynamicSqlHolderDO.setSqlTpye(sqlTpye.getSqlTpyeName());
@@ -471,7 +494,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     }
 
     private enum SqlTpye {
-        SELECT("SELECT"), UPDATE("UPDATE"), DELETE("DELETE"), INSERT_INTO("INSERTINTO"), DEFAULT("SELECT");
+        SELECT("SELECT"), UPDATE("UPDATE"), DELETE("DELETE"), INSERT("INSERT"), DEFAULT("DEFAULT");
         String sqlTpyeName;
 
         SqlTpye(String sqlTpyeName) {
