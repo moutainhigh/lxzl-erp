@@ -16,6 +16,7 @@
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
             <section id="content" class="animated fadeIn noprint">
+                #parse("component/loading.vm")
                 <form class="" id="detailPurchaseReceiveForm">
                     <div class="panel panel-primary panel-border top mb35 invoice-panel">
                         <div class="panel-body">
