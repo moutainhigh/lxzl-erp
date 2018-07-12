@@ -138,7 +138,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
             mark = dynamicSqlDao.updateBySql(dynamicSqlSelectParam.getSql());
             serviceResult.setResult("Affected rows:" + mark);
         } catch (SQLException | BadSqlGrammarException e) {
-            serviceResult.setResult("动态SQL查询语句不正确");
+            serviceResult.setResult(e.getMessage());
 //            throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -153,7 +153,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
             mark = dynamicSqlDao.insertBySql(dynamicSqlSelectParam.getSql());
             serviceResult.setResult("Affected rows:" + mark);
         } catch (SQLException | BadSqlGrammarException e) {
-            serviceResult.setResult("动态SQL查询语句不正确");
+            serviceResult.setResult(e.getMessage());
 //            throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
