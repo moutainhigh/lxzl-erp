@@ -220,6 +220,32 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         return serviceResult;
     }
 
+
+    @Override
+    public ServiceResult<String, DynamicSqlHolderDO> rejectDynamicSqlHolder(Integer dynamicSqlHolderId, String rejectResult) {
+        ServiceResult<String, DynamicSqlHolderDO> serviceResult = new ServiceResult<>();
+        if (!userSupport.isSuperUser()) {
+            serviceResult.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
+            return serviceResult;
+        }
+
+        if (dynamicSqlHolderId == null)
+            throw new BusinessException(ErrorCode.DYNAMICSQLHOLDERID_NOT_NULL);
+
+        if (rejectResult == null)
+            rejectResult = "该动态sql的执行被拒绝";
+
+        DynamicSqlHolderDO updateDynamicSqlHolderDO = new DynamicSqlHolderDO();
+        updateDynamicSqlHolderDO.setId(dynamicSqlHolderId);
+        updateDynamicSqlHolderDO.setStatus(DynamicSqlHolderDO.Status.REJECT.value);
+        updateDynamicSqlHolderDO.setResults(rejectResult);
+        updateDynamicSqlHolderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        dynamicSqlHolderMapper.update(updateDynamicSqlHolderDO);
+        serviceResult.setResult(updateDynamicSqlHolderDO);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
     @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> saveDynamicSql(DynamicSql dynamicSql) {
@@ -493,7 +519,6 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         dynamicSqlHolderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         return dynamicSqlHolderDO;
     }
-
 
 
 }

@@ -31,6 +31,8 @@ public interface DynamicSqlService {
 
     ServiceResult<String, DynamicSqlHolderDO> adoptDynamicSqlHolder(Integer dynamicSqlHolderId);
 
+    ServiceResult<String, DynamicSqlHolderDO> rejectDynamicSqlHolder(Integer dynamicSqlHolderId,String rejectResult);
+
     ServiceResult<String, String> saveDynamicSql(DynamicSql dynamicSql);
 
     ServiceResult<String, String> deleteDynamicSql(DynamicSql dynamicSql);

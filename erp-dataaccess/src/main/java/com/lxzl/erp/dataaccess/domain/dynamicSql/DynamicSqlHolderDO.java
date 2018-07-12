@@ -64,7 +64,7 @@ public class DynamicSqlHolderDO extends BaseDO {
     }
 
     public enum Status {
-        UNCHECK(0), CHECKED(1);
+        UNCHECK(0), CHECKED(1), REJECT(2);
         public int value;
 
         Status(int value) {

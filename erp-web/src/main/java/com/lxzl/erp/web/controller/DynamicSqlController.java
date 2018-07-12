@@ -44,8 +44,13 @@ public class DynamicSqlController extends BaseController {
     }
 
     @RequestMapping(value = "adopt", method = RequestMethod.POST)
-    public Result adoptExecuteBySql(@RequestBody @Validated({AddGroup.class})AdoptExecuteParam adoptExecuteParam) {
+    public Result adoptExecuteBySql(@RequestBody @Validated({AddGroup.class}) AdoptExecuteParam adoptExecuteParam) {
         return resultGenerator.generate(dynamicSqlService.adoptDynamicSqlHolder(adoptExecuteParam.getDynamicSqlHolderId()));
+    }
+
+    @RequestMapping(value = "reject", method = RequestMethod.POST)
+    public Result rejectExecuteBySql(@RequestBody @Validated({AddGroup.class}) AdoptExecuteParam adoptExecuteParam) {
+        return resultGenerator.generate(dynamicSqlService.rejectDynamicSqlHolder(adoptExecuteParam.getDynamicSqlHolderId(), adoptExecuteParam.getResult()));
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
