@@ -16,10 +16,6 @@
             #parse("layout/topbar.vm")
             <section id="content" class="animated fadeIn">
                 #parse("component/loading.vm")
-<<<<<<< HEAD
-
-=======
->>>>>>> 5c76fc026689153944019d8082a456db37165e55
                 <div class="panel panel-primary panel-border top mb35" id="workflowDetail">
                     <div class="panel-body">
                         <div class="row">

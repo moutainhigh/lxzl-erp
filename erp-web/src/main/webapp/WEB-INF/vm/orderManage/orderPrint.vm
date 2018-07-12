@@ -150,11 +150,6 @@
             </div>
         </div>
     </div>
-<<<<<<< HEAD
-=======
-    #parse("component/loading.vm")
-</div>
->>>>>>> 5c76fc026689153944019d8082a456db37165e55
 
     <script type="text/html" id="orderBaseInfoTpl">
         {{#order}}
