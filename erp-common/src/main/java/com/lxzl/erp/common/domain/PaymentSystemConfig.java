@@ -25,7 +25,7 @@ public class PaymentSystemConfig {
     public static String paymentSystemReturnDepositExpandURL;
     public static String paymentSystemPublicTransferPlusChargeURL;
 
-    public static void setPaymentSystemPublicTransferPlusChargeURL(String paymentSystemPublicTransferPlusChargeURL) {
+    public void setPaymentSystemPublicTransferPlusChargeURL(String paymentSystemPublicTransferPlusChargeURL) {
         PaymentSystemConfig.paymentSystemPublicTransferPlusChargeURL = paymentSystemPublicTransferPlusChargeURL;
     }
 

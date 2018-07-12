@@ -1,20 +1,19 @@
 package com.lxzl.erp.core.service.k3.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.OrderStatus;
+import com.lxzl.erp.common.constant.ReturnOrderStatus;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrder;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrderMaterial;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrderProduct;
-import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
-import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
-import com.lxzl.erp.common.domain.order.pojo.Order;
-import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.thread.ThreadFactoryDefault;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
@@ -29,7 +28,10 @@ import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderProductMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCustomerMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingSubCompanyMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
@@ -48,7 +50,6 @@ import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,12 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -75,6 +81,9 @@ import java.util.*;
 @Service("k3CallbackService")
 public class K3CallbackServiceImpl implements K3CallbackService {
     private static Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
+
+    private ExecutorService k3HnadleExecutor = Executors.newCachedThreadPool(new ThreadFactoryDefault("k3HnadleExecutor"));
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> callbackDelivery(DeliveryOrder deliveryOrder) {
@@ -194,7 +203,14 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_STATUS_CAN_NOT_RETURN);
             return serviceResult;
         }
-        return callbackReturnDetail(k3ReturnOrder,k3ReturnOrderDO);
+
+        ServiceResult<String, String> result = callbackReturnDetail(k3ReturnOrder,k3ReturnOrderDO);
+        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return result;
+        }
+
+        return result;
     }
     @Override
     public ServiceResult<String, String> callbackReturnDetail(K3ReturnOrder k3ReturnOrder,K3ReturnOrderDO k3ReturnOrderDO){
@@ -294,9 +310,9 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                     continue;
                 }
                 //如果訂單有未支付的就將標記改成false
-                if (isCreateReturnStatement && !PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
-                    isCreateReturnStatement = false;
-                }
+//                if (isCreateReturnStatement && !PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
+//                    isCreateReturnStatement = false;
+//                }
                 if (totalRentingProductCount==0 && totalRentingMaterialCount==0) {
                     //处理最后一件商品退还时间
                     List<K3ReturnOrderDetailDO> list = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
@@ -327,12 +343,18 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             // 如果退货单关联的所有订单都支付了，才生成退货单结算单,如果该方法返回错误代码，则内部会自动回滚，结算状态不会改变
             // 如果该方法抛出异常，内部会自动回滚，这里捕获异常，结算状态不改变但是不影响其他逻辑，发送钉钉通知
             if (isCreateReturnStatement) {
+                // 设置事务回滚点
+                Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
                 try{
-                    ServiceResult<String,BigDecimal> result = statementService.createK3ReturnOrderStatement(k3ReturnOrderDO.getReturnOrderNo());
+                    ServiceResult<String,BigDecimal> result = statementService.createK3ReturnOrderStatementNoTransaction(k3ReturnOrderDO.getReturnOrderNo());
                     if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
+                        // 创建结算单部分回滚
+                        TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
                         dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString()+"退货单["+k3ReturnOrderDO.getReturnOrderNo()+"]生成结算单失败："+JSON.toJSONString(resultGenerator.generate(result.getErrorCode())));
                     }
                 }catch (Exception e){
+                    // 创建结算单部分回滚
+                    TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
                     StringWriter exceptionFormat=new StringWriter();
                     e.printStackTrace(new PrintWriter(exceptionFormat,true));
                     dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString()+"退货单["+k3ReturnOrderDO.getReturnOrderNo()+"]生成结算单失败："+exceptionFormat.toString());

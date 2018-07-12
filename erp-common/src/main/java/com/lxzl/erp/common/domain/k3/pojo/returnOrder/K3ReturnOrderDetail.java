@@ -40,7 +40,7 @@ public class K3ReturnOrderDetail extends BasePO {
     private OrderMaterial orderMaterial;//关联商品物料
 
     private Date returnTime;  //退货时间
-    private Integer orderItemType;//商品类型，1-商品，2-配件
+    private Integer orderItemType;//商品类型,1-商品,2-配件
 
     public Integer getK3ReturnOrderDetailId() {
         return k3ReturnOrderDetailId;

@@ -5,19 +5,19 @@
     <div class="row pt20" style="margin:0;">
         <div class="col-md-4">
             <dl class="dl-horizontal">
-                <dt>可用余额（操作前）：</dt><dd class="mb5">￥{{oldBalanceAmount}}</dd>
-                <dt>总冻结金额（操作前）：</dt><dd class="mb5">￥{{oldTotalFrozenAmount}}</dd>
-                <dt>押金金额（操作前）：</dt><dd class="mb5">￥{{oldDepositAmount}}</dd>
-                <dt>租金押金（操作前）：</dt><dd class="mb5">￥{{oldRentDepositAmount}}</dd>
+                <dt>可用余额（操作前）：</dt><dd class="mb5">￥{{#price}}{{oldBalanceAmount}}{{/price}}</dd>
+                <dt>总冻结金额（操作前）：</dt><dd class="mb5">￥{{#price}}{{oldTotalFrozenAmount}}{{/price}}</dd>
+                <dt>押金金额（操作前）：</dt><dd class="mb5">￥{{#price}}{{oldDepositAmount}}{{/price}}</dd>
+                <dt>租金押金（操作前）：</dt><dd class="mb5">￥{{#price}}{{oldRentDepositAmount}}{{/price}}</dd>
             </dl>
         </div>
         <div class="col-md-4">
             <dl class="dl-horizontal">
-                <dt>可用余额（操作后）：</dt><dd class="mb5 text-primary">￥{{newBalanceAmount}}</dd>
-                <dt>总冻结金额（操作后）：</dt><dd class="mb5 text-primary">￥{{newTotalFrozenAmount}}</dd>
-                <dt>押金金额（操作后）：</dt><dd class="mb5 text-primary">￥{{newDepositAmount}}</dd>
-                <dt>租金押金（操作后）：</dt><dd class="mb5 text-primary">￥{{newRentDepositAmount}}</dd>
-                <dt>交易总额：</dt><dd class="mb5 text-danger">￥{{tradeAmount}}</dd>
+                <dt>可用余额（操作后）：</dt><dd class="mb5 text-primary">￥{{#price}}{{newBalanceAmount}}{{/price}}</dd>
+                <dt>总冻结金额（操作后）：</dt><dd class="mb5 text-primary">￥{{#price}}{{newTotalFrozenAmount}}{{/price}}</dd>
+                <dt>押金金额（操作后）：</dt><dd class="mb5 text-primary">￥{{#price}}{{newDepositAmount}}{{/price}}</dd>
+                <dt>租金押金（操作后）：</dt><dd class="mb5 text-primary">￥{{#price}}{{newRentDepositAmount}}{{/price}}</dd>
+                <dt>交易总额：</dt><dd class="mb5 text-danger">￥{{#price}}{{tradeAmount}}{{/price}}</dd>
             </dl>
         </div>
     </div>

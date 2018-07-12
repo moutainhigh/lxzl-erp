@@ -24,11 +24,9 @@ import javax.servlet.http.HttpServletResponse;
  * Date: 2016/12/24.
  * Time: 10:52.
  */
-public class SwitchInterceptor {
+public class SwitchInterceptor extends HandlerInterceptorAdapter{
 
-    private final Logger logger = LoggerFactory.getLogger(SwitchInterceptor.class);
-
-//    @Override
+    @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         String requestPath = request.getRequestURI();
@@ -42,12 +40,12 @@ public class SwitchInterceptor {
     }
 
     //模块权限值
-//    @Override
+    @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
                            ModelAndView modelAndView) throws Exception {
     }
 
-//    @Override
+    @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
 
@@ -55,6 +53,4 @@ public class SwitchInterceptor {
 
     @Autowired
     private SwitchMapper switchMapper;
-    @Autowired
-    private ResultGenerator resultGenerator;
 }

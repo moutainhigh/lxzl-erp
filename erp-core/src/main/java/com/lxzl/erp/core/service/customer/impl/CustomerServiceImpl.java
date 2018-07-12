@@ -1398,7 +1398,7 @@ public class CustomerServiceImpl implements CustomerService {
                 customerCommitParam.setVerifyMatters("个人客户审核事项：1.申请额度 2.客户相关信息图片核对");
             }
             ServiceResult<String, String> verifyResult = null;
-            UserDO userDO = userMapper.findByUserId(Integer.parseInt(customerDO.getCreateUser()));
+            UserDO userDO = userMapper.findByUserId(customerDO.getOwner());
             if(userSupport.isChannelSubCompany(ConverterUtil.convert(userDO,User.class))){
                 verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(), null);
             }else{
@@ -3395,6 +3395,34 @@ public class CustomerServiceImpl implements CustomerService {
         return serviceResult;
     }
 
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> confirmBadAccount(String customerNo) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        if (customerDO == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(customerDO.getConfirmBadAccountStatus())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST);
+            return serviceResult;
+        }
+
+        customerDO.setConfirmBadAccountStatus(CommonConstant.COMMON_CONSTANT_YES);
+        customerDO.setConfirmBadAccountUser(userSupport.getCurrentUserId());
+        customerDO.setConfirmBadAccountTime(now);
+        customerDO.setUpdateTime(now);
+        customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerMapper.update(customerDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(customerNo);
+        return serviceResult;
+    }
+
     /**
      * 查询该用户在租商品、配件、付费配件数量
      * @param customerNo
@@ -3431,15 +3459,24 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     /*
-    将customer中的确认用户id转换为名字
+    将customer中的确认结算单用户id和确认坏账用户id转换为名字
      */
     private void convertConfirmUserId2UserName(Customer customer) {
         if (customer != null) {
-            Integer userId = customer.getConfirmStatementUser();
-            if (userId != null) {
-                User user = CommonCache.userMap.get(userId);
+            Integer confirmStatementUserId = customer.getConfirmStatementUser();
+            Integer confirmBadAccountUserId = customer.getConfirmBadAccountUser();
+
+            if (confirmStatementUserId != null) {
+                User user = CommonCache.userMap.get(confirmStatementUserId);
                 if (user != null) {
                     customer.setConfirmStatementUserName(user.getRealName());
+                }
+            }
+
+            if (confirmBadAccountUserId != null) {
+                User user = CommonCache.userMap.get(confirmBadAccountUserId);
+                if (user != null) {
+                    customer.setConfirmBadAccountUserName(user.getRealName());
                 }
             }
         }
