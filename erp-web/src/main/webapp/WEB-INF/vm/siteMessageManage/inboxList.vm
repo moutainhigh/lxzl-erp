@@ -15,8 +15,10 @@
                 #parse("layout/topbarDropmenu.vm")
                 #parse("layout/topbar.vm")
                 <section id="content" class="animated fadeIn">
+                    
+                    #parse("component/loading.vm")
+
                     <div class="row">
-                        #parse("component/loading.vm")
                         <div class="col-md-2">
                             <script  type="text/html" id="messageMenuTpl">
                                 {{#hasSendMessage}}

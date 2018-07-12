@@ -15,7 +15,9 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
+
             #parse("component/loading.vm")
+
             <form class="" id="detailForm">
                 <div class="panel panel-primary panel-border top mb15">
                     <div class="panel-body">
@@ -63,6 +65,7 @@
                                     <dt>冲正其它费用：</dt><dd class="mb5">￥{{#price}}{{statementCorrectOtherAmount}}{{/price}}</dd>
                                     <dt>冲正逾期费用：</dt><dd class="mb5">￥{{#price}}{{statementCorrectOverdueAmount}}{{/price}}</dd>
                                 </dl>
+<<<<<<< HEAD
                             </div>
                             <div class="col-md-4">
                                 <dl class="dl-horizontal">
@@ -70,6 +73,15 @@
                                     <dt>创建时间：</dt><dd class="mb5">{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
                                 </dl>
                             </div>
+=======
+                            </div>
+                            <div class="col-md-4">
+                                <dl class="dl-horizontal">
+                                    <dt>创建人：</dt><dd class="mb5">{{createUserRealName}}&nbsp;</dd>
+                                    <dt>创建时间：</dt><dd class="mb5">{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
+                                </dl>
+                            </div>
+>>>>>>> 5c76fc026689153944019d8082a456db37165e55
                         </div>
                         {{/order}}
                     </script>
