@@ -1406,6 +1406,7 @@ CREATE TABLE `erp_order_time_axis` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `order_id` int(20) NOT NULL COMMENT '订单ID',
   `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '订单状态，0-待提交,4-审核中,8-待发货,12-处理中,16-已发货,20-确认收货,24-全部归还,28-取消,32-结束',
+  `operation_type` int(11) DEFAULT NULL COMMENT '操作类型,1-创建订单，2-修改订单,3-订单提交审核,4-订单审核通过,5-订单审核拒绝,6-K3发货回调（系统）,7-订单确认收货,8-k3退货回调（K3操作员或系统）,9-取消订单,10-强制取消订单,11-结算支付',
   `generation_time` datetime NOT NULL COMMENT '产生时间',
   `order_snapshot` mediumtext COMMENT '订单快照',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -3734,3 +3735,14 @@ CREATE TABLE `erp_customer_statement_date_change_log` (
 	PRIMARY KEY (`id`),
 	KEY `index_customer_no` (`customer_no`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户结算日修变更录表';
+
+
+DROP TABLE IF EXISTS `erp_month_config`;
+CREATE TABLE `erp_month_config` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `month_config` datetime DEFAULT NULL COMMENT '月份开始',
+  `month_start_config` datetime DEFAULT NULL COMMENT '月份开始',
+  `month_end_config` datetime DEFAULT NULL COMMENT '月份结束',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_month` (`month_config`)
+) ENGINE=InnoDB AUTO_INCREMENT=181 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='月份配置';

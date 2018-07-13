@@ -6,6 +6,7 @@ import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;import org.apache.
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public interface ReletOrderMapper extends BaseMysqlDAO<ReletOrderDO> {
@@ -36,4 +37,13 @@ public interface ReletOrderMapper extends BaseMysqlDAO<ReletOrderDO> {
 	List<ReletOrderDO> findRecentlyReletedOrderByParams(@Param("maps") Map<String, Object> paramMap);
 
 	List<ReletOrderDO> findReletOrderByOrderNo(@Param("orderNo") String orderNo);
+
+	/**
+	 * 批量查找订单下关联续租单
+	 * @param orderNos
+	 * @return
+	 */
+	List<ReletOrderDO> findReletedOrdersByOrderNos(@Param("orderNos") Set<String> orderNos);
+
+	void batchUpdate(@Param("list") List<ReletOrderDO> list);
 }

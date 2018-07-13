@@ -179,11 +179,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 }
 
                 K3ReturnOrderDetailDO k3ReturnOrderDetailDO = ConverterUtil.convert(k3ReturnOrderDetail, K3ReturnOrderDetailDO.class);
-                if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())){
-                    k3ReturnOrderDetailDO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
-                }else{
-                    k3ReturnOrderDetailDO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_MATERIAL);
-                }
                 k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
                 k3ReturnOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 k3ReturnOrderDetailDO.setCreateTime(currentTime);
@@ -1176,6 +1171,11 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 k3ReturnOrderDetailDO.setCreateUser(loginUser.getUserId().toString());
                 k3ReturnOrderDetailDO.setUpdateTime(currentTime);
                 k3ReturnOrderDetailDO.setUpdateUser(loginUser.getUserId().toString());
+                if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())){
+                    k3ReturnOrderDetailDO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
+                }else{
+                    k3ReturnOrderDetailDO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_MATERIAL);
+                }
                 k3ReturnOrderDetailMapper.save(k3ReturnOrderDetailDO);
             }
         }

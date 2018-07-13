@@ -66,9 +66,11 @@ public class ProductTest extends ERPUnTransactionalTest {
         product.setDataStatus(1);
         product.setSubtitle("台式机小标题");
         product.setIsReturnAnyTime(1);
+        product.setK3ProductNo("10.222");
 
         List<ProductSku> productSkuList = new ArrayList<>();
         ProductSku productSku = new ProductSku();
+        productSku.setSkuId(1704);
         productSku.setSkuPrice(new BigDecimal(5000.00));
         productSku.setDayRentPrice(new BigDecimal(98.00));
         productSku.setMonthRentPrice(new BigDecimal(98.00));

@@ -525,7 +525,6 @@ public class PaymentServiceImpl implements PaymentService {
                     }
                     if (jsonObject.get("businessCustomerName") != null) {
                         chargeRecord.setCustomerName(jsonObject.get("businessCustomerName").toString());
-                        customerNameList.add(jsonObject.get("businessCustomerName").toString());
                     }
 //                    ChargeRecord chargeRecord = JSON.parseObject(JSON.toJSONString(paymentChargeRecord),ChargeRecord.class);
 //                    PaymentChargeRecord paymentChargeRecordPojo = JSONUtil.parseObject(paymentChargeRecord, PaymentChargeRecord.class);
@@ -533,9 +532,9 @@ public class PaymentServiceImpl implements PaymentService {
                     chargeRecordList.add(chargeRecord);
                     if (chargeRecord.getBusinessCustomerNo().startsWith("LX")) {
                         customerNoList.add(chargeRecord.getBusinessCustomerNo());
+                    }else if(StringUtil.isNotEmpty(chargeRecord.getCustomerName())){
+                        customerNameList.add(chargeRecord.getCustomerName());
                     }
-
-
                 }
 
 //                for (int i = 0; i < paymentChargeRecordPageList.size(); i++) {
@@ -551,59 +550,28 @@ public class PaymentServiceImpl implements PaymentService {
 //                        chargeRecord.setCustomerName(chargeRecord.getBusinessCustomerName());
 //                    }
 //                }
-                if (CollectionUtil.isNotEmpty(customerNoList) && CollectionUtil.isNotEmpty(customerNameList)) {
+                Map<Object, CustomerDO> customerNoMap = new HashMap<>();
+                Map<Object, CustomerDO> customerNameMap = new HashMap<>();
+                if (CollectionUtil.isNotEmpty(customerNoList)) {
                     List<CustomerDO> customerDONoList = customerMapper.findByCustomerNoList(customerNoList);
+                    customerNoMap = ListUtil.listToMap(customerDONoList, "customerNo");
+                }
+                if (CollectionUtil.isNotEmpty(customerNameList)) {
                     List<CustomerDO> customerDONameList = customerMapper.findByCustomerNameList(customerNameList);
-                    if (CollectionUtil.isNotEmpty(customerDONoList) && CollectionUtil.isEmpty(customerDONoList)) {
-                        Map<Object, CustomerDO> customerNoMap = ListUtil.listToMap(customerDONoList, "customerNo");
-                        if (CollectionUtil.isNotEmpty(chargeRecordList)) {
-                            for (ChargeRecord chargeRecord : chargeRecordList) {
-                                setCustomerMessageByNo(chargeRecord,customerNoMap);
-                            }
-                        }
-                    } else if (CollectionUtil.isEmpty(customerDONoList) && CollectionUtil.isNotEmpty(customerDONameList)) {
-                        Map<Object, CustomerDO> customerNameMap = ListUtil.listToMap(customerDONameList, "customerName");
-                        if (CollectionUtil.isNotEmpty(chargeRecordList)) {
-                            for (ChargeRecord chargeRecord : chargeRecordList) {
-                                setCustomerMessageByName(chargeRecord,customerNameMap);
-                            }
-                        }
-                    } else if (CollectionUtil.isNotEmpty(customerDONoList) && CollectionUtil.isNotEmpty(customerDONameList)) {
-                        Map<Object, CustomerDO> customerNoMap = ListUtil.listToMap(customerDONoList, "customerNo");
-                        Map<Object, CustomerDO> customerNameMap = ListUtil.listToMap(customerDONameList, "customerName");
-                        for (ChargeRecord chargeRecord : chargeRecordList) {
-                            if (customerNoMap.get(chargeRecord.getBusinessCustomerNo()) != null) {
-                                CustomerDO customerDO = customerNoMap.get(chargeRecord.getBusinessCustomerNo());
-                                chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
-                                chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
-                                chargeRecord.setCustomerName(customerDO.getCustomerName());
-                                chargeRecord.setIsErpCustomer(CommonConstant.YES);
-                            } else {
-                                setCustomerMessageByName(chargeRecord,customerNameMap);
-                            }
-                        }
-                    }
-                }else if(CollectionUtil.isNotEmpty(customerNoList) && CollectionUtil.isEmpty(customerNameList)){
-                    List<CustomerDO> customerDONoList = customerMapper.findByCustomerNoList(customerNoList);
-                    if (CollectionUtil.isNotEmpty(customerDONoList)){
-                        Map<Object, CustomerDO> customerNoMap = ListUtil.listToMap(customerDONoList, "customerNo");
-                        for (ChargeRecord chargeRecord : chargeRecordList) {
-                             setCustomerMessageByNo(chargeRecord,customerNoMap);
-                        }
-                    }
-                }else if (CollectionUtil.isEmpty(customerNoList) && CollectionUtil.isNotEmpty(customerNameList)){
-                    List<CustomerDO> customerDONameList = customerMapper.findByCustomerNameList(customerNameList);
-                    if (CollectionUtil.isNotEmpty(customerDONameList)){
-                        Map<Object, CustomerDO> customerNameMap = ListUtil.listToMap(customerDONameList, "customerName");
-                        for (ChargeRecord chargeRecord : chargeRecordList) {
-                            setCustomerMessageByName(chargeRecord,customerNameMap);
-                        }
-                    }
-                }else{
-                    //客户编号和客户名称都是都没有的情况
-                    if (CollectionUtil.isNotEmpty(chargeRecordList)) {
-                        for (ChargeRecord chargeRecord : chargeRecordList) {
-                            chargeRecord.setIsErpCustomer(CommonConstant.NO);
+                    customerNameMap = ListUtil.listToMap(customerDONameList, "customerName");
+                }
+
+                if (CollectionUtil.isNotEmpty(chargeRecordList)){
+                    for (ChargeRecord chargeRecord : chargeRecordList){
+                        if (customerNoMap.get(chargeRecord.getBusinessCustomerNo()) != null){
+                            CustomerDO customerDO = customerNoMap.get(chargeRecord.getBusinessCustomerNo());
+                            chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
+                            chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
+                            chargeRecord.setCustomerName(customerDO.getCustomerName());
+                            chargeRecord.setErpCustomerNo(customerDO.getCustomerNo());
+                        }else if(customerNameMap.get(chargeRecord.getCustomerName()) != null){
+                            CustomerDO customerDO = customerNameMap.get(chargeRecord.getCustomerName());
+                            chargeRecord.setErpCustomerNo(customerDO.getCustomerNo());
                         }
                     }
                 }
@@ -830,19 +798,16 @@ public class PaymentServiceImpl implements PaymentService {
         Date now = new Date();
         String userId = CommonConstant.SUPER_USER_ID.toString();
 
-        CustomerDO customerDO = customerMapper.findByNo(chargeRecord.getBusinessCustomerNo());
-        if (customerDO != null) {
-            serviceResult.setErrorCode(ErrorCode.BINDING_CUSTOMER_NO);
+        //过滤手动充值,余额充值,对公加款
+        if (ChargeType.MANUAL_CHARGE.equals(chargeRecord.getChargeType()) || ChargeType.BALANCE_PAID.equals(chargeRecord.getChargeType()) || ChargeType.BANK_SLIP_CHARGE.equals(chargeRecord.getChargeType())) {
+            serviceResult.setErrorCode(ErrorCode.CHARGE_TYPE_IS_MANUAL_CHARGE_OR_PUBLIC_TRANSFER_PLUS);
             return serviceResult;
         }
 
-        if (chargeRecord == null) {
-            serviceResult.setErrorCode(ErrorCode.CHARGE_RECORD_NOT_EXISTS);
-            return serviceResult;
-        }
-        //更改支付方式验证
-        if (ChargeType.MANUAL_CHARGE.equals(chargeRecord.getChargeType()) || ChargeType.BALANCE_PAID.equals(chargeRecord.getChargeType()) || ChargeType.BANK_SLIP_CHARGE.equals(chargeRecord.getChargeType())) {
-            serviceResult.setErrorCode(ErrorCode.CHARGE_TYPE_IS_MANUAL_CHARGE_OR_PUBLIC_TRANSFER_PLUS);
+        //过滤绑定过的客户(已经打款无需再次认领打款)
+        CustomerDO customerDO = customerMapper.findByNo(chargeRecord.getBusinessCustomerNo());
+        if (customerDO != null) {
+            serviceResult.setErrorCode(ErrorCode.BINDING_CUSTOMER_NO);
             return serviceResult;
         }
 
@@ -853,16 +818,28 @@ public class PaymentServiceImpl implements PaymentService {
             return serviceResult;
         }
 
-        // 添加操作日志
+        //导入时间统一
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String format = simpleDateFormat.format(chargeRecord.getChargeTime());
         Date chargeTime = simpleDateFormat.parse(format);
 
+        Integer channelType = null;
+        if(ChannelType.LYCHEE_PAY.equals(chargeRecord.getChannelType())){
+            channelType = BankType.LYCHEE_PAY;
+        }else if(ChannelType.SWIFT_PASS.equals(chargeRecord.getChannelType())){
+            channelType = BankType.SWIFT_PASS;
+        }
+
         //保存流水总纪录
-        BankSlipDO bankSlipDO = bankSlipMapper.findBySubCompanyIdAndDayAndBankType(chargeRecord.getSubCompanyId(), BankType.SWIFT_PASS, chargeTime);
+        BankSlipDO bankSlipDO = bankSlipMapper.findBySubCompanyIdAndDayAndBankType(chargeRecord.getSubCompanyId(), channelType, chargeTime);
         if (bankSlipDO != null) {
             bankSlipDO.setInCount(bankSlipDO.getInCount() + 1);   //进款笔数
             bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() + 1);   //需认领笔数
+            if (SlipStatus.ALL_CLAIM.equals(bankSlipDO.getSlipStatus())) {
+                bankSlipDO.setSlipStatus(SlipStatus.ALREADY_PUSH_DOWN);
+            }
+            bankSlipDO.setUpdateUser(userId);
+            bankSlipDO.setUpdateTime(now);
             //跟新数据
             bankSlipMapper.update(bankSlipDO);
         } else {
@@ -870,7 +847,7 @@ public class PaymentServiceImpl implements PaymentService {
             bankSlipDO = new BankSlipDO();
             bankSlipDO.setSubCompanyId(chargeRecord.getSubCompanyId());   //分公司ID
             bankSlipDO.setSubCompanyName(chargeRecord.getSubCompanyName());   //分公司名称
-            bankSlipDO.setBankType(BankType.SWIFT_PASS);   //银行类型，1-支付宝，2-中国银行，3-交通银行，4-南京银行，5-农业银行，6-工商银行，7-建设银行，8-平安银行，9-招商银行，10-浦发银行
+            bankSlipDO.setBankType(channelType);   //银行类型，1-支付宝，2-中国银行，3-交通银行，4-南京银行，5-农业银行，6-工商银行，7-建设银行，8-平安银行，9-招商银行，10-浦发银行,11-汉口银行,12-快付通,13-库存现金,14-威富通
             bankSlipDO.setSlipDay(chargeTime);   //导入日期
             bankSlipDO.setInCount(CommonConstant.COMMON_ONE);   //进款笔数
             bankSlipDO.setNeedClaimCount(CommonConstant.COMMON_ONE);
@@ -886,7 +863,7 @@ public class PaymentServiceImpl implements PaymentService {
             bankSlipMapper.save(bankSlipDO);
         }
 
-        //保存流水记录
+        //保存流水项记录
         BankSlipDetailDO bankSlipDetailDO = new BankSlipDetailDO();
         bankSlipDetailDO.setPayerName(chargeRecord.getCustomerName());       //付款人名称
         bankSlipDetailDO.setTradeAmount(chargeRecord.getChargeAmountReal());       //交易金额
@@ -1049,7 +1026,7 @@ public class PaymentServiceImpl implements PaymentService {
                         BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
                         bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
                         bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.MOTION_CLAIM);
-                        bankSlipDetailOperationLogDO.setOperationContent("自动认领(付款人和已有的客户相同数据过滤)(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",认领人：" + "系统" + "，认领时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",客户编号：" + customerCompanyDO.getCustomerNo() + ",认领：" + newBankSlipClaimDO.getClaimAmount() + "元");
+                        bankSlipDetailOperationLogDO.setOperationContent("自动认领(付款人和已有的客户相同数据过滤)(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + ",银行：" + BankSlipSupport.getBankTypeName(bankSlipDO.getBankType()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",认领人：" + "系统" + "，认领时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",客户编号：" + customerCompanyDO.getCustomerNo() + ",认领：" + newBankSlipClaimDO.getClaimAmount() + "元");
                         bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                         bankSlipDetailOperationLogDO.setCreateTime(now);
                         bankSlipDetailOperationLogDO.setCreateUser(userId);
@@ -1099,7 +1076,7 @@ public class PaymentServiceImpl implements PaymentService {
                 BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
                 bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
                 bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.MOTION_LOCALIZATION);
-                bankSlipDetailOperationLogDO.setOperationContent("自动属地化(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",属地化人：" + "系统" + "，属地化时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",属地化到公司：" + dbBankSlipDetailDO.getSubCompanyName());
+                bankSlipDetailOperationLogDO.setOperationContent("自动属地化(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + ",银行：" + BankSlipSupport.getBankTypeName(bankSlipDO.getBankType()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",属地化人：" + "系统" + "，属地化时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",属地化到公司：" + dbBankSlipDetailDO.getSubCompanyName());
                 bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
 
                 bankSlipDetailOperationLogDO.setCreateTime(now);
@@ -1119,28 +1096,5 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    private void setCustomerMessageByNo(ChargeRecord chargeRecord,Map<Object,CustomerDO> customerNoMap){
-        if (customerNoMap.get(chargeRecord.getBusinessCustomerNo()) != null) {
-            CustomerDO customerDO = customerNoMap.get(chargeRecord.getBusinessCustomerNo());
-            chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
-            chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
-            chargeRecord.setCustomerName(customerDO.getCustomerName());
-            chargeRecord.setIsErpCustomer(CommonConstant.YES);
-        } else {
-            chargeRecord.setIsErpCustomer(CommonConstant.NO);
-        }
-    }
-
-    private void setCustomerMessageByName(ChargeRecord chargeRecord,Map<Object,CustomerDO> customerNameMap){
-        if (customerNameMap.get(chargeRecord.getCustomerName()) != null) {
-            CustomerDO customerDO = customerNameMap.get(chargeRecord.getCustomerName());
-            chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
-            chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
-            chargeRecord.setCustomerName(customerDO.getCustomerName());
-            chargeRecord.setIsErpCustomer(CommonConstant.YES);
-        } else {
-            chargeRecord.setIsErpCustomer(CommonConstant.NO);
-        }
-    }
 
 }

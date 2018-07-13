@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-数据分析-sql语句列表</title>
+    <title>凌雄ERP-数据分析-sql语句执行情况列表</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
 </head>
@@ -22,27 +22,9 @@
                     <div class="panel-menu p12">
                         <div class="row">
                             <div class="pull-left ml10">
-                                <script type="text/html" id="actionCommonButtonsTpl">
+                                <div class="btn-group" id="actionCommonButtons">
                                     <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
-                                    {{#acitonCommonButtons}}
-                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
-                                        <i class="{{iClass}}"></i> {{text}}
-                                    </a>
-                                    {{/acitonCommonButtons}}
-                                </script>
-
-                                <div class="btn-group" id="actionCommonButtons"></div>
-                            </div>
-                            <div class="pull-right mr10 text-right">
-                                <form id="searchForm" class="form-horizontal">
-                                    <div class="pull-right">
-                                        <button type="submit" class="btn btn-primary btn-sm">查询</button>
-                                        <button type="reset" class="btn btn-default btn-sm">重置</button>
-                                    </div>
-                                    <div class="form-group pull-right mn mr10" style="width: 120px;">
-                                        <input type="text" name="sqlTitle" id="sqlTitle" class="form-control input-sm bradius" autocomplete="off" placeholder="输入sql语句标题">
-                                    </div>
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -52,9 +34,10 @@
                                 <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13">
                                 <thead>
                                 <tr>
-                                    <th>sql语句标题</th>
+                                    <th>sql语句类型</th>
                                     <th>sql语句内容</th>
-                                    <th>备注</th>
+                                    <th>状态</th>
+                                    <th>查询结果</th>
                                     <th>创建人</th>
                                     {{#hasRowActionButtons}}
                                     <th class="text-right">操作</th>
@@ -65,9 +48,10 @@
                                 {{#dataSource}}
                                 {{#listData}}
                                 <tr>
-                                    <td>{{sqlTitle}}</td>
+                                    <td>{{sqlTpye}}</td>
                                     <td><pre class="sqlContent">{{sqlContent}}</pre></td>
-                                    <td>{{remark}}</td>
+                                    <td>{{statusVal}}</td>
+                                    <td>{{results}}</td>
                                     <td>
                                         <p class="mn">{{createUserRealName}}</p>
                                         <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
@@ -76,19 +60,19 @@
                                     <td class="text-right">
                                         <div class="btn-group text-right">
                                             {{#rowActionButtons}}
-                                            <a href="${ctx}{{menuUrl}}?id={{dynamicSqlId}}" type="button" class="btn btn-default btn-xs {{class}}" data-id="{{dynamicSqlId}}">{{text}}</a>
+                                            <a href="${ctx}{{menuUrl}}?id={{id}}" type="button" class="btn btn-default btn-xs {{class}}" data-id="{{id}}">{{text}}</a>
                                             {{/rowActionButtons}}
                                         </div>
                                     </td>
                                     {{/hasRowActionButtons}}
                                 </tr>
                                 <tr class="bn" style="height:0;">
-                                    <td class="pre-box" colspan="5"><pre>{{sqlContent}}</pre></td>
+                                    <td class="pre-box" colspan="6"><pre>{{sqlContent}}</pre></td>
                                 </tr>
                                 {{/listData}}
                                 {{^listData}}
                                 <tr>
-                                    <td valign="top" colspan="5" class="text-center">无数据</td>
+                                    <td valign="top" colspan="6" class="text-center">无数据</td>
                                 </tr>
                                 {{/listData}}
                                 {{/dataSource}}
@@ -113,13 +97,13 @@
     </div>
     #parse("layout/footer.vm")
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.dynamicsql.list.js');
+        management_load_script('${staticManagement}/js','manage.dynamicsql.execute.list.js','modal.input.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
         Rental.init();
         Layout.init();
-        DynamicSqlManage.init();
+        DynamicSqlExecuteManage.init();
 
         //UI效果初始化
         Core.init();
