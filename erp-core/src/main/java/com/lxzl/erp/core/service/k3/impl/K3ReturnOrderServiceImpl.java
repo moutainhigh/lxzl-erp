@@ -1,30 +1,21 @@
 package com.lxzl.erp.core.service.k3.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.*;
 import com.lxzl.erp.common.constant.*;
-import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.K3Config;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.OrderForReturnQueryParam;
-import com.lxzl.erp.common.domain.k3.pojo.order.Order;
-import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
-import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
-import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3HistoricalReturnOrder;
-import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
-import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
-import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
+import com.lxzl.erp.common.domain.k3.pojo.order.*;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
-import com.lxzl.erp.common.util.thread.ThreadFactoryDefault;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOutStock;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
@@ -42,21 +33,16 @@ import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
+import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.se.common.exception.BusinessException;
-import com.lxzl.se.common.util.CommonUtil;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
@@ -66,9 +52,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.*;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.io.PrintWriter;
@@ -77,8 +61,6 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @Author: your name
@@ -983,7 +965,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         // 过滤退货单详情列表信息
 //        needSaveBillDatas = filterReturnOrderDetails(needSaveBillDatas,info);
         // 保存k3数据列表
-        saveBillDatas(needSaveBillDatas,info);
+        saveBillDatas(needSaveBillDatas,info,k3ReturnOrderQueryParam.getHandleRent());
         Integer totalCount = billDatas==null?0:billDatas.size();
         importResult.setResult(totalCount);
         importResult.setErrorCode(ErrorCode.SUCCESS);
@@ -1027,6 +1009,35 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         Date endTime = new Date();
         dingDingSupport.dingDingSendMessage("共批量导入了"+totalCount+"条数据，耗时"+ ((endTime.getTime()-now.getTime())/1000)+"秒");
+        importResult.setErrorCode(ErrorCode.SUCCESS);
+        return importResult;
+    }
+
+    @Override
+    public ServiceResult<String, String> batchImportK3HistoricalReturnList(List<String> returnOrderNoList) {
+        ServiceResult<String, String> importResult = new ServiceResult<>();
+        Date now = new Date();
+        if (CollectionUtil.isEmpty(returnOrderNoList)) {
+            importResult.setErrorCode(ErrorCode.K3_RETURN_ORDER_IS_NOT_NULL);
+            return importResult;
+        }
+        int totalCount = 0;
+        for (String returnOrderNo : returnOrderNoList) {
+            K3ReturnOrderQueryParam k3ReturnOrderQueryParam = new K3ReturnOrderQueryParam();
+            k3ReturnOrderQueryParam.setReturnOrderNo(returnOrderNo);
+            k3ReturnOrderQueryParam.setHandleRent(false);
+            ServiceResult<String, Integer> result = importK3HistoricalRefundList(k3ReturnOrderQueryParam);
+            if (ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                Integer total = result.getResult();
+                totalCount = totalCount + total;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        dingDingSupport.dingDingSendMessage("共批量导入了" + totalCount + "条数据，耗时" + ((new Date().getTime() - now.getTime()) / 1000) + "秒");
         importResult.setErrorCode(ErrorCode.SUCCESS);
         return importResult;
     }
@@ -1651,13 +1662,15 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     /**
      * 保存k3历史退货订单数据，并发送钉钉
      */
-    private void saveBillDatas(List<K3HistoricalReturnOrder> needSaveBillDatas,StringBuffer info) {
+    private void saveBillDatas(List<K3HistoricalReturnOrder> needSaveBillDatas,StringBuffer info,Boolean isHandleRent) {
         // 获取待保存退货订单数据
         List<K3ReturnOrderDO> k3ReturnOrderDOList = saveK3ReturnOrders(needSaveBillDatas,info);
+        //不影响其他接口判断
+        if(isHandleRent == null) isHandleRent = true;
 
         // 保存k3回调接口的处理退货单数据
         info.append("实际保存退货单数量:"+k3ReturnOrderDOList.size()+"\n");
-        Integer notSuccessCount = doCallbackReturnOrder(k3ReturnOrderDOList);
+        Integer notSuccessCount = doCallbackReturnOrder(k3ReturnOrderDOList,isHandleRent);
         info.append("订单处理成功的退货单数量:"+(k3ReturnOrderDOList.size()-notSuccessCount)+"\n");
         dingDingSupport.dingDingSendMessage(info.toString());
     }
@@ -1665,7 +1678,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     /**
      * 执行保存k3回调接口的处理退货单数据
      */
-    private int doCallbackReturnOrder(List<K3ReturnOrderDO> k3ReturnOrderDOList) {
+    private int doCallbackReturnOrder(List<K3ReturnOrderDO> k3ReturnOrderDOList,Boolean isHandleRent) {
         int notSuccessCount = 0;
 
         for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOList){
@@ -1676,7 +1689,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             ServiceResult<String, String> callBackResult = null;
             try{
                 K3ReturnOrder k3ReturnOrder = ConverterUtil.convert(k3ReturnOrderDO,K3ReturnOrder.class);
-                callBackResult = k3CallbackService.callbackReturnDetail(k3ReturnOrder,k3ReturnOrderDO);
+                callBackResult = k3CallbackService.callbackReturnDetail(k3ReturnOrder,k3ReturnOrderDO,isHandleRent);
                 if (!ErrorCode.SUCCESS.equals(callBackResult.getErrorCode())) {
                     logger.info("调用回调接口失败：" + ErrorCode.getMessage(callBackResult.getErrorCode()));
                     notSuccessCount++;

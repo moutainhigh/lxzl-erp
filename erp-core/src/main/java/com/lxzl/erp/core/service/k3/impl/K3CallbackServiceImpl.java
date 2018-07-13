@@ -61,10 +61,7 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -174,34 +171,34 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         }
 
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, CommonConstant.SUPER_USER_ID,OperationType.K3_DELIVER_CALLBACK);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, CommonConstant.SUPER_USER_ID, OperationType.K3_DELIVER_CALLBACK);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 
     @Override
-    public ServiceResult<String, String> callbackCancelOrder(String orderNo,Integer cancelOrderReasonType) {
-        return orderService.cancelOrder(orderNo,cancelOrderReasonType);
+    public ServiceResult<String, String> callbackCancelOrder(String orderNo, Integer cancelOrderReasonType) {
+        return orderService.cancelOrder(orderNo, cancelOrderReasonType);
     }
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> callbackReturnOrder(K3ReturnOrder k3ReturnOrder) {
         String json = JSON.toJSONString(k3ReturnOrder);
-        logger.info("return order call back : "+json);
+        logger.info("return order call back : " + json);
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
 
-        if(k3ReturnOrderDO==null){
+        if (k3ReturnOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
             return serviceResult;
         }
-        if(!ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(k3ReturnOrderDO.getReturnOrderStatus())){
+        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_STATUS_CAN_NOT_RETURN);
             return serviceResult;
         }
 
-        ServiceResult<String, String> result = callbackReturnDetail(k3ReturnOrder,k3ReturnOrderDO);
+        ServiceResult<String, String> result = callbackReturnDetail(k3ReturnOrder, k3ReturnOrderDO, true);
         if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return result;
@@ -209,13 +206,14 @@ public class K3CallbackServiceImpl implements K3CallbackService {
 
         return result;
     }
+
     @Override
-    public ServiceResult<String, String> callbackReturnDetail(K3ReturnOrder k3ReturnOrder,K3ReturnOrderDO k3ReturnOrderDO){
+    public ServiceResult<String, String> callbackReturnDetail(K3ReturnOrder k3ReturnOrder, K3ReturnOrderDO k3ReturnOrderDO, Boolean isHandleRent) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         String userId = null;
-        if(StringUtil.isNotBlank(k3ReturnOrder.getUpdateUserRealName())){
+        if (StringUtil.isNotBlank(k3ReturnOrder.getUpdateUserRealName())) {
             UserDO userDO = userMapper.findByUserRealName(k3ReturnOrder.getUpdateUserRealName().trim());
-            if(userDO==null){
+            if (userDO == null) {
                 serviceResult.setErrorCode(ErrorCode.USER_NOT_EXISTS);
                 return serviceResult;
             }
@@ -226,135 +224,136 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         if (BigDecimalUtil.compare(b, BigDecimal.ZERO) != 0) {
             K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
             CustomerDO customerDO = null;
-            if(k3MappingCustomerDO == null){
+            if (k3MappingCustomerDO == null) {
                 customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
-            }else{
+            } else {
                 customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
             }
-            if(customerDO!=null){
+            if (customerDO != null) {
                 customerSupport.subCreditAmountUsed(customerDO.getId(), b);
             }
         }
 
         Date now = new Date();
-        Integer returnOrderStatus =  k3ReturnOrder.getReturnOrderStatus()==null?ReturnOrderStatus.RETURN_ORDER_STATUS_END:k3ReturnOrder.getReturnOrderStatus();
+        Integer returnOrderStatus = k3ReturnOrder.getReturnOrderStatus() == null ? ReturnOrderStatus.RETURN_ORDER_STATUS_END : k3ReturnOrder.getReturnOrderStatus();
         k3ReturnOrderDO.setReturnOrderStatus(returnOrderStatus);
         k3ReturnOrderDO.setUpdateTime(now);
         k3ReturnOrderDO.setUpdateUser(userId);
         k3ReturnOrderMapper.update(k3ReturnOrderDO);
         //退货状态为退货完成的，才修改在租数及考虑退货结算
-        if(ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(returnOrderStatus)){
+        if (ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(returnOrderStatus)) {
             List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
             Set<Integer> set = new HashSet();
-            for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList){
-                if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())) {
-                    //兼容erp订单和k3订单商品项
-                    OrderProductDO orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
-                    if(orderProductDO!=null){
-                        Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
-                        if(productCount<0){
-                            dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString()+"订单ID["+orderProductDO.getOrderId()+"]商品项ID["+orderProductDO.getId()+")]退货后数量为"+(productCount)+"台");
-                        }
-                        productCount = productCount<0?0:productCount;
-                        orderProductDO.setRentingProductCount(productCount);
-                        orderProductDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
-                        orderProductDO.setUpdateTime(now);
-                        orderProductMapper.update(orderProductDO);
-                        set.add(orderProductDO.getOrderId());
-                        k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
-                        k3ReturnOrderDetailDO.setUpdateUser(userId);
-                        k3ReturnOrderDetailDO.setUpdateTime(now);
-                        k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
-                    }else{
-                        dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString()+"未找到退货单项对应的商品项，退货单编号["+k3ReturnOrderDO.getReturnOrderNo()+"]，退货单项ID["+k3ReturnOrderDetailDO.getId()+"]");
-                    }
-
-                } else {
-                    //兼容erp订单和k3订单配件项
-                    OrderMaterialDO orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
-                    if(orderMaterialDO!=null){
-                        Integer materialCount = orderMaterialDO.getRentingMaterialCount()-k3ReturnOrderDetailDO.getProductCount();
-                        if(materialCount<0){
-                            dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString()+"订单ID["+orderMaterialDO.getOrderId()+"]商品项ID["+orderMaterialDO.getId()+")]退货后数量为"+(materialCount)+"台");
-                        }
-                        materialCount = materialCount<0?0:materialCount;
-                        orderMaterialDO.setRentingMaterialCount(materialCount);
-                        orderMaterialDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
-                        orderMaterialDO.setUpdateTime(now);
-                        orderMaterialMapper.update(orderMaterialDO);
-                        set.add(orderMaterialDO.getOrderId());
-                        k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
-                        k3ReturnOrderDetailDO.setUpdateUser(userId);
-                        k3ReturnOrderDetailDO.setUpdateTime(now);
-                        k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
-                    }else{
-                        dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString()+"未找到退货单项对应的配件项，退货单编号["+k3ReturnOrderDO.getReturnOrderNo()+"]，退货单项ID["+k3ReturnOrderDetailDO.getId()+"]");
-                    }
-
-                }
-            }
             //是否生成退货结算单
             Boolean isCreateReturnStatement = true;
-            for (Integer orderId : set) {
+            if (isHandleRent) {
+                for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList) {
+                    if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())) {
+                        //兼容erp订单和k3订单商品项
+                        OrderProductDO orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
+                        if (orderProductDO != null) {
+                            Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
+                            if (productCount < 0) {
+                                dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString() + "订单ID[" + orderProductDO.getOrderId() + "]商品项ID[" + orderProductDO.getId() + ")]退货后数量为" + (productCount) + "台");
+                            }
+                            productCount = productCount < 0 ? 0 : productCount;
+                            orderProductDO.setRentingProductCount(productCount);
+                            orderProductDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
+                            orderProductDO.setUpdateTime(now);
+                            orderProductMapper.update(orderProductDO);
+                            set.add(orderProductDO.getOrderId());
+                            k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
+                            k3ReturnOrderDetailDO.setUpdateUser(userId);
+                            k3ReturnOrderDetailDO.setUpdateTime(now);
+                            k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
+                        } else {
+                            dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString() + "未找到退货单项对应的商品项，退货单编号[" + k3ReturnOrderDO.getReturnOrderNo() + "]，退货单项ID[" + k3ReturnOrderDetailDO.getId() + "]");
+                        }
 
-                Integer totalRentingProductCount = orderProductMapper.findTotalRentingProductCountByOrderId(orderId);
-                totalRentingProductCount = totalRentingProductCount == null ? 0 : totalRentingProductCount;
-                Integer totalRentingMaterialCount = orderMaterialMapper.findTotalRentingMaterialCountByOrderId(orderId);
-                totalRentingMaterialCount = totalRentingMaterialCount == null ? 0 : totalRentingMaterialCount;
+                    } else {
+                        //兼容erp订单和k3订单配件项
+                        OrderMaterialDO orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
+                        if (orderMaterialDO != null) {
+                            Integer materialCount = orderMaterialDO.getRentingMaterialCount() - k3ReturnOrderDetailDO.getProductCount();
+                            if (materialCount < 0) {
+                                dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString() + "订单ID[" + orderMaterialDO.getOrderId() + "]商品项ID[" + orderMaterialDO.getId() + ")]退货后数量为" + (materialCount) + "台");
+                            }
+                            materialCount = materialCount < 0 ? 0 : materialCount;
+                            orderMaterialDO.setRentingMaterialCount(materialCount);
+                            orderMaterialDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
+                            orderMaterialDO.setUpdateTime(now);
+                            orderMaterialMapper.update(orderMaterialDO);
+                            set.add(orderMaterialDO.getOrderId());
+                            k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
+                            k3ReturnOrderDetailDO.setUpdateUser(userId);
+                            k3ReturnOrderDetailDO.setUpdateTime(now);
+                            k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
+                        } else {
+                            dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString() + "未找到退货单项对应的配件项，退货单编号[" + k3ReturnOrderDO.getReturnOrderNo() + "]，退货单项ID[" + k3ReturnOrderDetailDO.getId() + "]");
+                        }
 
-                OrderDO orderDO = orderMapper.findById(orderId);
-                if(orderDO == null){
-                    continue;
+                    }
                 }
-                //如果訂單有未支付的就將標記改成false
+                for (Integer orderId : set) {
+
+                    Integer totalRentingProductCount = orderProductMapper.findTotalRentingProductCountByOrderId(orderId);
+                    totalRentingProductCount = totalRentingProductCount == null ? 0 : totalRentingProductCount;
+                    Integer totalRentingMaterialCount = orderMaterialMapper.findTotalRentingMaterialCountByOrderId(orderId);
+                    totalRentingMaterialCount = totalRentingMaterialCount == null ? 0 : totalRentingMaterialCount;
+
+                    OrderDO orderDO = orderMapper.findById(orderId);
+                    if (orderDO == null) {
+                        continue;
+                    }
+                    //如果訂單有未支付的就將標記改成false
 //                if (isCreateReturnStatement && !PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
 //                    isCreateReturnStatement = false;
 //                }
-                if (totalRentingProductCount==0 && totalRentingMaterialCount==0) {
-                    //处理最后一件商品退还时间
-                    List<K3ReturnOrderDetailDO> list = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
-                    Date max = null;
-                    for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : list){
-                        K3ReturnOrderDO returnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrderDetailDO.getReturnOrderNo());
-                        if(max==null){
-                            max = returnOrderDO.getReturnTime();
-                        }else{
-                            max = max.getTime()<returnOrderDO.getReturnTime().getTime()?returnOrderDO.getReturnTime():max;
+                    if (totalRentingProductCount == 0 && totalRentingMaterialCount == 0) {
+                        //处理最后一件商品退还时间
+                        List<K3ReturnOrderDetailDO> list = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
+                        Date max = null;
+                        for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : list) {
+                            K3ReturnOrderDO returnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrderDetailDO.getReturnOrderNo());
+                            if (max == null) {
+                                max = returnOrderDO.getReturnTime();
+                            } else {
+                                max = max.getTime() < returnOrderDO.getReturnTime().getTime() ? returnOrderDO.getReturnTime() : max;
+                            }
                         }
+                        orderDO.setActualReturnTime(max);
+                        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
+                        orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
+                        orderDO.setUpdateTime(now);
+                        orderMapper.update(orderDO);
+                    } else if (orderDO.getTotalProductCount() > totalRentingProductCount || orderDO.getTotalMaterialCount() > totalRentingMaterialCount) {//部分退货
+                        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_PART_RETURN);
+                        orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
+                        orderDO.setUpdateTime(now);
+                        orderMapper.update(orderDO);
                     }
-                    orderDO.setActualReturnTime(max);
-                    orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
-                    orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
-                    orderDO.setUpdateTime(now);
-                    orderMapper.update(orderDO);
-                }else if(orderDO.getTotalProductCount()>totalRentingProductCount||orderDO.getTotalMaterialCount()>totalRentingMaterialCount){//部分退货
-                    orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_PART_RETURN);
-                    orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
-                    orderDO.setUpdateTime(now);
-                    orderMapper.update(orderDO);
+                    // 记录订单时间轴
+                    orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, now, StringUtil.isEmpty(userId) ? CommonConstant.SUPER_USER_ID.toString() : userId, OperationType.K3_RETURN_CALLBACK);
                 }
-                // 记录订单时间轴
-                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, now, StringUtil.isEmpty(userId)?CommonConstant.SUPER_USER_ID.toString():userId,OperationType.K3_RETURN_CALLBACK);
             }
-
             // 如果退货单关联的所有订单都支付了，才生成退货单结算单,如果该方法返回错误代码，则内部会自动回滚，结算状态不会改变
             // 如果该方法抛出异常，内部会自动回滚，这里捕获异常，结算状态不改变但是不影响其他逻辑，发送钉钉通知
             if (isCreateReturnStatement) {
                 // 设置事务回滚点
                 Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
-                try{
-                    ServiceResult<String,BigDecimal> result = statementService.createK3ReturnOrderStatementNoTransaction(k3ReturnOrderDO.getReturnOrderNo());
-                    if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
+                try {
+                    ServiceResult<String, BigDecimal> result = statementService.createK3ReturnOrderStatementNoTransaction(k3ReturnOrderDO.getReturnOrderNo());
+                    if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
                         // 创建结算单部分回滚
                         TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
-                        dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString()+"退货单["+k3ReturnOrderDO.getReturnOrderNo()+"]生成结算单失败："+JSON.toJSONString(resultGenerator.generate(result.getErrorCode())));
+                        dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString() + "退货单[" + k3ReturnOrderDO.getReturnOrderNo() + "]生成结算单失败：" + JSON.toJSONString(resultGenerator.generate(result.getErrorCode())));
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     // 创建结算单部分回滚
                     TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
-                    StringWriter exceptionFormat=new StringWriter();
-                    e.printStackTrace(new PrintWriter(exceptionFormat,true));
-                    dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString()+"退货单["+k3ReturnOrderDO.getReturnOrderNo()+"]生成结算单失败："+exceptionFormat.toString());
+                    StringWriter exceptionFormat = new StringWriter();
+                    e.printStackTrace(new PrintWriter(exceptionFormat, true));
+                    dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString() + "退货单[" + k3ReturnOrderDO.getReturnOrderNo() + "]生成结算单失败：" + exceptionFormat.toString());
                 }
             }
         }

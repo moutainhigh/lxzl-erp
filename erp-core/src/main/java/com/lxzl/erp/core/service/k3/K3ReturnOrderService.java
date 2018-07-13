@@ -2,13 +2,14 @@ package com.lxzl.erp.core.service.k3;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
 import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.OrderForReturnQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.core.service.VerifyReceiver;
+
+import java.util.List;
 
 /**
  * @Author: your name
@@ -116,6 +117,15 @@ public interface K3ReturnOrderService extends VerifyReceiver {
 
 
     ServiceResult<String, String> batchImportK3HistoricalRefundList(Integer startPage);
+
+    /**
+     * 导入历史k3退货单列表，不处理在租数
+     *
+     * @author kailin
+     * @param returnOrderNoList
+     * @return
+     */
+    ServiceResult<String, String> batchImportK3HistoricalReturnList(List<String> returnOrderNoList);
 
     /**
      * 创建退货单时查询erp的订单列表展示

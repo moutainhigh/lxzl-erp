@@ -14,6 +14,7 @@ import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
 import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderListParam;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.order.ChangeOrderItemParam;
 import com.lxzl.erp.common.domain.order.OrderConfirmChangeToK3Param;
@@ -728,5 +729,14 @@ public class K3ControllerTest extends ERPTransactionalTest {
         orderConfirmChangeToK3Param.setChangeOrderItemParamList(changeOrderItemParamList);
 
         TestResult testResult = getJsonTestResult("/k3/confirmOrder", orderConfirmChangeToK3Param);
+    }
+
+    @Test
+    public void batchImportK3HistoricalReturnList() throws Exception {
+        K3ReturnOrderListParam k3ReturnOrderListParam = new K3ReturnOrderListParam();
+        List<String> list = new ArrayList<>();
+        list.add("LXK3RO20180611153506891");
+        k3ReturnOrderListParam.setReturnOrderNoList(list);
+        TestResult testResult = getJsonTestResult("/k3/batchImportK3HistoricalReturnList", k3ReturnOrderListParam);
     }
 }
