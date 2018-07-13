@@ -30,7 +30,15 @@ public class ChargeRecord extends BasePO {
     private String customerName;
 
     private Integer isErpCustomer; //是否是erp用户;1-是，0-否
+    private Integer channelType;  //支付渠道类型
 
+    public Integer getChannelType() {
+        return channelType;
+    }
+
+    public void setChannelType(Integer channelType) {
+        this.channelType = channelType;
+    }
     public Integer getChargeOrderId() { return chargeOrderId; }
 
     public void setChargeOrderId(Integer chargeOrderId) { this.chargeOrderId = chargeOrderId; }

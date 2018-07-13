@@ -83,7 +83,7 @@
                                     {{/hasRowActionButtons}}
                                 </tr>
                                 <tr class="bn" style="height:0;">
-                                    <td colspan="5" style="height:0; padding:0;"><pre style="white-space:normal;margin:0; display:none;">{{sqlContent}}</pre></td>
+                                    <td class="pre-box" colspan="5"><pre>{{sqlContent}}</pre></td>
                                 </tr>
                                 {{/listData}}
                                 {{^listData}}

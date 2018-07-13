@@ -87,7 +87,6 @@ import com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
-import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
@@ -176,7 +175,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.CREATE_ORDER);
         // TODO: 2018\4\26 0026 使用优惠券
         if (CollectionUtil.isEmpty(order.getCouponList())) {
             result.setErrorCode(ErrorCode.SUCCESS);
@@ -262,7 +261,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.CREATE_ORDER);
         // TODO: 2018\4\26 0026 使用优惠券
         if (CollectionUtil.isEmpty(order.getCouponList())) {
             result.setErrorCode(ErrorCode.SUCCESS);
@@ -491,6 +490,8 @@ public class OrderServiceImpl implements OrderService {
         setOrderProductSummary(orderDO);
         orderMapper.update(orderDO);
 
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.UPDATE_ORDER);
+
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
         // TODO: 2018\4\26 0026  清除之前订单锁定的优惠券
         String revertresult = couponSupport.revertCoupon(order.getOrderNo());
@@ -593,6 +594,7 @@ public class OrderServiceImpl implements OrderService {
         //为了不影响之前的订单逻辑，这里暂时使用修改的方式
         setOrderProductSummary(orderDO);
         orderMapper.update(orderDO);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.UPDATE_ORDER);
 
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
         // TODO: 2018\4\26 0026  清除之前订单锁定的优惠券
@@ -755,11 +757,12 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(workflowCommitResult.getErrorCode());
             return result;
         }
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_VERIFYING);
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderDO.setUpdateTime(currentTime);
         orderMapper.update(orderDO);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.COMMIT_ORDER);
 
         // 扣除信用额度
         if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
@@ -1129,7 +1132,7 @@ public class OrderServiceImpl implements OrderService {
             orderMapper.update(orderDO);
 
             // 记录订单时间轴
-            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId());
+            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId(),OperationType.COMFIRM_ORDER);
             sb = new StringBuffer();
             sb.append("您的客户[").append(orderDO.getBuyerCustomerName()).append("]所下租赁订单（订单号：").append(orderDO.getOrderNo()).append("）已经正常确认收货。收货内容如下：\n");
             sb.append(confirmsb.toString());
@@ -1215,7 +1218,8 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
 
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId(),OperationType.COMFIRM_ORDER);
+
 
         Integer newTotalProductCount = orderDO.getTotalProductCount();
         Integer newTotalMaterialCount = orderDO.getTotalMaterialCount();
@@ -1577,7 +1581,7 @@ public class OrderServiceImpl implements OrderService {
                     return createStatementOrderResult.getErrorCode();
                 }
                 orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
-                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.VERIFY_ORDER_SUCCESS);
                 orderDO.setUpdateTime(currentTime);
                 orderDO.setUpdateUser(loginUser.getUserId().toString());
                 orderMapper.update(orderDO);
@@ -1590,7 +1594,7 @@ public class OrderServiceImpl implements OrderService {
                 if (BigDecimalUtil.compare(orderDO.getTotalCreditDepositAmount(), BigDecimal.ZERO) != 0) {
                     customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), orderDO.getTotalCreditDepositAmount());
                 }
-                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_REJECT, null, currentTime, loginUser.getUserId());
+                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_REJECT, null, currentTime, loginUser.getUserId(),OperationType.VERIFY_ORDER_FAILED);
                 orderDO.setUpdateTime(currentTime);
                 orderDO.setUpdateUser(loginUser.getUserId().toString());
                 orderMapper.update(orderDO);
@@ -2044,7 +2048,7 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderMapper.update(orderDO);
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.CANCEL_ORDER);
         // TODO: 2018\4\26 0026  清除之前订单锁定的优惠券
         String revertresult = couponSupport.revertCoupon(orderDO.getOrderNo());
         if (!ErrorCode.SUCCESS.equals(revertresult)) {
@@ -2171,7 +2175,7 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderMapper.update(orderDO);
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.FORCE_CANCEL_ORDER);
 
 
         // TODO: 2018\4\26 0026 清除锁定优惠券
@@ -2642,7 +2646,7 @@ public class OrderServiceImpl implements OrderService {
 
 
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.K3_DELIVER_CALLBACK);
 
         result.setResult(param.getOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -2991,7 +2995,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(dbRecordOrder);
 
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(dbRecordOrder.getId(), dbRecordOrder.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(dbRecordOrder.getId(), dbRecordOrder.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.K3_DELIVER_CALLBACK);
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order.getOrderNo());
@@ -3264,7 +3268,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
 
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.COMFIRM_ORDER);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
         return result;
@@ -3786,7 +3790,7 @@ public class OrderServiceImpl implements OrderService {
             Date currentTime = new Date();
             Integer userId = userSupport.getCurrentUserId();
             for (OrderDO orderDO : orderDOList) {
-                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, userId);
+                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, userId,OperationType.K3_RETURN_CALLBACK);
             }
         }
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -3832,13 +3836,13 @@ public class OrderServiceImpl implements OrderService {
             return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
         }
         //测试放开起租时间限制
-//        try {
-//            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
-//                return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
-//            }
-//        } catch (Exception e) {
-//            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
-//        }
+        try {
+            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
+                return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+            }
+        } catch (Exception e) {
+            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+        }
         if (order.getExpectDeliveryTime() == null) {
             return ErrorCode.ORDER_EXPECT_DELIVERY_TIME;
         }

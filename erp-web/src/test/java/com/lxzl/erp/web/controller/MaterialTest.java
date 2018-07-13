@@ -39,6 +39,7 @@ public class MaterialTest extends ERPUnTransactionalTest {
         material.setNewDayRentPrice(new BigDecimal("13.00"));
         material.setNewMonthRentPrice(new BigDecimal("14.00"));
         material.setIsReturnAnyTime(1);
+        material.setK3MaterialNo("20.3333");
 
         List<MaterialImg> materialImgList = new ArrayList<>();
         MaterialImg materialImg = new MaterialImg();
@@ -51,11 +52,12 @@ public class MaterialTest extends ERPUnTransactionalTest {
     @Test
     public void updateMaterial() throws Exception {
         Material material = new Material();
-        material.setMaterialNo("LXM--20180118-00002");
+        material.setMaterialNo("LX-XX-20180313-00005");
         material.setMaterialDesc("M201711201356145971009");
         material.setNewMaterialPrice(new BigDecimal("22.00"));
         material.setNewDayRentPrice(new BigDecimal("23.00"));
         material.setNewMonthRentPrice(new BigDecimal("24.00"));
+        material.setK3MaterialNo("20.1111");
         TestResult testResult = getJsonTestResult("/material/update", material);
     }
 

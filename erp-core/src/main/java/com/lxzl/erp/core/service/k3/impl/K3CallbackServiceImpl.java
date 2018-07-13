@@ -1,10 +1,7 @@
 package com.lxzl.erp.core.service.k3.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.OrderStatus;
-import com.lxzl.erp.common.constant.ReturnOrderStatus;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrder;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrderMaterial;
@@ -177,7 +174,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         }
 
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, CommonConstant.SUPER_USER_ID);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, CommonConstant.SUPER_USER_ID,OperationType.K3_DELIVER_CALLBACK);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -337,36 +334,33 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                     orderMapper.update(orderDO);
                 }
                 // 记录订单时间轴
-                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, now, CommonConstant.SUPER_USER_ID.toString());
+                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, now, StringUtil.isEmpty(userId)?CommonConstant.SUPER_USER_ID.toString():userId,OperationType.K3_RETURN_CALLBACK);
             }
 
             // 如果退货单关联的所有订单都支付了，才生成退货单结算单,如果该方法返回错误代码，则内部会自动回滚，结算状态不会改变
             // 如果该方法抛出异常，内部会自动回滚，这里捕获异常，结算状态不改变但是不影响其他逻辑，发送钉钉通知
             if (isCreateReturnStatement) {
-                executeCreateK3ReturnOrderStatement(k3ReturnOrderDO);
-            }
-        }
-//        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        return serviceResult;
-    }
-
-    private void executeCreateK3ReturnOrderStatement(final K3ReturnOrderDO k3ReturnOrderDO) {
-        k3HnadleExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
+                // 设置事务回滚点
+                Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
                 try{
-                    ServiceResult<String,BigDecimal> result = statementService.createK3ReturnOrderStatement(k3ReturnOrderDO.getReturnOrderNo());
+                    ServiceResult<String,BigDecimal> result = statementService.createK3ReturnOrderStatementNoTransaction(k3ReturnOrderDO.getReturnOrderNo());
                     if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
+                        // 创建结算单部分回滚
+                        TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
                         dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString()+"退货单["+k3ReturnOrderDO.getReturnOrderNo()+"]生成结算单失败："+JSON.toJSONString(resultGenerator.generate(result.getErrorCode())));
                     }
                 }catch (Exception e){
+                    // 创建结算单部分回滚
+                    TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
                     StringWriter exceptionFormat=new StringWriter();
                     e.printStackTrace(new PrintWriter(exceptionFormat,true));
                     dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString()+"退货单["+k3ReturnOrderDO.getReturnOrderNo()+"]生成结算单失败："+exceptionFormat.toString());
                 }
             }
-        });
+        }
+//        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
     }
 
     @Autowired
