@@ -607,13 +607,31 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         } else if (returnReasonType.equals(ReturnReasonType.REPLACEMENT_EQUIPMENT)) {
             return "更换设备";
         } else if (returnReasonType.equals(ReturnReasonType.COMPANY_CLOSURES)) {
-            return "公司倒闭";
+            return "公司经营不善/倒闭";
         } else if (returnReasonType.equals(ReturnReasonType.IDLE_EQUIPMENT)) {
-            return "设备";
+            return "项目结束闲置";
         } else if (returnReasonType.equals(ReturnReasonType.FOLLOW_THE_RENT)) {
             return "满三个月或六个月随租随还";
         } else if (returnReasonType.equals(ReturnReasonType.OTHER)) {
             return "其它',";
+        }else if (returnReasonType.equals(ReturnReasonType.COMMODITY_FAILURE_REPLACEMENT)) {
+            return "商品故障更换";
+        }else if (returnReasonType.equals(ReturnReasonType.CONFIGURATION_UPGRADE_REPLACEMENT)) {
+            return "配置升级更换";
+        }else if (returnReasonType.equals(ReturnReasonType.ORDER_INVALIDATION )) {
+            return "订单作废/取消";
+        }else if (returnReasonType.equals(ReturnReasonType.PRICE_CAUSE_TO_PURCHASE)) {
+            return "价格原因转购买";
+        }else if (returnReasonType.equals(ReturnReasonType.PRICE_REASONS_FOR_SUPPLIERS)) {
+            return "价格原因换供应商";
+        }else if (returnReasonType.equals(ReturnReasonType.PURCHASE_OF_COMMODITY_QUALITY)) {
+            return "商品质量问题转购买";
+        }else if (returnReasonType.equals(ReturnReasonType.COMMODITY_QUALITY_PROBLEMS_FOR_SUPPLIERS)) {
+            return "商品质量问题换供应商";
+        }else if (returnReasonType.equals(ReturnReasonType.THE_SERVICE_IS_NOT_RETURNED_IN_TIME)) {
+            return "服务不及时造成退货";
+        }else if (returnReasonType.equals(ReturnReasonType.STAFF_LEAVING_OR_STUDENT_GRADUATION_IDLE)) {
+            return "人员离职/学生毕业闲置";
         }
         return "";
     }
