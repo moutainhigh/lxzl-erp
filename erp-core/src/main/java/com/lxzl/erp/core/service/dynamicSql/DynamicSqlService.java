@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlQueryParam;
 import com.lxzl.erp.common.domain.dynamicSql.pojo.DynamicSql;
+import com.lxzl.erp.common.domain.dynamicSql.pojo.DynamicSqlHolder;
 import com.lxzl.erp.dataaccess.domain.dynamicSql.DynamicSqlHolderDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 
@@ -27,7 +28,7 @@ public interface DynamicSqlService {
 
     ServiceResult<String, String> insertBySql(DynamicSqlSelectParam dynamicSqlSelectParam);
 
-    ServiceResult<String, List<DynamicSqlHolderDO>> pageDynamicSqlHolder(PageQuery pageQuery);
+    ServiceResult<String, List<DynamicSqlHolder>>  pageDynamicSqlHolder(PageQuery pageQuery);
 
     ServiceResult<String, DynamicSqlHolderDO> adoptDynamicSqlHolder(Integer dynamicSqlHolderId);
 

@@ -1,21 +1,14 @@
-package com.lxzl.erp.dataaccess.domain.dynamicSql;
+package com.lxzl.erp.common.domain.dynamicSql.pojo;
 
+import com.lxzl.erp.common.domain.base.BasePO;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class DynamicSqlHolderDO extends BaseDO {
-
+public class DynamicSqlHolder extends BasePO {
     private Integer id;
     private String sqlContent;
     private String sqlTpye;
     private Integer status;
     private String results;
     private Integer dataStatus;
-
-
 
     public Integer getId() {
         return id;
@@ -63,14 +56,5 @@ public class DynamicSqlHolderDO extends BaseDO {
 
     public void setDataStatus(Integer dataStatus) {
         this.dataStatus = dataStatus;
-    }
-
-    public enum Status {
-        UNCHECK(0), CHECKED(1), REJECT(2);
-        public int value;
-
-        Status(int value) {
-            this.value = value;
-        }
     }
 }
