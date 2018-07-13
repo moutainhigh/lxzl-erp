@@ -1002,6 +1002,9 @@ public class ErrorCode {
     public static final String SQL_CONTENT_NOT_NULL = "J260000003";
     public static final String DYNAMIC_SQL_ID_NOT_NULL = "J260000004";
     public static final String DYNAMIC_SQL_NOT_EXISTS = "J260000005";
+    public static final String DELETE_PROTECTION = "J260000006";
+    public static final String DYNAMICSQLHOLDERID_NOT_NULL = "J260000007";
+    public static final String DYNAMIC_SQL_ILLEGAL_OPERATION = "J260000008";
 
 
     static {
@@ -1969,6 +1972,10 @@ public class ErrorCode {
         MAP.put(SQL_CONTENT_NOT_NULL, "动态SQL语句内容不能为空");
         MAP.put(DYNAMIC_SQL_ID_NOT_NULL, "动态SQL的ID不能为空");
         MAP.put(DYNAMIC_SQL_NOT_EXISTS, "动态SQL语句不存在");
+        MAP.put(DELETE_PROTECTION, "已开启删除保护,如需删除数据需要联系管理员");
+        MAP.put(DYNAMICSQLHOLDERID_NOT_NULL, "dynamicSqlHolderId 不能为空");
+        MAP.put(DYNAMIC_SQL_ILLEGAL_OPERATION, "非法的动态sql操作");
+
 
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户已经为确认结算单状态");
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE, "客户为确认结算单状态时不允许重算结算单");
