@@ -525,7 +525,6 @@ public class PaymentServiceImpl implements PaymentService {
                     }
                     if (jsonObject.get("businessCustomerName") != null) {
                         chargeRecord.setCustomerName(jsonObject.get("businessCustomerName").toString());
-                        customerNameList.add(jsonObject.get("businessCustomerName").toString());
                     }
 //                    ChargeRecord chargeRecord = JSON.parseObject(JSON.toJSONString(paymentChargeRecord),ChargeRecord.class);
 //                    PaymentChargeRecord paymentChargeRecordPojo = JSONUtil.parseObject(paymentChargeRecord, PaymentChargeRecord.class);
@@ -533,9 +532,9 @@ public class PaymentServiceImpl implements PaymentService {
                     chargeRecordList.add(chargeRecord);
                     if (chargeRecord.getBusinessCustomerNo().startsWith("LX")) {
                         customerNoList.add(chargeRecord.getBusinessCustomerNo());
+                    }else if(StringUtil.isEmpty(jsonObject.get("businessCustomerName").toString())){
+                        customerNameList.add(jsonObject.get("businessCustomerName").toString());
                     }
-
-
                 }
 
 //                for (int i = 0; i < paymentChargeRecordPageList.size(); i++) {
@@ -551,56 +550,55 @@ public class PaymentServiceImpl implements PaymentService {
 //                        chargeRecord.setCustomerName(chargeRecord.getBusinessCustomerName());
 //                    }
 //                }
-                if (CollectionUtil.isNotEmpty(customerNoList) && CollectionUtil.isNotEmpty(customerNameList)) {
+                if (CollectionUtil.isNotEmpty(customerNoList)){
                     List<CustomerDO> customerDONoList = customerMapper.findByCustomerNoList(customerNoList);
-                    List<CustomerDO> customerDONameList = customerMapper.findByCustomerNameList(customerNameList);
-                    if (CollectionUtil.isNotEmpty(customerDONoList) && CollectionUtil.isEmpty(customerDONoList)) {
+                    if (CollectionUtil.isNotEmpty(customerDONoList)){
                         Map<Object, CustomerDO> customerNoMap = ListUtil.listToMap(customerDONoList, "customerNo");
-                        if (CollectionUtil.isNotEmpty(chargeRecordList)) {
-                            for (ChargeRecord chargeRecord : chargeRecordList) {
-                                setCustomerMessageByNo(chargeRecord,customerNoMap);
-                            }
-                        }
-                    } else if (CollectionUtil.isEmpty(customerDONoList) && CollectionUtil.isNotEmpty(customerDONameList)) {
-                        Map<Object, CustomerDO> customerNameMap = ListUtil.listToMap(customerDONameList, "customerName");
-                        if (CollectionUtil.isNotEmpty(chargeRecordList)) {
-                            for (ChargeRecord chargeRecord : chargeRecordList) {
-                                setCustomerMessageByName(chargeRecord,customerNameMap);
-                            }
-                        }
-                    } else if (CollectionUtil.isNotEmpty(customerDONoList) && CollectionUtil.isNotEmpty(customerDONameList)) {
-                        Map<Object, CustomerDO> customerNoMap = ListUtil.listToMap(customerDONoList, "customerNo");
-                        Map<Object, CustomerDO> customerNameMap = ListUtil.listToMap(customerDONameList, "customerName");
                         for (ChargeRecord chargeRecord : chargeRecordList) {
                             if (customerNoMap.get(chargeRecord.getBusinessCustomerNo()) != null) {
                                 CustomerDO customerDO = customerNoMap.get(chargeRecord.getBusinessCustomerNo());
                                 chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
                                 chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
                                 chargeRecord.setCustomerName(customerDO.getCustomerName());
-                                chargeRecord.setIsErpCustomer(CommonConstant.YES);
-                            } else {
-                                setCustomerMessageByName(chargeRecord,customerNameMap);
+                                chargeRecord.setIsErpCustomer(CommonConstant.COMMON_CONSTANT_YES);
+                            }else {
+                                chargeRecord.setIsErpCustomer(CommonConstant.COMMON_CONSTANT_NO);
+                            }
+                        }
+                    }else{
+                        Map<Object, String> customerNoListMap = ListUtil.listToMap(customerNoList, "customerNo");
+                        for (ChargeRecord chargeRecord : chargeRecordList) {
+                            if (customerNoListMap.get(chargeRecord.getBusinessCustomerNo()) != null) {
+                                chargeRecord.setIsErpCustomer(CommonConstant.COMMON_CONSTANT_NO);
                             }
                         }
                     }
-                }else if(CollectionUtil.isNotEmpty(customerNoList) && CollectionUtil.isEmpty(customerNameList)){
-                    List<CustomerDO> customerDONoList = customerMapper.findByCustomerNoList(customerNoList);
-                    if (CollectionUtil.isNotEmpty(customerDONoList)){
-                        Map<Object, CustomerDO> customerNoMap = ListUtil.listToMap(customerDONoList, "customerNo");
-                        for (ChargeRecord chargeRecord : chargeRecordList) {
-                             setCustomerMessageByNo(chargeRecord,customerNoMap);
-                        }
-                    }
-                }else if (CollectionUtil.isEmpty(customerNoList) && CollectionUtil.isNotEmpty(customerNameList)){
+                }
+
+                if (CollectionUtil.isNotEmpty(customerNameList)) {
                     List<CustomerDO> customerDONameList = customerMapper.findByCustomerNameList(customerNameList);
-                    if (CollectionUtil.isNotEmpty(customerDONameList)){
+                    if (CollectionUtil.isNotEmpty(customerDONameList)) {
                         Map<Object, CustomerDO> customerNameMap = ListUtil.listToMap(customerDONameList, "customerName");
                         for (ChargeRecord chargeRecord : chargeRecordList) {
-                            setCustomerMessageByName(chargeRecord,customerNameMap);
+                            if (customerNameMap.get(chargeRecord.getCustomerName()) != null) {
+                                chargeRecord.setIsErpCustomer(CommonConstant.COMMON_CONSTANT_YES);
+                            } else {
+                                if (chargeRecord.getIsErpCustomer() == null) {
+                                    chargeRecord.setIsErpCustomer(CommonConstant.COMMON_CONSTANT_NO);
+                                }
+                            }
+                        }
+                    } else {
+                        Map<Object, String> customerNameListMap = ListUtil.listToMap(customerNoList, "customerName");
+                        for (ChargeRecord chargeRecord : chargeRecordList) {
+                            if (customerNameListMap.get(chargeRecord.getCustomerName()) != null) {
+                                chargeRecord.setIsErpCustomer(CommonConstant.COMMON_CONSTANT_NO);
+                            }
                         }
                     }
-                }else{
-                    //客户编号和客户名称都是都没有的情况
+                }
+
+                if (CollectionUtil.isEmpty(customerNoList) && CollectionUtil.isEmpty(customerNameList)){
                     if (CollectionUtil.isNotEmpty(chargeRecordList)) {
                         for (ChargeRecord chargeRecord : chargeRecordList) {
                             chargeRecord.setIsErpCustomer(CommonConstant.NO);
