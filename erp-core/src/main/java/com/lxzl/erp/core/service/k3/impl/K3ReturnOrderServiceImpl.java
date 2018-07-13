@@ -1982,6 +1982,11 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : waitSavek3ReturnOrderDetailDOList){
             K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderDOMap.get(k3ReturnOrderDetailDO.getReturnOrderNo());
             k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
+            if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())){
+                k3ReturnOrderDetailDO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
+            }else{
+                k3ReturnOrderDetailDO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_MATERIAL);
+            }
         }
         if(waitSavek3ReturnOrderDetailDOList.size()>0){
             k3ReturnOrderDetailMapper.saveList(waitSavek3ReturnOrderDetailDOList);
