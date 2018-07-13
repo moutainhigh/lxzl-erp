@@ -527,8 +527,10 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        param.setOrderNo("LXO-20180307-1000-00014");
 //        param.setDeliverySubCompanyId(2);
 //        param.setOrderStatus(16);
-        param.setendRentStartTime(new Date());
 //        param.setPayStatus(24);
+//        param.setOrderNo("LXO-20180608-027-00059");
+//        param.setOrderSellerId(500355);
+        param.setOrderSellerName("诚");
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
     @Test
@@ -554,14 +556,14 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         Order order = new Order();
-        order.setOrderNo("LXO-20180622-027-00123");
+        order.setOrderNo("LXO-20180627-027-00164");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
     }
 
     @Test
     public void queryOrderByNoNew() throws Exception {
         Order order = new Order();
-        order.setOrderNo("LXO-20180523-027-00112");
+        order.setOrderNo("LXO-20180627-027-00164");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNoNew", order);
     }
 
@@ -676,28 +678,28 @@ public class OrderTest extends ERPUnTransactionalTest {
     public void confirmChangeOrder() throws Exception {
         OrderConfirmChangeParam orderConfirmChangeParam = new OrderConfirmChangeParam();
         OrderItemParam orderItemParam1 = new OrderItemParam();
-        orderItemParam1.setItemId(3467);
+        orderItemParam1.setItemId(4136);
         orderItemParam1.setItemCount(0);
         orderItemParam1.setItemType(1);
         OrderItemParam orderItemParam2 = new OrderItemParam();
-        orderItemParam2.setItemId(3468);
+        orderItemParam2.setItemId(6903);
         orderItemParam2.setItemCount(0);
-        orderItemParam2.setItemType(1);
-        OrderItemParam orderItemParam3 = new OrderItemParam();
-        orderItemParam3.setItemId(5864);
-        orderItemParam3.setItemCount(0);
-        orderItemParam3.setItemType(2);
-        OrderItemParam orderItemParam4 = new OrderItemParam();
-        orderItemParam4.setItemId(5865);
-        orderItemParam4.setItemCount(0);
-        orderItemParam4.setItemType(2);
+        orderItemParam2.setItemType(2);
+//        OrderItemParam orderItemParam3 = new OrderItemParam();
+//        orderItemParam3.setItemId(5864);
+//        orderItemParam3.setItemCount(0);
+//        orderItemParam3.setItemType(2);
+//        OrderItemParam orderItemParam4 = new OrderItemParam();
+//        orderItemParam4.setItemId(5865);
+//        orderItemParam4.setItemCount(0);
+//        orderItemParam4.setItemType(2);
         List<OrderItemParam> orderItemParamList = new ArrayList<>();
         orderItemParamList.add(orderItemParam1);
         orderItemParamList.add(orderItemParam2);
-        orderItemParamList.add(orderItemParam3);
-        orderItemParamList.add(orderItemParam4);
+//        orderItemParamList.add(orderItemParam3);
+//        orderItemParamList.add(orderItemParam4);
         orderConfirmChangeParam.setOrderItemParamList(orderItemParamList);
-        orderConfirmChangeParam.setOrderNo("LXO-20180612-027-00082");
+        orderConfirmChangeParam.setOrderNo("LXO-20180711-027-00073");
         orderConfirmChangeParam.setChangeReasonType(1);
         orderConfirmChangeParam.setChangeReason("杀口接沙客sahksjdkaksjdakjshdkjas");
         Image image = new Image();

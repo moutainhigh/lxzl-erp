@@ -389,6 +389,16 @@ public class PageController extends BaseController {
         return "/businessCustomerManage/businessCustomerEditAfterPass";
     }
 
+    @RequestMapping("/customer-business-manage/service-list")
+    public String customerBusinessManageServiceList() {
+        return "/businessCustomerManage/serviceBusinessCustomerList";
+    }
+
+    @RequestMapping("/customer-business-manage/service-detail")
+    public String customerBusinessManageServiceDetail() {
+        return "/businessCustomerManage/serviceBusinessCustomerDetail";
+    }
+
     @RequestMapping("/customer-manage/confirm-statement")
     public String customerManageConfirmStatement() {
         return "/component/customer/confirmStatementModal";
@@ -432,6 +442,26 @@ public class PageController extends BaseController {
             return "redirect:/customer-business-manage/detail?no="+customerNo+"&consigninfoid="+id;
         }
         return "redirect:/error";
+    }
+
+    @RequestMapping("/customer-statement/list-export")
+    public String customerStatementListExport() {
+        return "/component/customer/exportModal";
+    }
+
+    @RequestMapping("/customer-manage/bad-debt-customer")
+    public String customerManageBadDebtCustomer() {
+        return "/component/customer/badDebtCustomer";
+    }
+
+    @RequestMapping("/customer-manage/service-list")
+    public String customerManageServiceList() {
+        return "/customerManage/serviceCustomerList";
+    }
+
+    @RequestMapping("/customer-manage/service-detail")
+    public String customerManageServiceDetail() {
+        return "/customerManage/serviceCustomerDetail";
     }
 
     //采购管理

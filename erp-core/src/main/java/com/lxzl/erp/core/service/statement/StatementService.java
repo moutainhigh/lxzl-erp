@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.statement.pojo.CheckStatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
@@ -77,6 +78,7 @@ public interface StatementService extends BaseService {
      * @return
      */
     ServiceResult<String, BigDecimal> reCreateOrderStatement(OrderStatementDateSplit k3StatementDateChange);
+    ServiceResult<String, BigDecimal> reCreateOrderStatementAllowConfirmCustommer(OrderDO orderDO);
 
 
     /**
@@ -164,6 +166,13 @@ public interface StatementService extends BaseService {
     ServiceResult<String, BigDecimal> createK3ReturnOrderStatement(String returnOrderNo);
 
     /**
+     * 创建k3退货结算单，不添加事务（事务嵌套部分回滚有问题），只在k3退货回调时调用
+     * @param returnOrderNo
+     * @return
+     */
+    ServiceResult<String, BigDecimal> createK3ReturnOrderStatementNoTransaction(String returnOrderNo);
+
+    /**
      * 创建换货单结算单
      *
      * @param changeOrderNo 换货单编号
@@ -234,5 +243,10 @@ public interface StatementService extends BaseService {
      * @return
      */
     ServiceResult<String, String> reStatementK3ReturnOrderRentOnly(String returnOrderNo);
-
+    /**
+     * 导入对账单查询
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/6/21 9:32
+     */
+    ServiceResult<String, List<CheckStatementOrder>> exportQueryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam);
 }

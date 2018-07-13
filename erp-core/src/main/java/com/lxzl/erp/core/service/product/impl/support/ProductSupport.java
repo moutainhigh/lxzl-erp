@@ -59,7 +59,11 @@ public class ProductSupport {
         }
     }
     public boolean isProduct(String productNo) {
-       return !isMaterial(productNo);
+        if (productNo.startsWith("10.")||productNo.startsWith("90.")){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     /**

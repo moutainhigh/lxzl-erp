@@ -8,6 +8,8 @@ import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import org.hibernate.validator.constraints.NotBlank;
+
+import java.beans.Transient;
 import java.util.Date;
 
 
@@ -37,6 +39,8 @@ public class K3ReturnOrderDetail extends BasePO {
     private OrderProduct orderProduct;//关联订单商品
     private OrderMaterial orderMaterial;//关联商品物料
 
+    private Date returnTime;  //退货时间
+    private Integer orderItemType;//商品类型,1-商品,2-配件
 
     public Integer getK3ReturnOrderDetailId() {
         return k3ReturnOrderDetailId;
@@ -180,5 +184,21 @@ public class K3ReturnOrderDetail extends BasePO {
 
     public void setOrderMaterial(OrderMaterial orderMaterial) {
         this.orderMaterial = orderMaterial;
+    }
+
+    public Date getReturnTime() {
+        return returnTime;
+    }
+
+    public void setReturnTime(Date returnTime) {
+        this.returnTime = returnTime;
+    }
+
+    public Integer getOrderItemType() {
+        return orderItemType;
+    }
+
+    public void setOrderItemType(Integer orderItemType) {
+        this.orderItemType = orderItemType;
     }
 }

@@ -14,11 +14,26 @@
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
             <section id="content" class="pn animated fadeIn">
-
                 #parse("component/loading.vm")
                 
                 <form id="customerDetail">
                     <div class="pv30 ph40 bg-light dark br-b br-grey posr">
+                        <div class="text-right br-b br-grey mb20">
+                            <script type="text/html" id="actionButtonsTpl">
+                                {{#acitonButtons}}
+                                <a href="${ctx}{{menuUrl}}?no={{customerNo}}"
+                                    class="btn btn-primary btn-sm ml5 bradius {{class}}" 
+                                    data-customerno="{{customerNo}}"
+                                    data-customername="{{customerName}}"
+                                    data-statementdate="{{statementDate}}"
+                                    data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
+                                    data-customertype="{{customerType}}"
+                                    data-ownerSubCompanyId="{{ownerSubCompanyId}}">{{text}}</a>
+                                {{/acitonButtons}}
+                            </script>
+                            <div class="btn-group mb20" id="actionButtons"></div>
+                        </div>
+
                         <script type="text/html" id="customerHeadTpl">
                             {{#customer}}
                             <div class="va-t m30">
@@ -69,7 +84,12 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <dl class="dl-horizontal">
-                                            <dt class="mb10">客户编号：</dt><dd>{{customerNo}}</dd>
+                                            <dt class="mb10">
+                                                {{#isBadDebtCustomer}}
+                                                <span class="label label-danger" title="坏账客户">坏账</span>
+                                                {{/isBadDebtCustomer}}
+                                                客户编号：</dt>
+                                            <dd>{{customerNo}}</dd>
                                             <dt class="mb10">客户姓名：</dt><dd>{{customerPerson.realName}}</dd>
                                             <dt class="mb10">身份证号：</dt><dd>{{customerPerson.personNo}}</dd>
                                             <dt class="mb10">邮箱：</dt><dd>{{customerPerson.email}}</dd>
@@ -146,11 +166,13 @@
         #parse("layout/sidebarRight.vm")
     </div>
     #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}assets/admin-tools/admin-forms/js/jquery-tcm-month.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'manage.customer.mixin.js',
                 'manage.customer.handle.mixin.js',
                 'manage.customer.detail.js',
+                'manage.customer.confirm.statement.js',
                 'manage.customer.risk.js',
                 'manage.customer.address.js',
                 'manage.customer.address.add.js',

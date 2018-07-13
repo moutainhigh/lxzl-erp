@@ -570,7 +570,7 @@ public class K3ControllerTest extends ERPTransactionalTest {
     }
     @Test
     public void createReturnOrderFromERPJson() throws Exception {
-        String str = "{\"k3CustomerNo\":\"LXCC-027-20180620-00135\",\"k3CustomerName\":\"分直结算十一号\",\"returnTime\":1529971200000,\"returnAddress\":\"湖北省武汉市洪山区你家大门口\",\"returnContacts\":\"咩咩\",\"returnPhone\":\"18566324590\",\"returnMode\":\"2\",\"logisticsAmount\":\"500\",\"serviceAmount\":0,\"remark\":\"\",\"returnReasonType\":\"5\",\"deliverySubCompanyId\":\"8\",\"k3ReturnOrderDetailList\":[{\"orderNo\":\"LXO-20180625-027-00159\",\"orderEntry\":3591,\"productNo\":\"10.TPC.AP.IPADPRO-64G\",\"productName\":\"苹果IPADPRO-64G\",\"productCount\":\"4\",\"remark\":\"\",\"orderItemId\":3591}]}";
+        String str = "{\"k3CustomerNo\":\"LXCC-027-20180620-00136\",\"k3CustomerName\":\"分直结算十二号\",\"returnTime\":1591779200000,\"returnAddress\":\"湖北省武汉市洪山区你家大门口\",\"returnContacts\":\"咩咩\",\"returnPhone\":\"18566324590\",\"returnMode\":\"2\",\"logisticsAmount\":\"0\",\"serviceAmount\":0,\"remark\":\"\",\"returnReasonType\":\"1\",\"deliverySubCompanyId\":\"8\",\"k3ReturnOrderDetailList\":[{\"orderNo\":\"LXO-20180627-027-00164\",\"orderEntry\":3598,\"productNo\":\"10.TPC.AP.IPADPRO-64G\",\"productName\":\"苹果IPADPRO-64G\",\"productCount\":\"3\",\"remark\":\"\",\"orderItemId\":3598}]}";
         K3ReturnOrder k3ReturnOrder = JSON.parseObject(str, K3ReturnOrder.class);
 
 

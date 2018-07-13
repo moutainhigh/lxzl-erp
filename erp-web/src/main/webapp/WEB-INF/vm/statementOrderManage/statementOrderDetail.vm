@@ -15,212 +15,212 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
-            <section id="content" class="animated fadeIn">
-                <div class="" id="statementOrderDetailForm">
-                    <div class="panel panel-primary panel-border top mb15">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <h5>结算单编号：<small id="statementOrderNo"></small></h5>
-                                </div>
-                                <div class="col-md-8 text-right">
-                                    <script type="text/html" id="actionButtonsTpl">
-                                        {{#acitonButtons}}
-                                        {{#showButton}}
-                                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">
-                                            <i class="{{iClass}}"></i> {{text}}
-                                        </a>
-                                        {{/showButton}}
-                                        {{/acitonButtons}}
-                                    </script>
-                                    <div class="btn-group" id="actionButtons"></div>
 
-                                    <script type="text/html" id="exportButtonsTpl">
-                                        {{#exportButtons}}
-                                        <div style="display: inline-block">
-                                            <form action="${ctx}{{menuUrl}}exportExcel/exportStatementOrderDetail" method="post" id="exportForm" target="exportFrame">
-                                                <input type="hidden" name="statementOrderNo" value="{{statementOrderNo}}">
-                                                <input type="submit" class="btn btn-primary btn-sm exportBtn"  value="导出">
-                                            </form>
-                                            <iframe id="exportFrame" name="exportFrame" src="about:blank" style="display:none;"></iframe>
-                                        </div>
-                                        {{/exportButtons}}
-                                    </script>
-                                    <div class="btn-group" id="exportButton"></div>
-                                </div>
+            #parse("component/loading.vm")
+            
+            <div class="" id="statementOrderDetailForm">
+                <div class="panel panel-primary panel-border top mb15">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>结算单编号：<small id="statementOrderNo"></small></h5>
                             </div>
-                        </div>
-                        <div class="panel-body">
-                            <div id="orderBaseInfo"></div>
-                        </div>
-                        <script type="text/html" id="orderBaseInfoTpl">
-                            {{#order}}
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <dl class="dl-horizontal">
-                                        <dt>状态：</dt><dd class="mb5">{{statementOrderStatusValue}}&nbsp;</dd>
-                                        <dt>业务员：</dt><dd class="mb5">{{ownerName}}</dd>
-                                        <dt>客户名：</dt><dd class="mb5"><a href="{{customerUrl}}" target="_blank">{{customerName}}</a></dd>
-                                        <dt>预计支付时间：</dt><dd class="mb5">{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</dd>
-                                        <dt>实际支付时间：</dt><dd class="mb5">{{#time}}{{statementPaidTime}}{{/time}}</dd>
-                                        <dt>结算开始日期：</dt><dd class="mb5">{{#shortTime}}{{statementStartTime}}{{/shortTime}}</dd>
-                                        <dt>结算结束日期：</dt><dd class="mb5">{{#shortTime}}{{statementEndTime}}{{/shortTime}}&nbsp;</dd>
-                                    </dl>
-                                </div>
-                                <div class="col-md-4">
-                                    <dl class="dl-horizontal">
-                                        <dt>租金押金：</dt><dd class="mb5">￥{{#price}}{{statementRentDepositAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>已付租金押金：</dt><dd class="mb5">￥{{#price}}{{statementRentDepositPaidAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>已退租金押金：</dt><dd class="mb5">￥{{#price}}{{statementRentDepositReturnAmount}}{{/price}}&nbsp;</dd>
-
-                                        <dt>设备押金：</dt><dd class="mb5">￥{{#price}}{{statementDepositAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>已付设备押金：</dt><dd class="mb5">￥{{#price}}{{statementDepositPaidAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>已退设备押金：</dt><dd class="mb5">￥{{#price}}{{statementDepositReturnAmount}}{{/price}}&nbsp;</dd>
-                                    </dl>
-                                </div>
-                                <div class="col-md-4">
-                                    <dl class="dl-horizontal">
-                                        <dt>租金：</dt><dd class="mb5">￥{{#price}}{{statementRentAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>已付租金：</dt><dd class="mb5">￥{{#price}}{{statementRentPaidAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>结算单总金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>已付总金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementPaidAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>逾期金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementOverdueAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>其它费用：</dt><dd class="text-danger mb5">￥{{#price}}{{statementOtherAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>冲正金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementCorrectAmount}}{{/price}}&nbsp;</dd>
-                                    </dl>
-                                </div>
-                            </div>
-                            {{/order}}
-                        </script>
-                    </div>
-
-                    <div class="panel">
-                        <div class="panel-body light pn">
-                            <div class="table-responsive" style="overflow-x: scroll; max-height: 500px;">
-                                <script type="text/html" id="dataListTpl">
-                                    <thead>
-                                    <tr class="bg-light">
-##                                        <th>ID</th>
-                                        <th class="nowrap">类型</th>
-                                        <th class="nowrap">订单编号</th>
-                                        <th class="nowrap">订单项类型</th>
-                                        <th class="nowrap">商品名</th>
-##                                        <th class="nowrap">金额类型</th>
-                                        <th class="nowrap">单价</th>
-                                        <th class="nowrap">商品数量</th>
-                                        <th class="nowrap">租赁类型</th>
-                                        <th class="nowrap">期数</th>
-                                        <th class="nowrap">预计支付时间</th>
-                                        <th class="nowrap">结算支付时间</th>
-
-                                        <th class="nowrap text-info">结算单金额</th>
-                                        <th class="nowrap text-info">抵扣金额</th>
-                                        <th class="nowrap">租金</th>
-                                        <th class="nowrap">租金押金</th>
-                                        <th class="nowrap">押金</th>
-
-                                        <th class="nowrap">其它费用</th>
-                                        <th class="nowrap">逾期金额</th>
-
-                                        <th class="nowrap text-success">已付金额</th>
-                                        <th class="nowrap">已付租金</th>
-                                        <th class="nowrap">已付租金押金</th>
-                                        <th class="nowrap">已付押金</th>
-
-                                        <th class="nowrap">退还租金押金</th>
-                                        <th class="nowrap">退还押金</th>
-                                        <th class="nowrap text-danger">冲正金额</th>
-
-                                        <th class="nowrap">状态</th>
-                                        <th class="nowrap" class="text-right">结算时间</th>
-
-                                        {{#hasRowActionButtons}}
-                                        <th style="white-space: nowrap;" class="text-right">操作</th>
-                                        {{/hasRowActionButtons}}
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {{#dataSource}}
-                                    {{#listData}}
-                                    <tr>
-##                                        <td class="nowrap">{{statementOrderDetailId}}</td>
-                                        <td class="nowrap">{{orderTypeValue}}</td>
-                                        <td class="nowrap"><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></td>
-                                        <td class="nowrap">{{orderItemTypeValue}}</td>
-                                        <td class="nowrap">
-                                            {{itemName}}
-                                        </td>
-##                                        <td class="nowrap">{{statementDetailTypeValue}}</td>
-                                        <td class="nowrap">￥{{#price}}{{unitAmount}}{{/price}}</td>
-                                        <td class="nowrap">{{itemCount}}</td>
-                                        <td class="nowrap">{{itemRentTypeValue}}</td>
-                                        <td class="nowrap">{{statementDetailPhase}}</td>
-                                        <td class="nowrap">{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
-                                        <td class="nowrap">{{#shortTime}}{{statementDetailPaidTime}}{{/shortTime}}</td>
-
-                                        <td class="nowrap text-info">￥{{#price}}{{statementDetailAmount}}{{/price}}</td>
-                                        <td class="nowrap text-info">￥{{#price}}{{statementCouponAmount}}{{/price}}</td>
-                                        <td class="nowrap">￥{{#price}}{{statementDetailRentAmount}}{{/price}}</td>
-                                        <td class="nowrap">￥{{#price}}{{statementDetailRentDepositAmount}}{{/price}}</td>
-                                        <td class="nowrap">￥{{#price}}{{statementDetailDepositAmount}}{{/price}}</td>
-
-                                        <td class="nowrap">￥{{#price}}{{statementDetailOtherAmount}}{{/price}}</td>
-                                        <td class="nowrap">￥{{#price}}{{statementDetailOverdueAmount}}{{/price}}</td>
-
-                                        <td class="nowrap text-success">￥{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>
-                                        <td class="nowrap">￥{{#price}}{{statementDetailRentPaidAmount}}{{/price}}</td>
-                                        <td class="nowrap">￥{{#price}}{{statementDetailRentDepositPaidAmount}}{{/price}}</td>
-                                        <td class="nowrap">￥{{#price}}{{statementDetailDepositPaidAmount}}{{/price}}</td>
-
-                                        <td class="nowrap">
-                                            <p class="mn">￥{{#price}}{{statementDetailRentDepositReturnAmount}}{{/price}}</p>
-                                            <p class="mn mt5">{{#clockTime}}{{statementDetailRentDepositReturnTime}}{{/clockTime}}</p>
-                                        </td>
-                                        <td class="nowrap">
-                                            <p class="mn">￥{{#price}}{{statementDetailDepositReturnAmount}}{{/price}}</p>
-                                            <p class="mn mt5">{{#clockTime}}{{statementDetailDepositReturnTime}}{{/clockTime}}</p>
-                                        </td>
-                                        <td class="nowrap text-danger">￥{{#price}}{{statementDetailCorrectAmount}}{{/price}}</td>
-
-                                        <td class="nowrap {{statementDetailStatusClass}}">{{statementDetailStatusValue}}</td>
-                                        <td class="nowrap">
-                                            <p class="mn">开始：{{#clockShorTime}}{{statementStartTime}}{{/clockShorTime}}</p>
-                                            <p class="mn mt5">结束：{{#clockShorTime}}{{statementEndTime}}{{/clockShorTime}}</p>
-                                        </td>
-                                        {{#hasRowActionButtons}}
-                                        <td class="text-right nowrap">
-                                            <div class="btn-group text-right">
-                                                {{#rowActionButtons}}
-                                                <a href="#" type="button" class="btn btn-default btn-xs {{class}}"
-                                                   data-statementOrderId="{{statementOrderId}}"
-                                                   data-orderId="{{orderId}}"
-                                                   data-orderItemReferId="{{orderItemReferId}}"
-                                                   data-no="{{no}}"
-                                                   data-statementOrderDetailId="{{statementOrderDetailId}}">{{text}}</a>
-                                                {{/rowActionButtons}}
-                                            </div>
-                                        </td>
-                                        {{/hasRowActionButtons}}
-                                    </tr>
-                                    {{/listData}}
-                                    {{^listData}}
-                                    <tr>
-                                        <td valign="top" colspan="14" class="text-center">无结算明细列表</td>
-                                    </tr>
-                                    {{/listData}}
-                                    {{/dataSource}}
-                                    </tbody>
+                            <div class="col-md-8 text-right">
+                                <script type="text/html" id="actionButtonsTpl">
+                                    {{#acitonButtons}}
+                                    {{#showButton}}
+                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">
+                                        <i class="{{iClass}}"></i> {{text}}
+                                    </a>
+                                    {{/showButton}}
+                                    {{/acitonButtons}}
                                 </script>
-                                <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                                <div class="btn-group" id="actionButtons"></div>
+
+                                <script type="text/html" id="exportButtonsTpl">
+                                    {{#exportButtons}}
+                                    <div style="display: inline-block">
+                                        <form action="${ctx}{{menuUrl}}exportExcel/exportStatementOrderDetail" method="post" id="exportForm" target="exportFrame">
+                                            <input type="hidden" name="statementOrderNo" value="{{statementOrderNo}}">
+                                            <input type="submit" class="btn btn-primary btn-sm exportBtn"  value="导出">
+                                        </form>
+                                        <iframe id="exportFrame" name="exportFrame" src="about:blank" style="display:none;"></iframe>
+                                    </div>
+                                    {{/exportButtons}}
+                                </script>
+                                <div class="btn-group" id="exportButton"></div>
                             </div>
                         </div>
-                        <div class="panel-footer clearfix">
-                            <button class="btn btn-default pull-right ml15 goBack">返回</button>
+                    </div>
+                    <div class="panel-body">
+                        <div id="orderBaseInfo"></div>
+                    </div>
+                    <script type="text/html" id="orderBaseInfoTpl">
+                        {{#order}}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <dl class="dl-horizontal">
+                                    <dt>状态：</dt><dd class="mb5">{{statementOrderStatusValue}}&nbsp;</dd>
+                                    <dt>业务员：</dt><dd class="mb5">{{ownerName}}</dd>
+                                    <dt>客户名：</dt><dd class="mb5"><a href="{{customerUrl}}" target="_blank">{{customerName}}</a></dd>
+                                    <dt>预计支付时间：</dt><dd class="mb5">{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</dd>
+                                    <dt>实际支付时间：</dt><dd class="mb5">{{#time}}{{statementPaidTime}}{{/time}}</dd>
+                                    <dt>结算开始日期：</dt><dd class="mb5">{{#shortTime}}{{statementStartTime}}{{/shortTime}}</dd>
+                                    <dt>结算结束日期：</dt><dd class="mb5">{{#shortTime}}{{statementEndTime}}{{/shortTime}}&nbsp;</dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-4">
+                                <dl class="dl-horizontal">
+                                    <dt>租金押金：</dt><dd class="mb5">￥{{#price}}{{statementRentDepositAmount}}{{/price}}&nbsp;</dd>
+                                    <dt>已付租金押金：</dt><dd class="mb5">￥{{#price}}{{statementRentDepositPaidAmount}}{{/price}}&nbsp;</dd>
+                                    <dt>已退租金押金：</dt><dd class="mb5">￥{{#price}}{{statementRentDepositReturnAmount}}{{/price}}&nbsp;</dd>
+
+                                    <dt>设备押金：</dt><dd class="mb5">￥{{#price}}{{statementDepositAmount}}{{/price}}&nbsp;</dd>
+                                    <dt>已付设备押金：</dt><dd class="mb5">￥{{#price}}{{statementDepositPaidAmount}}{{/price}}&nbsp;</dd>
+                                    <dt>已退设备押金：</dt><dd class="mb5">￥{{#price}}{{statementDepositReturnAmount}}{{/price}}&nbsp;</dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-4">
+                                <dl class="dl-horizontal">
+                                    <dt>租金：</dt><dd class="mb5">￥{{#price}}{{statementRentAmount}}{{/price}}&nbsp;</dd>
+                                    <dt>已付租金：</dt><dd class="mb5">￥{{#price}}{{statementRentPaidAmount}}{{/price}}&nbsp;</dd>
+                                    <dt>结算单总金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementAmount}}{{/price}}&nbsp;</dd>
+                                    <dt>已付总金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementPaidAmount}}{{/price}}&nbsp;</dd>
+                                    <dt>逾期金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementOverdueAmount}}{{/price}}&nbsp;</dd>
+                                    <dt>其它费用：</dt><dd class="text-danger mb5">￥{{#price}}{{statementOtherAmount}}{{/price}}&nbsp;</dd>
+                                    <dt>冲正金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementCorrectAmount}}{{/price}}&nbsp;</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        {{/order}}
+                    </script>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-body light pn">
+                        <div class="table-responsive" style="overflow-x: scroll; max-height: 500px;">
+                            <script type="text/html" id="dataListTpl">
+                                <thead>
+                                <tr class="bg-light">
+##                                        <th>ID</th>
+                                    <th class="nowrap">类型</th>
+                                    <th class="nowrap">订单编号</th>
+                                    <th class="nowrap">订单项类型</th>
+                                    <th class="nowrap">商品名</th>
+##                                        <th class="nowrap">金额类型</th>
+                                    <th class="nowrap">单价</th>
+                                    <th class="nowrap">商品数量</th>
+                                    <th class="nowrap">租赁类型</th>
+                                    <th class="nowrap">期数</th>
+                                    <th class="nowrap">预计支付时间</th>
+                                    <th class="nowrap">结算支付时间</th>
+
+                                    <th class="nowrap text-info">结算单金额</th>
+                                    <th class="nowrap text-info">抵扣金额</th>
+                                    <th class="nowrap">租金</th>
+                                    <th class="nowrap">租金押金</th>
+                                    <th class="nowrap">押金</th>
+
+                                    <th class="nowrap">其它费用</th>
+                                    <th class="nowrap">逾期金额</th>
+
+                                    <th class="nowrap text-success">已付金额</th>
+                                    <th class="nowrap">已付租金</th>
+                                    <th class="nowrap">已付租金押金</th>
+                                    <th class="nowrap">已付押金</th>
+
+                                    <th class="nowrap">退还租金押金</th>
+                                    <th class="nowrap">退还押金</th>
+                                    <th class="nowrap text-danger">冲正金额</th>
+
+                                    <th class="nowrap">状态</th>
+                                    <th class="nowrap" class="text-right">结算时间</th>
+
+                                    {{#hasRowActionButtons}}
+                                    <th style="white-space: nowrap;" class="text-right">操作</th>
+                                    {{/hasRowActionButtons}}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{#dataSource}}
+                                {{#listData}}
+                                <tr>
+##                                        <td class="nowrap">{{statementOrderDetailId}}</td>
+                                    <td class="nowrap">{{orderTypeValue}}</td>
+                                    <td class="nowrap"><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></td>
+                                    <td class="nowrap">{{orderItemTypeValue}}</td>
+                                    <td class="nowrap">
+                                        {{itemName}}
+                                    </td>
+##                                        <td class="nowrap">{{statementDetailTypeValue}}</td>
+                                    <td class="nowrap">￥{{#price}}{{unitAmount}}{{/price}}</td>
+                                    <td class="nowrap">{{itemCount}}</td>
+                                    <td class="nowrap">{{itemRentTypeValue}}</td>
+                                    <td class="nowrap">{{statementDetailPhase}}</td>
+                                    <td class="nowrap">{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
+                                    <td class="nowrap">{{#shortTime}}{{statementDetailPaidTime}}{{/shortTime}}</td>
+
+                                    <td class="nowrap text-info">￥{{#price}}{{statementDetailAmount}}{{/price}}</td>
+                                    <td class="nowrap text-info">￥{{#price}}{{statementCouponAmount}}{{/price}}</td>
+                                    <td class="nowrap">￥{{#price}}{{statementDetailRentAmount}}{{/price}}</td>
+                                    <td class="nowrap">￥{{#price}}{{statementDetailRentDepositAmount}}{{/price}}</td>
+                                    <td class="nowrap">￥{{#price}}{{statementDetailDepositAmount}}{{/price}}</td>
+
+                                    <td class="nowrap">￥{{#price}}{{statementDetailOtherAmount}}{{/price}}</td>
+                                    <td class="nowrap">￥{{#price}}{{statementDetailOverdueAmount}}{{/price}}</td>
+
+                                    <td class="nowrap text-success">￥{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>
+                                    <td class="nowrap">￥{{#price}}{{statementDetailRentPaidAmount}}{{/price}}</td>
+                                    <td class="nowrap">￥{{#price}}{{statementDetailRentDepositPaidAmount}}{{/price}}</td>
+                                    <td class="nowrap">￥{{#price}}{{statementDetailDepositPaidAmount}}{{/price}}</td>
+
+                                    <td class="nowrap">
+                                        <p class="mn">￥{{#price}}{{statementDetailRentDepositReturnAmount}}{{/price}}</p>
+                                        <p class="mn mt5">{{#clockTime}}{{statementDetailRentDepositReturnTime}}{{/clockTime}}</p>
+                                    </td>
+                                    <td class="nowrap">
+                                        <p class="mn">￥{{#price}}{{statementDetailDepositReturnAmount}}{{/price}}</p>
+                                        <p class="mn mt5">{{#clockTime}}{{statementDetailDepositReturnTime}}{{/clockTime}}</p>
+                                    </td>
+                                    <td class="nowrap text-danger">￥{{#price}}{{statementDetailCorrectAmount}}{{/price}}</td>
+
+                                    <td class="nowrap {{statementDetailStatusClass}}">{{statementDetailStatusValue}}</td>
+                                    <td class="nowrap">
+                                        <p class="mn">开始：{{#clockShorTime}}{{statementStartTime}}{{/clockShorTime}}</p>
+                                        <p class="mn mt5">结束：{{#clockShorTime}}{{statementEndTime}}{{/clockShorTime}}</p>
+                                    </td>
+                                    {{#hasRowActionButtons}}
+                                    <td class="text-right nowrap">
+                                        <div class="btn-group text-right">
+                                            {{#rowActionButtons}}
+                                            <a href="#" type="button" class="btn btn-default btn-xs {{class}}"
+                                                data-statementOrderId="{{statementOrderId}}"
+                                                data-orderId="{{orderId}}"
+                                                data-orderItemReferId="{{orderItemReferId}}"
+                                                data-no="{{no}}"
+                                                data-statementOrderDetailId="{{statementOrderDetailId}}">{{text}}</a>
+                                            {{/rowActionButtons}}
+                                        </div>
+                                    </td>
+                                    {{/hasRowActionButtons}}
+                                </tr>
+                                {{/listData}}
+                                {{^listData}}
+                                <tr>
+                                    <td valign="top" colspan="14" class="text-center">无结算明细列表</td>
+                                </tr>
+                                {{/listData}}
+                                {{/dataSource}}
+                                </tbody>
+                            </script>
+                            <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                         </div>
                     </div>
-
+                    <div class="panel-footer clearfix">
+                        <button class="btn btn-default pull-right ml15 goBack">返回</button>
+                    </div>
                 </div>
-            </section>
+            </div>
         </section>
     </section>
 

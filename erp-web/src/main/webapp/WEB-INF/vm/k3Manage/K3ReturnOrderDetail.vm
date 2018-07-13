@@ -16,9 +16,11 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
+
+            #parse("component/loading.vm")
+            
             <form class="" id="detailOrderForm">
                 <div class="panel panel-primary panel-border top mb35">
-
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-4">
@@ -27,7 +29,7 @@
                             <div class="col-md-8 text-right">
                                 <script type="text/html" id="actionButtonsTpl">
                                     {{#acitonButtons}}
-                                    <a href="${ctx}{{menuUrl}}?no={{no}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">
+                                    <a href="${ctx}{{menuUrl}}?no={{no}}" {{#blank}}target="_blank"{{/blank}} class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">
                                         <i class="{{iClass}}"></i> {{text}}
                                     </a>
                                     {{/acitonButtons}}
@@ -43,8 +45,8 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
-                                        <dt class="mb10">客户：</dt><dd>{{k3CustomerName}}</dd>
-                                        <dt class="mb10">客户编号：</dt><dd>{{k3CustomerNo}}</dd>
+                                        <dt class="mb10">客户：</dt><dd><a href="{{customerDetailUrl}}" target="_blank">{{k3CustomerName}}</a></dd>
+                                        <dt class="mb10">客户编号：</dt><dd><a href="{{customerDetailUrl}}" target="_blank">{{k3CustomerNo}}</a></dd>
                                         <dt class="mb10">联系人：</dt><dd>{{returnContacts}}</dd>
                                         <dt class="mb10">联系电话：</dt><dd>{{returnPhone}}</dd>
                                         <dt class="mb10">收货地址：</dt><dd>{{returnAddress}}</dd>
@@ -149,7 +151,7 @@
 ##                                                    <span class="checkbox mn"></span>
 ##                                                </label>
 ##                                            </td>
-                                            <td>{{orderNo}}</td>
+                                            <td><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></td>
                                             <td>{{productNo}}</td>
                                             <td>{{productName}}</td>
                                             <td>{{propertiesToStr}}</td>

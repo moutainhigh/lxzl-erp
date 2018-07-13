@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.*;
+import com.lxzl.erp.common.domain.statement.pojo.CheckStatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -159,4 +160,9 @@ public class StatementController extends BaseController {
         return resultGenerator.generate(result);
     }
 
+    @RequestMapping(value = "exportQueryStatementOrderCheckParam", method = RequestMethod.POST)
+    public Result exportQueryStatementOrderCheckParam(@RequestBody StatementOrderMonthQueryParam statementOrderMonthQueryParam, BindingResult validResult) {
+        ServiceResult<String, List<CheckStatementOrder>> serviceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }

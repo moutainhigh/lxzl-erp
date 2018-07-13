@@ -16,6 +16,8 @@
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
 
+            #parse("component/loading.vm")
+
             <div class="panel panel-primary panel-border top mb35">
                 <div class="panel-body">
                     <div class="row">

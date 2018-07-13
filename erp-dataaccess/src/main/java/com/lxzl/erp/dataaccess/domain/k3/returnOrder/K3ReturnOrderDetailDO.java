@@ -3,6 +3,8 @@ package com.lxzl.erp.dataaccess.domain.k3.returnOrder;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
+import java.util.Date;
+
 
 public class K3ReturnOrderDetailDO extends BaseDO {
 
@@ -19,6 +21,10 @@ public class K3ReturnOrderDetailDO extends BaseDO {
     private Integer realProductCount;
     private Integer dataStatus;
     private String remark;
+    private Integer orderItemType;
+
+    @Transient
+    private Date returnTime;
 
     public Integer getId() {
         return id;
@@ -116,4 +122,19 @@ public class K3ReturnOrderDetailDO extends BaseDO {
         this.realProductCount = realProductCount;
     }
 
+    public Date getReturnTime() {
+        return returnTime;
+    }
+
+    public void setReturnTime(Date returnTime) {
+        this.returnTime = returnTime;
+    }
+
+    public Integer getOrderItemType() {
+        return orderItemType;
+    }
+
+    public void setOrderItemType(Integer orderItemType) {
+        this.orderItemType = orderItemType;
+    }
 }

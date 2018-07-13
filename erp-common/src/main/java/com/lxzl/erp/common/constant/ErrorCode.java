@@ -149,6 +149,10 @@ public class ErrorCode {
     public static final String PRODUCT_CATEGORY_NOT_EXISTS = "J200085";
     public static final String PRODUCT_COUNT_ERROR = "J200086";
     public static final String PRODUCT_CAN_NOT_REPEAT = "J200087";
+    public static final String PRODUCT_K3_PRODUCT_NO_NOT_NULL = "J200088";
+    public static final String PRODUCT_K3_PRODUCT_NO_IS_ERROR = "J200089";
+    public static final String MATERIAL_K3_MATERIAL_NO_IS_ERROR = "J200090";
+    public static final String MATERIAL_K3_MATERIAL_NO_NOT_NULL = "J200091";
 
     public static final String PROPERTY_CAPACITY_VALUE_NOT_NULL = "J800086";
     public static final String PROPERTY_NAME_NOT_MATCH_MATERIAL_TYPE_NAME = "J800087";
@@ -439,8 +443,10 @@ public class ErrorCode {
     public static final String RETURN_COUNT_MORE_THAN_RENTING_PRODUCT_COUNT = "J400160";
     public static final String RETURN_ORDER_HAVE_THE_SAME_PRODUCT_OR_MATERIAL = "J400161";
     public static final String RETURN_DELIVERY_SUB_COMPANY_ERROR = "J400162";
-    public static final String ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400162";
-    public static final String RELET_ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400163";
+    public static final String ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400163";
+    public static final String RELET_ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400164";
+    public static final String EXPECT_RTURN_TIME_LESS_RETURN_TIME = "J400165";
+
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
     public static final String CUSTOMER_PERSON_NOT_NULL = "J500003";
@@ -627,6 +633,8 @@ public class ErrorCode {
     public static final String HAS_SPLIT_STATEMENT_CFG = "J500183";
     public static final String SPLIT_STATEMENT_TIME_ERROR = "J500184";
     public static final String RETURN_STATEMENT_ORDER_CREATE_ERROR = "J500185";
+
+    public static final String CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST = "J500186";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -839,6 +847,7 @@ public class ErrorCode {
     public static final String K3_RELET_ORDER_ERROR = "J17000034";
     public static final String K3_RETURN_ORDER_PRODUCT_COUNT_ERROR = "J17000035";
     public static final String K3_RETURN_ORDER_MATERIAL_COUNT_ERROR = "J17000036";
+    public static final String ONLY_SUCCESS_RETURN_ORDER_ALLOW_RE_STATEMENT = "J17000037";
 
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
@@ -888,12 +897,15 @@ public class ErrorCode {
     public static final String BANK_SLIP_DETAIL_IS_UNKNOWN = "J18000047";
     public static final String BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT = "J18000048";
     public static final String IMPORT_BANK_SLIP_DETAILS_IS_EXIST = "J18000049";
-    public static final String CHARGE_RECORD_IS_NULL = "J18000050";
+    public static final String CHARGE_RECORD_NOT_EXISTS = "J18000050";
     public static final String CHARGE_ORDER_NO_IS_NULL = "J18000051";
     public static final String EXPORT_CHARGE_RECORD_IS_FAIL = "J18000052";
     public static final String CHARGE_RECORD_IS_EXIST = "J18000053";
     public static final String BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED = "J18000054";
     public static final String BANK_SLIP_DETAIL_STATUS_CAN_NOT_CONFIRM = "J18000055";
+    public static final String CHARGE_TYPE_IS_MANUAL_CHARGE_OR_PUBLIC_TRANSFER_PLUS = "J18000056";
+    public static final String CHARGE_RECORD_DATA_FAIL = "J18000057";
+    public static final String BINDING_CUSTOMER_NO = "J18000058";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1587,12 +1599,17 @@ public class ErrorCode {
         MAP.put(RETURN_DELIVERY_SUB_COMPANY_ERROR, "订单【%s 】发货分公司为【%s 】，与创建退货单时选取的发货分公司不一致");
         MAP.put(ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT, "订单当前状态不允许重算");
         MAP.put(RELET_ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT, "续租单当前状态不允许重算");
+        MAP.put(EXPECT_RTURN_TIME_LESS_RETURN_TIME, "所选退货时间为【%s 】，订单【%s 】预计退货时间为【%s 】，所选退货时间不能超过订单预计归还时间,如符合真实情况请尝试【续租】");
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
         MAP.put(MESSAGE_RECEIVER_NOT_NULL, "站内信收件人不能为空");
         MAP.put(MESSAGE_ID_NOT_NULL, "站内信ID不能为空");
         MAP.put(MESSAGE_NOT_EXISTS, "站内信不存在");
         MAP.put(MESSAGE_CAN_NOT_SEND_SELF, "站内信不能发给自己");
+        MAP.put(PRODUCT_K3_PRODUCT_NO_NOT_NULL , "商品的K3编号不能为空");
+        MAP.put(PRODUCT_K3_PRODUCT_NO_IS_ERROR , "商品的K3编号填写有误，请重新填写");
+        MAP.put(MATERIAL_K3_MATERIAL_NO_IS_ERROR , "物料的K3编号填写有误，请重新填写");
+        MAP.put(MATERIAL_K3_MATERIAL_NO_NOT_NULL , "物料的K3编号不能为空");
 
         MAP.put(EQUIPMENT_AND_BULK_MATERIAL_IS_NOT_NULL, "设备维修单明细表不能为空");
         MAP.put(REPAIR_REASON_IS_NOT_NULL, "设备维修单的维修原因不能为空");
@@ -1798,6 +1815,7 @@ public class ErrorCode {
         MAP.put(K3_RELET_ORDER_ERROR, "K3订单续租推送信息失败,【%s 】");
         MAP.put(K3_RETURN_ORDER_PRODUCT_COUNT_ERROR, "订单号：【%s 】，商品：【%s 】可退货数量为【%s 】台，超过可退数量");
         MAP.put(K3_RETURN_ORDER_MATERIAL_COUNT_ERROR, "订单号：【%s 】，配件：【%s 】可退货数量为【%s 】台，超过可退数量");
+        MAP.put(ONLY_SUCCESS_RETURN_ORDER_ALLOW_RE_STATEMENT, "仅处理成功的退货单允许重算");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
@@ -1847,12 +1865,15 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_IS_UNKNOWN, "银行对公流水是未知状态,");
         MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT, "填写金额大于银行对公流水记录项金额");
         MAP.put(IMPORT_BANK_SLIP_DETAILS_IS_EXIST, "导入银行对公流水记录已存在");
-        MAP.put(CHARGE_RECORD_IS_NULL, "快付通充值记录为空");
+        MAP.put(CHARGE_RECORD_NOT_EXISTS, "充值记录不存在");
         MAP.put(CHARGE_ORDER_NO_IS_NULL, "支付系统充值订单号为空");
         MAP.put(EXPORT_CHARGE_RECORD_IS_FAIL, "充值记录导入银行流水失败");
-        MAP.put(CHARGE_RECORD_IS_EXIST, "快付通充值记录以存在");
+        MAP.put(CHARGE_RECORD_IS_EXIST, "充值记录已存在");
         MAP.put(BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED, "该条银行对公流水记录项为已认领状态，需商务或创建人取消认领后才能重新认领");
         MAP.put(BANK_SLIP_DETAIL_STATUS_CAN_NOT_CONFIRM, "该条银行对公流水记录不允许确认");
+        MAP.put(CHARGE_TYPE_IS_MANUAL_CHARGE_OR_PUBLIC_TRANSFER_PLUS, "充值记录是手动加款或者对公转账加款");
+        MAP.put(CHARGE_RECORD_DATA_FAIL, "充值记录数据有误");
+        MAP.put(BINDING_CUSTOMER_NO, "是绑定用户且已经充值过");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");
@@ -1963,6 +1984,7 @@ public class ErrorCode {
         MAP.put(HAS_SPLIT_STATEMENT_CFG, "该订单已进行过分段结算，请先进行指定结算日结算");
         MAP.put(SPLIT_STATEMENT_TIME_ERROR, "分段重算时间必须在订单起租时间与订单预计归还时间之间");
         MAP.put(RETURN_STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，该退货单结算单详情已存在，不能重复生成结算单");
+        MAP.put(CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST, "客户为已经为确认坏账状态");
     }
 
 

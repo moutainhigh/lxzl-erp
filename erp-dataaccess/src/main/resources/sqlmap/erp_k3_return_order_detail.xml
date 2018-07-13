@@ -19,11 +19,13 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
         <result column="return_order_no" jdbcType="VARCHAR" property="returnOrderNo"/>
+        <result column="return_time" jdbcType="TIMESTAMP" property="returnTime"/>
+        <result column="order_item_type" jdbcType="INTEGER" property="orderItemType"/>
     </resultMap>
 
     <sql id="column_List">
-		ekrod.id,ekrod.return_order_id,ekrod.order_no,ekrod.order_item_id,ekrod.order_entry,ekrod.product_no,ekrod.product_name,ekrod.product_count,ekrod.real_product_count,ekrod.data_status,ekrod.remark,ekrod.create_time,ekrod.create_user,ekrod.update_time,ekrod.update_user
-	</sql>
+        ekrod.id,ekrod.return_order_id,ekrod.order_no,ekrod.order_item_id,ekrod.order_entry,ekrod.product_no,ekrod.product_name,ekrod.product_count,ekrod.real_product_count,ekrod.data_status,ekrod.remark,ekrod.create_time,ekrod.create_user,ekrod.update_time,ekrod.update_user,order_item_type
+    </sql>
 
     <select id="findById" resultMap="K3ReturnOrderDetailDO" parameterType="java.lang.Integer">
         SELECT
@@ -79,6 +81,9 @@
             <if test="realProductCount != null">
                 real_product_count = #{realProductCount,jdbcType=INTEGER},
             </if>
+            <if test="orderItemType != null">
+                order_item_type = #{orderItemType,jdbcType=INTEGER},
+            </if>
             <if test="dataStatus != null">
                 data_status = #{dataStatus,jdbcType=INTEGER},
             </if>
@@ -97,6 +102,7 @@
             <if test="updateUser != null">
                 update_user = #{updateUser,jdbcType=VARCHAR},
             </if>
+
         </set>
     </sql>
 
@@ -107,9 +113,9 @@
     </insert>
     <insert id="saveList" parameterType="java.util.List" useGeneratedKeys="true">
         INSERT INTO erp_k3_return_order_detail(
-        return_order_id,order_no,order_item_id,order_entry,product_no,product_name,product_count,real_product_count,data_status,remark,create_time,create_user,update_time,update_user) VALUES
+        return_order_id,order_no,order_item_id,order_entry,product_no,product_name,product_count,real_product_count,order_item_type,data_status,remark,create_time,create_user,update_time,update_user) VALUES
         <foreach collection="list" item="item"  separator=",">
-            (#{item.returnOrderId},#{item.orderNo},#{item.orderItemId},#{item.orderEntry},#{item.productNo},#{item.productName},#{item.productCount},#{item.realProductCount},#{item.dataStatus},#{item.remark},#{item.createTime},#{item.createUser},#{item.updateTime},#{item.updateUser})
+            (#{item.returnOrderId},#{item.orderNo},#{item.orderItemId},#{item.orderEntry},#{item.productNo},#{item.productName},#{item.productCount},#{item.realProductCount},#{item.order_item_type},#{item.dataStatus},#{item.remark},#{item.createTime},#{item.createUser},#{item.updateTime},#{item.updateUser})
         </foreach>
     </insert>
     <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO">
@@ -126,7 +132,7 @@
     </select>
 
     <select id="findListByOrderNo" resultMap="K3ReturnOrderDetailDO">
-        SELECT<include refid="column_List"/>,ekro.return_order_no from erp_k3_return_order_detail ekrod
+        SELECT<include refid="column_List"/>,ekro.return_order_no,ekro.return_time from erp_k3_return_order_detail ekrod
         LEFT JOIN erp_k3_return_order ekro on ekro.id =ekrod.return_order_id AND ekro.data_status=1
         WHERE ekrod.order_no = #{orderNo,jdbcType=VARCHAR} AND ekrod.data_status = 1 AND ekrod.real_product_count>0
     </select>

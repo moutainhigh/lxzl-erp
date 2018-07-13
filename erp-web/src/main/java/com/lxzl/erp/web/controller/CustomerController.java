@@ -271,4 +271,21 @@ public class CustomerController {
         return resultGenerator.generate(serviceResult);
     }
 
+    @RequestMapping(value = "confirmBadAccount", method = RequestMethod.POST)
+    public Result confirmBadAccount(@RequestBody @Validated({IdGroup.class}) Customer customer) {
+        ServiceResult<String, String> serviceResult = customerService.confirmBadAccount(customer.getCustomerNo());
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 查询该用户再租商品、配件、付费配件数量
+     * @param customer
+     * @return
+     */
+    @RequestMapping(value = "queryRentCountByCustomerNo", method = RequestMethod.POST)
+    public Result queryRentCountByCustomerNo(@RequestBody Customer customer) {
+        ServiceResult<String, CustomerRentCount> serviceResult = customerService.queryRentCountByCustomerNo(customer.getCustomerNo());
+        return resultGenerator.generate(serviceResult);
+    }
+
 }
