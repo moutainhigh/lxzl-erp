@@ -17,10 +17,7 @@ public class DynamicSqlHolderDO extends BaseDO {
     private String results;
     private Integer dataStatus;
 
-    private Date createTime;   //添加时间
-    private String createUser;   //添加人
-    private Date updateTime;   //添加时间
-    private String updateUser;   //修改人
+
 
 
     public Integer getId() {
@@ -71,37 +68,6 @@ public class DynamicSqlHolderDO extends BaseDO {
         this.dataStatus = dataStatus;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getCreateUser() {
-        return createUser;
-    }
-
-    public void setCreateUser(String createUser) {
-        this.createUser = createUser;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public String getUpdateUser() {
-        return updateUser;
-    }
-
-    public void setUpdateUser(String updateUser) {
-        this.updateUser = updateUser;
-    }
 
     public enum Status {
         UNCHECK(0), CHECKED(1), REJECT(2);
