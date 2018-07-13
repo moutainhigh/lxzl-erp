@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlQueryParam;
 import com.lxzl.erp.common.domain.dynamicSql.pojo.DynamicSql;
+import com.lxzl.erp.common.domain.dynamicSql.pojo.DynamicSqlHolder;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.IdCardCheckUtil;
 import com.lxzl.erp.core.service.dynamicSql.DynamicSqlService;
@@ -162,7 +163,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     }
 
     @Override
-    public ServiceResult<String, List<DynamicSqlHolderDO>> pageDynamicSqlHolder(PageQuery pageQuery) {
+    public ServiceResult<String, List<DynamicSqlHolder>> pageDynamicSqlHolder(PageQuery pageQuery) {
         final PageQuery finalPageQuery = new PageQuery(pageQuery.getPageNo(), pageQuery.getPageSize());
         Map<String, Object> map = new HashMap<String, Object>() {{
             put("start", finalPageQuery.getPageNo());
@@ -173,9 +174,9 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
             map.put("createUser", userSupport.getCurrentUserId().toString());
         }
 
-        ServiceResult<String, List<DynamicSqlHolderDO>> serviceResult = new ServiceResult<>();
+        ServiceResult<String, List<DynamicSqlHolder>> serviceResult = new ServiceResult<>();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(dynamicSqlHolderMapper.listPage(map));
+        serviceResult.setResult(ConverterUtil.convertList(dynamicSqlHolderMapper.listPage(map), DynamicSqlHolder.class));
         return serviceResult;
     }
 
