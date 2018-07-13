@@ -1038,6 +1038,16 @@ public class PageController extends BaseController {
         return "/dataAnalysisManage/addSqlModal";
     }
 
+    @RequestMapping("/data-analysis/execute-list")
+    public String systemManageDynamicExecuteList() {
+        return "/dataAnalysisManage/dynamicSqlExecuteList";
+    }
+
+    @RequestMapping("/data-analysis/refuse")
+    public String systemManageDynamicRefuse() {
+        return "/dataAnalysisManage/refuseModal";
+    }
+
 
     //上传附件
     @RequestMapping("/jurnal-attachment-list/file/upload")

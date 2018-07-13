@@ -197,6 +197,7 @@
         <result column="time_axis_create_user" jdbcType="VARCHAR" property="createUser"/>
         <result column="time_axis_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="time_axis_update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="time_axis_operation_type" jdbcType="VARCHAR" property="operationType"/>
     </resultMap>
 
 
@@ -264,7 +265,7 @@
     </sql>
 
     <sql id="time_axis_column_List">
-        eota.id as time_axis_id,eota.order_id as time_axis_order_id,eota.order_status as time_axis_order_status,eota.generation_time as time_axis_generation_time,eota.order_snapshot as time_axis_order_snapshot,eota.data_status as time_axis_data_status,eota.remark as time_axis_remark,eota.create_time as time_axis_create_time,eota.create_user as time_axis_create_user,eota.update_time as time_axis_update_time,eota.update_user as time_axis_update_user
+        eota.id as time_axis_id,eota.order_id as time_axis_order_id,eota.order_status as time_axis_order_status,eota.generation_time as time_axis_generation_time,eota.order_snapshot as time_axis_order_snapshot,eota.data_status as time_axis_data_status,eota.remark as time_axis_remark,eota.create_time as time_axis_create_time,eota.create_user as time_axis_create_user,eota.update_time as time_axis_update_time,eota.update_user as time_axis_update_user,eota.operation_type as time_axis_operation_type
     </sql>
 
 
