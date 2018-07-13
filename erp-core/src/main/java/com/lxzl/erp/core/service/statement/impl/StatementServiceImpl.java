@@ -5434,20 +5434,28 @@ public class StatementServiceImpl implements StatementService {
                     String returnTimeString = simpleDateFormat.format(returnTime);
                     for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
                         returnCountMap.put(k3ReturnOrderDetailDO.getId(),k3ReturnOrderDetailDO.getRealProductCount());
-                        if (!returnDetailIdMap.containsKey(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()))) {
+                        String productNo = k3ReturnOrderDetailDO.getProductNo();
+                        Integer OrderItemId = Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId());
+                        if (productSupport.isMaterial(productNo)) {
+                            OrderItemId = productSupport.getMaterialId(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
+                        } else {
+                            OrderItemId = productSupport.getProductId(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
+                        }
+                        if (!returnDetailIdMap.containsKey(OrderItemId)) {
                             Map<String, Integer> returnDataMap = new HashMap<>();
                             returnDataMap.put(returnTimeString, k3ReturnOrderDetailDO.getProductCount());
+                            returnDetailIdMap.put(OrderItemId, returnDataMap);
                             //老订单获取商品项配件项ID
-                            String productNo = k3ReturnOrderDetailDO.getProductNo();
-                            if (productSupport.isMaterial(productNo)) {
-                                Integer OrderItemId = productSupport.getMaterialId(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
-                                returnDetailIdMap.put(OrderItemId, returnDataMap);
-                            } else {
-                                Integer OrderItemId = productSupport.getProductId(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
-                                returnDetailIdMap.put(OrderItemId, returnDataMap);
-                            }
+//                            String productNo = k3ReturnOrderDetailDO.getProductNo();
+//                            if (productSupport.isMaterial(productNo)) {
+//                                Integer OrderItemId = productSupport.getMaterialId(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
+//                                returnDetailIdMap.put(OrderItemId, returnDataMap);
+//                            } else {
+//                                Integer OrderItemId = productSupport.getProductId(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
+//                                returnDetailIdMap.put(OrderItemId, returnDataMap);
+//                            }
                         } else {
-                            Map<String, Integer> returnDataMap = returnDetailIdMap.get(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
+                            Map<String, Integer> returnDataMap = returnDetailIdMap.get(OrderItemId);
                             if (!returnDataMap.containsKey(returnTimeString)) {
                                 returnDataMap.put(returnTimeString, k3ReturnOrderDetailDO.getProductCount());
                             } else {
