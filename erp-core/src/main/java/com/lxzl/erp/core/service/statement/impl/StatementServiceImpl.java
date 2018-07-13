@@ -5737,7 +5737,7 @@ public class StatementServiceImpl implements StatementService {
                                 if (monthTime.after(k3RentStartTime)) {
                                     notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
                                 } else if (k3RentStartTime.equals(monthTime)) {
-                                    checkStatementOrderDetail.setStatementStartTime(k3OrderStatementConfigDO.getRentStartTime());
+//                                    checkStatementOrderDetail.setStatementStartTime(k3OrderStatementConfigDO.getRentStartTime());
                                     notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
                                 }
                             } catch (ParseException e) {
