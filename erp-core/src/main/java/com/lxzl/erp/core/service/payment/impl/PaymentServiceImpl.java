@@ -532,8 +532,8 @@ public class PaymentServiceImpl implements PaymentService {
                     chargeRecordList.add(chargeRecord);
                     if (chargeRecord.getBusinessCustomerNo().startsWith("LX")) {
                         customerNoList.add(chargeRecord.getBusinessCustomerNo());
-                    }else if(StringUtil.isNotEmpty(jsonObject.get("businessCustomerName").toString())){
-                        customerNameList.add(jsonObject.get("businessCustomerName").toString());
+                    }else if(StringUtil.isNotEmpty(chargeRecord.getCustomerName())){
+                        customerNameList.add(chargeRecord.getCustomerName());
                     }
                 }
 
