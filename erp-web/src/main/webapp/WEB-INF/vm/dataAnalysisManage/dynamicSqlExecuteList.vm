@@ -60,7 +60,7 @@
                                     <td class="text-right">
                                         <div class="btn-group text-right">
                                             {{#rowActionButtons}}
-                                            <a href="${ctx}{{menuUrl}}?id={{dynamicSqlId}}" type="button" class="btn btn-default btn-xs {{class}}" data-id="{{id}}">{{text}}</a>
+                                            <a href="${ctx}{{menuUrl}}?id={{id}}" type="button" class="btn btn-default btn-xs {{class}}" data-id="{{id}}">{{text}}</a>
                                             {{/rowActionButtons}}
                                         </div>
                                     </td>

@@ -9,7 +9,7 @@
                     <label for="result" class="field-label">拒绝原因</label>
                     <label for="result" class="field prepend-icon">
                         <input type="text" name="result" id="result" class="gui-input" />
-                        <label for="result" class="field-icon"><i class="fa fa-jpy"></i></label>
+                        <label for="result" class="field-icon"><i class="fa fa-tag"></i></label>
                     </label>
                 </div>
             </div>
