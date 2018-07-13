@@ -965,8 +965,30 @@ CREATE TABLE `erp_customer_statement_date_change_log` (
 ALTER TABLE erp_k3_return_order_detail ADD order_item_type INT(11) NOT NULL DEFAULT 1 COMMENT '商品类型,1-商品,2-配件';
 UPDATE erp_k3_return_order_detail SET order_item_type = 2 WHERE LEFT(product_no, 2)<>'10' AND LEFT(product_no, 2)<>'90';
 
--------------------------------未执行-----------------------------
 
 ALTER TABLE erp_customer ADD COLUMN `confirm_bad_account_status` INT(11) NOT NULL DEFAULT '0' COMMENT '是否为坏账客户 0否1是 默认为0';
 ALTER TABLE erp_customer ADD COLUMN `confirm_bad_account_user` INT(20) COMMENT '坏账客户确认人';
 ALTER TABLE erp_customer ADD COLUMN `confirm_bad_account_time` DATETIME COMMENT '坏账客户确认时间';
+
+-------------------------------未执行-----------------------------
+ALTER TABLE erp_order_time_axis ADD `operation_type` int(11) DEFAULT NULL COMMENT '操作类型,1-创建订单，2-修改订单,3-订单提交审核,4-订单审核通过,5-订单审核拒绝,6-K3发货回调（系统）,7-订单确认收货,8-k3退货回调（K3操作员或系统）,9-取消订单,10-强制取消订单,11-结算支付';
+
+CREATE TABLE erp_dynamic_sql_holder  (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `sql_content` text NOT NULL COMMENT 'SQL语句',
+  `sql_tpye` varchar(20) NOT NULL COMMENT 'SQL类型：SELECT 查询,UPDATE 更新,DELETE 删除,INSERT 插入',
+  `status` int(1) NOT NULL DEFAULT 0 COMMENT '状态：0审核中；1审核通过；',
+  `results` text NULL COMMENT '查询结果',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+	`remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+	`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+	`create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+	`update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (id)
+)  ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='动态sql执行表';
+
+
+
+
+
