@@ -4,6 +4,8 @@ package com.lxzl.erp.dataaccess.domain.dynamicSql;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 
+import java.util.Date;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DynamicSqlHolderDO extends BaseDO {
@@ -14,6 +16,7 @@ public class DynamicSqlHolderDO extends BaseDO {
     private Integer status;
     private String results;
     private Integer dataStatus;
+
 
 
 
@@ -64,6 +67,7 @@ public class DynamicSqlHolderDO extends BaseDO {
     public void setDataStatus(Integer dataStatus) {
         this.dataStatus = dataStatus;
     }
+
 
     public enum Status {
         UNCHECK(0), CHECKED(1), REJECT(2);
