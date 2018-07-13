@@ -2235,7 +2235,7 @@ public class StatementServiceImpl implements StatementService {
                                 }
 
                                 // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
-                                if (!OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && statementDetailStartTime.getTime() > returnTime.getTime()) {
+                                if (statementDetailStartTime.getTime() > returnTime.getTime()) {
 
                                     payReturnAmount = BigDecimalUtil.add(payReturnAmount, BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()), new BigDecimal(rentingProductCount), BigDecimalUtil.SCALE));
                                 }
@@ -2422,7 +2422,7 @@ public class StatementServiceImpl implements StatementService {
                                     payReturnAmount = BigDecimalUtil.add(reletCurrentPhaseReturnAmount, payReturnAmount);
                                 }
                                 // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
-                                if (!OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && statementDetailStartTime.getTime() > returnTime.getTime()) {
+                                if (statementDetailStartTime.getTime() > returnTime.getTime()) {
 
                                     payReturnAmount = BigDecimalUtil.add(payReturnAmount, BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()), new BigDecimal(rentingMaterialCount), BigDecimalUtil.SCALE));
                                 }
@@ -4737,7 +4737,7 @@ public class StatementServiceImpl implements StatementService {
                     }
 
                     // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
-                    if (!OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && statementDetailStartTime.getTime() > returnTime.getTime()) {
+                    if (statementDetailStartTime.getTime() > returnTime.getTime()) {
 
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()), new BigDecimal(rentingProductCount), BigDecimalUtil.SCALE));
                     }
@@ -4836,7 +4836,7 @@ public class StatementServiceImpl implements StatementService {
                             payReturnAmount = BigDecimalUtil.add(reletCurrentPhaseReturnAmount, payReturnAmount);
                         }
                         // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
-                        if (!OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && statementDetailStartTime.getTime() > returnTime.getTime()) {
+                        if (statementDetailStartTime.getTime() > returnTime.getTime()) {
 
                             payReturnAmount = BigDecimalUtil.add(payReturnAmount, BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()), new BigDecimal(rentingMaterialCount), BigDecimalUtil.SCALE));
                         }
