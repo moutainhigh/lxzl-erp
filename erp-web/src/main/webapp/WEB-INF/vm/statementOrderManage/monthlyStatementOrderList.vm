@@ -133,7 +133,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="14" class="text-center">没有查询到结算单</td>
+                                <td valign="top" colspan="14" class="text-center">请输入查询条件</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
