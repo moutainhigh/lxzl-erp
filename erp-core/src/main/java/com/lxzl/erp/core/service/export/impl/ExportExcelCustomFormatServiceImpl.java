@@ -114,7 +114,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
         statementOrderMonthQueryParam = new StatementOrderMonthQueryParam();
         statementOrderMonthQueryParam.setStatementOrderCustomerNo(customerNoParam);
-        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderStartTime);
+//        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderStartTime);
         statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderEndTime);
 
         ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam);
@@ -142,7 +142,10 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         String customerName = "";
 
         for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-            if (checkStatementOrder.getStatementExpectPayTime().getTime() > DateUtil.getEndMonthDate(new Date()).getTime()) {
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+            Date monthTime = simpleDateFormat.parse(checkStatementOrder.getMonthTime());
+            if (monthTime.getTime()<statementOrderStartTime.getTime()) {
                 continue;
             }
             if (StringUtil.isBlank(customerName)) {
