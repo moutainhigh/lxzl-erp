@@ -44,7 +44,7 @@ public class K3ReturnOrder extends BasePO {
     private BigDecimal logisticsAmount;    // 运费
     private BigDecimal serviceAmount;    // 服务费
     @Min(value = 1, message = ErrorCode.K3_RETURN_REASON_TYPE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
-    @Max(value = 11, message = ErrorCode.K3_RETURN_REASON_TYPE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
+    @Max(value = 20, message = ErrorCode.K3_RETURN_REASON_TYPE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
     private Integer returnReasonType;    // 退货原因
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注
