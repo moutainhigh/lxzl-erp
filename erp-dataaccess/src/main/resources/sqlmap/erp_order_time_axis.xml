@@ -14,10 +14,11 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="operation_type" jdbcType="VARCHAR" property="operationType" />
 	</resultMap>
 
 	<sql id="column_List">
-		eota.id,eota.order_id,eota.order_status,eota.generation_time,eota.order_snapshot,eota.data_status,eota.remark,eota.create_time,eota.create_user,eota.update_time,eota.update_user
+		eota.id,eota.order_id,eota.order_status,eota.generation_time,eota.order_snapshot,eota.data_status,eota.remark,eota.create_time,eota.create_user,eota.update_time,eota.update_user,operation_type
 	</sql>
 
 	<select id="findByOrderId" resultMap="OrderTimeAxisDO" parameterType="java.lang.Integer">
@@ -80,6 +81,9 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="operationType != null">
+				operation_type = #{operationType,jdbcType=INTEGER},
 			</if>
 		</set>
 	</sql>

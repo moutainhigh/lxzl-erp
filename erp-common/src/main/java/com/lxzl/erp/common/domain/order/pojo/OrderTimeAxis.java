@@ -22,6 +22,8 @@ public class OrderTimeAxis extends BasePO {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
+	private Integer operationType;// 操作类型,1-创建订单，2-修改订单,3-订单提交审核,4-订单审核通过,5-订单审核拒绝,6-K3发货回调（系统）,7-订单确认收货,8-k3退货回调（K3操作员或系统）,9-取消订单,10-强制取消订单,11-结算支付;
+
 
 	public Integer getOrderTimeAxisId(){
 		return orderTimeAxisId;
@@ -111,4 +113,11 @@ public class OrderTimeAxis extends BasePO {
 		this.updateUser = updateUser;
 	}
 
+	public Integer getOperationType() {
+		return operationType;
+	}
+
+	public void setOperationType(Integer operationType) {
+		this.operationType = operationType;
+	}
 }
