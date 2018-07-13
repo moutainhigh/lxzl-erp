@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-数据分析-sql语句执行情况列表</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
+
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+
+                #parse("component/loading.vm")
+
+                <div class="panel panel-primary panel-border top">
+                    <div class="panel-menu p12">
+                        <div class="row">
+                            <div class="pull-left ml10">
+                                <div class="btn-group" id="actionCommonButtons">
+                                    <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body pn">
+                        <div class="table-responsive">
+                            <script type="text/html" id="dataListTpl">
+                                <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13">
+                                <thead>
+                                <tr>
+                                    <th>sql语句类型</th>
+                                    <th>sql语句内容</th>
+                                    <th>状态</th>
+                                    <th>查询结果</th>
+                                    <th>创建人</th>
+                                    {{#hasRowActionButtons}}
+                                    <th class="text-right">操作</th>
+                                    {{/hasRowActionButtons}}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{#dataSource}}
+                                {{#listData}}
+                                <tr>
+                                    <td>{{sqlTpye}}</td>
+                                    <td><pre class="sqlContent">{{sqlContent}}</pre></td>
+                                    <td>{{statusVal}}</td>
+                                    <td>{{results}}</td>
+                                    <td>
+                                        <p class="mn">{{createUserRealName}}</p>
+                                        <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                    </td>
+                                    {{#hasRowActionButtons}}
+                                    <td class="text-right">
+                                        <div class="btn-group text-right">
+                                            {{#rowActionButtons}}
+                                            <a href="${ctx}{{menuUrl}}?id={{dynamicSqlId}}" type="button" class="btn btn-default btn-xs {{class}}" data-id="{{id}}">{{text}}</a>
+                                            {{/rowActionButtons}}
+                                        </div>
+                                    </td>
+                                    {{/hasRowActionButtons}}
+                                </tr>
+                                <tr class="bn" style="height:0;">
+                                    <td class="pre-box" colspan="6"><pre>{{sqlContent}}</pre></td>
+                                </tr>
+                                {{/listData}}
+                                {{^listData}}
+                                <tr>
+                                    <td valign="top" colspan="6" class="text-center">无数据</td>
+                                </tr>
+                                {{/listData}}
+                                {{/dataSource}}
+                                </tbody>
+                                </table>
+                            </script>
+                            <div id="dataListTable"></div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                                #parse("component/pager.vm")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        #parse("layout/sidebarRight.vm")
+    </div>
+    #parse("layout/footer.vm")
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js','manage.dynamicsql.execute.list.js','modal.input.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        DynamicSqlExecuteManage.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+
+    </script>
+</body>
+</html>
