@@ -28,7 +28,7 @@ public interface DynamicSqlService {
 
     ServiceResult<String, String> insertBySql(DynamicSqlSelectParam dynamicSqlSelectParam);
 
-    ServiceResult<String, List<DynamicSqlHolder>>  pageDynamicSqlHolder(PageQuery pageQuery);
+    ServiceResult<String, Page<DynamicSqlHolder>> pageDynamicSqlHolder(PageQuery pageQuery);
 
     ServiceResult<String, DynamicSqlHolderDO> adoptDynamicSqlHolder(Integer dynamicSqlHolderId);
 
