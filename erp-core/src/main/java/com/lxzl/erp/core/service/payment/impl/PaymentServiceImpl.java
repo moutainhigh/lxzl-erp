@@ -570,7 +570,7 @@ public class PaymentServiceImpl implements PaymentService {
                             chargeRecord.setCustomerName(customerDO.getCustomerName());
                             chargeRecord.setErpCustomerNo(customerDO.getCustomerNo());
                         }else if(customerNameMap.get(chargeRecord.getCustomerName()) != null){
-                            CustomerDO customerDO = customerNameMap.get(chargeRecord.getBusinessCustomerNo());
+                            CustomerDO customerDO = customerNameMap.get(chargeRecord.getCustomerName());
                             chargeRecord.setErpCustomerNo(customerDO.getCustomerNo());
                         }
                     }
