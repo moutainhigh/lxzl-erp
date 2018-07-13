@@ -66,8 +66,8 @@
             <if test="sqlContent != null">
                 sql_content = #{sqlContent,jdbcType=VARCHAR},
             </if>
-            <if test="dynamicSqlTpye != null">
-                sql_tpye = #{dynamicSqlTpye,jdbcType=VARCHAR},
+            <if test="sqlTpye != null">
+                sql_tpye = #{sqlTpye,jdbcType=VARCHAR},
             </if>
             <if test="status != null">
                 status = #{status,jdbcType=INTEGER},
