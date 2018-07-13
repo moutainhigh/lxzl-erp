@@ -20,19 +20,23 @@ import java.util.List;
 public class OrderTimeAxisSupport {
 
 
-    public void addOrderTimeAxis(Integer orderId, Integer orderStatus, String orderSnapshot, Date currentTime, Integer loginUserId) {
+    public void addOrderTimeAxis(Integer orderId, Integer orderStatus, String orderSnapshot, Date currentTime, Integer loginUserId,Integer operationType) {
         String userId = loginUserId==null?null:loginUserId.toString();
         if(loginUserId!=null){
-            addOrderTimeAxis( orderId,  orderStatus,  orderSnapshot,  currentTime, userId);
+            addOrderTimeAxis( orderId,  orderStatus,  orderSnapshot,  currentTime, userId,operationType);
         }
     }
-    public void addOrderTimeAxis(Integer orderId, Integer orderStatus, String orderSnapshot, Date currentTime, String loginUserId) {
+    public void addOrderTimeAxis(Integer orderId, Integer orderStatus, String orderSnapshot, Date currentTime, String loginUserId,Integer operationType) {
 
         List<OrderTimeAxisDO> orderTimeAxisDOList = orderTimeAxisMapper.findByOrderId(orderId);
         if (CollectionUtil.isNotEmpty(orderTimeAxisDOList)) {
             OrderTimeAxisDO lastRecord = orderTimeAxisDOList.get(orderTimeAxisDOList.size() - 1);
             // 如果最后的状态和当前状态相同，就没有必要再存一条
             if (orderStatus.equals(lastRecord.getOrderStatus())) {
+                lastRecord.setUpdateUser(loginUserId);
+                lastRecord.setUpdateTime(currentTime);
+                lastRecord.setOperationType(operationType);
+                orderTimeAxisMapper.update(lastRecord);
                 return;
             }
         }
@@ -45,6 +49,7 @@ public class OrderTimeAxisSupport {
         orderTimeAxisDO.setUpdateUser(loginUserId);
         orderTimeAxisDO.setCreateTime(currentTime);
         orderTimeAxisDO.setUpdateTime(currentTime);
+        orderTimeAxisDO.setOperationType(operationType);
         orderTimeAxisMapper.save(orderTimeAxisDO);
     }
     public List<OrderTimeAxisDO> getOrderTimeAxis(Integer orderId) {
