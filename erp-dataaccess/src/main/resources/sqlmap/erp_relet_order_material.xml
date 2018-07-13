@@ -135,4 +135,141 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderMaterialDO">
 		UPDATE erp_relet_order_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+
+	<update id="batchUpdate" parameterType="java.util.ArrayList">
+		update erp_relet_order_material
+		SET
+		<trim>
+			relet_order_id =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.reletOrderId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			relet_order_no =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.reletOrderNo,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			order_id =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.orderId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			order_no =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.orderNo,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			order_material_id =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.orderMaterialId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			material_id =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.materialId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			material_name =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.materialName,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			material_count =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.materialCount,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			material_unit_amount =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.materialUnitAmount,jdbcType=DECIMAL}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			material_amount =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.materialAmount,jdbcType=DECIMAL}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			material_snapshot =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.materialSnapshot,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			payment_cycle =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.paymentCycle,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			pay_mode =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.payMode,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			is_new_material =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.isNewMaterial,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			renting_material_count =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.rentingMaterialCount,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			data_status =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.dataStatus,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			remark =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.remark,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			create_time =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.createTime,jdbcType=TIMESTAMP}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			create_user =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.createUser,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.updateTime,jdbcType=TIMESTAMP}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_user =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.updateUser,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.id,jdbcType=INTEGER}
+		</foreach>
+
+	</update>
 </mapper>
