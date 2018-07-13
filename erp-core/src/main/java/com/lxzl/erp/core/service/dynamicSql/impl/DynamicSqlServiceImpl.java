@@ -177,7 +177,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         ServiceResult<String, Page<DynamicSqlHolder>> serviceResult = new ServiceResult<>();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         List<DynamicSqlHolder> dynamicSqlHolders = ConverterUtil.convertList(dynamicSqlHolderMapper.listPage(map), DynamicSqlHolder.class);
-        int totalCount =dynamicSqlHolderMapper.listCount(map);
+        int totalCount = dynamicSqlHolderMapper.listCount(map);
 
         Page<DynamicSqlHolder> page = new Page<>(dynamicSqlHolders, totalCount, finalPageQuery.getPageNo(), finalPageQuery.getPageSize());
         serviceResult.setResult(page);
@@ -416,7 +416,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
                     if (initialMark) {
                         initialMark = false;
                         for (DynamicSqlTpye dynamicSqlTpye1 : DynamicSqlTpye.values()) {
-                            if (dynamicSqlTpye1.getSqlTpyeName().equals(word.toString()))
+                            if (dynamicSqlTpye1.getSqlTpyeName().equals(word.toString().trim()))
                                 dynamicSqlTpye = dynamicSqlTpye1;
                         }
                     }
@@ -435,9 +435,8 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
                     break;
             }
 
-
             if (checkKeyWork) {
-                switch ((word.toString())) {
+                switch (word.toString().trim()) {
                     case "SELECT":
                         hasSelect = true;
                         //do something
