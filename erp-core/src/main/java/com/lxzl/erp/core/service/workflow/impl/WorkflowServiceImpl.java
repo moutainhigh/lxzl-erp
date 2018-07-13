@@ -506,7 +506,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             if (customerDO == null) {
                 result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
             }
-            UserDO userDO = userMapper.findByUserId(Integer.parseInt(customerDO.getCreateUser()));
+            UserDO userDO = userMapper.findByUserId(customerDO.getOwner());
             if (userSupport.isChannelSubCompany(ConverterUtil.convert(userDO, User.class))) {
                 workflowType = WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER;
             }
@@ -684,7 +684,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
                 return result;
             }
-            ServiceResult<String, User> userResult = userService.getUserById(Integer.valueOf(customerDO.getCreateUser()));
+            ServiceResult<String, User> userResult = userService.getUserById(customerDO.getOwner());
             if (userSupport.isChannelSubCompany(userResult.getResult())) {
                 workflowType = WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER;
             }

@@ -26,7 +26,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipDetailOperationLogMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipClaimDO;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDO;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
@@ -49,8 +48,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.sun.tools.internal.xjc.reader.Ring.add;
 
 /**
  * @Author: pengbinjie
@@ -806,7 +803,9 @@ public class BankSlipServiceImpl implements BankSlipService {
 
         //如果是未认领状态总数需要 +1
         bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() + 1);
-        bankSlipDO.setSlipStatus(SlipStatus.ALREADY_PUSH_DOWN);
+        if(!SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())){
+            bankSlipDO.setSlipStatus(SlipStatus.ALREADY_PUSH_DOWN);
+        }
         bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         bankSlipDO.setUpdateTime(now);
         bankSlipMapper.update(bankSlipDO);
@@ -905,9 +904,12 @@ public class BankSlipServiceImpl implements BankSlipService {
                     bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
                     bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() - 1);
                     bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() + 1);
-                    if (bankSlipDO.getNeedClaimCount() == 0 && bankSlipDO.getClaimCount() == 0) {
-                        bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+                    if(!SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())){
+                        if (bankSlipDO.getNeedClaimCount() == 0 && bankSlipDO.getClaimCount() == 0) {
+                            bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+                        }
                     }
+
                 }
             }
 
@@ -994,10 +996,6 @@ public class BankSlipServiceImpl implements BankSlipService {
 
         //总公司表数量 +1,跟新时间和操作人
         headquartersBankSlipDO.setLocalizationCount(headquartersBankSlipDO.getLocalizationCount() - 1);
-        if (headquartersBankSlipDO.getLocalizationCount() == 0 && headquartersBankSlipDO.getNeedClaimCount() == 0) {
-            headquartersBankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
-        }
-
 
         //删除认领信息
         if (BankSlipDetailStatus.CLAIMED.equals(bankSlipDetailDO.getDetailStatus()) && LocalizationType.IS_LOCALIZATION.equals(bankSlipDetailDO.getIsLocalization())) {
@@ -1013,10 +1011,11 @@ public class BankSlipServiceImpl implements BankSlipService {
                 bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
                 headquartersBankSlipDO.setClaimCount(headquartersBankSlipDO.getClaimCount() - 1);
                 headquartersBankSlipDO.setNeedClaimCount(headquartersBankSlipDO.getNeedClaimCount() + 1);
-                if (headquartersBankSlipDO.getNeedClaimCount() == 0 && headquartersBankSlipDO.getClaimCount() == 0) {
-                    headquartersBankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+                if(!SlipStatus.INITIALIZE.equals( headquartersBankSlipDO.getSlipStatus())){
+                    if (headquartersBankSlipDO.getNeedClaimCount() == 0 && headquartersBankSlipDO.getClaimCount() == 0) {
+                        headquartersBankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+                    }
                 }
-
             }
         }
 
