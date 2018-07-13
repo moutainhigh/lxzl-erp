@@ -1552,7 +1552,7 @@ public class StatementServiceImpl implements StatementService {
             orderDO.setTotalPaidOrderAmount(BigDecimalUtil.add(orderDO.getTotalPaidOrderAmount(), paidAmount));
             orderDO.setPayTime(currentTime);
             orderMapper.update(orderDO);
-            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_PAID, null, currentTime, loginUserId);
+            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_PAID, null, currentTime, loginUserId,OperationType.STATEMENT_PAID);
         }
         //更新续租单 支付状态和已付款金额
         for (Map.Entry<Integer, BigDecimal> entry : reletOrderPaidMap.entrySet()) {
@@ -4464,7 +4464,7 @@ public class StatementServiceImpl implements StatementService {
         orderDO.setTotalPaidOrderAmount(BigDecimalUtil.sub(orderDO.getTotalPaidOrderAmount(), needReturnAmount));
         orderDO.setPayTime(now);
         orderMapper.update(orderDO);
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_PAID, null, now, userSupport.getCurrentUser().getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_PAID, null, now, userSupport.getCurrentUser().getUserId(),OperationType.STATEMENT_PAID);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
