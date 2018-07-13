@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.dynamicSql.DynamicSqlHolderMapper">
+
+    <resultMap id="DynamicSqlHolderDO" type="com.lxzl.erp.dataaccess.domain.dynamicSql.DynamicSqlHolderDO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="sql_content" jdbcType="VARCHAR" property="sqlContent"/>
+        <result column="sql_tpye" jdbcType="VARCHAR" property="dynamicSqlTpye"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="results" jdbcType="VARCHAR" property="results"/>
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+    </resultMap>
+
+
+    <sql id="column_List">
+	id,
+	sql_content,
+	sql_tpye,
+	status,
+	results,
+	data_status,
+	create_time,
+	create_user,
+	update_time,
+	update_user
+	</sql>
+
+
+    <select id="findById" resultMap="DynamicSqlHolderDO" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_dynamic_sql_holder
+        WHERE id = #{id, jdbcType=INTEGER} AND data_status = 1
+    </select>
+
+    <select id="listCount" resultType="java.lang.Integer" parameterType="map">
+        SELECT count(1) FROM erp_dynamic_sql_holder
+        <where>
+            <if test="true">
+                AND data_status = 1
+            </if>
+        </where>
+    </select>
+
+    <select id="listPage" resultMap="DynamicSqlHolderDO" parameterType="map">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_dynamic_sql_holder
+        <where>
+            <if test="true">
+                AND data_status = 1
+            </if>
+            <if test="maps.createUser != null">
+                AND create_user = #{maps.createUser}
+            </if>
+        </where>
+        LIMIT #{maps.start},#{maps.pageSize}
+    </select>
+
+    <sql id="set_column_sql">
+        <set>
+            <if test="sqlContent != null">
+                sql_content = #{sqlContent,jdbcType=VARCHAR},
+            </if>
+            <if test="dynamicSqlTpye != null">
+                sql_tpye = #{dynamicSqlTpye,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="results != null">
+                results = #{results,jdbcType=VARCHAR},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+        </set>
+    </sql>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.dynamicSql.DynamicSqlHolderDO">
+        INSERT INTO erp_dynamic_sql_holder
+        <include refid="set_column_sql"/>
+    </insert>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.dynamicSql.DynamicSqlHolderDO">
+        UPDATE erp_dynamic_sql_holder
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+
+</mapper>
