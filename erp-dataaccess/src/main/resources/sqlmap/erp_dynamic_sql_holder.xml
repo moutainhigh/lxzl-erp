@@ -5,7 +5,7 @@
     <resultMap id="DynamicSqlHolderDO" type="com.lxzl.erp.dataaccess.domain.dynamicSql.DynamicSqlHolderDO">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="sql_content" jdbcType="VARCHAR" property="sqlContent"/>
-        <result column="sql_tpye" jdbcType="VARCHAR" property="dynamicSqlTpye"/>
+        <result column="sql_tpye" jdbcType="VARCHAR" property="sqlTpye"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
         <result column="results" jdbcType="VARCHAR" property="results"/>
         <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
