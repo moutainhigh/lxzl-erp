@@ -219,7 +219,7 @@ public class BankSlipSupport {
      * @Return : java.lang.String
      */
     public static String getBankTypeName(Integer bankType) {
-        String bankName = "";
+        String bankName;
         switch (bankType) {
             case 1:
                 bankName = "支付宝";
@@ -260,6 +260,12 @@ public class BankSlipSupport {
             case 13:
                 bankName = "库存现金";
                 break;
+            case 14:
+                bankName = "威富通";
+                break;
+            default:
+                bankName = null;
+                 break;
         }
         return bankName;
     }

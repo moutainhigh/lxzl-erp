@@ -52,4 +52,5 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     List<OrderDO> findOrderForReturnParam(@Param("maps") Map<String, Object> maps);
 
     List<String> findAllOrderNo();
+    List<OrderDO> findByNos(@Param("orderNos") Set<String> orderNos);
 }

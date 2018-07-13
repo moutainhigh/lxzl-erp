@@ -14,4 +14,6 @@ public interface ReletOrderProductMapper extends BaseMysqlDAO<ReletOrderProductD
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	List<ReletOrderProductDO> findByReletOrderId(@Param("reletOrderId") Integer reletOrderId);
+
+	void batchUpdate(@Param("list") List<ReletOrderProductDO> list);
 }
