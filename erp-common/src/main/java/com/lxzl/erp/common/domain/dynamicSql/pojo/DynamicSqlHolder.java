@@ -2,6 +2,8 @@ package com.lxzl.erp.common.domain.dynamicSql.pojo;
 
 import com.lxzl.erp.common.domain.base.BasePO;
 
+import java.util.Date;
+
 public class DynamicSqlHolder extends BasePO {
     private Integer id;
     private String sqlContent;
@@ -9,6 +11,7 @@ public class DynamicSqlHolder extends BasePO {
     private Integer status;
     private String results;
     private Integer dataStatus;
+    private Date
 
     public Integer getId() {
         return id;
