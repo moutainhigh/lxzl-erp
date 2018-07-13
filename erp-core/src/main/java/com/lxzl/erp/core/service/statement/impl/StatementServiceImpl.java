@@ -5405,11 +5405,11 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
-        Date statementOrderStartTime = statementOrderMonthQueryParam.getStatementOrderStartTime();
+//        Date statementOrderStartTime = statementOrderMonthQueryParam.getStatementOrderStartTime();
         Date statementOrderEndTime = statementOrderMonthQueryParam.getStatementOrderEndTime();
         statementOrderMonthQueryParam = new StatementOrderMonthQueryParam();
         statementOrderMonthQueryParam.setStatementOrderCustomerId(customerDO.getId());
-        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderStartTime);
+//        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderStartTime);
         statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderEndTime);
         Map<String, Object> maps = new HashMap<>();
         maps.put("statementOrderMonthQueryParam", statementOrderMonthQueryParam);
@@ -5542,9 +5542,7 @@ public class StatementServiceImpl implements StatementService {
 
         List<CheckStatementOrder> checkStatementOrderList = new ArrayList<>();
         for (CheckStatementOrderDO exportStatementOrderDO : statementOrderDOList) {
-            if (exportStatementOrderDO.getStatementExpectPayTime().getTime() > DateUtil.getEndMonthDate(new Date()).getTime()) {
-                continue;
-            }
+
             CheckStatementOrder statementOrder = ConverterUtil.convert(exportStatementOrderDO, CheckStatementOrder.class);
             List<CheckStatementOrderDetailDO> checkStatementOrderDetailDOList = exportStatementOrderDO.getCheckStatementOrderDetailDOList();
             if (CollectionUtil.isNotEmpty(exportStatementOrderDO.getCheckStatementOrderDetailDOList())) {
@@ -5742,41 +5740,41 @@ public class StatementServiceImpl implements StatementService {
             List<CheckStatementOrderDetail> statementOrderDetailList = ListUtil.mapToList(hashMap);
 
             //k3老订单支付截止时间限制
-            List<K3OrderStatementConfigDO> k3OrderStatementConfigList = k3OrderStatementConfigMapper.findByCustomerId(customerDO.getId());
-            if (CollectionUtil.isNotEmpty(k3OrderStatementConfigList)) {
-                Map<Integer,K3OrderStatementConfigDO> k3OrderStatementConfigMap = ListUtil.listToMap(k3OrderStatementConfigList,"orderId");
-                List<CheckStatementOrderDetail> notK3k3OrderStatementConfigList = new ArrayList<>();
-                for (CheckStatementOrderDetail checkStatementOrderDetail : statementOrderDetailList) {
-                    //是订单进行查询
-                    if (OrderType.ORDER_TYPE_ORDER.equals(checkStatementOrderDetail.getOrderType())) {
-                        K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMap.get(checkStatementOrderDetail.getOrderId());
-                        if (k3OrderStatementConfigDO != null) {
-                            //统一日期格式进行比较
-                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
-                            String k3RentStartTimeString = simpleDateFormat.format(k3OrderStatementConfigDO.getRentStartTime());
-                            String monthTimeString = statementOrder.getMonthTime();
-                            try {
-                                Date k3RentStartTime = simpleDateFormat.parse(k3RentStartTimeString);
-                                Date monthTime = simpleDateFormat.parse(monthTimeString);
-                                if (monthTime.after(k3RentStartTime)) {
-                                    notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
-                                } else if (k3RentStartTime.equals(monthTime)) {
-//                                    checkStatementOrderDetail.setStatementStartTime(k3OrderStatementConfigDO.getRentStartTime());
-                                    notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
-                                }
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                                logger.error("【导出对账单功能————筛选K3老订单支付截止时间之前结算单出错，错误原因对比结算单结束时间和K3老订单支付截止时间出错】，结算单id:【"+checkStatementOrderDetail.getStatementOrderDetailId()+"】,k3老订单(erp_k3_order_statement_config)订单编号：【"+k3OrderStatementConfigDO.getOrderNo()+"】",e);
-                            }
-                        }else {
-                            notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
-                        }
-                    }else {
-                        notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
-                    }
-                }
-                statementOrderDetailList = notK3k3OrderStatementConfigList;
-            }
+//            List<K3OrderStatementConfigDO> k3OrderStatementConfigList = k3OrderStatementConfigMapper.findByCustomerId(customerDO.getId());
+//            if (CollectionUtil.isNotEmpty(k3OrderStatementConfigList)) {
+//                Map<Integer,K3OrderStatementConfigDO> k3OrderStatementConfigMap = ListUtil.listToMap(k3OrderStatementConfigList,"orderId");
+//                List<CheckStatementOrderDetail> notK3k3OrderStatementConfigList = new ArrayList<>();
+//                for (CheckStatementOrderDetail checkStatementOrderDetail : statementOrderDetailList) {
+//                    //是订单进行查询
+//                    if (OrderType.ORDER_TYPE_ORDER.equals(checkStatementOrderDetail.getOrderType())) {
+//                        K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMap.get(checkStatementOrderDetail.getOrderId());
+//                        if (k3OrderStatementConfigDO != null) {
+//                            //统一日期格式进行比较
+//                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+//                            String k3RentStartTimeString = simpleDateFormat.format(k3OrderStatementConfigDO.getRentStartTime());
+//                            String monthTimeString = statementOrder.getMonthTime();
+//                            try {
+//                                Date k3RentStartTime = simpleDateFormat.parse(k3RentStartTimeString);
+//                                Date monthTime = simpleDateFormat.parse(monthTimeString);
+//                                if (monthTime.after(k3RentStartTime)) {
+//                                    notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
+//                                } else if (k3RentStartTime.equals(monthTime)) {
+////                                    checkStatementOrderDetail.setStatementStartTime(k3OrderStatementConfigDO.getRentStartTime());
+//                                    notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
+//                                }
+//                            } catch (ParseException e) {
+//                                e.printStackTrace();
+//                                logger.error("【导出对账单功能————筛选K3老订单支付截止时间之前结算单出错，错误原因对比结算单结束时间和K3老订单支付截止时间出错】，结算单id:【"+checkStatementOrderDetail.getStatementOrderDetailId()+"】,k3老订单(erp_k3_order_statement_config)订单编号：【"+k3OrderStatementConfigDO.getOrderNo()+"】",e);
+//                            }
+//                        }else {
+//                            notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
+//                        }
+//                    }else {
+//                        notK3k3OrderStatementConfigList.add(checkStatementOrderDetail);
+//                    }
+//                }
+//                statementOrderDetailList = notK3k3OrderStatementConfigList;
+//            }
             //排序
             if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
                 statementOrderDetailList = sortingCheckStatementOrderDetail(statementOrderDetailList);
