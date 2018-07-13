@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderListParam;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.order.OrderConfirmChangeToK3Param;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
@@ -275,6 +276,11 @@ public class K3Controller extends BaseController {
     @RequestMapping(value = "batchImportK3HistoricalRefundList", method = RequestMethod.POST)
     public Result batchImportK3HistoricalRefundList(@RequestBody BatchImportK3HistoricalRefundListParam batchImportK3HistoricalRefundListParam) {
         return resultGenerator.generate( k3ReturnOrderService.batchImportK3HistoricalRefundList(batchImportK3HistoricalRefundListParam.getStartPage()));
+    }
+
+    @RequestMapping(value = "batchImportK3HistoricalReturnList", method = RequestMethod.POST)
+    public Result batchImportK3HistoricalReturnList(@RequestBody K3ReturnOrderListParam k3ReturnOrderListParam) {
+        return resultGenerator.generate( k3ReturnOrderService.batchImportK3HistoricalReturnList(k3ReturnOrderListParam.getReturnOrderNoList()));
     }
 
     @RequestMapping(value = "confirmOrder", method = RequestMethod.POST)
