@@ -61,7 +61,7 @@
                             <div class="Rental-timeline-item-content">
                                 <span class="mr10">{{orderStatusValue}}</span>
                                 <span class="mr20">{{createTimeFormat}}</span>
-                                <span class="mr5 text-danger">{{#operationType}}{{realName}}{{/operationType}}</span>
+                                <span class="mr5 text-danger">{{realName}}</span>
                                 <span class="text-danger">{{operationVal}}</span>
                             </div>
                         </li>
