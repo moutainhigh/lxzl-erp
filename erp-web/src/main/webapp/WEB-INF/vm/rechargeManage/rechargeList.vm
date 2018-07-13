@@ -111,16 +111,14 @@
                             {{#listData}}
                             <tr>
                                 <td>{{chargeOrderNo}}</td>
-##                                <td>
-##                                    {{#isErpCustomerVal}}<a href="{{customerDetailUrl}}" target="_blank">{{businessCustomerNo}}</a>{{/isErpCustomerVal}}
-##                                    {{^isErpCustomerVal}}{{businessCustomerNo}}{{/isErpCustomerVal}}
-##                                </td>
-##                                <td>
-##                                    {{#isErpCustomerVal}}<a href="{{customerDetailUrl}}" target="_blank">{{customerName}}</a>{{/isErpCustomerVal}}
-##                                    {{^isErpCustomerVal}}{{customerName}}{{/isErpCustomerVal}}
-##                                </td>
-                                <td>{{businessCustomerNo}}</td>
-                                <td>{{customerName}}</td>
+                                <td>
+                                    {{#isErpCustomerVal}}<a href="{{customerDetailUrl}}" target="_blank">{{erpCustomerNo}}</a>{{/isErpCustomerVal}}
+                                    {{^isErpCustomerVal}}{{businessCustomerNo}}{{/isErpCustomerVal}}
+                                </td>
+                                <td>
+                                    {{#isErpCustomerVal}}<a href="{{customerDetailUrl}}" target="_blank">{{customerName}}</a>{{/isErpCustomerVal}}
+                                    {{^isErpCustomerVal}}{{customerName}}{{/isErpCustomerVal}}
+                                </td>
                                 <td>{{subCompanyName}}</td>
                                 <td>{{thirdPartyPayOrderId}}</td>
                                 <td>￥{{#price}}{{chargeAmountExpect}}{{/price}}</td>
