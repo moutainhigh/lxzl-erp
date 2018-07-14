@@ -32,6 +32,7 @@ import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDO;
 import com.lxzl.se.common.util.StringUtil;
+import org.apache.commons.collections.MapUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Font;
@@ -140,10 +141,70 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
         String previousSheetName = "";
         String customerName = "";
+        //先付后用找月份和结算开始时间在同一月的那一期
+        Map<String,CheckStatementOrderDetail> bigDecimalMap = new HashMap<>();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+            List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+            if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
+                continue;
+            }
+            String monthTime = checkStatementOrder.getMonthTime();
+            for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
+                if (BigDecimalUtil.compare(exportStatementOrderDetail.getUnitAmount(),BigDecimal.ZERO)>0) {
+                    Date statementStartTimeDate = exportStatementOrderDetail.getStatementStartTime();
+                    if (statementStartTimeDate != null) {
+                        String statementStartTime = simpleDateFormat.format(statementStartTimeDate);
+                        //订单商品或配件，先付后用（1），月份等于计算开始时间，取出字符串和对象
+                        if ((OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())||
+                                OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType()))&&
+                                OrderPayMode.PAY_MODE_PAY_BEFORE.equals(exportStatementOrderDetail.getPayMode())&&
+                                monthTime.equals(statementStartTime)) {
+                            //Key 商品/配件ID+结算单详情类型+结算单商品配件类型+支付类型+支付开始时间+支付结束时间+订单编号
+                            String bigDecimalKey = exportStatementOrderDetail.getOrderItemReferId() +"-"+exportStatementOrderDetail.getOrderType()+"-"+
+                                    exportStatementOrderDetail.getOrderItemType()+"-"+exportStatementOrderDetail.getPayMode()+"-"+
+                                    exportStatementOrderDetail.getStatementStartTime()+"-"+exportStatementOrderDetail.getStatementEndTime()+"-"+exportStatementOrderDetail.getOrderNo();
+                            if (!bigDecimalMap.containsKey(bigDecimalKey)) {
+                                bigDecimalMap.put(bigDecimalKey,exportStatementOrderDetail);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //开始存储先付后用的金额
+        if (MapUtils.isNotEmpty(bigDecimalMap)) {
+            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+                List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+                if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
+                    continue;
+                }
+                String monthTime = checkStatementOrder.getMonthTime();
+                for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
+                    if (BigDecimalUtil.compare(exportStatementOrderDetail.getUnitAmount(),BigDecimal.ZERO)>0) {
+                        Date statementStartTimeDate = exportStatementOrderDetail.getStatementStartTime();
+                        if (statementStartTimeDate != null) {
+                            String statementStartTime = simpleDateFormat.format(statementStartTimeDate);
+                            if (!monthTime.equals(statementStartTime)) {
+                                //Key 商品/配件ID+结算单详情类型+结算单商品配件类型+支付类型+支付开始时间+支付结束时间+订单编号
+                                String bigDecimalKey = exportStatementOrderDetail.getOrderItemReferId() +"-"+exportStatementOrderDetail.getOrderType()+"-"+
+                                        exportStatementOrderDetail.getOrderItemType()+"-"+exportStatementOrderDetail.getPayMode()+"-"+
+                                        exportStatementOrderDetail.getStatementStartTime()+"-"+exportStatementOrderDetail.getStatementEndTime()+"-"+exportStatementOrderDetail.getOrderNo();
+                                if (bigDecimalMap.containsKey(bigDecimalKey)) {
+                                    CheckStatementOrderDetail checkStatementOrderDetail = bigDecimalMap.get(bigDecimalKey);
+                                    exportStatementOrderDetail.setStatementDetailEndAmount(checkStatementOrderDetail.getStatementDetailAmount());
+                                    exportStatementOrderDetail.setStatementDetailRentEndAmount(checkStatementOrderDetail.getStatementDetailRentAmount());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 
         for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
             Date monthTime = simpleDateFormat.parse(checkStatementOrder.getMonthTime());
             if (monthTime.getTime()<statementOrderStartTime.getTime()) {
                 continue;
