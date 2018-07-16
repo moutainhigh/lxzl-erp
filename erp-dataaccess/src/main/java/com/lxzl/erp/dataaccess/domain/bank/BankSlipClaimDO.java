@@ -17,6 +17,15 @@ public class BankSlipClaimDO  extends BaseDO {
 	private String remark;
 	private String customerName;  //客户名称
 	private String k3CustomerNo;  //k3客户编码
+	private String customerSubCompanyName;  //客户对应的公司名称
+
+	public String getCustomerSubCompanyName() {
+		return customerSubCompanyName;
+	}
+
+	public void setCustomerSubCompanyName(String customerSubCompanyName) {
+		this.customerSubCompanyName = customerSubCompanyName;
+	}
 
 	public String getK3CustomerNo() {
 		return k3CustomerNo;

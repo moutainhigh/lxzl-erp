@@ -4,6 +4,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
+import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
@@ -14,6 +15,7 @@ import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.statistics.StatisticsSalesmanPageParam;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesman;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanDetail;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.bank.BankSlipService;
 import com.lxzl.erp.core.service.dynamicSql.DynamicSqlService;
@@ -62,7 +64,20 @@ public class DisposeExportDataServiceImpl implements DisposeExportDataService {
             result.setErrorCode(stringPageServiceResult.getErrorCode());
             return result;
         }
-        result = excelExportService.export(stringPageServiceResult, ExcelExportConfigGroup.bankSlipDetailConfig, ExcelExportSupport.formatFileName("资金流水记录"), "sheet1", response);
+        List<BankSlipDetail> bankSlipDetailList = stringPageServiceResult.getResult().getItemList();
+        if(bankSlipDetailList != null){
+            for (BankSlipDetail bankSlipDetail : bankSlipDetailList) {
+                List<BankSlipClaim> bankSlipClaimList = bankSlipDetail.getBankSlipClaimList();
+                if(CollectionUtil.isNotEmpty(bankSlipClaimList)){
+                    String customerSubCompanyNameStringList = "";
+                    for (BankSlipClaim bankSlipClaim : bankSlipClaimList) {
+                        customerSubCompanyNameStringList = customerSubCompanyNameStringList +"\r\n"+ bankSlipClaim.getCustomerSubCompanyName();
+                    }
+                    bankSlipDetail.setCustomerSubCompanyNameStringList(customerSubCompanyNameStringList.trim());  //保存所有已经认领的客户对应的公司
+                }
+            }
+        }
+        result = excelExportService.export(bankSlipDetailList, ExcelExportConfigGroup.bankSlipDetailConfig, ExcelExportSupport.formatFileName("资金流水记录"), "sheet1", response);
         return result;
     }
 
