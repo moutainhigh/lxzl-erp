@@ -65,7 +65,7 @@ public class DisposeExportDataServiceImpl implements DisposeExportDataService {
             return result;
         }
         List<BankSlipDetail> bankSlipDetailList = stringPageServiceResult.getResult().getItemList();
-        if(bankSlipDetailList != null){
+        if(CollectionUtil.isNotEmpty(bankSlipDetailList)){
             for (BankSlipDetail bankSlipDetail : bankSlipDetailList) {
                 List<BankSlipClaim> bankSlipClaimList = bankSlipDetail.getBankSlipClaimList();
                 if(CollectionUtil.isNotEmpty(bankSlipClaimList)){
@@ -77,7 +77,7 @@ public class DisposeExportDataServiceImpl implements DisposeExportDataService {
                 }
             }
         }
-        result = excelExportService.export(bankSlipDetailList, ExcelExportConfigGroup.bankSlipDetailConfig, ExcelExportSupport.formatFileName("资金流水记录"), "sheet1", response);
+        result = excelExportService.export(bankSlipDetailList, ExcelExportConfigGroup.bankSlipDetailConfig, "资金流水记录", "sheet1", response);
         return result;
     }
 
@@ -109,7 +109,7 @@ public class DisposeExportDataServiceImpl implements DisposeExportDataService {
         if(statisticsSalesmanResult.getResult() == null || statisticsSalesmanResult.getResult().getStatisticsSalesmanDetailPage() == null){
             statisticsSalesmanDetailList = statisticsSalesmanResult.getResult().getStatisticsSalesmanDetailPage().getItemList();
         }
-        ServiceResult<String, String> serviceResult = excelExportService.export(statisticsSalesmanDetailList, ExcelExportConfigGroup.statisticsSalesmanDetailConfig, ExcelExportSupport.formatFileName("销售统计详情"), "sheet1", response);
+        ServiceResult<String, String> serviceResult = excelExportService.export(statisticsSalesmanDetailList, ExcelExportConfigGroup.statisticsSalesmanDetailConfig, "销售统计详情", "sheet1", response);
         return serviceResult;
     }
 
@@ -121,7 +121,7 @@ public class DisposeExportDataServiceImpl implements DisposeExportDataService {
             result.setErrorCode(financeStatementOrderPayDetailResult.getErrorCode());
             return result;
         }
-        ServiceResult<String, String> serviceResult = excelExportService.export(financeStatementOrderPayDetailResult.getResult().getItemList(), ExcelExportConfigGroup.statementOrderPayDetailConfig,ExcelExportSupport.formatFileName("支付明细"), "sheet1", response);
+        ServiceResult<String, String> serviceResult = excelExportService.export(financeStatementOrderPayDetailResult.getResult().getItemList(), ExcelExportConfigGroup.statementOrderPayDetailConfig,"支付明细", "sheet1", response);
         return serviceResult;
     }
 
@@ -137,7 +137,7 @@ public class DisposeExportDataServiceImpl implements DisposeExportDataService {
             result.setErrorCode(dynamicSqlResult.getCode());
             return result;
         }
-        result = excelExportService.export(dynamicSqlResult,ExcelExportSupport.formatFileName("动态sql"),"sheet1" , response,5000);
+        result = excelExportService.export(dynamicSqlResult,"动态sql","sheet1" , response,5000);
         return result;
     }
 }

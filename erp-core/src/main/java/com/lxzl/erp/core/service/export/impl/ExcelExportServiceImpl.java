@@ -31,7 +31,7 @@ public class ExcelExportServiceImpl<T> implements ExcelExportService<T> {
         try {
             if (ErrorCode.SUCCESS.equals(result.getErrorCode())) {
                 //导出设计表格
-                serviceResult = ExcelExportSupport.export(result.getResult().getItemList(), config, fileName, sheetName, response);
+                serviceResult = ExcelExportSupport.export(result.getResult().getItemList(), config, ExcelExportSupport.formatFileName(fileName), sheetName, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -45,7 +45,7 @@ public class ExcelExportServiceImpl<T> implements ExcelExportService<T> {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         try {
             //导出设计表格
-            serviceResult = ExcelExportSupport.export(list, config,response,hssfWorkbook,fileName,sheetName,row);
+            serviceResult = ExcelExportSupport.export(list, config,response,hssfWorkbook,ExcelExportSupport.formatFileName(fileName),sheetName,row);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -73,7 +73,7 @@ public class ExcelExportServiceImpl<T> implements ExcelExportService<T> {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
         try {
             //导出设计表格
-            serviceResult = ExcelExportSupport.export(list, config, fileName, sheetName,response);
+            serviceResult = ExcelExportSupport.export(list, config, ExcelExportSupport.formatFileName(fileName), sheetName,response);
             return serviceResult;
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,7 +92,7 @@ public class ExcelExportServiceImpl<T> implements ExcelExportService<T> {
 
         try {
             //导出设计表格
-            serviceResult = ExcelExportSupport.export(list, fileName, sheetName,response,width);
+            serviceResult = ExcelExportSupport.export(list, ExcelExportSupport.formatFileName(fileName), sheetName,response,width);
             return serviceResult;
         } catch (Exception e) {
             e.printStackTrace();
