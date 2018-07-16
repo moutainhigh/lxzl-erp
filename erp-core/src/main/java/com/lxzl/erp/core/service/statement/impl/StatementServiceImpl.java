@@ -2059,6 +2059,9 @@ public class StatementServiceImpl implements StatementService {
         return createK3ReturnOrderStatementCore(returnOrderNo);
     }
 
+    /**
+     * k3退货回调处理结算单时的回滚不能影响主逻辑，如果是k3回调处理结算单，这里不能添加事务，也不能设置RollbackOnly。
+     */
     private ServiceResult<String, BigDecimal> createK3ReturnOrderStatementCore(String returnOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);
