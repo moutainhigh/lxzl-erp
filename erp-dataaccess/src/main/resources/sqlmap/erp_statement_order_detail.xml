@@ -1572,6 +1572,39 @@
         and t1.data_status = 1
     </select>
 
+    <select id="exportReletReturnListPage" resultMap="CheckStatementOrderDetailDO" parameterType="map">
+        select t3.return_time as statement_expect_pay_time,t1.* from erp_statement_order_detail t1
+        inner join (
+        select esod.order_item_refer_id,min(statement_expect_pay_time) as min_statement_expect_pay_time from erp_statement_order_detail esod
+        where 1=1
+        <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
+            AND esod.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
+        </if>
+        AND esod.data_status = 1 AND esod.order_type = 4
+        <![CDATA[ and esod.order_item_refer_id <> 0  ]]>
+        group by esod.order_item_refer_id) t2 on t1.order_item_refer_id = t2.order_item_refer_id and t1.statement_expect_pay_time = t2.min_statement_expect_pay_time
+        left join (
+        select t2.id,min(t1.return_time) as return_time from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t1.id = t2.return_order_id and t2.data_status = 1
+        left join erp_customer t3 on t1.k3_customer_no = t3.customer_no
+        where 1=1
+        <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
+            AND t3.id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
+        </if>
+        and t1.return_order_status = 20 and t1.data_status = 1 group by t2.id) t3 on t1.order_item_refer_id = t3.id
+        INNER JOIN (SELECT esod.id, esod.data_status FROM erp_statement_order_detail esod
+        where 1=1
+        <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
+            AND esod.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
+        </if>
+        AND esod.order_type = 1
+        AND esod.data_status = 1
+        ) t4 on t1.return_refer_id = t4.id
+        WHERE t1.order_type = 4
+        and t1.data_status = 1
+        and t1.relet_order_item_refer_id is not NULL
+        <![CDATA[ AND t1.relet_order_item_refer_id <> 0  ]]>
+    </select>
+
     <select id="findByOrderItemReferIdAndTime" resultMap="CheckStatementOrderDetailDO">
         SELECT
         <include refid="column_List"/>
