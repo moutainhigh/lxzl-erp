@@ -5269,6 +5269,9 @@ public class StatementServiceImpl implements StatementService {
                     if (newStatementOrderDetail != null) {
                         if (StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetail.getStatementDetailType())) {
                             newStatementOrderDetail.setStatementOrderDetailId(statementOrderDetail.getStatementOrderDetailId());
+                            if (statementOrderDetail.getReletOrderItemReferId() != null) {
+                                newStatementOrderDetail.setReletOrderItemReferId(statementOrderDetail.getReletOrderItemReferId());
+                            }
                         }
                         newStatementOrderDetail.setStatementDetailRentAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailRentAmount(), statementOrderDetail.getStatementDetailRentAmount()));
                         newStatementOrderDetail.setStatementDetailRentPaidAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailRentPaidAmount(), statementOrderDetail.getStatementDetailRentPaidAmount()));
