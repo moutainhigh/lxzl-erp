@@ -219,6 +219,12 @@ public class ExcelExportConfigGroup {
                     return "浦发银行";
                 } else if (BankType.HAN_KOU_BANK.equals(bankType)) {
                     return "汉口银行";
+                }else if (BankType.LYCHEE_PAY.equals(bankType)) {
+                    return "快付通";
+                }else if (BankType.STOCK_CASH.equals(bankType)) {
+                    return "库存现金";
+                }else if (BankType.SWIFT_PASS.equals(bankType)) {
+                    return "威富通";
                 }
                 return "";
             }
