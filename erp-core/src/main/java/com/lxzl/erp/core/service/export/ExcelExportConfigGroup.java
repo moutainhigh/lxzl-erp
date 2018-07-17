@@ -222,7 +222,7 @@ public class ExcelExportConfigGroup {
                 }else if (BankType.LYCHEE_PAY.equals(bankType)) {
                     return "快付通";
                 }else if (BankType.STOCK_CASH.equals(bankType)) {
-                    return "库存现金";
+                    return "现金库存";
                 }else if (BankType.SWIFT_PASS.equals(bankType)) {
                     return "威富通";
                 }
