@@ -5492,7 +5492,7 @@ public class StatementServiceImpl implements StatementService {
 
             List<CheckStatementOrderDetail> statementOrderDetails = returnOrderProudctAndMaterialMap.get(statementOrderDetail.getStatementOrderDetailId());
             if (CollectionUtil.isNotEmpty(statementOrderDetails)) {
-                // TODO: 2018\7\3 0003 这里添加退货单合并逻辑
+                //这里添加退货单合并逻辑
                 BigDecimal statementDetailAmount = BigDecimal.ZERO;
                 BigDecimal statementDetailRentAmount = BigDecimal.ZERO;
                 BigDecimal statementDetailDepositAmount = BigDecimal.ZERO;
@@ -5503,10 +5503,10 @@ public class StatementServiceImpl implements StatementService {
                 BigDecimal statementDetailRentDepositAmount = BigDecimal.ZERO;
                 for (CheckStatementOrderDetail checkStatementOrderDetail : statementOrderDetails) {
                     if (BigDecimalUtil.compare(checkStatementOrderDetail.getStatementDetailAmount(), BigDecimal.ZERO) == 0) {
-                        // TODO: 2018\7\3 0003 判断金额，如果金额为0，则直接保存
+                        //判断金额，如果金额为0，则直接保存
                         list.add(checkStatementOrderDetail);
                     } else {
-                        // TODO: 2018\7\3 0003 如果金额不为0，将数量进行累加，然后跟最外层的订单对账单进行相减，金额相加，之后退货单不存储
+                        //如果金额不为0，将数量进行累加，然后跟最外层的订单对账单进行相减，金额相加，之后退货单不存储
                         statementDetailAmount = BigDecimalUtil.add(statementDetailAmount, checkStatementOrderDetail.getStatementDetailAmount());
                         statementDetailRentAmount = BigDecimalUtil.add(statementDetailRentAmount, checkStatementOrderDetail.getStatementDetailRentAmount());
                         statementDetailDepositAmount = BigDecimalUtil.add(statementDetailDepositAmount, checkStatementOrderDetail.getStatementDetailDepositAmount());
@@ -5534,7 +5534,7 @@ public class StatementServiceImpl implements StatementService {
                 statementOrderDetail.setStatementDetailRentDepositAmount(BigDecimalUtil.add(statementDetailRentDepositAmount, statementOrderDetail.getStatementDetailRentDepositAmount()));
                 statementOrderDetail.setStatementDetailRentDepositAmount(BigDecimalUtil.compare(statementOrderDetail.getStatementDetailRentDepositAmount(), BigDecimal.ZERO) == -1 ? BigDecimal.ZERO : statementOrderDetail.getStatementDetailRentDepositAmount());
             }
-            // TODO: 2018\7\3 0003 判断相减之后最外层的对账单商品数或配件数是否为0，如果为0，则直接不存储
+            //判断相减之后最外层的对账单商品数或配件数是否为0，如果为0，则直接不存储
             if (OrderItemType.ORDER_ITEM_TYPE_OTHER.equals(statementOrderDetail.getOrderItemType())) {
                 allList.addAll(list);
             }else {
