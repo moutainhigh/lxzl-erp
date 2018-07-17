@@ -732,6 +732,9 @@
             <if test="maps.orderQueryParam.isReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 0">
                 AND eo.relet_order_id IS NULL
             </if>
+            <if test="maps.orderQueryParam.isCanReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 0">
+                AND eo.relet_order_id IS NULL
+            </if>
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
             </if>
@@ -1243,5 +1246,20 @@
         #{item}
         </foreach>
         and eo.data_status = 1
+    </select>
+
+    <select id="queryOrderByWorkbench" resultType="java.lang.Integer" parameterType="map">
+        select count(eo.id) from erp_order eo
+        <where>
+            <if test="maps.workbenchOrderQueryParam.orderStatus != null ">
+                and eo.order_status = #{maps.workbenchOrderQueryParam.orderStatus, jdbcType=INTEGER}
+            </if>
+            <if test="maps.currentUserId != null ">
+                and eo.create_user = #{maps.currentUserId ,jdbcType=INTEGER}
+            </if>
+            <if test="maps.isQueryAll == null">
+                and eo.data_status = 1
+            </if>
+        </where>
     </select>
 </mapper>
