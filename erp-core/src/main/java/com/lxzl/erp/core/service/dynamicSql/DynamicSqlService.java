@@ -24,9 +24,9 @@ public interface DynamicSqlService {
 
     ServiceResult<String, List<List<Object>>> selectBySql(DynamicSqlSelectParam dynamicSqlSelectParam);
 
-    ServiceResult<String, String> updateBySql(DynamicSqlSelectParam dynamicSqlSelectParam);
+    ServiceResult<String, String> updateBySql(String sql);
 
-    ServiceResult<String, String> insertBySql(DynamicSqlSelectParam dynamicSqlSelectParam);
+    ServiceResult<String, String> insertBySql(String sql);
 
     ServiceResult<String, Page<DynamicSqlHolder>> pageDynamicSqlHolder(PageQuery pageQuery);
 
