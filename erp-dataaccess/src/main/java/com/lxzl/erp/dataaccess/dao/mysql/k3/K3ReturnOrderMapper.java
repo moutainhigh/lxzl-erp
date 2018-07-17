@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public interface K3ReturnOrderMapper extends BaseMysqlDAO<K3ReturnOrderDO> {
@@ -27,4 +28,6 @@ public interface K3ReturnOrderMapper extends BaseMysqlDAO<K3ReturnOrderDO> {
     K3ReturnOrderDO findReturnOrderById(@Param("id") Integer id);
 
     List<K3ReturnOrderDO> findByCustomerNoForExport(@Param("k3CustomerNo") String customerNo);
+
+    List<K3ReturnOrderDO> findByIdSet(@Param("k3ReturnIdSet") Set<Integer> k3ReturnIdSet);
 }
