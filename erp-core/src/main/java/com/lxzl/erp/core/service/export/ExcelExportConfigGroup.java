@@ -252,6 +252,8 @@ public class ExcelExportConfigGroup {
                         return customerName.toString().trim();
                     }
                 }))
+                .addConfig(new ColConfig("customerSubCompanyNameStringList", "客户所属分公司"))
+                .addConfig(new ColConfig("ownerSubCompanyName", "数据分公司"))
                 .addConfig(new ColConfig("subCompanyName", "客户归属地"))
                 .addConfig(new ColConfig("tradeSerialNo", "交易流水号",39));
     }
