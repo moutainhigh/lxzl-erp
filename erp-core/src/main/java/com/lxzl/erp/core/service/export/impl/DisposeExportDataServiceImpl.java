@@ -129,10 +129,7 @@ public class DisposeExportDataServiceImpl implements DisposeExportDataService {
     public ServiceResult<String, String> disposeDynamicSql(DynamicSqlSelectParam dynamicSqlSelectParam, HttpServletResponse response) throws Exception {
         ServiceResult<String, String> result = new ServiceResult<>();
         String sql  = URLDecoder.decode(dynamicSqlSelectParam.getSql(),"UTF-8");
-        dynamicSqlSelectParam.setSql(sql);
-        dynamicSqlSelectParam.setLimit(Integer.MAX_VALUE);
-        dynamicSqlService.selectBySql(dynamicSqlSelectParam);
-        Result dynamicSqlResult = resultGenerator.generate(dynamicSqlService.selectBySql(dynamicSqlSelectParam));
+        Result dynamicSqlResult = resultGenerator.generate(dynamicSqlService.selectBySql(sql));
         if(!ErrorCode.SUCCESS.equals(dynamicSqlResult.getCode())){
             result.setErrorCode(dynamicSqlResult.getCode());
             return result;
