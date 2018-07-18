@@ -3,8 +3,8 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dynamicSql.AdoptExecuteParam;
+import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlParam;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlQueryParam;
-import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
 import com.lxzl.erp.common.domain.dynamicSql.pojo.DynamicSql;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
@@ -34,8 +34,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class DynamicSqlController extends BaseController {
 
     @RequestMapping(value = "select", method = RequestMethod.POST)
-    public Result executeBySql(@RequestBody DynamicSqlSelectParam dynamicSqlSelectParam) {
-        return resultGenerator.generate(dynamicSqlService.executeBySql(dynamicSqlSelectParam));
+    public Result executeBySql(@RequestBody DynamicSqlParam dynamicSqlParam) {
+        return resultGenerator.generate(dynamicSqlService.executeBySql(dynamicSqlParam));
     }
 
     @RequestMapping(value = "adoptList", method = RequestMethod.POST)
