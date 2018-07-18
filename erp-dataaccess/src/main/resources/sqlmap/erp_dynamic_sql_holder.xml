@@ -8,6 +8,7 @@
         <result column="sql_tpye" jdbcType="VARCHAR" property="sqlTpye"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
         <result column="results" jdbcType="VARCHAR" property="results"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
@@ -22,6 +23,7 @@
 	sql_tpye,
 	status,
 	results,
+	remark,
 	data_status,
 	create_time,
 	create_user,
@@ -78,9 +80,13 @@
             <if test="results != null">
                 results = #{results,jdbcType=VARCHAR},
             </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
             <if test="dataStatus != null">
                 data_status = #{dataStatus,jdbcType=INTEGER},
             </if>
+
             <if test="createTime != null">
                 create_time = #{createTime,jdbcType=TIMESTAMP},
             </if>

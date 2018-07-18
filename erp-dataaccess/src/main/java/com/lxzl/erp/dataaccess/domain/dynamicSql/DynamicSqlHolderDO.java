@@ -16,8 +16,7 @@ public class DynamicSqlHolderDO extends BaseDO {
     private Integer status;
     private String results;
     private Integer dataStatus;
-
-
+    private String remark;
 
 
     public Integer getId() {
@@ -68,6 +67,14 @@ public class DynamicSqlHolderDO extends BaseDO {
         this.dataStatus = dataStatus;
     }
 
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
     public enum Status {
         UNCHECK(0), CHECKED(1), REJECT(2);
