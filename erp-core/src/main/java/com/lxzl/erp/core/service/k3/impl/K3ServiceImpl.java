@@ -798,6 +798,7 @@ public class K3ServiceImpl implements K3Service {
                 return serviceResult;
             }else{
                 serviceResult.setErrorCode(ErrorCode.K3_CONFIRM_ORDER_ERROR,responseMap.get("Message").toString());
+                dingDingSupport.dingDingSendMessage(getErrorMessage(response,OrderDO.getOrderNo()));
                 return serviceResult;
             }
         }catch (Exception e){
