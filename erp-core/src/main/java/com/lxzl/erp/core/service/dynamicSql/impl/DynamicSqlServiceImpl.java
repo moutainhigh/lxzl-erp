@@ -53,7 +53,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
 
 
     @Override
-    public ServiceResult<String, List<List<Object>>> executeBySql(final DynamicSqlParam dynamicSqlParam) {
+    public ServiceResult<String, List<List<Object>>> executeBySql(DynamicSqlParam dynamicSqlParam) {
         ServiceResult<String, List<List<Object>>> serviceResult = new ServiceResult<>();
         if (dynamicSqlParam.getLimit() == null || dynamicSqlParam.getLimit() <= 0) {
             dynamicSqlParam.setLimit(totalReturnCount);
@@ -375,7 +375,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
                             dynamicSqlItem.hasLimit = false;
                     break;
 
-                case ' ':
+                case ' ':case '\t':
                     if (stringParameterStateItem.isNotStringParameter())
                         checkKeyWork = true;
 
