@@ -63,7 +63,7 @@
                 AND create_user = #{maps.createUser}
             </if>
         </where>
-        LIMIT #{maps.start},#{maps.pageSize}
+        ORDER BY 1 DESC LIMIT #{maps.start},#{maps.pageSize}
     </select>
 
     <sql id="set_column_sql">

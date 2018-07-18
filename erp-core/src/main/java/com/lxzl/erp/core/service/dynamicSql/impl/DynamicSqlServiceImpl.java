@@ -5,6 +5,7 @@ import com.lxzl.erp.common.constant.DynamicSqlTpye;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.dynamicSql.DMLResult;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlParam;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlQueryParam;
 import com.lxzl.erp.common.domain.dynamicSql.pojo.DynamicSql;
@@ -131,31 +132,37 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     }
 
     @Override
-    public ServiceResult<String, String> updateBySql(String sql) {
-        ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        final int mark;
+    public ServiceResult<String, DMLResult> updateBySql(String sql) {
+        ServiceResult<String, DMLResult> serviceResult = new ServiceResult<>();
+        DMLResult dmlResult = new DMLResult();
         try {
-            mark = dynamicSqlDao.updateBySql(sql);
-            serviceResult.setResult("Affected rows:" + mark);
+            int mark = dynamicSqlDao.updateBySql(sql);
+            dmlResult.setSuccess(true);
+            dmlResult.setAffectedRows(mark);
+            dmlResult.setMsg("Affected rows:" + mark);
         } catch (SQLException | NonTransientDataAccessException e) {
-            serviceResult.setResult(e.getMessage());
+            dmlResult.setMsg(e.getMessage());
 //            throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
+        serviceResult.setResult(dmlResult);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
 
     @Override
-    public ServiceResult<String, String> insertBySql(String sql) {
-        ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        final int mark;
+    public ServiceResult<String, DMLResult> insertBySql(String sql) {
+        ServiceResult<String, DMLResult> serviceResult = new ServiceResult<>();
+        DMLResult dmlResult = new DMLResult();
         try {
-            mark = dynamicSqlDao.insertBySql(sql);
-            serviceResult.setResult("Affected rows:" + mark);
+            int mark = dynamicSqlDao.insertBySql(sql);
+            dmlResult.setSuccess(true);
+            dmlResult.setAffectedRows(mark);
+            dmlResult.setMsg("Affected rows:" + mark);
         } catch (SQLException | NonTransientDataAccessException e) {
-            serviceResult.setResult(e.getMessage());
+            dmlResult.setMsg(e.getMessage());
 //            throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
+        serviceResult.setResult(dmlResult);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -182,6 +189,8 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         return serviceResult;
     }
 
+    private static final int changeLimit = 50;
+
     @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, DynamicSqlHolderDO> adoptDynamicSqlHolder(Integer dynamicSqlHolderId) {
@@ -197,16 +206,25 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         final String sql = dynamicSqlHolderDO.getSqlContent();
         List<DynamicSqlItem> dynamicSqlItems = analysisAndRebuildDynamicSql(sql);
         StringBuilder sqlResultBuilder = new StringBuilder();
+        int affectedRows = 0;
         switch (dynamicSqlTpye) {
             case UPDATE:
-                for (DynamicSqlItem dynamicSqlItem : dynamicSqlItems)
-                    sqlResultBuilder.append(updateBySql(dynamicSqlItem.getSql()).getResult()).append(";").append("\n");
+                for (DynamicSqlItem dynamicSqlItem : dynamicSqlItems) {
+                    DMLResult dmlResult = updateBySql(dynamicSqlItem.getSql()).getResult();
+                    affectedRows += dmlResult.getAffectedRows();
+                    sqlResultBuilder.append(dmlResult.getMsg()).append(";").append("\n");
+                }
                 break;
             case INSERT:
-                for (DynamicSqlItem dynamicSqlItem : dynamicSqlItems)
-                    sqlResultBuilder.append(insertBySql(dynamicSqlItem.getSql()).getResult()).append(";").append("\n");
+                for (DynamicSqlItem dynamicSqlItem : dynamicSqlItems) {
+                    DMLResult dmlResult = insertBySql(dynamicSqlItem.getSql()).getResult();
+                    affectedRows += dmlResult.getAffectedRows();
+                    sqlResultBuilder.append(dmlResult.getMsg()).append(";").append("\n");
+                }
                 break;
         }
+        if (affectedRows > changeLimit)
+            throw new BusinessException("改变条数不能超过:" + changeLimit + "(affectedRows:" + affectedRows + ")");
         DynamicSqlHolderDO updateDynamicSqlHolderDO = new DynamicSqlHolderDO();
         updateDynamicSqlHolderDO.setId(dynamicSqlHolderDO.getId());
         updateDynamicSqlHolderDO.setStatus(DynamicSqlHolderDO.Status.CHECKED.value);
@@ -591,7 +609,6 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         }
 
     }
-
 /*
     private static final String SENSITIVE_INFO_VIEW = "***";
 
