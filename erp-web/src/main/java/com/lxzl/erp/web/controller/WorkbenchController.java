@@ -1,15 +1,11 @@
 package com.lxzl.erp.web.controller;
 
-import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
-import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
-import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.workbench.*;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
-import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.workbench.WorkbenchService;
@@ -126,17 +122,6 @@ public class WorkbenchController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    /**
-    *@描述 查询待审核工作流分页
-    *@param  workflowLinkQueryParam
-    *@param validResult
-    *@return  com.lxzl.se.common.domain.Result
-    */
-    @RequestMapping(value = "queryWaitVerifyWorkflowLinkPage", method = RequestMethod.POST)
-    public Result queryWaitVerifyWorkflowLinkPage(@RequestBody  WorkflowLinkQueryParam workflowLinkQueryParam, BindingResult validResult) {
-        ServiceResult<String, Page<WorkflowLink>> serviceResult = workbenchService.queryWaitVerifyWorkflowLinkPage(workflowLinkQueryParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
 
     /**
     *@描述 查询待认领的银行流水数量
@@ -162,17 +147,6 @@ public class WorkbenchController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    /**
-     *@描述 未支付,部分支付的结算单分页
-     *@param  statementOrderQueryParam
-     *@param validResult
-     *@return  com.lxzl.se.common.domain.Result
-     */
-    @RequestMapping(value = "queryStatementOrderPage", method = RequestMethod.POST)
-    public Result queryStatementOrderPage(@RequestBody  StatementOrderQueryParam statementOrderQueryParam, BindingResult validResult) {
-        ServiceResult<String, Page<StatementOrder>> serviceResult = workbenchService.queryStatementOrderPage(statementOrderQueryParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
 
 
     @Autowired

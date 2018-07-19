@@ -37,6 +37,15 @@ public class StatementOrderQueryParam extends BasePageParam {
     private Integer owner;		//数据归属人，跟单员
     private String ownerName; //业务员姓名
     private Integer subCompanyId; //分公司ID
+    private Boolean isWorkbench; //是否是工作台
+
+    public Boolean getIsWorkbench() {
+        return isWorkbench;
+    }
+
+    public void setIsWorkbench(Boolean workbench) {
+        isWorkbench = workbench;
+    }
 
     public Integer getSubCompanyId() {
         return subCompanyId;
