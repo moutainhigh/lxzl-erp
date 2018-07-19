@@ -1,10 +1,7 @@
 package com.lxzl.erp.common.domain.workflow;
 
-import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePageParam;
-import com.lxzl.erp.common.domain.validGroup.workbench.WorkbenchGroup;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
