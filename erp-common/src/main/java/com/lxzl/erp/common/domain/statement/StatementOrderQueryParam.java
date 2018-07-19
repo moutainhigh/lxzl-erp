@@ -22,7 +22,7 @@ public class StatementOrderQueryParam extends BasePageParam {
     private Integer statementOrderCustomerId;
     private String statementOrderCustomerNo;
     private String statementOrderNo;
-    @NotNull(message = ErrorCode.STATEMENT_ORDER_STATUS_IS_NULL,groups = {WorkbenchGroup.class})
+    @NotNull(message = ErrorCode.STATEMENT_ORDER_STATUS_IS_NULL_IN_WORK_BENCH,groups = {WorkbenchGroup.class})
     private Integer statementOrderStatus;
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date statementExpectPayStartTime;

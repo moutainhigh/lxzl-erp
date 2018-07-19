@@ -319,13 +319,13 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
         List<Map<String, Integer>> list = new ArrayList<>();
         if(CollectionUtil.isEmpty(statementOrderQueryParamList)){
-            result.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_IS_NULL);
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_IS_NULL_IN_WORK_BENCH);
             return result;
         }
         //判断是否都传了状态
         for (StatementOrderQueryParam statementOrderQueryParam : statementOrderQueryParamList) {
             if(statementOrderQueryParam.getStatementOrderStatus() == null){
-                result.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_IS_NULL);
+                result.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_IS_NULL_IN_WORK_BENCH);
                 return result;
             }
         }
