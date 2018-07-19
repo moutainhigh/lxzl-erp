@@ -7,7 +7,6 @@ import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
-import com.lxzl.erp.common.domain.validGroup.workbench.WorkbenchGroup;
 import com.lxzl.erp.common.domain.workbench.*;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
@@ -18,7 +17,6 @@ import com.lxzl.se.common.domain.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -123,7 +121,7 @@ public class WorkbenchController {
     *@return  com.lxzl.se.common.domain.Result
     */
     @RequestMapping(value = "queryWaitVerifyWorkflowLinkCount", method = RequestMethod.POST)
-    public Result queryWaitVerifyWorkflowLinkCount(@RequestBody @Validated(WorkbenchGroup.class) WorkflowLinkQueryParam workflowLinkQueryParam, BindingResult validResult) {
+    public Result queryWaitVerifyWorkflowLinkCount(@RequestBody  WorkflowLinkQueryParam workflowLinkQueryParam, BindingResult validResult) {
         ServiceResult<String, Integer> serviceResult = workbenchService.queryWaitVerifyWorkflowLinkCount(workflowLinkQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
@@ -135,7 +133,7 @@ public class WorkbenchController {
     *@return  com.lxzl.se.common.domain.Result
     */
     @RequestMapping(value = "queryWaitVerifyWorkflowLinkPage", method = RequestMethod.POST)
-    public Result queryWaitVerifyWorkflowLinkPage(@RequestBody @Validated(WorkbenchGroup.class) WorkflowLinkQueryParam workflowLinkQueryParam, BindingResult validResult) {
+    public Result queryWaitVerifyWorkflowLinkPage(@RequestBody  WorkflowLinkQueryParam workflowLinkQueryParam, BindingResult validResult) {
         ServiceResult<String, Page<WorkflowLink>> serviceResult = workbenchService.queryWaitVerifyWorkflowLinkPage(workflowLinkQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
@@ -147,7 +145,7 @@ public class WorkbenchController {
     *@return  com.lxzl.se.common.domain.Result
     */
     @RequestMapping(value = "queryBankSlipDetailCount", method = RequestMethod.POST)
-    public Result queryBankSlipDetailCount(@RequestBody @Validated(WorkbenchGroup.class) BankSlipDetailQueryParam bankSlipDetailQueryParam, BindingResult validResult) {
+    public Result queryBankSlipDetailCount(@RequestBody  BankSlipDetailQueryParam bankSlipDetailQueryParam, BindingResult validResult) {
         ServiceResult<String, Integer> serviceResult = workbenchService.queryBankSlipDetailCount(bankSlipDetailQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
@@ -160,7 +158,7 @@ public class WorkbenchController {
     */
     @RequestMapping(value = "queryStatementOrderCount", method = RequestMethod.POST)
     public Result queryStatementOrderCount(@RequestBody  List<StatementOrderQueryParam>  statementOrderQueryParamList, BindingResult validResult) {
-        ServiceResult<String, List<Map<String, Integer>>> serviceResult = workbenchService.queryStatementOrderCount(statementOrderQueryParamList);
+        ServiceResult<String, Map<String, Integer>> serviceResult = workbenchService.queryStatementOrderCount(statementOrderQueryParamList);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -171,7 +169,7 @@ public class WorkbenchController {
      *@return  com.lxzl.se.common.domain.Result
      */
     @RequestMapping(value = "queryStatementOrderPage", method = RequestMethod.POST)
-    public Result queryStatementOrderPage(@RequestBody @Validated(WorkbenchGroup.class) StatementOrderQueryParam statementOrderQueryParam, BindingResult validResult) {
+    public Result queryStatementOrderPage(@RequestBody  StatementOrderQueryParam statementOrderQueryParam, BindingResult validResult) {
         ServiceResult<String, Page<StatementOrder>> serviceResult = workbenchService.queryStatementOrderPage(statementOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }

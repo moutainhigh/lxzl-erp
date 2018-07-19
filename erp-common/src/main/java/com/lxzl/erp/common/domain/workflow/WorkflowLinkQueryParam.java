@@ -20,7 +20,6 @@ public class WorkflowLinkQueryParam extends BasePageParam implements Serializabl
     private String workflowLinkNo;
     private Integer workflowType;
     private String workflowReferNo;
-    @NotNull(message = ErrorCode.WORKFLOW_VERIFY_STATUS_IS_NULL_IN_WORK_BENCH,groups = {WorkbenchGroup.class})
     private Integer verifyStatus;
     private String verifyMatters;
     private Integer commitUserId;
