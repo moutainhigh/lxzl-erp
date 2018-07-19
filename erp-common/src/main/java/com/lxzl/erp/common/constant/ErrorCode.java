@@ -201,7 +201,6 @@ public class ErrorCode {
     public static final String PARAM_IS_NOT_ENOUGH = "J900016";
     public static final String NO_DUPLICATE_COMMIT = "J900017";
     public static final String PARAM_IS_ERROR = "J900018";
-    public static final String WORKFLOW_VERIFY_STATUS_IS_NULL = "J900020";
 
     public static final String PURCHASE_ORDER_ID_NOT_NULL = "J300000";
     public static final String PRODUCT_SUPPLIER_ID_NOT_NULL = "J300001";
@@ -810,8 +809,6 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO = "J16000020";
     public static final String STATEMENT_ORDER_DETAIL_ID_NOT_NULL = "J16000021";
     public static final String RELET_ORDER_NOT_ALLOW_RE_STATEMENT = "J16000022";
-    public static final String STATEMENT_ORDER_STATUS_IS_NULL = "J16000023";
-
 
     public static final String K3_RETURN_ORDER_IS_NOT_NULL = "J17000001";
     public static final String K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE = "J17000002";
@@ -908,8 +905,6 @@ public class ErrorCode {
     public static final String CHARGE_TYPE_IS_MANUAL_CHARGE_OR_PUBLIC_TRANSFER_PLUS = "J18000056";
     public static final String CHARGE_RECORD_DATA_FAIL = "J18000057";
     public static final String BINDING_CUSTOMER_NO = "J18000058";
-    public static final String BANK_SLIP_DETAIL_STATUS_IS_NULL = "J18000059";
-    public static final String BANK_SLIP_DETAIL_LOAN_SIGN_IS_NULL = "J18000060";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1010,6 +1005,11 @@ public class ErrorCode {
     public static final String DYNAMICSQLHOLDERID_NOT_NULL = "J260000007";
     public static final String DYNAMIC_SQL_ILLEGAL_OPERATION = "J260000008";
 
+    //工作台
+    public static final String WORKFLOW_VERIFY_STATUS_IS_NULL_IN_WORK_BENCH = "J270000001";
+    public static final String STATEMENT_ORDER_STATUS_IS_NULL_IN_WORK_BENCH = "J270000002";
+    public static final String BANK_SLIP_DETAIL_STATUS_IS_NULL_IN_WORK_BENCH = "J270000003";
+    public static final String BANK_SLIP_DETAIL_LOAN_SIGN_IS_NULL_IN_WORK_BENCH = "J270000004";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1251,7 +1251,6 @@ public class ErrorCode {
         MAP.put(PARAM_IS_NOT_ENOUGH, "选择的设备不存在或者信息不全，请仔细检查");
         MAP.put(NO_DUPLICATE_COMMIT, "禁止重复提交");
         MAP.put(PARAM_IS_ERROR, "参数有误，请仔细检查");
-        MAP.put(WORKFLOW_VERIFY_STATUS_IS_NULL, "工作流审核状态不能为空");
 
         MAP.put(PURCHASE_ORDER_ID_NOT_NULL, "采购订单ID不能为空");
         MAP.put(PRODUCT_SUPPLIER_ID_NOT_NULL, "商品供应商ID不能为空");
@@ -1787,7 +1786,6 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO, "由结算单生成结算支付记录时，结算单的支付总金额必须大于0");
         MAP.put(STATEMENT_ORDER_DETAIL_ID_NOT_NULL, "结算单详情ID不能为空");
         MAP.put(RELET_ORDER_NOT_ALLOW_RE_STATEMENT, "续租单目前暂不支持重算");
-        MAP.put(STATEMENT_ORDER_STATUS_IS_NULL, "结算单状态不能为空");
 
         MAP.put(K3_RETURN_ORDER_IS_NOT_NULL, "K3退货单不存在");
         MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE, "K3退货单状态为审核中或者已推送到K3，不能修改");
@@ -1883,8 +1881,6 @@ public class ErrorCode {
         MAP.put(CHARGE_TYPE_IS_MANUAL_CHARGE_OR_PUBLIC_TRANSFER_PLUS, "充值记录是手动加款或者对公转账加款");
         MAP.put(CHARGE_RECORD_DATA_FAIL, "充值记录数据有误");
         MAP.put(BINDING_CUSTOMER_NO, "是绑定用户且已经充值过");
-        MAP.put(BANK_SLIP_DETAIL_STATUS_IS_NULL, "银行流水明细状态不能为空");
-        MAP.put(BANK_SLIP_DETAIL_LOAN_SIGN_IS_NULL, "银行流水明细借贷标志不能为空");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");
@@ -2001,6 +1997,10 @@ public class ErrorCode {
         MAP.put(RETURN_STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，该退货单结算单详情已存在，不能重复生成结算单");
         MAP.put(CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST, "客户为已经为确认坏账状态");
 
+        MAP.put(WORKFLOW_VERIFY_STATUS_IS_NULL_IN_WORK_BENCH, "工作台工作流审核状态不能为空");
+        MAP.put(STATEMENT_ORDER_STATUS_IS_NULL_IN_WORK_BENCH, "工作台结算单状态不能为空");
+        MAP.put(BANK_SLIP_DETAIL_STATUS_IS_NULL_IN_WORK_BENCH, "工作台银行流水明细状态不能为空");
+        MAP.put(BANK_SLIP_DETAIL_LOAN_SIGN_IS_NULL_IN_WORK_BENCH, "工作台银行流水明细借贷标志不能为空");
 
     }
 
