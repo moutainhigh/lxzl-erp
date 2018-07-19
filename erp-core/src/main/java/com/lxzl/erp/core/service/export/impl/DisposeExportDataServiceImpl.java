@@ -4,6 +4,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
+import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
@@ -14,6 +15,7 @@ import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.statistics.StatisticsSalesmanPageParam;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesman;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanDetail;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.bank.BankSlipService;
 import com.lxzl.erp.core.service.dynamicSql.DynamicSqlService;
@@ -62,7 +64,20 @@ public class DisposeExportDataServiceImpl implements DisposeExportDataService {
             result.setErrorCode(stringPageServiceResult.getErrorCode());
             return result;
         }
-        result = excelExportService.export(stringPageServiceResult, ExcelExportConfigGroup.bankSlipDetailConfig, ExcelExportSupport.formatFileName("资金流水记录"), "sheet1", response);
+        List<BankSlipDetail> bankSlipDetailList = stringPageServiceResult.getResult().getItemList();
+        if(CollectionUtil.isNotEmpty(bankSlipDetailList)){
+            for (BankSlipDetail bankSlipDetail : bankSlipDetailList) {
+                List<BankSlipClaim> bankSlipClaimList = bankSlipDetail.getBankSlipClaimList();
+                if(CollectionUtil.isNotEmpty(bankSlipClaimList)){
+                    String customerSubCompanyNameStringList = "";
+                    for (BankSlipClaim bankSlipClaim : bankSlipClaimList) {
+                        customerSubCompanyNameStringList = customerSubCompanyNameStringList +"\r\n"+ bankSlipClaim.getCustomerSubCompanyName();
+                    }
+                    bankSlipDetail.setCustomerSubCompanyNameStringList(customerSubCompanyNameStringList.trim());  //保存所有已经认领的客户对应的公司
+                }
+            }
+        }
+        result = excelExportService.export(bankSlipDetailList, ExcelExportConfigGroup.bankSlipDetailConfig, "资金流水记录", "sheet1", response);
         return result;
     }
 
@@ -94,7 +109,7 @@ public class DisposeExportDataServiceImpl implements DisposeExportDataService {
         if(statisticsSalesmanResult.getResult() == null || statisticsSalesmanResult.getResult().getStatisticsSalesmanDetailPage() == null){
             statisticsSalesmanDetailList = statisticsSalesmanResult.getResult().getStatisticsSalesmanDetailPage().getItemList();
         }
-        ServiceResult<String, String> serviceResult = excelExportService.export(statisticsSalesmanDetailList, ExcelExportConfigGroup.statisticsSalesmanDetailConfig, ExcelExportSupport.formatFileName("销售统计详情"), "sheet1", response);
+        ServiceResult<String, String> serviceResult = excelExportService.export(statisticsSalesmanDetailList, ExcelExportConfigGroup.statisticsSalesmanDetailConfig, "销售统计详情", "sheet1", response);
         return serviceResult;
     }
 
@@ -106,7 +121,7 @@ public class DisposeExportDataServiceImpl implements DisposeExportDataService {
             result.setErrorCode(financeStatementOrderPayDetailResult.getErrorCode());
             return result;
         }
-        ServiceResult<String, String> serviceResult = excelExportService.export(financeStatementOrderPayDetailResult.getResult().getItemList(), ExcelExportConfigGroup.statementOrderPayDetailConfig,ExcelExportSupport.formatFileName("支付明细"), "sheet1", response);
+        ServiceResult<String, String> serviceResult = excelExportService.export(financeStatementOrderPayDetailResult.getResult().getItemList(), ExcelExportConfigGroup.statementOrderPayDetailConfig,"支付明细", "sheet1", response);
         return serviceResult;
     }
 
@@ -114,15 +129,12 @@ public class DisposeExportDataServiceImpl implements DisposeExportDataService {
     public ServiceResult<String, String> disposeDynamicSql(DynamicSqlSelectParam dynamicSqlSelectParam, HttpServletResponse response) throws Exception {
         ServiceResult<String, String> result = new ServiceResult<>();
         String sql  = URLDecoder.decode(dynamicSqlSelectParam.getSql(),"UTF-8");
-        dynamicSqlSelectParam.setSql(sql);
-        dynamicSqlSelectParam.setLimit(Integer.MAX_VALUE);
-        dynamicSqlService.selectBySql(dynamicSqlSelectParam);
-        Result dynamicSqlResult = resultGenerator.generate(dynamicSqlService.selectBySql(dynamicSqlSelectParam));
+        Result dynamicSqlResult = resultGenerator.generate(dynamicSqlService.selectBySql(sql));
         if(!ErrorCode.SUCCESS.equals(dynamicSqlResult.getCode())){
             result.setErrorCode(dynamicSqlResult.getCode());
             return result;
         }
-        result = excelExportService.export(dynamicSqlResult,ExcelExportSupport.formatFileName("动态sql"),"sheet1" , response,5000);
+        result = excelExportService.export(dynamicSqlResult,"动态sql","sheet1" , response,5000);
         return result;
     }
 }

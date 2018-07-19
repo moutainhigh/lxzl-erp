@@ -288,4 +288,15 @@
         ekro.id = #{id,jdbcType=VARCHAR} AND ekro.data_status = 1
     </select>
 
+    <select id="findByIdSet" resultMap="K3ReturnOrderDO" parameterType="java.util.Set">
+        select
+        <include refid="column_List"/>
+        from erp_k3_return_order ekro
+        where ekro.id in
+        <foreach collection="k3ReturnIdSet" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and ekro.data_status = 1
+        AND ekro.return_order_status = 20
+    </select>
 </mapper>
