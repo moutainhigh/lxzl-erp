@@ -89,7 +89,8 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
     /**
      * 审核中的订单 4
      * 待发货的订单 8
-     *
+     * 到期未处理订单
+     *  未支付的订单
      * */
     @Test
     public void queryOrderTest() throws Exception{
@@ -106,6 +107,10 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
         OrderQueryParam orderQueryParam3 = new OrderQueryParam();
         orderQueryParam3.setIsReturnOverDue(CommonConstant.DATA_STATUS_ENABLE);
         list.add(orderQueryParam3);
+
+        OrderQueryParam orderQueryParam4 = new OrderQueryParam();
+        orderQueryParam4.setPayStatus(PayStatus.PAY_STATUS_INIT);
+        list.add(orderQueryParam4);
 
         param.setOrderQueryParamList(list);
         TestResult testResult = getJsonTestResult("/workbench/queryOrder", param);
