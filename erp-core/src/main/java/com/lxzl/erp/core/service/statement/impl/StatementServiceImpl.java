@@ -6683,7 +6683,7 @@ public class StatementServiceImpl implements StatementService {
         Date currentTime=new Date();
         BigDecimal rentPayAmount=BigDecimal.ZERO, rentDepositPayAmount=BigDecimal.ZERO, depositPayAmount=BigDecimal.ZERO, otherPayAmount=BigDecimal.ZERO, overduePayAmount=BigDecimal.ZERO, realTotalNeedPayAmount=BigDecimal.ZERO;
         for(StatementOrderDetailDO statementOrderDetailDO:statementOrderDetailDOList){
-            if(!OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetailDO.getOrderType()))continue;
+            if(OrderType.ORDER_TYPE_RETURN.equals(statementOrderDetailDO.getOrderType()))continue;
             if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())
                     || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                 continue;
