@@ -95,7 +95,7 @@ public interface WorkbenchService {
      *查询审核中，被驳回的工作流
      *
      */
-    ServiceResult<String, List<Map<String, Integer>>> queryStatementOrderCount(List<StatementOrderQueryParam> statementOrderQueryParamList);
+    ServiceResult<String, Map<String, Integer>> queryStatementOrderCount(List<StatementOrderQueryParam> statementOrderQueryParamList);
     /**
      *查询审核中，被驳回的工作流
      *

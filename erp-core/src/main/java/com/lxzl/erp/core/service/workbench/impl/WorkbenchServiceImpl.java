@@ -33,7 +33,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowVerifyUserGroupMapper;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
@@ -314,41 +313,32 @@ public class WorkbenchServiceImpl implements WorkbenchService{
     }
 
     @Override
-    public ServiceResult<String, List<Map<String, Integer>>> queryStatementOrderCount(List<StatementOrderQueryParam>  statementOrderQueryParamList) {
-        ServiceResult<String, List<Map<String, Integer>>> result = new ServiceResult<>();
+    public ServiceResult<String, Map<String, Integer>> queryStatementOrderCount(List<StatementOrderQueryParam>  statementOrderQueryParamList) {
+        ServiceResult<String, Map<String, Integer>> result = new ServiceResult<>();
 
-        List<Map<String, Integer>> list = new ArrayList<>();
-        if(CollectionUtil.isEmpty(statementOrderQueryParamList)){
-            result.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_IS_NULL_IN_WORK_BENCH);
-            return result;
-        }
-        //判断是否都传了状态
-        for (StatementOrderQueryParam statementOrderQueryParam : statementOrderQueryParamList) {
-            if(statementOrderQueryParam.getStatementOrderStatus() == null){
-                result.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_IS_NULL_IN_WORK_BENCH);
-                return result;
+        Map<String, Integer> map = new HashMap<>();
+
+        if(CollectionUtil.isNotEmpty(statementOrderQueryParamList)){
+            for (StatementOrderQueryParam statementOrderQueryParam : statementOrderQueryParamList) {
+                //未分支付查询
+                statementOrderQueryParam.setStatementExpectPayStartTime(DateUtil.getDayByOffset(new Date(), -7));
+
+                Map<String, Object> maps = new HashMap<>();
+                maps.put("statementOrderQueryParam", statementOrderQueryParam);
+                maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
+
+                Integer totalCount = statementOrderMapper.listSaleCount(maps);
+
+                if (StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementOrderQueryParam.getStatementOrderStatus())) {
+                    map.put("unPaymentStatementOrder", totalCount);
+                }else if(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART.equals(statementOrderQueryParam.getStatementOrderStatus())){
+                    map.put("partialPaymentStatementOrder", totalCount);
+                }
             }
         }
 
-        for (StatementOrderQueryParam statementOrderQueryParam : statementOrderQueryParamList) {
-            Map<String, Integer> map = new HashMap<>();
-            //未分支付查询
-            statementOrderQueryParam.setStatementExpectPayStartTime(DateUtil.getDayByOffset(new Date(), -7));
-
-            Map<String, Object> maps = new HashMap<>();
-            maps.put("statementOrderQueryParam", statementOrderQueryParam);
-            maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
-
-            Integer totalCount = statementOrderMapper.listSaleCount(maps);
-
-            map.put("statementOrderStatus",statementOrderQueryParam.getStatementOrderStatus());
-            map.put("totalCount",totalCount);
-
-            list.add(map);
-        }
-
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(list);
+        result.setResult(map);
         return result;
     }
 
