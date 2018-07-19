@@ -723,14 +723,14 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 int month = diff[0];
                 int day = diff[1];
                 String monthAndDays = month + "月" + day + "天";
-
+                int typeDay = DateUtil.daysBetween(statementStartTime, statementEndTime) + 1;
                 if (OrderRentType.RENT_TYPE_DAY.equals(exportStatementOrderDetail.getOrderRentType())) {
-                    exportStatementOrderDetailBase.setRentTimeLength(exportStatementOrderDetail.getOrderRentTimeLength() + "天");  //期限
+                    exportStatementOrderDetailBase.setRentTimeLength(typeDay + "天");  //期限
                     exportStatementOrderDetailBase.setStatementMonth(0); //月
                     exportStatementOrderDetailBase.setStatementDay((DateUtil.daysBetween(statementStartTime,statementEndTime) + 1)); //日
                     exportStatementOrderDetailBase.setUnitAmountInfo(exportStatementOrderDetailBase.getUnitAmount() + "/日");
-                    exportStatementOrderDetail.setStatementStartTime(exportStatementOrderDetail.getOrderRentStartTime());
-                    exportStatementOrderDetail.setStatementEndTime(exportStatementOrderDetail.getOrderExpectReturnTime());
+//                    exportStatementOrderDetail.setStatementStartTime(exportStatementOrderDetail.getOrderRentStartTime());
+//                    exportStatementOrderDetail.setStatementEndTime(exportStatementOrderDetail.getOrderExpectReturnTime());
                 } else if (OrderRentType.RENT_TYPE_MONTH.equals(exportStatementOrderDetail.getOrderRentType())) {
                     exportStatementOrderDetailBase.setStatementMonth(month); //月
                     exportStatementOrderDetailBase.setStatementDay(day); //日

@@ -12,7 +12,6 @@ import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
 import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
 import com.lxzl.erp.common.domain.product.pojo.Product;
-import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.*;
 import com.lxzl.erp.common.domain.statement.pojo.CheckStatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.CheckStatementOrderDetail;
@@ -76,7 +75,6 @@ import com.lxzl.erp.dataaccess.domain.statement.*;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDO;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDetailDO;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
-import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import com.lxzl.se.dataaccess.mysql.source.interceptor.SqlLogInterceptor;
@@ -1574,6 +1572,12 @@ public class StatementServiceImpl implements StatementService {
     @Override
     public ServiceResult<String, Page<StatementOrder>> queryStatementOrder(StatementOrderQueryParam statementOrderQueryParam) {
         ServiceResult<String, Page<StatementOrder>> result = new ServiceResult<>();
+
+        //工作台判断
+        if(statementOrderQueryParam.getIsWorkbench() != null && statementOrderQueryParam.getIsWorkbench()){
+            statementOrderQueryParam.setStatementExpectPayStartTime(DateUtil.getDayByOffset(new Date(), -7));
+        }
+
         PageQuery pageQuery = new PageQuery(statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
         if (StringUtil.isNotEmpty(statementOrderQueryParam.getOrderNo())) {
@@ -5066,28 +5070,28 @@ public class StatementServiceImpl implements StatementService {
         }
         List<CheckStatementOrderDetailDO> firstReturnListPage = statementOrderDetailMapper.exportFirstReturnListPage(maps);
         // TODO: 2018\7\5 0005 新逻辑  将所有第一次创建的放到里面
-        Map<String,Map<Integer,List<CheckStatementOrderDetailDO>>> firstReturnMonthMap = new HashMap<>();
+        Map<String,Map<String,List<CheckStatementOrderDetailDO>>> firstReturnMonthMap = new HashMap<>();
         if (CollectionUtil.isNotEmpty(firstReturnListPage)) {
             for (CheckStatementOrderDetailDO checkStatementOrderDetailDO : firstReturnListPage) {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
                 Date statementExpectPayTime = checkStatementOrderDetailDO.getStatementExpectPayTime();
                 String monthTimeString = simpleDateFormat.format(statementExpectPayTime);
                 if (!firstReturnMonthMap.containsKey(monthTimeString)) {
-                    Map<Integer,List<CheckStatementOrderDetailDO>> itemIdMap = new HashMap<>();
+                    Map<String,List<CheckStatementOrderDetailDO>> itemIdMap = new HashMap<>();
                     List<CheckStatementOrderDetailDO> returnCheckStatementOrderDetailDOList = new ArrayList<>();
                     returnCheckStatementOrderDetailDOList.add(checkStatementOrderDetailDO);
                     StatementOrderDetailDO byStatementOrderId = statementOrderDetailMapper.findById(checkStatementOrderDetailDO.getReturnReferId());
-                    itemIdMap.put(byStatementOrderId.getOrderItemReferId(),returnCheckStatementOrderDetailDOList);
+                    itemIdMap.put(byStatementOrderId.getOrderItemReferId()+"-"+ byStatementOrderId.getReletOrderItemReferId(),returnCheckStatementOrderDetailDOList);
                     firstReturnMonthMap.put(monthTimeString,itemIdMap);
                 }else {
-                    Map<Integer,List<CheckStatementOrderDetailDO>> itemIdMap = firstReturnMonthMap.get(monthTimeString);
+                    Map<String,List<CheckStatementOrderDetailDO>> itemIdMap = firstReturnMonthMap.get(monthTimeString);
                     StatementOrderDetailDO byStatementOrderId = statementOrderDetailMapper.findById(checkStatementOrderDetailDO.getReturnReferId());
-                    if (!itemIdMap.containsKey(byStatementOrderId.getOrderItemReferId())) {
+                    if (!itemIdMap.containsKey(byStatementOrderId.getOrderItemReferId()+"-"+ byStatementOrderId.getReletOrderItemReferId())) {
                         List<CheckStatementOrderDetailDO> returnCheckStatementOrderDetailDOList = new ArrayList<>();
                         returnCheckStatementOrderDetailDOList.add(checkStatementOrderDetailDO);
-                        itemIdMap.put(byStatementOrderId.getOrderItemReferId(),returnCheckStatementOrderDetailDOList);
+                        itemIdMap.put(byStatementOrderId.getOrderItemReferId()+"-"+ byStatementOrderId.getReletOrderItemReferId(),returnCheckStatementOrderDetailDOList);
                     }else {
-                        List<CheckStatementOrderDetailDO> returnCheckStatementOrderDetailDOList = itemIdMap.get(byStatementOrderId.getOrderItemReferId());
+                        List<CheckStatementOrderDetailDO> returnCheckStatementOrderDetailDOList = itemIdMap.get(byStatementOrderId.getOrderItemReferId()+"-"+ byStatementOrderId.getReletOrderItemReferId());
                         returnCheckStatementOrderDetailDOList.add(checkStatementOrderDetailDO);
                     }
                 }
@@ -5156,7 +5160,7 @@ public class StatementServiceImpl implements StatementService {
                             if (orderProductDO != null) {
                                 Integer productId = orderProductDO.getProductId();
                                 Integer isNewProduct = orderProductDO.getIsNewProduct();
-                                key = statementOrderDetail.getOrderItemReferId() + statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
+                                key = statementOrderDetail.getOrderItemReferId() + statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType() + "-" + statementOrderDetail.getReletOrderItemReferId();
                                 payMode = orderProductDO.getPayMode();
                             }
                         }
@@ -5166,7 +5170,7 @@ public class StatementServiceImpl implements StatementService {
                             if (orderMaterialDO != null) {
                                 Integer materialId = orderMaterialDO.getMaterialId();
                                 Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
-                                key = statementOrderDetail.getOrderItemReferId() + statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
+                                key = statementOrderDetail.getOrderItemReferId() + statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType() + "-" + statementOrderDetail.getReletOrderItemReferId();
                                 payMode = orderMaterialDO.getPayMode();
                             }
                         }
@@ -5208,7 +5212,7 @@ public class StatementServiceImpl implements StatementService {
                         }
                         //为订单其他时
                         if (OrderItemType.ORDER_ITEM_TYPE_OTHER.equals(statementOrderDetail.getOrderItemType())) {
-                            key = statementOrderDetail.getOrderItemReferId() + statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
+                            key = statementOrderDetail.getOrderItemReferId() + statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType() + "-" + statementOrderDetail.getReletOrderItemReferId();
                             hashMap.put(key, statementOrderDetail);
                             continue;
                         }
@@ -5230,7 +5234,7 @@ public class StatementServiceImpl implements StatementService {
                                 if (orderProductDO != null) {
                                     Integer productId = orderProductDO.getProductId();
                                     Integer isNewProduct = orderProductDO.getIsNewProduct();
-                                    key = statementOrderDetail.getOrderItemReferId() + statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
+                                    key = statementOrderDetail.getOrderItemReferId() + statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType()+ "-" + statementOrderDetail.getReletOrderItemReferId();
                                 }
                             }
                         }
@@ -5250,13 +5254,13 @@ public class StatementServiceImpl implements StatementService {
                                 if (orderMaterialDO != null) {
                                     Integer materialId = orderMaterialDO.getMaterialId();
                                     Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
-                                    key = statementOrderDetail.getOrderItemReferId() + statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
+                                    key = statementOrderDetail.getOrderItemReferId() + statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType()+ "-" + statementOrderDetail.getReletOrderItemReferId();
                                 }
                             }
                         }
                         //为退还物料时
                         if (OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER.equals(statementOrderDetail.getOrderItemType())) {
-                            key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType() + "-" + statementOrderDetail.getOrderItemReferId();
+                            key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType() + "-" + statementOrderDetail.getOrderItemReferId()+ "-" + statementOrderDetail.getReletOrderItemReferId();
                         }
                         statementOrderDetail.setItemCount(statementOrderDetail.getItemCount() == null ? 0 : statementOrderDetail.getItemCount() * -1);
                     }
@@ -5388,15 +5392,15 @@ public class StatementServiceImpl implements StatementService {
             //插入退货的第一期
             for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
                 if (firstReturnMonthMap.containsKey(checkStatementOrder.getMonthTime())) {
-                    Map<Integer, List<CheckStatementOrderDetailDO>> itemIdMap = firstReturnMonthMap.get(checkStatementOrder.getMonthTime());
+                    Map<String, List<CheckStatementOrderDetailDO>> itemIdMap = firstReturnMonthMap.get(checkStatementOrder.getMonthTime());
                     List<CheckStatementOrderDetail> statementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
                     List<CheckStatementOrderDetail> newList = new ArrayList<>();
                     for (CheckStatementOrderDetail checkStatementOrderDetail:statementOrderDetailList){
-                        if (!itemIdMap.containsKey(checkStatementOrderDetail.getOrderItemReferId())) {
+                        if (!itemIdMap.containsKey(checkStatementOrderDetail.getOrderItemReferId()+"-"+checkStatementOrderDetail.getReletOrderItemReferId())) {
                             newList.add(checkStatementOrderDetail);
                         }else {
                             newList.add(checkStatementOrderDetail);
-                            List<CheckStatementOrderDetailDO> returnCheckStatementOrderDetailDOList = itemIdMap.get(checkStatementOrderDetail.getOrderItemReferId());
+                            List<CheckStatementOrderDetailDO> returnCheckStatementOrderDetailDOList = itemIdMap.get(checkStatementOrderDetail.getOrderItemReferId()+"-"+checkStatementOrderDetail.getReletOrderItemReferId());
                             List<CheckStatementOrderDetail> returnCheckStatementOrderDetailList = ConverterUtil.convertList(returnCheckStatementOrderDetailDOList,CheckStatementOrderDetail.class);
                             for (CheckStatementOrderDetail detail:returnCheckStatementOrderDetailList) {
                                 detail.setStatementStartTime(detail.getStatementExpectPayTime());
