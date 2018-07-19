@@ -112,7 +112,7 @@
                             <tr>
                                 <td>{{chargeOrderNo}}</td>
                                 <td>
-                                    {{#isErpCustomerVal}}<a href="{{customerDetailUrl}}" target="_blank">{{erpCustomerNo}}</a>{{/isErpCustomerVal}}
+                                    {{#isErpCustomerVal}}<a href="{{customerDetailUrl}}" target="_blank">{{businessCustomerNo}}</a>{{/isErpCustomerVal}}
                                     {{^isErpCustomerVal}}{{businessCustomerNo}}{{/isErpCustomerVal}}
                                 </td>
                                 <td>
