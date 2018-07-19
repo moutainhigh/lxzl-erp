@@ -1,7 +1,10 @@
 package com.lxzl.erp.common.domain.workflow;
 
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePageParam;
+import com.lxzl.erp.common.domain.validGroup.workbench.WorkbenchGroup;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +20,7 @@ public class WorkflowLinkQueryParam extends BasePageParam implements Serializabl
     private String workflowLinkNo;
     private Integer workflowType;
     private String workflowReferNo;
+    @NotNull(message = ErrorCode.WORKFLOW_VERIFY_STATUS_IS_NULL,groups = {WorkbenchGroup.class})
     private Integer verifyStatus;
     private String verifyMatters;
     private Integer commitUserId;

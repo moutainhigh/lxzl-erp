@@ -68,6 +68,7 @@ public class WorkflowTest extends ERPUnTransactionalTest {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
 //        workflowLinkQueryParam.setPageNo(1);
 //        workflowLinkQueryParam.setPageSize(15);
+        workflowLinkQueryParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
 //        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
 //        workflowLinkQueryParam.setWorkflowReferNo("");
         workflowLinkQueryParam.setVerifyStatus(3);
