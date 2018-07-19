@@ -1,8 +1,11 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
+import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
+import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.workbench.WorkbenchService;
@@ -57,27 +60,38 @@ public class WorkbenchController {
 
     /**
      * 查询审核中，被驳回的客户
-     * @param k3ReturnOrderQueryParam
+     * @param customerCompanyQueryParam
      * @param validResult
      * @return
      */
     @RequestMapping(value = "queryCompanyCustomer", method = RequestMethod.POST)
-    public Result queryCompanyCustomer(@RequestBody K3ReturnOrderQueryParam k3ReturnOrderQueryParam, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = workbenchService.queryReturnOrder(k3ReturnOrderQueryParam);
+    public Result queryCompanyCustomer(@RequestBody CustomerCompanyQueryParam customerCompanyQueryParam, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = workbenchService.queryCompanyCustomer(customerCompanyQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     /**
      * 查询审核中，被驳回的个人客户
-     * @param k3ReturnOrderQueryParam
+     * @param customerPersonQueryParam
      * @param validResult
      * @return
      */
     @RequestMapping(value = "queryPersonCustomer", method = RequestMethod.POST)
-    public Result queryPersonCustomer(@RequestBody K3ReturnOrderQueryParam k3ReturnOrderQueryParam, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = workbenchService.queryReturnOrder(k3ReturnOrderQueryParam);
+    public Result queryPersonCustomer(@RequestBody CustomerPersonQueryParam customerPersonQueryParam, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = workbenchService.queryPersonCustomer(customerPersonQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    /**
+     *查询审核中，被驳回的工作流
+     *
+     */
+    @RequestMapping(value = "queryWorkflow", method = RequestMethod.POST)
+    public Result queryWorkflow(@RequestBody WorkflowLinkQueryParam workflowLinkQueryParam, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = workbenchService.queryWorkflow(workflowLinkQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 
 
 
