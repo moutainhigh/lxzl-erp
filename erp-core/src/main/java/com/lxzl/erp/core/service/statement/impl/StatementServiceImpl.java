@@ -6763,23 +6763,30 @@ public class StatementServiceImpl implements StatementService {
             String loginUserId=userSupport.getCurrentUserId().toString();
 
             //更新结算单项
-            statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
-            statementOrderDetailDO.setStatementDetailPaidTime(currentTime);
-            statementOrderDetailDO.setUpdateTime(currentTime);
-            statementOrderDetailDO.setUpdateUser(loginUserId);
-            statementOrderDetailMapper.update(statementOrderDetailDO);
+            if(BigDecimalUtil.compare(realNeedPayAmount,BigDecimal.ZERO)>0){
+                statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
+                statementOrderDetailDO.setStatementDetailPaidTime(currentTime);
+                statementOrderDetailDO.setUpdateTime(currentTime);
+                statementOrderDetailDO.setUpdateUser(loginUserId);
+                statementOrderDetailMapper.update(statementOrderDetailDO);
+                //修改结算单项关联订单或续租单
+                updateOrderAfterStatementItemPay(statementOrderDetailDO, realNeedPayAmount, currentTime, loginUserId);
 
-            //修改结算单项关联订单或续租单
-            updateOrderAfterStatementItemPay(statementOrderDetailDO, realNeedPayAmount, currentTime, loginUserId);
+                rentPayAmount=BigDecimalUtil.add(rentPayAmount,needStatementDetailRentPayAmount);
+                rentDepositPayAmount=BigDecimalUtil.add(rentDepositPayAmount,needStatementDetailRentDepositPayAmount);
+                depositPayAmount=BigDecimalUtil.add(depositPayAmount,needStatementDetailDepositPayAmount);
+                otherPayAmount=BigDecimalUtil.add(otherPayAmount,needStatementDetailOtherPayAmount);
+                overduePayAmount=BigDecimalUtil.add(overduePayAmount,needStatementDetailOverduePayAmount);
+                realTotalNeedPayAmount=BigDecimalUtil.add(realTotalNeedPayAmount,realNeedPayAmount);
+            }
 
-            rentPayAmount=BigDecimalUtil.add(rentPayAmount,needStatementDetailRentPayAmount);
-            rentDepositPayAmount=BigDecimalUtil.add(rentDepositPayAmount,needStatementDetailRentDepositPayAmount);
-            depositPayAmount=BigDecimalUtil.add(depositPayAmount,needStatementDetailDepositPayAmount);
-            otherPayAmount=BigDecimalUtil.add(otherPayAmount,needStatementDetailOtherPayAmount);
-            overduePayAmount=BigDecimalUtil.add(overduePayAmount,needStatementDetailOverduePayAmount);
-            realTotalNeedPayAmount=BigDecimalUtil.add(realTotalNeedPayAmount,realNeedPayAmount);
         }
         //根据结算单项支付金额修改结算单
+        if(BigDecimalUtil.compare(otherPayAmount,BigDecimal.ZERO)<=0&&BigDecimalUtil.compare(rentPayAmount,BigDecimal.ZERO)<=0&&BigDecimalUtil.compare(rentDepositPayAmount,BigDecimal.ZERO)<=0&&BigDecimalUtil.compare(depositPayAmount,BigDecimal.ZERO)<=0&&BigDecimalUtil.compare(overduePayAmount,BigDecimal.ZERO)<=0){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_ITEM_NO_NEED_PAY);
+            return result;
+        }
         updateStatementOrderByItemPay(statementOrderDO, otherPayAmount, rentPayAmount, rentDepositPayAmount, depositPayAmount,overduePayAmount, currentTime, userSupport.getCurrentUserId().toString());
 
         //最后支付
@@ -6881,6 +6888,10 @@ public class StatementServiceImpl implements StatementService {
                 if (dbStatementOrderDetail.getStatementOrderId().equals(statementOrderDetailDO.getStatementOrderId())) {
                     break;
                 }
+                //如果未支付状态但，需支付金额为零可以跳过
+                BigDecimal returnAmount=getStatementItemHasReturn(dbStatementOrderDetail).getReturnStatementAmount();
+                BigDecimal hasPaidAmount=BigDecimalUtil.addAll(dbStatementOrderDetail.getStatementDetailDepositPaidAmount(),dbStatementOrderDetail.getStatementDetailOtherPaidAmount(),dbStatementOrderDetail.getStatementDetailOverduePaidAmount(),dbStatementOrderDetail.getStatementDetailPenaltyPaidAmount(),dbStatementOrderDetail.getStatementDetailRentPaidAmount(),dbStatementOrderDetail.getStatementDetailRentDepositPaidAmount());
+                if(BigDecimalUtil.compare(BigDecimalUtil.add(returnAmount,BigDecimalUtil.sub(dbStatementOrderDetail.getStatementDetailAmount(),hasPaidAmount)),dbStatementOrderDetail.getStatementDetailCorrectAmount())<=0)continue;
                 return ErrorCode.STATEMENT_ORDER_CAN_NOT_PAID_THIS;
             }
         }

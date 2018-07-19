@@ -811,6 +811,7 @@ public class ErrorCode {
     public static final String RELET_ORDER_NOT_ALLOW_RE_STATEMENT = "J16000022";
     public static final String STATEMENT_ORDER_DETAIL_NOT_IN_SAME_STATEMENT_ORDER = "J16000023";
     public static final String STATEMENT_ORDER_DETAIL_NOT_IN_SAME_ORDER = "J16000024";
+    public static final String STATEMENT_ORDER_ITEM_NO_NEED_PAY = "J16000025";
 
 
     public static final String K3_RETURN_ORDER_IS_NOT_NULL = "J17000001";
@@ -1785,7 +1786,8 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_DETAIL_ID_NOT_NULL, "结算单详情ID不能为空");
         MAP.put(RELET_ORDER_NOT_ALLOW_RE_STATEMENT, "续租单目前暂不支持重算");
         MAP.put(STATEMENT_ORDER_DETAIL_NOT_IN_SAME_STATEMENT_ORDER, "结算单项不属于同一结算单");
-        MAP.put(STATEMENT_ORDER_DETAIL_NOT_IN_SAME_ORDER, "结算单项不属于同一订单");
+        MAP.put(STATEMENT_ORDER_DETAIL_NOT_IN_SAME_ORDER, "结算单项不属于同一结算单");
+        MAP.put(STATEMENT_ORDER_ITEM_NO_NEED_PAY, "结算单项无需支付");
 
         MAP.put(K3_RETURN_ORDER_IS_NOT_NULL, "K3退货单不存在");
         MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE, "K3退货单状态为审核中或者已推送到K3，不能修改");
