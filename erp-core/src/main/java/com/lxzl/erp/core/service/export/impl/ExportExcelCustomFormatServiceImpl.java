@@ -415,6 +415,134 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 }
             }
         }
+        // TODO: 2018\7\18 0018 过滤商品数量为0，金额不为0的数据
+        // TODO: 2018\7\18 0018 拿到所有数量为零，金额不为0的订单数据
+        Map<String,Map<String,List<String>>> findMapOut = new HashMap<>();//map<支付月份，map<key,list<原月份>>>
+        Map<String,Map<String,Boolean>> booleanMapOut = new HashMap<>();//map<原月份，map<key,是否删除（默认都为true删除）>>
+        for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+            List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+            if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
+                continue;
+            }
+            String monthTime = checkStatementOrder.getMonthTime();//原月份
+            for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
+                Date statementExpectPayEndTime = exportStatementOrderDetail.getStatementExpectPayEndTime();
+                String statementExpectPayEndTimeString = null;//支付月份
+                if (statementExpectPayEndTime!=null) {
+                    statementExpectPayEndTimeString = simpleDateFormat.format(statementExpectPayEndTime);
+                }
+                if (statementExpectPayEndTimeString!= null) {
+                    //判断条件：原月份和支付月份不在同一月，为订单商品或订单配件结算单，先付后用，租赁数量为零，本期应付数大于零，本期应付租金大于零
+                    if (!monthTime.equals(statementExpectPayEndTimeString) &&
+                            (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())||
+                            OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType()))&&
+                            exportStatementOrderDetail.getItemCount() == 0 &&
+                            OrderPayMode.PAY_MODE_PAY_BEFORE.equals(exportStatementOrderDetail.getPayMode())&&
+                            BigDecimalUtil.compare(exportStatementOrderDetail.getStatementDetailEndAmount(),BigDecimal.ZERO)>0 &&
+                            BigDecimalUtil.compare(exportStatementOrderDetail.getStatementDetailRentEndAmount(),BigDecimal.ZERO)>0) {
+                        //key:订单ID-商品、配件项ID-商品、配件类型-单价-本期应付日期
+                        String key = exportStatementOrderDetail.getOrderId() +"-"+ exportStatementOrderDetail.getOrderItemReferId() +"-"+
+                                exportStatementOrderDetail.getOrderItemType() +"-"+ exportStatementOrderDetail.getUnitAmount()  +"-"+
+                                exportStatementOrderDetail.getStatementExpectPayEndTime();
+                        //存储查找的map的逻辑
+                        if (!findMapOut.containsKey(statementExpectPayEndTimeString)) {
+                            Map<String,List<String>> findMapInner = new HashMap<>();
+                            List<String> findList = new ArrayList<>();
+                            findList.add(monthTime);
+                            findMapInner.put(key,findList);
+                            findMapOut.put(statementExpectPayEndTimeString,findMapInner);
+                        }else {
+                            Map<String,List<String>> findMapInner = findMapOut.get(statementExpectPayEndTimeString);
+                            if (!findMapInner.containsKey(key)) {
+                                List<String> findList = new ArrayList<>();
+                                findList.add(monthTime);
+                                findMapInner.put(key,findList);
+                            }else {
+                                List<String> findList = findMapInner.get(key);
+                                findList.add(monthTime);
+                            }
+                        }
+                        //存储是否删除的map的逻辑
+                        if (!booleanMapOut.containsKey(monthTime)) {
+                            Map<String,Boolean> booleanMapInner = new HashMap<>();
+                            booleanMapInner.put(key,false);//存为false，默认删除该条数据
+                            booleanMapOut.put(monthTime,booleanMapInner);
+                        }else {
+                            Map<String,Boolean> booleanMapInner = booleanMapOut.get(monthTime);
+                            if (!booleanMapInner.containsKey(key)) {
+                                booleanMapInner.put(key,false);//存为false，默认删除该条数据
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // TODO: 2018\7\18 0018 到对应月份去找是否存在，存在标记为true，不存在标记为false不变
+        if (MapUtils.isNotEmpty(findMapOut)&& MapUtils.isNotEmpty(booleanMapOut)) {
+            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+                List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+                if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
+                    continue;
+                }
+                String monthTime = checkStatementOrder.getMonthTime();
+                if (findMapOut.containsKey(monthTime) && MapUtils.isNotEmpty(findMapOut.get(monthTime))) {
+                    Map<String,List<String>> findMapInner = findMapOut.get(monthTime);
+                    for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
+                        Date statementExpectPayEndTime = exportStatementOrderDetail.getStatementExpectPayTime();
+                        String statementExpectPayEndTimeString = null;//支付月份
+                        if (statementExpectPayEndTime!=null) {
+                            statementExpectPayEndTimeString = simpleDateFormat.format(statementExpectPayEndTime);
+                        }
+                        if (monthTime.equals(statementExpectPayEndTimeString) &&
+                                OrderPayMode.PAY_MODE_PAY_BEFORE.equals(exportStatementOrderDetail.getPayMode())&&
+                                (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())||
+                                        OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType()))&&
+                                exportStatementOrderDetail.getItemCount() > 0) {
+                            //key:订单ID-商品、配件项ID-商品、配件类型-单价-本期应付日期
+                            String key = exportStatementOrderDetail.getOrderId() +"-"+ exportStatementOrderDetail.getOrderItemReferId() +"-"+
+                                    exportStatementOrderDetail.getOrderItemType() +"-"+ exportStatementOrderDetail.getUnitAmount()  +"-"+
+                                    exportStatementOrderDetail.getStatementExpectPayTime();
+                            if (findMapInner.containsKey(key) && CollectionUtil.isNotEmpty(findMapInner.get(key))) {
+                                List<String> findList = findMapInner.get(key);
+                                for (String monthTimeString:findList){
+                                    if (booleanMapOut.containsKey(monthTimeString) && MapUtils.isNotEmpty(booleanMapOut.get(monthTimeString))) {
+                                        Map<String,Boolean> booleanMapInner = booleanMapOut.get(monthTimeString);
+                                        if (booleanMapInner.containsKey(key)) {
+                                            booleanMapInner.put(key,true);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // TODO: 2018\7\18 0018 循环遍历，删除标记为false的项
+            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+                List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+                if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
+                    continue;
+                }
+                String monthTime = checkStatementOrder.getMonthTime();
+                if (booleanMapOut.containsKey(monthTime) && MapUtils.isNotEmpty(booleanMapOut.get(monthTime))) {
+                    Map<String,Boolean> booleanMapInner = booleanMapOut.get(monthTime);
+                    List<CheckStatementOrderDetail> newList = new ArrayList<>();
+                    for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
+                        //key:订单ID-商品、配件项ID-商品、配件类型-单价-本期应付日期
+                        String key = exportStatementOrderDetail.getOrderId() +"-"+ exportStatementOrderDetail.getOrderItemReferId() +"-"+
+                                exportStatementOrderDetail.getOrderItemType() +"-"+ exportStatementOrderDetail.getUnitAmount()  +"-"+
+                                exportStatementOrderDetail.getStatementExpectPayEndTime();
+                        //map中没有则存储
+                        if (!booleanMapInner.containsKey(key)) {
+                            newList.add(exportStatementOrderDetail);
+                        }else if (booleanMapInner.get(key)) {//map中有，且为true就存储，为false不存储即删除
+                            newList.add(exportStatementOrderDetail);
+                        }
+                    }
+                    checkStatementOrder.setStatementOrderDetailList(newList);
+                }
+            }
+        }
 
 
         for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {

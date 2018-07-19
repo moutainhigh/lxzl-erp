@@ -810,7 +810,6 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_DETAIL_ID_NOT_NULL = "J16000021";
     public static final String RELET_ORDER_NOT_ALLOW_RE_STATEMENT = "J16000022";
 
-
     public static final String K3_RETURN_ORDER_IS_NOT_NULL = "J17000001";
     public static final String K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE = "J17000002";
     public static final String K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE = "J17000003";
@@ -1005,7 +1004,6 @@ public class ErrorCode {
     public static final String DELETE_PROTECTION = "J260000006";
     public static final String DYNAMICSQLHOLDERID_NOT_NULL = "J260000007";
     public static final String DYNAMIC_SQL_ILLEGAL_OPERATION = "J260000008";
-
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1992,6 +1990,7 @@ public class ErrorCode {
         MAP.put(SPLIT_STATEMENT_TIME_ERROR, "分段重算时间必须在订单起租时间与订单预计归还时间之间");
         MAP.put(RETURN_STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，该退货单结算单详情已存在，不能重复生成结算单");
         MAP.put(CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST, "客户为已经为确认坏账状态");
+
     }
 
 

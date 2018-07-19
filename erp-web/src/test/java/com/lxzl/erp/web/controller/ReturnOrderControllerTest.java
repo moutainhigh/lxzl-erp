@@ -145,8 +145,9 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void page() throws Exception {
         ReturnOrderPageParam returnOrderPageParam = new ReturnOrderPageParam();
+        returnOrderPageParam.setReturnOrderStatus(0);
 //        returnOrderPageParam.setCustomerName("星期五早上_不要动");
-        returnOrderPageParam.setOwnerName("毛涛");
+//        returnOrderPageParam.setOwnerName("毛涛");
 //        returnOrderPageParam.setReturnOrderNo("RO201711291746283331383");
 //        returnOrderPageParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010006");
 //        returnOrderPageParam.setReturnOrderNo("RO20171129174628333138");
