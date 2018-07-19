@@ -1,5 +1,7 @@
 package com.lxzl.erp.common.domain.workbench;
 
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
+
 import java.util.List;
 
 /**
@@ -9,13 +11,13 @@ import java.util.List;
  * @Modified By:
  */
 public class WorkbenchReturnOrderQueryParam {
-    private List<Integer> returnOrderStatus;
+    private List<K3ReturnOrderQueryParam> k3ReturnOrderQueryParamList;
 
-    public List<Integer> getReturnOrderStatus() {
-        return returnOrderStatus;
+    public List<K3ReturnOrderQueryParam> getK3ReturnOrderQueryParamList() {
+        return k3ReturnOrderQueryParamList;
     }
 
-    public void setReturnOrderStatus(List<Integer> returnOrderStatus) {
-        this.returnOrderStatus = returnOrderStatus;
+    public void setK3ReturnOrderQueryParamList(List<K3ReturnOrderQueryParam> k3ReturnOrderQueryParamList) {
+        this.k3ReturnOrderQueryParamList = k3ReturnOrderQueryParamList;
     }
 }

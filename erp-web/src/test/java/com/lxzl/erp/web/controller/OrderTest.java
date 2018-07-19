@@ -532,7 +532,11 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        param.setOrderNo("LXO-20180608-027-00059");
 //        param.setOrderSellerId(500355);
 //        param.setOrderSellerName("诚");
-          param.setIsReturnOverDue(1);
+//          param.setIsReturnOverDue(1);
+          param.setIsCanReletOrder(1);
+          param.setPageNo(1);
+          param.setPageSize(5);
+
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
     @Test

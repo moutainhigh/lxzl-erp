@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.ERPTransactionalTest;
+import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.ReturnOrChangeMode;
 import com.lxzl.erp.common.domain.Page;
@@ -41,7 +42,7 @@ import java.util.List;
  * @author gaochao
  * @date 2018-02-13 9:41
  */
-public class K3ControllerTest extends ERPTransactionalTest {
+public class K3ControllerTest extends ERPUnTransactionalTest {
 
     @Autowired
     private PenaltySupport penaltySupport;

@@ -2460,6 +2460,57 @@ public class OrderServiceImpl implements OrderService {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
 
+        //仅仅是为工作台查询可续租的订单服务
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderQueryParam.getIsCanReletOrder())){
+            Map<String,Object> maps = new HashMap<>();
+            maps.put("orderQueryParam",orderQueryParam);
+            maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
+
+            List<OrderDO> orderDOList = orderMapper.findOrderByOrderStatus(maps);
+
+            List<String> orderNoList = new ArrayList<>();
+            Map<String, Order> orderDOMap = new HashMap<>();
+            List<Order> canReletOrderList = new ArrayList<>();
+            for (OrderDO orderDO :orderDOList){
+                orderNoList.add(orderDO.getOrderNo());
+                Order order = ConverterUtil.convert(orderDO, Order.class);
+                orderDOMap.put(orderDO.getOrderNo(), order);
+                Integer canReletOrder = orderSupport.isOrderCanRelet(order);
+                order.setCanReletOrder(canReletOrder);
+                Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
+                order.setIsReletOrder(isReletOrder);
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(order.getCanReletOrder())){
+                    canReletOrderList.add(order);
+                }
+            }
+
+            List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
+            for (WorkflowLinkDO workflowLinkDO : workflowLinkDOList) {
+                Order order = orderDOMap.get(workflowLinkDO.getWorkflowReferNo());
+                if (order != null) {
+                    WorkflowLink workflowLink = ConverterUtil.convert(workflowLinkDO, WorkflowLink.class);
+                    order.setWorkflowLink(workflowLink);
+                }
+            }
+
+            List<Order> pageOrderList = new ArrayList<>();
+            Integer startPage = orderQueryParam.getPageSize() * orderQueryParam.getPageNo() - orderQueryParam.getPageSize() <= 0 ? 0:orderQueryParam.getPageSize() * orderQueryParam.getPageNo() - orderQueryParam.getPageSize();
+            if (CollectionUtil.isNotEmpty(canReletOrderList)){
+                for (int i = startPage; i< orderQueryParam.getPageSize() * orderQueryParam.getPageNo() - 1; i++){
+                    if (i <= canReletOrderList.size() - 1){
+                        if(canReletOrderList.get(i) != null){
+                            pageOrderList.add(canReletOrderList.get(i));
+                        }
+                    }
+                }
+            }
+
+            Page<Order> page = new Page<>(pageOrderList, canReletOrderList.size(), orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(page);
+            return result;
+        }
+
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());

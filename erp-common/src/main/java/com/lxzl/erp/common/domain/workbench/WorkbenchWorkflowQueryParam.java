@@ -1,5 +1,7 @@
 package com.lxzl.erp.common.domain.workbench;
 
+import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
+
 import java.util.List;
 
 /**
@@ -9,13 +11,13 @@ import java.util.List;
  * @Modified By:
  */
 public class WorkbenchWorkflowQueryParam {
-    private List<Integer> workflowStatusList;
+    private List<WorkflowLinkQueryParam> workflowLinkQueryParamList;
 
-    public List<Integer> getWorkflowStatusList() {
-        return workflowStatusList;
+    public List<WorkflowLinkQueryParam> getWorkflowLinkQueryParamList() {
+        return workflowLinkQueryParamList;
     }
 
-    public void setWorkflowStatusList(List<Integer> workflowStatusList) {
-        this.workflowStatusList = workflowStatusList;
+    public void setWorkflowLinkQueryParamList(List<WorkflowLinkQueryParam> workflowLinkQueryParamList) {
+        this.workflowLinkQueryParamList = workflowLinkQueryParamList;
     }
 }

@@ -60,14 +60,14 @@ public class WorkbenchController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    /**
-     * 分页展示可续租的订单
-     */
-    @RequestMapping(value = "queryCanReletOrderPage", method = RequestMethod.POST)
-    public Result queryCanReletOrderPage(@RequestBody OrderQueryParam orderQueryParam, BindingResult validResult) {
-        ServiceResult<String, Page<Order>> serviceResult = workbenchService.queryCanReletOrderPage(orderQueryParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
+//    /**
+//     * 分页展示可续租的订单
+//     */
+//    @RequestMapping(value = "queryCanReletOrderPage", method = RequestMethod.POST)
+//    public Result queryCanReletOrderPage(@RequestBody OrderQueryParam orderQueryParam, BindingResult validResult) {
+//        ServiceResult<String, Page<Order>> serviceResult = workbenchService.queryCanReletOrderPage(orderQueryParam);
+//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+//    }
 
     /**
      * 查询审核中，被驳回，处理中，未提交退货单

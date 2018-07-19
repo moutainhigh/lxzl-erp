@@ -1,5 +1,7 @@
 package com.lxzl.erp.common.domain.workbench;
 
+import com.lxzl.erp.common.domain.order.OrderQueryParam;
+
 import java.util.List;
 
 /**
@@ -9,13 +11,13 @@ import java.util.List;
  * @Modified By:
  */
 public class WorkbenchOrderQueryParam {
-    private List<Integer> orderStatusList;
+    private List<OrderQueryParam> orderQueryParamList;
 
-    public List<Integer> getOrderStatusList() {
-        return orderStatusList;
+    public List<OrderQueryParam> getOrderQueryParamList() {
+        return orderQueryParamList;
     }
 
-    public void setOrderStatusList(List<Integer> orderStatusList) {
-        this.orderStatusList = orderStatusList;
+    public void setOrderQueryParamList(List<OrderQueryParam> orderQueryParamList) {
+        this.orderQueryParamList = orderQueryParamList;
     }
 }

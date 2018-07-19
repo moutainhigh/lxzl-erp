@@ -1,5 +1,7 @@
 package com.lxzl.erp.common.domain.workbench;
 
+import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
+
 import java.util.List;
 
 /**
@@ -9,13 +11,13 @@ import java.util.List;
  * @Modified By:
  */
 public class WorkbenchCompanyCustomerQueryParam {
-    private List<Integer> companyCustomerStatus;
+    private List<CustomerCompanyQueryParam> customerCompanyQueryParamList;
 
-    public List<Integer> getCompanyCustomerStatus() {
-        return companyCustomerStatus;
+    public List<CustomerCompanyQueryParam> getCustomerCompanyQueryParamList() {
+        return customerCompanyQueryParamList;
     }
 
-    public void setCompanyCustomerStatus(List<Integer> companyCustomerStatus) {
-        this.companyCustomerStatus = companyCustomerStatus;
+    public void setCustomerCompanyQueryParamList(List<CustomerCompanyQueryParam> customerCompanyQueryParamList) {
+        this.customerCompanyQueryParamList = customerCompanyQueryParamList;
     }
 }

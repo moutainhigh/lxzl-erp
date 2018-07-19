@@ -43,12 +43,12 @@ public interface WorkbenchService {
      */
     ServiceResult<String,Integer> queryCanReletOrder(OrderQueryParam orderQueryParam);
 
-    /**
-     * 分页展示可续租的订单
-     * @param orderQueryParam
-     * @return
-     */
-    ServiceResult<String,Page<Order>> queryCanReletOrderPage(OrderQueryParam orderQueryParam);
+//    /**
+//     * 分页展示可续租的订单
+//     * @param orderQueryParam
+//     * @return
+//     */
+//    ServiceResult<String,Page<Order>> queryCanReletOrderPage(OrderQueryParam orderQueryParam);
 
     /**
      * 查询审核中，被驳回，处理中，未提交退货单
