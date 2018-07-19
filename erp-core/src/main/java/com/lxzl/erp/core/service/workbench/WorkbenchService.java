@@ -2,6 +2,17 @@ package com.lxzl.erp.core.service.workbench;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
+import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
+import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
+import com.lxzl.erp.common.domain.order.OrderQueryParam;
+import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
+import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
+
+import java.util.List;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.workbench.*;
@@ -65,6 +76,30 @@ public interface WorkbenchService {
      *
      */
     ServiceResult<String,Map<String,Integer>> queryWorkflow(WorkbenchWorkflowQueryParam workbenchWorkflowQueryParam);
-
+    /**
+     *查询待审核工作流总数
+     *
+     */
+    ServiceResult<String,Integer> queryWaitVerifyWorkflowLinkCount(WorkflowLinkQueryParam workflowLinkQueryParam);
+    /**
+     *查询审核中，被驳回的工作流
+     *
+     */
+    ServiceResult<String, Page<WorkflowLink>> queryWaitVerifyWorkflowLinkPage(WorkflowLinkQueryParam workflowLinkQueryParam);
+    /**
+     *查询审核中，被驳回的工作流
+     *
+     */
+    ServiceResult<String,Integer> queryBankSlipDetailCount(BankSlipDetailQueryParam bankSlipDetailQueryParam);
+    /**
+     *查询审核中，被驳回的工作流
+     *
+     */
+    ServiceResult<String, List<Map<String, Integer>>> queryStatementOrderCount(List<StatementOrderQueryParam> statementOrderQueryParamList);
+    /**
+     *查询审核中，被驳回的工作流
+     *
+     */
+    ServiceResult<String, Page<StatementOrder>>  queryStatementOrderPage(StatementOrderQueryParam statementOrderQueryParam);
 
 }

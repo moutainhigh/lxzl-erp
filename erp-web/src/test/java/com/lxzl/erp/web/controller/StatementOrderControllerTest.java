@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.StatementOrderPayType;
+import com.lxzl.erp.common.constant.StatementOrderStatus;
 import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.order.pojo.Order;
@@ -10,6 +11,7 @@ import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import org.junit.Test;
 
@@ -76,7 +78,8 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
         StatementOrderQueryParam param = new StatementOrderQueryParam();
 //        param.setOrderNo("LXO-20180305-0755-00009");//LXO-20180305-010-00001
 //        param.setStatementOrderCustomerName("收货进行时五号");
-        param.setSubCompanyId(3);
+        param.setStatementExpectPayStartTime(DateUtil.getDayByOffset(new Date(), -7));
+        param.setStatementOrderStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
         TestResult testResult = getJsonTestResult("/statementOrder/page", param);
     }
 

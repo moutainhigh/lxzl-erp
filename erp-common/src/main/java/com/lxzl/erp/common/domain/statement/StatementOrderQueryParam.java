@@ -1,10 +1,12 @@
 package com.lxzl.erp.common.domain.statement;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePageParam;
+import com.lxzl.erp.common.domain.validGroup.workbench.WorkbenchGroup;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.Serializable;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +22,7 @@ public class StatementOrderQueryParam extends BasePageParam {
     private Integer statementOrderCustomerId;
     private String statementOrderCustomerNo;
     private String statementOrderNo;
+    @NotNull(message = ErrorCode.STATEMENT_ORDER_STATUS_IS_NULL_IN_WORK_BENCH,groups = {WorkbenchGroup.class})
     private Integer statementOrderStatus;
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date statementExpectPayStartTime;

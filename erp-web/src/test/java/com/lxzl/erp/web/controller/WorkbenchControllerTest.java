@@ -2,12 +2,21 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.constant.BankSlipDetailStatus;
+import com.lxzl.erp.common.constant.LoanSignType;
+import com.lxzl.erp.common.constant.StatementOrderStatus;
+import com.lxzl.erp.common.constant.VerifyStatus;
+import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
+import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author: your name
@@ -16,6 +25,67 @@ import org.junit.Test;
  * @Modified By:
  */
 public class WorkbenchControllerTest extends ERPUnTransactionalTest {
+
+    /**
+     * 待审核的工作流 1
+     *
+     * */
+    @Test
+    public void queryWaitVerifyWorkflowLinkCount() throws Exception {
+        WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
+        workflowLinkQueryParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+        TestResult testResult = getJsonTestResult("/workbench/queryWaitVerifyWorkflowLinkCount", workflowLinkQueryParam);
+    }
+    /**
+     * 待审核的工作流 1
+     *
+     * */
+    @Test
+    public void queryWaitVerifyWorkflowLinkPage() throws Exception {
+        WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
+        workflowLinkQueryParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+        TestResult testResult = getJsonTestResult("/workbench/queryWaitVerifyWorkflowLinkPage", workflowLinkQueryParam);
+      }
+    /**
+     * 待认领的流水 1
+     *
+     * */
+    @Test
+    public void queryBankSlipDetailCount() throws Exception {
+        BankSlipDetailQueryParam bankSlipDetailQueryParam = new BankSlipDetailQueryParam();
+        bankSlipDetailQueryParam.setLoanSign(LoanSignType.INCOME);
+        bankSlipDetailQueryParam.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
+        TestResult testResult = getJsonTestResult("/workbench/queryBankSlipDetailCount", bankSlipDetailQueryParam);
+    }
+    /**
+     * 未支付的结算单 0  部分支付的结算单 4
+     *
+     * */
+    @Test
+    public void queryStatementOrderCount() throws Exception {
+        List<StatementOrderQueryParam> list = new ArrayList<>();
+        StatementOrderQueryParam statementOrderQueryParam = new StatementOrderQueryParam();
+        statementOrderQueryParam.setStatementOrderStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);  //未支付的结算单
+        list.add(statementOrderQueryParam);
+        StatementOrderQueryParam statementOrderQueryParam1 = new StatementOrderQueryParam();
+        statementOrderQueryParam1.setStatementOrderStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);  //部分支付的结算单
+        list.add(statementOrderQueryParam1);
+
+        TestResult testResult = getJsonTestResult("/workbench/queryStatementOrderCount", list);
+    }
+    /**
+     * 未支付的结算单 0  部分支付的结算单 4
+     *
+     * */
+    @Test
+    public void queryStatementOrderPage() throws Exception {
+        StatementOrderQueryParam statementOrderQueryParam = new StatementOrderQueryParam();
+        statementOrderQueryParam.setPageNo(1);
+        statementOrderQueryParam.setPageSize(Integer.MAX_VALUE);
+        statementOrderQueryParam.setStatementOrderStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);  //未支付的结算单
+//        statementOrderQueryParam.setStatementOrderStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);  //部分支付的结算单
+        TestResult testResult = getJsonTestResult("/workbench/queryStatementOrderPage", statementOrderQueryParam);
+    }
 
     /**
      * 审核中的订单 4

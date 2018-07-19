@@ -13,7 +13,10 @@ import com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO;
 import org.junit.Test;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -217,5 +220,14 @@ public class SimpleTest {
 
         k3ReturnOrder.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         String customer = restTemplate.postForObject("http://192.168.10.94:8085/k3Callback/callbackReturnOrder",k3ReturnOrder,String.class);
+    }
+
+    @Test
+    public void myTest() throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss");
+        String str = "2018-01-02 16:10:57";
+        System.out.println(str.length());
+        Date d = simpleDateFormat.parse(str);
+        System.out.println(d);
     }
 }
