@@ -161,6 +161,48 @@
                         <h2 class="lh30 mt70 text-center">欢迎使用凌雄租赁ERP系统</h2>
                     </div>
                 </div>
+
+                <div class="panel profession-workbench hide">
+                    <div class="panel-heading">
+                        <span class="panel-title fw700 fs16">工作台</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="workbench-row row pl35" id="orderRow">
+                            <div class="col-md-3 pn mr35 mb20">
+                                <div class="rowTitle fs16 fw700 mb5 border-left">租赁订单</div>
+                                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">审核中的订单</p>
+                                    <p class="num text-success fs36 fw700 pn mn mb10">0</p>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="workbench-row row pl35" id="statementRow">
+                            <div class="col-md-3 pn mr35 mb20">
+                                <div class="rowTitle fs16 fw700 mb5 border-left">租赁订单</div>
+                                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">审核中的订单</p>
+                                    <p class="num text-success fs36 fw700 pn mn mb10">0</p>
+                                </a>
+                            </div>
+                            <div class="col-md-3 pn mr35 mb20">
+                                <div class="rowTitle fs16 fw700 mb5"></div>
+                                <a href="javascript:;" class="workbench-item pl30 pt20 hasdata">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">审核中的订单</p>
+                                    <p class="num text-danger fs36 fw700 pn mn mb10">3</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel business-workbench hide">
+                    <div class="panel-heading">
+                        <span class="panel-title fw700 fs16"><i class="fa fa-pencil hidden"></i>工作台</span>
+                    </div>
+                </div>
 			</section>
 		</section>
 		#parse("layout/sidebarRight.vm")
