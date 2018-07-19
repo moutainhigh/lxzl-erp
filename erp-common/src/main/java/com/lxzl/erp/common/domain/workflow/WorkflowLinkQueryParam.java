@@ -23,9 +23,18 @@ public class WorkflowLinkQueryParam extends BasePageParam implements Serializabl
     private Integer currentVerifyUser;
     private Date createStartTime;
     private Date createEndTime;
+    private Boolean isWorkbench;
 
     //控制数据权限
     private List<Integer> passiveUserIdList;
+
+    public Boolean getIsWorkbench() {
+        return isWorkbench;
+    }
+
+    public void setIsWorkbench(Boolean workbench) {
+        isWorkbench = workbench;
+    }
 
     public Date getCreateStartTime() {
         return createStartTime;

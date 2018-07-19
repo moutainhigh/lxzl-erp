@@ -12,7 +12,6 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
-import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.workbench.*;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
@@ -35,8 +34,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
-import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
-import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -266,29 +263,6 @@ public class WorkbenchServiceImpl implements WorkbenchService{
         return serviceResult;
     }
 
-    @Override
-    public ServiceResult<String, Page<WorkflowLink>> queryWaitVerifyWorkflowLinkPage(WorkflowLinkQueryParam workflowLinkQueryParam) {
-        ServiceResult<String, Page<WorkflowLink>> serviceResult = new ServiceResult<>();
-
-        PageQuery pageQuery = new PageQuery(workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("start", pageQuery.getStart());
-        paramMap.put("pageSize", pageQuery.getPageSize());
-        paramMap.put("workflowQueryParam", workflowLinkQueryParam);
-        //只有审核人数据
-        if (!userSupport.isSuperUser()) {
-            paramMap.put("verifyUserId", userSupport.getCurrentUserId().toString());
-        }
-
-        Integer dataCount = workflowLinkMapper.workbenchListCount(paramMap);
-        List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.workbenchListPage(paramMap);
-
-        Page<WorkflowLink> page = new Page<>(ConverterUtil.convertList(workflowLinkDOList, WorkflowLink.class), dataCount, workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
-
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(page);
-        return serviceResult;
-    }
 
     @Override
     public ServiceResult<String, Integer> queryBankSlipDetailCount(BankSlipDetailQueryParam bankSlipDetailQueryParam) {
@@ -338,11 +312,6 @@ public class WorkbenchServiceImpl implements WorkbenchService{
         return result;
     }
 
-    @Override
-    public ServiceResult<String, Page<StatementOrder>> queryStatementOrderPage(StatementOrderQueryParam statementOrderQueryParam) {
-        statementOrderQueryParam.setStatementExpectPayStartTime(DateUtil.getDayByOffset(new Date(), -7));
-        return statementService.queryStatementOrder(statementOrderQueryParam);
-    }
 
 
     @Autowired
