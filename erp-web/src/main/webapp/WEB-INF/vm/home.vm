@@ -171,9 +171,14 @@
                             <div class="col-md-3 pn mr35 mb20">
                                 <div class="rowTitle fs16 fw700 mb5 border-left">租赁订单</div>
                                 <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                    <div class="bg-loading orderLoading">
+                                        <div class="box-loading">
+                                            <div class="loading"><i></i><span>数据加载中,请稍候...</span></div>
+                                        </div>
+                                    </div>
                                     <div class="top-line"></div>
-                                    <p class="title pn mn text-default">审核中的订单</p>
-                                    <p class="num text-success fs36 fw700 pn mn mb10">0</p>
+##                                    <p class="title pn mn text-default">审核中的订单</p>
+##                                    <p class="num text-success fs36 fw700 pn mn mb10">0</p>
                                 </a>
                             </div>
                         </div>
