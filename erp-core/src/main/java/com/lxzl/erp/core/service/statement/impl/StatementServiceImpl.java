@@ -4156,6 +4156,8 @@ public class StatementServiceImpl implements StatementService {
         ServiceResult<String, AmountNeedReturn> result = new ServiceResult<>();
         Map<Integer, StatementOrderDO> statementOrderDOMap = statementOrderSupport.getStatementOrderByDetails(statementOrderDetailDOList);
         statementOrderSupport.reStatement(new Date(), statementOrderDOMap, statementOrderDetailDOList);
+        //删除相关冲正单
+        statementOrderSupport.clearStatementRefCorrect(statementOrderDetailDOList);
         if (paid) {
             //已付设备押金
             BigDecimal depositPaidAmount = BigDecimal.ZERO;
@@ -7040,5 +7042,6 @@ public class StatementServiceImpl implements StatementService {
     private OrderSupport orderSupport;
     @Autowired
     private DataDictionaryMapper dataDictionaryMapper;
+
 
 }

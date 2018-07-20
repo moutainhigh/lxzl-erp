@@ -2,12 +2,15 @@ package com.lxzl.erp.core.service.statement.impl.support;
 
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.dingding.DingDingCommonMsg;
+import com.lxzl.erp.common.domain.k3.pojo.order.Order;
+import com.lxzl.erp.common.domain.messagethirdchannel.pojo.MessageThirdChannel;
 import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
+import com.lxzl.erp.core.service.messagethirdchannel.MessageThirdChannelService;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
@@ -15,9 +18,12 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerPersonMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.dingdingGroupMessageConfig.DingdingGroupMessageConfigMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderStatementDateChangeLogMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectDetailMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
@@ -27,6 +33,7 @@ import com.lxzl.erp.dataaccess.domain.order.OrderStatementDateChangeLogDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDetailDO;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -131,19 +138,19 @@ public class StatementOrderSupport {
      * @param rentStartTime
      * @return
      */
-    public Integer getCustomerStatementDate(Integer statementDate,Date rentStartTime) {
-        if (statementDate == null){
+    public Integer getCustomerStatementDate(Integer statementDate, Date rentStartTime) {
+        if (statementDate == null) {
             DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
-            statementDate = dataDictionaryDO==null?StatementMode.STATEMENT_MONTH_END:Integer.parseInt(dataDictionaryDO.getDataName());
+            statementDate = dataDictionaryDO == null ? StatementMode.STATEMENT_MONTH_END : Integer.parseInt(dataDictionaryDO.getDataName());
         }
         if (StatementMode.STATEMENT_MONTH_NATURAL.equals(statementDate)) {
             // 如果结算日为按月结算，那么就要自然日来结算
             Calendar rentStartTimeCalendar = Calendar.getInstance();
             rentStartTimeCalendar.setTime(rentStartTime);
             //如果是当月第一天
-            if(DateUtil.isSameDay(rentStartTimeCalendar.getTime(),DateUtil.getStartMonthDate(rentStartTimeCalendar.getTime()))){
+            if (DateUtil.isSameDay(rentStartTimeCalendar.getTime(), DateUtil.getStartMonthDate(rentStartTimeCalendar.getTime()))) {
                 statementDate = StatementMode.STATEMENT_MONTH_END;
-            }else{
+            } else {
                 rentStartTimeCalendar.add(Calendar.DAY_OF_MONTH, -1);
                 statementDate = rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH);
             }
@@ -153,10 +160,11 @@ public class StatementOrderSupport {
 
     /**
      * 恢复结算单
+     *
      * @param currentTime
      * @param statementOrderDetailDOList
      */
-    public void reStatement( Date currentTime , Map<Integer, StatementOrderDO> statementCache ,List<StatementOrderDetailDO> statementOrderDetailDOList){
+    public void reStatement(Date currentTime, Map<Integer, StatementOrderDO> statementCache, List<StatementOrderDetailDO> statementOrderDetailDOList) {
         //处理结算单
         if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
             for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
@@ -182,7 +190,7 @@ public class StatementOrderSupport {
             }
             for (Integer key : statementCache.keySet()) {
                 StatementOrderDO statementOrderDO = statementCache.get(key);
-                if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), statementOrderDO.getStatementPaidAmount()) <= 0){
+                if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), statementOrderDO.getStatementPaidAmount()) <= 0) {
                     statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
                 }
                 statementOrderDO.setUpdateTime(currentTime);
@@ -191,10 +199,11 @@ public class StatementOrderSupport {
             }
         }
     }
+
     /**
      * 恢复结算单已支付金额
      */
-    public void reStatementPaid(Map<Integer, StatementOrderDO> statementOrderDOMap , List<StatementOrderDetailDO> statementOrderDetailDOList){
+    public void reStatementPaid(Map<Integer, StatementOrderDO> statementOrderDOMap, List<StatementOrderDetailDO> statementOrderDetailDOList) {
         //处理结算单
         //缓存查询到的结算单
         if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
@@ -223,7 +232,8 @@ public class StatementOrderSupport {
             }
         }
     }
-    public Map<Integer,StatementOrderDO> getStatementOrderByDetails(List<StatementOrderDetailDO> statementOrderDetailDOList) {
+
+    public Map<Integer, StatementOrderDO> getStatementOrderByDetails(List<StatementOrderDetailDO> statementOrderDetailDOList) {
         //缓存查询到的结算单
         Map<Integer, StatementOrderDO> statementCache = new HashMap<>();
         if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
@@ -239,9 +249,9 @@ public class StatementOrderSupport {
     }
 
     public void recordStatementDateLog(String orderNo, Integer statementDate) {
-        if (statementDate == null){
+        if (statementDate == null) {
             DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
-            statementDate = dataDictionaryDO==null?StatementMode.STATEMENT_MONTH_END:Integer.parseInt(dataDictionaryDO.getDataName());
+            statementDate = dataDictionaryDO == null ? StatementMode.STATEMENT_MONTH_END : Integer.parseInt(dataDictionaryDO.getDataName());
         }
         Date now = new Date();
         OrderStatementDateChangeLogDO orderStatementDateChangeLogDO = new OrderStatementDateChangeLogDO();
@@ -257,33 +267,78 @@ public class StatementOrderSupport {
 
     /**
      * 订单重算成功钉钉消息
+     *
      * @param orderDO
      */
-    public void sendOrderRestatementSuccess(OrderDO orderDO){
-        if(orderDO==null)return;
-        sendReStatementDdMsg(orderDO.getOrderSellerName(), orderDO.getOrderSubCompanyName(), orderDO.getBuyerCustomerName(), orderDO.getOrderNo(),orderDO.getOrderSubCompanyId());
+    public void sendOrderRestatementSuccess(OrderDO orderDO) {
+        if (orderDO == null) return;
+        sendReStatementDdMsg(orderDO.getOrderSellerName(), orderDO.getOrderSubCompanyName(), orderDO.getBuyerCustomerName(), orderDO.getOrderNo(), orderDO.getOrderSubCompanyId());
 
     }
 
     /**
      * 续租单重算成功
+     *
      * @param reletOrderDO
      */
-    public void sendReletOrderRestatementSuccess(ReletOrderDO reletOrderDO){
-        if(reletOrderDO==null)return;
-        sendReStatementDdMsg(reletOrderDO.getOrderSellerName(), reletOrderDO.getOrderSellerName(), reletOrderDO.getBuyerCustomerName(), reletOrderDO.getOrderNo(),reletOrderDO.getOrderSubCompanyId());
+    public void sendReletOrderRestatementSuccess(ReletOrderDO reletOrderDO) {
+        if (reletOrderDO == null) return;
+        sendReStatementDdMsg(reletOrderDO.getOrderSellerName(), reletOrderDO.getOrderSellerName(), reletOrderDO.getBuyerCustomerName(), reletOrderDO.getOrderNo(), reletOrderDO.getOrderSubCompanyId());
     }
 
     private void sendReStatementDdMsg(String salemanName, String subCompanyName, String customerName, String orderNo, Integer subCompanyId) {
-        List<DingdingGroupMessageConfigDO> dingdingGroupMessageConfigDOS=dingdingGroupMessageConfigMapper.findBySendTypeAndSubCompanyId(DingDingGroupMessageType.SEND_TYPE_STATEMENT_RECALCU,subCompanyId);
-        if(CollectionUtil.isEmpty(dingdingGroupMessageConfigDOS))return;
-        for (DingdingGroupMessageConfigDO dingdingGroupMessageConfigDO:dingdingGroupMessageConfigDOS){
-            DingDingCommonMsg dingDingCommonMsg =new DingDingCommonMsg();
+        List<DingdingGroupMessageConfigDO> dingdingGroupMessageConfigDOS = dingdingGroupMessageConfigMapper.findBySendTypeAndSubCompanyId(DingDingGroupMessageType.SEND_TYPE_STATEMENT_RECALCU, subCompanyId);
+        if (CollectionUtil.isEmpty(dingdingGroupMessageConfigDOS)) return;
+        for (DingdingGroupMessageConfigDO dingdingGroupMessageConfigDO : dingdingGroupMessageConfigDOS) {
+            DingDingCommonMsg dingDingCommonMsg = new DingDingCommonMsg();
             dingDingCommonMsg.setUserGroupUrl(dingdingGroupMessageConfigDO.getDingdingGroupUrl());
             dingDingCommonMsg.setContent(dingdingGroupMessageConfigDO.getMessageContent());
-            dingDingSupport.dingDingSendMessage(dingDingCommonMsg,dingdingGroupMessageConfigDO.getMessageTitle(),subCompanyName,salemanName,customerName,orderNo);
+            dingDingSupport.dingDingSendMessage(dingDingCommonMsg, dingdingGroupMessageConfigDO.getMessageTitle(), subCompanyName, salemanName, customerName, orderNo);
         }
     }
+
+    /**
+     * 清除结算详情关联冲正
+     *
+     * @param list
+     */
+    public void clearStatementRefCorrect(List<StatementOrderDetailDO> list) {
+        if (CollectionUtil.isEmpty(list)) {
+            return;
+        }
+        //数据准备
+        List<Integer> ids = new ArrayList<>();
+        Set<Integer> orderIds=new HashSet<>();
+        for (StatementOrderDetailDO orderDetailDO : list) {
+            ids.add(orderDetailDO.getId());
+            orderIds.add(orderDetailDO.getOrderId());
+        }
+        List<StatementOrderCorrectDetailDO> statementOrderCorrectDetailDOS = statementOrderCorrectDetailMapper.findByStatementDetailIds(ids);
+        if (CollectionUtil.isEmpty(statementOrderCorrectDetailDOS)) {
+            return;
+        }
+        List<Integer> statementOrderCorrectIds = new ArrayList<>();
+        for (StatementOrderCorrectDetailDO statementOrderCorrectDetailDO : statementOrderCorrectDetailDOS) {
+            statementOrderCorrectIds.add(statementOrderCorrectDetailDO.getStatementOrderCorrectId());
+        }
+        //删除冲正单和关联明细
+        statementOrderCorrectMapper.deleteByIds(statementOrderCorrectIds);
+        statementOrderCorrectDetailMapper.deleteByIds(ids);
+        StringBuilder sb=null;
+        //目前只会涉及一个订单
+        for(Integer id:orderIds){
+            OrderDO orderDO =orderMapper.findByOrderId(id);
+            if(orderDO!=null&&orderDO.getOrderSellerId()!=null){
+                sb = new StringBuilder();
+                sb.append("您的客户[").append(orderDO.getBuyerCustomerName()).append("]所下租赁订单（订单号：").append(orderDO.getOrderNo()).append("）由于重算冲正信息已被清除，请重新冲正！");
+                MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
+                messageThirdChannel.setMessageContent(sb.toString());
+                messageThirdChannel.setReceiverUserId(orderDO.getOrderSellerId());
+                messageThirdChannelService.sendMessage(messageThirdChannel);
+            }
+        }
+    }
+
 
     @Autowired
     private UserSupport userSupport;
@@ -293,6 +348,13 @@ public class StatementOrderSupport {
     private DingdingGroupMessageConfigMapper dingdingGroupMessageConfigMapper;
     @Autowired
     private DingDingSupport dingDingSupport;
-
+    @Autowired
+    private StatementOrderCorrectDetailMapper statementOrderCorrectDetailMapper;
+    @Autowired
+    private StatementOrderCorrectMapper statementOrderCorrectMapper;
+    @Autowired
+    private MessageThirdChannelService messageThirdChannelService;
+    @Autowired
+    private OrderMapper orderMapper;
 
 }
