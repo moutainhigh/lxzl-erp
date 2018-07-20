@@ -93,6 +93,15 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     notPayMap.put("count",orderResult.getResult().getTotalCount());
                     MapList.add(notPayMap);
                 }
+                //可续租的订单
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderQueryParam.getIsCanReletOrder())){
+                    Map<String,Object> notPayMap = new HashMap();
+                    notPayMap.put("params","isCanReletOrder");
+                    notPayMap.put("paramsValue",CommonConstant.COMMON_CONSTANT_YES);
+                    notPayMap.put("workbenchType",WorkbenchType.CAN_RELET);
+                    notPayMap.put("count",orderResult.getResult().getTotalCount());
+                    MapList.add(notPayMap);
+                }
             }
         }
 
@@ -101,38 +110,38 @@ public class WorkbenchServiceImpl implements WorkbenchService{
         return serviceResult;
     }
 
-    @Override
-    public ServiceResult<String, List<Map<String,Object>>> queryCanReletOrder(OrderQueryParam orderQueryParam) {
-        ServiceResult<String, List<Map<String,Object>>> serviceResult = new ServiceResult<>();
-        List<Map<String,Object>> MapList = new ArrayList<>();
-
-        Map<String,Object> maps = new HashMap<>();
-        maps.put("orderQueryParam",orderQueryParam);
-        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
-
-        List<OrderDO> orderDOList = orderMapper.findOrderByOrderStatus(maps);
-        List<Order> canReletOrderList = new ArrayList<>();
-        for (OrderDO orderDO :orderDOList){
-            Order order = ConverterUtil.convert(orderDO, Order.class);
-            Integer canReletOrder = orderSupport.isOrderCanRelet(order);
-            order.setCanReletOrder(canReletOrder);
-            if (CommonConstant.COMMON_CONSTANT_YES.equals(order.getCanReletOrder())){
-                canReletOrderList.add(order);
-            }
-        }
-
-        Map<String,Object> resultMap = new HashMap();
-        resultMap.put("params","isCanReletOrder");
-        resultMap.put("paramsValue",CommonConstant.COMMON_CONSTANT_YES);
-        resultMap.put("workbenchType",WorkbenchType.CAN_RELET);
-        resultMap.put("count",canReletOrderList.size());
-
-        MapList.add(resultMap);
-
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(MapList);
-        return serviceResult;
-    }
+//    @Override
+//    public ServiceResult<String, List<Map<String,Object>>> queryCanReletOrder(OrderQueryParam orderQueryParam) {
+//        ServiceResult<String, List<Map<String,Object>>> serviceResult = new ServiceResult<>();
+//        List<Map<String,Object>> MapList = new ArrayList<>();
+//
+//        Map<String,Object> maps = new HashMap<>();
+//        maps.put("orderQueryParam",orderQueryParam);
+//        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
+//
+//        List<OrderDO> orderDOList = orderMapper.findOrderByOrderStatus(maps);
+//        List<Order> canReletOrderList = new ArrayList<>();
+//        for (OrderDO orderDO :orderDOList){
+//            Order order = ConverterUtil.convert(orderDO, Order.class);
+//            Integer canReletOrder = orderSupport.isOrderCanRelet(order);
+//            order.setCanReletOrder(canReletOrder);
+//            if (CommonConstant.COMMON_CONSTANT_YES.equals(order.getCanReletOrder())){
+//                canReletOrderList.add(order);
+//            }
+//        }
+//
+//        Map<String,Object> resultMap = new HashMap();
+//        resultMap.put("params","isCanReletOrder");
+//        resultMap.put("paramsValue",CommonConstant.COMMON_CONSTANT_YES);
+//        resultMap.put("workbenchType",WorkbenchType.CAN_RELET);
+//        resultMap.put("count",canReletOrderList.size());
+//
+//        MapList.add(resultMap);
+//
+//        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+//        serviceResult.setResult(MapList);
+//        return serviceResult;
+//    }
 
     @Override
     public ServiceResult<String,List<Map<String,Object>>> queryReturnOrder(WorkbenchReturnOrderQueryParam workbenchReturnOrderQueryParam) {

@@ -26,13 +26,13 @@ public interface WorkbenchService {
      */
     ServiceResult<String,List<Map<String,Object>>> queryVerifingOrder(WorkbenchOrderQueryParam workbenchOrderQueryParam);
 
-    /**
-     * 查询可续租的订单
-     *
-     * @param
-     * @return Result
-     */
-    ServiceResult<String,List<Map<String,Object>>> queryCanReletOrder(OrderQueryParam orderQueryParam);
+//    /**
+//     * 查询可续租的订单
+//     *
+//     * @param
+//     * @return Result
+//     */
+//    ServiceResult<String,List<Map<String,Object>>> queryCanReletOrder(OrderQueryParam orderQueryParam);
 
 //    /**
 //     * 分页展示可续租的订单
