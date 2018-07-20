@@ -207,6 +207,58 @@
                     <div class="panel-heading">
                         <span class="panel-title fw700 fs16"><i class="fa fa-pencil hidden"></i>工作台</span>
                     </div>
+                    <div class="panel-body">
+                        <div class="workbench-row row pl35">
+                            <script type="text/html" id="workflowTpl">
+                                <div class="rowTitle fs16 fw700 mb5 border-left">工作流</div>
+                                <a href="${ctx}audit-manage/list?status=1" class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                                    <div class="bg-loading workflowLoading hide">
+                                        <div class="box-loading">
+                                            <div class="loading"><i></i><span>数据加载中,请稍候...</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">待审核的工作流</p>
+                                    <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
+                                </a>
+                            </script>
+                            <div class="col-md-3 pn mr35 mb20" id="workflowCol"></div>
+
+                            <script type="text/html" id="financeTpl">
+                                <div class="rowTitle fs16 fw700 mb5 border-left">资金流水</div>
+                                <a href="${ctx}jurnal-amount/list?status=1" class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                                    <div class="bg-loading financeLoading hide">
+                                        <div class="box-loading">
+                                            <div class="loading"><i></i><span>数据加载中,请稍候...</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">待认领的流水</p>
+                                    <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
+                                </a>
+                            </script>
+                            <div class="col-md-3 pn mr35 mb20" id="financeCol"></div>
+                        </div>
+
+                        <div class="workbench-row row pl35" id="statementRow">
+                            <div class="col-md-3 pn mr35 mb20">
+                                <div class="rowTitle fs16 fw700 mb5 border-left">租赁订单</div>
+                                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">审核中的订单</p>
+                                    <p class="num text-success fs36 fw700 pn mn mb10">0</p>
+                                </a>
+                            </div>
+                            <div class="col-md-3 pn mr35 mb20">
+                                <div class="rowTitle fs16 fw700 mb5"></div>
+                                <a href="javascript:;" class="workbench-item pl30 pt20 hasdata">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">审核中的订单</p>
+                                    <p class="num text-danger fs36 fw700 pn mn mb10">3</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 			</section>
 		</section>
