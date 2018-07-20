@@ -4,6 +4,7 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.dingding.DingDingCommonMsg;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.messagethirdchannel.pojo.MessageThirdChannel;
+import com.lxzl.erp.common.domain.statement.AmountHasReturn;
 import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.util.BigDecimalUtil;
@@ -185,7 +186,9 @@ public class StatementOrderSupport {
                 statementOrderDO.setStatementCorrectAmount(BigDecimalUtil.sub(statementOrderDO.getStatementCorrectAmount(), statementOrderDetailDO.getStatementDetailCorrectAmount()));
                 statementOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 statementOrderDetailDO.setUpdateTime(currentTime);
-                statementOrderDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                // K3退货回调时没有登录用户，设为superUser
+                String updateUser = userSupport.getCurrentUser() == null ? CommonConstant.SUPER_USER_ID.toString() : userSupport.getCurrentUserId().toString();
+                statementOrderDetailDO.setUpdateUser(updateUser);
                 statementOrderDetailMapper.update(statementOrderDetailDO);
             }
             for (Integer key : statementCache.keySet()) {
@@ -194,7 +197,9 @@ public class StatementOrderSupport {
                     statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
                 }
                 statementOrderDO.setUpdateTime(currentTime);
-                statementOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                // K3退货回调时没有登录用户，设为superUser
+                String updateUser = userSupport.getCurrentUser() == null ? CommonConstant.SUPER_USER_ID.toString() : userSupport.getCurrentUserId().toString();
+                statementOrderDO.setUpdateUser(updateUser);
                 statementOrderMapper.update(statementOrderDO);
             }
         }
@@ -338,6 +343,35 @@ public class StatementOrderSupport {
             }
         }
     }
+
+    /**
+     * 计算结算单项已退金额
+     * @param statementOrderDetailDO
+     * @return
+     */
+    public AmountHasReturn getStatementItemHasReturn(StatementOrderDetailDO statementOrderDetailDO){
+        Integer returnType = null;
+        if (StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetailDO.getStatementDetailType())) {
+            returnType = StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT;
+        } else if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
+            returnType = StatementDetailType.STATEMENT_DETAIL_TYPE_RETURN_DEPOSIT;
+        }
+        //计算已退金额
+        BigDecimal returnStatementAmount = BigDecimal.ZERO, returnStatementRentAmount = BigDecimal.ZERO, returnStatementDepositAmount = BigDecimal.ZERO, returnStatementRentDepositAmount = BigDecimal.ZERO;
+        if (returnType != null) {
+            List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByReturnReferIdAndStatementType(statementOrderDetailDO.getId(), returnType);
+            if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+                for (StatementOrderDetailDO sod : statementOrderDetailDOList) {
+                    returnStatementAmount = BigDecimalUtil.add(returnStatementAmount, sod.getStatementDetailAmount(), BigDecimalUtil.STANDARD_SCALE);
+                    returnStatementRentAmount = BigDecimalUtil.add(returnStatementRentAmount, sod.getStatementDetailRentAmount(), BigDecimalUtil.STANDARD_SCALE);
+                    returnStatementDepositAmount = BigDecimalUtil.add(returnStatementDepositAmount, sod.getStatementDetailDepositAmount(), BigDecimalUtil.STANDARD_SCALE);
+                    returnStatementRentDepositAmount = BigDecimalUtil.add(returnStatementRentDepositAmount, sod.getStatementDetailRentDepositAmount(), BigDecimalUtil.STANDARD_SCALE);
+                }
+            }
+        }
+        return new AmountHasReturn(returnStatementAmount,returnStatementRentAmount,returnStatementDepositAmount,returnStatementRentDepositAmount);
+    }
+
 
 
     @Autowired
