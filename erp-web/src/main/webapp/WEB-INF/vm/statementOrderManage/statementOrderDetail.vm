@@ -198,7 +198,8 @@
                                                 data-orderId="{{orderId}}"
                                                 data-orderItemReferId="{{orderItemReferId}}"
                                                 data-no="{{no}}"
-                                                data-statementOrderDetailId="{{statementOrderDetailId}}">{{text}}</a>
+                                                data-statementOrderDetailId="{{statementOrderDetailId}}"
+                                                data-mergelist="{{mergeListStr}}">{{text}}</a>
                                             {{/rowActionButtons}}
                                         </div>
                                     </td>
