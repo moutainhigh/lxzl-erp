@@ -335,7 +335,6 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                             if (MapUtils.isNotEmpty(orderMap) &&
                                     (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())||
                                     OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType()))&&
-                                    OrderPayMode.PAY_MODE_PAY_BEFORE.equals(exportStatementOrderDetail.getPayMode()) &&
                                             exportStatementOrderDetail.getReletOrderItemReferId() != null) {
                                 //订单的key：退货关联ID-续租关联ID-商品类型
                                 String orderKey = exportStatementOrderDetail.getStatementOrderDetailId() +"-"+ exportStatementOrderDetail.getReletOrderItemReferId() +"-"+
