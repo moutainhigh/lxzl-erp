@@ -18,4 +18,19 @@ public interface StatementOrderCorrectDetailMapper extends BaseMysqlDAO<Statemen
     List<StatementOrderCorrectDetailDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+    /**
+     * 根据结算详情id查找冲正明细
+     * @param ids
+     * @return
+     */
+    List<StatementOrderCorrectDetailDO> findByStatementDetailIds(@Param("list") List<Integer> ids);
+
+    /**
+     * 批量删除
+     * @param ids
+     * @return
+     */
+    int deleteByIds(@Param("list")List<Integer>ids);
+
 }
