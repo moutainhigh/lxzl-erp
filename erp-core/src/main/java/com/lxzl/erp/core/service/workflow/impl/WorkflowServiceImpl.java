@@ -735,7 +735,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     public ServiceResult<String, Page<WorkflowLink>> getWorkflowLinkPage(WorkflowLinkQueryParam workflowLinkQueryParam) {
         ServiceResult<String, Page<WorkflowLink>> result = new ServiceResult<>();
         //工作台判断
-        if(workflowLinkQueryParam.getIsWorkbench() != null && workflowLinkQueryParam.getIsWorkbench()){
+        if(workflowLinkQueryParam.getIsWorkbench() != null && CommonConstant.COMMON_CONSTANT_YES.equals(workflowLinkQueryParam.getIsWorkbench())){
 
             PageQuery pageQuery = new PageQuery(workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
             Map<String, Object> paramMap = new HashMap<>();

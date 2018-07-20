@@ -142,7 +142,7 @@ public class WorkbenchController {
     */
     @RequestMapping(value = "queryStatementOrderCount", method = RequestMethod.POST)
     public Result queryStatementOrderCount(@RequestBody  WorkbenchStatementOrderQueryParam  workbenchStatementOrderQueryParam, BindingResult validResult) {
-        ServiceResult<String, List<Map<String, Integer>>> serviceResult = workbenchService.queryStatementOrderCount(workbenchStatementOrderQueryParam);
+        ServiceResult<String, List<Map<String, Object>>> serviceResult = workbenchService.queryStatementOrderCount(workbenchStatementOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
