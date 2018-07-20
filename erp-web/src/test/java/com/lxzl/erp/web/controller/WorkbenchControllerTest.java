@@ -40,8 +40,10 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryWaitVerifyWorkflowLinkPage() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
+        workflowLinkQueryParam.setPageNo(1);
+        workflowLinkQueryParam.setPageSize(Integer.MAX_VALUE);
 //        workflowLinkQueryParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
-        workflowLinkQueryParam.setIsWorkbench(true);
+//        workflowLinkQueryParam.setIsWorkbench(1);
         TestResult testResult = getJsonTestResult("/workflow/queryWorkflowLinkPage", workflowLinkQueryParam);
       }
     /**
@@ -61,6 +63,7 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
      * */
     @Test
     public void queryStatementOrderCount() throws Exception {
+        WorkbenchStatementOrderQueryParam  workbenchStatementOrderQueryParam = new WorkbenchStatementOrderQueryParam();
         List<StatementOrderQueryParam> list = new ArrayList<>();
         StatementOrderQueryParam statementOrderQueryParam = new StatementOrderQueryParam();
         statementOrderQueryParam.setStatementOrderStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);  //未支付的结算单
@@ -71,8 +74,8 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
         StatementOrderQueryParam statementOrderQueryParam2 = new StatementOrderQueryParam();
 //        statementOrderQueryParam2.setStatementOrderStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);  //部分支付的结算单
         list.add(statementOrderQueryParam2);
-
-        TestResult testResult = getJsonTestResult("/workbench/queryStatementOrderCount", list);
+        workbenchStatementOrderQueryParam.setStatementOrderQueryParamList(list);
+        TestResult testResult = getJsonTestResult("/workbench/queryStatementOrderCount", workbenchStatementOrderQueryParam);
     }
     /**
      * 未支付的结算单 0  部分支付的结算单 4
