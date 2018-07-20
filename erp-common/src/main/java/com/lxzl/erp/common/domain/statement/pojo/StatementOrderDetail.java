@@ -6,6 +6,7 @@ import com.lxzl.erp.common.util.BigDecimalUtil;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StatementOrderDetail extends BasePO {
@@ -62,6 +63,7 @@ public class StatementOrderDetail extends BasePO {
     private BigDecimal unitAmount;
     private Integer itemRentType;
     private String statementOrderNo;  //结算单编号
+    private List<Integer> mergeStatementItemIdList;//详情合并的结算详情id
 
     public Integer getStatementOrderDetailId() {
         return statementOrderDetailId;
@@ -461,5 +463,13 @@ public class StatementOrderDetail extends BasePO {
 
     public void setStatementOrderNo(String statementOrderNo) {
         this.statementOrderNo = statementOrderNo;
+    }
+
+    public List<Integer> getMergeStatementItemIdList() {
+        return mergeStatementItemIdList;
+    }
+
+    public void setMergeStatementItemIdList(List<Integer> mergeStatementItemIdList) {
+        this.mergeStatementItemIdList = mergeStatementItemIdList;
     }
 }
