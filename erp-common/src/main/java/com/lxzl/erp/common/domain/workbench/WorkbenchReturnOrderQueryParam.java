@@ -11,13 +11,13 @@ import java.util.List;
  * @Modified By:
  */
 public class WorkbenchReturnOrderQueryParam {
-    private List<K3ReturnOrderQueryParam> k3ReturnOrderQueryParamList;
+    private List<Integer> returnOrderStatusList;
 
-    public List<K3ReturnOrderQueryParam> getK3ReturnOrderQueryParamList() {
-        return k3ReturnOrderQueryParamList;
+    public List<Integer> getReturnOrderStatusList() {
+        return returnOrderStatusList;
     }
 
-    public void setK3ReturnOrderQueryParamList(List<K3ReturnOrderQueryParam> k3ReturnOrderQueryParamList) {
-        this.k3ReturnOrderQueryParamList = k3ReturnOrderQueryParamList;
+    public void setReturnOrderStatusList(List<Integer> returnOrderStatusList) {
+        this.returnOrderStatusList = returnOrderStatusList;
     }
 }
