@@ -11,13 +11,13 @@ import java.util.List;
  * @Modified By:
  */
 public class WorkbenchCompanyCustomerQueryParam {
-    private List<CustomerCompanyQueryParam> customerCompanyQueryParamList;
+    private List<Integer> customerCompanyStatusList;
 
-    public List<CustomerCompanyQueryParam> getCustomerCompanyQueryParamList() {
-        return customerCompanyQueryParamList;
+    public List<Integer> getCustomerCompanyStatusList() {
+        return customerCompanyStatusList;
     }
 
-    public void setCustomerCompanyQueryParamList(List<CustomerCompanyQueryParam> customerCompanyQueryParamList) {
-        this.customerCompanyQueryParamList = customerCompanyQueryParamList;
+    public void setCustomerCompanyStatusList(List<Integer> customerCompanyStatusList) {
+        this.customerCompanyStatusList = customerCompanyStatusList;
     }
 }

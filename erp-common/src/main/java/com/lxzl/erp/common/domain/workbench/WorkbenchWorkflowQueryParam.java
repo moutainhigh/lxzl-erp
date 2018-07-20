@@ -11,13 +11,13 @@ import java.util.List;
  * @Modified By:
  */
 public class WorkbenchWorkflowQueryParam {
-    private List<WorkflowLinkQueryParam> workflowLinkQueryParamList;
+    private List<Integer> workflowLinkStatusList;
 
-    public List<WorkflowLinkQueryParam> getWorkflowLinkQueryParamList() {
-        return workflowLinkQueryParamList;
+    public List<Integer> getWorkflowLinkStatusList() {
+        return workflowLinkStatusList;
     }
 
-    public void setWorkflowLinkQueryParamList(List<WorkflowLinkQueryParam> workflowLinkQueryParamList) {
-        this.workflowLinkQueryParamList = workflowLinkQueryParamList;
+    public void setWorkflowLinkStatusList(List<Integer> workflowLinkStatusList) {
+        this.workflowLinkStatusList = workflowLinkStatusList;
     }
 }

@@ -3,7 +3,6 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
-import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.workbench.*;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.core.annotation.ControllerLog;
@@ -38,7 +37,7 @@ public class WorkbenchController {
      */
     @RequestMapping(value = "queryOrder", method = RequestMethod.POST)
     public Result queryOrder(@RequestBody WorkbenchOrderQueryParam workbenchOrderQueryParam, BindingResult validResult) {
-        ServiceResult<String, Map<String,Integer>> serviceResult = workbenchService.queryVerifingOrder(workbenchOrderQueryParam);
+        ServiceResult<String, List<Map<String,Object>>> serviceResult = workbenchService.queryVerifingOrder(workbenchOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -50,7 +49,7 @@ public class WorkbenchController {
      */
     @RequestMapping(value = "queryCanReletOrder", method = RequestMethod.POST)
     public Result queryCanReletOrder(@RequestBody OrderQueryParam orderQueryParam, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = workbenchService.queryCanReletOrder(orderQueryParam);
+        ServiceResult<String, List<Map<String,Object>>> serviceResult = workbenchService.queryCanReletOrder(orderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -71,7 +70,7 @@ public class WorkbenchController {
      */
     @RequestMapping(value = "queryReturnOrder", method = RequestMethod.POST)
     public Result queryReturnOrder(@RequestBody WorkbenchReturnOrderQueryParam workbenchReturnOrderQueryParam, BindingResult validResult) {
-        ServiceResult<String, Map<String,Integer>> serviceResult = workbenchService.queryReturnOrder(workbenchReturnOrderQueryParam);
+        ServiceResult<String, List<Map<String,Object>>> serviceResult = workbenchService.queryReturnOrder(workbenchReturnOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -83,7 +82,7 @@ public class WorkbenchController {
      */
     @RequestMapping(value = "queryCompanyCustomer", method = RequestMethod.POST)
     public Result queryCompanyCustomer(@RequestBody WorkbenchCompanyCustomerQueryParam workbenchCompanyCustomerQueryParam, BindingResult validResult) {
-        ServiceResult<String,  Map<String,Integer>> serviceResult = workbenchService.queryCompanyCustomer(workbenchCompanyCustomerQueryParam);
+        ServiceResult<String, List<Map<String,Object>>> serviceResult = workbenchService.queryCompanyCustomer(workbenchCompanyCustomerQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -95,7 +94,7 @@ public class WorkbenchController {
      */
     @RequestMapping(value = "queryPersonCustomer", method = RequestMethod.POST)
     public Result queryPersonCustomer(@RequestBody WorkbenchPersonCustomerQueryParam workbenchPersonCustomerQueryParam, BindingResult validResult) {
-        ServiceResult<String,  Map<String,Integer>> serviceResult = workbenchService.queryPersonCustomer(workbenchPersonCustomerQueryParam);
+        ServiceResult<String,  List<Map<String,Object>>> serviceResult = workbenchService.queryPersonCustomer(workbenchPersonCustomerQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -105,7 +104,7 @@ public class WorkbenchController {
      */
     @RequestMapping(value = "queryWorkflow", method = RequestMethod.POST)
     public Result queryWorkflow(@RequestBody WorkbenchWorkflowQueryParam workbenchWorkflowQueryParam, BindingResult validResult) {
-        ServiceResult<String, Map<String,Integer>> serviceResult = workbenchService.queryWorkflow(workbenchWorkflowQueryParam);
+        ServiceResult<String, List<Map<String,Object>>> serviceResult = workbenchService.queryWorkflow(workbenchWorkflowQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -137,13 +136,13 @@ public class WorkbenchController {
 
     /**
     *@描述 未支付,部分支付的结算单总数
-    *@param  statementOrderQueryParamList
+    *@param  workbenchStatementOrderQueryParam
     *@param validResult
     *@return  com.lxzl.se.common.domain.Result
     */
     @RequestMapping(value = "queryStatementOrderCount", method = RequestMethod.POST)
-    public Result queryStatementOrderCount(@RequestBody  List<StatementOrderQueryParam>  statementOrderQueryParamList, BindingResult validResult) {
-        ServiceResult<String, Map<String, Integer>> serviceResult = workbenchService.queryStatementOrderCount(statementOrderQueryParamList);
+    public Result queryStatementOrderCount(@RequestBody  WorkbenchStatementOrderQueryParam  workbenchStatementOrderQueryParam, BindingResult validResult) {
+        ServiceResult<String, List<Map<String, Integer>>> serviceResult = workbenchService.queryStatementOrderCount(workbenchStatementOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
