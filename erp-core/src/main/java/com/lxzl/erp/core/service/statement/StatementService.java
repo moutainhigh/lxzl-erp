@@ -249,4 +249,11 @@ public interface StatementService extends BaseService {
      * @Date : Created in 2018/6/21 9:32
      */
     ServiceResult<String, List<CheckStatementOrder>> exportQueryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam);
+
+    /**
+     * 支付结算单项
+     * @param mergeStatementItemList
+     * @return
+     */
+    ServiceResult<String, Boolean> payStatementOrderDetail(List<Integer> mergeStatementItemList);
 }
