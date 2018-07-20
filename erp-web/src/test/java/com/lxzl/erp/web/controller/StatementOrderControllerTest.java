@@ -94,7 +94,7 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detail() throws Exception {
         StatementOrderPayParam param = new StatementOrderPayParam();
-        param.setStatementOrderNo("LXSO-701088-20180601-07728");
+        param.setStatementOrderNo("LXSO-705609-20180702-01022");
         TestResult testResult = getJsonTestResult("/statementOrder/detail", param);
     }
 
@@ -201,9 +201,9 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
 //        param.setOwnerName("来春");
 //        param.setSubCompanyId(2);
 //        param.setStatementOrderCustomerName("庄凯麟勿动");
-        param.setStatementOrderCustomerNo("LXCC-027-20180713-00073");
-        param.setStatementOrderStartTime(rentStartTime1);
-        param.setStatementOrderEndTime(rentStartTime);
+        param.setStatementOrderCustomerNo("LXCC-027-20180717-00078");
+        param.setStatementOrderStartTime(rentStartTime);
+        param.setStatementOrderEndTime(rentStartTime1);
 //        param.setMonthTime(rentStartTime);
         TestResult testResult = getJsonTestResult("/statementOrder/exportQueryStatementOrderCheckParam", param);
     }

@@ -116,6 +116,10 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
         orderQueryParam4.setPayStatus(PayStatus.PAY_STATUS_INIT);
         list.add(orderQueryParam4);
 
+        OrderQueryParam orderQueryParam5 = new OrderQueryParam();
+        orderQueryParam5.setIsCanReletOrder(CommonConstant.COMMON_CONSTANT_YES);
+        list.add(orderQueryParam5);
+
         param.setOrderQueryParamList(list);
         TestResult testResult = getJsonTestResult("/workbench/queryOrder", param);
     }
@@ -139,24 +143,13 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryReturnOrderTest() throws Exception{
         WorkbenchReturnOrderQueryParam param = new WorkbenchReturnOrderQueryParam();
-        List<K3ReturnOrderQueryParam> list = new ArrayList<>();
-        K3ReturnOrderQueryParam k3ReturnOrderQueryParam1 = new K3ReturnOrderQueryParam();
-        k3ReturnOrderQueryParam1.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
-        list.add(k3ReturnOrderQueryParam1);
+        List<Integer> list = new ArrayList<>();
+        list.add(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
+        list.add(ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING);
+        list.add(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
+        list.add(ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED);
 
-        K3ReturnOrderQueryParam k3ReturnOrderQueryParam2 = new K3ReturnOrderQueryParam();
-        k3ReturnOrderQueryParam2.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING);
-        list.add(k3ReturnOrderQueryParam2);
-
-        K3ReturnOrderQueryParam k3ReturnOrderQueryParam3 = new K3ReturnOrderQueryParam();
-        k3ReturnOrderQueryParam3.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
-        list.add(k3ReturnOrderQueryParam3);
-
-        K3ReturnOrderQueryParam k3ReturnOrderQueryParam4 = new K3ReturnOrderQueryParam();
-        k3ReturnOrderQueryParam4.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED);
-        list.add(k3ReturnOrderQueryParam4);
-
-//        param.setK3ReturnOrderQueryParamList(list);
+        param.setReturnOrderStatusList(list);
 
         TestResult testResult = getJsonTestResult("/workbench/queryReturnOrder", param);
     }
@@ -171,7 +164,7 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
         List<Integer> List = new ArrayList<>();
         List.add(CustomerStatus.STATUS_COMMIT);
         List.add(CustomerStatus.STATUS_REJECT);
-//        param.setCompanyCustomerStatus(List);
+        param.setCustomerCompanyStatusList(List);
         TestResult testResult = getJsonTestResult("/workbench/queryCompanyCustomer", param);
     }
 
@@ -185,7 +178,7 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
         List<Integer> List = new ArrayList<>();
         List.add(CustomerStatus.STATUS_COMMIT);
         List.add(CustomerStatus.STATUS_REJECT);
-//        param.setPersonCustomerStatusList(List);
+        param.setCustomerPersonStatusList(List);
 
         TestResult testResult = getJsonTestResult("/workbench/queryPersonCustomer", param);
     }
@@ -200,7 +193,7 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
         List<Integer> List = new ArrayList<>();
         List.add(VerifyStatus.VERIFY_STATUS_COMMIT);
         List.add(VerifyStatus.VERIFY_STATUS_BACK);
-//        param.setWorkflowStatusList(List);
+        param.setWorkflowLinkStatusList(List);
 
         TestResult testResult = getJsonTestResult("/workbench/queryWorkflow", param);
     }

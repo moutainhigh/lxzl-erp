@@ -41,17 +41,17 @@ public class WorkbenchController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    /**
-     * 查询可续租的订单
-     *
-     * @param
-     * @return Result
-     */
-    @RequestMapping(value = "queryCanReletOrder", method = RequestMethod.POST)
-    public Result queryCanReletOrder(@RequestBody OrderQueryParam orderQueryParam, BindingResult validResult) {
-        ServiceResult<String, List<Map<String,Object>>> serviceResult = workbenchService.queryCanReletOrder(orderQueryParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
+//    /**
+//     * 查询可续租的订单
+//     *
+//     * @param
+//     * @return Result
+//     */
+//    @RequestMapping(value = "queryCanReletOrder", method = RequestMethod.POST)
+//    public Result queryCanReletOrder(@RequestBody OrderQueryParam orderQueryParam, BindingResult validResult) {
+//        ServiceResult<String, List<Map<String,Object>>> serviceResult = workbenchService.queryCanReletOrder(orderQueryParam);
+//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+//    }
 
 //    /**
 //     * 分页展示可续租的订单
