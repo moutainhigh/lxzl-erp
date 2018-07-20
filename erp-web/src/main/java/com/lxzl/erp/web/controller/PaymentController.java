@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.validGroup.QueryGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
+import com.lxzl.erp.core.service.bank.BankSlipService;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.web.util.NetworkUtil;
 import com.lxzl.se.common.domain.Result;
@@ -46,6 +47,9 @@ public class PaymentController extends BaseController {
 
     @Autowired
     private HttpServletRequest request;
+
+    @Autowired
+    private BankSlipService bankSlipService;
 
     @RequestMapping(value = "queryAccount", method = RequestMethod.POST)
     public Result queryAccount(@RequestBody Customer customer, BindingResult validResult) {
@@ -103,7 +107,13 @@ public class PaymentController extends BaseController {
 
     @RequestMapping(value = "addOnlineBankSlip", method = RequestMethod.POST)
     public Result addOnlineBankSlip(@RequestBody @Validated(QueryGroup.class) AddOnlineBankSlipQueryParam addOnlineBankSlipQueryParam, BindingResult validResult) throws Exception {
-        ServiceResult<String, String> serviceResult = paymentService.addOnlineBankSlip(addOnlineBankSlipQueryParam);
+        ServiceResult<String, String> serviceResult = bankSlipService.addOnlineBankSlip(addOnlineBankSlipQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "addOnlineHistoryBankSlip", method = RequestMethod.POST)
+    public Result addOnlineHistoryBankSlip(@RequestBody  AddOnlineBankSlipQueryParam addOnlineBankSlipQueryParam, BindingResult validated) throws Exception {
+        ServiceResult<String, String> serviceResult = bankSlipService.addOnlineHistoryBankSlip(addOnlineBankSlipQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 }

@@ -55,7 +55,7 @@ public class StatementOrderCorrectController {
     @RequestMapping(value = "commit",method = RequestMethod.POST)
     public Result commitStatementOrderCorrect(@RequestBody @Validated(CommitGroup.class) StatementOrderCorrectParam statementOrderCorrectParam, BindingResult bindingResult){
         ServiceResult<String,String> serviceResult = statementOrderCorrectService.commitStatementOrderCorrect(statementOrderCorrectParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+        return resultGenerator.generate(serviceResult);
     }
 
     /**

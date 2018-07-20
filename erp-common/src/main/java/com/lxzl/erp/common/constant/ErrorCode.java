@@ -809,6 +809,10 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO = "J16000020";
     public static final String STATEMENT_ORDER_DETAIL_ID_NOT_NULL = "J16000021";
     public static final String RELET_ORDER_NOT_ALLOW_RE_STATEMENT = "J16000022";
+    public static final String STATEMENT_ORDER_DETAIL_NOT_IN_SAME_STATEMENT_ORDER = "J16000023";
+    public static final String STATEMENT_ORDER_DETAIL_NOT_IN_SAME_ORDER = "J16000024";
+    public static final String STATEMENT_ORDER_ITEM_NO_NEED_PAY = "J16000025";
+    public static final String CORRECT_AMOUNT_ERROR = "J16000026";
 
 
     public static final String K3_RETURN_ORDER_IS_NOT_NULL = "J17000001";
@@ -903,9 +907,12 @@ public class ErrorCode {
     public static final String CHARGE_RECORD_IS_EXIST = "J18000053";
     public static final String BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED = "J18000054";
     public static final String BANK_SLIP_DETAIL_STATUS_CAN_NOT_CONFIRM = "J18000055";
-    public static final String CHARGE_TYPE_IS_MANUAL_CHARGE_OR_PUBLIC_TRANSFER_PLUS = "J18000056";
+    public static final String CHARGE_TYPE_IS_MANUAL_CHARGE = "J18000056";
     public static final String CHARGE_RECORD_DATA_FAIL = "J18000057";
     public static final String BINDING_CUSTOMER_NO = "J18000058";
+    public static final String CHARGE_RECORD_IS_NULL = "J18000059";
+    public static final String CHARGE_TYPE_IS_BALANCE_PAID = "J18000060";
+    public static final String CHARGE_TYPE_IS_BANK_SLIP_CHARGE = "J18000061";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1782,6 +1789,10 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO, "由结算单生成结算支付记录时，结算单的支付总金额必须大于0");
         MAP.put(STATEMENT_ORDER_DETAIL_ID_NOT_NULL, "结算单详情ID不能为空");
         MAP.put(RELET_ORDER_NOT_ALLOW_RE_STATEMENT, "续租单目前暂不支持重算");
+        MAP.put(STATEMENT_ORDER_DETAIL_NOT_IN_SAME_STATEMENT_ORDER, "结算单项不属于同一结算单");
+        MAP.put(STATEMENT_ORDER_DETAIL_NOT_IN_SAME_ORDER, "结算单项不属于同一结算单");
+        MAP.put(STATEMENT_ORDER_ITEM_NO_NEED_PAY, "结算单项无需支付");
+        MAP.put(CORRECT_AMOUNT_ERROR, "冲正金额有误，%s ");
 
         MAP.put(K3_RETURN_ORDER_IS_NOT_NULL, "K3退货单不存在");
         MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE, "K3退货单状态为审核中或者已推送到K3，不能修改");
@@ -1874,9 +1885,12 @@ public class ErrorCode {
         MAP.put(CHARGE_RECORD_IS_EXIST, "充值记录已存在");
         MAP.put(BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED, "该条银行对公流水记录项为已认领状态，需商务或创建人取消认领后才能重新认领");
         MAP.put(BANK_SLIP_DETAIL_STATUS_CAN_NOT_CONFIRM, "该条银行对公流水记录不允许确认");
-        MAP.put(CHARGE_TYPE_IS_MANUAL_CHARGE_OR_PUBLIC_TRANSFER_PLUS, "充值记录是手动加款或者对公转账加款");
+        MAP.put(CHARGE_TYPE_IS_MANUAL_CHARGE, "充值记录是手动加款或者对公转账加款");
         MAP.put(CHARGE_RECORD_DATA_FAIL, "充值记录数据有误");
         MAP.put(BINDING_CUSTOMER_NO, "是绑定用户且已经充值过");
+        MAP.put(CHARGE_RECORD_IS_NULL, "充值记录为空");
+        MAP.put(CHARGE_TYPE_IS_BALANCE_PAID, "充值记录是余额支付");
+        MAP.put(CHARGE_TYPE_IS_BANK_SLIP_CHARGE, "充值记录是对公加款");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");
