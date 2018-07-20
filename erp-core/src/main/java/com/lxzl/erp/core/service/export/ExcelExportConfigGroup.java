@@ -2,10 +2,8 @@ package com.lxzl.erp.core.service.export;
 
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
-import com.lxzl.erp.common.util.BigDecimalUtil;
 import org.apache.poi.hssf.util.HSSFColor;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -225,6 +223,8 @@ public class ExcelExportConfigGroup {
                     return "现金库存";
                 }else if (BankType.SWIFT_PASS.equals(bankType)) {
                     return "威富通";
+                }else if (BankType.UNKNOWN_CHANNEL_PAY_TYPE.equals(bankType)) {
+                    return "支付未知渠道";
                 }
                 return "";
             }

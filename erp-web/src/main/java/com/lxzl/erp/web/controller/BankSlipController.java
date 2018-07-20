@@ -9,8 +9,6 @@ import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetailOperationLog;
-import com.lxzl.erp.common.domain.payment.ChargeRecordPageParam;
-import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.QueryGroup;
