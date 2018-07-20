@@ -812,6 +812,7 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_DETAIL_NOT_IN_SAME_STATEMENT_ORDER = "J16000023";
     public static final String STATEMENT_ORDER_DETAIL_NOT_IN_SAME_ORDER = "J16000024";
     public static final String STATEMENT_ORDER_ITEM_NO_NEED_PAY = "J16000025";
+    public static final String CORRECT_AMOUNT_ERROR = "J16000026";
 
     public static final String K3_RETURN_ORDER_IS_NOT_NULL = "J17000001";
     public static final String K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE = "J17000002";
@@ -1786,6 +1787,7 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_DETAIL_NOT_IN_SAME_STATEMENT_ORDER, "结算单项不属于同一结算单");
         MAP.put(STATEMENT_ORDER_DETAIL_NOT_IN_SAME_ORDER, "结算单项不属于同一结算单");
         MAP.put(STATEMENT_ORDER_ITEM_NO_NEED_PAY, "结算单项无需支付");
+        MAP.put(CORRECT_AMOUNT_ERROR, "冲正金额有误，%s ");
 
         MAP.put(K3_RETURN_ORDER_IS_NOT_NULL, "K3退货单不存在");
         MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE, "K3退货单状态为审核中或者已推送到K3，不能修改");
