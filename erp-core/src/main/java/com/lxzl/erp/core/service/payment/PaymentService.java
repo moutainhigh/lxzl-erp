@@ -155,13 +155,6 @@ public interface PaymentService extends BaseService {
      */
     String returnDepositExpand(String customerNo,BigDecimal businessReturnRentAmount,BigDecimal businessReturnOtherAmount,BigDecimal businessReturnRentDepositAmount,
                                BigDecimal businessReturnDepositAmount,String remark) ;
-    /**
-     * 时时导入快付通数据到银行流水
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/5/21 17:48
-     * @param : itemList
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
-     */
-    ServiceResult<String,String> addOnlineBankSlip(AddOnlineBankSlipQueryParam addOnlineBankSlipQueryParam) throws ParseException;
+
 
 }

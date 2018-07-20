@@ -208,7 +208,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             for (Integer customerCompanyStatus : customerCompanyStatusList){
                 CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
                 customerCompanyQueryParam.setCustomerStatus(customerCompanyStatus);
-                customerCompanyQueryParam.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES); //客户查询默认为禁用
+                customerCompanyQueryParam.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO); //客户查询默认为禁用
                 ServiceResult<String, Page<Customer>> customerCompanyResult = customerService.pageCustomerCompany(customerCompanyQueryParam);
                 if (CustomerStatus.STATUS_COMMIT.equals(customerCompanyQueryParam.getCustomerStatus())){
                     Map<String,Object> commitMap = new HashMap();
@@ -244,7 +244,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             for (Integer customerPersonStatus : customerPersonStatusList){
                 CustomerPersonQueryParam customerPersonQueryParam = new CustomerPersonQueryParam();
                 customerPersonQueryParam.setCustomerStatus(customerPersonStatus);
-                customerPersonQueryParam.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES); //客户查询默认为禁用
+                customerPersonQueryParam.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO); //客户查询默认为禁用
                 ServiceResult<String, Page<Customer>> customerPersonResult = customerService.pageCustomerPerson(customerPersonQueryParam);
                 if (CustomerStatus.STATUS_COMMIT.equals(customerPersonQueryParam.getCustomerStatus())){
                     Map<String,Object> commitMap = new HashMap();

@@ -906,9 +906,12 @@ public class ErrorCode {
     public static final String CHARGE_RECORD_IS_EXIST = "J18000053";
     public static final String BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED = "J18000054";
     public static final String BANK_SLIP_DETAIL_STATUS_CAN_NOT_CONFIRM = "J18000055";
-    public static final String CHARGE_TYPE_IS_MANUAL_CHARGE_OR_PUBLIC_TRANSFER_PLUS = "J18000056";
+    public static final String CHARGE_TYPE_IS_MANUAL_CHARGE = "J18000056";
     public static final String CHARGE_RECORD_DATA_FAIL = "J18000057";
     public static final String BINDING_CUSTOMER_NO = "J18000058";
+    public static final String CHARGE_RECORD_IS_NULL = "J18000059";
+    public static final String CHARGE_TYPE_IS_BALANCE_PAID = "J18000060";
+    public static final String CHARGE_TYPE_IS_BANK_SLIP_CHARGE = "J18000061";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1880,9 +1883,12 @@ public class ErrorCode {
         MAP.put(CHARGE_RECORD_IS_EXIST, "充值记录已存在");
         MAP.put(BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED, "该条银行对公流水记录项为已认领状态，需商务或创建人取消认领后才能重新认领");
         MAP.put(BANK_SLIP_DETAIL_STATUS_CAN_NOT_CONFIRM, "该条银行对公流水记录不允许确认");
-        MAP.put(CHARGE_TYPE_IS_MANUAL_CHARGE_OR_PUBLIC_TRANSFER_PLUS, "充值记录是手动加款或者对公转账加款");
+        MAP.put(CHARGE_TYPE_IS_MANUAL_CHARGE, "充值记录是手动加款或者对公转账加款");
         MAP.put(CHARGE_RECORD_DATA_FAIL, "充值记录数据有误");
         MAP.put(BINDING_CUSTOMER_NO, "是绑定用户且已经充值过");
+        MAP.put(CHARGE_RECORD_IS_NULL, "充值记录为空");
+        MAP.put(CHARGE_TYPE_IS_BALANCE_PAID, "充值记录是余额支付");
+        MAP.put(CHARGE_TYPE_IS_BANK_SLIP_CHARGE, "充值记录是对公加款");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");
