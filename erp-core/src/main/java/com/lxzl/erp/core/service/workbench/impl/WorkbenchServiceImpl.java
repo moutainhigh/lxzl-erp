@@ -177,7 +177,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> processingMap = new HashMap();
                     processingMap.put("params","returnOrderStatus");
                     processingMap.put("paramsValue",ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
-                    processingMap.put("workbenchType",WorkbenchType.REJECT);
+                    processingMap.put("workbenchType",WorkbenchType.PROCESSING);
                     processingMap.put("count",k3ReturnOrderResult.getResult().getTotalCount());
                     MapList.add(processingMap);
                 }
@@ -186,7 +186,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> backedMap = new HashMap();
                     backedMap.put("params","returnOrderStatus");
                     backedMap.put("paramsValue",ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED);
-                    backedMap.put("workbenchType",WorkbenchType.PROCESSING);
+                    backedMap.put("workbenchType",WorkbenchType.REJECT);
                     backedMap.put("count",k3ReturnOrderResult.getResult().getTotalCount());
                     MapList.add(backedMap);
                 }
