@@ -4,8 +4,6 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
@@ -31,7 +29,8 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryWaitVerifyWorkflowLinkCount() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
-        workflowLinkQueryParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+//        workflowLinkQueryParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+//        workflowLinkQueryParam.setIsWorkbench(true);
         TestResult testResult = getJsonTestResult("/workbench/queryWaitVerifyWorkflowLinkCount", workflowLinkQueryParam);
     }
     /**
@@ -41,8 +40,9 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryWaitVerifyWorkflowLinkPage() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
-        workflowLinkQueryParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
-        TestResult testResult = getJsonTestResult("/workbench/queryWaitVerifyWorkflowLinkPage", workflowLinkQueryParam);
+//        workflowLinkQueryParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+        workflowLinkQueryParam.setIsWorkbench(true);
+        TestResult testResult = getJsonTestResult("/workflow/queryWorkflowLinkPage", workflowLinkQueryParam);
       }
     /**
      * 待认领的流水 1
@@ -51,8 +51,8 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryBankSlipDetailCount() throws Exception {
         BankSlipDetailQueryParam bankSlipDetailQueryParam = new BankSlipDetailQueryParam();
-        bankSlipDetailQueryParam.setLoanSign(LoanSignType.INCOME);
-        bankSlipDetailQueryParam.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
+//        bankSlipDetailQueryParam.setLoanSign(LoanSignType.INCOME);
+//        bankSlipDetailQueryParam.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
         TestResult testResult = getJsonTestResult("/workbench/queryBankSlipDetailCount", bankSlipDetailQueryParam);
     }
     /**
@@ -68,6 +68,9 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
         StatementOrderQueryParam statementOrderQueryParam1 = new StatementOrderQueryParam();
         statementOrderQueryParam1.setStatementOrderStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);  //部分支付的结算单
         list.add(statementOrderQueryParam1);
+        StatementOrderQueryParam statementOrderQueryParam2 = new StatementOrderQueryParam();
+//        statementOrderQueryParam2.setStatementOrderStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);  //部分支付的结算单
+        list.add(statementOrderQueryParam2);
 
         TestResult testResult = getJsonTestResult("/workbench/queryStatementOrderCount", list);
     }
@@ -82,7 +85,8 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
         statementOrderQueryParam.setPageSize(Integer.MAX_VALUE);
         statementOrderQueryParam.setStatementOrderStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);  //未支付的结算单
 //        statementOrderQueryParam.setStatementOrderStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);  //部分支付的结算单
-        TestResult testResult = getJsonTestResult("/workbench/queryStatementOrderPage", statementOrderQueryParam);
+//        statementOrderQueryParam.setIsWorkbench(true);
+        TestResult testResult = getJsonTestResult("/statementOrder/page", statementOrderQueryParam);
     }
 
 
@@ -152,7 +156,7 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
         k3ReturnOrderQueryParam4.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED);
         list.add(k3ReturnOrderQueryParam4);
 
-        param.setK3ReturnOrderQueryParamList(list);
+//        param.setK3ReturnOrderQueryParamList(list);
 
         TestResult testResult = getJsonTestResult("/workbench/queryReturnOrder", param);
     }
