@@ -332,14 +332,19 @@ public class WorkbenchServiceImpl implements WorkbenchService{
     }
 
     @Override
-    public ServiceResult<String, Map<String, Integer>> queryStatementOrderCount(List<StatementOrderQueryParam>  statementOrderQueryParamList) {
-        ServiceResult<String, Map<String, Integer>> result = new ServiceResult<>();
+    public ServiceResult<String, List<Map<String, Integer>>> queryStatementOrderCount( WorkbenchStatementOrderQueryParam  workbenchStatementOrderQueryParam) {
+        ServiceResult<String, List<Map<String, Integer>>> result = new ServiceResult<>();
 
-        Map<String, Integer> map = new HashMap<>();
+        List<Map<String, Integer>> list =  new ArrayList<>();
+        if(CollectionUtil.isNotEmpty(workbenchStatementOrderQueryParam.getStatementOrderQueryParamList())){
+            for (StatementOrderQueryParam statementOrderQueryParam : workbenchStatementOrderQueryParam.getStatementOrderQueryParamList()) {
+                Map<String, Integer> map = new HashMap<>();
 
-        if(CollectionUtil.isNotEmpty(statementOrderQueryParamList)){
-            for (StatementOrderQueryParam statementOrderQueryParam : statementOrderQueryParamList) {
-                //未分支付查询
+                if(statementOrderQueryParam.getStatementOrderStatus() == null){
+                    continue;
+                }
+
+                //预计支付时间提前七天查询
                 statementOrderQueryParam.setStatementExpectPayStartTime(DateUtil.getDayByOffset(new Date(), -7));
 
                 Map<String, Object> maps = new HashMap<>();
@@ -348,16 +353,15 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
                 Integer totalCount = statementOrderMapper.listSaleCount(maps);
 
-                if (StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementOrderQueryParam.getStatementOrderStatus())) {
-                    map.put("unPaymentStatementOrder", totalCount);
-                }else if(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART.equals(statementOrderQueryParam.getStatementOrderStatus())){
-                    map.put("partialPaymentStatementOrder", totalCount);
-                }
+                map.put("statementOrderStatus",statementOrderQueryParam.getStatementOrderStatus());
+                map.put("totalCount",totalCount);
+
+                list.add(map);
             }
         }
 
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(map);
+        result.setResult(list);
         return result;
     }
 

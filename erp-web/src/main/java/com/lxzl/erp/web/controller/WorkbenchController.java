@@ -3,7 +3,6 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
-import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.workbench.*;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.core.annotation.ControllerLog;
@@ -137,13 +136,13 @@ public class WorkbenchController {
 
     /**
     *@描述 未支付,部分支付的结算单总数
-    *@param  statementOrderQueryParamList
+    *@param  workbenchStatementOrderQueryParam
     *@param validResult
     *@return  com.lxzl.se.common.domain.Result
     */
     @RequestMapping(value = "queryStatementOrderCount", method = RequestMethod.POST)
-    public Result queryStatementOrderCount(@RequestBody  List<StatementOrderQueryParam>  statementOrderQueryParamList, BindingResult validResult) {
-        ServiceResult<String, Map<String, Integer>> serviceResult = workbenchService.queryStatementOrderCount(statementOrderQueryParamList);
+    public Result queryStatementOrderCount(@RequestBody  WorkbenchStatementOrderQueryParam  workbenchStatementOrderQueryParam, BindingResult validResult) {
+        ServiceResult<String, List<Map<String, Integer>>> serviceResult = workbenchService.queryStatementOrderCount(workbenchStatementOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
