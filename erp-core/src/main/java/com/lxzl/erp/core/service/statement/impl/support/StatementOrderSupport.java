@@ -186,7 +186,9 @@ public class StatementOrderSupport {
                 statementOrderDO.setStatementCorrectAmount(BigDecimalUtil.sub(statementOrderDO.getStatementCorrectAmount(), statementOrderDetailDO.getStatementDetailCorrectAmount()));
                 statementOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 statementOrderDetailDO.setUpdateTime(currentTime);
-                statementOrderDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                // K3退货回调时没有登录用户，设为superUser
+                String updateUser = userSupport.getCurrentUser() == null ? CommonConstant.SUPER_USER_ID.toString() : userSupport.getCurrentUserId().toString();
+                statementOrderDetailDO.setUpdateUser(updateUser);
                 statementOrderDetailMapper.update(statementOrderDetailDO);
             }
             for (Integer key : statementCache.keySet()) {
@@ -195,7 +197,9 @@ public class StatementOrderSupport {
                     statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
                 }
                 statementOrderDO.setUpdateTime(currentTime);
-                statementOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                // K3退货回调时没有登录用户，设为superUser
+                String updateUser = userSupport.getCurrentUser() == null ? CommonConstant.SUPER_USER_ID.toString() : userSupport.getCurrentUserId().toString();
+                statementOrderDO.setUpdateUser(updateUser);
                 statementOrderMapper.update(statementOrderDO);
             }
         }
