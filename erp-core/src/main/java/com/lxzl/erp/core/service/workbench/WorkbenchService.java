@@ -24,7 +24,7 @@ public interface WorkbenchService {
      * @param
      * @return Result
      */
-    ServiceResult<String,Map<String,Integer>> queryVerifingOrder(WorkbenchOrderQueryParam workbenchOrderQueryParam);
+    ServiceResult<String,List<Map<String,Object>>> queryVerifingOrder(WorkbenchOrderQueryParam workbenchOrderQueryParam);
 
     /**
      * 查询可续租的订单
@@ -32,7 +32,7 @@ public interface WorkbenchService {
      * @param
      * @return Result
      */
-    ServiceResult<String,Integer> queryCanReletOrder(OrderQueryParam orderQueryParam);
+    ServiceResult<String,List<Map<String,Object>>> queryCanReletOrder(OrderQueryParam orderQueryParam);
 
 //    /**
 //     * 分页展示可续租的订单
@@ -46,27 +46,27 @@ public interface WorkbenchService {
      * @param workbenchReturnOrderQueryParam
      * @return
      */
-    ServiceResult<String,Map<String,Integer>> queryReturnOrder(WorkbenchReturnOrderQueryParam workbenchReturnOrderQueryParam);
+    ServiceResult<String,List<Map<String,Object>>> queryReturnOrder(WorkbenchReturnOrderQueryParam workbenchReturnOrderQueryParam);
 
     /**
      * 查询审核中，被驳回的企业客户
      * @param workbenchCompanyCustomerQueryParam
      * @return
      */
-    ServiceResult<String, Map<String,Integer>> queryCompanyCustomer(WorkbenchCompanyCustomerQueryParam workbenchCompanyCustomerQueryParam);
+    ServiceResult<String, List<Map<String,Object>>> queryCompanyCustomer(WorkbenchCompanyCustomerQueryParam workbenchCompanyCustomerQueryParam);
 
     /**
      * 查询审核中，被驳回的个人客户
      * @param workbenchPersonCustomerQueryParam
      * @return
      */
-    ServiceResult<String, Map<String,Integer>> queryPersonCustomer(WorkbenchPersonCustomerQueryParam workbenchPersonCustomerQueryParam);
+    ServiceResult<String, List<Map<String,Object>>> queryPersonCustomer(WorkbenchPersonCustomerQueryParam workbenchPersonCustomerQueryParam);
 
     /**
      *查询审核中，被驳回的工作流
      *
      */
-    ServiceResult<String,Map<String,Integer>> queryWorkflow(WorkbenchWorkflowQueryParam workbenchWorkflowQueryParam);
+    ServiceResult<String,List<Map<String,Object>>> queryWorkflow(WorkbenchWorkflowQueryParam workbenchWorkflowQueryParam);
     /**
      *查询待审核工作流总数
      *

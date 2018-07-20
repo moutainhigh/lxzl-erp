@@ -49,9 +49,9 @@ import java.util.*;
 public class WorkbenchServiceImpl implements WorkbenchService{
 
     @Override
-    public ServiceResult<String, Map<String,Integer>> queryVerifingOrder(WorkbenchOrderQueryParam workbenchOrderQueryParam) {
-        ServiceResult<String, Map<String,Integer>> serviceResult = new ServiceResult<>();
-        Map<String,Integer> resultMap = new HashMap();
+    public ServiceResult<String, List<Map<String,Object>>> queryVerifingOrder(WorkbenchOrderQueryParam workbenchOrderQueryParam) {
+        ServiceResult<String, List<Map<String,Object>>> serviceResult = new ServiceResult<>();
+        List<Map<String,Object>> MapList = new ArrayList<>();
 
         List<OrderQueryParam> orderQueryParamList = workbenchOrderQueryParam.getOrderQueryParamList();
         if (CollectionUtil.isNotEmpty(orderQueryParamList)){
@@ -59,31 +59,52 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                 ServiceResult<String, Page<Order>> orderResult = orderService.queryAllOrder(orderQueryParam);
                 //审核中的订单
                 if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderQueryParam.getOrderStatus())){
-                    resultMap.put("verifyingOrder",orderResult.getResult().getTotalCount());
+                    Map<String,Object> verifyingMap = new HashMap();
+                    verifyingMap.put("params","orderStatus");
+                    verifyingMap.put("paramsValue",OrderStatus.ORDER_STATUS_VERIFYING);
+                    verifyingMap.put("workbenchType",WorkbenchType.VERIFYING);
+                    verifyingMap.put("count",orderResult.getResult().getTotalCount());
+                    MapList.add(verifyingMap);
                 }
                 //待发货的订单
                 if (OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderQueryParam.getOrderStatus())){
-                    resultMap.put("waitDeliveryOrder_",orderResult.getResult().getTotalCount());
+                    Map<String,Object> waitDeliveryMap = new HashMap();
+                    waitDeliveryMap.put("params","orderStatus");
+                    waitDeliveryMap.put("paramsValue",OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
+                    waitDeliveryMap.put("workbenchType",WorkbenchType.WAIT_DELIVERY);
+                    waitDeliveryMap.put("count",orderResult.getResult().getTotalCount());
+                    MapList.add(waitDeliveryMap);
                 }
                 //到期未处理的订单
                 if (CommonConstant.COMMON_CONSTANT_YES.equals(orderQueryParam.getIsReturnOverDue())){
-                    resultMap.put("returnOverDueOrder",orderResult.getResult().getTotalCount());
+                    Map<String,Object> overDueMap= new HashMap();
+                    overDueMap.put("params","isReturnOverDue");
+                    overDueMap.put("paramsValue",CommonConstant.COMMON_CONSTANT_YES);
+                    overDueMap.put("workbenchType",WorkbenchType.OVER_DUE);
+                    overDueMap.put("count",orderResult.getResult().getTotalCount());
+                    MapList.add(overDueMap);
                 }
                 //未支付的订单
                 if (PayStatus.PAY_STATUS_INIT.equals(orderQueryParam.getPayStatus())){
-                    resultMap.put("notPayOrder",orderResult.getResult().getTotalCount());
+                    Map<String,Object> notPayMap = new HashMap();
+                    notPayMap.put("params","payStatus");
+                    notPayMap.put("paramsValue",PayStatus.PAY_STATUS_INIT);
+                    notPayMap.put("workbenchType",WorkbenchType.NOT_PAY);
+                    notPayMap.put("count",orderResult.getResult().getTotalCount());
+                    MapList.add(notPayMap);
                 }
             }
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(resultMap);
+        serviceResult.setResult(MapList);
         return serviceResult;
     }
 
     @Override
-    public ServiceResult<String, Integer> queryCanReletOrder(OrderQueryParam orderQueryParam) {
-        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
+    public ServiceResult<String, List<Map<String,Object>>> queryCanReletOrder(OrderQueryParam orderQueryParam) {
+        ServiceResult<String, List<Map<String,Object>>> serviceResult = new ServiceResult<>();
+        List<Map<String,Object>> MapList = new ArrayList<>();
 
         Map<String,Object> maps = new HashMap<>();
         maps.put("orderQueryParam",orderQueryParam);
@@ -100,148 +121,176 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             }
         }
 
+        Map<String,Object> resultMap = new HashMap();
+        resultMap.put("params","isCanReletOrder");
+        resultMap.put("paramsValue",CommonConstant.COMMON_CONSTANT_YES);
+        resultMap.put("workbenchType",WorkbenchType.CAN_RELET);
+        resultMap.put("count",canReletOrderList.size());
+
+        MapList.add(resultMap);
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(canReletOrderList.size());
+        serviceResult.setResult(MapList);
         return serviceResult;
     }
 
-//    @Override
-//    public ServiceResult<String, Page<Order>> queryCanReletOrderPage(OrderQueryParam orderQueryParam) {
-//        ServiceResult<String, Page<Order>> serviceResult = new ServiceResult<>();
-//
-//        Map<String,Object> maps = new HashMap<>();
-//        maps.put("orderQueryParam",orderQueryParam);
-//        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
-//
-//        List<OrderDO> orderDOList = orderMapper.findOrderByOrderStatus(maps);
-//        List<Order> canReletOrderList = new ArrayList<>();
-//        for (OrderDO orderDO :orderDOList){
-//            Order order = ConverterUtil.convert(orderDO, Order.class);
-//            Integer canReletOrder = orderSupport.isOrderCanRelet(order);
-//            order.setCanReletOrder(canReletOrder);
-//            if (CommonConstant.COMMON_CONSTANT_YES.equals(order.getCanReletOrder())){
-//                canReletOrderList.add(order);
-//            }
-//        }
-//
-//        List<Order> pageOrderList = new ArrayList<>();
-//        Integer startPage = orderQueryParam.getPageSize() * orderQueryParam.getPageNo() - 15 <= 0 ? 0:orderQueryParam.getPageSize() * orderQueryParam.getPageNo() - 15;
-//        if (CollectionUtil.isNotEmpty(canReletOrderList)){
-//            for (int i = startPage; i< orderQueryParam.getPageSize() * orderQueryParam.getPageNo() - 1; i++){
-//                if (i <= canReletOrderList.size() - 1){
-//                    if(canReletOrderList.get(i) != null){
-//                        pageOrderList.add(canReletOrderList.get(i));
-//                    }
-//                }
-//            }
-//        }
-//
-//        Page<Order> page = new Page<>(pageOrderList, canReletOrderList.size(), orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
-//        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-//        serviceResult.setResult(page);
-//        return serviceResult;
-//    }
-
     @Override
-    public ServiceResult<String, Map<String,Integer>> queryReturnOrder(WorkbenchReturnOrderQueryParam workbenchReturnOrderQueryParam) {
-        ServiceResult<String, Map<String,Integer>> serviceResult = new ServiceResult<>();
-        Map<String,Integer> resultMap = new HashMap();
+    public ServiceResult<String,List<Map<String,Object>>> queryReturnOrder(WorkbenchReturnOrderQueryParam workbenchReturnOrderQueryParam) {
+        ServiceResult<String, List<Map<String,Object>>> serviceResult = new ServiceResult<>();
+        List<Map<String,Object>> MapList = new ArrayList<>();
 
-        List<K3ReturnOrderQueryParam> k3ReturnOrderQueryParamList = workbenchReturnOrderQueryParam.getK3ReturnOrderQueryParamList();
-        if (CollectionUtil.isNotEmpty(k3ReturnOrderQueryParamList)) {
-            for (K3ReturnOrderQueryParam k3ReturnOrderQueryParam : k3ReturnOrderQueryParamList) {
+        List<Integer> returnOrderStatusList = workbenchReturnOrderQueryParam.getReturnOrderStatusList();
+        if (CollectionUtil.isNotEmpty(returnOrderStatusList)) {
+            for (Integer returnOrderStatus : returnOrderStatusList) {
+                K3ReturnOrderQueryParam k3ReturnOrderQueryParam = new K3ReturnOrderQueryParam();
+                k3ReturnOrderQueryParam.setReturnOrderStatus(returnOrderStatus);
                 ServiceResult<String, Page<K3ReturnOrder>> k3ReturnOrderResult = k3ReturnOrderService.queryReturnOrder(k3ReturnOrderQueryParam);
                 //未提交的退货单
                 if (ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderQueryParam.getReturnOrderStatus())) {
-                    resultMap.put("waitCommitReturnOrder", k3ReturnOrderResult.getResult().getTotalCount());
+                    Map<String,Object> waitCommitMap = new HashMap();
+                    waitCommitMap.put("params","returnOrderStatus");
+                    waitCommitMap.put("paramsValue",ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
+                    waitCommitMap.put("workbenchType",WorkbenchType.WAIT_COMMIT);
+                    waitCommitMap.put("count",k3ReturnOrderResult.getResult().getTotalCount());
+                    MapList.add(waitCommitMap);
                 }
                 //审核中的退货单
                 if (ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING.equals(k3ReturnOrderQueryParam.getReturnOrderStatus())) {
-                    resultMap.put("verifyingReturnOrder", k3ReturnOrderResult.getResult().getTotalCount());
+                    Map<String,Object> verifyingMap = new HashMap();
+                    verifyingMap.put("params","returnOrderStatus");
+                    verifyingMap.put("paramsValue",ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING);
+                    verifyingMap.put("workbenchType",WorkbenchType.VERIFYING);
+                    verifyingMap.put("count",k3ReturnOrderResult.getResult().getTotalCount());
+                    MapList.add(verifyingMap);
                 }
                 //处理中的退货单
                 if (ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(k3ReturnOrderQueryParam.getReturnOrderStatus())) {
-                    resultMap.put("processingReturnOrder", k3ReturnOrderResult.getResult().getTotalCount());
+                    Map<String,Object> processingMap = new HashMap();
+                    processingMap.put("params","returnOrderStatus");
+                    processingMap.put("paramsValue",ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
+                    processingMap.put("workbenchType",WorkbenchType.REJECT);
+                    processingMap.put("count",k3ReturnOrderResult.getResult().getTotalCount());
+                    MapList.add(processingMap);
                 }
                 //被驳回的退货单
                 if (ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED.equals(k3ReturnOrderQueryParam.getReturnOrderStatus())) {
-                    resultMap.put("backedReturnOrder", k3ReturnOrderResult.getResult().getTotalCount());
+                    Map<String,Object> backedMap = new HashMap();
+                    backedMap.put("params","returnOrderStatus");
+                    backedMap.put("paramsValue",ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED);
+                    backedMap.put("workbenchType",WorkbenchType.PROCESSING);
+                    backedMap.put("count",k3ReturnOrderResult.getResult().getTotalCount());
+                    MapList.add(backedMap);
                 }
-
             }
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(resultMap);
+        serviceResult.setResult(MapList);
         return serviceResult;
     }
 
     @Override
-    public ServiceResult<String,  Map<String,Integer>> queryCompanyCustomer(WorkbenchCompanyCustomerQueryParam workbenchCompanyCustomerQueryParam) {
-        ServiceResult<String,  Map<String,Integer>> serviceResult = new ServiceResult<>();
-        Map<String,Integer> resultMap = new HashMap();
+    public ServiceResult<String,  List<Map<String,Object>>> queryCompanyCustomer(WorkbenchCompanyCustomerQueryParam workbenchCompanyCustomerQueryParam) {
+        ServiceResult<String,  List<Map<String,Object>>> serviceResult = new ServiceResult<>();
+        List<Map<String,Object>> MapList = new ArrayList<>();
 
-        List<CustomerCompanyQueryParam> customerCompanyQueryParamList = workbenchCompanyCustomerQueryParam.getCustomerCompanyQueryParamList();
-        if (CollectionUtil.isNotEmpty(customerCompanyQueryParamList)){
-            for (CustomerCompanyQueryParam customerCompanyQueryParam : customerCompanyQueryParamList){
+        List<Integer> customerCompanyStatusList = workbenchCompanyCustomerQueryParam.getCustomerCompanyStatusList();
+        if (CollectionUtil.isNotEmpty(customerCompanyStatusList)){
+            for (Integer customerCompanyStatus : customerCompanyStatusList){
+                CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
+                customerCompanyQueryParam.setCustomerStatus(customerCompanyStatus);
                 ServiceResult<String, Page<Customer>> customerCompanyResult = customerService.pageCustomerCompany(customerCompanyQueryParam);
                 if (CustomerStatus.STATUS_COMMIT.equals(customerCompanyQueryParam.getCustomerStatus())){
-                    resultMap.put("verifyingCompanyCustomer",customerCompanyResult.getResult().getTotalCount());
+                    Map<String,Object> commitMap = new HashMap();
+                    commitMap.put("params","customerStatus");
+                    commitMap.put("paramsValue",CustomerStatus.STATUS_COMMIT);
+                    commitMap.put("workbenchType",WorkbenchType.VERIFYING);
+                    commitMap.put("count",customerCompanyResult.getResult().getTotalCount());
+                    MapList.add(commitMap);
                 }
                 if (CustomerStatus.STATUS_REJECT.equals(customerCompanyQueryParam.getCustomerStatus())){
-                    resultMap.put("rejectCompanyCustomer",customerCompanyResult.getResult().getTotalCount());
+                    Map<String,Object> rejectMap = new HashMap();
+                    rejectMap.put("params","customerStatus");
+                    rejectMap.put("paramsValue",CustomerStatus.STATUS_REJECT);
+                    rejectMap.put("workbenchType",WorkbenchType.REJECT);
+                    rejectMap.put("count",customerCompanyResult.getResult().getTotalCount());
+                    MapList.add(rejectMap);
                 }
             }
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(resultMap);
+        serviceResult.setResult(MapList);
         return serviceResult;
     }
 
     @Override
-    public ServiceResult<String,  Map<String,Integer>> queryPersonCustomer(WorkbenchPersonCustomerQueryParam workbenchPersonCustomerQueryParam) {
-        ServiceResult<String,  Map<String,Integer>> serviceResult = new ServiceResult<>();
-        Map<String,Integer> resultMap = new HashMap();
+    public ServiceResult<String, List<Map<String,Object>>> queryPersonCustomer(WorkbenchPersonCustomerQueryParam workbenchPersonCustomerQueryParam) {
+        ServiceResult<String,  List<Map<String,Object>>> serviceResult = new ServiceResult<>();
+        List<Map<String,Object>> MapList = new ArrayList<>();
 
-        List<CustomerPersonQueryParam> customerPersonQueryParamList = workbenchPersonCustomerQueryParam.getCustomerPersonQueryParamList();
-        if (CollectionUtil.isNotEmpty(customerPersonQueryParamList)){
-            for (CustomerPersonQueryParam customerPersonQueryParam : customerPersonQueryParamList){
+        List<Integer> customerPersonStatusList = workbenchPersonCustomerQueryParam.getCustomerPersonStatusList();
+        if (CollectionUtil.isNotEmpty(customerPersonStatusList)){
+            for (Integer customerPersonStatus : customerPersonStatusList){
+                CustomerPersonQueryParam customerPersonQueryParam = new CustomerPersonQueryParam();
+                customerPersonQueryParam.setCustomerStatus(customerPersonStatus);
                 ServiceResult<String, Page<Customer>> customerPersonResult = customerService.pageCustomerPerson(customerPersonQueryParam);
                 if (CustomerStatus.STATUS_COMMIT.equals(customerPersonQueryParam.getCustomerStatus())){
-                    resultMap.put("verifyingPersonCustomer",customerPersonResult.getResult().getTotalCount());
+                    Map<String,Object> commitMap = new HashMap();
+                    commitMap.put("params","customerStatus");
+                    commitMap.put("paramsValue",CustomerStatus.STATUS_COMMIT);
+                    commitMap.put("workbenchType",WorkbenchType.VERIFYING);
+                    commitMap.put("count",customerPersonResult.getResult().getTotalCount());
+                    MapList.add(commitMap);
                 }
                 if (CustomerStatus.STATUS_REJECT.equals(customerPersonQueryParam.getCustomerStatus())){
-                    resultMap.put("rejectPersonCustomer",customerPersonResult.getResult().getTotalCount());
+                    Map<String,Object> rejectMap = new HashMap();
+                    rejectMap.put("params","customerStatus");
+                    rejectMap.put("paramsValue",CustomerStatus.STATUS_REJECT);
+                    rejectMap.put("workbenchType",WorkbenchType.REJECT);
+                    rejectMap.put("count",customerPersonResult.getResult().getTotalCount());
+                    MapList.add(rejectMap);
                 }
             }
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(resultMap);
+        serviceResult.setResult(MapList);
         return serviceResult;
     }
 
     @Override
-    public ServiceResult<String, Map<String,Integer>> queryWorkflow(WorkbenchWorkflowQueryParam workbenchWorkflowQueryParam) {
-        ServiceResult<String, Map<String,Integer>> serviceResult = new ServiceResult<>();
-        Map<String,Integer> resultMap = new HashMap();
+    public ServiceResult<String, List<Map<String,Object>>> queryWorkflow(WorkbenchWorkflowQueryParam workbenchWorkflowQueryParam) {
+        ServiceResult<String, List<Map<String,Object>>> serviceResult = new ServiceResult<>();
+        List<Map<String,Object>> MapList = new ArrayList<>();
 
-        List<WorkflowLinkQueryParam> workflowLinkQueryParamList = workbenchWorkflowQueryParam.getWorkflowLinkQueryParamList();
-        if (CollectionUtil.isNotEmpty(workflowLinkQueryParamList)){
-            for(WorkflowLinkQueryParam workflowLinkQueryParam : workflowLinkQueryParamList) {
+        List<Integer> workflowLinkStatusList = workbenchWorkflowQueryParam.getWorkflowLinkStatusList();
+        if (CollectionUtil.isNotEmpty(workflowLinkStatusList)){
+            for(Integer workflowLinkStatus : workflowLinkStatusList) {
+                WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
+                workflowLinkQueryParam.setVerifyStatus(workflowLinkStatus);
                 ServiceResult<String, Page<WorkflowLink>> workflowLinkResult = workflowService.getWorkflowLinkPage(workflowLinkQueryParam);
                 if (VerifyStatus.VERIFY_STATUS_COMMIT.equals(workflowLinkQueryParam.getVerifyStatus())) {
-                    resultMap.put("verifingWorkflow", workflowLinkResult.getResult().getTotalCount());
+                    Map<String,Object> rejectMap = new HashMap();
+                    rejectMap.put("params","verifyStatus");
+                    rejectMap.put("paramsValue",VerifyStatus.VERIFY_STATUS_COMMIT);
+                    rejectMap.put("workbenchType",WorkbenchType.VERIFYING);
+                    rejectMap.put("count",workflowLinkResult.getResult().getTotalCount());
+                    MapList.add(rejectMap);
                 }
                 if (VerifyStatus.VERIFY_STATUS_BACK.equals(workflowLinkQueryParam.getVerifyStatus())) {
-                    resultMap.put("backedWorkflow", workflowLinkResult.getResult().getTotalCount());
+                    Map<String,Object> rejectMap = new HashMap();
+                    rejectMap.put("params","verifyStatus");
+                    rejectMap.put("paramsValue",VerifyStatus.VERIFY_STATUS_BACK);
+                    rejectMap.put("workbenchType",WorkbenchType.REJECT);
+                    rejectMap.put("count",workflowLinkResult.getResult().getTotalCount());
+                    MapList.add(rejectMap);
                 }
             }
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(resultMap);
+        serviceResult.setResult(MapList);
         return serviceResult;
     }
 
@@ -349,12 +398,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
     @Autowired
     private StatementOrderMapper statementOrderMapper;
-
-    @Autowired
-    private StatementService statementService;
-
-    @Autowired
-    private K3ReturnOrderMapper k3ReturnOrderMapper;
+    
 
 }
 

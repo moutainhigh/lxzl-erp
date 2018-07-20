@@ -126,17 +126,6 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/workbench/queryCanReletOrder", param);
     }
 
-    /** 查询可续租的订单分页展示 */
-    @Test
-    public void isCanReletOrderPageTest() throws Exception{
-        OrderQueryParam param = new OrderQueryParam();
-        param.setPageNo(2);
-        param.setPageSize(15);
-        param.setIsCanReletOrder(1);
-
-        TestResult testResult = getJsonTestResult("/workbench/queryCanReletOrderPage", param);
-    }
-
     /**
      * 未提交的退货单 0
      * 审核中的退货单 4

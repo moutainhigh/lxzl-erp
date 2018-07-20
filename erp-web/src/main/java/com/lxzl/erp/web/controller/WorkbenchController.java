@@ -38,7 +38,7 @@ public class WorkbenchController {
      */
     @RequestMapping(value = "queryOrder", method = RequestMethod.POST)
     public Result queryOrder(@RequestBody WorkbenchOrderQueryParam workbenchOrderQueryParam, BindingResult validResult) {
-        ServiceResult<String, Map<String,Integer>> serviceResult = workbenchService.queryVerifingOrder(workbenchOrderQueryParam);
+        ServiceResult<String, List<Map<String,Object>>> serviceResult = workbenchService.queryVerifingOrder(workbenchOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -50,7 +50,7 @@ public class WorkbenchController {
      */
     @RequestMapping(value = "queryCanReletOrder", method = RequestMethod.POST)
     public Result queryCanReletOrder(@RequestBody OrderQueryParam orderQueryParam, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = workbenchService.queryCanReletOrder(orderQueryParam);
+        ServiceResult<String, List<Map<String,Object>>> serviceResult = workbenchService.queryCanReletOrder(orderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -71,7 +71,7 @@ public class WorkbenchController {
      */
     @RequestMapping(value = "queryReturnOrder", method = RequestMethod.POST)
     public Result queryReturnOrder(@RequestBody WorkbenchReturnOrderQueryParam workbenchReturnOrderQueryParam, BindingResult validResult) {
-        ServiceResult<String, Map<String,Integer>> serviceResult = workbenchService.queryReturnOrder(workbenchReturnOrderQueryParam);
+        ServiceResult<String, List<Map<String,Object>>> serviceResult = workbenchService.queryReturnOrder(workbenchReturnOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -83,7 +83,7 @@ public class WorkbenchController {
      */
     @RequestMapping(value = "queryCompanyCustomer", method = RequestMethod.POST)
     public Result queryCompanyCustomer(@RequestBody WorkbenchCompanyCustomerQueryParam workbenchCompanyCustomerQueryParam, BindingResult validResult) {
-        ServiceResult<String,  Map<String,Integer>> serviceResult = workbenchService.queryCompanyCustomer(workbenchCompanyCustomerQueryParam);
+        ServiceResult<String, List<Map<String,Object>>> serviceResult = workbenchService.queryCompanyCustomer(workbenchCompanyCustomerQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -95,7 +95,7 @@ public class WorkbenchController {
      */
     @RequestMapping(value = "queryPersonCustomer", method = RequestMethod.POST)
     public Result queryPersonCustomer(@RequestBody WorkbenchPersonCustomerQueryParam workbenchPersonCustomerQueryParam, BindingResult validResult) {
-        ServiceResult<String,  Map<String,Integer>> serviceResult = workbenchService.queryPersonCustomer(workbenchPersonCustomerQueryParam);
+        ServiceResult<String,  List<Map<String,Object>>> serviceResult = workbenchService.queryPersonCustomer(workbenchPersonCustomerQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -105,7 +105,7 @@ public class WorkbenchController {
      */
     @RequestMapping(value = "queryWorkflow", method = RequestMethod.POST)
     public Result queryWorkflow(@RequestBody WorkbenchWorkflowQueryParam workbenchWorkflowQueryParam, BindingResult validResult) {
-        ServiceResult<String, Map<String,Integer>> serviceResult = workbenchService.queryWorkflow(workbenchWorkflowQueryParam);
+        ServiceResult<String, List<Map<String,Object>>> serviceResult = workbenchService.queryWorkflow(workbenchWorkflowQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
