@@ -153,6 +153,7 @@ public class ErrorCode {
     public static final String PRODUCT_K3_PRODUCT_NO_IS_ERROR = "J200089";
     public static final String MATERIAL_K3_MATERIAL_NO_IS_ERROR = "J200090";
     public static final String MATERIAL_K3_MATERIAL_NO_NOT_NULL = "J200091";
+    public static final String ORDERN_AND_CUSTOMER_ERROR = "J200092";
 
     public static final String PROPERTY_CAPACITY_VALUE_NOT_NULL = "J800086";
     public static final String PROPERTY_NAME_NOT_MATCH_MATERIAL_TYPE_NAME = "J800087";
@@ -1618,6 +1619,7 @@ public class ErrorCode {
         MAP.put(PRODUCT_K3_PRODUCT_NO_IS_ERROR , "商品的K3编号填写有误，请重新填写");
         MAP.put(MATERIAL_K3_MATERIAL_NO_IS_ERROR , "物料的K3编号填写有误，请重新填写");
         MAP.put(MATERIAL_K3_MATERIAL_NO_NOT_NULL , "物料的K3编号不能为空");
+        MAP.put(ORDERN_AND_CUSTOMER_ERROR , "订单客户与当前所选客户不一致，不能创建退货单");
 
         MAP.put(EQUIPMENT_AND_BULK_MATERIAL_IS_NOT_NULL, "设备维修单明细表不能为空");
         MAP.put(REPAIR_REASON_IS_NOT_NULL, "设备维修单的维修原因不能为空");
