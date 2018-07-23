@@ -343,13 +343,12 @@ public class WorkbenchServiceImpl implements WorkbenchService{
     }
 
     @Override
-    public ServiceResult<String, List<Map<String, Integer>>> queryStatementOrderCount( WorkbenchStatementOrderQueryParam  workbenchStatementOrderQueryParam) {
-        ServiceResult<String, List<Map<String, Integer>>> result = new ServiceResult<>();
+    public ServiceResult<String, List<Map<String, Object>>> queryStatementOrderCount( WorkbenchStatementOrderQueryParam  workbenchStatementOrderQueryParam) {
+        ServiceResult<String, List<Map<String, Object>>> result = new ServiceResult<>();
 
-        List<Map<String, Integer>> list =  new ArrayList<>();
+        List<Map<String, Object>> list =  new ArrayList<>();
         if(CollectionUtil.isNotEmpty(workbenchStatementOrderQueryParam.getStatementOrderQueryParamList())){
             for (StatementOrderQueryParam statementOrderQueryParam : workbenchStatementOrderQueryParam.getStatementOrderQueryParamList()) {
-                Map<String, Integer> map = new HashMap<>();
 
                 if(statementOrderQueryParam.getStatementOrderStatus() == null){
                     continue;
@@ -364,10 +363,25 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
                 Integer totalCount = statementOrderMapper.listSaleCount(maps);
 
-                map.put("statementOrderStatus",statementOrderQueryParam.getStatementOrderStatus());
-                map.put("totalCount",totalCount);
+                if (StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementOrderQueryParam.getStatementOrderStatus())) {
+                    Map<String,Object> rejectMap = new HashMap();
+                    rejectMap.put("params","statementOrderStatus");
+                    rejectMap.put("paramsValue",StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
+                    rejectMap.put("workbenchType",WorkbenchType.STATEMENT_ORDER_STATUS_INIT);
+                    rejectMap.put("count",totalCount);
+                    list.add(rejectMap);
+                }
 
-                list.add(map);
+                if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART.equals(statementOrderQueryParam.getStatementOrderStatus())) {
+                    Map<String,Object> rejectMap = new HashMap();
+                    rejectMap.put("params","statementOrderStatus");
+                    rejectMap.put("paramsValue",StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
+                    rejectMap.put("workbenchType",WorkbenchType.STATEMENT_ORDER_STATUS_SETTLED_PART);
+                    rejectMap.put("count",totalCount);
+                    list.add(rejectMap);
+                }
+
+
             }
         }
 

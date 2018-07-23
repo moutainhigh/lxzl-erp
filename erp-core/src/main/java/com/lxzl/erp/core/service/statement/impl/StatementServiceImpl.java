@@ -1569,7 +1569,7 @@ public class StatementServiceImpl implements StatementService {
         ServiceResult<String, Page<StatementOrder>> result = new ServiceResult<>();
 
         //工作台判断
-        if(statementOrderQueryParam.getIsWorkbench() != null && statementOrderQueryParam.getIsWorkbench()){
+        if(statementOrderQueryParam.getIsWorkbench() != null && CommonConstant.COMMON_CONSTANT_YES.equals(statementOrderQueryParam.getIsWorkbench())){
             statementOrderQueryParam.setStatementExpectPayStartTime(DateUtil.getDayByOffset(new Date(), -7));
         }
 
