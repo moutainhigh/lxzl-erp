@@ -8,14 +8,21 @@ package com.lxzl.erp.common.constant;
  */
 public class WorkbenchType {
 
-    public static final Integer WAIT_COMMIT = 1; //未提交
-    public static final Integer VERIFYING = 2; //审核中
-    public static final Integer REJECT = 3; //被驳回
-    public static final Integer PROCESSING = 4; //处理中
-    public static final Integer CAN_RELET = 5; //可续租
-    public static final Integer OVER_DUE = 6; //到期未处理
-    public static final Integer WAIT_DELIVERY = 7; //代发货
-    public static final Integer NOT_PAY = 8; //未支付
-    public static final Integer STATEMENT_ORDER_STATUS_INIT = 9; //未结算
-    public static final Integer STATEMENT_ORDER_STATUS_SETTLED_PART = 10; //部分结算
+    public static final Integer ORDER_STATUS_VERIFYING = 1; //审核中订单
+    public static final Integer ORDER_STATUS_CAN_RELET = 2; //可续租的订单
+    public static final Integer ORDER_STATUS_OVER_DUE = 3; //到期未处理的订单
+    public static final Integer ORDER_STATUS_WAIT_DELIVERY = 4; //代发货的订单
+    public static final Integer ORDER_STATUS_NOT_PAY = 5; //未支付的订单
+    public static final Integer RETURN_ORDER_STATUS_VERIFYING = 6; //审核中退货单
+    public static final Integer RETURN_ORDER_STATUS_REJECT = 7; //被驳回的退货单
+    public static final Integer RETURN_ORDER_STATUS_PROCESSING = 8; //处理中的退货单
+    public static final Integer RETURN_ORDER_STATUS_WAIT_COMMIT = 9; //未提交的的退货单
+    public static final Integer COMPANY_CUSTOMER_STATUS_VERIFYING = 10; //审核中的企业客户
+    public static final Integer COMPANY_CUSTOMER_STATUS_REJECT = 11; //被驳回的企业客户
+    public static final Integer PERSON_CUSTOMER_STATUS_VERIFYING = 12; //审核中的个人客户
+    public static final Integer PERSON_CUSTOMER_STATUS_REJECT = 13; //被驳回的个人客户
+    public static final Integer WORKFLOW_STATUS_VERIFYING = 14; //审核中的工作流
+    public static final Integer WORKFLOW__STATUS_REJECT = 15; //被驳回的工作流
+    public static final Integer STATEMENT_ORDER_STATUS_INIT = 16; //未结算
+    public static final Integer STATEMENT_ORDER_STATUS_SETTLED_PART = 17; //部分结算
 }
