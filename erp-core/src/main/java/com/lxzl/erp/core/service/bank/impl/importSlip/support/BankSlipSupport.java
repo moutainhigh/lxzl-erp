@@ -54,7 +54,7 @@ public class BankSlipSupport {
     @Autowired
     private BankSlipDetailMapper bankSlipDetailMapper;
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
-    public BankSlipDO formatBankSlipDetail(BankSlipDO bankSlipDO, List<BankSlipDetailDO> bankSlipDetailDOList) {
+    public BankSlipDO filterBankSlipDetail(BankSlipDO bankSlipDO, List<BankSlipDetailDO> bankSlipDetailDOList) {
 
         //查询出导入时间的所有本公司的所有导入数据
         List<BankSlipDO> dbBankSlipDOList = bankSlipMapper.findBySubCompanyIdAndBankType(bankSlipDO.getSubCompanyId(), bankSlipDO.getBankType());
