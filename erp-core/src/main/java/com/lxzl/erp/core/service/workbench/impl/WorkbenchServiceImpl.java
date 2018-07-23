@@ -62,7 +62,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> verifyingMap = new HashMap();
                     verifyingMap.put("params","orderStatus");
                     verifyingMap.put("paramsValue",OrderStatus.ORDER_STATUS_VERIFYING);
-                    verifyingMap.put("workbenchType",WorkbenchType.VERIFYING);
+                    verifyingMap.put("workbenchType",WorkbenchType.ORDER_STATUS_VERIFYING);
                     verifyingMap.put("count",orderResult.getResult().getTotalCount());
                     MapList.add(verifyingMap);
                 }
@@ -71,7 +71,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> waitDeliveryMap = new HashMap();
                     waitDeliveryMap.put("params","orderStatus");
                     waitDeliveryMap.put("paramsValue",OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
-                    waitDeliveryMap.put("workbenchType",WorkbenchType.WAIT_DELIVERY);
+                    waitDeliveryMap.put("workbenchType",WorkbenchType.ORDER_STATUS_WAIT_DELIVERY);
                     waitDeliveryMap.put("count",orderResult.getResult().getTotalCount());
                     MapList.add(waitDeliveryMap);
                 }
@@ -80,7 +80,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> overDueMap= new HashMap();
                     overDueMap.put("params","isReturnOverDue");
                     overDueMap.put("paramsValue",CommonConstant.COMMON_CONSTANT_YES);
-                    overDueMap.put("workbenchType",WorkbenchType.OVER_DUE);
+                    overDueMap.put("workbenchType",WorkbenchType.ORDER_STATUS_OVER_DUE);
                     overDueMap.put("count",orderResult.getResult().getTotalCount());
                     MapList.add(overDueMap);
                 }
@@ -89,7 +89,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> notPayMap = new HashMap();
                     notPayMap.put("params","payStatus");
                     notPayMap.put("paramsValue",PayStatus.PAY_STATUS_INIT);
-                    notPayMap.put("workbenchType",WorkbenchType.NOT_PAY);
+                    notPayMap.put("workbenchType",WorkbenchType.ORDER_STATUS_NOT_PAY);
                     notPayMap.put("count",orderResult.getResult().getTotalCount());
                     MapList.add(notPayMap);
                 }
@@ -98,7 +98,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> notPayMap = new HashMap();
                     notPayMap.put("params","isCanReletOrder");
                     notPayMap.put("paramsValue",CommonConstant.COMMON_CONSTANT_YES);
-                    notPayMap.put("workbenchType",WorkbenchType.CAN_RELET);
+                    notPayMap.put("workbenchType",WorkbenchType.ORDER_STATUS_CAN_RELET);
                     notPayMap.put("count",orderResult.getResult().getTotalCount());
                     MapList.add(notPayMap);
                 }
@@ -159,7 +159,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> waitCommitMap = new HashMap();
                     waitCommitMap.put("params","returnOrderStatus");
                     waitCommitMap.put("paramsValue",ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
-                    waitCommitMap.put("workbenchType",WorkbenchType.WAIT_COMMIT);
+                    waitCommitMap.put("workbenchType",WorkbenchType.RETURN_ORDER_STATUS_WAIT_COMMIT);
                     waitCommitMap.put("count",k3ReturnOrderResult.getResult().getTotalCount());
                     MapList.add(waitCommitMap);
                 }
@@ -168,7 +168,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> verifyingMap = new HashMap();
                     verifyingMap.put("params","returnOrderStatus");
                     verifyingMap.put("paramsValue",ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING);
-                    verifyingMap.put("workbenchType",WorkbenchType.VERIFYING);
+                    verifyingMap.put("workbenchType",WorkbenchType.RETURN_ORDER_STATUS_VERIFYING);
                     verifyingMap.put("count",k3ReturnOrderResult.getResult().getTotalCount());
                     MapList.add(verifyingMap);
                 }
@@ -177,7 +177,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> processingMap = new HashMap();
                     processingMap.put("params","returnOrderStatus");
                     processingMap.put("paramsValue",ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
-                    processingMap.put("workbenchType",WorkbenchType.PROCESSING);
+                    processingMap.put("workbenchType",WorkbenchType.RETURN_ORDER_STATUS_PROCESSING);
                     processingMap.put("count",k3ReturnOrderResult.getResult().getTotalCount());
                     MapList.add(processingMap);
                 }
@@ -186,7 +186,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> backedMap = new HashMap();
                     backedMap.put("params","returnOrderStatus");
                     backedMap.put("paramsValue",ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED);
-                    backedMap.put("workbenchType",WorkbenchType.REJECT);
+                    backedMap.put("workbenchType",WorkbenchType.RETURN_ORDER_STATUS_REJECT);
                     backedMap.put("count",k3ReturnOrderResult.getResult().getTotalCount());
                     MapList.add(backedMap);
                 }
@@ -214,7 +214,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> commitMap = new HashMap();
                     commitMap.put("params","customerStatus");
                     commitMap.put("paramsValue",CustomerStatus.STATUS_COMMIT);
-                    commitMap.put("workbenchType",WorkbenchType.VERIFYING);
+                    commitMap.put("workbenchType",WorkbenchType.COMPANY_CUSTOMER_STATUS_VERIFYING);
                     commitMap.put("count",customerCompanyResult.getResult().getTotalCount());
                     MapList.add(commitMap);
                 }
@@ -222,7 +222,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> rejectMap = new HashMap();
                     rejectMap.put("params","customerStatus");
                     rejectMap.put("paramsValue",CustomerStatus.STATUS_REJECT);
-                    rejectMap.put("workbenchType",WorkbenchType.REJECT);
+                    rejectMap.put("workbenchType",WorkbenchType.COMPANY_CUSTOMER_STATUS_REJECT);
                     rejectMap.put("count",customerCompanyResult.getResult().getTotalCount());
                     MapList.add(rejectMap);
                 }
@@ -250,7 +250,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> commitMap = new HashMap();
                     commitMap.put("params","customerStatus");
                     commitMap.put("paramsValue",CustomerStatus.STATUS_COMMIT);
-                    commitMap.put("workbenchType",WorkbenchType.VERIFYING);
+                    commitMap.put("workbenchType",WorkbenchType.PERSON_CUSTOMER_STATUS_VERIFYING);
                     commitMap.put("count",customerPersonResult.getResult().getTotalCount());
                     MapList.add(commitMap);
                 }
@@ -258,7 +258,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> rejectMap = new HashMap();
                     rejectMap.put("params","customerStatus");
                     rejectMap.put("paramsValue",CustomerStatus.STATUS_REJECT);
-                    rejectMap.put("workbenchType",WorkbenchType.REJECT);
+                    rejectMap.put("workbenchType",WorkbenchType.PERSON_CUSTOMER_STATUS_REJECT);
                     rejectMap.put("count",customerPersonResult.getResult().getTotalCount());
                     MapList.add(rejectMap);
                 }
@@ -285,7 +285,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> rejectMap = new HashMap();
                     rejectMap.put("params","verifyStatus");
                     rejectMap.put("paramsValue",VerifyStatus.VERIFY_STATUS_COMMIT);
-                    rejectMap.put("workbenchType",WorkbenchType.VERIFYING);
+                    rejectMap.put("workbenchType",WorkbenchType.WORKFLOW_STATUS_VERIFYING);
                     rejectMap.put("count",workflowLinkResult.getResult().getTotalCount());
                     MapList.add(rejectMap);
                 }
@@ -293,7 +293,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                     Map<String,Object> rejectMap = new HashMap();
                     rejectMap.put("params","verifyStatus");
                     rejectMap.put("paramsValue",VerifyStatus.VERIFY_STATUS_BACK);
-                    rejectMap.put("workbenchType",WorkbenchType.REJECT);
+                    rejectMap.put("workbenchType",WorkbenchType.WORKFLOW__STATUS_REJECT);
                     rejectMap.put("count",workflowLinkResult.getResult().getTotalCount());
                     MapList.add(rejectMap);
                 }
