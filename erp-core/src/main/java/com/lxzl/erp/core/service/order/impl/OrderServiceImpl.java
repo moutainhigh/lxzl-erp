@@ -2470,26 +2470,30 @@ public class OrderServiceImpl implements OrderService {
             List<String> orderNoList = new ArrayList<>();
             Map<String, Order> orderDOMap = new HashMap<>();
             List<Order> canReletOrderList = new ArrayList<>();
-            for (OrderDO orderDO :orderDOList){
-                Order order = ConverterUtil.convert(orderDO, Order.class);
-                Integer canReletOrder = orderSupport.isOrderCanRelet(order);
-                order.setCanReletOrder(canReletOrder);
-                Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
-                order.setIsReletOrder(isReletOrder);
-                if (CommonConstant.COMMON_CONSTANT_YES.equals(order.getCanReletOrder())){
-                    canReletOrderList.add(order);
-                    orderNoList.add(orderDO.getOrderNo());
-                    orderDOMap.put(orderDO.getOrderNo(), order);
+            if (CollectionUtil.isNotEmpty(orderDOList)){
+                for (OrderDO orderDO :orderDOList){
+                    Order order = ConverterUtil.convert(orderDO, Order.class);
+                    Integer canReletOrder = orderSupport.isOrderCanRelet(order);
+                    order.setCanReletOrder(canReletOrder);
+                    Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
+                    order.setIsReletOrder(isReletOrder);
+                    if (CommonConstant.COMMON_CONSTANT_YES.equals(order.getCanReletOrder())){
+                        canReletOrderList.add(order);
+                        orderNoList.add(orderDO.getOrderNo());
+                        orderDOMap.put(orderDO.getOrderNo(), order);
 
+                    }
                 }
             }
 
             List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
-            for (WorkflowLinkDO workflowLinkDO : workflowLinkDOList) {
-                Order order = orderDOMap.get(workflowLinkDO.getWorkflowReferNo());
-                if (order != null) {
-                    WorkflowLink workflowLink = ConverterUtil.convert(workflowLinkDO, WorkflowLink.class);
-                    order.setWorkflowLink(workflowLink);
+            if (CollectionUtil.isNotEmpty(workflowLinkDOList)){
+                for (WorkflowLinkDO workflowLinkDO : workflowLinkDOList) {
+                    Order order = orderDOMap.get(workflowLinkDO.getWorkflowReferNo());
+                    if (order != null) {
+                        WorkflowLink workflowLink = ConverterUtil.convert(workflowLinkDO, WorkflowLink.class);
+                        order.setWorkflowLink(workflowLink);
+                    }
                 }
             }
 
