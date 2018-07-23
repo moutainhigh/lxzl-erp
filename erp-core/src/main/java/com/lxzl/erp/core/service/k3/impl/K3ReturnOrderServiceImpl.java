@@ -31,11 +31,13 @@ import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
@@ -191,6 +193,25 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if (CollectionUtil.isEmpty(k3ReturnOrderDetailList)) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
             return result;
+        }
+        //校验所退退货单是否是该客户的订单
+        CustomerDO customerDO = customerMapper.findByNo(k3ReturnOrder.getK3CustomerNo());
+        if (customerDO==null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailList)) {
+            for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrderDetailList) {
+                OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
+                if (orderDO == null) {
+                    result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                    return result;
+                }
+                if (!customerDO.getId().equals(orderDO.getBuyerCustomerId())) {
+                    result.setErrorCode(ErrorCode.ORDERN_AND_CUSTOMER_ERROR);
+                    return result;
+                }
+            }
         }
         if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())
                 && !ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
@@ -1117,8 +1138,28 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 //            result.setErrorCode(ErrorCode.HAS_SAME_PRODUCT);
 //            return result;
 //        }
+        //校验所退退货单是否是该客户的订单
+        CustomerDO customerDO = customerMapper.findByNo(k3ReturnOrder.getK3CustomerNo());
+        if (customerDO==null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        List<K3ReturnOrderDetail> k3ReturnOrderDetailList = k3ReturnOrder.getK3ReturnOrderDetailList();
+        if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailList)) {
+            for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrderDetailList) {
+                OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
+                if (orderDO == null) {
+                    result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                    return result;
+                }
+                if (!customerDO.getId().equals(orderDO.getBuyerCustomerId())) {
+                    result.setErrorCode(ErrorCode.ORDERN_AND_CUSTOMER_ERROR);
+                    return result;
+                }
+            }
+        }
         //itemId校验
-        if (!varifyOrderItemId(k3ReturnOrder.getK3ReturnOrderDetailList())) {
+        if (!varifyOrderItemId(k3ReturnOrderDetailList)) {
             result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
             return result;
         }
@@ -2141,5 +2182,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     private K3MappingMaterialTypeMapper k3MappingMaterialTypeMapper;
     @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    @Autowired
+    private CustomerMapper customerMapper;
 
 }
