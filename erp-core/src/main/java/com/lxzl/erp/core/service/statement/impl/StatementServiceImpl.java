@@ -2053,11 +2053,6 @@ public class StatementServiceImpl implements StatementService {
         return serviceResult;
     }
 
-    // k3退货回调使用
-    public ServiceResult<String, BigDecimal> createK3ReturnOrderStatementNoTransaction(String returnOrderNo) {
-        return createK3ReturnOrderStatementCore(returnOrderNo);
-    }
-
     /**
      * k3退货回调处理结算单时的回滚不能影响主逻辑，如果是k3回调处理结算单，这里不能添加事务，也不能设置RollbackOnly。
      */

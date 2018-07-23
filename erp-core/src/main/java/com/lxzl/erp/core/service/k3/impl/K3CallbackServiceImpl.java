@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrder;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrderMaterial;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrderProduct;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
+import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -49,6 +50,7 @@ import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -56,12 +58,16 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import javax.servlet.http.HttpSession;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -182,8 +188,12 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> callbackReturnOrder(K3ReturnOrder k3ReturnOrder) {
+        // 回调时不需要登陆，这里设置user为super user
+        User superUser = new User();
+        superUser.setUserId(CommonConstant.SUPER_USER_ID);
+        httpSession.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, superUser);
+
         String json = JSON.toJSONString(k3ReturnOrder);
         logger.info("return order call back : " + json);
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
@@ -198,16 +208,18 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             return serviceResult;
         }
 
-        ServiceResult<String, String> result = callbackReturnDetail(k3ReturnOrder, k3ReturnOrderDO, true);
-        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return result;
+        // 处理类内service调用
+        K3CallbackService k3CallbackService = (K3CallbackService)AopContext.currentProxy();
+        ServiceResult<String, String> result = k3CallbackService.callbackReturnDetail(k3ReturnOrder, k3ReturnOrderDO, true);
+        if (ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+            createK3ReturnOrderStatement(k3ReturnOrderDO.getReturnOrderNo());
         }
 
         return result;
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> callbackReturnDetail(K3ReturnOrder k3ReturnOrder, K3ReturnOrderDO k3ReturnOrderDO, Boolean isHandleRent) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         String userId = null;
@@ -336,30 +348,25 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                     orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, now, StringUtil.isEmpty(userId) ? CommonConstant.SUPER_USER_ID.toString() : userId, OperationType.K3_RETURN_CALLBACK);
                 }
             }
-            // 如果退货单关联的所有订单都支付了，才生成退货单结算单,如果该方法返回错误代码，则内部会自动回滚，结算状态不会改变
-            // 如果该方法抛出异常，内部会自动回滚，这里捕获异常，结算状态不改变但是不影响其他逻辑，发送钉钉通知
-            if (isCreateReturnStatement) {
-                // 设置事务回滚点
-                Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
-                try {
-                    ServiceResult<String, BigDecimal> result = statementService.createK3ReturnOrderStatementNoTransaction(k3ReturnOrderDO.getReturnOrderNo());
-                    if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
-                        // 创建结算单部分回滚
-                        TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
-                        dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString() + "退货单[" + k3ReturnOrderDO.getReturnOrderNo() + "]生成结算单失败：" + JSON.toJSONString(resultGenerator.generate(result.getErrorCode())));
-                    }
-                } catch (Exception e) {
-                    // 创建结算单部分回滚
-                    TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
-                    StringWriter exceptionFormat = new StringWriter();
-                    e.printStackTrace(new PrintWriter(exceptionFormat, true));
-                    dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString() + "退货单[" + k3ReturnOrderDO.getReturnOrderNo() + "]生成结算单失败：" + exceptionFormat.toString());
-                }
-            }
         }
 //        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
+    }
+
+    private void createK3ReturnOrderStatement(String k3ReturnOrderNo) {
+        // 如果退货单关联的所有订单都支付了，才生成退货单结算单,如果该方法返回错误代码，则内部会自动回滚，结算状态不会改变
+        // 如果该方法抛出异常，内部会自动回滚，这里捕获异常，结算状态不改变但是不影响其他逻辑，发送钉钉通知
+        try {
+            ServiceResult<String, BigDecimal> result = statementService.createK3ReturnOrderStatement(k3ReturnOrderNo);
+            if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString() + "退货单[" + k3ReturnOrderNo + "]生成结算单失败：" + JSON.toJSONString(resultGenerator.generate(result.getErrorCode())));
+            }
+        } catch (Exception e) {
+            StringWriter exceptionFormat = new StringWriter();
+            e.printStackTrace(new PrintWriter(exceptionFormat, true));
+            dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString() + "退货单[" + k3ReturnOrderNo + "]生成结算单失败：" + exceptionFormat.toString());
+        }
     }
 
     @Autowired
@@ -414,4 +421,6 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     private StatementService statementService;
     @Autowired
     private ResultGenerator resultGenerator;
+    @Autowired
+    private HttpSession httpSession;
 }
