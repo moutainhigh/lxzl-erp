@@ -21,6 +21,7 @@ import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderMapper;
@@ -56,7 +57,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.servlet.http.HttpSession;
 import java.io.PrintWriter;
@@ -190,9 +190,11 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     @Override
     public ServiceResult<String, String> callbackReturnOrder(K3ReturnOrder k3ReturnOrder) {
         // 回调时不需要登陆，这里设置user为super user
-        User superUser = new User();
-        superUser.setUserId(CommonConstant.SUPER_USER_ID);
-        httpSession.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, superUser);
+        if (userSupport.getCurrentUser() == null) {
+            User superUser = new User();
+            superUser.setUserId(CommonConstant.SUPER_USER_ID);
+            httpSession.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, superUser);
+        }
 
         String json = JSON.toJSONString(k3ReturnOrder);
         logger.info("return order call back : " + json);
@@ -423,4 +425,6 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     private ResultGenerator resultGenerator;
     @Autowired
     private HttpSession httpSession;
+    @Autowired
+    private UserSupport userSupport;
 }
