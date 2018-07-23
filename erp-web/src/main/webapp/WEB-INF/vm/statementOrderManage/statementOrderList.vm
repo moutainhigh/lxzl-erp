@@ -61,6 +61,11 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="hide">
+                                                <div class="field form-group mn">
+                                                    <input type="text" name="isWorkbench" id="isWorkbench" class="form-control input-sm bradius" autocomplete="off">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
