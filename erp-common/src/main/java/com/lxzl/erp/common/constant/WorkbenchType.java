@@ -16,5 +16,6 @@ public class WorkbenchType {
     public static final Integer OVER_DUE = 6; //到期未处理
     public static final Integer WAIT_DELIVERY = 7; //代发货
     public static final Integer NOT_PAY = 8; //未支付
-
+    public static final Integer STATEMENT_ORDER_STATUS_INIT = 9; //未结算
+    public static final Integer STATEMENT_ORDER_STATUS_SETTLED_PART = 10; //部分结算
 }
