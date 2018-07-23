@@ -117,7 +117,6 @@ public class ImportBankSlip {
      * @Date : Created in 2018/5/26 14:33
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.dataaccess.domain.bank.BankSlipDO>
      */
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, BankSlipDO> saveBankSlip(BankSlip bankSlip, InputStream inputStream, Integer bankType) throws Exception {
         ServiceResult<String, BankSlipDO> serviceResult = new ServiceResult<>();
         BankSlipDO bankSlipDO = null;
@@ -167,7 +166,7 @@ public class ImportBankSlip {
             bankSlipDO.setCreateUser(userSupport.getCurrentUserId().toString());
             bankSlipDO.setUpdateTime(now);
             bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            bankSlipDO = bankSlipSupport.formatBankSlipDetail(bankSlipDO, bankSlipDetailDOList);
+            bankSlipDO = bankSlipSupport.filtrationBankSlipDetail(bankSlipDO, bankSlipDetailDOList);
             if (bankSlipDO == null) {
                 serviceResult.setErrorCode(ErrorCode.IMPORT_BANK_SLIP_DETAILS_IS_EXIST);
                 return serviceResult;
