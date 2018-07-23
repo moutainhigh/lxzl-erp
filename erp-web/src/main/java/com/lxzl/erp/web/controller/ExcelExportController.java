@@ -6,11 +6,13 @@ import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.statistics.FinanceStatisticsWeeklyParam;
 import com.lxzl.erp.common.domain.statistics.StatisticsSalesmanPageParam;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.export.DisposeExportDataService;
 import com.lxzl.erp.core.service.export.ExportExcelCustomFormatService;
+import com.lxzl.erp.core.service.export.ExportStatisticsFinanceDataWeeklyService;
 import com.lxzl.se.common.domain.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,6 +32,9 @@ public class ExcelExportController {
     private DisposeExportDataService disposeExportDataService;
     @Autowired
     private ExportExcelCustomFormatService exportExcelCustomFormatService;
+    @Autowired
+    private ExportStatisticsFinanceDataWeeklyService exportStatisticsFinanceDataWeeklyService;
+
     @RequestMapping(value = "exportPageBankSlipDetail", method = RequestMethod.POST)
     public Result exportPageBankSlip(BankSlipDetailQueryParam bankSlipDetailQueryParam, HttpServletResponse response) throws Exception {
         return resultGenerator.generate(disposeExportDataService.disposePageBankSlipDetail(bankSlipDetailQueryParam,response).getErrorCode());
@@ -58,6 +63,12 @@ public class ExcelExportController {
     @RequestMapping(value = "exportStatementOrderCheck", method = RequestMethod.POST)
     public Result exportDynamicSql(StatementOrderMonthQueryParam statementOrderMonthQueryParam, HttpServletResponse response) throws Exception {
         ServiceResult<String, String> serviceResult = exportExcelCustomFormatService.queryStatementOrderCheckParam(statementOrderMonthQueryParam, response);
+        return resultGenerator.generate(serviceResult.getErrorCode());
+    }
+
+    @RequestMapping(value = "exportStatisticsFinanceDataWeekly", method = RequestMethod.POST)
+    public Result exportStatisticsFinanceDataWeekly(FinanceStatisticsWeeklyParam param, HttpServletResponse response) throws Exception {
+        ServiceResult<String, String> serviceResult = exportStatisticsFinanceDataWeeklyService.exportStatisticsFinanceDataWeekly(param, response);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
 

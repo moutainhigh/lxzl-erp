@@ -991,6 +991,8 @@ public class ErrorCode {
     public static final String CONFIRM_STATUS_NOT_NULL = "J240000002";
     public static final String CONFIRM_STATUS_ERROR = "J240000003";
     public static final String STATISTICS_SALESMAN_MONTH_HASH_PEER_EXISTS = "J240000004";
+    public static final String STATISTICS_FINANCE_WEEKLY_PARAM_INVALID = "J240000005";
+    public static final String STATISTICS_FINANCE_WEEKLY_DATA_NOT_EXISTS = "J240000006";
 
     // 定时任务错误信息
     public static final String QUARTZ_SCHED_NAME_NOT_NULL = "J250000001";
@@ -1970,6 +1972,8 @@ public class ErrorCode {
         MAP.put(CONFIRM_STATUS_NOT_NULL, "确认状态不能为空");
         MAP.put(CONFIRM_STATUS_ERROR, "确认状态错误");
         MAP.put(STATISTICS_SALESMAN_MONTH_HASH_PEER_EXISTS, "该月业务员提成统计月结数据已生成，请勿重复生成");
+        MAP.put(STATISTICS_FINANCE_WEEKLY_PARAM_INVALID, "导出财务周报时，参数年、月以及当月第几周为必填参数且不能为空，请核对后并正确填写");
+        MAP.put(STATISTICS_FINANCE_WEEKLY_DATA_NOT_EXISTS, "该周统计的财务月累计数据不存在");
 
         MAP.put(QUARTZ_SCHED_NAME_NOT_NULL, "定时任务的Sched名称不能为空");
         MAP.put(QUARTZ_JOB_NAME_NOT_NULL, "定时任务的任务名称不能为空");

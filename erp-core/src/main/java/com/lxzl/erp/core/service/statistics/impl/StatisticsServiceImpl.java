@@ -13,18 +13,24 @@ import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
+import com.lxzl.erp.core.service.statistics.impl.support.finance.FinanceStatisticsWeeklySupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statistics.FinanceStatisticsDataWeeklyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsSalesmanMonthMapper;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataWeeklyDO;
+import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDealsCountBySubCompany;
 import com.lxzl.erp.dataaccess.domain.statistics.StatisticsSalesmanMonthDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -935,6 +941,53 @@ public class StatisticsServiceImpl implements StatisticsService {
         return BigDecimalUtil.compare(prepayRentAmount, BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : prepayRentAmount;
     }
 
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, Map<String, List<FinanceStatisticsDataWeeklyDO>>> statisticsFinanceDataWeeklyNow(){
+        ServiceResult<String, Map<String, List<FinanceStatisticsDataWeeklyDO>>> result = new ServiceResult<>();
+        Map<String, List<FinanceStatisticsDataWeeklyDO>> diffStatisticsDataWeeklyMap = new HashMap<>();
+        Date now = new Date();
+        // 测试使用(修改当前时间)
+       /* SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            now = sdf.parse(*//*"2018-03-06"*//*"2018-03-03");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }*/
+        Calendar currentCalendar = Calendar.getInstance();
+        currentCalendar.setTime(now);
+        int currentYear = currentCalendar.get(Calendar.YEAR);
+        int currentMonth = currentCalendar.get(Calendar.MONTH) + 1; // 因为日历获取的月份比实际月份小1
+        int currentWeekOfMonth = currentCalendar.get(Calendar.WEEK_OF_MONTH);
+        Date firstDayOfThisWeek = financeStatisticsWeeklySupport.getFirstDayOfCurrentWeek(now);
+        if (firstDayOfThisWeek.compareTo(DateUtil.getStartMonthDate(now)) < 0) { //如果这周第一天的日期比当月第一天的时间还小，说明这周已经跨月份
+            Calendar firstDayOfThisWeekCalendar = Calendar.getInstance();
+            firstDayOfThisWeekCalendar.setTime(firstDayOfThisWeek);
+            int firstDayOfThisWeekInYear = firstDayOfThisWeekCalendar.get(Calendar.YEAR);
+            int firstDayOfThisWeekInMonth = firstDayOfThisWeekCalendar.get(Calendar.MONTH) + 1; // 因为日历获取的月份比实际月份小1
+            int firstDayOfThisWeekInWeekOfMonth = firstDayOfThisWeekCalendar.get(Calendar.WEEK_OF_MONTH);
+            List<FinanceStatisticsDataWeeklyDO> lastMonthData = financeStatisticsWeeklySupport.statisticsFinanceDataWeekly(firstDayOfThisWeekInYear, firstDayOfThisWeekInMonth, firstDayOfThisWeekInWeekOfMonth);
+            String key = firstDayOfThisWeekInYear + "-" + firstDayOfThisWeekInMonth +  "-" + firstDayOfThisWeekInWeekOfMonth;
+            diffStatisticsDataWeeklyMap.put(key, lastMonthData);
+        }
+        String key = currentYear + "-" + currentMonth + "-" + currentWeekOfMonth;
+        List<FinanceStatisticsDataWeeklyDO> currentMonthData = financeStatisticsWeeklySupport.statisticsFinanceDataWeekly(currentYear, currentMonth, currentWeekOfMonth);
+        diffStatisticsDataWeeklyMap.put(key, currentMonthData);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(diffStatisticsDataWeeklyMap);
+        return result;
+    }
+
+    @Override
+    public List<FinanceStatisticsDataWeeklyExcel> statisticsFinanceDataWeeklyToExcel(int year, int month, int weekOfMonth){
+        List<FinanceStatisticsDataWeeklyDO> diffFinanceAllStatisticsDataWeekly = financeStatisticsWeeklySupport.statisticsFinanceDataWeekly(year, month,weekOfMonth);
+        List<FinanceStatisticsDataWeeklyExcel> excelList = financeStatisticsWeeklySupport.convertToExcelData(diffFinanceAllStatisticsDataWeekly);
+        /*for (FinanceStatisticsDataWeeklyExcel excel: excelList) {
+            System.out.println(excel.toString());
+        }*/
+        return excelList;
+    }
+
     @Autowired
     private CustomerMapper customerMapper;
     @Autowired
@@ -955,4 +1008,6 @@ public class StatisticsServiceImpl implements StatisticsService {
     private StatisticsSalesmanMonthMapper statisticsSalesmanMonthMapper;
     @Autowired
     private UserSupport userSupport;
+    @Autowired
+    private FinanceStatisticsWeeklySupport financeStatisticsWeeklySupport;
 }
