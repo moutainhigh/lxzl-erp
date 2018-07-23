@@ -734,6 +734,28 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Override
     public ServiceResult<String, Page<WorkflowLink>> getWorkflowLinkPage(WorkflowLinkQueryParam workflowLinkQueryParam) {
         ServiceResult<String, Page<WorkflowLink>> result = new ServiceResult<>();
+        //工作台判断
+        if(workflowLinkQueryParam.getIsWorkbench() != null && CommonConstant.COMMON_CONSTANT_YES.equals(workflowLinkQueryParam.getIsWorkbench())){
+
+            PageQuery pageQuery = new PageQuery(workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("start", pageQuery.getStart());
+            paramMap.put("pageSize", pageQuery.getPageSize());
+            paramMap.put("workflowQueryParam", workflowLinkQueryParam);
+            //只有审核人数据
+            if (!userSupport.isSuperUser()) {
+                paramMap.put("verifyUserId", userSupport.getCurrentUserId().toString());
+            }
+
+            Integer dataCount = workflowLinkMapper.workbenchListCount(paramMap);
+            List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.workbenchListPage(paramMap);
+
+            Page<WorkflowLink> page = new Page<>(ConverterUtil.convertList(workflowLinkDOList, WorkflowLink.class), dataCount, workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
+
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(page);
+            return result;
+        }
         PageQuery pageQuery = new PageQuery(workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("start", pageQuery.getStart());

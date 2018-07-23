@@ -1567,6 +1567,12 @@ public class StatementServiceImpl implements StatementService {
     @Override
     public ServiceResult<String, Page<StatementOrder>> queryStatementOrder(StatementOrderQueryParam statementOrderQueryParam) {
         ServiceResult<String, Page<StatementOrder>> result = new ServiceResult<>();
+
+        //工作台判断
+        if(statementOrderQueryParam.getIsWorkbench() != null && CommonConstant.COMMON_CONSTANT_YES.equals(statementOrderQueryParam.getIsWorkbench())){
+            statementOrderQueryParam.setStatementExpectPayStartTime(DateUtil.getDayByOffset(new Date(), -7));
+        }
+
         PageQuery pageQuery = new PageQuery(statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
         if (StringUtil.isNotEmpty(statementOrderQueryParam.getOrderNo())) {
