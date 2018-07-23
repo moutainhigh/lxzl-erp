@@ -166,7 +166,7 @@ public class ImportBankSlip {
             bankSlipDO.setCreateUser(userSupport.getCurrentUserId().toString());
             bankSlipDO.setUpdateTime(now);
             bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            bankSlipDO = bankSlipSupport.filtrationBankSlipDetail(bankSlipDO, bankSlipDetailDOList);
+            bankSlipDO = bankSlipSupport.filterBankSlipDetail(bankSlipDO, bankSlipDetailDOList);
             if (bankSlipDO == null) {
                 serviceResult.setErrorCode(ErrorCode.IMPORT_BANK_SLIP_DETAILS_IS_EXIST);
                 return serviceResult;
