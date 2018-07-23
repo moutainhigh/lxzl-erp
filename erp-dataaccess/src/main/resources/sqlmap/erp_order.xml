@@ -1369,6 +1369,10 @@
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
             </if>
+            and
+            ( eo.rent_type = 1 AND expect_return_time &lt;=  curdate() + INTERVAL 14 DAY)
+            or
+            ( eo.rent_type = 2 AND expect_return_time &lt;=  curdate() + INTERVAL 29 DAY)
             <include refid="permission_sql.order_control"/>
         </where>
     </select>
