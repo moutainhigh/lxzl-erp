@@ -194,25 +194,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
             return result;
         }
-        //校验所退退货单是否是该客户的订单
-        CustomerDO customerDO = customerMapper.findByNo(k3ReturnOrder.getK3CustomerNo());
-        if (customerDO==null) {
-            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
-            return result;
-        }
-        if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailList)) {
-            for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrderDetailList) {
-                OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
-                if (orderDO == null) {
-                    result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-                    return result;
-                }
-                if (!customerDO.getId().equals(orderDO.getBuyerCustomerId())) {
-                    result.setErrorCode(ErrorCode.ORDERN_AND_CUSTOMER_ERROR);
-                    return result;
-                }
-            }
-        }
         if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())
                 && !ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE);
@@ -1138,26 +1119,19 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 //            result.setErrorCode(ErrorCode.HAS_SAME_PRODUCT);
 //            return result;
 //        }
-        //校验所退退货单是否是该客户的订单
+
         CustomerDO customerDO = customerMapper.findByNo(k3ReturnOrder.getK3CustomerNo());
         if (customerDO==null) {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
+        Set<String> orderNoSet = new HashSet<>();
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = k3ReturnOrder.getK3ReturnOrderDetailList();
-        if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailList)) {
-            for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrderDetailList) {
-                OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
-                if (orderDO == null) {
-                    result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-                    return result;
-                }
-                if (!customerDO.getId().equals(orderDO.getBuyerCustomerId())) {
-                    result.setErrorCode(ErrorCode.ORDERN_AND_CUSTOMER_ERROR);
-                    return result;
-                }
-            }
+        //校验所退退货单是否是该客户的订单
+        if (verifyOrderAndCustomer(result, customerDO, orderNoSet, k3ReturnOrderDetailList)){
+            return result;
         }
+
         //itemId校验
         if (!varifyOrderItemId(k3ReturnOrderDetailList)) {
             result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
@@ -1253,6 +1227,32 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         result.setResult(k3ReturnOrderDO.getReturnOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    private boolean verifyOrderAndCustomer(ServiceResult<String, String> result, CustomerDO customerDO, Set<String> orderNoSet, List<K3ReturnOrderDetail> k3ReturnOrderDetailList) {
+        if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailList)) {
+            for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrderDetailList) {
+                orderNoSet.add(k3ReturnOrderDetail.getOrderNo());
+            }
+        }else {
+            result.setErrorCode(ErrorCode.RETURN_DETAIL_LIST_NOT_NULL);
+            return true;
+        }
+        if (CollectionUtil.isNotEmpty(orderNoSet)) {
+            List<OrderDO> orderDOList = orderMapper.findByNos(orderNoSet);
+            if (CollectionUtil.isNotEmpty(orderDOList)) {
+                for (OrderDO orderDO:orderDOList) {
+                    if (!customerDO.getId().equals(orderDO.getBuyerCustomerId())) {
+                        result.setErrorCode(ErrorCode.ORDERN_AND_CUSTOMER_ERROR);
+                        return true;
+                    }
+                }
+            }else {
+                result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
