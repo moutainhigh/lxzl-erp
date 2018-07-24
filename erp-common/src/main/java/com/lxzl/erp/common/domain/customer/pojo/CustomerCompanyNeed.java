@@ -34,6 +34,8 @@ public class CustomerCompanyNeed {
     private Integer rentType;  //租赁类型，1按天，2按月
 
     private Product product; //商品
+    private BigDecimal productRentPrice; //商品租金
+    private BigDecimal totalProductRentPrice; //商品总租金
 
     public Integer getSkuId() {
         return skuId;
@@ -97,5 +99,21 @@ public class CustomerCompanyNeed {
 
     public void setRentType(Integer rentType) {
         this.rentType = rentType;
+    }
+
+    public BigDecimal getProductRentPrice() {
+        return productRentPrice;
+    }
+
+    public void setProductRentPrice(BigDecimal productRentPrice) {
+        this.productRentPrice = productRentPrice;
+    }
+
+    public BigDecimal getTotalProductRentPrice() {
+        return totalProductRentPrice;
+    }
+
+    public void setTotalProductRentPrice(BigDecimal totalProductRentPrice) {
+        this.totalProductRentPrice = totalProductRentPrice;
     }
 }
