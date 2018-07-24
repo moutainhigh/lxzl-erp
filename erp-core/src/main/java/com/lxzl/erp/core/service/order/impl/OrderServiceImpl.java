@@ -2462,6 +2462,8 @@ public class OrderServiceImpl implements OrderService {
         //仅仅是为工作台查询可续租的订单服务
         if (CommonConstant.COMMON_CONSTANT_YES.equals(orderQueryParam.getIsCanReletOrder())){
             Map<String,Object> maps = new HashMap<>();
+            maps.put("reletTimeOfDay",CommonConstant.RELET_TIME_OF_RENT_TYPE_DAY );
+            maps.put("reletTimeOfMonth",CommonConstant.RELET_TIME_OF_RENT_TYPE_MONTH);
             maps.put("orderQueryParam",orderQueryParam);
             maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
 

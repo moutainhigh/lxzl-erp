@@ -355,7 +355,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                 }
 
                 //预计支付时间提前七天查询
-                statementOrderQueryParam.setStatementExpectPayEndTime(DateUtil.getDayByOffset(new Date(), 7));
+                statementOrderQueryParam.setStatementExpectPayEndTime(DateUtil.getDayByOffset(new Date(), CommonConstant.STATEMENT_ADVANCE_EXPECT_PAY_END_TIME));
 
                 Map<String, Object> maps = new HashMap<>();
                 maps.put("statementOrderQueryParam", statementOrderQueryParam);

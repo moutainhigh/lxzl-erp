@@ -1274,8 +1274,8 @@
         <where>
             <if test="maps.orderQueryParam.isCanReletOrder != null &amp;&amp; maps.orderQueryParam.isCanReletOrder == 1">
                 (case
-                when eo.rent_type = 1 then  <![CDATA[ eo.expect_return_time  <=  curdate() + INTERVAL 14 DAY ]]>
-                when eo.rent_type = 2 then  <![CDATA[ eo.expect_return_time <=  curdate() + INTERVAL 29 DAY ]]>
+                when eo.rent_type = 1 then  <![CDATA[ eo.expect_return_time  <  curdate() + INTERVAL #{maps.reletTimeOfDay, jdbcType=INTEGER} DAY ]]>
+                when eo.rent_type = 2 then  <![CDATA[ eo.expect_return_time <  curdate() + INTERVAL #{maps.reletTimeOfMonth, jdbcType=INTEGER} DAY ]]>
                 end)
                 AND eo.order_status in (20,22)
             </if>
