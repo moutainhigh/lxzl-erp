@@ -729,4 +729,13 @@ public class K3ControllerTest extends ERPTransactionalTest {
 
         TestResult testResult = getJsonTestResult("/k3/confirmOrder", orderConfirmChangeToK3Param);
     }
+
+    @Test
+    public void testBatchImportK3HistoricalRefundList() throws Exception {
+        BatchImportK3HistoricalRefundListParam batchImportK3HistoricalRefundListParam = new BatchImportK3HistoricalRefundListParam();
+        batchImportK3HistoricalRefundListParam.setStartPage(1);
+
+        TestResult testResult = getJsonTestResult("/k3/batchImportK3HistoricalRefundList", batchImportK3HistoricalRefundListParam);
+    }
+
 }

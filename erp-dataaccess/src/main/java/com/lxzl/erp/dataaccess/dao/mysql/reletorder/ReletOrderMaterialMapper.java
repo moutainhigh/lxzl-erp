@@ -14,4 +14,6 @@ public interface ReletOrderMaterialMapper extends BaseMysqlDAO<ReletOrderMateria
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	List<ReletOrderMaterialDO> findByReletOrderId(@Param("reletOrderId") Integer reletOrderId);
+
+	void batchUpdate(@Param("list") List<ReletOrderMaterialDO> list);
 }

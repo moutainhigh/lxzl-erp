@@ -32,6 +32,7 @@ import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDO;
 import com.lxzl.se.common.util.StringUtil;
+import org.apache.commons.collections.MapUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Font;
@@ -114,7 +115,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
         statementOrderMonthQueryParam = new StatementOrderMonthQueryParam();
         statementOrderMonthQueryParam.setStatementOrderCustomerNo(customerNoParam);
-        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderStartTime);
+//        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderStartTime);
         statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderEndTime);
 
         ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam);
@@ -140,9 +141,72 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
         String previousSheetName = "";
         String customerName = "";
+        //先付后用找月份和结算开始时间在同一月的那一期
+        Map<String,CheckStatementOrderDetail> bigDecimalMap = new HashMap<>();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+            List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+            if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
+                continue;
+            }
+            String monthTime = checkStatementOrder.getMonthTime();
+            for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
+                if (BigDecimalUtil.compare(exportStatementOrderDetail.getUnitAmount(),BigDecimal.ZERO)>0) {
+                    Date statementStartTimeDate = exportStatementOrderDetail.getStatementStartTime();
+                    if (statementStartTimeDate != null) {
+                        String statementStartTime = simpleDateFormat.format(statementStartTimeDate);
+                        //订单商品或配件，先付后用（1），月份等于计算开始时间，取出字符串和对象
+                        if ((OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())||
+                                OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType()))&&
+                                OrderPayMode.PAY_MODE_PAY_BEFORE.equals(exportStatementOrderDetail.getPayMode())&&
+                                monthTime.equals(statementStartTime)) {
+                            //Key 商品/配件ID+结算单详情类型+结算单商品配件类型+支付类型+支付开始时间+支付结束时间+订单编号
+                            String bigDecimalKey = exportStatementOrderDetail.getOrderItemReferId() +"-"+exportStatementOrderDetail.getOrderType()+"-"+
+                                    exportStatementOrderDetail.getOrderItemType()+"-"+exportStatementOrderDetail.getPayMode()+"-"+
+                                    exportStatementOrderDetail.getStatementStartTime()+"-"+exportStatementOrderDetail.getStatementEndTime()+"-"+exportStatementOrderDetail.getOrderNo();
+                            if (!bigDecimalMap.containsKey(bigDecimalKey)) {
+                                bigDecimalMap.put(bigDecimalKey,exportStatementOrderDetail);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //开始存储先付后用的金额
+        if (MapUtils.isNotEmpty(bigDecimalMap)) {
+            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+                List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+                if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
+                    continue;
+                }
+                String monthTime = checkStatementOrder.getMonthTime();
+                for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
+                    if (BigDecimalUtil.compare(exportStatementOrderDetail.getUnitAmount(),BigDecimal.ZERO)>0) {
+                        Date statementStartTimeDate = exportStatementOrderDetail.getStatementStartTime();
+                        if (statementStartTimeDate != null) {
+                            String statementStartTime = simpleDateFormat.format(statementStartTimeDate);
+                            if (!monthTime.equals(statementStartTime)) {
+                                //Key 商品/配件ID+结算单详情类型+结算单商品配件类型+支付类型+支付开始时间+支付结束时间+订单编号
+                                String bigDecimalKey = exportStatementOrderDetail.getOrderItemReferId() +"-"+exportStatementOrderDetail.getOrderType()+"-"+
+                                        exportStatementOrderDetail.getOrderItemType()+"-"+exportStatementOrderDetail.getPayMode()+"-"+
+                                        exportStatementOrderDetail.getStatementStartTime()+"-"+exportStatementOrderDetail.getStatementEndTime()+"-"+exportStatementOrderDetail.getOrderNo();
+                                if (bigDecimalMap.containsKey(bigDecimalKey)) {
+                                    CheckStatementOrderDetail checkStatementOrderDetail = bigDecimalMap.get(bigDecimalKey);
+                                    exportStatementOrderDetail.setStatementDetailEndAmount(checkStatementOrderDetail.getStatementDetailAmount());
+                                    exportStatementOrderDetail.setStatementDetailRentEndAmount(checkStatementOrderDetail.getStatementDetailRentAmount());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 
         for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-            if (checkStatementOrder.getStatementExpectPayTime().getTime() > DateUtil.getEndMonthDate(new Date()).getTime()) {
+
+            Date monthTime = simpleDateFormat.parse(checkStatementOrder.getMonthTime());
+            if (monthTime.getTime()<statementOrderStartTime.getTime()) {
                 continue;
             }
             if (StringUtil.isBlank(customerName)) {
@@ -607,13 +671,31 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         } else if (returnReasonType.equals(ReturnReasonType.REPLACEMENT_EQUIPMENT)) {
             return "更换设备";
         } else if (returnReasonType.equals(ReturnReasonType.COMPANY_CLOSURES)) {
-            return "公司倒闭";
+            return "公司经营不善/倒闭";
         } else if (returnReasonType.equals(ReturnReasonType.IDLE_EQUIPMENT)) {
-            return "设备";
+            return "项目结束闲置";
         } else if (returnReasonType.equals(ReturnReasonType.FOLLOW_THE_RENT)) {
             return "满三个月或六个月随租随还";
         } else if (returnReasonType.equals(ReturnReasonType.OTHER)) {
             return "其它',";
+        }else if (returnReasonType.equals(ReturnReasonType.COMMODITY_FAILURE_REPLACEMENT)) {
+            return "商品故障更换";
+        }else if (returnReasonType.equals(ReturnReasonType.CONFIGURATION_UPGRADE_REPLACEMENT)) {
+            return "配置升级更换";
+        }else if (returnReasonType.equals(ReturnReasonType.ORDER_INVALIDATION )) {
+            return "订单作废/取消";
+        }else if (returnReasonType.equals(ReturnReasonType.PRICE_CAUSE_TO_PURCHASE)) {
+            return "价格原因转购买";
+        }else if (returnReasonType.equals(ReturnReasonType.PRICE_REASONS_FOR_SUPPLIERS)) {
+            return "价格原因换供应商";
+        }else if (returnReasonType.equals(ReturnReasonType.PURCHASE_OF_COMMODITY_QUALITY)) {
+            return "商品质量问题转购买";
+        }else if (returnReasonType.equals(ReturnReasonType.COMMODITY_QUALITY_PROBLEMS_FOR_SUPPLIERS)) {
+            return "商品质量问题换供应商";
+        }else if (returnReasonType.equals(ReturnReasonType.THE_SERVICE_IS_NOT_RETURNED_IN_TIME)) {
+            return "服务不及时造成退货";
+        }else if (returnReasonType.equals(ReturnReasonType.STAFF_LEAVING_OR_STUDENT_GRADUATION_IDLE)) {
+            return "人员离职/学生毕业闲置";
         }
         return "";
     }

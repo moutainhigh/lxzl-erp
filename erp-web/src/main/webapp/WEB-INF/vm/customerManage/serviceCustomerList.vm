@@ -119,7 +119,7 @@
                                 {{/listData}}
                                 {{^listData}}
                                 <tr>
-                                    <td valign="top" colspan="14" class="text-center">没有查询到客户信息</td>
+                                    <td valign="top" colspan="14" class="text-center">无客户信息</td>
                                 </tr>
                                 {{/listData}}
                                 {{/dataSource}}
@@ -128,13 +128,13 @@
                             <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                         </div>
                     </div>
-                    <div class="panel-footer">
-                        <div class="row">
-                            <div class="col-xs-12 col-md-12 text-right mt10 mb10">
-                                #parse("component/pager.vm")
-                            </div>
-                        </div>
-                    </div>
+##                    <div class="panel-footer">
+##                        <div class="row">
+##                            <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+##                                #parse("component/pager.vm")
+##                            </div>
+##                        </div>
+##                    </div>
                 </div>
             </section>
         </section>
