@@ -576,7 +576,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         //短租
         Calendar cal = Calendar.getInstance();
         cal.setTime(currentTime);
-        cal.add(Calendar.DAY_OF_MONTH, 2);  //按天租 提前3天
+        cal.add(Calendar.DAY_OF_MONTH, CommonConstant.RELET_TIME_OF_RENT_TYPE_DAY - 1);  //按天租 提前15天
         OrderQueryParam orderQueryParam = new OrderQueryParam();
         orderQueryParam.setRentType(OrderRentType.RENT_TYPE_DAY);
         orderQueryParam.setStartExpectReturnTime(DateUtil.getFirstOfDay(cal.getTime()));
@@ -590,7 +590,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         //长租
         Calendar calLong = Calendar.getInstance();
         calLong.setTime(currentTime);
-        calLong.add(Calendar.DAY_OF_MONTH, 9);  //按月租  提前10天
+        calLong.add(Calendar.DAY_OF_MONTH, CommonConstant.RELET_TIME_OF_RENT_TYPE_MONTH - 1);  //按月租  提前30天
         OrderQueryParam orderQueryParamLong = new OrderQueryParam();
         orderQueryParamLong.setRentType(OrderRentType.RENT_TYPE_MONTH);
         orderQueryParamLong.setStartExpectReturnTime(DateUtil.getFirstOfDay(calLong.getTime()));
@@ -1486,9 +1486,9 @@ public class ReletOrderServiceImpl implements ReletOrderService {
      * @date 2018/5/9 15:16
      */
     private String validReletTimeRange(Date returnTime, Date currentTime, Integer rentType) {
-        Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(returnTime, currentTime);
-        if ((OrderRentType.RENT_TYPE_MONTH.equals(rentType) && dayCount < -9)
-                || (OrderRentType.RENT_TYPE_DAY.equals(rentType) && dayCount < -2)) {  //订单： 按月租前10天 和  按天租前3天 可续租
+        Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(currentTime, returnTime);
+        if ((OrderRentType.RENT_TYPE_MONTH.equals(rentType) && dayCount >= CommonConstant.RELET_TIME_OF_RENT_TYPE_MONTH)
+                || (OrderRentType.RENT_TYPE_DAY.equals(rentType) && dayCount >= CommonConstant.RELET_TIME_OF_RENT_TYPE_DAY)) {  //订单： 按月租前30天 和  按天租前15天 可续租
             return ErrorCode.RELET_ORDER_NOT_IN_RELET_TIME_SCOPE;
         }
         return ErrorCode.SUCCESS;

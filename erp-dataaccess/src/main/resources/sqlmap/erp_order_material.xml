@@ -87,7 +87,7 @@
 				rent_time_length = #{rentTimeLength, jdbcType=INTEGER},
 			</if>
 			<if test="rentLengthType != null">
-                rent_length_type = #{rentLengthType, jdbcType=INTEGER},
+				rent_length_type = #{rentLengthType, jdbcType=INTEGER},
 			</if>
 			<if test="materialId != null">
 				material_id = #{materialId,jdbcType=INTEGER},
@@ -186,5 +186,13 @@
 	</select>
 	<select id="findK3OrderMaterial" resultType="OrderMaterialDO" parameterType="java.util.Map">
 		SELECT <include refid="column_List"/> FROM erp_order_material eom WHERE order_id = #{orderId} AND FEntry_id = #{FEntryId} AND data_status = 1
+	</select>
+
+	<select id="findByOrderIdList" resultMap="OrderMaterialDO">
+		SELECT <include refid="column_List"/> FROM erp_order_material eom
+		WHERE eom.order_id IN
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item}
+		</foreach>
 	</select>
 </mapper>

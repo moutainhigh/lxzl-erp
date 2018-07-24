@@ -9,10 +9,10 @@ import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetailOperationLog;
-import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
+import com.lxzl.erp.common.domain.payment.AddOnlineBankSlipQueryParam;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
 
-import java.util.List;
+import java.text.ParseException;
 
 /**
  * @Author: your name
@@ -165,4 +165,21 @@ public interface BankSlipService {
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
      */
     ServiceResult<String,Integer> confirmBankSlipDetail(BankSlipDetail bankSlipDetail);
+    /**
+     * 时时导入快付通数据到银行流水
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/5/21 17:48
+     * @param : itemList
+     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+     */
+    ServiceResult<String,String> addOnlineBankSlip(AddOnlineBankSlipQueryParam addOnlineBankSlipQueryParam) throws ParseException;
+    /**
+     * 时时导入快付通数据到银行流水
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/5/21 17:48
+     * @param : itemList
+     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+     */
+    ServiceResult<String, String> addOnlineHistoryBankSlip(AddOnlineBankSlipQueryParam addOnlineBankSlipQueryParam) throws ParseException;
 }
+

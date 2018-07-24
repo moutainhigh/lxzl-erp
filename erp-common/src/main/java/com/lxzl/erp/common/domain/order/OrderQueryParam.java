@@ -43,6 +43,8 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private Integer isRecycleBin;//是否回收站
     private Integer isReturnOverDue;  //商品退还是否逾期
 
+    private Integer isCanReletOrder; //是否为可续租的订单
+
     public Integer getOrderId() {
         return orderId;
     }
@@ -268,4 +270,13 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setRentLengthType(Integer rentLengthType) {
         this.rentLengthType = rentLengthType;
-    }}
+    }
+
+    public Integer getIsCanReletOrder() {
+        return isCanReletOrder;
+    }
+
+    public void setIsCanReletOrder(Integer isCanReletOrder) {
+        this.isCanReletOrder = isCanReletOrder;
+    }
+}

@@ -265,4 +265,13 @@
 		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc
 		WHERE esoc.statement_order_id = #{statementOrderId, jdbcType=INTEGER}  AND esoc.statement_order_refer_id = #{referId, jdbcType=INTEGER}  AND esoc.data_status = 1
 	</select>
+
+	<update id="deleteByIds"  parameterType="java.util.List">
+		UPDATE erp_statement_order_correct
+		SET data_status=2
+		WHERE id in
+		<foreach collection="list" open="(" close=")" separator="," item="id">#{id}</foreach>
+		AND data_status = 1
+	</update>
+
 </mapper>

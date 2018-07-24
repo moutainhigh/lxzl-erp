@@ -91,4 +91,23 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDetailDO">
 		UPDATE erp_statement_order_correct_detail <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<update id="deleteByIds"  parameterType="java.util.List">
+		UPDATE erp_statement_order_correct_detail
+		SET data_status=2
+		WHERE id in
+		<foreach collection="list" open="(" close=")" separator="," item="id">#{id}</foreach>
+		AND data_status = 1
+	</update>
+
+	<select id="findByStatementDetailIds" resultMap="StatementOrderCorrectDetailDO" parameterType="java.util.List">
+		SELECT
+		<include refid="column_List"/>
+		FROM erp_statement_order_correct_detail esocd
+		WHERE esocd.data_status = 1
+		and esocd.statement_order_detail_id in
+		<foreach collection="list" open="(" close=")" separator="," item="id">#{id}</foreach>
+	</select>
+
+
 </mapper>
