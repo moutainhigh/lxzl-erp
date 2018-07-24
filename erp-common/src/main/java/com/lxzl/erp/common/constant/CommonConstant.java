@@ -60,4 +60,6 @@ public class CommonConstant {
     public static final Integer COMMON_ONE = 1;
     public static final Integer WORKFLOW_STEP_TWO = 2;
 
+    public static final Integer RELET_TIME_OF_RENT_TYPE_MONTH = 30;  //按月租提前30天
+    public static final Integer RELET_TIME_OF_RENT_TYPE_DAY = 15;   //按天租提前15天
 }

@@ -1,9 +1,6 @@
 package com.lxzl.erp.core.service.order.impl.support;
 
-import com.lxzl.erp.common.constant.CanReletOrderStatus;
-import com.lxzl.erp.common.constant.OrderRentType;
-import com.lxzl.erp.common.constant.OrderStatus;
-import com.lxzl.erp.common.constant.ReletOrderStatus;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.util.CollectionUtil;
@@ -69,9 +66,9 @@ public class OrderSupport {
 
         //检查是否在续租时间范围
         Date currentTime = new Date();
-        Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(order.getExpectReturnTime(), currentTime);
-        if ((OrderRentType.RENT_TYPE_MONTH.equals(order.getRentType()) && dayCount < -9)
-                || (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && dayCount < -2)) {  //订单： 长租前10天 和 短租前3天 可续租
+        Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(currentTime, order.getExpectReturnTime());
+        if ((OrderRentType.RENT_TYPE_MONTH.equals(order.getRentType()) && dayCount >= CommonConstant.RELET_TIME_OF_RENT_TYPE_MONTH)
+                || (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && dayCount >= CommonConstant.RELET_TIME_OF_RENT_TYPE_DAY)) {  //订单： 月租提前30天 和 天租提前15天 可续租
             return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_NO;
         }
 
