@@ -22,4 +22,7 @@ public interface StatementOrderCorrectMapper extends BaseMysqlDAO<StatementOrder
 	StatementOrderCorrectDO findByNo(@Param("statementCorrectNo") String statementCorrectNo);
 
 	List<StatementOrderCorrectDO> findStatementOrderIdAndReferId(@Param("statementOrderId")Integer statementOrderId,@Param("referId")Integer referId);
+
+	int deleteByIds(@Param("list")List<Integer>ids);
+
 }

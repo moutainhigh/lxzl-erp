@@ -249,7 +249,6 @@
 				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
 				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR})))
 			</if>
-			and ebsd.loan_sign = 1
 		</where>
 </select>
 
@@ -312,7 +311,6 @@
 				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
 				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR})))
 			</if>
-			and ebsd.loan_sign = 1
 		</where>
 		GROUP BY ebsd.id
 		ORDER BY ebsd.detail_status ASC ,ebsd.payer_name DESC

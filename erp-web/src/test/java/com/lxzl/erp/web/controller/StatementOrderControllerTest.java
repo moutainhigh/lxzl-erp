@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.StatementOrderPayType;
+import com.lxzl.erp.common.constant.StatementOrderStatus;
 import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.order.pojo.Order;
@@ -10,6 +11,7 @@ import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import org.junit.Test;
 
@@ -76,7 +78,8 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
         StatementOrderQueryParam param = new StatementOrderQueryParam();
 //        param.setOrderNo("LXO-20180305-0755-00009");//LXO-20180305-010-00001
 //        param.setStatementOrderCustomerName("收货进行时五号");
-        param.setSubCompanyId(3);
+        param.setStatementExpectPayStartTime(DateUtil.getDayByOffset(new Date(), -7));
+        param.setStatementOrderStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
         TestResult testResult = getJsonTestResult("/statementOrder/page", param);
     }
 
@@ -91,7 +94,7 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detail() throws Exception {
         StatementOrderPayParam param = new StatementOrderPayParam();
-        param.setStatementOrderNo("LXSO-701088-20180601-07728");
+        param.setStatementOrderNo("LXSO-705609-20180702-01022");
         TestResult testResult = getJsonTestResult("/statementOrder/detail", param);
     }
 
@@ -187,8 +190,8 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void exportQueryStatementOrderCheckParam() throws Exception {
-        String str = "2018-06";
-        String str1 = "2018-08";
+        String str = "2018-07";
+        String str1 = "2018-07";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
         Date rentStartTime = sdf.parse(str);
         Date rentStartTime1 = sdf.parse(str1);
@@ -198,9 +201,9 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
 //        param.setOwnerName("来春");
 //        param.setSubCompanyId(2);
 //        param.setStatementOrderCustomerName("庄凯麟勿动");
-        param.setStatementOrderCustomerNo("LXCC-2000-20180317-00853");
-        param.setStatementOrderStartTime(rentStartTime1);
-        param.setStatementOrderEndTime(rentStartTime);
+        param.setStatementOrderCustomerNo("LXCC-027-20180717-00078");
+        param.setStatementOrderStartTime(rentStartTime);
+        param.setStatementOrderEndTime(rentStartTime1);
 //        param.setMonthTime(rentStartTime);
         TestResult testResult = getJsonTestResult("/statementOrder/exportQueryStatementOrderCheckParam", param);
     }
