@@ -60,9 +60,9 @@
         <result column="buyer_remark" jdbcType="VARCHAR" property="buyerRemark"/>
         <result column="product_summary" jdbcType="VARCHAR" property="productSummary"/>
         <result column="is_k3_order" jdbcType="INTEGER" property="isK3Order"/>
-        <result column="statement_date" jdbcType="INTEGER" property="statementDate" />
-        <result column="order_message" jdbcType="VARCHAR" property="orderMessage" />
-        <result column="cancel_order_reason_type" jdbcType="INTEGER" property="cancelOrderReasonType" />
+        <result column="statement_date" jdbcType="INTEGER" property="statementDate"/>
+        <result column="order_message" jdbcType="VARCHAR" property="orderMessage"/>
+        <result column="cancel_order_reason_type" jdbcType="INTEGER" property="cancelOrderReasonType"/>
         <result column="relet_order_id_alias" jdbcType="INTEGER" property="reletOrderId"/>
         <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -111,8 +111,8 @@
         <result column="product_update_time" property="updateTime"/>
         <result column="product_FEntry_id" property="FEntryID"/>
         <result column="product_product_number" property="productNumber"/>
-        <result column="product_order_joint_product_id" jdbcType="INTEGER" property="orderJointProductId" />
-        <result column="product_joint_product_product_id" jdbcType="INTEGER" property="jointProductProductId" />
+        <result column="product_order_joint_product_id" jdbcType="INTEGER" property="orderJointProductId"/>
+        <result column="product_joint_product_product_id" jdbcType="INTEGER" property="jointProductProductId"/>
     </resultMap>
 
     <resultMap id="OrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO">
@@ -145,8 +145,8 @@
         <result column="material_update_user" jdbcType="VARCHAR" property="updateUser"/>
         <result column="material_FEntry_id" property="FEntryID"/>
         <result column="material_product_number" property="productNumber"/>
-        <result column="material_order_joint_product_id" jdbcType="INTEGER" property="orderJointProductId" />
-        <result column="material_joint_material_id" jdbcType="INTEGER" property="jointMaterialId" />
+        <result column="material_order_joint_product_id" jdbcType="INTEGER" property="orderJointProductId"/>
+        <result column="material_joint_material_id" jdbcType="INTEGER" property="jointMaterialId"/>
     </resultMap>
 
     <resultMap id="OrderJointProductDO" type="com.lxzl.erp.dataaccess.domain.order.OrderJointProductDO">
@@ -161,7 +161,7 @@
         <result column="order_joint_product_create_user" jdbcType="VARCHAR" property="createUser"/>
         <result column="order_joint_product_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="order_joint_product_update_user" jdbcType="VARCHAR" property="updateUser"/>
-        <result column="order_joint_product_is_new" jdbcType="INTEGER" property="isNew" />
+        <result column="order_joint_product_is_new" jdbcType="INTEGER" property="isNew"/>
     </resultMap>
 
     <resultMap type="com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO" id="OrderConsignInfoDO">
@@ -197,49 +197,50 @@
         <result column="time_axis_create_user" jdbcType="VARCHAR" property="createUser"/>
         <result column="time_axis_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="time_axis_update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="time_axis_operation_type" jdbcType="VARCHAR" property="operationType"/>
     </resultMap>
 
 
     <resultMap id="ReletOrderDO" type="com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO">
-        <id column="relet_id" jdbcType="INTEGER" property="id" />
-        <result column="relet_relet_order_no" jdbcType="VARCHAR" property="reletOrderNo" />
-        <result column="relet_order_id" jdbcType="INTEGER" property="orderId" />
-        <result column="relet_order_no" jdbcType="VARCHAR" property="orderNo" />
-        <result column="relet_buyer_customer_id" jdbcType="INTEGER" property="buyerCustomerId" />
-        <result column="relet_buyer_customer_no" jdbcType="VARCHAR" property="buyerCustomerNo" />
-        <result column="relet_buyer_customer_name" jdbcType="VARCHAR" property="buyerCustomerName" />
-        <result column="relet_order_sub_company_id" jdbcType="INTEGER" property="orderSubCompanyId" />
-        <result column="relet_delivery_sub_company_id" jdbcType="INTEGER" property="deliverySubCompanyId" />
-        <result column="relet_rent_type" jdbcType="INTEGER" property="rentType" />
-        <result column="relet_rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
-        <result column="relet_rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
-        <result column="relet_rent_start_time" jdbcType="TIMESTAMP" property="rentStartTime" />
-        <result column="relet_total_product_count" jdbcType="INTEGER" property="totalProductCount" />
-        <result column="relet_total_product_amount" jdbcType="DECIMAL" property="totalProductAmount" />
-        <result column="relet_total_material_count" jdbcType="INTEGER" property="totalMaterialCount" />
-        <result column="relet_total_material_amount" jdbcType="DECIMAL" property="totalMaterialAmount" />
-        <result column="relet_total_order_amount" jdbcType="DECIMAL" property="totalOrderAmount" />
-        <result column="relet_total_paid_order_amount" jdbcType="DECIMAL" property="totalPaidOrderAmount" />
-        <result column="relet_order_seller_id" jdbcType="INTEGER" property="orderSellerId" />
-        <result column="relet_order_union_seller_id" jdbcType="INTEGER" property="orderUnionSellerId" />
-        <result column="relet_total_discount_amount" jdbcType="DECIMAL" property="totalDiscountAmount" />
-        <result column="relet_relet_order_status" jdbcType="INTEGER" property="reletOrderStatus" />
-        <result column="relet_pay_status" jdbcType="INTEGER" property="payStatus" />
-        <result column="relet_pay_time" jdbcType="TIMESTAMP" property="payTime" />
-        <result column="relet_expect_return_time" jdbcType="TIMESTAMP" property="expectReturnTime" />
-        <result column="relet_actual_return_time" jdbcType="TIMESTAMP" property="actualReturnTime" />
-        <result column="relet_high_tax_rate" jdbcType="INTEGER" property="highTaxRate" />
-        <result column="relet_low_tax_rate" jdbcType="INTEGER" property="lowTaxRate" />
-        <result column="relet_statement_date" jdbcType="INTEGER" property="statementDate" />
-        <result column="relet_buyer_remark" jdbcType="VARCHAR" property="buyerRemark" />
-        <result column="relet_product_summary" jdbcType="VARCHAR" property="productSummary" />
-        <result column="relet_data_status" jdbcType="INTEGER" property="dataStatus" />
-        <result column="relet_remark" jdbcType="VARCHAR" property="remark" />
-        <result column="relet_owner" jdbcType="INTEGER" property="owner" />
-        <result column="relet_create_time" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="relet_create_user" jdbcType="VARCHAR" property="createUser" />
-        <result column="relet_update_time" jdbcType="TIMESTAMP" property="updateTime" />
-        <result column="relet_update_user" jdbcType="VARCHAR" property="updateUser" />
+        <id column="relet_id" jdbcType="INTEGER" property="id"/>
+        <result column="relet_relet_order_no" jdbcType="VARCHAR" property="reletOrderNo"/>
+        <result column="relet_order_id" jdbcType="INTEGER" property="orderId"/>
+        <result column="relet_order_no" jdbcType="VARCHAR" property="orderNo"/>
+        <result column="relet_buyer_customer_id" jdbcType="INTEGER" property="buyerCustomerId"/>
+        <result column="relet_buyer_customer_no" jdbcType="VARCHAR" property="buyerCustomerNo"/>
+        <result column="relet_buyer_customer_name" jdbcType="VARCHAR" property="buyerCustomerName"/>
+        <result column="relet_order_sub_company_id" jdbcType="INTEGER" property="orderSubCompanyId"/>
+        <result column="relet_delivery_sub_company_id" jdbcType="INTEGER" property="deliverySubCompanyId"/>
+        <result column="relet_rent_type" jdbcType="INTEGER" property="rentType"/>
+        <result column="relet_rent_time_length" jdbcType="INTEGER" property="rentTimeLength"/>
+        <result column="relet_rent_length_type" jdbcType="INTEGER" property="rentLengthType"/>
+        <result column="relet_rent_start_time" jdbcType="TIMESTAMP" property="rentStartTime"/>
+        <result column="relet_total_product_count" jdbcType="INTEGER" property="totalProductCount"/>
+        <result column="relet_total_product_amount" jdbcType="DECIMAL" property="totalProductAmount"/>
+        <result column="relet_total_material_count" jdbcType="INTEGER" property="totalMaterialCount"/>
+        <result column="relet_total_material_amount" jdbcType="DECIMAL" property="totalMaterialAmount"/>
+        <result column="relet_total_order_amount" jdbcType="DECIMAL" property="totalOrderAmount"/>
+        <result column="relet_total_paid_order_amount" jdbcType="DECIMAL" property="totalPaidOrderAmount"/>
+        <result column="relet_order_seller_id" jdbcType="INTEGER" property="orderSellerId"/>
+        <result column="relet_order_union_seller_id" jdbcType="INTEGER" property="orderUnionSellerId"/>
+        <result column="relet_total_discount_amount" jdbcType="DECIMAL" property="totalDiscountAmount"/>
+        <result column="relet_relet_order_status" jdbcType="INTEGER" property="reletOrderStatus"/>
+        <result column="relet_pay_status" jdbcType="INTEGER" property="payStatus"/>
+        <result column="relet_pay_time" jdbcType="TIMESTAMP" property="payTime"/>
+        <result column="relet_expect_return_time" jdbcType="TIMESTAMP" property="expectReturnTime"/>
+        <result column="relet_actual_return_time" jdbcType="TIMESTAMP" property="actualReturnTime"/>
+        <result column="relet_high_tax_rate" jdbcType="INTEGER" property="highTaxRate"/>
+        <result column="relet_low_tax_rate" jdbcType="INTEGER" property="lowTaxRate"/>
+        <result column="relet_statement_date" jdbcType="INTEGER" property="statementDate"/>
+        <result column="relet_buyer_remark" jdbcType="VARCHAR" property="buyerRemark"/>
+        <result column="relet_product_summary" jdbcType="VARCHAR" property="productSummary"/>
+        <result column="relet_data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="relet_remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="relet_owner" jdbcType="INTEGER" property="owner"/>
+        <result column="relet_create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="relet_create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="relet_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="relet_update_user" jdbcType="VARCHAR" property="updateUser"/>
     </resultMap>
 
 
@@ -264,7 +265,7 @@
     </sql>
 
     <sql id="time_axis_column_List">
-        eota.id as time_axis_id,eota.order_id as time_axis_order_id,eota.order_status as time_axis_order_status,eota.generation_time as time_axis_generation_time,eota.order_snapshot as time_axis_order_snapshot,eota.data_status as time_axis_data_status,eota.remark as time_axis_remark,eota.create_time as time_axis_create_time,eota.create_user as time_axis_create_user,eota.update_time as time_axis_update_time,eota.update_user as time_axis_update_user
+        eota.id as time_axis_id,eota.order_id as time_axis_order_id,eota.order_status as time_axis_order_status,eota.generation_time as time_axis_generation_time,eota.order_snapshot as time_axis_order_snapshot,eota.data_status as time_axis_data_status,eota.remark as time_axis_remark,eota.create_time as time_axis_create_time,eota.create_user as time_axis_create_user,eota.update_time as time_axis_update_time,eota.update_user as time_axis_update_user,eota.operation_type as time_axis_operation_type
     </sql>
 
 
@@ -279,14 +280,16 @@
         from erp_order eo where eo.id = #{id, jdbcType=INTEGER} and eo.data_status = 1
     </select>
     <select id="findByOrderIdSimple" resultMap="OrderDO" parameterType="java.lang.Integer">
-        SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>
+        SELECT<include refid="column_List"/>,<include refid="product_column_List"/>,
+        <include refid="material_column_List"/>
         from erp_order eo
         LEFT JOIN erp_order_product eop ON eo.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON eo.id = eom.order_id and eom.data_status = 1
-        where eo.id = #{orderId, jdbcType=INTEGER} and  eo.data_status = 1
+        where eo.id = #{orderId, jdbcType=INTEGER} and eo.data_status = 1
     </select>
     <select id="findByOrderNoSimple" resultMap="OrderDO" parameterType="java.lang.String">
-        SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>
+        SELECT<include refid="column_List"/>,<include refid="product_column_List"/>,
+        <include refid="material_column_List"/>
         from erp_order eo
         LEFT JOIN erp_order_product eop ON eo.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON eo.id = eom.order_id and eom.data_status = 1
@@ -529,10 +532,10 @@
                 and eo.order_status != 28
             </if>
             <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==1">
-                and  curdate() > eo.expect_return_time AND eo.order_status IN (16, 20, 22)
+                and curdate() > eo.expect_return_time AND eo.order_status IN (16, 20, 22)
             </if>
             <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==2">
-                and (eo.expect_return_time >= curdate()  OR eo.order_status NOT  IN (16, 20, 22))
+                and (eo.expect_return_time >= curdate() OR eo.order_status NOT IN (16, 20, 22))
             </if>
             <if test="maps.orderQueryParam.orderStatus != null">
                 and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
@@ -615,7 +618,7 @@
         FROM erp_order eo WHERE eo.pay_status = 8
     </select>
 
-    <select id="listCount" resultType="java.lang.Integer" >
+    <select id="listCount" resultType="java.lang.Integer">
         SELECT COUNT( eo.id )
         FROM erp_order eo
         WHERE eo.data_status = 1
@@ -678,10 +681,10 @@
                 and eo.order_status != 28
             </if>
             <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==1">
-                and  curdate() > eo.expect_return_time AND eo.order_status IN (16, 20, 22)
+                and curdate() > eo.expect_return_time AND eo.order_status IN (16, 20, 22)
             </if>
             <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==2">
-                and (eo.expect_return_time >= curdate()  OR eo.order_status NOT  IN (16, 20, 22))
+                and (eo.expect_return_time >= curdate() OR eo.order_status NOT IN (16, 20, 22))
             </if>
             <if test="maps.orderQueryParam.orderStatus != null">
                 and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
@@ -944,7 +947,9 @@
 
     <!-- 根据订单号列表获取订单列表信息 -->
     <select id="listByOrderNOs" resultMap="OrderDO">
-        SELECT <include refid="column_List"/> FROM erp_order eo
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_order eo
         <where>
             AND eo.order_no IN
             <if test="orderNOs != null">
@@ -1101,7 +1106,7 @@
             <include refid="consign_column_List"/>
         </trim>
         <trim prefix=",">
-        eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name
+            eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name
         </trim>
         FROM erp_order eo
         LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
@@ -1123,8 +1128,10 @@
     <select id="findByOrderItemTypeAndOrderItemReferId" resultMap="OrderDO">
         SELECT
         <include refid="column_List"/>
-        ,<include refid="product_column_List"/>
-        ,<include refid="material_column_List"/>
+        ,
+        <include refid="product_column_List"/>
+        ,
+        <include refid="material_column_List"/>
         FROM erp_order eo
         LEFT JOIN erp_order_product eop on eop.order_id = eo.id
         LEFT JOIN erp_order_material eom on eom.order_id = eo.id
@@ -1179,7 +1186,8 @@
             <include refid="consign_column_List"/>
         </trim>
         <trim prefix=",">
-            eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name,esc.sub_company_name AS order_sub_company_name
+            eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS
+            district_name,esc.sub_company_name AS order_sub_company_name
             ,ec.customer_no AS buyer_customer_no,escd.sub_company_name AS delivery_sub_company_name
         </trim>
         FROM erp_order eo
