@@ -11,7 +11,6 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.common.util.thread.ThreadFactoryDefault;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
@@ -65,8 +64,6 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -373,7 +370,6 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> callbackManualReturnOrder(String returnOrderNo) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         if (StringUtil.isBlank(returnOrderNo)) {
