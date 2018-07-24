@@ -1449,9 +1449,9 @@ ORDER BY esc.data_order DESC
             LEFT JOIN erp_customer ec ON eo.buyer_customer_id=ec.id
         </if>
         WHERE eo.data_status=1 AND eo.order_status IN (16, 20, 22, 24)
-        AND eo.order_sub_company_id NOT IN(10 , 11)
+        AND eo.order_sub_company_id NOT IN (1, 10 , 11)
         <if test="maps.statisticsStartTime != null and maps.statisticsEndTime != null">
-            AND eo.delivery_time BETWEEN  #{maps.statisticsStartTime,jdbcType=DATE} AND #{maps.statisticsEndTime,jdbcType=DATE}
+            AND eo.delivery_time BETWEEN  #{maps.statisticsStartTime,jdbcType=TIMESTAMP} AND #{maps.statisticsEndTime,jdbcType=TIMESTAMP}
         </if>
         <if test="maps.rentLengthType != null">
             <if test="maps.rentLengthType == 1">
@@ -1487,7 +1487,7 @@ ORDER BY esc.data_order DESC
         </if>
         WHERE eo.data_status=1 AND eo.order_status IN (16, 20, 22, 24)
         <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
-            AND eo.order_sub_company_id NOT IN(10 , 11)
+            AND eo.order_sub_company_id NOT IN (1, 10 , 11)
         </if>
         <if test="maps.orderOrigin != null and maps.orderOrigin ==2">
             AND eo.order_sub_company_id = 10
@@ -1496,7 +1496,7 @@ ORDER BY esc.data_order DESC
             AND eo.order_sub_company_id = 11
         </if>
         <if test="maps.statisticsStartTime != null and maps.statisticsEndTime != null">
-            AND eo.delivery_time BETWEEN  #{maps.statisticsStartTime,jdbcType=DATE} AND #{maps.statisticsEndTime,jdbcType=DATE}
+            AND eo.delivery_time BETWEEN  #{maps.statisticsStartTime,jdbcType=TIMESTAMP} AND #{maps.statisticsEndTime,jdbcType=TIMESTAMP}
         </if>
         <if test="maps.rentLengthType != null">
             <if test="maps.rentLengthType == 1">
@@ -1540,7 +1540,7 @@ ORDER BY esc.data_order DESC
         WHERE ep.data_status=1 AND eo.order_status IN (16, 20, 22, 24) AND eop.product_count > 0
         AND (CASE WHEN ep.k3_product_no LIKE '%.DIS.%' THEN  eop.product_unit_amount>0 ELSE 1=1 END)
         <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
-            AND eo.order_sub_company_id NOT IN(10 , 11)
+            AND eo.order_sub_company_id NOT IN (1, 10 , 11)
         </if>
         <if test="maps.orderOrigin != null and maps.orderOrigin ==2">
             AND eo.order_sub_company_id = 10
@@ -1549,7 +1549,7 @@ ORDER BY esc.data_order DESC
             AND eo.order_sub_company_id = 11
         </if>
         <if test="maps.statisticsStartTime != null and maps.statisticsEndTime != null">
-            AND eo.delivery_time BETWEEN  #{maps.statisticsStartTime,jdbcType=DATE} AND #{maps.statisticsEndTime,jdbcType=DATE}
+            AND eo.delivery_time BETWEEN  #{maps.statisticsStartTime,jdbcType=TIMESTAMP} AND #{maps.statisticsEndTime,jdbcType=TIMESTAMP}
         </if>
         <if test="maps.rentLengthType != null">
             <if test="maps.rentLengthType == 1">
@@ -1591,7 +1591,7 @@ ORDER BY esc.data_order DESC
         AND eo.id=eop.order_id AND (ekrod.order_item_id=eop.id OR ekrod.order_entry=eop.FEntry_id) AND eop.data_status=1
         WHERE ekrod.order_item_type=1 AND ekrod.real_product_count > 0
         <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
-            AND eo.order_sub_company_id NOT IN(10 , 11)
+            AND eo.order_sub_company_id NOT IN(1, 10 , 11)
         </if>
         <if test="maps.orderOrigin != null and maps.orderOrigin ==2">
             AND eo.order_sub_company_id=10
@@ -1600,7 +1600,7 @@ ORDER BY esc.data_order DESC
             AND eo.order_sub_company_id=11
         </if>
         <if test="maps.statisticsStartTime != null and maps.statisticsEndTime != null">
-            AND ekro.return_time BETWEEN  #{maps.statisticsStartTime,jdbcType=DATE} AND #{maps.statisticsEndTime,jdbcType=DATE}
+            AND ekro.return_time BETWEEN  #{maps.statisticsStartTime,jdbcType=TIMESTAMP} AND #{maps.statisticsEndTime,jdbcType=TIMESTAMP}
         </if>
         <if test="maps.rentLengthType != null">
             <if test="maps.rentLengthType == 1">
