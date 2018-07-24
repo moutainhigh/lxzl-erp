@@ -55,6 +55,11 @@
                                         <select class="form-control input-sm bradius" name="workflowType" id="workflowType"></select>
                                     </div>
                                 </div>
+                                <div class="form-group pull-right hide">
+                                    <div class="input-group">
+                                        <input type="text" name="isWorkbench" id="isWorkbench" class="form-control input-sm bradius" autocomplete="off">
+                                    </div>
+                                </div>
 ##                                <select name="verifyStatus" id="verifyStatus" class="hide"></select>
 ##                                <select name="workflowType" id="workflowType" class="hide"></select>
                             </form>
