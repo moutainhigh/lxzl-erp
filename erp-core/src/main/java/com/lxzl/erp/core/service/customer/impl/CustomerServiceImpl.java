@@ -246,12 +246,12 @@ public class CustomerServiceImpl implements CustomerService {
 
         // 添加客户变更记录
         createCustomerUpdateLog(customerDO.getId(), customerDO.getOwner(), customerDO.getUnionUser(), now, 0, 0, null, null);
-
         paymentService.queryCustomerAccount(customerDO.getCustomerNo());
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class), true);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
+
     }
 
 
@@ -477,7 +477,7 @@ public class CustomerServiceImpl implements CustomerService {
         //判断首次所需设备 list转json
         if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getCustomerCompanyNeedFirstList())) {
             List<CustomerCompanyNeed> customerCompanyNeedFirstList = customer.getCustomerCompany().getCustomerCompanyNeedFirstList();
-            //记录所有设备的总金额
+            //记录所有所有设备的总金额
             setServiceResult = setCustomerCompanyNeed(customerCompanyNeedFirstList);
             if (!ErrorCode.SUCCESS.equals(setServiceResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -994,13 +994,10 @@ public class CustomerServiceImpl implements CustomerService {
             String customerCompanyNeedFirstJson = customerDO.getCustomerCompanyDO().getCustomerCompanyNeedFirstJson();
             List<CustomerCompanyNeed> customerCompanyNeedList = JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class);
             BigDecimal firstListTotalPrice = new BigDecimal(0);
-            BigDecimal firstListTotalRentPrice = new BigDecimal(0);
             for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
                 firstListTotalPrice = firstListTotalPrice.add(customerCompanyNeed.getTotalPrice());
-                firstListTotalRentPrice = firstListTotalRentPrice.add(customerCompanyNeed.getTotalProductRentPrice());
             }
             customerResult.getCustomerCompany().setFirstListTotalPrice(firstListTotalPrice);
-            customerResult.getCustomerCompany().setFirstListTotalRentPrice(firstListTotalRentPrice);
             customerResult.getCustomerCompany().setCustomerCompanyNeedFirstList(JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class));
         }
 
@@ -1009,13 +1006,10 @@ public class CustomerServiceImpl implements CustomerService {
             String customerCompanyNeedLaterList = customerDO.getCustomerCompanyDO().getCustomerCompanyNeedLaterJson();
             List<CustomerCompanyNeed> customerCompanyNeedList = JSONObject.parseArray(customerCompanyNeedLaterList, CustomerCompanyNeed.class);
             BigDecimal laterListTotalPrice = new BigDecimal(0);
-            BigDecimal laterListTotalRentPrice = new BigDecimal(0);
             for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
                 laterListTotalPrice = laterListTotalPrice.add(customerCompanyNeed.getTotalPrice());
-                laterListTotalRentPrice = laterListTotalRentPrice.add(customerCompanyNeed.getTotalProductRentPrice());
             }
             customerResult.getCustomerCompany().setLaterListTotalPrice(laterListTotalPrice);
-            customerResult.getCustomerCompany().setLaterListTotalRentPrice(laterListTotalRentPrice);
             customerResult.getCustomerCompany().setCustomerCompanyNeedLaterList(JSONObject.parseArray(customerCompanyNeedLaterList, CustomerCompanyNeed.class));
         }
 
@@ -2640,40 +2634,17 @@ public class CustomerServiceImpl implements CustomerService {
                 return serviceResult;
             }
             if (CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getIsNew())) {
-                //全新
                 customerCompanyNeed.setUnitPrice(productSkuDO.getNewSkuPrice());
-                //计算商品租金和商品总租金
-                if (CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getRentType())){
-                    //按天租
-                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewDayRentPrice());
-                }else {
-                    //按月租
-                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewMonthRentPrice());
-                }
             } else {
                 customerCompanyNeed.setUnitPrice(productSkuDO.getSkuPrice());
-                //计算商品租金和商品总租金
-                if (CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getRentType())){
-                    //按天租
-                    customerCompanyNeed.setProductRentPrice(productSkuDO.getDayRentPrice());
-                }else {
-                    //按月租
-                    customerCompanyNeed.setProductRentPrice(productSkuDO.getMonthRentPrice());
-                }
             }
             if (customerCompanyNeed.getRentCount() == null) {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL);
                 return serviceResult;
             }
 
-            //商品总价值
             BigDecimal totalPrice = BigDecimalUtil.mul(customerCompanyNeed.getUnitPrice(), new BigDecimal(customerCompanyNeed.getRentCount()));
             customerCompanyNeed.setTotalPrice(totalPrice);
-
-            //商品总租金
-            BigDecimal totalProductRentPrice =  BigDecimalUtil.mul(BigDecimalUtil.mul(customerCompanyNeed.getProductRentPrice(), new BigDecimal(customerCompanyNeed.getRentCount())),new BigDecimal(customerCompanyNeed.getRentTimeLength()));
-            customerCompanyNeed.setTotalPrice(totalProductRentPrice);
-
             ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
             customerCompanyNeed.setProduct(productServiceResult.getResult());
         }
