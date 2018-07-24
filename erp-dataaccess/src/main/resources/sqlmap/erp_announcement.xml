@@ -35,15 +35,41 @@
         WHERE id = #{id, jdbcType=INTEGER} AND data_status = 1
     </select>
 
+
+    <sql id="where_column_sql">
+        <if test="maps.id != null">
+            AND id = #{maps.id}
+        </if>
+        <if test="maps.title != null">
+            AND title = #{maps.title}
+        </if>
+        <if test="maps.content != null">
+            AND content = #{maps.content}
+        </if>
+        <if test="maps.remark != null">
+            AND remark = #{maps.remark}
+        </if>
+        <if test="maps.createTime != null">
+            AND create_time = #{maps.createTime}
+        </if>
+        <if test="maps.createUser != null">
+            AND create_user = #{maps.createUser}
+        </if>
+        <if test="maps.updateTime != null">
+            AND update_time = #{maps.updateTime}
+        </if>
+        <if test="maps.updateUser != null">
+            AND update_user = #{maps.updateUser}
+        </if>
+    </sql>
+
     <select id="listCount" resultType="java.lang.Integer" parameterType="map">
         SELECT count(1) FROM erp_announcement
         <where>
             <if test="true">
                 AND data_status = 1
             </if>
-            <if test="maps.createUser != null">
-                AND create_user = #{maps.createUser}
-            </if>
+            <include refid="where_column_sql"/>
         </where>
     </select>
 
@@ -55,9 +81,7 @@
             <if test="true">
                 AND data_status = 1
             </if>
-            <if test="maps.createUser != null">
-                AND create_user = #{maps.createUser}
-            </if>
+            <include refid="where_column_sql"/>
         </where>
         ORDER BY 1 DESC LIMIT #{maps.start},#{maps.pageSize}
     </select>
