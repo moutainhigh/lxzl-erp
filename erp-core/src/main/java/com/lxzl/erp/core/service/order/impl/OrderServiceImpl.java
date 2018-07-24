@@ -2479,20 +2479,6 @@ public class OrderServiceImpl implements OrderService {
                     order.setIsReletOrder(isReletOrder);
                     if (CommonConstant.COMMON_CONSTANT_YES.equals(order.getCanReletOrder())){
                         canReletOrderList.add(order);
-                        orderNoList.add(orderDO.getOrderNo());
-                        orderDOMap.put(orderDO.getOrderNo(), order);
-
-                    }
-                }
-            }
-
-            List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
-            if (CollectionUtil.isNotEmpty(workflowLinkDOList)){
-                for (WorkflowLinkDO workflowLinkDO : workflowLinkDOList) {
-                    Order order = orderDOMap.get(workflowLinkDO.getWorkflowReferNo());
-                    if (order != null) {
-                        WorkflowLink workflowLink = ConverterUtil.convert(workflowLinkDO, WorkflowLink.class);
-                        order.setWorkflowLink(workflowLink);
                     }
                 }
             }
@@ -2504,7 +2490,20 @@ public class OrderServiceImpl implements OrderService {
                     if (i <= canReletOrderList.size() - 1){
                         if(canReletOrderList.get(i) != null){
                             pageOrderList.add(canReletOrderList.get(i));
+                            orderNoList.add(canReletOrderList.get(i).getOrderNo());
+                            orderDOMap.put(canReletOrderList.get(i).getOrderNo(), canReletOrderList.get(i));
                         }
+                    }
+                }
+            }
+
+            List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
+            if (CollectionUtil.isNotEmpty(workflowLinkDOList)){
+                for (WorkflowLinkDO workflowLinkDO : workflowLinkDOList) {
+                    Order order = orderDOMap.get(workflowLinkDO.getWorkflowReferNo());
+                    if (order != null) {
+                        WorkflowLink workflowLink = ConverterUtil.convert(workflowLinkDO, WorkflowLink.class);
+                        order.setWorkflowLink(workflowLink);
                     }
                 }
             }
