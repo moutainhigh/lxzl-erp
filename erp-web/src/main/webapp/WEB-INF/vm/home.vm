@@ -384,7 +384,7 @@
                         <div class="workbench-row row pl35">
                             <script type="text/html" id="workflowTpl">
                                 <div class="rowTitle fs16 fw700 mb5 border-left">工作流</div>
-                                <a href="${ctx}audit-manage/list?status=1&isWorkbench=1" class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                                <a href="{{#hasdata}}${ctx}audit-manage/list?status=1&isWorkbench=1{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
                                     <div class="bg-loading workflowLoading hide">
                                         <div class="box-loading">
                                             <div class="loading"><i></i><span>数据加载中,请稍候...</span></div>
@@ -470,14 +470,6 @@
                                 <div class="rowTitle fs16 fw700 mb5"></div>
                                 <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                     <div class="top-line"></div>
-                                    <p class="title pn mn text-default">未支付的订单</p>
-                                    <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
-                                </a>
-                            </div>
-                            <div class="col-md-3 pn pr35 mb20">
-                                <div class="rowTitle fs16 fw700 mb5"></div>
-                                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
-                                    <div class="top-line"></div>
                                     <p class="title pn mn text-default">到期未处理的订单</p>
                                     <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                 </a>
@@ -535,7 +527,7 @@
                         <div class="workbench-row row pl35">
                             <script type="text/html" id="waitAuditWorkflowTpl">
                                 <div class="rowTitle fs16 fw700 mb5 border-left">工作流</div>
-                                <a href="${ctx}audit-manage/list?status=1&isWorkbench=1" class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                                <a href="{{#hasdata}}${ctx}audit-manage/list?status=1&isWorkbench=1{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
                                     <div class="bg-loading workflowLoading hide">
                                         <div class="box-loading">
                                             <div class="loading"><i></i><span>数据加载中,请稍候...</span></div>
