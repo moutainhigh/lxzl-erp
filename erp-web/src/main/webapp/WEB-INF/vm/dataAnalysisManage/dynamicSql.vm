@@ -32,11 +32,21 @@
                                     <div class="panel-body p25">
                                         <div class="section row">
                                             <div class="col-md-12">
+                                                <label for="remark" class="field-label">sql查询语句</label>
                                                 <label class="field prepend-icon">
                                                     <textarea class="gui-textarea" id="sql" name="sql" placeholder="输入SQL查询语句"></textarea>
                                                     <label for="comment" class="field-icon"><i class="fa fa-search"></i>
                                                     </label>
-                                                ##                                                    <span class="input-footer"><strong>Hint:</strong>Don't be negative or off topic! just be awesome...</span>
+##                                                    <span class="input-footer"><strong>Hint:</strong>Don't be negative or off topic! just be awesome...</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="section row">
+                                            <div class="col-md-12">
+                                                <label for="remark" class="field-label">备注</label>
+                                                <label class="field prepend-icon">
+                                                    <textarea class="gui-textarea" id="remark" name="remark" placeholder="备注..."></textarea>
+                                                    <label for="comment" class="field-icon"><i class="fa fa-search"></i></label>
                                                 </label>
                                             </div>
                                         </div>

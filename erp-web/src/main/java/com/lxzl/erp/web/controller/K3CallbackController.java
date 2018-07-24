@@ -3,8 +3,6 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrder;
 import com.lxzl.erp.common.domain.k3.group.K3ReturnOrderCallback;
-import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
-import com.lxzl.erp.common.domain.k3.pojo.callback.K3DeliveryOrder;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.core.annotation.ControllerLog;
@@ -49,6 +47,13 @@ public class K3CallbackController extends BaseController {
         ServiceResult<String, String> serviceResult = k3CallbackService.callbackReturnOrder(k3ReturnOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    @RequestMapping(value = "callbackManualReturnOrder", method = RequestMethod.POST)
+    public Result callbackManualReturnOrder(@RequestBody K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = k3CallbackService.callbackManualReturnOrder(k3ReturnOrder.getReturnOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @Autowired
     private ResultGenerator resultGenerator;
 
