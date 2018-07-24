@@ -79,8 +79,6 @@ import java.util.concurrent.Executors;
 public class K3CallbackServiceImpl implements K3CallbackService {
     private static Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
-    private ExecutorService k3HnadleExecutor = Executors.newCachedThreadPool(new ThreadFactoryDefault("k3HnadleExecutor"));
-
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> callbackDelivery(DeliveryOrder deliveryOrder) {
