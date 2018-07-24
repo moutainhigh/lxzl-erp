@@ -384,7 +384,7 @@
                         <div class="workbench-row row pl35">
                             <script type="text/html" id="workflowTpl">
                                 <div class="rowTitle fs16 fw700 mb5 border-left">工作流</div>
-                                <a href="${ctx}audit-manage/list?status=1&isWorkbench=1" class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                                <a href="{{#hasdata}}${ctx}audit-manage/list?status=1&isWorkbench=1{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
                                     <div class="bg-loading workflowLoading hide">
                                         <div class="box-loading">
                                             <div class="loading"><i></i><span>数据加载中,请稍候...</span></div>
@@ -535,7 +535,7 @@
                         <div class="workbench-row row pl35">
                             <script type="text/html" id="waitAuditWorkflowTpl">
                                 <div class="rowTitle fs16 fw700 mb5 border-left">工作流</div>
-                                <a href="${ctx}audit-manage/list?status=1&isWorkbench=1" class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                                <a href="{{#hasdata}}${ctx}audit-manage/list?status=1&isWorkbench=1{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
                                     <div class="bg-loading workflowLoading hide">
                                         <div class="box-loading">
                                             <div class="loading"><i></i><span>数据加载中,请稍候...</span></div>
