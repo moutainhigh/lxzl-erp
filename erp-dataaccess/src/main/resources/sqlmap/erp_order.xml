@@ -1273,9 +1273,10 @@
         LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
         <where>
             <if test="maps.orderQueryParam.isCanReletOrder != null &amp;&amp; maps.orderQueryParam.isCanReletOrder == 1">
+
                 (case
-                when eo.rent_type = 1 then  <![CDATA[ eo.expect_return_time  <  curdate() + INTERVAL #{maps.reletTimeOfDay, jdbcType=INTEGER} DAY ]]>
-                when eo.rent_type = 2 then  <![CDATA[ eo.expect_return_time <  curdate() + INTERVAL #{maps.reletTimeOfMonth, jdbcType=INTEGER} DAY ]]>
+                when eo.rent_type = 1 then   curdate() + INTERVAL #{maps.reletTimeOfDay, jdbcType=INTEGER} DAY > eo.expect_return_time
+                when eo.rent_type = 2 then   curdate() + INTERVAL #{maps.reletTimeOfMonth, jdbcType=INTEGER} DAY > eo.expect_return_time
                 end)
                 AND eo.order_status in (20,22)
             </if>
