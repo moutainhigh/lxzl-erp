@@ -38,6 +38,7 @@
                                     <th>sql语句内容</th>
                                     <th>状态</th>
                                     <th>查询结果</th>
+                                    <th>备注</th>
                                     <th>创建人</th>
                                     {{#hasRowActionButtons}}
                                     <th class="text-right">操作</th>
@@ -52,6 +53,7 @@
                                     <td><pre class="sqlContent">{{sqlContent}}</pre></td>
                                     <td>{{statusVal}}</td>
                                     <td><div class="sqlContent">{{results}}</div></td>
+                                    <td>{{remark}}</td>
                                     <td>
                                         <p class="mn">{{createUserRealName}}</p>
                                         <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
