@@ -2,10 +2,8 @@ package com.lxzl.erp.core.service.export;
 
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
-import com.lxzl.erp.common.util.BigDecimalUtil;
 import org.apache.poi.hssf.util.HSSFColor;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -219,6 +217,14 @@ public class ExcelExportConfigGroup {
                     return "浦发银行";
                 } else if (BankType.HAN_KOU_BANK.equals(bankType)) {
                     return "汉口银行";
+                }else if (BankType.LYCHEE_PAY.equals(bankType)) {
+                    return "快付通";
+                }else if (BankType.STOCK_CASH.equals(bankType)) {
+                    return "现金库存";
+                }else if (BankType.SWIFT_PASS.equals(bankType)) {
+                    return "威富通";
+                }else if (BankType.UNKNOWN_CHANNEL_PAY_TYPE.equals(bankType)) {
+                    return "支付未知渠道";
                 }
                 return "";
             }
@@ -252,6 +258,8 @@ public class ExcelExportConfigGroup {
                         return customerName.toString().trim();
                     }
                 }))
+                .addConfig(new ColConfig("customerSubCompanyNameStringList", "客户所属分公司"))
+                .addConfig(new ColConfig("ownerSubCompanyName", "数据分公司"))
                 .addConfig(new ColConfig("subCompanyName", "客户归属地"))
                 .addConfig(new ColConfig("tradeSerialNo", "交易流水号",39));
     }

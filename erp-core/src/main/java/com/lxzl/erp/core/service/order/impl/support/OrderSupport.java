@@ -1,6 +1,8 @@
 package com.lxzl.erp.core.service.order.impl.support;
 
-import com.lxzl.erp.common.constant.OrderRentType;
+import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
@@ -50,5 +52,47 @@ public class OrderSupport {
             return DateUtil.dateInterval(DateUtil.monthInterval(rentStartTime, rentTimeLength), -1);
         }
         return null;
+    }
+
+    /**
+     * 判断是否可续租
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/5/25 10:47
+     * @param
+     * @return
+     */
+    public Integer isOrderCanRelet(Order order){
+
+        //检查是否在续租时间范围
+        Date currentTime = new Date();
+        Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(currentTime, order.getExpectReturnTime());
+        if ((OrderRentType.RENT_TYPE_MONTH.equals(order.getRentType()) && dayCount >= CommonConstant.RELET_TIME_OF_RENT_TYPE_MONTH)
+                || (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && dayCount >= CommonConstant.RELET_TIME_OF_RENT_TYPE_DAY)) {  //订单： 月租提前30天 和 天租提前15天 可续租
+            return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_NO;
+        }
+
+        //订单状态 必须是租赁中 ，续租中，部分退还  才可续租
+        if (!OrderStatus.canReletOrderByCurrentStatus(order.getOrderStatus())){
+            return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_NO;
+        }
+
+        if (CollectionUtil.isNotEmpty(order.getReletOrderList())){
+            for (ReletOrder reletOrder : order.getReletOrderList()){
+                if (!ReletOrderStatus.canReletOrderByCurrentStatus(reletOrder.getReletOrderStatus())){
+
+                    return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_EXIST_WAIT_HANDLE;
+                }
+                else {
+
+                    if (currentTime.compareTo(reletOrder.getRentStartTime()) < 0){  //如果当前续租还没开始  不允许再次续租
+
+                        return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_EXIST_SUCCESS_RELET_NOT_BEGIN;
+                    }
+                }
+            }
+        }
+
+        return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_YES;
     }
 }

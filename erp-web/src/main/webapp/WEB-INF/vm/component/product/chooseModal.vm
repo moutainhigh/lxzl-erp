@@ -112,11 +112,19 @@
                                                 </td>
                                                 {{#showIsNewCheckBox}}
                                                 <td>
-                                                    <label class="block mn switch switch-primary">
-                                                        <input type="checkbox" name="isNewProduct" id="isNewProduct-{{skuId}}" value="1">
-                                                        <label for="isNewProduct-{{skuId}}" data-on="全新" data-off="次新"></label>
-                                                        <span></span>
-                                                    </label>
+                                                    <div class="radio-custom pull-left mr10 mb5">
+                                                        <input type="radio" id="radio-{{skuId}}-1" class="radios oldProduct" name="radio-{{skuId}}">
+                                                        <label for="radio-{{skuId}}-1">次新</label>
+                                                    </div>
+                                                    <div class="radio-custom radio-primary pull-left">
+                                                        <input type="radio" id="radio-{{skuId}}-2" class="radios newProduct" name="radio-{{skuId}}">
+                                                        <label for="radio-{{skuId}}-2">全新</label>
+                                                    </div>
+##                                                    <label class="block mn switch switch-primary">
+##                                                        <input type="checkbox" name="isNewProduct" id="isNewProduct-{{skuId}}" value="1">
+##                                                        <label for="isNewProduct-{{skuId}}" data-on="全新" data-off="次新"></label>
+##                                                        <span></span>
+##                                                    </label>
                                                 </td>
                                                 {{/showIsNewCheckBox}}
                                                 <td>{{propertiesToStr}}</td>

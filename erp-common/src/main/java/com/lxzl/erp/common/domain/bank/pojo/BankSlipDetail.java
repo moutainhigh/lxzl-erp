@@ -39,6 +39,15 @@ public class BankSlipDetail extends BasePO {
 	private Integer ownerSubCompanyId;  //数据归属公司id
 	private String ownerSubCompanyName;  //数据归属公司名称
 	private Integer bankSlipBankType;  //银行类型
+	private String customerSubCompanyNameStringList;  //所有认领客户对应的公司名称
+
+	public String getCustomerSubCompanyNameStringList() {
+		return customerSubCompanyNameStringList;
+	}
+
+	public void setCustomerSubCompanyNameStringList(String customerSubCompanyNameStringList) {
+		this.customerSubCompanyNameStringList = customerSubCompanyNameStringList;
+	}
 
 	private List<BankSlipClaim> bankSlipClaimList;
 

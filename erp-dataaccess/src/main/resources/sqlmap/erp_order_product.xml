@@ -233,4 +233,12 @@
     <select id="findK3OrderProduct" resultType="OrderProductDO" parameterType="java.util.Map">
         SELECT <include refid="column_List"/> FROM erp_order_product eop WHERE order_id = #{orderId} AND FEntry_id = #{FEntryId} AND data_status = 1
     </select>
+
+    <select id="findByOrderIdList" resultMap="OrderProductDO">
+        SELECT <include refid="column_List"/> FROM erp_order_product eop
+        WHERE eop.order_id IN
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
 </mapper>
