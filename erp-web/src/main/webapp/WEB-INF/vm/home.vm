@@ -14,7 +14,6 @@
 			#parse("layout/topbarDropmenu.vm")
 			#parse("layout/topbar.vm")
 			<section id="content" class="animated fadeIn">
-
 				<script type="text/html" id="statisticsTpl">
 					{{#statistics}}
                     <div class="row mb10">
@@ -525,6 +524,266 @@
                             {{/listData}}
                             {{/dataSource}}
                         </script>
+                    </div>
+                </div>
+
+                <div class="panel two-authority hide">
+                    <div class="panel-heading">
+                        <span class="panel-title fw700 fs16"><i class="fa fa-pencil hidden"></i>工作台</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="workbench-row row pl35">
+                            <script type="text/html" id="waitAuditWorkflowTpl">
+                                <div class="rowTitle fs16 fw700 mb5 border-left">工作流</div>
+                                <a href="${ctx}audit-manage/list?status=1" class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                                    <div class="bg-loading workflowLoading hide">
+                                        <div class="box-loading">
+                                            <div class="loading"><i></i><span>数据加载中,请稍候...</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">待审核的工作流</p>
+                                    <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
+                                </a>
+                            </script>
+                            <div class="col-md-3 pn pr35 mb20" id="waitAuditWorkflowCol">
+                                <div class="rowTitle fs16 fw700 mb5 border-left">工作流</div>
+                                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">待审核的工作流</p>
+                                    <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
+                                </a>
+                            </div>
+
+                            <div class="col-md-6 pn">
+                                <script type="text/html" id="AuditAndRejectTpl">
+                                    {{#dataSource}}
+                                    {{#listData}}
+                                    <div class="col-md-6 pn pr35 mb20">
+                                        <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
+                                        <a href="{{#hasdata}}${ctx}audit-manage/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
+                                            class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                                            <div class="top-line"></div>
+                                            <p class="title pn mn text-default">{{auditColTitle}}</p>
+                                            <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
+                                        </a>
+                                    </div>
+                                    {{/listData}}
+                                    {{/dataSource}}
+                                </script>
+                                <div class="row pn mn" id="AuditAndRejectRow">
+                                    <div class="col-md-6 pn pr35 mb20">
+                                        <div class="rowTitle fs16 fw700 mb5"></div>
+                                        <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                            <div class="top-line"></div>
+                                            <p class="title pn mn text-default">审核中的工作流</p>
+                                            <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
+                                        </a>
+                                    </div>
+                                    <div class="col-md-6 pn pr35 mb20">
+                                        <div class="rowTitle fs16 fw700 mb5"></div>
+                                        <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                            <div class="top-line"></div>
+                                            <p class="title pn mn text-default">被驳回的工作流</p>
+                                            <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <script type="text/html" id="multiPrivilegeFinanceTpl">
+                                <div class="rowTitle fs16 fw700 mb5 border-left">资金流水</div>
+                                <a href="{{#hasdata}}${ctx}jurnal-amount/list?status=1{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
+                                    class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">待认领的流水</p>
+                                    <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
+                                </a>
+                            </script>
+                            <div class="col-md-3 pn pr35 mb20" id="multiPrivilegeFinanceCol">
+                                <div class="rowTitle fs16 fw700 mb5 border-left">资金流水</div>
+                                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">待认领的流水</p>
+                                    <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
+                                </a>
+                            </div>
+                        </div>
+
+                        <script type="text/html" id="multiPrivilegeStatementTpl">
+                            {{#dataSource}}
+                            {{#listData}}
+                            <div class="col-md-3 pn pr35 mb20">
+                                <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
+                                <a href="{{#hasdata}}${ctx}statement-order/list?{{params}}={{paramsValue}}&isWorkbench=1{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
+                                    class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">{{statementColTitle}}</p>
+                                    <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
+                                </a>
+                            </div>
+                            {{/listData}}
+                            {{/dataSource}}
+                        </script>
+                        <div class="workbench-row row pl35" id="multiPrivilegeStatementRow">
+                            <div class="col-md-3 pn pr35 mb20">
+                                <div class="rowTitle fs16 fw700 mb5 border-left">结算单</div>
+                                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">未支付的结算单</p>
+                                    <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
+                                </a>
+                            </div>
+                            <div class="col-md-3 pn pr35 mb20">
+                                <div class="rowTitle fs16 fw700 mb5"></div>
+                                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">部分支付的结算单</p>
+                                    <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="workbench-row row pl35" id="multiPrivilegeOrderRow">
+                            <div class="col-md-3 pn pr35 mb20">
+                                <div class="rowTitle fs16 fw700 mb5 border-left">租赁订单</div>
+                                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">审核中的订单</p>
+                                    <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
+                                </a>
+                            </div>
+                            <div class="col-md-3 pn pr35 mb20">
+                                <div class="rowTitle fs16 fw700 mb5"></div>
+                                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">未支付的订单</p>
+                                    <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
+                                </a>
+                            </div>
+                            <div class="col-md-3 pn pr35 mb20">
+                                <div class="rowTitle fs16 fw700 mb5"></div>
+                                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">到期未处理的订单</p>
+                                    <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
+                                </a>
+                            </div>
+                        </div>
+                        <script type="text/html" id="multiPrivilegeOrdeTpl">
+                            {{#dataSource}}
+                            {{#listData}}
+                            <div class="col-md-3 pn pr35 mb20">
+                                <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
+                                <a href="{{#hasdata}}${ctx}order-manage/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
+                                    class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">{{orderColTitle}}</p>
+                                    <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
+                                </a>
+                            </div>
+                            {{/listData}}
+                            {{/dataSource}}
+                        </script>
+
+                        <div class="workbench-row row pl35" id="multiPrivilegeReturnRow">
+                            <div class="col-md-3 pn pr35 mb20">
+                                <div class="rowTitle fs16 fw700 mb5 border-left">退货单</div>
+                                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">审核中的退货单</p>
+                                    <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
+                                </a>
+                            </div>
+                        </div>
+                        <script type="text/html" id="multiPrivilegeReturnTpl">
+                            {{#dataSource}}
+                            {{#listData}}
+                            <div class="col-md-3 pn pr35 mb20">
+                                <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
+                                <a href="{{#hasdata}}${ctx}return-order-k3/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
+                                    class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                                    <div class="top-line"></div>
+                                    <p class="title pn mn text-default">{{returnColTitle}}</p>
+                                    <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
+                                </a>
+                            </div>
+                            {{/listData}}
+                            {{/dataSource}}
+                        </script>
+
+                        <div class="workbench-row row pl35">
+                            <div class="col-md-6 pn">
+                                <script type="text/html" id="multiPrivilegeCompanyTpl">
+                                    {{#dataSource}}
+                                    {{#listData}}
+                                    <div class="col-md-6 pn pr35 mb20">
+                                        <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
+                                        <a href="{{#hasdata}}${ctx}customer-business-manage/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
+                                            class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                                            <div class="top-line"></div>
+                                            <p class="title pn mn text-default">{{companyColTitle}}</p>
+                                            <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
+                                        </a>
+                                    </div>
+                                    {{/listData}}
+                                    {{/dataSource}}
+                                </script>
+                                <div class="row pn mn" id="multiPrivilegeCompanyRow">
+                                    <div class="col-md-6 pn pr35 mb20">
+                                        <div class="rowTitle fs16 fw700 mb5 border-left">客户</div>
+                                        <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                            <div class="top-line"></div>
+                                            <p class="title pn mn text-default">审核中的企业客户</p>
+                                            <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
+                                        </a>
+                                    </div>
+                                    <div class="col-md-6 pn pr35 mb20">
+                                        <div class="rowTitle fs16 fw700 mb5"></div>
+                                        <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                            <div class="top-line"></div>
+                                            <p class="title pn mn text-default">被驳回的企业客户</p>
+                                            <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 pn">
+                                <script type="text/html" id="multiPrivilegePersonTpl">
+                                    {{#dataSource}}
+                                    {{#listData}}
+                                    <div class="col-md-6 pn pr35 mb20">
+                                        <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
+                                        <a href="{{#hasdata}}${ctx}customer-manage/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
+                                            class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                                            <div class="top-line"></div>
+                                            <p class="title pn mn text-default">{{personColTitle}}</p>
+                                            <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
+                                        </a>
+                                    </div>
+                                    {{/listData}}
+                                    {{/dataSource}}
+                                </script>
+                                <div class="row pn mn" id="multiPrivilegePersonRow">
+                                    <div class="col-md-6 pn pr35 mb20">
+                                        <div class="rowTitle fs16 fw700 mb5"></div>
+                                        <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                            <div class="top-line"></div>
+                                            <p class="title pn mn text-default">审核中的个人客户</p>
+                                            <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
+                                        </a>
+                                    </div>
+                                    <div class="col-md-6 pn pr35 mb20">
+                                        <div class="rowTitle fs16 fw700 mb5"></div>
+                                        <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                                            <div class="top-line"></div>
+                                            <p class="title pn mn text-default">被驳回的个人客户</p>
+                                            <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 			</section>
