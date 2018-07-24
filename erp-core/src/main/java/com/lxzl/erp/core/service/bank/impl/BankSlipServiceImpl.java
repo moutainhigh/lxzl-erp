@@ -195,7 +195,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             bankSlipDetailQueryParam.setSlipDayEnd(DateUtil.getDayByOffset(bankSlipDetailQueryParam.getSlipDayEnd(), CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD));
 
         }
-        Integer departmentType = confirmDepartmentType();
+        Integer departmentType = bankSlipSupport.departmentType();
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -611,7 +611,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     @Override
     public ServiceResult<String, BankSlipDetail> queryBankSlipDetail(BankSlipDetail bankSlipDetail) {
         ServiceResult<String, BankSlipDetail> serviceResult = new ServiceResult<>();
-        Integer departmentType = confirmDepartmentType();
+        Integer departmentType = bankSlipSupport.departmentType();
         Map<String, Object> maps = new HashMap<>();
         maps.put("bankSlipDetailId", bankSlipDetail.getBankSlipDetailId());
         maps.put("departmentType", departmentType);
@@ -1081,7 +1081,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     public ServiceResult<String, Page<BankSlipDetailOperationLog>> pageBankSlipDetailOperationLog(BankSlipDetailOperationLogQueryParam bankSlipDetailOperationLogQueryParam) {
         ServiceResult<String, Page<BankSlipDetailOperationLog>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(bankSlipDetailOperationLogQueryParam.getPageNo(), bankSlipDetailOperationLogQueryParam.getPageSize());
-        Integer departmentType = confirmDepartmentType();
+        Integer departmentType = bankSlipSupport.departmentType();
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -1105,7 +1105,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     public ServiceResult<String, BankSlipDetail> queryUnknownBankSlipDetail(BankSlipDetail bankSlipDetail) {
         ServiceResult<String, BankSlipDetail> serviceResult = new ServiceResult<>();
 
-        Integer departmentType = confirmDepartmentType();
+        Integer departmentType = bankSlipSupport.departmentType();
         Map<String, Object> maps = new HashMap<>();
         maps.put("departmentType", departmentType);
         maps.put("bankSlipDetailId", bankSlipDetail.getBankSlipDetailId());
@@ -1179,7 +1179,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     public ServiceResult<String, Page<BankSlipDetail>> pageUnknownBankSlipDetail(BankSlipDetailQueryParam bankSlipDetailQueryParam) {
         ServiceResult<String, Page<BankSlipDetail>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(bankSlipDetailQueryParam.getPageNo(), bankSlipDetailQueryParam.getPageSize());
-        Integer departmentType = confirmDepartmentType();
+        Integer departmentType = bankSlipSupport.departmentType();
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -1905,21 +1905,6 @@ public class BankSlipServiceImpl implements BankSlipService {
         bankSlipDetailOperationLogDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         // 保存日志list
         bankSlipDetailOperationLogMapper.save(bankSlipDetailOperationLogDO);
-    }
-
-    private Integer confirmDepartmentType() {
-        Integer departmentType = 0;
-        if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
-            //财务人员类型设置为1
-            departmentType = 1;
-        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isElectric() || userSupport.isChannelSubCompany()) {
-            //商务类型设置为2
-            departmentType = 2;
-        } else if (userSupport.isBusinessPerson()) {
-            //业务员类型设置为3
-            departmentType = 3;
-        }
-        return departmentType;
     }
 
     /**
