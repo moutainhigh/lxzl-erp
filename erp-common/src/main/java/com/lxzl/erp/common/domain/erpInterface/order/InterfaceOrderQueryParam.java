@@ -56,6 +56,7 @@ public class InterfaceOrderQueryParam extends BasePageParam implements Serializa
     private Integer isPeer;
     private Integer isRecycleBin;//是否回收站
     private Integer isReturnOverDue;   //商品退还是否逾期
+    private Integer isCanReletOrder;  //是否为可续租单
 
     public Integer getOrderId() {
         return orderId;
@@ -311,5 +312,13 @@ public class InterfaceOrderQueryParam extends BasePageParam implements Serializa
 
     public void setRentLengthType(Integer rentLengthType) {
         this.rentLengthType = rentLengthType;
+    }
+
+    public Integer getIsCanReletOrder() {
+        return isCanReletOrder;
+    }
+
+    public void setIsCanReletOrder(Integer isCanReletOrder) {
+        this.isCanReletOrder = isCanReletOrder;
     }
 }

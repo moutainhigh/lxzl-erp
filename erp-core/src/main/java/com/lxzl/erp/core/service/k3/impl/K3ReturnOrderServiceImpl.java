@@ -31,11 +31,13 @@ import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
@@ -1117,8 +1119,21 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 //            result.setErrorCode(ErrorCode.HAS_SAME_PRODUCT);
 //            return result;
 //        }
+
+        CustomerDO customerDO = customerMapper.findByNo(k3ReturnOrder.getK3CustomerNo());
+        if (customerDO==null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        Set<String> orderNoSet = new HashSet<>();
+        List<K3ReturnOrderDetail> k3ReturnOrderDetailList = k3ReturnOrder.getK3ReturnOrderDetailList();
+        //校验所退退货单是否是该客户的订单
+        if (verifyOrderAndCustomer(result, customerDO, orderNoSet, k3ReturnOrderDetailList)){
+            return result;
+        }
+
         //itemId校验
-        if (!varifyOrderItemId(k3ReturnOrder.getK3ReturnOrderDetailList())) {
+        if (!varifyOrderItemId(k3ReturnOrderDetailList)) {
             result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
             return result;
         }
@@ -1212,6 +1227,32 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         result.setResult(k3ReturnOrderDO.getReturnOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    private boolean verifyOrderAndCustomer(ServiceResult<String, String> result, CustomerDO customerDO, Set<String> orderNoSet, List<K3ReturnOrderDetail> k3ReturnOrderDetailList) {
+        if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailList)) {
+            for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrderDetailList) {
+                orderNoSet.add(k3ReturnOrderDetail.getOrderNo());
+            }
+        }else {
+            result.setErrorCode(ErrorCode.RETURN_DETAIL_LIST_NOT_NULL);
+            return true;
+        }
+        if (CollectionUtil.isNotEmpty(orderNoSet)) {
+            List<OrderDO> orderDOList = orderMapper.findByNos(orderNoSet);
+            if (CollectionUtil.isNotEmpty(orderDOList)) {
+                for (OrderDO orderDO:orderDOList) {
+                    if (!customerDO.getId().equals(orderDO.getBuyerCustomerId())) {
+                        result.setErrorCode(ErrorCode.ORDERN_AND_CUSTOMER_ERROR);
+                        return true;
+                    }
+                }
+            }else {
+                result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -2141,5 +2182,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     private K3MappingMaterialTypeMapper k3MappingMaterialTypeMapper;
     @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    @Autowired
+    private CustomerMapper customerMapper;
 
 }

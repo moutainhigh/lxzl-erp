@@ -1233,6 +1233,18 @@
         where eo.data_status = 1
     </select>
 
+    <select id="findByNo" resultMap="OrderDO" parameterType="java.lang.String">
+        SELECT <include refid="column_List"/> FROM erp_order eo
+        WHERE eo.order_no = #{orderNo, jdbcType=VARCHAR} AND eo.data_status=1
+    </select>
+
+    <select id="findByOrderNoList" resultMap="OrderDO">
+        SELECT <include refid="column_List"/> FROM erp_order eo
+        WHERE eo.order_no IN
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
 
     <select id="findByNos" resultMap="OrderDO" parameterType="java.util.Set">
         select
@@ -1240,8 +1252,152 @@
         from erp_order eo
         where eo.order_no in
         <foreach collection="orderNos" item="item" index="index" separator="," open="(" close=")">
-        #{item}
+            #{item}
         </foreach>
         and eo.data_status = 1
     </select>
+
+    <select id="findCanReletOrderForWorkbench"  resultMap="OrderDO" parameterType="map">
+        SELECT e_order.*
+        <trim prefix=",">
+            <include refid="relet_column_List"/>
+        </trim>
+        FROM (
+        SELECT
+        <include refid="column_List"/>
+        <trim prefix=",">
+            <include refid="consign_column_List"/>
+        </trim>
+        <trim prefix=",">
+            eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name,
+            eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS
+            delivery_sub_company_name, ec.customer_no AS buyer_customer_no
+        </trim>
+        FROM erp_order eo
+        INNER JOIN erp_user eu ON eu.id = eo.order_seller_id
+        INNER JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
+        LEFT JOIN erp_area_province eap ON eap.id = eoci.province
+        LEFT JOIN erp_area_city eac ON eac.id = eoci.city
+        LEFT JOIN erp_area_district ead ON ead.id = eoci.district
+        INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+        INNER JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
+        LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
+        <where>
+            <if test="maps.orderQueryParam.isCanReletOrder != null &amp;&amp; maps.orderQueryParam.isCanReletOrder == 1">
+
+                (case
+                when eo.rent_type = 1 then   curdate() + INTERVAL #{maps.reletTimeOfDay, jdbcType=INTEGER} DAY > eo.expect_return_time
+                when eo.rent_type = 2 then   curdate() + INTERVAL #{maps.reletTimeOfMonth, jdbcType=INTEGER} DAY > eo.expect_return_time
+                end)
+                AND eo.order_status in (20,22)
+            </if>
+            <if test="maps.orderQueryParam.buyerRealName != null &amp;&amp; maps.orderQueryParam.buyerRealName != ''">
+                and eo.buyer_customer_name like CONCAT('%','${maps.orderQueryParam.buyerRealName}','%' )
+            </if>
+            <if test="maps.orderQueryParam.consigneeName != null &amp;&amp; maps.orderQueryParam.consigneeName != ''">
+                and eoci.consignee_name like CONCAT('%','${maps.orderQueryParam.consigneeName}','%' )
+            </if>
+            <if test="maps.orderQueryParam.consigneePhone != null &amp;&amp; maps.orderQueryParam.consigneePhone != ''">
+                and eoci.consignee_phone = #{maps.orderQueryParam.consigneePhone, jdbcType=VARCHAR}
+            </if>
+            <if test="maps.orderQueryParam.deliveryMode != null">
+                and eo.delivery_mode = #{maps.orderQueryParam.deliveryMode, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.subCompanyId != null">
+                and eo.order_sub_company_id = #{maps.orderQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.deliverySubCompanyId != null">
+                and eo.delivery_sub_company_id = #{maps.orderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.orderId != null">
+                and eo.id = #{maps.orderQueryParam.orderId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.orderNo != null &amp;&amp; maps.orderQueryParam.orderNo != ''">
+                and eo.order_no like CONCAT('%','${maps.orderQueryParam.orderNo}','%' )
+            </if>
+            <if test="maps.orderQueryParam.buyerCustomerId != null">
+                and eo.buyer_customer_id = #{maps.orderQueryParam.buyerCustomerId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.buyerCustomerNo != null &amp;&amp; maps.orderQueryParam.buyerCustomerNo != ''">
+                and ec.customer_no = #{maps.orderQueryParam.buyerCustomerNo, jdbcType=VARCHAR}
+            </if>
+            <if test="maps.orderQueryParam.orderSellerId != null">
+                and eo.order_seller_id = #{maps.orderQueryParam.orderSellerId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.orderSellerName != null &amp;&amp; maps.orderQueryParam.orderSellerName != ''">
+                and eu.real_name like CONCAT('%','${maps.orderQueryParam.orderSellerName}','%' )
+            </if>
+            <if test="maps.orderQueryParam.rentType != null">
+                and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.isRecycleBin != null &amp;&amp; maps.orderQueryParam.isRecycleBin==1">
+                and eo.order_status = 28
+            </if>
+            <if test="maps.orderQueryParam.isRecycleBin != null &amp;&amp; maps.orderQueryParam.isRecycleBin==0">
+                and eo.order_status != 28
+            </if>
+            <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==1">
+                and curdate() > eo.expect_return_time AND eo.order_status IN (16, 20, 22)
+            </if>
+            <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==2">
+                and (eo.expect_return_time >= curdate() OR eo.order_status NOT IN (16, 20, 22))
+            </if>
+            <if test="maps.orderQueryParam.orderStatus != null">
+                and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.orderStatusList != null &amp;&amp; maps.orderQueryParam.orderStatusList.size() > 0">
+                and eo.order_status in
+                <foreach item="item" index="index" collection="maps.orderQueryParam.orderStatusList"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="maps.orderQueryParam.payStatus != null">
+                and eo.pay_status = #{maps.orderQueryParam.payStatus, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.isPeer != null">
+                and eo.is_peer = #{maps.orderQueryParam.isPeer, jdbcType=INTEGER}
+            </if>
+            <if test='maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery == 1'>
+                and eo.order_status in (8, 12) AND (eo.pay_status = 8 OR eo.first_need_pay_amount = 0)
+            </if>
+            <if test="maps.orderQueryParam.createStartTime != null">
+                <![CDATA[ AND eo.create_time >= #{maps.orderQueryParam.createStartTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.createEndTime != null ">
+                <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.startRentStartTime != null">
+                <![CDATA[ AND eo.rent_start_time >= #{maps.orderQueryParam.startRentStartTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.endRentStartTime != null ">
+                <![CDATA[ AND eo.rent_start_time <= #{maps.orderQueryParam.endRentStartTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.startExpectReturnTime != null">
+                <![CDATA[ AND eo.expect_return_time >= #{maps.orderQueryParam.startExpectReturnTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.endExpectReturnTime != null ">
+                <![CDATA[ AND eo.expect_return_time <= #{maps.orderQueryParam.endExpectReturnTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.rentLengthType != null">
+                and eo.rent_length_type = #{maps.orderQueryParam.rentLengthType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.isReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 1">
+                AND eo.relet_order_id IS NOT NULL
+            </if>
+            <if test="maps.orderQueryParam.isReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 0">
+                AND eo.relet_order_id IS NULL
+            </if>
+            <if test="maps.isQueryAll == null">
+                and eo.data_status = 1
+            </if>
+            <include refid="permission_sql.order_control"/>
+        </where>
+        ORDER BY eo.create_time DESC
+        ) e_order
+        LEFT JOIN erp_relet_order ero ON ero.order_id = e_order.id and ero.data_status = 1
+    </select>
+
+
 </mapper>
