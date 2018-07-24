@@ -2462,6 +2462,8 @@ public class OrderServiceImpl implements OrderService {
         //仅仅是为工作台查询可续租的订单服务
         if (CommonConstant.COMMON_CONSTANT_YES.equals(orderQueryParam.getIsCanReletOrder())){
             Map<String,Object> maps = new HashMap<>();
+            maps.put("reletTimeOfDay",CommonConstant.RELET_TIME_OF_RENT_TYPE_DAY );
+            maps.put("reletTimeOfMonth",CommonConstant.RELET_TIME_OF_RENT_TYPE_MONTH);
             maps.put("orderQueryParam",orderQueryParam);
             maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
 
@@ -2479,20 +2481,6 @@ public class OrderServiceImpl implements OrderService {
                     order.setIsReletOrder(isReletOrder);
                     if (CommonConstant.COMMON_CONSTANT_YES.equals(order.getCanReletOrder())){
                         canReletOrderList.add(order);
-                        orderNoList.add(orderDO.getOrderNo());
-                        orderDOMap.put(orderDO.getOrderNo(), order);
-
-                    }
-                }
-            }
-
-            List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
-            if (CollectionUtil.isNotEmpty(workflowLinkDOList)){
-                for (WorkflowLinkDO workflowLinkDO : workflowLinkDOList) {
-                    Order order = orderDOMap.get(workflowLinkDO.getWorkflowReferNo());
-                    if (order != null) {
-                        WorkflowLink workflowLink = ConverterUtil.convert(workflowLinkDO, WorkflowLink.class);
-                        order.setWorkflowLink(workflowLink);
                     }
                 }
             }
@@ -2504,7 +2492,20 @@ public class OrderServiceImpl implements OrderService {
                     if (i <= canReletOrderList.size() - 1){
                         if(canReletOrderList.get(i) != null){
                             pageOrderList.add(canReletOrderList.get(i));
+                            orderNoList.add(canReletOrderList.get(i).getOrderNo());
+                            orderDOMap.put(canReletOrderList.get(i).getOrderNo(), canReletOrderList.get(i));
                         }
+                    }
+                }
+            }
+
+            List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
+            if (CollectionUtil.isNotEmpty(workflowLinkDOList)){
+                for (WorkflowLinkDO workflowLinkDO : workflowLinkDOList) {
+                    Order order = orderDOMap.get(workflowLinkDO.getWorkflowReferNo());
+                    if (order != null) {
+                        WorkflowLink workflowLink = ConverterUtil.convert(workflowLinkDO, WorkflowLink.class);
+                        order.setWorkflowLink(workflowLink);
                     }
                 }
             }

@@ -63,4 +63,6 @@ public class CommonConstant {
 
     public static final Integer RELET_TIME_OF_RENT_TYPE_MONTH = 30;  //按月租提前30天
     public static final Integer RELET_TIME_OF_RENT_TYPE_DAY = 15;   //按天租提前15天
+
+    public static final Integer STATEMENT_ADVANCE_EXPECT_PAY_END_TIME = 7;//工作台结算单预计支付时间提前七天查询
 }

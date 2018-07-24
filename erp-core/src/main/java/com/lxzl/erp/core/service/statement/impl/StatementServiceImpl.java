@@ -1570,7 +1570,7 @@ public class StatementServiceImpl implements StatementService {
 
         //工作台判断
         if(statementOrderQueryParam.getIsWorkbench() != null && CommonConstant.COMMON_CONSTANT_YES.equals(statementOrderQueryParam.getIsWorkbench())){
-            statementOrderQueryParam.setStatementExpectPayStartTime(DateUtil.getDayByOffset(new Date(), -7));
+            statementOrderQueryParam.setStatementExpectPayEndTime(DateUtil.getDayByOffset(new Date(), CommonConstant.STATEMENT_ADVANCE_EXPECT_PAY_END_TIME));
         }
 
         PageQuery pageQuery = new PageQuery(statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
