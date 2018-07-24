@@ -6563,9 +6563,15 @@ public class StatementServiceImpl implements StatementService {
             //兼容erp订单和k3订单商品项
             if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())) {
                 OrderProductDO orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
+                if(orderProductDO==null){
+                    continue;
+                }
                 returnMap.put(OrderItemType.ORDER_ITEM_TYPE_PRODUCT+"_"+orderProductDO.getId(),k3ReturnOrderDetailDO.getRealProductCount());
             }else {
                 OrderMaterialDO orderMaterialDO=productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
+                if(orderMaterialDO==null){
+                    continue;
+                }
                 returnMap.put(OrderItemType.ORDER_ITEM_TYPE_MATERIAL+"_"+orderMaterialDO.getId(),k3ReturnOrderDetailDO.getRealProductCount());
             }
         }
