@@ -17,6 +17,8 @@ public class K3ReturnOrderQueryParam extends BasePageParam implements Serializab
     private Integer returnOrderStatus;   // 归还订单状态，0-待提交，4-审核中，16-已取消，20-已完成，24已驳回
     private String orderNo;  //订单编号
 
+    private Boolean isHandleRent;
+
     public String getOrderNo() {
         return orderNo;
     }
@@ -72,4 +74,8 @@ public class K3ReturnOrderQueryParam extends BasePageParam implements Serializab
     public void setReturnEndTime(Date returnEndTime) {
         this.returnEndTime = returnEndTime;
     }
+
+    public Boolean getHandleRent() { return isHandleRent; }
+
+    public void setHandleRent(Boolean handleRent) { isHandleRent = handleRent; }
 }

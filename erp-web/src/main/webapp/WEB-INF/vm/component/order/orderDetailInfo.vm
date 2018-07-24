@@ -58,7 +58,12 @@
                         <li class="Rental-timeline-item {{#isLastLine}}Rental-timeline-item-last{{/isLastLine}}">
                             <div class="Rental-timeline-item-tail"></div>
                             <div class="Rental-timeline-item-head {{inlineClass}}"></div>
-                            <div class="Rental-timeline-item-content"><span class="mr15">{{orderStatusValue}}</span><span>{{createTimeFormat}}</span></div>
+                            <div class="Rental-timeline-item-content">
+                                <span class="mr10">{{orderStatusValue}}</span>
+                                <span class="mr20">{{createTimeFormat}}</span>
+                                <span class="mr5 text-danger">{{realName}}</span>
+                                <span class="text-danger">{{operationVal}}</span>
+                            </div>
                         </li>
                         {{/orderTimeAxisTree}}
                     </ul>

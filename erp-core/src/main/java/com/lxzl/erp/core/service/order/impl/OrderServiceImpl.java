@@ -17,7 +17,6 @@ import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.*;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
-import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.system.pojo.Image;
@@ -87,7 +86,6 @@ import com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
-import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
@@ -176,7 +174,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.CREATE_ORDER);
         // TODO: 2018\4\26 0026 使用优惠券
         if (CollectionUtil.isEmpty(order.getCouponList())) {
             result.setErrorCode(ErrorCode.SUCCESS);
@@ -262,7 +260,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.CREATE_ORDER);
         // TODO: 2018\4\26 0026 使用优惠券
         if (CollectionUtil.isEmpty(order.getCouponList())) {
             result.setErrorCode(ErrorCode.SUCCESS);
@@ -491,6 +489,8 @@ public class OrderServiceImpl implements OrderService {
         setOrderProductSummary(orderDO);
         orderMapper.update(orderDO);
 
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.UPDATE_ORDER);
+
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
         // TODO: 2018\4\26 0026  清除之前订单锁定的优惠券
         String revertresult = couponSupport.revertCoupon(order.getOrderNo());
@@ -593,6 +593,7 @@ public class OrderServiceImpl implements OrderService {
         //为了不影响之前的订单逻辑，这里暂时使用修改的方式
         setOrderProductSummary(orderDO);
         orderMapper.update(orderDO);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.UPDATE_ORDER);
 
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
         // TODO: 2018\4\26 0026  清除之前订单锁定的优惠券
@@ -755,11 +756,12 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(workflowCommitResult.getErrorCode());
             return result;
         }
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_VERIFYING);
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderDO.setUpdateTime(currentTime);
         orderMapper.update(orderDO);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.COMMIT_ORDER);
 
         // 扣除信用额度
         if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
@@ -1129,7 +1131,7 @@ public class OrderServiceImpl implements OrderService {
             orderMapper.update(orderDO);
 
             // 记录订单时间轴
-            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId());
+            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId(),OperationType.COMFIRM_ORDER);
             sb = new StringBuffer();
             sb.append("您的客户[").append(orderDO.getBuyerCustomerName()).append("]所下租赁订单（订单号：").append(orderDO.getOrderNo()).append("）已经正常确认收货。收货内容如下：\n");
             sb.append(confirmsb.toString());
@@ -1215,7 +1217,8 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
 
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId(),OperationType.COMFIRM_ORDER);
+
 
         Integer newTotalProductCount = orderDO.getTotalProductCount();
         Integer newTotalMaterialCount = orderDO.getTotalMaterialCount();
@@ -1577,7 +1580,7 @@ public class OrderServiceImpl implements OrderService {
                     return createStatementOrderResult.getErrorCode();
                 }
                 orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
-                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.VERIFY_ORDER_SUCCESS);
                 orderDO.setUpdateTime(currentTime);
                 orderDO.setUpdateUser(loginUser.getUserId().toString());
                 orderMapper.update(orderDO);
@@ -1590,7 +1593,7 @@ public class OrderServiceImpl implements OrderService {
                 if (BigDecimalUtil.compare(orderDO.getTotalCreditDepositAmount(), BigDecimal.ZERO) != 0) {
                     customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), orderDO.getTotalCreditDepositAmount());
                 }
-                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_REJECT, null, currentTime, loginUser.getUserId());
+                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_REJECT, null, currentTime, loginUser.getUserId(),OperationType.VERIFY_ORDER_FAILED);
                 orderDO.setUpdateTime(currentTime);
                 orderDO.setUpdateUser(loginUser.getUserId().toString());
                 orderMapper.update(orderDO);
@@ -1720,7 +1723,7 @@ public class OrderServiceImpl implements OrderService {
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         //判断是否可续租
-        Integer canReletOrder = isOrderCanRelet(order);
+        Integer canReletOrder = orderSupport.isOrderCanRelet(order);
         order.setCanReletOrder(canReletOrder);
         Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
         order.setIsReletOrder(isReletOrder);
@@ -1744,47 +1747,6 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
-    /**
-     * 判断是否可续租
-     *
-     * @author ZhaoZiXuan
-     * @date 2018/5/25 10:47
-     * @param
-     * @return
-     */
-    private Integer isOrderCanRelet(Order order){
-
-        //检查是否在续租时间范围
-        Date currentTime = new Date();
-        Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(order.getExpectReturnTime(), currentTime);
-        if ((OrderRentType.RENT_TYPE_MONTH.equals(order.getRentType()) && dayCount < -9)
-                || (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && dayCount < -2)) {  //订单： 长租前10天 和 短租前3天 可续租
-            return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_NO;
-        }
-
-        //订单状态 必须是租赁中 ，续租中，部分退还  才可续租
-        if (!OrderStatus.canReletOrderByCurrentStatus(order.getOrderStatus())){
-            return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_NO;
-        }
-
-        if (CollectionUtil.isNotEmpty(order.getReletOrderList())){
-            for (ReletOrder reletOrder : order.getReletOrderList()){
-                if (!ReletOrderStatus.canReletOrderByCurrentStatus(reletOrder.getReletOrderStatus())){
-
-                    return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_EXIST_WAIT_HANDLE;
-                }
-                else {
-
-                    if (currentTime.compareTo(reletOrder.getRentStartTime()) < 0){  //如果当前续租还没开始  不允许再次续租
-
-                        return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_EXIST_SUCCESS_RELET_NOT_BEGIN;
-                    }
-                }
-            }
-        }
-
-        return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_YES;
-    }
 
     @Override
     public ServiceResult<String, Order> queryOrderByNoNew(String orderNo) {
@@ -1891,7 +1853,7 @@ public class OrderServiceImpl implements OrderService {
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
 
         //判断是否可续租
-        Integer canReletOrder = isOrderCanRelet(order);
+        Integer canReletOrder = orderSupport.isOrderCanRelet(order);
         order.setCanReletOrder(canReletOrder);
         Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
         order.setIsReletOrder(isReletOrder);
@@ -2044,7 +2006,7 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderMapper.update(orderDO);
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.CANCEL_ORDER);
         // TODO: 2018\4\26 0026  清除之前订单锁定的优惠券
         String revertresult = couponSupport.revertCoupon(orderDO.getOrderNo());
         if (!ErrorCode.SUCCESS.equals(revertresult)) {
@@ -2171,7 +2133,7 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderMapper.update(orderDO);
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.FORCE_CANCEL_ORDER);
 
 
         // TODO: 2018\4\26 0026 清除锁定优惠券
@@ -2497,6 +2459,62 @@ public class OrderServiceImpl implements OrderService {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
 
+        //仅仅是为工作台查询可续租的订单服务
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderQueryParam.getIsCanReletOrder())){
+            Map<String,Object> maps = new HashMap<>();
+            maps.put("orderQueryParam",orderQueryParam);
+            maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
+
+            List<OrderDO> orderDOList = orderMapper.findCanReletOrderForWorkbench(maps);
+
+            List<String> orderNoList = new ArrayList<>();
+            Map<String, Order> orderDOMap = new HashMap<>();
+            List<Order> canReletOrderList = new ArrayList<>();
+            if (CollectionUtil.isNotEmpty(orderDOList)){
+                for (OrderDO orderDO :orderDOList){
+                    Order order = ConverterUtil.convert(orderDO, Order.class);
+                    Integer canReletOrder = orderSupport.isOrderCanRelet(order);
+                    order.setCanReletOrder(canReletOrder);
+                    Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
+                    order.setIsReletOrder(isReletOrder);
+                    if (CommonConstant.COMMON_CONSTANT_YES.equals(order.getCanReletOrder())){
+                        canReletOrderList.add(order);
+                        orderNoList.add(orderDO.getOrderNo());
+                        orderDOMap.put(orderDO.getOrderNo(), order);
+
+                    }
+                }
+            }
+
+            List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
+            if (CollectionUtil.isNotEmpty(workflowLinkDOList)){
+                for (WorkflowLinkDO workflowLinkDO : workflowLinkDOList) {
+                    Order order = orderDOMap.get(workflowLinkDO.getWorkflowReferNo());
+                    if (order != null) {
+                        WorkflowLink workflowLink = ConverterUtil.convert(workflowLinkDO, WorkflowLink.class);
+                        order.setWorkflowLink(workflowLink);
+                    }
+                }
+            }
+
+            List<Order> pageOrderList = new ArrayList<>();
+            Integer startPage = orderQueryParam.getPageSize() * orderQueryParam.getPageNo() - orderQueryParam.getPageSize() <= 0 ? 0:orderQueryParam.getPageSize() * orderQueryParam.getPageNo() - orderQueryParam.getPageSize();
+            if (CollectionUtil.isNotEmpty(canReletOrderList)){
+                for (int i = startPage; i <= orderQueryParam.getPageSize() * orderQueryParam.getPageNo() - 1; i++){
+                    if (i <= canReletOrderList.size() - 1){
+                        if(canReletOrderList.get(i) != null){
+                            pageOrderList.add(canReletOrderList.get(i));
+                        }
+                    }
+                }
+            }
+
+            Page<Order> page = new Page<>(pageOrderList, canReletOrderList.size(), orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(page);
+            return result;
+        }
+
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -2514,7 +2532,7 @@ public class OrderServiceImpl implements OrderService {
             Order order = ConverterUtil.convert(orderDO, Order.class);
             orderDOMap.put(orderDO.getOrderNo(), order);
             //判断是否可续租
-            Integer canReletOrder = isOrderCanRelet(order);
+            Integer canReletOrder = orderSupport.isOrderCanRelet(order);
             order.setCanReletOrder(canReletOrder);
             Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
             order.setIsReletOrder(isReletOrder);
@@ -2554,7 +2572,7 @@ public class OrderServiceImpl implements OrderService {
 
             Order order = ConverterUtil.convert(orderDO, Order.class);
             //判断是否可续租
-            Integer canReletOrder = isOrderCanRelet(order);
+            Integer canReletOrder = orderSupport.isOrderCanRelet(order);
             order.setCanReletOrder(canReletOrder);
             Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
             order.setIsReletOrder(isReletOrder);
@@ -2642,7 +2660,7 @@ public class OrderServiceImpl implements OrderService {
 
 
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.K3_DELIVER_CALLBACK);
 
         result.setResult(param.getOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -2991,7 +3009,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(dbRecordOrder);
 
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(dbRecordOrder.getId(), dbRecordOrder.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(dbRecordOrder.getId(), dbRecordOrder.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.K3_DELIVER_CALLBACK);
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order.getOrderNo());
@@ -3264,7 +3282,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
 
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.COMFIRM_ORDER);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
         return result;
@@ -3786,7 +3804,7 @@ public class OrderServiceImpl implements OrderService {
             Date currentTime = new Date();
             Integer userId = userSupport.getCurrentUserId();
             for (OrderDO orderDO : orderDOList) {
-                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, userId);
+                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, userId,OperationType.K3_RETURN_CALLBACK);
             }
         }
         result.setErrorCode(ErrorCode.SUCCESS);

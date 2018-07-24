@@ -183,6 +183,8 @@
         <mapper resource="sqlmap/erp_order_statement_date_split.xml" />
 
         <mapper resource="sqlmap/erp_dynamic_sql.xml" />
+        <mapper resource="sqlmap/erp_dynamic_sql_holder.xml" />
+
 
         <mapper resource="sqlmap/erp_dingding_group_message_config.xml" />
 

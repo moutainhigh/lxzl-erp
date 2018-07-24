@@ -47,11 +47,19 @@
                                 <td>{{groupedProductTostr}}</td>
                                 <td>{{groupedMaterialTostr}}</td>
                                 <td>
-                                    <label class="block mn switch switch-primary">
-                                        <input type="checkbox" name="isNew" id="isNewGroup-{{jointProductId}}" value="1" />
-                                        <label for="isNewGroup-{{jointProductId}}" data-on="全新" data-off="次新"></label>
-                                        <span></span>
-                                    </label>
+                                    <div class="radio-custom pull-left mr10 mb5">
+                                        <input type="radio" id="radio-{{jointProductId}}-1" class="radios oldGroup" name="radio-{{jointProductId}}">
+                                        <label for="radio-{{jointProductId}}-1">次新</label>
+                                    </div>
+                                    <div class="radio-custom radio-primary pull-left">
+                                        <input type="radio" id="radio-{{jointProductId}}-2" class="radios newGroup" name="radio-{{jointProductId}}">
+                                        <label for="radio-{{jointProductId}}-2">全新</label>
+                                    </div>
+##                                    <label class="block mn switch switch-primary">
+##                                        <input type="checkbox" name="isNew" id="isNewGroup-{{jointProductId}}" value="1" />
+##                                        <label for="isNewGroup-{{jointProductId}}" data-on="全新" data-off="次新"></label>
+##                                        <span></span>
+##                                    </label>
                                 </td>
                                 <td class="text-right">
                                     <div class="btn-group text-right">

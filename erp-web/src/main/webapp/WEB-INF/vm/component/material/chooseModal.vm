@@ -84,11 +84,19 @@
                         </td>
                         {{#showIsNewCheckBox}}
                         <td>
-                            <label class="block mn switch switch-primary">
-                                <input type="checkbox" name="isNewMaterial" id="isNewMaterial-{{materialNo}}" value="1" />
-                                <label for="isNewMaterial-{{materialNo}}" data-on="全新" data-off="次新"></label>
-                                <span></span>
-                            </label>
+                            <div class="radio-custom pull-left mr10 mb5">
+                                <input type="radio" id="isNewMaterial-{{materialNo}}-1" class="radios oldMaterial" name="radio-{{materialNo}}">
+                                <label for="isNewMaterial-{{materialNo}}-1">次新</label>
+                            </div>
+                            <div class="radio-custom radio-primary pull-left">
+                                <input type="radio" id="isNewMaterial-{{materialNo}}-2" class="radios newMaterial" name="radio-{{materialNo}}">
+                                <label for="isNewMaterial-{{materialNo}}-2">全新</label>
+                            </div>
+##                            <label class="block mn switch switch-primary">
+##                                <input type="checkbox" name="isNewMaterial" id="isNewMaterial-{{materialNo}}" value="1" />
+##                                <label for="isNewMaterial-{{materialNo}}" data-on="全新" data-off="次新"></label>
+##                                <span></span>
+##                            </label>
                         </td>
                         {{/showIsNewCheckBox}}
                         <td class="text-right">

@@ -70,7 +70,7 @@
                                     <td>{{remark}}</td>
                                     <td>
                                         <p class="mn">{{createUserRealName}}</p>
-                                        <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                        <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
                                     </td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
@@ -83,7 +83,7 @@
                                     {{/hasRowActionButtons}}
                                 </tr>
                                 <tr class="bn" style="height:0;">
-                                    <td colspan="5" style="height:0; padding:0;"><pre style="white-space:normal;margin:0; display:none;">{{sqlContent}}</pre></td>
+                                    <td class="pre-box" colspan="5"><pre>{{sqlContent}}</pre></td>
                                 </tr>
                                 {{/listData}}
                                 {{^listData}}

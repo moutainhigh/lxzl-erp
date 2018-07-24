@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.ERPTransactionalTest;
+import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.ReturnOrChangeMode;
 import com.lxzl.erp.common.domain.Page;
@@ -41,7 +42,7 @@ import java.util.List;
  * @author gaochao
  * @date 2018-02-13 9:41
  */
-public class K3ControllerTest extends ERPTransactionalTest {
+public class K3ControllerTest extends ERPUnTransactionalTest {
 
     @Autowired
     private PenaltySupport penaltySupport;
@@ -294,10 +295,11 @@ public class K3ControllerTest extends ERPTransactionalTest {
     @Test
     public void queryReturnOrder() throws Exception {
         K3ReturnOrderQueryParam param = new K3ReturnOrderQueryParam();
-        param.setOrderNo("LXO-20180416-1000-00087");
+//        param.setOrderNo("LXO-20180416-1000-00087");
+        param.setReturnOrderStatus(4);
 //        param.setReturnOrderStatus(16);
 //        param.setK3CustomerNo("LXCC-027-20180416-00026");
-        param.setPageSize(3);
+//        param.setPageSize(3);
         TestResult testResult = getJsonTestResult("/k3/queryReturnOrder", param);
     }
 
@@ -550,9 +552,9 @@ public class K3ControllerTest extends ERPTransactionalTest {
 //        param.setCreateStartTime(new SimpleDateFormat("yyyy-MM-dd").parse("2001-03-01"));
 //        param.setCreateEndTime(new SimpleDateFormat("yyyy-MM-dd").parse("2018-06-22"));
 //        param.setOrderStatus(20);
-//        param.setOrderStatus(16);
+        param.setOrderStatus(0);
 //        param.setCustomerNo("LXO-20180613-027-00096");
-        param.setOrderNo("LXO-20180613-027-00096");
+//        param.setOrderNo("LXO-20180613-027-00096");
         TestResult testResult = getJsonTestResult("/k3/queryOrderForReturn", param);
     }
     @Test
@@ -570,7 +572,7 @@ public class K3ControllerTest extends ERPTransactionalTest {
     }
     @Test
     public void createReturnOrderFromERPJson() throws Exception {
-        String str = "{\"k3CustomerNo\":\"LXCC-027-20180620-00136\",\"k3CustomerName\":\"分直结算十二号\",\"returnTime\":1591779200000,\"returnAddress\":\"湖北省武汉市洪山区你家大门口\",\"returnContacts\":\"咩咩\",\"returnPhone\":\"18566324590\",\"returnMode\":\"2\",\"logisticsAmount\":\"0\",\"serviceAmount\":0,\"remark\":\"\",\"returnReasonType\":\"1\",\"deliverySubCompanyId\":\"8\",\"k3ReturnOrderDetailList\":[{\"orderNo\":\"LXO-20180627-027-00164\",\"orderEntry\":3598,\"productNo\":\"10.TPC.AP.IPADPRO-64G\",\"productName\":\"苹果IPADPRO-64G\",\"productCount\":\"3\",\"remark\":\"\",\"orderItemId\":3598}]}";
+        String str = "{\"k3CustomerNo\":\"LXCC-027-20180723-00084\",\"k3CustomerName\":\"不准动测试一号\",\"returnTime\":1529884800000,\"returnAddress\":\"湖北省武汉市洪山区你家大门口\",\"returnContacts\":\"咩咩\",\"returnPhone\":\"18566324590\",\"returnMode\":\"2\",\"logisticsAmount\":0,\"serviceAmount\":0,\"remark\":\"\",\"returnReasonType\":\"14\",\"deliverySubCompanyId\":\"8\",\"k3ReturnOrderDetailList\":[{\"orderNo\":\"LXO-20180723-027-00124\",\"orderEntry\":4210,\"productNo\":\"10.TPC.AP.IPADPRO-64G\",\"productName\":\"苹果IPADPRO-64G\",\"productCount\":\"1\",\"remark\":\"\",\"orderItemId\":4210}]}";
         K3ReturnOrder k3ReturnOrder = JSON.parseObject(str, K3ReturnOrder.class);
 
 
@@ -729,4 +731,13 @@ public class K3ControllerTest extends ERPTransactionalTest {
 
         TestResult testResult = getJsonTestResult("/k3/confirmOrder", orderConfirmChangeToK3Param);
     }
+
+    @Test
+    public void testBatchImportK3HistoricalRefundList() throws Exception {
+        BatchImportK3HistoricalRefundListParam batchImportK3HistoricalRefundListParam = new BatchImportK3HistoricalRefundListParam();
+        batchImportK3HistoricalRefundListParam.setStartPage(1);
+
+        TestResult testResult = getJsonTestResult("/k3/batchImportK3HistoricalRefundList", batchImportK3HistoricalRefundListParam);
+    }
+
 }

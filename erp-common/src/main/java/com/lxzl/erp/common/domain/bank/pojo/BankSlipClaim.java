@@ -32,9 +32,17 @@ public class BankSlipClaim extends BasePO {
 	private String updateUser;   //修改人
 	private String customerName;   //客户名称
 	private String k3CustomerNo;  //k3客户编码
-
+	private String customerSubCompanyName;  //客户对应的公司名称
 	@Valid
 	private List<ClaimParam> claimParam;
+
+	public String getCustomerSubCompanyName() {
+		return customerSubCompanyName;
+	}
+
+	public void setCustomerSubCompanyName(String customerSubCompanyName) {
+		this.customerSubCompanyName = customerSubCompanyName;
+	}
 
 	public String getK3CustomerNo() {
 		return k3CustomerNo;
