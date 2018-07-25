@@ -61,7 +61,7 @@
                                     <input type="hidden" name="returnStartTime" id="returnStartTime" />
                                     <input type="hidden" name="returnEndTime" id="returnEndTime" />
                                     <div class="input-group date" id="returnPicker">
-                                        <input type="text" name="returnTimePicker" id="returnPickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择下单时间">
+                                        <input type="text" name="returnTimePicker" id="returnPickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择退货时间">
                                         <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                                     </div>
                                 </div>
@@ -77,6 +77,7 @@
                                 <th>退还编号</th>
                                 <th>K3客户编码</th>
                                 <th>K3客户名称</th>
+                                <th>退货时间</th>
                                 <th>退货地址</th>
                                 <th>退货单状态</th>
                                 <th>备注</th>
@@ -93,6 +94,7 @@
                                 <td><a href="{{detailUrl}}" target="_blank">{{returnOrderNo}}</a></td>
                                 <td><a href="{{customerDetailUrl}}" target="_blank">{{k3CustomerNo}}</a></td>
                                 <td><a href="{{customerDetailUrl}}" target="_blank">{{k3CustomerName}}</a></td>
+                                <td>{{#clockShorTime}}{{returnTime}}{{/clockShorTime}}</td>
                                 <td>
                                     <p class="mn">{{returnContacts}}</p>
                                     <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{returnPhone}}</p>
