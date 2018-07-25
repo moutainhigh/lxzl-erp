@@ -77,6 +77,9 @@ public class CustomerCompany extends BasePO {
     private String districtName; //地区名
     private Integer addressVerifyStatus; //公司经营地址审核状态：0未提交；1.已提交 2.初审通过；3.终审通过 4.审批驳回
 
+    private BigDecimal firstListTotalRentPrice; //首次所需设备租金总金额
+    private BigDecimal laterListTotalRentPrice; //后续所需设备租金总金额
+
     @Valid
     private List<CustomerConsignInfo> customerConsignInfoList;
 
@@ -596,4 +599,20 @@ public class CustomerCompany extends BasePO {
     public Integer getAddressVerifyStatus() { return addressVerifyStatus; }
 
     public void setAddressVerifyStatus(Integer addressVerifyStatus) { this.addressVerifyStatus = addressVerifyStatus; }
+
+    public BigDecimal getFirstListTotalRentPrice() {
+        return firstListTotalRentPrice;
+    }
+
+    public void setFirstListTotalRentPrice(BigDecimal firstListTotalRentPrice) {
+        this.firstListTotalRentPrice = firstListTotalRentPrice;
+    }
+
+    public BigDecimal getLaterListTotalRentPrice() {
+        return laterListTotalRentPrice;
+    }
+
+    public void setLaterListTotalRentPrice(BigDecimal laterListTotalRentPrice) {
+        this.laterListTotalRentPrice = laterListTotalRentPrice;
+    }
 }

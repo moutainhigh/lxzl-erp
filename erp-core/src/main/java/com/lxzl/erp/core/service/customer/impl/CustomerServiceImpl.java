@@ -993,24 +993,26 @@ public class CustomerServiceImpl implements CustomerService {
         if (StringUtil.isNotEmpty(customerDO.getCustomerCompanyDO().getCustomerCompanyNeedFirstJson())) {
             String customerCompanyNeedFirstJson = customerDO.getCustomerCompanyDO().getCustomerCompanyNeedFirstJson();
             List<CustomerCompanyNeed> customerCompanyNeedList = JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class);
-            BigDecimal firstListTotalPrice = new BigDecimal(0);
-            for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
-                firstListTotalPrice = firstListTotalPrice.add(customerCompanyNeed.getTotalPrice());
+
+            ServiceResult<String, String> result = getListTotalPrice(customerCompanyNeedList,customerResult.getCustomerCompany(),CommonConstant.COMMON_CONSTANT_YES);
+            if (!ErrorCode.SUCCESS.equals(result.getErrorCode())){
+                serviceResult.setErrorCode(result.getErrorCode());
+                return serviceResult;
             }
-            customerResult.getCustomerCompany().setFirstListTotalPrice(firstListTotalPrice);
-            customerResult.getCustomerCompany().setCustomerCompanyNeedFirstList(JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class));
+            customerResult.getCustomerCompany().setCustomerCompanyNeedFirstList(customerCompanyNeedList);
         }
 
         //后续所需设备，Json转list
         if (StringUtil.isNotEmpty(customerDO.getCustomerCompanyDO().getCustomerCompanyNeedLaterJson())) {
             String customerCompanyNeedLaterList = customerDO.getCustomerCompanyDO().getCustomerCompanyNeedLaterJson();
             List<CustomerCompanyNeed> customerCompanyNeedList = JSONObject.parseArray(customerCompanyNeedLaterList, CustomerCompanyNeed.class);
-            BigDecimal laterListTotalPrice = new BigDecimal(0);
-            for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
-                laterListTotalPrice = laterListTotalPrice.add(customerCompanyNeed.getTotalPrice());
+            ServiceResult<String, String> result = getListTotalPrice(customerCompanyNeedList,customerResult.getCustomerCompany(),CommonConstant.COMMON_CONSTANT_NO);
+            if (!ErrorCode.SUCCESS.equals(result.getErrorCode())){
+                serviceResult.setErrorCode(result.getErrorCode());
+                return serviceResult;
             }
-            customerResult.getCustomerCompany().setLaterListTotalPrice(laterListTotalPrice);
-            customerResult.getCustomerCompany().setCustomerCompanyNeedLaterList(JSONObject.parseArray(customerCompanyNeedLaterList, CustomerCompanyNeed.class));
+
+            customerResult.getCustomerCompany().setCustomerCompanyNeedLaterList(customerCompanyNeedList);
         }
 
         //加入默认地址关联ID
@@ -1138,6 +1140,59 @@ public class CustomerServiceImpl implements CustomerService {
         convertConfirmUserId2UserName(customerResult);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
+        return serviceResult;
+    }
+
+    private ServiceResult<String,String> getListTotalPrice(List<CustomerCompanyNeed> customerCompanyNeedList,CustomerCompany customerCompany,Integer firstOrLasterEquipment) {
+        ServiceResult<String,String> serviceResult = new ServiceResult<>();
+
+        BigDecimal listTotalPrice = BigDecimal.ZERO;
+        BigDecimal listTotalRentPrice = BigDecimal.ZERO;
+
+        for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
+            if (customerCompanyNeed.getProductRentPrice() == null || customerCompanyNeed.getTotalProductRentPrice() == null){
+                ProductSkuDO productSkuDO = productSkuMapper.findById(customerCompanyNeed.getSkuId());
+                if (productSkuDO == null) {
+                    serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
+                    return serviceResult;
+                }
+                //全新
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getIsNew())) {
+                    if(CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getRentType())){
+                        //按天租
+                        customerCompanyNeed.setProductRentPrice(productSkuDO.getNewDayRentPrice());
+                    }else{
+                        //按月租
+                        customerCompanyNeed.setProductRentPrice(productSkuDO.getNewMonthRentPrice());
+                    }
+                } else {
+                    //次新
+                    if(CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getRentType())){
+                        //按天租
+                        customerCompanyNeed.setProductRentPrice(productSkuDO.getNewDayRentPrice());
+                    }else{
+                        //按月租
+                        customerCompanyNeed.setProductRentPrice(productSkuDO.getNewMonthRentPrice());
+                    }
+                }
+                //商品总租金
+                BigDecimal totalRentPrice = BigDecimalUtil.mul(BigDecimalUtil.mul(customerCompanyNeed.getProductRentPrice(), new BigDecimal(customerCompanyNeed.getRentCount())),new BigDecimal(customerCompanyNeed.getRentTimeLength()));
+                customerCompanyNeed.setTotalProductRentPrice(totalRentPrice);
+            }
+            //计算总列表的金额
+            listTotalPrice = listTotalPrice.add(customerCompanyNeed.getTotalPrice());
+            listTotalRentPrice = BigDecimalUtil.add(listTotalRentPrice,customerCompanyNeed.getTotalProductRentPrice());
+        }
+
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(firstOrLasterEquipment)){
+            customerCompany.setFirstListTotalPrice(listTotalPrice);
+            customerCompany.setFirstListTotalRentPrice(listTotalRentPrice);
+        }else if(CommonConstant.COMMON_CONSTANT_NO.equals(firstOrLasterEquipment)){
+            customerCompany.setLaterListTotalPrice(listTotalPrice);
+            customerCompany.setLaterListTotalRentPrice(listTotalRentPrice);
+        }
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
 
@@ -2633,10 +2688,27 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
                 return serviceResult;
             }
+            //全新
             if (CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getIsNew())) {
                 customerCompanyNeed.setUnitPrice(productSkuDO.getNewSkuPrice());
+
+                if(CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getRentType())){
+                    //按天租
+                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewDayRentPrice());
+                }else{
+                    //按月租
+                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewMonthRentPrice());
+                }
             } else {
+                //次新
                 customerCompanyNeed.setUnitPrice(productSkuDO.getSkuPrice());
+                if(CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getRentType())){
+                    //按天租
+                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewDayRentPrice());
+                }else{
+                    //按月租
+                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewMonthRentPrice());
+                }
             }
             if (customerCompanyNeed.getRentCount() == null) {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL);
@@ -2645,6 +2717,11 @@ public class CustomerServiceImpl implements CustomerService {
 
             BigDecimal totalPrice = BigDecimalUtil.mul(customerCompanyNeed.getUnitPrice(), new BigDecimal(customerCompanyNeed.getRentCount()));
             customerCompanyNeed.setTotalPrice(totalPrice);
+
+            //商品总租金
+            BigDecimal totalRentPrice = BigDecimalUtil.mul(BigDecimalUtil.mul(customerCompanyNeed.getProductRentPrice(), new BigDecimal(customerCompanyNeed.getRentCount())),new BigDecimal(customerCompanyNeed.getRentTimeLength()));
+            customerCompanyNeed.setTotalProductRentPrice(totalRentPrice);
+
             ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
             customerCompanyNeed.setProduct(productServiceResult.getResult());
         }

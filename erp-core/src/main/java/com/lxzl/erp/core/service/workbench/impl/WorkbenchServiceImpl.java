@@ -33,6 +33,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowVerifyUserGroupMapper;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -314,6 +315,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
         //只有审核人数据
         if (!userSupport.isSuperUser()) {
             paramMap.put("verifyUserId", userSupport.getCurrentUserId().toString());
+            List<String> currentUserGroupList = workflowVerifyUserGroupMapper.findGroupUUIDByUserId(userSupport.getCurrentUserId());
+            paramMap.put("currentUserGroupList", currentUserGroupList); 
         }
 
         Integer dataCount = workflowLinkMapper.workbenchListCount(paramMap);
@@ -355,7 +358,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                 }
 
                 //预计支付时间提前七天查询
-                statementOrderQueryParam.setStatementExpectPayStartTime(DateUtil.getDayByOffset(new Date(), -7));
+                statementOrderQueryParam.setStatementExpectPayEndTime(DateUtil.getDayByOffset(new Date(), CommonConstant.STATEMENT_ADVANCE_EXPECT_PAY_END_TIME));
 
                 Map<String, Object> maps = new HashMap<>();
                 maps.put("statementOrderQueryParam", statementOrderQueryParam);
@@ -427,6 +430,9 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
     @Autowired
     private StatementOrderMapper statementOrderMapper;
+
+    @Autowired
+    private WorkflowVerifyUserGroupMapper workflowVerifyUserGroupMapper;
 
 
 }

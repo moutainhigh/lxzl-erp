@@ -1570,7 +1570,7 @@ public class StatementServiceImpl implements StatementService {
 
         //工作台判断
         if(statementOrderQueryParam.getIsWorkbench() != null && CommonConstant.COMMON_CONSTANT_YES.equals(statementOrderQueryParam.getIsWorkbench())){
-            statementOrderQueryParam.setStatementExpectPayStartTime(DateUtil.getDayByOffset(new Date(), -7));
+            statementOrderQueryParam.setStatementExpectPayEndTime(DateUtil.getDayByOffset(new Date(), CommonConstant.STATEMENT_ADVANCE_EXPECT_PAY_END_TIME));
         }
 
         PageQuery pageQuery = new PageQuery(statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
@@ -2057,11 +2057,6 @@ public class StatementServiceImpl implements StatementService {
         }
 
         return serviceResult;
-    }
-
-    // k3退货回调使用
-    public ServiceResult<String, BigDecimal> createK3ReturnOrderStatementNoTransaction(String returnOrderNo) {
-        return createK3ReturnOrderStatementCore(returnOrderNo);
     }
 
     /**
@@ -5187,6 +5182,9 @@ public class StatementServiceImpl implements StatementService {
                                 if (thisPeriodsByOrderInfoMap != null && thisPeriodsByOrderInfoMap.size() != 0) {
                                     statementOrderDetail.setStatementDetailRentEndAmount(new BigDecimal(thisPeriodsByOrderInfoMap.get("statementDetailRentAmount").toString()));
                                     statementOrderDetail.setStatementDetailEndAmount(new BigDecimal(thisPeriodsByOrderInfoMap.get("statementDetailAmount").toString()));
+                                    if (thisPeriodsByOrderInfoMap.get("reletOrderItemReferId")!=null) {
+                                        statementOrderDetail.setReletOrderItemReferId(Integer.parseInt(thisPeriodsByOrderInfoMap.get("reletOrderItemReferId").toString()));
+                                    }
                                     try {
                                         statementOrderDetail.setStatementExpectPayEndTime(new SimpleDateFormat("yyyy-MM-dd").parse(thisPeriodsByOrderInfoMap.get("statementExpectPayTime").toString()));
                                         statementOrderDetail.setStatementStartTime(new SimpleDateFormat("yyyy-MM-dd").parse(thisPeriodsByOrderInfoMap.get("statementStartTime").toString()));
