@@ -168,8 +168,9 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     }
 
     @Override
-    public ServiceResult<String, Page<DynamicSqlHolder>> pageDynamicSqlHolder(PageQuery pageQuery) {
-        final PageQuery finalPageQuery = new PageQuery(pageQuery.getPageNo(), pageQuery.getPageSize());
+    public ServiceResult<String, Page<DynamicSqlHolder>> pageDynamicSqlHolder(PageQuery param) {
+        final PageQuery finalPageQuery = new PageQuery(param.getPageNo() == 0 ? 1 : param.getPageNo(),
+                param.getPageSize() == 0 ? 10 : param.getPageSize());
         Map<String, Object> map = new HashMap<String, Object>() {{
             put("start", finalPageQuery.getStart());
             put("pageSize", finalPageQuery.getPageSize() == 0 ? 10 : finalPageQuery.getPageSize());

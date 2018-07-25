@@ -295,8 +295,10 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryReturnOrder() throws Exception {
         K3ReturnOrderQueryParam param = new K3ReturnOrderQueryParam();
+        param.setCreateUserName("何木");
+        param.setDeliverySubCompanyId(8);
 //        param.setOrderNo("LXO-20180416-1000-00087");
-        param.setReturnOrderStatus(4);
+//        param.setReturnOrderStatus(4);
 //        param.setReturnOrderStatus(16);
 //        param.setK3CustomerNo("LXCC-027-20180416-00026");
 //        param.setPageSize(3);
