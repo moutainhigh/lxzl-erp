@@ -26,8 +26,6 @@ public interface UserMapper extends BaseMysqlDAO<UserDO> {
 
     UserDO findByUserRealName(@Param("realName") String realName);
 
-    UserDO findAllUserByUserRealName(@Param("realName") String realName);
-
     List<UserDO> listAllUser();
 
 }
