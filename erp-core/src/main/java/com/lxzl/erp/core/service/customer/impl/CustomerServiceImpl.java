@@ -993,17 +993,12 @@ public class CustomerServiceImpl implements CustomerService {
         if (StringUtil.isNotEmpty(customerDO.getCustomerCompanyDO().getCustomerCompanyNeedFirstJson())) {
             String customerCompanyNeedFirstJson = customerDO.getCustomerCompanyDO().getCustomerCompanyNeedFirstJson();
             List<CustomerCompanyNeed> customerCompanyNeedList = JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class);
-            BigDecimal firstListTotalPrice = new BigDecimal(0);
-            BigDecimal firstListTotalRentPrice = new BigDecimal(0);
-            ServiceResult<String, String> result = getListTotalPrice(customerCompanyNeedList,firstListTotalPrice,firstListTotalRentPrice);
+
+            ServiceResult<String, String> result = getListTotalPrice(customerCompanyNeedList,customerResult.getCustomerCompany(),CommonConstant.COMMON_CONSTANT_YES);
             if (!ErrorCode.SUCCESS.equals(result.getErrorCode())){
                 serviceResult.setErrorCode(result.getErrorCode());
                 return serviceResult;
             }
-
-            customerResult.getCustomerCompany().setFirstListTotalPrice(firstListTotalPrice);
-            customerResult.getCustomerCompany().setFirstListTotalRentPrice(firstListTotalRentPrice);
-
             customerResult.getCustomerCompany().setCustomerCompanyNeedFirstList(customerCompanyNeedList);
         }
 
@@ -1011,16 +1006,11 @@ public class CustomerServiceImpl implements CustomerService {
         if (StringUtil.isNotEmpty(customerDO.getCustomerCompanyDO().getCustomerCompanyNeedLaterJson())) {
             String customerCompanyNeedLaterList = customerDO.getCustomerCompanyDO().getCustomerCompanyNeedLaterJson();
             List<CustomerCompanyNeed> customerCompanyNeedList = JSONObject.parseArray(customerCompanyNeedLaterList, CustomerCompanyNeed.class);
-            BigDecimal laterListTotalPrice = new BigDecimal(0);
-            BigDecimal laterListTotalRentPrice = new BigDecimal(0);
-            ServiceResult<String, String> result = getListTotalPrice(customerCompanyNeedList,laterListTotalPrice,laterListTotalRentPrice);
+            ServiceResult<String, String> result = getListTotalPrice(customerCompanyNeedList,customerResult.getCustomerCompany(),CommonConstant.COMMON_CONSTANT_NO);
             if (!ErrorCode.SUCCESS.equals(result.getErrorCode())){
                 serviceResult.setErrorCode(result.getErrorCode());
                 return serviceResult;
             }
-
-            customerResult.getCustomerCompany().setLaterListTotalPrice(laterListTotalPrice);
-            customerResult.getCustomerCompany().setLaterListTotalRentPrice(laterListTotalRentPrice);
 
             customerResult.getCustomerCompany().setCustomerCompanyNeedLaterList(customerCompanyNeedList);
         }
@@ -1153,11 +1143,14 @@ public class CustomerServiceImpl implements CustomerService {
         return serviceResult;
     }
 
-    private ServiceResult<String,String> getListTotalPrice(List<CustomerCompanyNeed> customerCompanyNeedList, BigDecimal listTotalPrice, BigDecimal listTotalRentPrice) {
+    private ServiceResult<String,String> getListTotalPrice(List<CustomerCompanyNeed> customerCompanyNeedList,CustomerCompany customerCompany,Integer firstOrLasterEquipment) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
 
+        BigDecimal listTotalPrice = new BigDecimal(0);
+        BigDecimal listTotalRentPrice = new BigDecimal(0);
+
         for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
-            if (customerCompanyNeed.getProductRentPrice() == null && customerCompanyNeed.getTotalProductRentPrice() == null){
+            if (customerCompanyNeed.getProductRentPrice() == null || customerCompanyNeed.getTotalProductRentPrice() == null){
                 ProductSkuDO productSkuDO = productSkuMapper.findById(customerCompanyNeed.getSkuId());
                 if (productSkuDO == null) {
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
@@ -1186,9 +1179,17 @@ public class CustomerServiceImpl implements CustomerService {
                 BigDecimal totalRentPrice = BigDecimalUtil.mul(BigDecimalUtil.mul(customerCompanyNeed.getProductRentPrice(), new BigDecimal(customerCompanyNeed.getRentCount())),new BigDecimal(customerCompanyNeed.getRentTimeLength()));
                 customerCompanyNeed.setTotalProductRentPrice(totalRentPrice);
             }
-
+            //计算总列表的金额
             listTotalPrice = listTotalPrice.add(customerCompanyNeed.getTotalPrice());
             listTotalRentPrice = BigDecimalUtil.add(listTotalRentPrice,customerCompanyNeed.getTotalProductRentPrice());
+        }
+
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(firstOrLasterEquipment)){
+            customerCompany.setFirstListTotalPrice(listTotalPrice);
+            customerCompany.setFirstListTotalRentPrice(listTotalRentPrice);
+        }else if(CommonConstant.COMMON_CONSTANT_NO.equals(firstOrLasterEquipment)){
+            customerCompany.setLaterListTotalPrice(listTotalPrice);
+            customerCompany.setLaterListTotalRentPrice(listTotalRentPrice);
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
