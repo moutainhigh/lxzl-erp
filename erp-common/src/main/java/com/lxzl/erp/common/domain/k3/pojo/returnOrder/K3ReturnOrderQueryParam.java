@@ -17,6 +17,7 @@ public class K3ReturnOrderQueryParam extends BasePageParam implements Serializab
     private Integer returnOrderStatus;   // 归还订单状态，0-待提交，4-审核中，16-已取消，20-已完成，24已驳回
     private String orderNo;  //订单编号
     private Integer deliverySubCompanyId;  //发货分公司
+    private String createUserName; //创建人姓名
 
     private Boolean isHandleRent;
 
@@ -86,5 +87,13 @@ public class K3ReturnOrderQueryParam extends BasePageParam implements Serializab
 
     public void setDeliverySubCompanyId(Integer deliverySubCompanyId) {
         this.deliverySubCompanyId = deliverySubCompanyId;
+    }
+
+    public String getCreateUserName() {
+        return createUserName;
+    }
+
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
     }
 }
