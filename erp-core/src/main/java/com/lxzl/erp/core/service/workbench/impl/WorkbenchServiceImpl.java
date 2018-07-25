@@ -316,7 +316,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
         if (!userSupport.isSuperUser()) {
             paramMap.put("verifyUserId", userSupport.getCurrentUserId().toString());
             List<String> currentUserGroupList = workflowVerifyUserGroupMapper.findGroupUUIDByUserId(userSupport.getCurrentUserId());
-            paramMap.put("currentUserGroupList", currentUserGroupList);
+            paramMap.put("currentUserGroupList", currentUserGroupList); 
         }
 
         Integer dataCount = workflowLinkMapper.workbenchListCount(paramMap);
