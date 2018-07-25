@@ -719,6 +719,15 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             //要保存到额集合
             List<CheckStatementOrderDetailBase> exportList = new ArrayList<>();
             for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
+                //设置续租状态
+                if (OrderType.ORDER_TYPE_ORDER.equals(exportStatementOrderDetail.getOrderType()) && exportStatementOrderDetail.getReletOrderItemReferId() != null) {
+                    exportStatementOrderDetail.setOrderType(CommonConstant.ORDER_TYPE_RELET);
+                }
+                if (OrderType.ORDER_TYPE_RETURN.equals(exportStatementOrderDetail.getOrderType())
+                        && exportStatementOrderDetail.getReletOrderItemReferId() != null
+                        && exportStatementOrderDetail.getReletOrderItemReferId() != 0) {
+                    exportStatementOrderDetail.setOrderType(CommonConstant.ORDER_TYPE_RELET_RETURN);
+                }
                 //todo 分装对象来处理
                 CheckStatementOrderDetailBase exportStatementOrderDetailBase = new CheckStatementOrderDetailBase();
                 exportStatementOrderDetailBase.setOrderNo(exportStatementOrderDetail.getOrderNo()); //订单编号
@@ -782,7 +791,8 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 }
 
                 //退货单和冲正单取No和原因
-                if (OrderType.ORDER_TYPE_RETURN.equals(exportStatementOrderDetail.getOrderType())) {
+                if (OrderType.ORDER_TYPE_RETURN.equals(exportStatementOrderDetail.getOrderType()) ||
+                        CommonConstant.ORDER_TYPE_RELET_RETURN.equals(exportStatementOrderDetail.getOrderType())) {
 
                     K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(exportStatementOrderDetail.getOrderId());
                     StringBuffer k3ReturnOrderDONo = new StringBuffer();
