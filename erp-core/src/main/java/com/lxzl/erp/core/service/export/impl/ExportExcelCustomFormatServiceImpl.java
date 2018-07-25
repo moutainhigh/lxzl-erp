@@ -54,6 +54,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -584,7 +585,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                                 String reletTimeMonth = simpleDateFormat.format(reletTime);
                                 String reletTimeDay = dateFormat.format(reletTime);
                                 //是否是在续租当月退货
-                                if (reletTimeMonth.equals(reletTimeMonth)) {
+                                if (returnTimeMonth.equals(reletTimeMonth)) {
                                     Date reletTimeDayTime = dateFormat.parse(reletTimeDay);
                                     Date returnTimeDayTime = dateFormat.parse(returnTimeDay);
                                     //是否是在续租之前退货
@@ -594,50 +595,11 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                                             Map<String,List<CheckStatementOrderDetail>> returnCheckStatementOrderDetailMapInner = new HashMap<>();
                                             List<CheckStatementOrderDetail> retrunCheckStatementOrderDetailList = new ArrayList<>();
                                             //造退货对账单对象
-                                            CheckStatementOrderDetail checkStatementOrderDetail = new CheckStatementOrderDetail();
-                                            checkStatementOrderDetail.setOrderType(OrderType.ORDER_TYPE_RETURN);
-                                            if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(k3ReturnOrderDetailDO.getOrderItemType())) {
-                                                OrderProductDO orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
-                                                //存入商品名称
-                                                if (orderProductDO != null) {
-                                                    checkStatementOrderDetail.setItemName(orderProductDO.getProductName());
-                                                    checkStatementOrderDetail.setItemSkuName(orderProductDO.getProductSkuName());
-                                                    //存入商品单价
-                                                    checkStatementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
-                                                    //存入租赁方式，1按天租，2按月租
-                                                    checkStatementOrderDetail.setItemRentType(orderProductDO.getRentType());
-                                                    checkStatementOrderDetail.setOrderItemReferId(orderProductDO.getId());
-                                                }
-                                                //存入结算单明细类型：3-抵消租金（退租）
-                                                checkStatementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
-                                                //存入实际退还商品数量
-                                                checkStatementOrderDetail.setItemCount(k3ReturnOrderDetailDO.getRealProductCount());
-                                                checkStatementOrderDetail.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT);
-                                            } else if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(k3ReturnOrderDetailDO.getOrderItemType())) {
-                                                checkStatementOrderDetail.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL);
-                                                OrderMaterialDO orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
-                                                if (orderMaterialDO != null) {
-                                                    //保存配件名
-                                                    checkStatementOrderDetail.setItemName(orderMaterialDO.getMaterialName());
-                                                    //保存配件单价
-                                                    checkStatementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
-                                                    //保存租赁方式，1按天租，2按月租
-                                                    checkStatementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
-                                                    checkStatementOrderDetail.setOrderItemReferId(orderMaterialDO.getId());
-                                                }
-                                                checkStatementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
-                                                //保存退货数量
-                                                checkStatementOrderDetail.setItemCount(k3ReturnOrderDetailDO.getRealProductCount());
-                                            }
-                                            checkStatementOrderDetail.setOrderNo(k3ReturnOrderDetailDO.getOrderNo());
-                                            checkStatementOrderDetail.setStatementEndTime(returnTime);
-                                            checkStatementOrderDetail.setStatementStartTime(returnTime);
-                                            checkStatementOrderDetail.setOrderId(k3ReturnOrderDO.getId());
+                                            CheckStatementOrderDetail checkStatementOrderDetail = createReturnCheckStatementOrderDetail(k3ReturnOrderDO, returnTime, k3ReturnOrderDetailDO);
                                             //存储创造的退货单结算单
                                             retrunCheckStatementOrderDetailList.add(checkStatementOrderDetail);
-                                            //key---商品/配件ID+类型+单价+续租ID
-                                            String key = checkStatementOrderDetail.getOrderItemReferId() +"-"+ k3ReturnOrderDetailDO.getOrderItemType() +"-"+
-                                                    checkStatementOrderDetail.getUnitAmount() +"-"+ checkStatementOrderDetail.getReletOrderItemReferId();
+                                            //key---商品/配件ID+类型
+                                            String key = checkStatementOrderDetail.getOrderItemReferId() +"-"+ k3ReturnOrderDetailDO.getOrderItemType();
                                             returnCheckStatementOrderDetailMapInner.put(key,retrunCheckStatementOrderDetailList);
                                             returnCheckStatementOrderDetailMap.put(returnTimeMonth,returnCheckStatementOrderDetailMapInner);
                                         }else {
@@ -647,20 +609,29 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                                                 OrderProductDO orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
                                                 //存入商品名称
                                                 if (orderProductDO != null) {
-                                                    key = orderProductDO.getId() +"-"+ k3ReturnOrderDetailDO.getOrderItemType() +"-"+
-                                                            orderProductDO.getProductUnitAmount() +"-"+ null;
+                                                    key = orderProductDO.getId() +"-"+ k3ReturnOrderDetailDO.getOrderItemType();
                                                 }
-
                                             } else if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(k3ReturnOrderDetailDO.getOrderItemType())) {
                                                 OrderMaterialDO orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
                                                 if (orderMaterialDO != null) {
-                                                    key = orderMaterialDO.getId() +"-"+ k3ReturnOrderDetailDO.getOrderItemType() +"-"+
-                                                            orderMaterialDO.getMaterialUnitAmount() +"-"+ null;
-
+                                                    key = orderMaterialDO.getId() +"-"+ k3ReturnOrderDetailDO.getOrderItemType();
                                                 }
                                             }
-                                            if (!returnCheckStatementOrderDetailMapInner.containsKey(key)) {
-
+                                            if (!returnCheckStatementOrderDetailMapInner.containsKey(key) && key != "") {
+                                                List<CheckStatementOrderDetail> retrunCheckStatementOrderDetailList = new ArrayList<>();
+                                                //造退货对账单对象
+                                                CheckStatementOrderDetail checkStatementOrderDetail = createReturnCheckStatementOrderDetail(k3ReturnOrderDO, returnTime, k3ReturnOrderDetailDO);
+                                                //存储创造的退货单结算单
+                                                retrunCheckStatementOrderDetailList.add(checkStatementOrderDetail);
+                                                //key---商品/配件ID+类型
+                                                key = checkStatementOrderDetail.getOrderItemReferId() +"-"+ k3ReturnOrderDetailDO.getOrderItemType();
+                                                returnCheckStatementOrderDetailMapInner.put(key,retrunCheckStatementOrderDetailList);
+                                            } else if (returnCheckStatementOrderDetailMapInner.containsKey(key)) {
+                                                List<CheckStatementOrderDetail> retrunCheckStatementOrderDetailList = returnCheckStatementOrderDetailMapInner.get(key);
+                                                //造退货对账单对象
+                                                CheckStatementOrderDetail checkStatementOrderDetail = createReturnCheckStatementOrderDetail(k3ReturnOrderDO, returnTime, k3ReturnOrderDetailDO);
+                                                //存储创造的退货单结算单
+                                                retrunCheckStatementOrderDetailList.add(checkStatementOrderDetail);
                                             }
                                         }
                                     }
@@ -671,11 +642,66 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 }
             }
         }
-        // TODO: 2018\7\23 0023 查出该用户在续租当月该续租单订单的退货单
-        // TODO: 2018\7\23 0023 造出当期退货
         // TODO: 2018\7\23 0023 放到对应的订单项下
-        // TODO: 2018\7\23 0023 对应的续租单如果续租之前做了退货需要减少数量
-
+        if (MapUtils.isNotEmpty(returnCheckStatementOrderDetailMap)) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
+                List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
+                if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
+                    continue;
+                }
+                String monthTime = checkStatementOrder.getMonthTime();
+                if (returnCheckStatementOrderDetailMap.containsKey(monthTime)) {
+                    Map<String,List<CheckStatementOrderDetail>> returnCheckStatementOrderDetailMapInner = returnCheckStatementOrderDetailMap.get(monthTime);
+                    if (MapUtils.isNotEmpty(returnCheckStatementOrderDetailMapInner)) {
+                        List<CheckStatementOrderDetail> newList = new ArrayList<>();
+                        for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
+                            String key = exportStatementOrderDetail.getOrderItemReferId() +"-"+ exportStatementOrderDetail.getOrderItemType();
+                            if (returnCheckStatementOrderDetailMapInner.containsKey(key) && exportStatementOrderDetail.getReletOrderItemReferId()==null) {
+                                List<CheckStatementOrderDetail> retrunCheckStatementOrderDetailList = returnCheckStatementOrderDetailMapInner.get(key);
+                                if (CollectionUtil.isNotEmpty(retrunCheckStatementOrderDetailList)) {
+                                    newList.add(exportStatementOrderDetail);
+                                    for (CheckStatementOrderDetail retrunCheckStatementOrderDetail:retrunCheckStatementOrderDetailList) {
+                                        //判断退货时间是不是在结算开始时间和结算结束时间之间，如果是则存储
+                                        Date returnTime = retrunCheckStatementOrderDetail.getStatementStartTime();
+                                        String returnTimeString = dateFormat.format(returnTime);
+                                        Date returnTimeDay = dateFormat.parse(returnTimeString);
+                                        Date statementStartTime = exportStatementOrderDetail.getStatementStartTime();
+                                        Date statementEndTime = exportStatementOrderDetail.getStatementEndTime();
+                                        if (returnTimeDay.after(statementStartTime) && (returnTimeDay.before(statementEndTime)||returnTimeDay.compareTo(statementEndTime) == 0)) {
+                                            retrunCheckStatementOrderDetail.setOrderRentStartTime(exportStatementOrderDetail.getOrderRentStartTime());
+                                            retrunCheckStatementOrderDetail.setOrderExpectReturnTime(exportStatementOrderDetail.getOrderExpectReturnTime());
+                                            retrunCheckStatementOrderDetail.setIsNew(exportStatementOrderDetail.getIsNew());
+                                            retrunCheckStatementOrderDetail.setPayMode(exportStatementOrderDetail.getPayMode());
+                                            retrunCheckStatementOrderDetail.setStatementExpectPayTime(returnTime);
+                                            retrunCheckStatementOrderDetail.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
+                                            retrunCheckStatementOrderDetail.setOrderRentType(exportStatementOrderDetail.getOrderRentType());
+                                            retrunCheckStatementOrderDetail.setItemSkuName(exportStatementOrderDetail.getItemSkuName());
+                                            newList.add(retrunCheckStatementOrderDetail);
+                                        }
+                                    }
+                                }else {
+                                    newList.add(exportStatementOrderDetail);
+                                }
+                            } else if (returnCheckStatementOrderDetailMapInner.containsKey(key) && exportStatementOrderDetail.getReletOrderItemReferId()!=null) {
+                                // TODO: 2018\7\23 0023 对应的续租单如果续租之前做了退货需要减少数量
+                                List<CheckStatementOrderDetail> retrunCheckStatementOrderDetailList = returnCheckStatementOrderDetailMapInner.get(key);
+                                Integer returnCount = 0;
+                                for (CheckStatementOrderDetail retrunCheckStatementOrderDetail:retrunCheckStatementOrderDetailList) {
+                                    returnCount += retrunCheckStatementOrderDetail.getItemCount();
+                                }
+                                Integer itemCount = returnCount + exportStatementOrderDetail.getItemCount();
+                                exportStatementOrderDetail.setItemCount(itemCount);
+                                newList.add(exportStatementOrderDetail);
+                            }else {
+                                newList.add(exportStatementOrderDetail);
+                            }
+                        }
+                        checkStatementOrder.setStatementOrderDetailList(newList);
+                    }
+                }
+            }
+        }
 
         for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
 
@@ -1083,6 +1109,49 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    private CheckStatementOrderDetail createReturnCheckStatementOrderDetail(K3ReturnOrderDO k3ReturnOrderDO, Date returnTime, K3ReturnOrderDetailDO k3ReturnOrderDetailDO) {
+        CheckStatementOrderDetail checkStatementOrderDetail = new CheckStatementOrderDetail();
+        checkStatementOrderDetail.setOrderType(OrderType.ORDER_TYPE_RETURN);
+        if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(k3ReturnOrderDetailDO.getOrderItemType())) {
+            OrderProductDO orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
+            //存入商品名称
+            if (orderProductDO != null) {
+                checkStatementOrderDetail.setItemName(orderProductDO.getProductName());
+                checkStatementOrderDetail.setItemSkuName(orderProductDO.getProductSkuName());
+                //存入商品单价
+                checkStatementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
+                //存入租赁方式，1按天租，2按月租
+                checkStatementOrderDetail.setItemRentType(orderProductDO.getRentType());
+                checkStatementOrderDetail.setOrderItemReferId(orderProductDO.getId());
+            }
+            //存入结算单明细类型：3-抵消租金（退租）
+            checkStatementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
+            //存入实际退还商品数量
+            checkStatementOrderDetail.setItemCount(0-k3ReturnOrderDetailDO.getRealProductCount());
+            checkStatementOrderDetail.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT);
+        } else if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(k3ReturnOrderDetailDO.getOrderItemType())) {
+            checkStatementOrderDetail.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL);
+            OrderMaterialDO orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
+            if (orderMaterialDO != null) {
+                //保存配件名
+                checkStatementOrderDetail.setItemName(orderMaterialDO.getMaterialName());
+                //保存配件单价
+                checkStatementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
+                //保存租赁方式，1按天租，2按月租
+                checkStatementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
+                checkStatementOrderDetail.setOrderItemReferId(orderMaterialDO.getId());
+            }
+            checkStatementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
+            //保存退货数量
+            checkStatementOrderDetail.setItemCount(0-k3ReturnOrderDetailDO.getRealProductCount());
+        }
+        checkStatementOrderDetail.setOrderNo(k3ReturnOrderDetailDO.getOrderNo());
+        checkStatementOrderDetail.setStatementEndTime(returnTime);
+        checkStatementOrderDetail.setStatementStartTime(returnTime);
+        checkStatementOrderDetail.setOrderId(k3ReturnOrderDO.getId());
+        return checkStatementOrderDetail;
     }
 
     //压缩文件
