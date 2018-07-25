@@ -1,6 +1,7 @@
 package com.lxzl.erp.web.filter;
 
 import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.core.session.SessionManagement;
 import com.lxzl.se.common.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ public class SessionFilter implements Filter {
     private String excludedPages;
 
     private String[] excludedPageArray;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         excludedPages = filterConfig.getInitParameter("excludedPages");
@@ -42,17 +44,15 @@ public class SessionFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         boolean isExcludedPage = false;
-        String requestPath = ((HttpServletRequest) request).getServletPath();
-        if(requestPath.startsWith("/html/user/randomCode")||requestPath.endsWith(".js")||requestPath.endsWith(".css")||
-                requestPath.endsWith(".png")||requestPath.endsWith(".jpg")||requestPath.endsWith(".jpeg"))
-        {
+        String requestPath = request.getServletPath();
+        if (requestPath.startsWith("/html/user/randomCode") || requestPath.endsWith(".js") || requestPath.endsWith(".css") ||
+                requestPath.endsWith(".png") || requestPath.endsWith(".jpg") || requestPath.endsWith(".jpeg")) {
             isExcludedPage = true;
-        }else
-        {
+        } else {
             for (String page : excludedPageArray) {//判断是否在过滤url之外
                 Pattern pattern = Pattern.compile(page);
                 Matcher matcher = pattern.matcher(requestPath);
-                if(requestPath.endsWith(page) || matcher.find()){
+                if (requestPath.endsWith(page) || matcher.find()) {
                     isExcludedPage = true;
                     break;
                 }
@@ -61,29 +61,40 @@ public class SessionFilter implements Filter {
         if (isExcludedPage) {//在过滤url之外
             filterChain.doFilter(servletRequest, servletResponse);
         } else {//不在过滤url之外，判断session是否存在
-            HttpSession session = ((HttpServletRequest) request).getSession();
-            if (session == null || session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY) == null) {
-                log.info("用户session已失效,请求地址"+requestPath);
-                String type = request.getHeader("X-Requested-With");
-                if ("XMLHttpRequest".equalsIgnoreCase(type)) {// AJAX REQUEST PROCESS
-                    HttpServletResponse response = (HttpServletResponse)servletResponse;
-                    response.setHeader("sessionStatus", "timeout");
-                    response.setHeader("path", request.getContextPath());
-                    PrintWriter out = response.getWriter();
-                    out.write("timeout");
-                    out.close();
-                }else{
-                    ((HttpServletResponse) servletResponse).sendRedirect(request.getContextPath()+"/login");
-//                    filterChain.doFilter(request, servletResponse);
+            HttpSession session = request.getSession();
+            if (session != null && session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY) != null) {
+                Integer loginId = ((com.lxzl.erp.common.domain.user.pojo.User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY)).getUserId();
+                if (SessionManagement.getInstance().hasSession(loginId.toString())) {
+                    filterChain.doFilter(request, servletResponse);
+                    return;
+                } else {
+                    session.invalidate();
                 }
-                return;
-            } else {
-                filterChain.doFilter(request, servletResponse);
             }
+
+            log.info("用户session已失效,请求地址" + requestPath);
+            String type = request.getHeader("X-Requested-With");
+            if ("XMLHttpRequest".equalsIgnoreCase(type)) {// AJAX REQUEST PROCESS
+                HttpServletResponse response = (HttpServletResponse) servletResponse;
+                response.setHeader("sessionStatus", "timeout");
+                response.setHeader("path", request.getContextPath());
+                PrintWriter out = response.getWriter();
+                out.write("timeout");
+                out.close();
+            } else {
+                ((HttpServletResponse) servletResponse).sendRedirect(request.getContextPath() + "/login");
+//                    filterChain.doFilter(request, servletResponse);
+            }
+
         }
     }
+
     @Override
     public void destroy() {
         return;
+    }
+
+    private void doRefuse() {
+
     }
 }
