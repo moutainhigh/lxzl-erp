@@ -106,12 +106,12 @@
                         {{/listData}}
                         {{^listData}}
                         <tr>
-                            <td valign="top" colspan="9" class="text-center">没有查询到首次所需设备</td>
+                            <td valign="top" colspan="11" class="text-center">没有查询到首次所需设备</td>
                         </tr>
                         {{/listData}}
                         <tr class="totalPriceRow {{^hasFirstTotalPrice}}hide{{/hasFirstTotalPrice}}">
-                            <td colspan="8" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">首期所需设备总价值：</td>
-                            <td class="text-danger">
+                            <td colspan="9" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">首期所需设备总价值：</td>
+                            <td colspan="2" class="text-danger">
                                 <div class="text-danger" id="firstListTotalPriceBox">￥{{#price}}{{firstTotalPrice}}{{/price}}</div>
                             </td>
                         </tr>
@@ -161,12 +161,12 @@
                         {{/listData}}
                         {{^listData}}
                         <tr>
-                            <td valign="top" colspan="9" class="text-center">没有查询到后续所需设备</td>
+                            <td valign="top" colspan="11" class="text-center">没有查询到后续所需设备</td>
                         </tr>
                         {{/listData}}
                         <tr class="totalPriceRow {{^hasLaterTotalPrice}}hide{{/hasLaterTotalPrice}}">
-                            <td colspan="8" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">后续所需设备总价值：</td>
-                            <td class="text-danger">
+                            <td colspan="9" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">后续所需设备总价值：</td>
+                            <td colspan="2" class="text-danger">
                                 <div class="text-danger" id="laterListTotalPriceBox">￥{{#price}}{{laterTotalPrice}}{{/price}}</div>
                             </td>
                         </tr>

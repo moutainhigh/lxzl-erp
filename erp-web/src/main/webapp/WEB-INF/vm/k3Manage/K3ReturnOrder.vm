@@ -75,7 +75,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group mn">
-                                            <input type="text" name="createUserRealName" id="createUserRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="创建人">
+                                            <input type="text" name="createUserName" id="createUserName" class="form-control input-sm bradius" autocomplete="off" placeholder="创建人">
                                         </div>
                                     </div>
                                 </div>
@@ -128,7 +128,7 @@
                             <tr>
                                 <td><a href="{{detailUrl}}" target="_blank">{{returnOrderNo}}</a></td>
                                 <td><a href="{{customerDetailUrl}}" target="_blank">{{k3CustomerName}}</a></td>
-                                <td>{{deliverySubCompanyId}}</td>
+                                <td>{{deliverySubCompanyName}}</td>
                                 <td>
                                     <p class="mn">{{returnContacts}}</p>
                                     <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{returnPhone}}</p>
