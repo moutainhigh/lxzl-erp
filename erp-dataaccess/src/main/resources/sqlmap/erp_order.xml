@@ -1244,6 +1244,7 @@
         <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
             #{item}
         </foreach>
+        AND eo.data_status = 1
     </select>
 
     <select id="findByNos" resultMap="OrderDO" parameterType="java.util.Set">
