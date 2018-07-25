@@ -185,6 +185,7 @@
         <mapper resource="sqlmap/erp_dynamic_sql.xml" />
         <mapper resource="sqlmap/erp_dynamic_sql_holder.xml" />
 
+        <mapper resource="sqlmap/erp_announcement.xml" />
 
         <mapper resource="sqlmap/erp_dingding_group_message_config.xml" />
 

@@ -46,4 +46,11 @@ public interface ReletOrderMapper extends BaseMysqlDAO<ReletOrderDO> {
 	List<ReletOrderDO> findReletedOrdersByOrderNos(@Param("orderNos") Set<String> orderNos);
 
 	void batchUpdate(@Param("list") List<ReletOrderDO> list);
+
+	/**
+	 * 通过客户ID查找该客户所有的续租单
+	 * @param customerId
+	 * @return
+	 */
+    List<ReletOrderDO> findByCustomerId(@Param("customerId") Integer customerId);
 }

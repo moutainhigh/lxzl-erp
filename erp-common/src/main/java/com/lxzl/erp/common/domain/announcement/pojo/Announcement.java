@@ -1,17 +1,15 @@
-package com.lxzl.erp.common.domain.dynamicSql.pojo;
+package com.lxzl.erp.common.domain.announcement.pojo;
 
 import com.lxzl.erp.common.domain.base.BasePO;
 
 import java.util.Date;
 
-public class DynamicSqlHolder extends BasePO {
+public class Announcement extends BasePO {
     private Integer id;
-    private String sqlContent;
-    private String sqlTpye;
-    private Integer status;
-    private String results;
-    private Integer dataStatus;
+    private String title;
+    private String content;
     private String remark;
+    private Integer dataStatus;
     private Date createTime;   //添加时间
     private String createUser;   //添加人
     private Date updateTime;   //添加时间
@@ -25,44 +23,20 @@ public class DynamicSqlHolder extends BasePO {
         this.id = id;
     }
 
-    public String getSqlContent() {
-        return sqlContent;
+    public String getTitle() {
+        return title;
     }
 
-    public void setSqlContent(String sqlContent) {
-        this.sqlContent = sqlContent;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getSqlTpye() {
-        return sqlTpye;
+    public String getContent() {
+        return content;
     }
 
-    public void setSqlTpye(String sqlTpye) {
-        this.sqlTpye = sqlTpye;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getResults() {
-        return results;
-    }
-
-    public void setResults(String results) {
-        this.results = results;
-    }
-
-    public Integer getDataStatus() {
-        return dataStatus;
-    }
-
-    public void setDataStatus(Integer dataStatus) {
-        this.dataStatus = dataStatus;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getRemark() {
@@ -71,6 +45,14 @@ public class DynamicSqlHolder extends BasePO {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Integer getDataStatus() {
+        return dataStatus;
+    }
+
+    public void setDataStatus(Integer dataStatus) {
+        this.dataStatus = dataStatus;
     }
 
     public Date getCreateTime() {

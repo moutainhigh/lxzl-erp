@@ -96,7 +96,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("精钢葫芦娃集团");
+        customerCompany.setCompanyName("水钢葫芦娃集团");
         customerCompany.setIndustry("2");
         customerCompany.setIsLegalPersonApple(1);
         customerCompany.setProvince(2);
@@ -477,7 +477,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-027-20180323-00790");
+        customer.setCustomerNo("LXCC-1000-20180327-00824");
 
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }
@@ -485,7 +485,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomer() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-010-20180306-00295");
+        customer.setCustomerNo("LXCC-1000-20180515-00015");
         TestResult result = getJsonTestResult("/customer/detailCustomer", customer);
     }
 
