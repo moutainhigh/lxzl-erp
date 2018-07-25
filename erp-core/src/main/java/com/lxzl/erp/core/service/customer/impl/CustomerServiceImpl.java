@@ -1146,8 +1146,8 @@ public class CustomerServiceImpl implements CustomerService {
     private ServiceResult<String,String> getListTotalPrice(List<CustomerCompanyNeed> customerCompanyNeedList,CustomerCompany customerCompany,Integer firstOrLasterEquipment) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
 
-        BigDecimal listTotalPrice = new BigDecimal(0);
-        BigDecimal listTotalRentPrice = new BigDecimal(0);
+        BigDecimal listTotalPrice = BigDecimal.ZERO;
+        BigDecimal listTotalRentPrice = BigDecimal.ZERO;
 
         for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
             if (customerCompanyNeed.getProductRentPrice() == null || customerCompanyNeed.getTotalProductRentPrice() == null){
