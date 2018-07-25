@@ -32,20 +32,22 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public ServiceResult<String, Page<Announcement>> page(final AnnouncementParam param) {
-        final PageQuery finalPageQuery = new PageQuery(param.getPageNo() == 0 ? 1 : param.getPageNo(),
-                param.getPageSize() == 0 ? 10 : param.getPageSize());
+        final PageQuery finalPageQuery = new PageQuery(param == null || param.getPageNo() == 0 ? 1 : param.getPageNo(),
+                param == null || param.getPageSize() == 0 ? 10 : param.getPageSize());
 
         Map<String, Object> map = new HashMap<String, Object>() {{
             put("start", finalPageQuery.getStart());
             put("pageSize", finalPageQuery.getPageSize());
-            if (param.getTitle() != null)
-                put("title", param.getTitle());
+            if (param != null) {
+                if (param.getTitle() != null)
+                    put("title", param.getTitle());
 
-            if (param.getContent() != null)
-                put("content", param.getContent());
+                if (param.getContent() != null)
+                    put("content", param.getContent());
 
-            if (param.getRemark() != null)
-                put("remark", param.getRemark());
+                if (param.getRemark() != null)
+                    put("remark", param.getRemark());
+            }
         }};
 
         List<Announcement> announcements = ConverterUtil.convertList(announcementMapper.listPage(map), Announcement.class);
