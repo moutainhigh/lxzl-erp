@@ -91,8 +91,16 @@
         <if test="maps.k3ReturnOrderQueryParam.orderNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.orderNo != ''">
             INNER JOIN erp_k3_return_order_detail ekrod ON ekrod.return_order_id = ekro.id and ekrod.data_status = 1
         </if>
-
+        <if test="maps.k3ReturnOrderQueryParam.createUserName != null &amp;&amp; maps.k3ReturnOrderQueryParam.createUserName != ''">
+            INNER JOIN erp_user eu ON eu.id = ekro.create_user
+        </if>
         <where>
+            <if test="maps.k3ReturnOrderQueryParam.createUserName != null &amp;&amp; maps.k3ReturnOrderQueryParam.createUserName != ''">
+                and eu.real_name like CONCAT('%','${maps.k3ReturnOrderQueryParam.createUserName}','%' )
+            </if>
+            <if test="maps.k3ReturnOrderQueryParam.deliverySubCompanyId != null ">
+                and ekro.delivery_sub_company_id = #{maps.k3ReturnOrderQueryParam.deliverySubCompanyId}
+            </if>
             <if test="maps.k3ReturnOrderQueryParam.orderNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.orderNo != ''">
                 and ekrod.order_no = #{maps.k3ReturnOrderQueryParam.orderNo}
             </if>
@@ -125,7 +133,7 @@
         SELECT m_order.*
         <trim prefix=",">
             <include refid="detail_column_List"/>
-        </trim>
+        </trim>,esc.sub_company_name
         FROM (
         SELECT
           DISTINCT ekro.id,ekro.return_order_no,ekro.k3_customer_no,ekro.k3_customer_name,ekro.return_time,ekro.return_address,ekro.return_contacts,ekro.return_phone,ekro.return_mode,ekro.return_order_status,ekro.logistics_amount,ekro.service_amount,ekro.return_reason_type,ekro.data_status,ekro.remark,ekro.create_time,ekro.create_user,ekro.update_time,ekro.update_user,ekro.delivery_sub_company_id,success_status
@@ -133,7 +141,16 @@
         <if test="maps.k3ReturnOrderQueryParam.orderNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.orderNo != ''">
             INNER JOIN erp_k3_return_order_detail ekrod ON ekrod.return_order_id = ekro.id and ekrod.data_status = 1
         </if>
+        <if test="maps.k3ReturnOrderQueryParam.createUserName != null &amp;&amp; maps.k3ReturnOrderQueryParam.createUserName != ''">
+            INNER JOIN erp_user eu ON eu.id = ekro.create_user
+        </if>
         <where>
+            <if test="maps.k3ReturnOrderQueryParam.createUserName != null &amp;&amp; maps.k3ReturnOrderQueryParam.createUserName != ''">
+                and eu.real_name like CONCAT('%','${maps.k3ReturnOrderQueryParam.createUserName}','%' )
+            </if>
+            <if test="maps.k3ReturnOrderQueryParam.deliverySubCompanyId != null ">
+                and ekro.delivery_sub_company_id = #{maps.k3ReturnOrderQueryParam.deliverySubCompanyId}
+            </if>
             <if test="maps.k3ReturnOrderQueryParam.orderNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.orderNo != ''">
                 and ekrod.order_no = #{maps.k3ReturnOrderQueryParam.orderNo}
             </if>
@@ -164,6 +181,7 @@
         LIMIT #{maps.start},#{maps.pageSize}
         ) m_order
         LEFT JOIN erp_k3_return_order_detail ekrod ON m_order.id = ekrod.return_order_id and ekrod.data_status = 1
+        LEFT JOIN erp_sub_company esc on  m_order.delivery_sub_company_id=esc.id AND esc.data_status = 1
         ORDER BY m_order.create_time DESC
     </select>
 
