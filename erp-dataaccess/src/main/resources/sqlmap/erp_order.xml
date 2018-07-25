@@ -623,7 +623,6 @@
         FROM erp_order eo
         WHERE eo.data_status = 1
     </select>
-
     <select id="findOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
         SELECT count(eo.id)
         FROM erp_order eo
@@ -1234,6 +1233,18 @@
         where eo.data_status = 1
     </select>
 
+    <select id="findByNo" resultMap="OrderDO" parameterType="java.lang.String">
+        SELECT <include refid="column_List"/> FROM erp_order eo
+        WHERE eo.order_no = #{orderNo, jdbcType=VARCHAR} AND eo.data_status=1
+    </select>
+
+    <select id="findByOrderNoList" resultMap="OrderDO">
+        SELECT <include refid="column_List"/> FROM erp_order eo
+        WHERE eo.order_no IN
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
 
     <select id="findByNos" resultMap="OrderDO" parameterType="java.util.Set">
         select
@@ -1247,7 +1258,13 @@
     </select>
 
     <select id="findCanReletOrderForWorkbench"  resultMap="OrderDO" parameterType="map">
-        select  <include refid="column_List"/>
+        SELECT e_order.*
+        <trim prefix=",">
+            <include refid="relet_column_List"/>
+        </trim>
+        FROM (
+        SELECT
+        <include refid="column_List"/>
         <trim prefix=",">
             <include refid="consign_column_List"/>
         </trim>
@@ -1266,6 +1283,14 @@
         INNER JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
         LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
         <where>
+            <if test="maps.orderQueryParam.isCanReletOrder != null &amp;&amp; maps.orderQueryParam.isCanReletOrder == 1">
+
+                (case
+                when eo.rent_type = 1 then   curdate() + INTERVAL #{maps.reletTimeOfDay, jdbcType=INTEGER} DAY > eo.expect_return_time
+                when eo.rent_type = 2 then   curdate() + INTERVAL #{maps.reletTimeOfMonth, jdbcType=INTEGER} DAY > eo.expect_return_time
+                end)
+                AND eo.order_status in (20,22)
+            </if>
             <if test="maps.orderQueryParam.buyerRealName != null &amp;&amp; maps.orderQueryParam.buyerRealName != ''">
                 and eo.buyer_customer_name like CONCAT('%','${maps.orderQueryParam.buyerRealName}','%' )
             </if>
@@ -1327,6 +1352,7 @@
                     #{item}
                 </foreach>
             </if>
+
             <if test="maps.orderQueryParam.payStatus != null">
                 and eo.pay_status = #{maps.orderQueryParam.payStatus, jdbcType=INTEGER}
             </if>
@@ -1363,13 +1389,15 @@
             <if test="maps.orderQueryParam.isReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 0">
                 AND eo.relet_order_id IS NULL
             </if>
-            <if test="maps.orderQueryParam.isCanReletOrder != null &amp;&amp; maps.orderQueryParam.isCanReletOrder == 1">
-                and eo.order_status in(20,22)
-            </if>
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
             </if>
             <include refid="permission_sql.order_control"/>
         </where>
+        ORDER BY eo.create_time DESC
+        ) e_order
+        LEFT JOIN erp_relet_order ero ON ero.order_id = e_order.id and ero.data_status = 1
     </select>
+
+
 </mapper>

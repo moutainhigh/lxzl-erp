@@ -994,10 +994,13 @@ public class CustomerServiceImpl implements CustomerService {
             String customerCompanyNeedFirstJson = customerDO.getCustomerCompanyDO().getCustomerCompanyNeedFirstJson();
             List<CustomerCompanyNeed> customerCompanyNeedList = JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class);
             BigDecimal firstListTotalPrice = new BigDecimal(0);
+            BigDecimal firstListTotalRentPrice = new BigDecimal(0);
             for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
                 firstListTotalPrice = firstListTotalPrice.add(customerCompanyNeed.getTotalPrice());
+                firstListTotalRentPrice = BigDecimalUtil.add(firstListTotalRentPrice,customerCompanyNeed.getTotalProductRentPrice());
             }
             customerResult.getCustomerCompany().setFirstListTotalPrice(firstListTotalPrice);
+            customerResult.getCustomerCompany().setFirstListTotalRentPrice(firstListTotalRentPrice);
             customerResult.getCustomerCompany().setCustomerCompanyNeedFirstList(JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class));
         }
 
@@ -1006,10 +1009,13 @@ public class CustomerServiceImpl implements CustomerService {
             String customerCompanyNeedLaterList = customerDO.getCustomerCompanyDO().getCustomerCompanyNeedLaterJson();
             List<CustomerCompanyNeed> customerCompanyNeedList = JSONObject.parseArray(customerCompanyNeedLaterList, CustomerCompanyNeed.class);
             BigDecimal laterListTotalPrice = new BigDecimal(0);
+            BigDecimal laterListTotalRentPrice = new BigDecimal(0);
             for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
                 laterListTotalPrice = laterListTotalPrice.add(customerCompanyNeed.getTotalPrice());
+                laterListTotalRentPrice = BigDecimalUtil.add(laterListTotalRentPrice,customerCompanyNeed.getTotalProductRentPrice());
             }
             customerResult.getCustomerCompany().setLaterListTotalPrice(laterListTotalPrice);
+            customerResult.getCustomerCompany().setLaterListTotalRentPrice(laterListTotalRentPrice);
             customerResult.getCustomerCompany().setCustomerCompanyNeedLaterList(JSONObject.parseArray(customerCompanyNeedLaterList, CustomerCompanyNeed.class));
         }
 
@@ -2633,10 +2639,27 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
                 return serviceResult;
             }
+            //全新
             if (CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getIsNew())) {
                 customerCompanyNeed.setUnitPrice(productSkuDO.getNewSkuPrice());
+
+                if(CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getRentType())){
+                    //按天租
+                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewDayRentPrice());
+                }else{
+                    //按月租
+                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewMonthRentPrice());
+                }
             } else {
+                //次新
                 customerCompanyNeed.setUnitPrice(productSkuDO.getSkuPrice());
+                if(CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getRentType())){
+                    //按天租
+                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewDayRentPrice());
+                }else{
+                    //按月租
+                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewMonthRentPrice());
+                }
             }
             if (customerCompanyNeed.getRentCount() == null) {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL);
@@ -2645,6 +2668,11 @@ public class CustomerServiceImpl implements CustomerService {
 
             BigDecimal totalPrice = BigDecimalUtil.mul(customerCompanyNeed.getUnitPrice(), new BigDecimal(customerCompanyNeed.getRentCount()));
             customerCompanyNeed.setTotalPrice(totalPrice);
+
+            //商品总租金
+            BigDecimal totalRentPrice = BigDecimalUtil.mul(BigDecimalUtil.mul(customerCompanyNeed.getProductRentPrice(), new BigDecimal(customerCompanyNeed.getRentCount())),new BigDecimal(customerCompanyNeed.getRentTimeLength()));
+            customerCompanyNeed.setTotalProductRentPrice(totalRentPrice);
+
             ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
             customerCompanyNeed.setProduct(productServiceResult.getResult());
         }
