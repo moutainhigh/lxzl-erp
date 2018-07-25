@@ -240,5 +240,6 @@
         <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
             #{item}
         </foreach>
+        AND eop.data_status = 1
     </select>
 </mapper>
