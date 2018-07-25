@@ -75,7 +75,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group mn">
-                                            <input type="text" name="createUserRealName" id="createUserRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="创建人">
+                                            <input type="text" name="createUserName" id="createUserName" class="form-control input-sm bradius" autocomplete="off" placeholder="创建人">
                                         </div>
                                     </div>
                                 </div>
