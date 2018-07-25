@@ -25,7 +25,7 @@ public class AnnouncementController {
     private ResultGenerator resultGenerator;
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public Result list(@RequestBody AnnouncementParam pageQuery) {
+    public Result list(@RequestBody(required = false) AnnouncementParam pageQuery) {
         return resultGenerator.generate(announcementService.page(pageQuery));
     }
 
