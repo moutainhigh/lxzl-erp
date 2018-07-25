@@ -745,6 +745,8 @@ public class WorkflowServiceImpl implements WorkflowService {
             //只有审核人数据
             if (!userSupport.isSuperUser()) {
                 paramMap.put("verifyUserId", userSupport.getCurrentUserId().toString());
+                List<String> currentUserGroupList = workflowVerifyUserGroupMapper.findGroupUUIDByUserId(userSupport.getCurrentUserId());
+                paramMap.put("currentUserGroupList", currentUserGroupList);
             }
 
             Integer dataCount = workflowLinkMapper.workbenchListCount(paramMap);
