@@ -75,8 +75,8 @@
                             <thead>
                             <tr class="bg-light">
                                 <th>退还编号</th>
-                                <th>K3客户编码</th>
                                 <th>K3客户名称</th>
+                                <th>发货分公司</th>
                                 <th>退货时间</th>
                                 <th>退货地址</th>
                                 <th>退货单状态</th>
@@ -92,8 +92,8 @@
                             {{#listData}}
                             <tr>
                                 <td><a href="{{detailUrl}}" target="_blank">{{returnOrderNo}}</a></td>
-                                <td><a href="{{customerDetailUrl}}" target="_blank">{{k3CustomerNo}}</a></td>
                                 <td><a href="{{customerDetailUrl}}" target="_blank">{{k3CustomerName}}</a></td>
+                                <td>{{deliverySubCompanyId}}</td>
                                 <td>{{#clockShorTime}}{{returnTime}}{{/clockShorTime}}</td>
                                 <td>
                                     <p class="mn">{{returnContacts}}</p>
