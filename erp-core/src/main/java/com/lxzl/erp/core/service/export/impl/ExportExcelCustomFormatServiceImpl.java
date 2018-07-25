@@ -668,7 +668,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                                         Date returnTimeDay = dateFormat.parse(returnTimeString);
                                         Date statementStartTime = exportStatementOrderDetail.getStatementStartTime();
                                         Date statementEndTime = exportStatementOrderDetail.getStatementEndTime();
-                                        if (returnTimeDay.after(statementStartTime) && (returnTimeDay.before(statementEndTime)||returnTimeDay.compareTo(statementEndTime) == 0)) {
+                                        if ((returnTimeDay.after(statementStartTime)||returnTimeDay.compareTo(statementStartTime) == 0) && (returnTimeDay.before(statementEndTime)||returnTimeDay.compareTo(statementEndTime) == 0)) {
                                             retrunCheckStatementOrderDetail.setOrderRentStartTime(exportStatementOrderDetail.getOrderRentStartTime());
                                             retrunCheckStatementOrderDetail.setOrderExpectReturnTime(exportStatementOrderDetail.getOrderExpectReturnTime());
                                             retrunCheckStatementOrderDetail.setIsNew(exportStatementOrderDetail.getIsNew());
