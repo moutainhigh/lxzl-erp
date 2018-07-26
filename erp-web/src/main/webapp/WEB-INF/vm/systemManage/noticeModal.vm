@@ -13,8 +13,8 @@
                     </div>
                     <div class="row">
                         <ul>
-                            <li class="mb10">{{content}}</li>
-                            <li class="mb10">{{remark}}</li>
+                            <li class="mb10"><span>内容</span>：{{content}}</li>
+                            <li class="mb10"><span>备注</span>：{{remark}}</li>
                             <li class="mb10"><span>创建人</span>：{{createUserRealName}}</li>
                             <li class="mb10"><span>修改人</span>：{{updateUserRealName}}</li>
                             <li class="mb10"><span>修改时间</span>：{{#clockTime}}{{updateTime}}{{/clockTime}}</li>
