@@ -172,9 +172,4 @@ public class StatementController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "batchReturnDeposit", method = RequestMethod.POST)
-    public Result batchReturnDeposit(@RequestBody BatchReturnDepositParam param) {
-        ServiceResult<String, String> serviceResult = statementService.batchReturnDeposit(param.getOrderNoList());
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
 }

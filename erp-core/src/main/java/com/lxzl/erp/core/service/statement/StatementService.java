@@ -253,8 +253,8 @@ public interface StatementService extends BaseService {
 
     /**
      * 批量退还应退的押金
-     * @param orderNos
+     * @param orderNo
      * @return
      */
-    ServiceResult<String, String> batchReturnDeposit(List<String> orderNos);
+    String returnDeposit(String orderNo);
 }
