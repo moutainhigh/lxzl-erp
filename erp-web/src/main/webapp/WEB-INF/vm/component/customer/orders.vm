@@ -101,7 +101,7 @@
                             <td>{{rentCount}}</td>
                             <td>{{rentTimeLength}}</td>
                             <td>￥{{#price}}{{totalPrice}}{{/price}}</td>
-                            <td>￥{{#price}}{{totalProductRentPrice}}{{/price}}</td>
+                            <td>{{#totalProductRentPrice}}￥{{#price}}{{totalProductRentPrice}}{{/price}}{{/totalProductRentPrice}}</td>
                         </tr>
                         {{/listData}}
                         {{^listData}}
@@ -156,7 +156,7 @@
                             <td>{{rentCount}}</td>
                             <td>{{rentTimeLength}}</td>
                             <td>￥{{#price}}{{totalPrice}}{{/price}}</td>
-                            <td>￥{{#price}}{{totalProductRentPrice}}{{/price}}</td>
+                            <td>{{#totalProductRentPrice}}￥{{#price}}{{totalProductRentPrice}}{{/price}}{{/totalProductRentPrice}}</td>
                         </tr>
                         {{/listData}}
                         {{^listData}}
