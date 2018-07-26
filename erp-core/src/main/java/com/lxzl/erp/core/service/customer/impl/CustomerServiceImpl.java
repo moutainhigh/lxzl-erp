@@ -1169,10 +1169,10 @@ public class CustomerServiceImpl implements CustomerService {
                     //次新
                     if(CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getRentType())){
                         //按天租
-                        customerCompanyNeed.setProductRentPrice(productSkuDO.getNewDayRentPrice());
+                        customerCompanyNeed.setProductRentPrice(productSkuDO.getDayRentPrice());
                     }else{
                         //按月租
-                        customerCompanyNeed.setProductRentPrice(productSkuDO.getNewMonthRentPrice());
+                        customerCompanyNeed.setProductRentPrice(productSkuDO.getMonthRentPrice());
                     }
                 }
                 //商品总租金
@@ -1500,9 +1500,9 @@ public class CustomerServiceImpl implements CustomerService {
             result.setErrorCode(ErrorCode.CUSTOMER_STATUS_IS_PASS_CAN_REJECT);
             return result;
         }
-        String userId = customerDO.getCreateUser();
+        Integer userId = customerDO.getOwner();
         Integer workflowType = WorkflowType.WORKFLOW_TYPE_CUSTOMER;
-        UserDO userDO = userMapper.findByUserId(Integer.parseInt(userId));
+        UserDO userDO = userMapper.findByUserId(userId);
         if(userSupport.isChannelSubCompany(ConverterUtil.convert(userDO,User.class))){
             workflowType = WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER;
         }
@@ -2707,10 +2707,10 @@ public class CustomerServiceImpl implements CustomerService {
                 customerCompanyNeed.setUnitPrice(productSkuDO.getSkuPrice());
                 if(CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getRentType())){
                     //按天租
-                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewDayRentPrice());
+                    customerCompanyNeed.setProductRentPrice(productSkuDO.getDayRentPrice());
                 }else{
                     //按月租
-                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewMonthRentPrice());
+                    customerCompanyNeed.setProductRentPrice(productSkuDO.getMonthRentPrice());
                 }
             }
             if (customerCompanyNeed.getRentCount() == null) {
