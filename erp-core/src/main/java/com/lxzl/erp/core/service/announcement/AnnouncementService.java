@@ -8,10 +8,10 @@ public interface AnnouncementService {
 
     ServiceResult<String,Page<Announcement>> page(AnnouncementParam announcementParam);
 
-    ServiceResult<String, Integer> save(AnnouncementParam announcementDO);
+    ServiceResult<String, Integer> save(Announcement announcement);
 
-    ServiceResult<String, Integer> update(AnnouncementParam announcementDO);
+    ServiceResult<String, Integer> update(Announcement announcement);
 
-    ServiceResult<String, Integer> delete(AnnouncementParam announcementDO);
+    ServiceResult<String, Integer> delete(Announcement announcement);
 
 }
