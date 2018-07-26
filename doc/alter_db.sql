@@ -1002,6 +1002,3 @@ CREATE TABLE `erp_announcement`  (
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='公告表';
 
 
-
-
-

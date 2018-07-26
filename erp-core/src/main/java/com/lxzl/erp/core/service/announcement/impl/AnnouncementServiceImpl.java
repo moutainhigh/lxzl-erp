@@ -32,20 +32,22 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public ServiceResult<String, Page<Announcement>> page(final AnnouncementParam param) {
-        final PageQuery finalPageQuery = new PageQuery(param.getPageNo() == 0 ? 1 : param.getPageNo(),
-                param.getPageSize() == 0 ? 10 : param.getPageSize());
+        final PageQuery finalPageQuery = new PageQuery(param == null || param.getPageNo() == 0 ? 1 : param.getPageNo(),
+                param == null || param.getPageSize() == 0 ? 10 : param.getPageSize());
 
         Map<String, Object> map = new HashMap<String, Object>() {{
             put("start", finalPageQuery.getStart());
             put("pageSize", finalPageQuery.getPageSize());
-            if (param.getTitle() != null)
-                put("title", param.getTitle());
+            if (param != null) {
+                if (param.getTitle() != null)
+                    put("title", param.getTitle());
 
-            if (param.getContent() != null)
-                put("content", param.getContent());
+                if (param.getContent() != null)
+                    put("content", param.getContent());
 
-            if (param.getRemark() != null)
-                put("remark", param.getRemark());
+                if (param.getRemark() != null)
+                    put("remark", param.getRemark());
+            }
         }};
 
         List<Announcement> announcements = ConverterUtil.convertList(announcementMapper.listPage(map), Announcement.class);
@@ -58,7 +60,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public ServiceResult<String, Integer> save(AnnouncementParam param) {
+    public ServiceResult<String, Integer> save(Announcement param) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         if (!userSupport.isSuperUser()) {
             serviceResult.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
@@ -70,7 +72,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public ServiceResult<String, Integer> update(AnnouncementParam param) {
+    public ServiceResult<String, Integer> update(Announcement param) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         if (!userSupport.isSuperUser()) {
             serviceResult.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
@@ -87,7 +89,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public ServiceResult<String, Integer> delete(AnnouncementParam param) {
+    public ServiceResult<String, Integer> delete(Announcement param) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         if (!userSupport.isSuperUser()) {
             serviceResult.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
@@ -114,11 +116,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             announcementDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             announcementDO.setCreateUser(userSupport.getCurrentUserId().toString());
             announcementDO.setCreateTime(date);
-            if (title == null)
-                throw new BusinessException(ErrorCode.ANNOUNCEMENT_TITLE_NOT_NULL);
-
-            if (content == null)
-                throw new BusinessException(ErrorCode.ANNOUNCEMENT_CONTENT_NOT_NULL);
         }
         announcementDO.setTitle(title);
         announcementDO.setContent(content);
