@@ -182,7 +182,17 @@ public class StatisticsController extends BaseController {
      */
     @RequestMapping(value = "statisticsFinanceDataWeeklyNow", method = RequestMethod.POST)
     public Result statisticsFinanceDataWeeklyNow() {
-        ServiceResult<String, Map<String, List<FinanceStatisticsDataWeeklyDO>>> serviceResult = statisticsService.statisticsFinanceDataWeeklyNow();
+        ServiceResult<String, Boolean> serviceResult = statisticsService.statisticsFinanceDataWeeklyNow();
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 重新统计历史财务周数据
+     * @return
+     */
+    @RequestMapping(value = "reStatisticsFinanceDataWeekly", method = RequestMethod.POST)
+    public Result reStatisticsFinanceDataWeekly(@RequestBody @Validated FinanceStatisticsWeeklyParam financeStatisticsWeeklyParam, BindingResult validResult) {
+        ServiceResult<String, Boolean> serviceResult = statisticsService.reStatisticsFinanceDataWeekly(financeStatisticsWeeklyParam);
         return resultGenerator.generate(serviceResult);
     }
 

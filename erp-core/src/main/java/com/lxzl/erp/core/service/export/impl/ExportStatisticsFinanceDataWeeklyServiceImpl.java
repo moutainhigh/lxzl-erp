@@ -44,7 +44,8 @@ public class ExportStatisticsFinanceDataWeeklyServiceImpl implements ExportStati
             return excelServiceResult;
         }
         String fileName = "财务周报" + "_" + param.getYear() + "年" + param.getMonth() + "月第" + param.getWeekOfMonth() + "周";
-        List<FinanceStatisticsDataWeeklyExcel> financeAllStatisticsDataWeeklyExcelList = statisticsService.statisticsFinanceDataWeeklyToExcel(param.getYear(), param.getMonth(), param.getWeekOfMonth());
+        ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsResult = statisticsService.statisticsFinanceDataWeeklyToExcel(param);
+        List<FinanceStatisticsDataWeeklyExcel> financeAllStatisticsDataWeeklyExcelList = statisticsResult.getResult();
         if (CollectionUtil.isNotEmpty(financeAllStatisticsDataWeeklyExcelList)) {
             excelServiceResult = excelExportService.export(financeAllStatisticsDataWeeklyExcelList, ExcelExportConfigGroup.statisticsFinanceWeeklyConfig, ExcelExportSupport.formatFileName(fileName), "sheet1", response);
             excelServiceResult.setErrorCode(ErrorCode.SUCCESS);

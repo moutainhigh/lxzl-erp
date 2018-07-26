@@ -70,6 +70,8 @@ public interface StatisticsService extends BaseService {
      */
     ServiceResult<String,String> createStatisticsSalesmanMonth(Date date);
 
-    ServiceResult<String, Map<String, List<FinanceStatisticsDataWeeklyDO>>> statisticsFinanceDataWeeklyNow();
-    List<FinanceStatisticsDataWeeklyExcel> statisticsFinanceDataWeeklyToExcel(int year, int month, int weekOfMonth);
+//    ServiceResult<String, Map<String, List<FinanceStatisticsDataWeeklyDO>>> statisticsFinanceDataWeeklyNow();
+    ServiceResult<String,Boolean> statisticsFinanceDataWeeklyNow();
+    ServiceResult<String, Boolean> reStatisticsFinanceDataWeekly(FinanceStatisticsWeeklyParam paramVo);
+    ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyToExcel(FinanceStatisticsWeeklyParam paramVo);
 }
