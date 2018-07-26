@@ -3,16 +3,19 @@ package com.lxzl.erp.common.domain.announcement.pojo;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class Announcement extends BasePO {
+    @NotNull(message = ErrorCode.ID_NOT_NULL, groups = {IdGroup.class})
     private Integer id;
-    @NotBlank(message = ErrorCode.ANNOUNCEMENT_TITLE_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
+    @NotBlank(message = ErrorCode.ANNOUNCEMENT_TITLE_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
     private String title;
-    @NotBlank(message = ErrorCode.ANNOUNCEMENT_CONTENT_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
+    @NotBlank(message = ErrorCode.ANNOUNCEMENT_CONTENT_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
     private String content;
     private String remark;
     private Integer dataStatus;

@@ -4,6 +4,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.announcement.AnnouncementParam;
 import com.lxzl.erp.common.domain.announcement.pojo.Announcement;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -45,7 +46,7 @@ public class AnnouncementController {
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public Result delete(@RequestBody @Validated({UpdateGroup.class}) Announcement announcement, BindingResult validResult) {
+    public Result delete(@RequestBody @Validated({IdGroup.class}) Announcement announcement, BindingResult validResult) {
         return resultGenerator.generate(announcementService.delete(announcement));
     }
 }
