@@ -1169,10 +1169,10 @@ public class CustomerServiceImpl implements CustomerService {
                     //次新
                     if(CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getRentType())){
                         //按天租
-                        customerCompanyNeed.setProductRentPrice(productSkuDO.getNewDayRentPrice());
+                        customerCompanyNeed.setProductRentPrice(productSkuDO.getDayRentPrice());
                     }else{
                         //按月租
-                        customerCompanyNeed.setProductRentPrice(productSkuDO.getNewMonthRentPrice());
+                        customerCompanyNeed.setProductRentPrice(productSkuDO.getMonthRentPrice());
                     }
                 }
                 //商品总租金
@@ -2707,10 +2707,10 @@ public class CustomerServiceImpl implements CustomerService {
                 customerCompanyNeed.setUnitPrice(productSkuDO.getSkuPrice());
                 if(CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getRentType())){
                     //按天租
-                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewDayRentPrice());
+                    customerCompanyNeed.setProductRentPrice(productSkuDO.getDayRentPrice());
                 }else{
                     //按月租
-                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewMonthRentPrice());
+                    customerCompanyNeed.setProductRentPrice(productSkuDO.getMonthRentPrice());
                 }
             }
             if (customerCompanyNeed.getRentCount() == null) {
