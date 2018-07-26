@@ -18,4 +18,6 @@ public interface WorkflowVerifyUserGroupMapper extends BaseMysqlDAO<WorkflowVeri
 	List<WorkflowVerifyUserGroupDO> findByVerifyUserGroupId(@Param("verifyUserGroupId") String verifyUserGroupId);
 
 	List<String> findGroupUUIDByUserId(@Param("userId") Integer userId);
+
+	List<String> findGroupUUIDByUserIdAndVerifyStatus(@Param("userId") Integer userId,@Param("verifyStatus") Integer verifyStatus);
 }
