@@ -77,8 +77,8 @@
                                 {{#dataSource}}
                                 {{#listData}}
                                 <tr data-notice="{{noticeStr}}">
-                                    <td>{{title}}</td>
-                                    <td><pre class="sqlContent">{{content}}</pre></td>
+                                    <td><div class="over-ellipsis" style="max-width:300px;">{{title}}</div></td>
+                                    <td><div class="over-ellipsis" style="max-width:300px;">{{content}}</div></td>
                                     <td>{{remark}}</td>
                                     <td>
                                         <p class="mn">{{createUserRealName}}</p>
@@ -97,9 +97,6 @@
                                         </div>
                                     </td>
                                     {{/hasRowActionButtons}}
-                                </tr>
-                                <tr class="bn" style="height:0;">
-                                    <td class="pre-box" colspan="6"><pre>{{content}}</pre></td>
                                 </tr>
                                 {{/listData}}
                                 {{^listData}}
