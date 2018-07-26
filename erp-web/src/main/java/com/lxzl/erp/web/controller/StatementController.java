@@ -9,7 +9,6 @@ import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.*;
 import com.lxzl.erp.common.domain.statement.pojo.CheckStatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
-import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.statement.StatementService;
@@ -170,6 +169,12 @@ public class StatementController extends BaseController {
     @RequestMapping(value = "payStatementOrderDetail", method = RequestMethod.POST)
     public Result payStatementOrderDetail(@RequestBody StatementDetailPayParam param, BindingResult validResult) {
         ServiceResult<String, Boolean> serviceResult = statementService.payStatementOrderDetail(param.getMergeStatementItemList());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "batchReturnDeposit", method = RequestMethod.POST)
+    public Result batchReturnDeposit(@RequestBody BatchReturnDepositParam param) {
+        ServiceResult<String, String> serviceResult = statementService.batchReturnDeposit(param.getOrderNoList());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }
