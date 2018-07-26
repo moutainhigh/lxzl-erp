@@ -30,7 +30,7 @@ import java.util.Map;
 @ControllerLog
 public class WorkbenchController {
     /**
-     * 查询审核中,到期未处理,待发货的订单
+     * 查询审核中,到期未处理,待发货,可续租，未支付的订单
      *
      * @param
      * @return Result
