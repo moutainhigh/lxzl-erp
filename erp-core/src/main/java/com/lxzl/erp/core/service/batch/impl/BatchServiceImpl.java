@@ -85,14 +85,14 @@ public class BatchServiceImpl implements BatchService {
                     String message = statementService.returnDeposit(orderNo);
                     sb.append(message);
                 } catch (Exception e) {
-                    logger.error("订单退押金【系统错误】：订单号[" + orderNo + "]", e);
                     sb.append("订单退押金【系统错误】：订单号[" + orderNo + "]" + e.getMessage() + "\n");
                 }
 
             }
         }
 
-        dingDingSupport.dingDingSendMessage(sb.toString());
+        logger.info(sb.toString());
+//        dingDingSupport.dingDingSendMessage(sb.toString());
 
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
