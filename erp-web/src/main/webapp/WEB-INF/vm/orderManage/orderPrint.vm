@@ -231,7 +231,7 @@
 ##                            <p>{{propertiesToStr}}</p>
                         </td>
                         <td class="text-center">{{propertiesToStr}}</td>
-                        <td class="text-center">￥{{#price}}{{skuPrice}}{{/price}}</td>
+                        <td class="text-center">￥{{#price}}{{currentSkuPrice}}{{/price}}</td>
 ##                        <td class="text-center">{{productCount}}</td>
                         <td class="text-center">
                             ￥{{#price}}{{productUnitAmount}}{{/price}}
@@ -298,7 +298,7 @@
                             {{materialName}}({{isNewMaterialValue}})
                         </td>
                         <td class="text-center">{{materialTypeStr}}{{#memorysize}}{{#materialInfo}}{{materialCapacityValue}}{{/materialInfo}}{{/memorysize}}</td>
-                        <td class="text-center">￥{{#price}}{{materialPrice}}{{/price}}</td>
+                        <td class="text-center">￥{{#price}}{{currentMaterialPrice}}{{/price}}</td>
 ##                        <td class="text-center">{{materialCount}}</td>
                         <td class="text-center">
                             ￥{{#price}}{{materialUnitAmount}}{{/price}}

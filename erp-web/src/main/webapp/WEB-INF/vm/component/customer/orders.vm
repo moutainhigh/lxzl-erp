@@ -76,10 +76,12 @@
                             <th>品牌</th>
                             <th>商品参数</th>
                             <th>商品保值价</th>
-                            <th>数量</th>
+                            <th>商品租金</th>
                             <th>类型</th>
+                            <th>数量</th>
                             <th>期限</th>
                             <th>商品保值总价</th>
+                            <th>商品总租金</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -93,22 +95,24 @@
                             <td>{{categoryName}}</td>
                             <td>{{brandName}}</td>
                             <td>{{propertiesToStr}}</td>
-                            <td>￥{{unitPrice}}</td>
-                            <td>{{rentCount}}</td>
+                            <td>￥{{#price}}{{unitPrice}}{{/price}}</td>
+                            <td>￥{{#price}}{{productRentPrice}}{{/price}}</td>
                             <td>{{rentTypeValue}}</td>
+                            <td>{{rentCount}}</td>
                             <td>{{rentTimeLength}}</td>
-                            <td>￥{{totalPrice}}</td>
+                            <td>￥{{#price}}{{totalPrice}}{{/price}}</td>
+                            <td>￥{{#price}}{{totalProductRentPrice}}{{/price}}</td>
                         </tr>
                         {{/listData}}
                         {{^listData}}
                         <tr>
-                            <td valign="top" colspan="9" class="text-center">没有查询到首次所需设备</td>
+                            <td valign="top" colspan="11" class="text-center">没有查询到首次所需设备</td>
                         </tr>
                         {{/listData}}
-                        <tr class="totalPriceRow hide">
-                            <td colspan="8" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">首期所需设备总价值：</td>
-                            <td class="text-danger">
-                                <div class="text-danger" id="firstListTotalPriceBox"></div>
+                        <tr class="totalPriceRow {{^hasFirstTotalPrice}}hide{{/hasFirstTotalPrice}}">
+                            <td colspan="9" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">首期所需设备总价值：</td>
+                            <td colspan="2" class="text-danger">
+                                <div class="text-danger" id="firstListTotalPriceBox">￥{{#price}}{{firstTotalPrice}}{{/price}}</div>
                             </td>
                         </tr>
                         {{/dataSource}}
@@ -127,10 +131,12 @@
                             <th>品牌</th>
                             <th>商品参数</th>
                             <th>商品保值价</th>
-                            <th>数量</th>
+                            <th>商品租金</th>
                             <th>类型</th>
+                            <th>数量</th>
                             <th>期限</th>
                             <th>商品保值总价</th>
+                            <th>商品总租金</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -144,22 +150,24 @@
                             <td>{{categoryName}}</td>
                             <td>{{brandName}}</td>
                             <td>{{propertiesToStr}}</td>
-                            <td>￥{{unitPrice}}</td>
-                            <td>{{rentCount}}</td>
+                            <td>￥{{#price}}{{unitPrice}}{{/price}}</td>
+                            <td>￥{{#price}}{{productRentPrice}}{{/price}}</td>
                             <td>{{rentTypeValue}}</td>
+                            <td>{{rentCount}}</td>
                             <td>{{rentTimeLength}}</td>
-                            <td>￥{{totalPrice}}</td>
+                            <td>￥{{#price}}{{totalPrice}}{{/price}}</td>
+                            <td>￥{{#price}}{{totalProductRentPrice}}{{/price}}</td>
                         </tr>
                         {{/listData}}
                         {{^listData}}
                         <tr>
-                            <td valign="top" colspan="9" class="text-center">没有查询到后续所需设备</td>
+                            <td valign="top" colspan="11" class="text-center">没有查询到后续所需设备</td>
                         </tr>
                         {{/listData}}
-                        <tr class="totalPriceRow hide">
-                            <td colspan="8" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">后续所需设备总价值：</td>
-                            <td class="text-danger">
-                                <div class="text-danger" id="laterListTotalPriceBox"></div>
+                        <tr class="totalPriceRow {{^hasLaterTotalPrice}}hide{{/hasLaterTotalPrice}}">
+                            <td colspan="9" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">后续所需设备总价值：</td>
+                            <td colspan="2" class="text-danger">
+                                <div class="text-danger" id="laterListTotalPriceBox">￥{{#price}}{{laterTotalPrice}}{{/price}}</div>
                             </td>
                         </tr>
                         {{/dataSource}}
