@@ -1181,7 +1181,7 @@ public class CustomerServiceImpl implements CustomerService {
                     BigDecimal totalRentPrice = BigDecimalUtil.mul(countPrice,new BigDecimal(customerCompanyNeed.getRentTimeLength()));
                     customerCompanyNeed.setTotalProductRentPrice(totalRentPrice);
                 }else{
-                    customerCompanyNeed.setTotalProductRentPrice(countPrice);
+                    customerCompanyNeed.setTotalProductRentPrice(BigDecimal.ZERO);
                 }
             }
             //计算总列表的金额
