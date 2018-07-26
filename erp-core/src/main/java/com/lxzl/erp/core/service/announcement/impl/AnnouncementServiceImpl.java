@@ -39,13 +39,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             put("start", finalPageQuery.getStart());
             put("pageSize", finalPageQuery.getPageSize());
             if (param != null) {
-                if (param.getTitle() != null)
+                if (param.getTitle() != null && param.getTitle().trim().length() > 0)
                     put("title", param.getTitle());
 
-                if (param.getContent() != null)
+                if (param.getContent() != null && param.getContent().trim().length() > 0)
                     put("content", param.getContent());
 
-                if (param.getRemark() != null)
+                if (param.getRemark() != null && param.getRemark().trim().length() > 0)
                     put("remark", param.getRemark());
             }
         }};
