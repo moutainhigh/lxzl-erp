@@ -1176,8 +1176,11 @@ public class CustomerServiceImpl implements CustomerService {
                     }
                 }
                 //商品总租金
-                BigDecimal totalRentPrice = BigDecimalUtil.mul(BigDecimalUtil.mul(customerCompanyNeed.getProductRentPrice(), new BigDecimal(customerCompanyNeed.getRentCount())),new BigDecimal(customerCompanyNeed.getRentTimeLength()));
-                customerCompanyNeed.setTotalProductRentPrice(totalRentPrice);
+                BigDecimal countPrice = BigDecimalUtil.mul(customerCompanyNeed.getProductRentPrice(), new BigDecimal(customerCompanyNeed.getRentCount()));
+                if (customerCompanyNeed.getRentTimeLength() != null) {
+                    BigDecimal totalRentPrice = BigDecimalUtil.mul(countPrice,new BigDecimal(customerCompanyNeed.getRentTimeLength()));
+                    customerCompanyNeed.setTotalProductRentPrice(totalRentPrice);
+                }
             }
             //计算总列表的金额
             listTotalPrice = listTotalPrice.add(customerCompanyNeed.getTotalPrice());
