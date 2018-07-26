@@ -125,4 +125,12 @@
         <include refid="set_column_sql"/>
         WHERE id = #{id, jdbcType=INTEGER}
     </update>
+
+    <select id="findGroupUUIDByUserIdAndVerifyStatus" resultType="String" >
+        SELECT ewvug.verify_user_group_id FROM erp_workflow_verify_user_group ewvug
+        WHERE ewvug.verify_user = #{userId} AND ewvug.data_status = 1
+        <if test="verifyStatus != null">
+            AND ewvug.verify_status = #{verifyStatus}
+        </if>
+    </select>
 </mapper>
