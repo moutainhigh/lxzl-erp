@@ -95,8 +95,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             serviceResult.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
             return serviceResult;
         }
-        if (param.getId() == null)
-            throw new BusinessException(ErrorCode.ID_NOT_NULL);
         AnnouncementDO announcementDO = new AnnouncementDO();
         announcementDO.setId(param.getId());
         announcementDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
