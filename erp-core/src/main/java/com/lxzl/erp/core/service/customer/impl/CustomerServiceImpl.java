@@ -1151,7 +1151,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
             if (customerCompanyNeed.getProductRentPrice() == null || customerCompanyNeed.getTotalProductRentPrice() == null){
-                ProductSkuDO productSkuDO = productSkuMapper.findById(customerCompanyNeed.getSkuId());
+                ProductSkuDO productSkuDO = productSkuMapper.findByIdAndStatusDelete(customerCompanyNeed.getSkuId());
                 if (productSkuDO == null) {
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
                     return serviceResult;
