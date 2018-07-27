@@ -690,7 +690,15 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                                 List<CheckStatementOrderDetail> retrunCheckStatementOrderDetailList = returnCheckStatementOrderDetailMapInner.get(key);
                                 Integer returnCount = 0;
                                 for (CheckStatementOrderDetail retrunCheckStatementOrderDetail:retrunCheckStatementOrderDetailList) {
-                                    returnCount += retrunCheckStatementOrderDetail.getItemCount();
+                                    Date returnTime = retrunCheckStatementOrderDetail.getStatementStartTime();
+                                    String returnTimeString = dateFormat.format(returnTime);
+                                    Date returnTimeDay = dateFormat.parse(returnTimeString);
+                                    Date statementStartTime = exportStatementOrderDetail.getStatementStartTime();
+                                    if (statementStartTime != null && returnTimeDay != null) {
+                                        if (returnTimeDay.before(statementStartTime)) {
+                                            returnCount += retrunCheckStatementOrderDetail.getItemCount();
+                                        }
+                                    }
                                 }
                                 Integer itemCount = returnCount + exportStatementOrderDetail.getItemCount();
                                 exportStatementOrderDetail.setItemCount(itemCount);
