@@ -92,7 +92,7 @@ public class BatchServiceImpl implements BatchService {
         }
 
         logger.info(sb.toString());
-//        dingDingSupport.dingDingSendMessage(sb.toString());
+        dingDingSupport.dingDingSendMessage(sb.toString());
 
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;

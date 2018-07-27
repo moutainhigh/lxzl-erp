@@ -7022,8 +7022,10 @@ public class StatementServiceImpl implements StatementService {
                 || BigDecimalUtil.compare(totalReturnDepositAmount, BigDecimal.ZERO) > 0) {
             ServiceResult<String, Boolean> returnDepositResult = paymentService.returnDeposit(orderDO.getBuyerCustomerNo(), totalReturnRentDepositAmount, totalReturnDepositAmount);
             if (!ErrorCode.SUCCESS.equals(returnDepositResult.getErrorCode()) || !returnDepositResult.getResult()) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 sb.append("订单号【" + orderNo + "】调用支付网关退还押金失败！\n");
             }
+            sb.append("订单号【" + orderNo + "】退还押金给客户【" + orderDO.getBuyerCustomerNo() + "】成功！\n");
         }
 
         return sb.toString();
