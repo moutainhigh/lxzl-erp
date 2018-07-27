@@ -72,4 +72,10 @@ public class ExcelExportController {
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
 
+    @RequestMapping(value = "exportStatisticsFinanceDataMonthly", method = RequestMethod.POST)
+    public Result exportStatisticsFinanceDataMonthly(FinanceStatisticsWeeklyParam param, HttpServletResponse response) throws Exception {
+        ServiceResult<String, String> serviceResult = exportStatisticsFinanceDataWeeklyService.exportStatisticsFinanceDataMonthly(param, response);
+        return resultGenerator.generate(serviceResult.getErrorCode());
+    }
+
 }

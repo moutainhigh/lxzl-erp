@@ -22,4 +22,6 @@ public interface ExportStatisticsFinanceDataWeeklyService {
     * @Date : Created in 2018/7/10 11:44
     */
     ServiceResult<String, String> exportStatisticsFinanceDataWeekly(FinanceStatisticsWeeklyParam financeStatisticsWeeklyParam, HttpServletResponse response);
+    ServiceResult<String, String> exportStatisticsFinanceDataMonthly(FinanceStatisticsWeeklyParam financeStatisticsWeeklyParam, HttpServletResponse response);
 }
+;
