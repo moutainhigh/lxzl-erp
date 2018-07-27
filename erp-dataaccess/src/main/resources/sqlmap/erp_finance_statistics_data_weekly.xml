@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.statistics.FinanceStatisticsDataWeeklyMapper">
+
+	<resultMap id="FinanceStatisticsDataWeeklyDO" type="com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataWeeklyDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="order_origin" jdbcType="INTEGER" property="orderOrigin" />
+		<result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+		<result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
+		<result column="customer_deals_count" jdbcType="INTEGER" property="customerDealsCount" />
+		<result column="new_customer_deals_count" jdbcType="INTEGER" property="newCustomerDealsCount" />
+		<result column="rent_product_deals_count" jdbcType="INTEGER" property="rentProductDealsCount" />
+		<result column="return_product_deals_count" jdbcType="INTEGER" property="returnProductDealsCount" />
+		<result column="increase_product_deals_count" jdbcType="INTEGER" property="increaseProductDealsCount" />
+		<result column="year" jdbcType="INTEGER" property="year" />
+		<result column="month" jdbcType="INTEGER" property="month" />
+		<result column="week_of_month" jdbcType="INTEGER" property="weekOfMonth" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		efsdw.id,efsdw.order_origin,efsdw.rent_length_type,efsdw.sub_company_id,efsdw.customer_deals_count,efsdw.new_customer_deals_count,efsdw.rent_product_deals_count,efsdw.return_product_deals_count,efsdw.increase_product_deals_count,efsdw.year,efsdw.month,efsdw.week_of_month,efsdw.data_status,efsdw.create_time,efsdw.create_user,efsdw.update_time,efsdw.update_user
+	</sql>
+
+	<select id="findById" resultMap="FinanceStatisticsDataWeeklyDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_finance_statistics_data_weekly efsdw 
+		WHERE efsdw.id = #{id, jdbcType=INTEGER} AND efsdw.data_status = 1 
+	</select>
+
+	<select id="findByWhenCause" resultMap="FinanceStatisticsDataWeeklyDO" parameterType="java.util.Map">
+		SELECT <include refid="column_List"/> FROM erp_finance_statistics_data_weekly efsdw
+		WHERE efsdw.data_status = 1
+		<if test="maps.orderOrigin != null">
+			AND order_origin=#{maps.orderOrigin, jdbcType=INTEGER}
+		</if>
+		<if test="maps.rentLengthType != null">
+			AND rent_length_type=#{maps.rentLengthType, jdbcType=INTEGER}
+		</if>
+		<if test="maps.subCompanyId != null">
+			AND sub_company_id=#{maps.subCompanyId, jdbcType=INTEGER}
+		</if>
+		<if test="maps.year != null">
+			AND year=#{maps.year, jdbcType=INTEGER}
+		</if>
+		<if test="maps.month != null">
+			AND month=#{maps.month, jdbcType=INTEGER}
+		</if>
+		<if test="maps.weekOfMonth != null">
+			AND week_of_month=#{maps.weekOfMonth, jdbcType=INTEGER}
+		</if>
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(efsdw.id) FROM erp_finance_statistics_data_weekly efsdw 
+		<where>
+			<if test="true">
+				AND efsdw.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="FinanceStatisticsDataWeeklyDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_finance_statistics_data_weekly efsdw 
+		<where>
+			<if test="true">
+				AND efsdw.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="orderOrigin != null">
+				order_origin = #{orderOrigin,jdbcType=INTEGER},
+			</if>
+			<if test="rentLengthType != null">
+				rent_length_type = #{rentLengthType,jdbcType=INTEGER},
+			</if>
+			<if test="subCompanyId != null">
+				sub_company_id = #{subCompanyId,jdbcType=INTEGER},
+			</if>
+			<if test="customerDealsCount != null">
+				customer_deals_count = #{customerDealsCount,jdbcType=INTEGER},
+			</if>
+			<if test="newCustomerDealsCount != null">
+				new_customer_deals_count = #{newCustomerDealsCount,jdbcType=INTEGER},
+			</if>
+			<if test="rentProductDealsCount != null">
+				rent_product_deals_count = #{rentProductDealsCount,jdbcType=INTEGER},
+			</if>
+			<if test="returnProductDealsCount != null">
+				return_product_deals_count = #{returnProductDealsCount,jdbcType=INTEGER},
+			</if>
+			<if test="increaseProductDealsCount != null">
+				increase_product_deals_count = #{increaseProductDealsCount,jdbcType=INTEGER},
+			</if>
+			<if test="year != null">
+				year = #{year,jdbcType=INTEGER},
+			</if>
+			<if test="month != null">
+				month = #{month,jdbcType=INTEGER},
+			</if>
+			<if test="weekOfMonth != null">
+				week_of_month = #{weekOfMonth,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataWeeklyDO">
+		INSERT INTO erp_finance_statistics_data_weekly <include refid="set_column_sql"/>
+	</insert>
+
+	<insert id="saveList" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List">
+		INSERT INTO erp_finance_statistics_data_weekly (order_origin,rent_length_type,sub_company_id,customer_deals_count,new_customer_deals_count,rent_product_deals_count,return_product_deals_count,increase_product_deals_count,year,month,week_of_month,data_status,create_time,create_user,update_time,update_user)
+		values
+		<foreach collection ="list" item="financeStatisticsDataWeeklyDO" index= "index" separator =",">
+        (
+            #{financeStatisticsDataWeeklyDO.orderOrigin}, #{financeStatisticsDataWeeklyDO.rentLengthType},#{financeStatisticsDataWeeklyDO.subCompanyId},
+			#{financeStatisticsDataWeeklyDO.customerDealsCount},#{financeStatisticsDataWeeklyDO.newCustomerDealsCount},#{financeStatisticsDataWeeklyDO.rentProductDealsCount},
+			#{financeStatisticsDataWeeklyDO.returnProductDealsCount},#{financeStatisticsDataWeeklyDO.increaseProductDealsCount},
+			#{financeStatisticsDataWeeklyDO.year},#{financeStatisticsDataWeeklyDO.month},#{financeStatisticsDataWeeklyDO.weekOfMonth},
+            #{financeStatisticsDataWeeklyDO.dataStatus}, #{financeStatisticsDataWeeklyDO.createTime},#{financeStatisticsDataWeeklyDO.createUser}, #{financeStatisticsDataWeeklyDO.updateTime}, #{financeStatisticsDataWeeklyDO.updateUser}
+        )
+		</foreach >
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataWeeklyDO">
+		UPDATE erp_finance_statistics_data_weekly <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<update id="logicalDeleteWhenCause" parameterType="java.util.Map">
+		<if test="maps != null and maps.size() > 0">
+			UPDATE erp_finance_statistics_data_weekly SET data_status=2
+			WHERE data_status = 1
+			<if test="maps.orderOrigin != null">
+				AND order_origin=#{maps.orderOrigin, jdbcType=INTEGER}
+			</if>
+			<if test="maps.rentLengthType != null">
+				AND rent_length_type=#{maps.rentLengthType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.subCompanyId != null">
+				AND sub_company_id=#{maps.subCompanyId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.year != null">
+				AND year=#{maps.year, jdbcType=INTEGER}
+			</if>
+			<if test="maps.month != null">
+				AND month=#{maps.month, jdbcType=INTEGER}
+			</if>
+			<if test="maps.weekOfMonth != null">
+				AND week_of_month=#{maps.weekOfMonth, jdbcType=INTEGER}
+			</if>
+		</if>
+	</update>
+
+	<delete id="deleteWhenCause" parameterType="java.util.Map">
+		<if test="maps != null and maps.size() > 0">
+		    DELETE FROM erp_finance_statistics_data_weekly
+			WHERE data_status = 1
+			<if test="maps.orderOrigin != null">
+				AND order_origin=#{maps.orderOrigin, jdbcType=INTEGER}
+			</if>
+			<if test="maps.rentLengthType != null">
+				AND rent_length_type=#{maps.rentLengthType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.subCompanyId != null">
+				AND sub_company_id=#{maps.subCompanyId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.year != null">
+				AND year=#{maps.year, jdbcType=INTEGER}
+			</if>
+			<if test="maps.month != null">
+				AND month=#{maps.month, jdbcType=INTEGER}
+			</if>
+			<if test="maps.weekOfMonth != null">
+				AND week_of_month=#{maps.weekOfMonth, jdbcType=INTEGER}
+			</if>
+		</if>
+	</delete>
+</mapper>
