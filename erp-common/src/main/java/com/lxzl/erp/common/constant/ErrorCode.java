@@ -2010,9 +2010,9 @@ public class ErrorCode {
 
         MAP.put(ANNOUNCEMENT_TITLE_NOT_NULL, "公告标题不能为空");
         MAP.put(ANNOUNCEMENT_CONTENT_NOT_NULL, "公告内容不能为空");
-        MAP.put(ANNOUNCEMENT_TITLE_TOO_LARGE, "公告标题不能超过100");
-        MAP.put(ANNOUNCEMENT_CONTENT_TOO_LARGE, "公告内容不能超过500");
-        MAP.put(ANNOUNCEMENT_REMARK_TOO_LARGE, "公告注释不能超过500");
+        MAP.put(ANNOUNCEMENT_TITLE_TOO_LARGE, "公告标题不能超过100字");
+        MAP.put(ANNOUNCEMENT_CONTENT_TOO_LARGE, "公告内容不能超过500字");
+        MAP.put(ANNOUNCEMENT_REMARK_TOO_LARGE, "公告备注不能超过500字");
 
 
 
