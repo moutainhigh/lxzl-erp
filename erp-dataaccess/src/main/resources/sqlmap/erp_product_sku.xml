@@ -331,4 +331,31 @@
     <select id="findSkuIdCount" resultType="java.lang.Integer">
         SELECT COUNT(*) FROM erp_product_sku WHERE id = #{skuId}
     </select>
+
+    <select id="findByIdAndStatusDelete" resultMap="ProductSkuDO" parameterType="java.lang.Integer">
+        SELECT sku_main.*
+        <trim prefix=",">
+            <include refid="sku_property_column_List" />
+        </trim>
+        <trim prefix=",">
+            <include refid="product_material_column_List" />
+        </trim>
+        <trim prefix=",">
+            em.material_type as product_material_material_type,mpcp.property_name AS sku_property_property_name,mpcpv.property_value_name AS sku_property_property_value_Name,
+            em.material_name AS product_material_material_name,em.material_no AS product_material_material_no,em.material_capacity_value AS product_material_material_capacity_value,
+            em.material_model_id AS product_material_material_model_id
+        </trim>
+        FROM (
+        select
+        <include refid="column_List"/>,ep.product_name
+        from erp_product_sku eps left join erp_product ep on ep.id=eps.product_id
+        where eps.id = #{id, jdbcType=INTEGER}
+        ) sku_main
+        LEFT JOIN erp_product_sku_property epsps ON epsps.sku_id = sku_main.id AND epsps.data_status = 1 AND epsps.is_sku = 1
+        LEFT JOIN erp_product_category_property mpcp ON epsps.property_id = mpcp.id
+        LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id
+        LEFT JOIN erp_product_material epm ON (epm.product_sku_id = sku_main.id OR (epm.product_id = sku_main.product_id AND epm.product_sku_id IS NULL)) AND epm.data_status = 1
+        LEFT JOIN erp_material em on epm.material_id = em.id
+        ORDER BY mpcp.data_order DESC,mpcpv.data_order DESC
+    </select>
 </mapper>
