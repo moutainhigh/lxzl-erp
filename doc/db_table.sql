@@ -3746,6 +3746,47 @@ CREATE TABLE `erp_month_config` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_month` (`month_config`)
 ) ENGINE=InnoDB AUTO_INCREMENT=181 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='月份配置';
+DROP TABLE IF EXISTS `erp_announcement`;
+CREATE TABLE `erp_announcement`  (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `title` varchar(255) NOT NULL COMMENT '标题',
+  `content` text NOT NULL COMMENT '内容',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+	`remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+	`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+	`create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+	`update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='公告表';
+
+
+DROP TABLE if exists `erp_delayed_task`;
+CREATE TABLE `erp_delayed_task` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `task_type` int(11) NOT NULL COMMENT '任务类型，1为对账单导出',
+	`task_status` int(11) NOT NULL COMMENT '任务状态：1排队中；2处理中；3已完成；4已取消；5执行失败',
+	`queue_number` int(11) NOT NULL DEFAULT '0' COMMENT '排队数量',
+	`request_json` text COLLATE utf8_bin COMMENT '请求参数',
+	`thread_name` varchar(64) COMMENT '线程名称',
+	`progress_rate` double(5,4) COMMENT '处理进度，10%的处理进度时存储为0.0100',
+	`remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='延迟任务列表';
+
+DROP TABLE if exists `erp_delayed_task_config_export_statement`;
+CREATE TABLE `erp_delayed_task_config_export_statement` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `customer_no` varchar(100) NOT NULL COMMENT '客户编号',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户对账单延迟导出配置表';
+
 DROP TABLE IF EXISTS `erp_finance_statistics_data_weekly`;
 CREATE TABLE `erp_finance_statistics_data_weekly` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识ID',

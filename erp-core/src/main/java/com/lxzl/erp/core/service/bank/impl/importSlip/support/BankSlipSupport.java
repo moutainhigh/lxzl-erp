@@ -54,7 +54,7 @@ public class BankSlipSupport {
     @Autowired
     private BankSlipDetailMapper bankSlipDetailMapper;
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
-    public BankSlipDO formatBankSlipDetail(BankSlipDO bankSlipDO, List<BankSlipDetailDO> bankSlipDetailDOList) {
+    public BankSlipDO filterBankSlipDetail(BankSlipDO bankSlipDO, List<BankSlipDetailDO> bankSlipDetailDOList) {
 
         //查询出导入时间的所有本公司的所有导入数据
         List<BankSlipDO> dbBankSlipDOList = bankSlipMapper.findBySubCompanyIdAndBankType(bankSlipDO.getSubCompanyId(), bankSlipDO.getBankType());
@@ -268,6 +268,21 @@ public class BankSlipSupport {
                  break;
         }
         return bankName;
+    }
+
+    public Integer departmentType() {
+        Integer departmentType = 0;
+        if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
+            //财务人员类型设置为1
+            departmentType = 1;
+        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isElectric() || userSupport.isChannelSubCompany()) {
+            //商务类型设置为2
+            departmentType = 2;
+        } else if (userSupport.isBusinessPerson()) {
+            //业务员类型设置为3
+            departmentType = 3;
+        }
+        return departmentType;
     }
 
 }

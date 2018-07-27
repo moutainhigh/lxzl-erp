@@ -798,4 +798,18 @@
         </foreach>
 
     </update>
+
+    <select id="findByCustomerId" resultMap="ReletOrderDO" parameterType="Integer">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_relet_order ero
+        <where>
+            <if test="true">
+                AND ero.buyer_customer_id = #{customerId,jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                AND ero.data_status = 1
+            </if>
+        </where>
+    </select>
 </mapper>

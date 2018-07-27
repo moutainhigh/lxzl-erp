@@ -38,6 +38,7 @@
                                     <th>sql语句内容</th>
                                     <th>状态</th>
                                     <th>查询结果</th>
+                                    <th>备注</th>
                                     <th>创建人</th>
                                     {{#hasRowActionButtons}}
                                     <th class="text-right">操作</th>
@@ -51,10 +52,11 @@
                                     <td>{{sqlTpye}}</td>
                                     <td><pre class="sqlContent">{{sqlContent}}</pre></td>
                                     <td>{{statusVal}}</td>
-                                    <td><div class="sqlContent">{{results}}</div></td>
+                                    <td><div class="over-ellipsis" style="max-width:300px;">{{results}}</div></td>
+                                    <td>{{remark}}</td>
                                     <td>
                                         <p class="mn">{{createUserRealName}}</p>
-                                        <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                        <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
                                     </td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
@@ -68,7 +70,7 @@
                                     {{/hasRowActionButtons}}
                                 </tr>
                                 <tr class="bn" style="height:0;">
-                                    <td class="pre-box" colspan="6"><pre>{{sqlContent}}</pre></td>
+                                    <td class="pre-box" colspan="7"><pre>{{sqlContent}}</pre></td>
                                 </tr>
                                 {{/listData}}
                                 {{^listData}}

@@ -357,6 +357,10 @@ public class ExcelExportConfigGroup {
                     return "租赁";
                 } else if (OrderType.ORDER_TYPE_RETURN.equals(businessType)) {
                     return "退货";
+                } else if (CommonConstant.ORDER_TYPE_RELET.equals(businessType)){
+                    return "续租";
+                } else if (CommonConstant.ORDER_TYPE_RELET_RETURN.equals(businessType)){
+                    return "续租退货";
                 }
                 return null;
             }

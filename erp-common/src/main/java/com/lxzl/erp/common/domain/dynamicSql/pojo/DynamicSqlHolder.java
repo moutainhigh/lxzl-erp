@@ -11,6 +11,7 @@ public class DynamicSqlHolder extends BasePO {
     private Integer status;
     private String results;
     private Integer dataStatus;
+    private String remark;
     private Date createTime;   //添加时间
     private String createUser;   //添加人
     private Date updateTime;   //添加时间
@@ -62,6 +63,14 @@ public class DynamicSqlHolder extends BasePO {
 
     public void setDataStatus(Integer dataStatus) {
         this.dataStatus = dataStatus;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public Date getCreateTime() {
