@@ -1021,6 +1021,9 @@ public class ErrorCode {
     //公告
     public static final String ANNOUNCEMENT_TITLE_NOT_NULL = "J280000001";
     public static final String ANNOUNCEMENT_CONTENT_NOT_NULL = "J280000002";
+    public static final String ANNOUNCEMENT_TITLE_TOO_LARGE = "J280000003";
+    public static final String ANNOUNCEMENT_CONTENT_TOO_LARGE = "J280000004";
+    public static final String ANNOUNCEMENT_REMARK_TOO_LARGE = "J280000005";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -2007,6 +2010,11 @@ public class ErrorCode {
 
         MAP.put(ANNOUNCEMENT_TITLE_NOT_NULL, "公告标题不能为空");
         MAP.put(ANNOUNCEMENT_CONTENT_NOT_NULL, "公告内容不能为空");
+        MAP.put(ANNOUNCEMENT_TITLE_TOO_LARGE, "公告标题不能超过100");
+        MAP.put(ANNOUNCEMENT_CONTENT_TOO_LARGE, "公告内容不能超过500");
+        MAP.put(ANNOUNCEMENT_REMARK_TOO_LARGE, "公告注释不能超过500");
+
+
 
 
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户已经为确认结算单状态");
