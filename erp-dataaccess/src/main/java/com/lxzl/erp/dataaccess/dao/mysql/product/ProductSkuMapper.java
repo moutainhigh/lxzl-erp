@@ -30,4 +30,5 @@ public interface ProductSkuMapper extends BaseMysqlDAO<ProductSkuDO> {
 
     List<ProductSkuDO> selectAll ();
 
+    ProductSkuDO findByIdAndStatusDelete(@Param("id")Integer skuId);
 }
