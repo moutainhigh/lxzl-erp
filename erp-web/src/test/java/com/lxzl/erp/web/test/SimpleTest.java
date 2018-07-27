@@ -6,18 +6,24 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
+import com.lxzl.erp.common.util.BigDecimalUtil;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO;
 import org.junit.Test;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author lk
@@ -230,4 +236,109 @@ public class SimpleTest {
         Date d = simpleDateFormat.parse(str);
         System.out.println(d);
     }
+
+
+
+    class MyThread implements Runnable{
+        private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+        private Integer i;
+        public MyThread(int i ,ThreadPoolTaskExecutor threadPoolTaskExecutor){
+            this.i = i;
+            this.threadPoolTaskExecutor = threadPoolTaskExecutor;
+        }
+        @Override
+        public void run() {
+
+            System.out.println("正在执行的线程线程编号："+i+",当前线程活跃数:"+threadPoolTaskExecutor.getActiveCount());
+            double second = (50);
+            try {
+
+                List<User> userList = new ArrayList<>();
+                for(int i = 0;i<100;i++){
+                    User user = new User("test",1);
+                    userList.add(user);
+
+                }
+                Step<User> step = new Step<User>(userList) {
+                    @Override
+                    public void executeDetail(User user) {
+                        System.out.println("detail.....");
+                    }
+                };
+                step.excute();
+                Thread.sleep((int)second*1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("线程编号："+i+",共执行"+second+"秒");
+        }
+    }
+
+    @Test
+    public void testThread() throws InterruptedException {
+
+        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        threadPoolTaskExecutor.setCorePoolSize(5);
+        threadPoolTaskExecutor.setMaxPoolSize(50);
+        threadPoolTaskExecutor.setQueueCapacity(1000);
+        threadPoolTaskExecutor.setKeepAliveSeconds(60);
+        threadPoolTaskExecutor.initialize();
+        for(int i = 0 ; i <100 ; i++){
+            threadPoolTaskExecutor.execute(new MyThread(i,threadPoolTaskExecutor));
+        }
+
+        Thread.sleep(1000000);
+    }
+    class User{
+        private String name;
+        private Integer age;
+
+        public User(String name, Integer age) {
+            this.name = name;
+            this.age = age;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Integer getAge() {
+            return age;
+        }
+
+        public void setAge(Integer age) {
+            this.age = age;
+        }
+
+
+    }
+    abstract class Step<E>{
+
+        private List<E> list;
+        private int currentStep;
+        private int stepCount;
+
+        final void excute() throws Exception{
+            for(int i = 0 ; i < this.stepCount ; i++){
+                E e = this.list.get(i);
+                this.currentStep = i+1 ;
+                executeDetail(e);
+                System.out.println("当前执行百分比：" + this.currentStep/(double)this.stepCount);
+            }
+        }
+        public Step(List<E> list ){
+            this.stepCount = list.size();
+            this.list = list;
+        }
+        public void executeDetail(E e){
+
+        }
+    }
+
 }
