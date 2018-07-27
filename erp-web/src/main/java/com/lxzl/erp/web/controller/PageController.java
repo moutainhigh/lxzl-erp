@@ -1004,6 +1004,11 @@ public class PageController extends BaseController {
         return "/financialManage/jurnalAmountDetail";
     }
 
+    @RequestMapping("/finance-manage/statistics")
+    public String financialStatistics() {
+        return "/financialManage/financialStatistics";
+    }
+
     /**
      * 系统功能开关设置
      * @return
