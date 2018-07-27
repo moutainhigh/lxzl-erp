@@ -3771,6 +3771,7 @@ CREATE TABLE `erp_delayed_task` (
 	`request_json` text COLLATE utf8_bin COMMENT '请求参数',
 	`thread_name` varchar(64) COMMENT '线程名称',
 	`progress_rate` double(5,4) COMMENT '处理进度，10%的处理进度时存储为0.0100',
+	`file_url` varchar(200) NOT NULL DEFAULT '' COMMENT '文件URL',
 	`remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -3787,3 +3788,26 @@ CREATE TABLE `erp_delayed_task_config_export_statement` (
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户对账单延迟导出配置表';
+
+DROP TABLE IF EXISTS `erp_finance_statistics_data_weekly`;
+CREATE TABLE `erp_finance_statistics_data_weekly` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识ID',
+  `order_origin` int(11) NOT NULL COMMENT '订单来源：1-KA  2-电销  3-大客户渠道',
+  `rent_length_type` int(11) NOT NULL COMMENT '租赁类型：1-短租 2-长租 3-短短租',
+  `sub_company_id` int(20) NOT NULL COMMENT '分公司ID',
+  `customer_deals_count` int(11) NOT NULL DEFAULT '0' COMMENT '客户成交数量',
+  `new_customer_deals_count` int(11) NOT NULL DEFAULT '0' COMMENT '新客户成交数量',
+  `rent_product_deals_count` int(11) NOT NULL DEFAULT '0' COMMENT '租赁商品成交数量',
+  `return_product_deals_count` int(11) NOT NULL DEFAULT '0' COMMENT '退货商品成交数量',
+  `increase_product_deals_count` int(11) NOT NULL DEFAULT '0' COMMENT '净增长商品成交数量',
+  `year` int(11) NOT NULL COMMENT '年份',
+  `month` int(11) NOT NULL COMMENT '月份',
+  `week_of_month` int(11) NOT NULL COMMENT '当月第几周',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `create_time` datetime NOT NULL COMMENT '添加时间',
+  `create_user` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  KEY `index_year_month_week` (`year`,`month`,`week_of_month`)
+) ENGINE=InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='财务按周统计当月数据记录表';
