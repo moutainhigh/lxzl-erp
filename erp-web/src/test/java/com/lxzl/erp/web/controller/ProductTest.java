@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.product.ProductCategoryPageParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.product.ProductQueryParam;
@@ -23,6 +24,7 @@ public class ProductTest extends ERPUnTransactionalTest {
 
     @Test
     public void queryAllProduct() throws Exception {
+        String str = "{pageNo: 1, pageSize: 15, isRent: 1, k3ProductNo: \"\", productName: \"Dell\", productId: \"\"}";
         ProductQueryParam productQueryParam = new ProductQueryParam();
         productQueryParam.setPageNo(1);
         productQueryParam.setPageSize(15);
@@ -30,6 +32,14 @@ public class ProductTest extends ERPUnTransactionalTest {
         productQueryParam.setK3ProductNo("10");
 //        productQueryParam.setIsRent(0);
 //        productQueryParam.setBrandId(15);
+        TestResult testResult = getJsonTestResult("/product/queryAllProduct", productQueryParam);
+    }
+
+    @Test
+    public void queryAllProductJSON() throws Exception {
+        String str = "{pageNo: 1, pageSize: 15, isRent: 1, k3ProductNo: \"\", productName: \"Dell\", productId: \"\"}";
+        ProductQueryParam productQueryParam = FastJsonUtil.toBean(str, ProductQueryParam.class);
+
         TestResult testResult = getJsonTestResult("/product/queryAllProduct", productQueryParam);
     }
     @Test

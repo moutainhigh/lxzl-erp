@@ -668,16 +668,18 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                                         Date returnTimeDay = dateFormat.parse(returnTimeString);
                                         Date statementStartTime = exportStatementOrderDetail.getStatementStartTime();
                                         Date statementEndTime = exportStatementOrderDetail.getStatementEndTime();
-                                        if ((returnTimeDay.after(statementStartTime)||returnTimeDay.compareTo(statementStartTime) == 0) && (returnTimeDay.before(statementEndTime)||returnTimeDay.compareTo(statementEndTime) == 0)) {
-                                            retrunCheckStatementOrderDetail.setOrderRentStartTime(exportStatementOrderDetail.getOrderRentStartTime());
-                                            retrunCheckStatementOrderDetail.setOrderExpectReturnTime(exportStatementOrderDetail.getOrderExpectReturnTime());
-                                            retrunCheckStatementOrderDetail.setIsNew(exportStatementOrderDetail.getIsNew());
-                                            retrunCheckStatementOrderDetail.setPayMode(exportStatementOrderDetail.getPayMode());
-                                            retrunCheckStatementOrderDetail.setStatementExpectPayTime(returnTime);
-                                            retrunCheckStatementOrderDetail.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
-                                            retrunCheckStatementOrderDetail.setOrderRentType(exportStatementOrderDetail.getOrderRentType());
-                                            retrunCheckStatementOrderDetail.setItemSkuName(exportStatementOrderDetail.getItemSkuName());
-                                            newList.add(retrunCheckStatementOrderDetail);
+                                        if (statementStartTime != null && statementEndTime!= null && returnTimeDay != null) {
+                                            if ((returnTimeDay.after(statementStartTime)||returnTimeDay.compareTo(statementStartTime) == 0) && (returnTimeDay.before(statementEndTime)||returnTimeDay.compareTo(statementEndTime) == 0)) {
+                                                retrunCheckStatementOrderDetail.setOrderRentStartTime(exportStatementOrderDetail.getOrderRentStartTime());
+                                                retrunCheckStatementOrderDetail.setOrderExpectReturnTime(exportStatementOrderDetail.getOrderExpectReturnTime());
+                                                retrunCheckStatementOrderDetail.setIsNew(exportStatementOrderDetail.getIsNew());
+                                                retrunCheckStatementOrderDetail.setPayMode(exportStatementOrderDetail.getPayMode());
+                                                retrunCheckStatementOrderDetail.setStatementExpectPayTime(returnTime);
+                                                retrunCheckStatementOrderDetail.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
+                                                retrunCheckStatementOrderDetail.setOrderRentType(exportStatementOrderDetail.getOrderRentType());
+                                                retrunCheckStatementOrderDetail.setItemSkuName(exportStatementOrderDetail.getItemSkuName());
+                                                newList.add(retrunCheckStatementOrderDetail);
+                                            }
                                         }
                                     }
                                 }else {
@@ -688,7 +690,15 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                                 List<CheckStatementOrderDetail> retrunCheckStatementOrderDetailList = returnCheckStatementOrderDetailMapInner.get(key);
                                 Integer returnCount = 0;
                                 for (CheckStatementOrderDetail retrunCheckStatementOrderDetail:retrunCheckStatementOrderDetailList) {
-                                    returnCount += retrunCheckStatementOrderDetail.getItemCount();
+                                    Date returnTime = retrunCheckStatementOrderDetail.getStatementStartTime();
+                                    String returnTimeString = dateFormat.format(returnTime);
+                                    Date returnTimeDay = dateFormat.parse(returnTimeString);
+                                    Date statementStartTime = exportStatementOrderDetail.getStatementStartTime();
+                                    if (statementStartTime != null && returnTimeDay != null) {
+                                        if (returnTimeDay.before(statementStartTime)) {
+                                            returnCount += retrunCheckStatementOrderDetail.getItemCount();
+                                        }
+                                    }
                                 }
                                 Integer itemCount = returnCount + exportStatementOrderDetail.getItemCount();
                                 exportStatementOrderDetail.setItemCount(itemCount);
