@@ -948,9 +948,10 @@ public class StatisticsServiceImpl implements StatisticsService {
         Map<String, List<FinanceStatisticsDataWeeklyDO>> diffStatisticsDataWeeklyMap = new HashMap<>();
         Date now = new Date();
         // 测试使用(修改当前时间)
-       /* SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+       /**
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            now = sdf.parse(*//*"2018-03-06"*//*"2018-03-03");
+            now = sdf.parse("2018-07-01"); //"2018-03-06" "2018-03-03"
         } catch (ParseException e) {
             e.printStackTrace();
         }*/
@@ -1105,6 +1106,18 @@ public class StatisticsServiceImpl implements StatisticsService {
             System.out.println(excel.toString());
         }*/
         }
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataMonthlyToExcel(FinanceStatisticsWeeklyParam paramVo){
+        ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> serviceResult = new ServiceResult<>();
+        int maxWeekOfMonth = financeStatisticsWeeklySupport.getMaxWeekCountOfYearAndMonth(paramVo.getYear(), paramVo.getMonth());
+        paramVo.setWeekOfMonth(maxWeekOfMonth);
+        List<FinanceStatisticsDataWeeklyDO> financeAllStatisticsDataMonthly = financeStatisticsWeeklySupport.statisticsFinanceDataMonthly(paramVo);
+        List<FinanceStatisticsDataWeeklyExcel> excelList = financeStatisticsWeeklySupport.convertToExcelData(financeAllStatisticsDataMonthly);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(excelList);
         return serviceResult;
     }
 

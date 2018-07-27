@@ -20,6 +20,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -87,7 +89,9 @@ public class FinanceStatisticsWeeklySupport {
         Calendar cal = Calendar.getInstance();
         try {
             cal.setTime(date);
+            //cal.setFirstDayOfWeek(Calendar.MONDAY);  //设置星期一为当周第一天
             cal.set(Calendar.DAY_OF_WEEK, 1);
+            //cal.add(Calendar.DAY_OF_WEEK, -6); //并且设置为当周第一天
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -128,6 +132,44 @@ public class FinanceStatisticsWeeklySupport {
         }
         //将此次重新统计的数据保存到数据库
         freshStatisticsDataToDB(year, month, weekOfMonth, financeAllStatisticsDataWeekly);
+        return financeAllStatisticsDataWeekly;
+    }
+
+    public List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataMonthly(FinanceStatisticsWeeklyParam paramVo) {
+        int year = paramVo.getYear();
+        int month = paramVo.getMonth();
+        int weekOfMonth = paramVo.getWeekOfMonth();
+        boolean isHistoryData = !isCurrentWeek(year, month, weekOfMonth);
+        List<FinanceStatisticsDataWeeklyDO> financeAllStatisticsDataWeekly = new ArrayList<>();
+        //统计KA
+        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_KA);
+        List<FinanceStatisticsDataWeeklyDO> financeKAStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
+        if (CollectionUtil.isNotEmpty(financeKAStatisticsDataWeekly)) {
+            financeKAStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData, true);
+            if (CollectionUtil.isNotEmpty(financeKAStatisticsDataWeekly)) {
+                financeAllStatisticsDataWeekly.addAll(financeKAStatisticsDataWeekly);
+            }
+        }
+        //统计电销
+        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_TMK);
+        List<FinanceStatisticsDataWeeklyDO> financeTMKStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
+        if (CollectionUtil.isNotEmpty(financeTMKStatisticsDataWeekly)) {
+            financeTMKStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData, true);
+            if (CollectionUtil.isNotEmpty(financeTMKStatisticsDataWeekly)) {
+                financeAllStatisticsDataWeekly.addAll(financeTMKStatisticsDataWeekly);
+            }
+        }
+        // 统计大客户渠道
+        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_BCC);
+        List<FinanceStatisticsDataWeeklyDO> financeBCCStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
+        if (CollectionUtil.isNotEmpty(financeBCCStatisticsDataWeekly)) {
+            financeBCCStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData, true);
+            if (CollectionUtil.isNotEmpty(financeBCCStatisticsDataWeekly)) {
+                financeAllStatisticsDataWeekly.addAll(financeBCCStatisticsDataWeekly);
+            }
+        }
+        //将此次重新统计的数据保存到数据库
+        //freshStatisticsDataToDB(year, month, weekOfMonth, financeAllStatisticsDataWeekly);
         return financeAllStatisticsDataWeekly;
     }
 
@@ -337,12 +379,14 @@ public class FinanceStatisticsWeeklySupport {
         Date now = new Date();
         Calendar currentCalendar = Calendar.getInstance();
         // 测试使用(修改当前时间)
-      /*  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        /**
+       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            now = sdf.parse(*//*"2018-03-06"*//*"2018-03-03");
+            now = sdf.parse("2018-07-01");//"2018-03-06" "2018-03-03"
         } catch (ParseException e) {
             e.printStackTrace();
-        }*/
+        }
+        */
         currentCalendar.setTime(now);
         int currentYear = currentCalendar.get(Calendar.YEAR);
         int currentMonth = currentCalendar.get(Calendar.MONTH) + 1; // 因为日历获取的月份比实际月份小1
