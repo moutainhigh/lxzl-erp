@@ -19,9 +19,8 @@
                     <div class="col-md-12">
                         <label for="content" class="field-label">内容</label>
                         <label for="content" class="field prepend-icon">
-                            <textarea class="gui-textarea required" name="content" placeholder="请输入内容" maxlength="500"></textarea>
-                            <label for="content" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
+                            <textarea class="gui-textarea required area-item" name="content" placeholder="请输入内容" maxlength="500"></textarea>
+                            <label for="content" class="field-icon"><i class="fa fa-tag"></i></label>
                         </label>
                     </div>
                 </div>
@@ -29,9 +28,8 @@
                     <div class="col-md-12">
                         <label for="remark" class="field-label">备注</label>
                         <label for="remark" class="field prepend-icon">
-                            <textarea class="gui-textarea" id="remark" name="remark" placeholder="请输入备注" maxlength="500"></textarea>
-                            <label for="remark" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
+                            <textarea class="gui-textarea area-item" id="remark" name="remark" placeholder="请输入备注" maxlength="500"></textarea>
+                            <label for="remark" class="field-icon"><i class="fa fa-tag"></i></label>
                         </label>
                     </div>
                 </div>
