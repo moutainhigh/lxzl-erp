@@ -904,9 +904,19 @@ public class CustomerServiceImpl implements CustomerService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        if (customerCompanyQueryParam.getCompanyName()!=null) {
-            //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
-            customerCompanyQueryParam.setCompanyName(StrReplaceUtil.nameToSimple(customerCompanyQueryParam.getCompanyName()));
+        if (StringUtil.isNotBlank(customerCompanyQueryParam.getCompanyName())){
+            if (customerCompanyQueryParam.getCompanyName() != null ) {
+                //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
+                customerCompanyQueryParam.setCompanyName(StrReplaceUtil.nameToSimple(customerCompanyQueryParam.getCompanyName()));
+            }
+            if (StringUtil.isBlank(customerCompanyQueryParam.getCompanyName())) {
+                List<Customer> customerList = new ArrayList<>();
+                Page<Customer> page = new Page<>(customerList, 0, customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
+
+                result.setErrorCode(ErrorCode.SUCCESS);
+                result.setResult(page);
+                return result;
+            }
         }
 
         maps.put("customerCompanyQueryParam", customerCompanyQueryParam);

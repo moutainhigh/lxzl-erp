@@ -1163,7 +1163,7 @@ public class ErrorCode {
         MAP.put(BULK_MATERIAL_STATUS_NOT_REPAIR, "编号【%s 】的散料只有处于设备空闲或者租赁中,才能进行新增维修操作");
         MAP.put(PRODUCT_NOT_SAME, "收货商品不一致，请联系相关人员");
         MAP.put(MATERIAL_NOT_SAME, "收货配件不一致，请联系相关人员");
-        MAP.put(CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL, "企业客户首次所需设备的sku的ID不能为空");
+        MAP.put(CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL, "企业客户所需设备的sku的ID不能为空");
         MAP.put(CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL, "企业客户首次所需设备的单台价值不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL, "企业客户首次所需设备的租赁数量不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_RENT_LENGTH_NOT_NULL, "企业客户首次所需设备的租赁期限不能空");
