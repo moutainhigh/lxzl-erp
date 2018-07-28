@@ -901,9 +901,7 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, Page<Customer>> pageCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam) {
         ServiceResult<String, Page<Customer>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
-        Map<String, Object> maps = new HashMap<>();
-        maps.put("start", pageQuery.getStart());
-        maps.put("pageSize", pageQuery.getPageSize());
+
         if (StringUtil.isNotBlank(customerCompanyQueryParam.getCompanyName())){
             if (customerCompanyQueryParam.getCompanyName() != null ) {
                 //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
@@ -911,7 +909,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
             if (StringUtil.isBlank(customerCompanyQueryParam.getCompanyName())) {
                 List<Customer> customerList = new ArrayList<>();
-                Page<Customer> page = new Page<>(customerList, 0, customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
+                Page<Customer> page = new Page<>(customerList, CommonConstant.COMMON_ZERO, customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
 
                 result.setErrorCode(ErrorCode.SUCCESS);
                 result.setResult(page);
@@ -919,6 +917,9 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
 
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
         maps.put("customerCompanyQueryParam", customerCompanyQueryParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
         Integer totalCount = customerMapper.findCustomerCompanyCountByParams(maps);
