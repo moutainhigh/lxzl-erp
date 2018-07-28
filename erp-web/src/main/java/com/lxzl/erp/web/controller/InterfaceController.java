@@ -218,8 +218,9 @@ public class InterfaceController extends BaseController {
             httpSession.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, superUser);
         }
         ServiceResult<String, String> serviceResult = customerService.addPerson(customer);
-
         httpSession.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, null);
+        if (serviceResult.getErrorCode().equals(ErrorCode.CUSTOMER_PERSON_IS_EXISTS))
+            return resultGenerator.generate(ErrorCode.SUCCESS, serviceResult.getResult());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
