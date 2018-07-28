@@ -244,7 +244,7 @@
 
 	<select id="findByRealNameAndPersonNo" resultMap="CustomerDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> FROM  erp_customer ec
-		LEFT JOIN erp_customer_person ecp ON ec.id=ecp.customer_id AND ecp.person_no = #{personNo, jdbcType=VARCHAR} AND
+		LEFT JOIN erp_customer_person ecp ON ec.id=ecp.customer_id AND ecp.person_no = #{personNo, jdbcType=VARCHAR}
 		WHERE real_name = #{realName, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>
 
