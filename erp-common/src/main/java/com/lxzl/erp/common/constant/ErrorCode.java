@@ -1007,6 +1007,27 @@ public class ErrorCode {
     public static final String QUARTZ_TRIGGER_GROUP_NOT_NULL = "J250000007";
     public static final String QUARTZ_CRON_TRIGGER_FLAG_NOT_NULL = "J250000008";
     public static final String QUARTZ_EXPRESSION_NOT_NULL = "J250000009";
+    public static final String QUARTZ_HOLIDAY_NAME_NOT_NULL = "J250000010";
+    public static final String QUARTZ_HOLIDAY_YEAR_NOT_NULL = "J250000011";
+    public static final String QUARTZ_HOLIDAY_MONTH_NOT_NULL = "J250000012";
+    public static final String QUARTZ_HOLIDAY_DAY_NOT_NULL = "J250000013";
+    public static final String QUARTZ_TASK_EXECUTOR_REQUEST_URL_NOT_NULL = "J250000014";
+    public static final String QUARTZ_TASK_EXECUTOR_SYSTEM_TYPE_NOT_NULL = "J250000015";
+    public static final String QUARTZ_TASK_EXECUTOR_JOB_TYPE_NOT_NULL = "J250000016";
+    public static final String QUARTZ_TASK_EXECUTOR_ID_NOT_NULL = "J250000017";
+    public static final String QUARTZ_TASK_EXECUTOR_NOT_NULL = "J250000018";
+    public static final String QUARTZ_TRIGGER_NAME_NOT_CN = "J250000019";
+    public static final String QUARTZ_TRIGGER_NAME_IS_LENGTH = "J250000020";
+    public static final String QUARTZ_TRIGGER_GROUP_NOT_CN = "J250000021";
+    public static final String QUARTZ_TRIGGER_GROUP_IS_LENGTH = "J250000022";
+    public static final String QUARTZ_JOB_NAME_NOT_CN = "J250000023";
+    public static final String QUARTZ_JOB_NAME_IS_LENGTH = "J250000024";
+    public static final String QUARTZ_JOB_GROUP_NOT_CN = "J250000025";
+    public static final String QUARTZ_JOB_GROUP_IS_LENGTH = "J250000026";
+    public static final String QUARTZ_HOLIDAY_NAME_NOT_CN = "J250000027";
+    public static final String QUARTZ_HOLIDAY_NAME_IS_LENGTH = "J250000028";
+    public static final String QUARTZ_CRON_EXPRESSION_IS_LENGTH = "J250000029";
+    public static final String QUARTZ_TASK_EXECUTOR_NO_NOT_NULL = "J250000030";
 
     // 动态SQL查询
     public static final String DYNAMIC_SQL_ERROR = "J260000001";
@@ -1997,6 +2018,28 @@ public class ErrorCode {
         MAP.put(QUARTZ_TRIGGER_GROUP_NOT_NULL, "定时任务的触发器组名称不能为空");
         MAP.put(QUARTZ_CRON_TRIGGER_FLAG_NOT_NULL, "定时任务的CRON标识不能为空");
         MAP.put(QUARTZ_EXPRESSION_NOT_NULL, "定时任务的CRON表达式不能为空");
+        MAP.put(QUARTZ_HOLIDAY_NAME_NOT_NULL, "定时任务的假期名称不能为空");
+        MAP.put(QUARTZ_HOLIDAY_YEAR_NOT_NULL, "定时任务日期列表,年份不能为空");
+        MAP.put(QUARTZ_HOLIDAY_MONTH_NOT_NULL, "定时任务日期列表,月份不能为空");
+        MAP.put(QUARTZ_HOLIDAY_DAY_NOT_NULL, "定时任务日期列表,日不能为空");
+        MAP.put(QUARTZ_TASK_EXECUTOR_REQUEST_URL_NOT_NULL, "定时任务执行者请求url不能为空");
+        MAP.put(QUARTZ_TASK_EXECUTOR_SYSTEM_TYPE_NOT_NULL, "定时任务执行者系统类型不能为空");
+        MAP.put(QUARTZ_TASK_EXECUTOR_JOB_TYPE_NOT_NULL, "定时任务执行者任务类型不能为空");
+        MAP.put(QUARTZ_TASK_EXECUTOR_ID_NOT_NULL, "定时任务执行者ID不能为空");
+        MAP.put(QUARTZ_TASK_EXECUTOR_NOT_NULL, "定时任务执行者信息不能为空");
+        MAP.put(QUARTZ_TRIGGER_NAME_NOT_CN, "定时任务触发器名称只能是英文和数字组成");
+        MAP.put(QUARTZ_TRIGGER_NAME_IS_LENGTH, "定时任务触发器名称长度不能超过31");
+        MAP.put(QUARTZ_TRIGGER_GROUP_NOT_CN, "定时任务触发器分组名称只能是英文和数字组成");
+        MAP.put(QUARTZ_TRIGGER_GROUP_IS_LENGTH, "定时任务触发器分组名称长度不能超过31");
+        MAP.put(QUARTZ_JOB_NAME_NOT_CN, "定时任务工作名称只能是英文和数字组成");
+        MAP.put(QUARTZ_JOB_NAME_IS_LENGTH, "定时任务工作名称长度不能超过31");
+        MAP.put(QUARTZ_JOB_GROUP_NOT_CN, "定时任务工作分组名称只能是英文和数字组成");
+        MAP.put(QUARTZ_JOB_GROUP_IS_LENGTH, "定时任务工作分组名称长度不能超过31");
+        MAP.put(QUARTZ_HOLIDAY_NAME_NOT_CN, "定时任务假期名称只能是英文和数字组成");
+        MAP.put(QUARTZ_HOLIDAY_NAME_IS_LENGTH, "定时任务假期名称长度不能超过31");
+        MAP.put(QUARTZ_CRON_EXPRESSION_IS_LENGTH, "定时任务cron表达式长度不能超过31");
+        MAP.put(QUARTZ_TASK_EXECUTOR_NO_NOT_NULL, "定时任务任务执行者编号不能为空");
+
 
         MAP.put(DYNAMIC_SQL_ERROR, "动态SQL查询语句不正确");
         MAP.put(SQL_TITLE_NOT_NULL, "动态SQL语句标题不能为空");
