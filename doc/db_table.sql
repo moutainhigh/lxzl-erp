@@ -382,6 +382,7 @@ CREATE TABLE `erp_customer` (
   `confirm_bad_account_status` INT(11) NOT NULL DEFAULT '0' COMMENT '是否为坏账客户 0否1是 默认为0',
   `confirm_bad_account_user` INT(20) COMMENT '坏账客户确认人',
   `confirm_bad_account_time` DATETIME COMMENT '坏账客户确认时间',
+  `user_source` INT(11) NOT NULL DEFAULT 1 COMMENT '用户来源,1-erp系统，2-大学生商城',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',

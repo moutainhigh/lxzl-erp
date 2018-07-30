@@ -1056,3 +1056,5 @@ CREATE TABLE `erp_finance_statistics_data_weekly` (
   KEY `index_year_month_week` (`year`,`month`,`week_of_month`)
 ) ENGINE=InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='财务按周统计当月数据记录表';
 
+ALTER TABLE `erp_customer` ADD COLUMN `user_source` int(11) NOT NULL DEFAULT 1 COMMENT '用户来源,1-erp系统，2-大学生商城' AFTER `confirm_bad_account_time`;
+
