@@ -37,6 +37,7 @@
 		<result column="confirm_bad_account_status" jdbcType="INTEGER" property="confirmBadAccountStatus" />
 		<result column="confirm_bad_account_user" jdbcType="INTEGER" property="confirmBadAccountUser" />
 		<result column="confirm_bad_account_time" jdbcType="TIMESTAMP" property="confirmBadAccountTime" />
+        <result column="customer_source" jdbcType="INTEGER" property="customerSource" />
 
 		<association resultMap="CustomerCompanyDO" property="customerCompanyDO"/>
 		<association resultMap="CustomerPersonDO" property="customerPersonDO"/>
@@ -400,6 +401,9 @@
 			<if test="confirmBadAccountTime != null">
 				confirm_bad_account_time = #{confirmBadAccountTime,jdbcType=TIMESTAMP},
 			</if>
+            <if test="customerSource != null">
+                customer_source = #{customerSource,jdbcType=INTEGER},
+            </if>
 				pass_reason = #{passReason,jdbcType=VARCHAR},
 				fail_reason = #{failReason,jdbcType=VARCHAR},
 				union_user = #{unionUser,jdbcType=INTEGER},
