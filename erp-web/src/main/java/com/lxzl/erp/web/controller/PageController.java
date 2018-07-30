@@ -1224,4 +1224,10 @@ public class PageController extends BaseController {
     public String addSystemNotice() {
         return "/systemManage/addSystemNotice";
     }
+
+    //定时任务执行者列表
+    @RequestMapping("/timed-manage/list")
+    public String timerManageList() {
+        return "/timedTask/taskScheduler";
+    }
 }
