@@ -50,6 +50,7 @@ import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.erp.dataaccess.domain.workflow.*;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import com.lxzl.se.dataaccess.mysql.source.interceptor.SqlLogInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -279,38 +280,68 @@ public class WorkflowServiceImpl implements WorkflowService {
     public ServiceResult<String, String> cancelWorkFlow(Integer workflowType, String workflowReferNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
-        User loginUser = userSupport.getCurrentUser();
+        String userId = userSupport.getCurrentUser().getUserId().toString();
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
         if (workflowLinkDO == null) {
             result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
             return result;
         }
-
-        if (VerifyStatus.VERIFY_STATUS_PASS.equals(workflowLinkDO.getCurrentVerifyStatus())
-                || VerifyStatus.VERIFY_STATUS_BACK.equals(workflowLinkDO.getCurrentVerifyStatus())) {
+        if (VerifyStatus.VERIFY_STATUS_PASS.equals(workflowLinkDO.getCurrentVerifyStatus()) || VerifyStatus.VERIFY_STATUS_BACK.equals(workflowLinkDO.getCurrentVerifyStatus())) {
             result.setErrorCode(ErrorCode.VERIFY_STATUS_ERROR);
             return result;
         }
+        //取消审核组人员在审核中的变成取消
+        List<WorkflowVerifyUserGroupDO> workflowVerifyUserGroupDOList = workflowVerifyUserGroupMapper.findByVerifyUserGroupId(workflowLinkDO.getVerifyUserGroupId());
+        if(CollectionUtil.isNotEmpty(workflowVerifyUserGroupDOList)){
+            List<WorkflowVerifyUserGroupDO> updateWorkflowVerifyUserGroupDOList = new ArrayList<>();
+            for(WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO : workflowVerifyUserGroupDOList){
+                if(VerifyStatus.VERIFY_STATUS_COMMIT.equals(workflowVerifyUserGroupDO.getVerifyStatus())){
+                    workflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_CANCEL);
+                    workflowVerifyUserGroupDO.setUpdateUser(userId);
+                    workflowVerifyUserGroupDO.setUpdateTime(currentTime);
+                    updateWorkflowVerifyUserGroupDOList.add(workflowVerifyUserGroupDO);
+                }
+            }
+            if(CollectionUtil.isNotEmpty(updateWorkflowVerifyUserGroupDOList)){
+                SqlLogInterceptor.setExecuteSql("skip print  workflowVerifyUserGroupMapper.updateBatchVerifyUserGroup  sql ......");
+                workflowVerifyUserGroupMapper.updateBatchVerifyUserGroup(updateWorkflowVerifyUserGroupDOList);
+            }
+        }
+        //新增一条审核组当前取消人的审核组人员
+        String verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId();
+        WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
+        workflowVerifyUserGroupDO.setVerifyUserGroupId(verifyUserGroupId);
+        workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THE_SAME_GROUP_ALL_PASS);
+        workflowVerifyUserGroupDO.setVerifyUser(userSupport.getCurrentUserId());
+        workflowVerifyUserGroupDO.setVerifyTime(currentTime);
+        workflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_CANCEL);
+        workflowVerifyUserGroupDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        workflowVerifyUserGroupDO.setCreateTime(currentTime);
+        workflowVerifyUserGroupDO.setCreateUser(userId);
+        workflowVerifyUserGroupMapper.save(workflowVerifyUserGroupDO);
 
+        //修改当前工作流状态
         workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_CANCEL);
         workflowLinkDO.setCurrentVerifyUser(userSupport.getCurrentUserId());
+        workflowLinkDO.setVerifyUserGroupId(verifyUserGroupId);
         workflowLinkMapper.update(workflowLinkDO);
         WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
 
+        //新增工作流详情取消节点
         List<WorkflowLinkDetailDO> workflowLinkDetailDOList = workflowLinkDO.getWorkflowLinkDetailDOList();
         if (workflowLinkDetailDOList != null && workflowLinkDetailDOList.size() > 1) {
             WorkflowLinkDetailDO previousWorkflowLinkDetailDO = workflowLinkDetailDOList.get(1);
             workflowLinkDetailDO.setWorkflowPreviousNodeId(previousWorkflowLinkDetailDO.getWorkflowCurrentNodeId());
             workflowLinkDetailDO.setWorkflowStep(previousWorkflowLinkDetailDO.getWorkflowStep() + 1);
         }
-
+        workflowLinkDetailDO.setVerifyUserGroupId(verifyUserGroupId);
         workflowLinkDetailDO.setVerifyUser(userSupport.getCurrentUserId());
         workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
         workflowLinkDetailDO.setWorkflowReferNo(workflowReferNo);
         workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_CANCEL);
         workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        workflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
-        workflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
+        workflowLinkDetailDO.setUpdateUser(userId);
+        workflowLinkDetailDO.setCreateUser(userId);
         workflowLinkDetailDO.setUpdateTime(currentTime);
         workflowLinkDetailDO.setCreateTime(currentTime);
         workflowLinkDetailMapper.save(workflowLinkDetailDO);
