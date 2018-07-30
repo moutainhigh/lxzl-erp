@@ -266,9 +266,11 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_REAL_NAME_ERROR);
             return serviceResult;
         }
-        CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerPerson().getRealName());
+        CustomerDO dbCustomerDO = customerMapper.findByRealNameAndPersonNo(customer.getCustomerPerson().getRealName(),
+                customer.getCustomerPerson().getPersonNo());
         if (dbCustomerDO != null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_IS_EXISTS);
+            serviceResult.setResult(dbCustomerDO.getCustomerNo());
             return serviceResult;
         }
         //判断业务员和联合开发员
@@ -901,14 +903,25 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, Page<Customer>> pageCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam) {
         ServiceResult<String, Page<Customer>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
+
+        if (StringUtil.isNotBlank(customerCompanyQueryParam.getCompanyName())){
+            if (customerCompanyQueryParam.getCompanyName() != null ) {
+                //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
+                customerCompanyQueryParam.setCompanyName(StrReplaceUtil.nameToSimple(customerCompanyQueryParam.getCompanyName()));
+            }
+            if (StringUtil.isBlank(customerCompanyQueryParam.getCompanyName())) {
+                List<Customer> customerList = new ArrayList<>();
+                Page<Customer> page = new Page<>(customerList, CommonConstant.COMMON_ZERO, customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
+
+                result.setErrorCode(ErrorCode.SUCCESS);
+                result.setResult(page);
+                return result;
+            }
+        }
+
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        if (customerCompanyQueryParam.getCompanyName()!=null) {
-            //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
-            customerCompanyQueryParam.setCompanyName(StrReplaceUtil.nameToSimple(customerCompanyQueryParam.getCompanyName()));
-        }
-
         maps.put("customerCompanyQueryParam", customerCompanyQueryParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
         Integer totalCount = customerMapper.findCustomerCompanyCountByParams(maps);
@@ -1151,7 +1164,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
             if (customerCompanyNeed.getProductRentPrice() == null || customerCompanyNeed.getTotalProductRentPrice() == null){
-                ProductSkuDO productSkuDO = productSkuMapper.findById(customerCompanyNeed.getSkuId());
+                ProductSkuDO productSkuDO = productSkuMapper.findByIdAndStatusDelete(customerCompanyNeed.getSkuId());
                 if (productSkuDO == null) {
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
                     return serviceResult;
@@ -1169,10 +1182,10 @@ public class CustomerServiceImpl implements CustomerService {
                     //次新
                     if(CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getRentType())){
                         //按天租
-                        customerCompanyNeed.setProductRentPrice(productSkuDO.getNewDayRentPrice());
+                        customerCompanyNeed.setProductRentPrice(productSkuDO.getDayRentPrice());
                     }else{
                         //按月租
-                        customerCompanyNeed.setProductRentPrice(productSkuDO.getNewMonthRentPrice());
+                        customerCompanyNeed.setProductRentPrice(productSkuDO.getMonthRentPrice());
                     }
                 }
                 //商品总租金
@@ -1500,9 +1513,9 @@ public class CustomerServiceImpl implements CustomerService {
             result.setErrorCode(ErrorCode.CUSTOMER_STATUS_IS_PASS_CAN_REJECT);
             return result;
         }
-        String userId = customerDO.getCreateUser();
+        Integer userId = customerDO.getOwner();
         Integer workflowType = WorkflowType.WORKFLOW_TYPE_CUSTOMER;
-        UserDO userDO = userMapper.findByUserId(Integer.parseInt(userId));
+        UserDO userDO = userMapper.findByUserId(userId);
         if(userSupport.isChannelSubCompany(ConverterUtil.convert(userDO,User.class))){
             workflowType = WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER;
         }
@@ -2686,7 +2699,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, BigDecimal> serviceResult = new ServiceResult<>();
 
         for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
-            ProductSkuDO productSkuDO = productSkuMapper.findById(customerCompanyNeed.getSkuId());
+            ProductSkuDO productSkuDO = productSkuMapper.findByIdAndStatusDelete(customerCompanyNeed.getSkuId());
             if (productSkuDO == null) {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
                 return serviceResult;
@@ -2707,10 +2720,10 @@ public class CustomerServiceImpl implements CustomerService {
                 customerCompanyNeed.setUnitPrice(productSkuDO.getSkuPrice());
                 if(CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getRentType())){
                     //按天租
-                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewDayRentPrice());
+                    customerCompanyNeed.setProductRentPrice(productSkuDO.getDayRentPrice());
                 }else{
                     //按月租
-                    customerCompanyNeed.setProductRentPrice(productSkuDO.getNewMonthRentPrice());
+                    customerCompanyNeed.setProductRentPrice(productSkuDO.getMonthRentPrice());
                 }
             }
             if (customerCompanyNeed.getRentCount() == null) {

@@ -381,7 +381,120 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void updateCustomerCompanyJSON() throws Exception {
-        String str = "{\"isDisabled\":\"0\",\"unionUser\":\"500018\",\"customerCompany\":{\"customerOrigin\":\"3\",\"unionUserName\":\"QWER\",\"unionUser\":\"500018\",\"companyName\":\"高超专用测试账户1\",\"companyAbb\":\"测试地址\",\"landline\":\"0755-89741234\",\"connectRealName\":\"陈斯托夫斯基\",\"connectPhone\":\"13112341234\",\"legalPerson\":\"张江\",\"legalPersonNo\":\"230321198606131214\",\"legalPersonPhone\":\"13808088080\",\"companyFoundTime\":\"2018-01-06\",\"industry\":\"\",\"affiliatedEnterprise\":\"\",\"registeredCapital\":\"0\",\"officeNumber\":\"\",\"productPurpose\":\"\",\"agentPersonName\":\"\",\"agentPersonPhone\":\"\",\"agentPersonNo\":\"\",\"unifiedCreditCode\":\"\",\"operatingArea\":\"\",\"unitInsuredNumber\":\"\",\"isDisabled\":\"0\",\"remark\":\"\",\"province\":\"1\",\"city\":\"1\",\"district\":\"1\",\"address\":\"32\",\"businessLicensePictureImage\":{\"imgId\":188},\"legalPersonNoPictureFrontImage\":{\"imgId\":189},\"legalPersonNoPictureBackImage\":{\"imgId\":190},\"legalPersonCreditReportImageList\":[{\"imgId\":191}],\"fixedAssetsProveImageList\":[{\"imgId\":192}],\"publicAccountFlowBillImageList\":[{\"imgId\":193}],\"socialSecurityRoProvidentFundImageList\":[{\"imgId\":194}],\"cooperationAgreementImageList\":[{\"imgId\":195}],\"legalPersonEducationImageList\":[{\"imgId\":196}],\"legalPersonPositionalTitleImageList\":[{\"imgId\":197}],\"localeChecklistsImageList\":[{\"imgId\":200}],\"managerPlaceRentContractImageList\":[{\"imgId\":199}],\"otherDateImageList\":[{\"imgId\":198}]},\"customerNo\":\"LXCC10002018010600026\"}";
+        String str = "{\n" +
+                "    \"customerNo\": \"LXCC-025-20180212-00490\",\n" +
+                "    \"unionUser\": \"\",\n" +
+                "    \"owner\": \"500227\",\n" +
+                "    \"firstApplyAmount\": \"75000.00\",\n" +
+                "    \"laterApplyAmount\": \"39690\",\n" +
+                "    \"deliveryMode\": \"3\",\n" +
+                "    \"shortLimitReceivableAmount\": \"\",\n" +
+                "    \"isDefaultConsignAddress\": \"0\",\n" +
+                "    \"statementDate\": \"20\",\n" +
+                "    \"customerCompany\": {\n" +
+                "        \"customerOrigin\": \"4\",\n" +
+                "        \"ownerName\": \"何波\",\n" +
+                "        \"owner\": \"500227\",\n" +
+                "        \"unionUserName\": \"\",\n" +
+                "        \"unionUser\": \"\",\n" +
+                "        \"companyAbb\": \"\",\n" +
+                "        \"industry\": \"1\",\n" +
+                "        \"affiliatedEnterprise\": \"北京宇天恒瑞科技发展有限公司\",\n" +
+                "        \"unitInsuredNumber\": \"\",\n" +
+                "        \"landline\": \"\",\n" +
+                "        \"shortLimitReceivableAmount\": \"\",\n" +
+                "        \"deliveryMode\": \"3\",\n" +
+                "        \"isLegalPersonApple\": \"0\",\n" +
+                "        \"agentPersonName\": \"王莹\",\n" +
+                "        \"agentPersonNo\": \"51010619880331002X\",\n" +
+                "        \"agentPersonPhone\": \"13151076268\",\n" +
+                "        \"statementDate\": \"20\",\n" +
+                "        \"remark\": \"\",\n" +
+                "        \"legalPerson\": \"许平\",\n" +
+                "        \"legalPersonNo\": \"430304197808243050\",\n" +
+                "        \"legalPersonPhone\": \"18080033060\",\n" +
+                "        \"registeredCapital\": \"10000000\",\n" +
+                "        \"officeNumber\": \"50\",\n" +
+                "        \"unifiedCreditCode\": \"91110105672825056T\",\n" +
+                "        \"operatingArea\": \"1000\",\n" +
+                "        \"connectRealName\": \"许平\",\n" +
+                "        \"connectPhone\": \"18080033060\",\n" +
+                "        \"productPurpose\": \"办公\",\n" +
+                "        \"firstApplyAmount\": \"75000.00\",\n" +
+                "        \"laterApplyAmount\": \"39690\",\n" +
+                "        \"companyFoundTime\": \"2017-08-02\",\n" +
+                "        \"isDefaultConsignAddress\": \"0\",\n" +
+                "        \"province\": \"\",\n" +
+                "        \"city\": \"\",\n" +
+                "        \"district\": \"\",\n" +
+                "        \"address\": \"南京市栖霞区迈皋桥创业园科技研发基地寅春路18号-M747\",\n" +
+                "        \"unitPrice\": \"2646.00\",\n" +
+                "        \"isNewProduct\": \"0\",\n" +
+                "        \"productId\": \"2000041\",\n" +
+                "        \"skuId\": \"146\",\n" +
+                "        \"rentCount-1667-96\": \"10\",\n" +
+                "        \"rentType-1667-44\": \"2\",\n" +
+                "        \"rentTimeLength-1667-76\": \"12\",\n" +
+                "        \"firstListTotalPrice\": \"75000.00\",\n" +
+                "        \"rentCount-146-61\": \"15\",\n" +
+                "        \"rentType-146-8\": \"2\",\n" +
+                "        \"rentTimeLength-146-62\": \"12\",\n" +
+                "        \"laterListTotalPrice\": \"\",\n" +
+                "        \"companyName\": \"北京宇天恒瑞科技发展有限公司南京分公司\",\n" +
+                "        \"businessLicensePictureImage\": {\n" +
+                "            \"imgId\": 363\n" +
+                "        },\n" +
+                "        \"legalPersonNoPictureFrontImage\": {\n" +
+                "            \"imgId\": 364\n" +
+                "        },\n" +
+                "        \"legalPersonNoPictureBackImage\": {\n" +
+                "            \"imgId\": 365\n" +
+                "        },\n" +
+                "        \"agentPersonNoPictureFrontImage\": {\n" +
+                "            \"imgId\": 366\n" +
+                "        },\n" +
+                "        \"agentPersonNoPictureBackImage\": {\n" +
+                "            \"imgId\": 367\n" +
+                "        },\n" +
+                "        \"customerCompanyNeedFirstList\": [\n" +
+                "            {\n" +
+                "                \"skuId\": 146,\n" +
+                "                \"rentCount\": 10,\n" +
+                "                \"isNew\": 0,\n" +
+                "                \"rentType\": 2,\n" +
+                "                \"rentTimeLength\": 12\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"customerCompanyNeedLaterList\": [\n" +
+                "            {\n" +
+                "                \"skuId\": 146,\n" +
+                "                \"rentCount\": 15,\n" +
+                "                \"isNew\": 0,\n" +
+                "                \"rentType\": 2,\n" +
+                "                \"rentTimeLength\": 12\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"customerConsignInfoList\": [\n" +
+                "            {\n" +
+                "                \"address\": \"南京市建邺区庐山路226号南京移动20楼\",\n" +
+                "                \"consigneeName\": \"无收件人\",\n" +
+                "                \"createTime\": 1518418296000,\n" +
+                "                \"createUser\": \"500227\",\n" +
+                "                \"createUserRealName\": \"何波\",\n" +
+                "                \"customerConsignInfoId\": 1446,\n" +
+                "                \"customerId\": 701446,\n" +
+                "                \"dataStatus\": 1,\n" +
+                "                \"isBusinessAddress\": 0,\n" +
+                "                \"isMain\": 1,\n" +
+                "                \"updateTime\": 1518418296000,\n" +
+                "                \"updateUser\": \"500227\",\n" +
+                "                \"updateUserRealName\": \"何波\",\n" +
+                "                \"verifyStatus\": 0,\n" +
+                "                \"workflowType\": 0\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
 
         Customer customer = FastJsonUtil.toBean(str, Customer.class);
         TestResult result = getJsonTestResult("/customer/updateCompany", customer);
@@ -431,14 +544,15 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pageCustomerCompany() throws Exception {
         CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
-        customerCompanyQueryParam.setCustomerStatus(3);
+//        customerCompanyQueryParam.setCustomerStatus(4);
 //        customerCompanyQueryParam.setCustomerNo("LXCC10002018010100005");
-//          customerCompanyQueryParam.setCompanyName("a");
+          customerCompanyQueryParam.setCompanyName("12312");
 //          customerCompanyQueryParam.setIsRisk(1);
 //        customerCompanyQueryParam.setProductPurpose("测试");
 //        customerCompanyQueryParam.setIsDisabled(0);
 //        customerCompanyQueryParam.setCustomerStatus(CustomerStatus.STATUS_PASS);
 //        customerCompanyQueryParam.setConnectPhone("13726273851");
+
 //        customerCompanyQueryParam.setOwnerSubCompanyId(3);
 //        customerCompanyQueryParam.setConfirmStatementStatus(ConfirmStatementStatus.CONFIRM_STATUS_YES);
         TestResult result = getJsonTestResult("/customer/pageCustomerCompany", customerCompanyQueryParam);
@@ -477,7 +591,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-2000-20180306-00309");
+        customer.setCustomerNo("LXCC-2000-20180212-02830");
 
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }

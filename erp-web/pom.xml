@@ -34,6 +34,16 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 		</profile>
+		<!-- 开发环境，默认激活 -->
+		<profile>
+			<id>test2</id>
+			<properties>
+				<env>test2</env>
+			</properties>
+			<!--<activation>-->
+				<!--<activeByDefault>true</activeByDefault>-->
+			<!--</activation>-->
+		</profile>
 		<!-- 开发测试 -->
 		<profile>
 			<id>devtest</id>
