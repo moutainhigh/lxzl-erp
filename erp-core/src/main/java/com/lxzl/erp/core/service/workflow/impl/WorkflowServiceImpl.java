@@ -543,6 +543,10 @@ public class WorkflowServiceImpl implements WorkflowService {
             }
         }
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
+        if(workflowLinkDO != null && VerifyStatus.VERIFY_STATUS_CANCEL.equals(workflowLinkDO.getCurrentVerifyStatus())){
+            result.setErrorCode(ErrorCode.WORKFLOW_LINK_VERIFY_ALREADY_OVER);
+            return result;
+        }
         WorkflowNodeDO workflowNodeDO = null;
         WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
         if (workflowLinkDO == null) {
@@ -873,7 +877,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
         WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(0);
         if (VerifyStatus.VERIFY_STATUS_PASS.equals(lastWorkflowLinkDetailDO.getVerifyStatus())
-                || VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
+                || VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())
+                || VerifyStatus.VERIFY_STATUS_CANCEL.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
             result.setErrorCode(ErrorCode.WORKFLOW_LINK_VERIFY_ALREADY_OVER);
             return result;
         }
