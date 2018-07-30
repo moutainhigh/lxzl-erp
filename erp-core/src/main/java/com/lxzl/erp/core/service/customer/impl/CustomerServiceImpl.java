@@ -266,9 +266,11 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_REAL_NAME_ERROR);
             return serviceResult;
         }
-        CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerPerson().getRealName());
+        CustomerDO dbCustomerDO = customerMapper.findByRealNameAndPersonNo(customer.getCustomerPerson().getRealName(),
+                customer.getCustomerPerson().getPersonNo());
         if (dbCustomerDO != null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_IS_EXISTS);
+            serviceResult.setResult(dbCustomerDO.getCustomerNo());
             return serviceResult;
         }
         //判断业务员和联合开发员
@@ -901,14 +903,25 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, Page<Customer>> pageCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam) {
         ServiceResult<String, Page<Customer>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
+
+        if (StringUtil.isNotBlank(customerCompanyQueryParam.getCompanyName())){
+            if (customerCompanyQueryParam.getCompanyName() != null ) {
+                //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
+                customerCompanyQueryParam.setCompanyName(StrReplaceUtil.nameToSimple(customerCompanyQueryParam.getCompanyName()));
+            }
+            if (StringUtil.isBlank(customerCompanyQueryParam.getCompanyName())) {
+                List<Customer> customerList = new ArrayList<>();
+                Page<Customer> page = new Page<>(customerList, CommonConstant.COMMON_ZERO, customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
+
+                result.setErrorCode(ErrorCode.SUCCESS);
+                result.setResult(page);
+                return result;
+            }
+        }
+
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        if (customerCompanyQueryParam.getCompanyName()!=null) {
-            //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
-            customerCompanyQueryParam.setCompanyName(StrReplaceUtil.nameToSimple(customerCompanyQueryParam.getCompanyName()));
-        }
-
         maps.put("customerCompanyQueryParam", customerCompanyQueryParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
         Integer totalCount = customerMapper.findCustomerCompanyCountByParams(maps);
