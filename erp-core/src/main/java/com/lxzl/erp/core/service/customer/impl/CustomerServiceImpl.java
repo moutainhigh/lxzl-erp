@@ -266,9 +266,11 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_REAL_NAME_ERROR);
             return serviceResult;
         }
-        CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerPerson().getRealName());
+        CustomerDO dbCustomerDO = customerMapper.findByRealNameAndPersonNo(customer.getCustomerPerson().getRealName(),
+                customer.getCustomerPerson().getPersonNo());
         if (dbCustomerDO != null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_IS_EXISTS);
+            serviceResult.setResult(dbCustomerDO.getCustomerNo());
             return serviceResult;
         }
         //判断业务员和联合开发员

@@ -242,6 +242,12 @@
 		WHERE ec.customer_name = #{customerName, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>
 
+	<select id="findByRealNameAndPersonNo" resultMap="CustomerDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM  erp_customer ec
+		LEFT JOIN erp_customer_person ecp ON ec.id = ecp.customer_id AND ecp.person_no = #{personNo, jdbcType=VARCHAR} AND ec.customer_type=2
+		WHERE real_name = #{realName, jdbcType=VARCHAR} AND ec.data_status = 1
+	</select>
+
 	<select id="findCustomerCompanyByNo" resultMap="CustomerDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/>,<include refid="company_column_List"/>,<include refid="risk_column_List"/>,<include refid="consignInfo_column_List"/>
 		,eap.province_name AS provinceName
