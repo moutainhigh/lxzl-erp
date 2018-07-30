@@ -804,6 +804,9 @@
                                         <span class="notice-time ml20">{{#shortTime}}{{createTime}}{{/shortTime}}</span>
                                     </li>
                                     {{/listData}}
+                                    {{^listData}}
+                                    <li class="nowrap mt10" style="list-style:none">暂无公告</li>
+                                    {{/listData}}
                                     {{/dataSource}}
                                 </script>
                                 <ul id="systemNoticeList" class="pl40"></ul>
