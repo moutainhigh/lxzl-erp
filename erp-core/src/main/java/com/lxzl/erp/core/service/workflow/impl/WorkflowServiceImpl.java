@@ -543,10 +543,6 @@ public class WorkflowServiceImpl implements WorkflowService {
             }
         }
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
-        if(workflowLinkDO != null && VerifyStatus.VERIFY_STATUS_CANCEL.equals(workflowLinkDO.getCurrentVerifyStatus())){
-            result.setErrorCode(ErrorCode.WORKFLOW_LINK_VERIFY_ALREADY_OVER);
-            return result;
-        }
         WorkflowNodeDO workflowNodeDO = null;
         WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
         if (workflowLinkDO == null) {
