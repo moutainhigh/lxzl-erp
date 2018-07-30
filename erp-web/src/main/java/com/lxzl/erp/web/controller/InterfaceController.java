@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 /**
@@ -211,17 +212,53 @@ public class InterfaceController extends BaseController {
     }
 
     @RequestMapping(value = "addPerson", method = RequestMethod.POST)
-    public Result addPerson(@RequestBody @Validated(AddCustomerPersonGroup.class) Customer customer, BindingResult validResult) {
+    public Result addPerson(@RequestBody @Validated(AddCustomerPersonGroup.class) InterfaceAddPersonParam param, BindingResult validResult) {
+        if (!businessSystemConfigService.verifyErpIdentity(param.getErpAppId(), param.getErpAppSecret()))
+            return resultGenerator.generate(ErrorCode.BUSINESS_SYSTEM_ERROR);
+
         if (userSupport.getCurrentUser() == null) {
             User superUser = new User();
             superUser.setUserId(CommonConstant.SUPER_USER_ID);
             httpSession.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, superUser);
         }
-        ServiceResult<String, String> serviceResult = customerService.addPerson(customer);
+        ServiceResult<String, String> serviceResult = customerService.addPerson(param.getCustomer());
         httpSession.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, null);
         if (serviceResult.getErrorCode().equals(ErrorCode.CUSTOMER_PERSON_IS_EXISTS))
             return resultGenerator.generate(ErrorCode.SUCCESS, serviceResult.getResult());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+
+    private static class InterfaceAddPersonParam{
+        @NotNull(message = ErrorCode.BUSINESS_APP_ID_NOT_NULL)
+        private String erpAppId;   //业务系统APP ID由ERP系统生成，提供给业务系统
+        @NotNull(message = ErrorCode.BUSINESS_APP_SECRET_NOT_NULL)
+        private String erpAppSecret;   //业务系统app secret由ERP系统生成，提供给业务系统
+        @NotNull(message = ErrorCode.USER_NOT_NULL)
+        private Customer customer;
+
+        public String getErpAppId() {
+            return erpAppId;
+        }
+
+        public void setErpAppId(String erpAppId) {
+            this.erpAppId = erpAppId;
+        }
+
+        public String getErpAppSecret() {
+            return erpAppSecret;
+        }
+
+        public void setErpAppSecret(String erpAppSecret) {
+            this.erpAppSecret = erpAppSecret;
+        }
+
+        public Customer getCustomer() {
+            return customer;
+        }
+
+        public void setCustomer(Customer customer) {
+            this.customer = customer;
+        }
+    }
 }
