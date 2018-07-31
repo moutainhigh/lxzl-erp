@@ -17,12 +17,6 @@ public class DingDingConfig {
     public static String dingdingSecret;
 
     /**
-     * 接口---发起钉钉消息
-     * 警告：此接口不在新的命名空间内,如要修改需要双边同步
-     */
-    private static String interfaceSendSystemMessage = "sendDingTalkMsg";
-
-    /**
      * <p>
      * 审批回调URL
      * </p>
@@ -60,7 +54,7 @@ public class DingDingConfig {
      * 获取发送系统消息的url
      */
     public static String getSendSystemMessageUrl() {
-        return dingDingGatewayUrl + "/" + interfaceSendSystemMessage;
+        return dingDingGatewayUrl + "/" +  DingTalkGatewayRUSTApi.interfaceSendSystemMessage.uri;
     }
 
     public void setApplyApprovingWorkflowCallBackUrl(String applyApprovingWorkflowCallBackUrl) {
@@ -81,7 +75,9 @@ public class DingDingConfig {
         //往钉钉网关上注册erp系统的userId接口
         interfaceInputMember("inputMember"),
         //注销钉钉网关工作流接口
-        delApprovingWorkflow("delApprovingWorkflow");
+        delApprovingWorkflow("delApprovingWorkflow"),
+        //发起钉钉消息
+        interfaceSendSystemMessage("sendDingTalkMsg");
 
         private String uri;
 
