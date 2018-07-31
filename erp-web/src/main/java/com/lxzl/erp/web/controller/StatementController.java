@@ -171,4 +171,5 @@ public class StatementController extends BaseController {
         ServiceResult<String, Boolean> serviceResult = statementService.payStatementOrderDetail(param.getMergeStatementItemList());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
 }
