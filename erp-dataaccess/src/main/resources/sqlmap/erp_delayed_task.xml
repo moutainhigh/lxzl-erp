@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.delayedTask.DelayedTaskMapper">
+
+	<resultMap id="DelayedTaskDO" type="com.lxzl.erp.dataaccess.domain.delayedTask.DelayedTaskDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="task_type" jdbcType="INTEGER" property="taskType" />
+		<result column="task_status" jdbcType="INTEGER" property="taskStatus" />
+		<result column="queue_number" jdbcType="INTEGER" property="queueNumber" />
+		<result column="request_json" jdbcType="VARCHAR" property="requestJson" />
+		<result column="thread_name" jdbcType="VARCHAR" property="threadName" />
+		<result column="progress_rate" jdbcType="DOUBLE" property="progressRate" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="file_url" jdbcType="VARCHAR" property="fileUrl" />
+	</resultMap>
+
+	<sql id="column_List">
+		edt.id,edt.task_type,edt.task_status,edt.queue_number,edt.request_json,edt.thread_name,edt.progress_rate,edt.remark,edt.data_status,edt.create_time,edt.create_user,edt.update_time,edt.update_user,edt.file_url
+	</sql>
+
+	<select id="findById" resultMap="DelayedTaskDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_delayed_task edt 
+		WHERE edt.create_user = #{currentUserId, jdbcType=VARCHAR} AND edt.data_status = 1 AND task_status in (1,2)
+	</select>
+
+	<select id="findQueueLast" resultMap="DelayedTaskDO" >
+		SELECT <include refid="column_List"/> FROM erp_delayed_task edt
+		WHERE edt.data_status = 1 AND task_status = 1
+		limit 0,1;
+	</select>
+
+	<select id="findProcessingCount" resultType="java.lang.Integer" >
+		SELECT IFNULL(count(edt.id),0) FROM erp_delayed_task edt
+		WHERE edt.data_status = 1 AND task_status = 2
+	</select>
+
+	<select id="findByUserId" resultMap="DelayedTaskDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_delayed_task edt
+		WHERE edt.create_user = #{currentUserId, jdbcType=VARCHAR} AND edt.data_status = 1 AND edt.task_status in (1,2)
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(edt.id) FROM erp_delayed_task edt 
+		<where>
+			<if test="true">
+				AND edt.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<update id="subQueueNumber1">
+		update erp_delayed_task edt
+		set edt.queue_number = edt.queue_number-1
+		WHERE edt.task_status = 1
+		AND edt.data_status = 1
+		AND <![CDATA[ edt.queue_number <> 0]]>
+	</update>
+
+	<update id="subQueueNumber2">
+		SET edt.task_status = 2
+		WHERE task_status = 1
+		AND queue_number = 0
+		AND data_status = 1
+	</update>
+
+	<select id="listPage" resultMap="DelayedTaskDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_delayed_task edt 
+		<where>
+			<if test="true">
+				AND edt.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<select id="findDelayedTaskByParams" resultMap="DelayedTaskDO" parameterType="map">
+		SELECT <include refid="column_List"/>
+		FROM erp_delayed_task edt
+		INNER JOIN erp_user eu ON eu.id = edt.create_user
+		<where>
+			<if test="maps.delayedTaskQueryParam != null &amp;&amp; maps.delayedTaskQueryParam.taskType != null ">
+				and edt.task_type = #{maps.delayedTaskQueryParam.taskType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.delayedTaskQueryParam != null &amp;&amp; maps.delayedTaskQueryParam.createUser != null ">
+				and edt.create_user = #{maps.delayedTaskQueryParam.createUser, jdbcType=INTEGER}
+			</if>
+			<if test="maps.delayedTaskQueryParam != null &amp;&amp; maps.delayedTaskQueryParam.taskStatus != null ">
+				and edt.task_status = #{maps.delayedTaskQueryParam.taskStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.delayedTaskQueryParam != null &amp;&amp; maps.delayedTaskQueryParam.createUserName != null ">
+				and eu.real_name like CONCAT('%','${maps.delayedTaskQueryParam.createUserName}','%' )
+			</if>
+			<if test="maps.delayedTaskQueryParam != null &amp;&amp; maps.delayedTaskQueryParam.createStartTime != null ">
+				<![CDATA[ AND edt.create_time >= #{maps.delayedTaskQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.delayedTaskQueryParam != null &amp;&amp; maps.delayedTaskQueryParam.createEndTime != null ">
+				<![CDATA[ AND edt.create_time <= #{maps.delayedTaskQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="true">
+				AND edt.data_status = 1
+			</if>
+		</where>
+		ORDER BY edt.update_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<select id="findDelayedTaskCountByParams" resultType="Integer" parameterType="map">
+		SELECT count(edt.id)
+		FROM erp_delayed_task edt
+		INNER JOIN erp_user eu ON eu.id = edt.create_user
+		<where>
+			<if test="maps.delayedTaskQueryParam != null &amp;&amp; maps.delayedTaskQueryParam.taskType != null ">
+				and edt.task_type = #{maps.delayedTaskQueryParam.taskType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.delayedTaskQueryParam != null &amp;&amp; maps.delayedTaskQueryParam.createUser != null ">
+				and edt.create_user = #{maps.delayedTaskQueryParam.createUser, jdbcType=INTEGER}
+			</if>
+			<if test="maps.delayedTaskQueryParam != null &amp;&amp; maps.delayedTaskQueryParam.taskStatus != null ">
+				and edt.task_status = #{maps.delayedTaskQueryParam.taskStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.delayedTaskQueryParam != null &amp;&amp; maps.delayedTaskQueryParam.createUserName != null ">
+				and eu.real_name like CONCAT('%','${maps.delayedTaskQueryParam.createUserName}','%' )
+			</if>
+			<if test="maps.delayedTaskQueryParam != null &amp;&amp; maps.delayedTaskQueryParam.createStartTime != null ">
+				<![CDATA[ AND edt.create_time >= #{maps.delayedTaskQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.delayedTaskQueryParam != null &amp;&amp; maps.delayedTaskQueryParam.createEndTime != null ">
+				<![CDATA[ AND edt.create_time <= #{maps.delayedTaskQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="true">
+				AND edt.data_status = 1
+			</if>
+		</where>
+	</select>
+	<sql id="set_column_sql">
+		<set>
+			<if test="taskType != null">
+				task_type = #{taskType,jdbcType=INTEGER},
+			</if>
+			<if test="taskStatus != null">
+				task_status = #{taskStatus,jdbcType=INTEGER},
+			</if>
+			<if test="queueNumber != null">
+				queue_number = #{queueNumber,jdbcType=INTEGER},
+			</if>
+			<if test="requestJson != null">
+				request_json = #{requestJson,jdbcType=VARCHAR},
+			</if>
+			<if test="threadName != null">
+				thread_name = #{threadName,jdbcType=VARCHAR},
+			</if>
+			<if test="progressRate != null">
+				progress_rate = #{progressRate,jdbcType=DOUBLE},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="fileUrl != null">
+				file_url = #{fileUrl,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.delayedTask.DelayedTaskDO">
+		INSERT INTO erp_delayed_task <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.delayedTask.DelayedTaskDO">
+		UPDATE erp_delayed_task <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
