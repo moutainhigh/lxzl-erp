@@ -1021,6 +1021,9 @@ public class ErrorCode {
     //公告
     public static final String ANNOUNCEMENT_TITLE_NOT_NULL = "J280000001";
     public static final String ANNOUNCEMENT_CONTENT_NOT_NULL = "J280000002";
+    public static final String ANNOUNCEMENT_TITLE_TOO_LARGE = "J280000003";
+    public static final String ANNOUNCEMENT_CONTENT_TOO_LARGE = "J280000004";
+    public static final String ANNOUNCEMENT_REMARK_TOO_LARGE = "J280000005";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1160,7 +1163,7 @@ public class ErrorCode {
         MAP.put(BULK_MATERIAL_STATUS_NOT_REPAIR, "编号【%s 】的散料只有处于设备空闲或者租赁中,才能进行新增维修操作");
         MAP.put(PRODUCT_NOT_SAME, "收货商品不一致，请联系相关人员");
         MAP.put(MATERIAL_NOT_SAME, "收货配件不一致，请联系相关人员");
-        MAP.put(CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL, "企业客户首次所需设备的sku的ID不能为空");
+        MAP.put(CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL, "企业客户所需设备的sku的ID不能为空");
         MAP.put(CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL, "企业客户首次所需设备的单台价值不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL, "企业客户首次所需设备的租赁数量不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_RENT_LENGTH_NOT_NULL, "企业客户首次所需设备的租赁期限不能空");
@@ -2007,6 +2010,11 @@ public class ErrorCode {
 
         MAP.put(ANNOUNCEMENT_TITLE_NOT_NULL, "公告标题不能为空");
         MAP.put(ANNOUNCEMENT_CONTENT_NOT_NULL, "公告内容不能为空");
+        MAP.put(ANNOUNCEMENT_TITLE_TOO_LARGE, "公告标题不能超过100字");
+        MAP.put(ANNOUNCEMENT_CONTENT_TOO_LARGE, "公告内容不能超过500字");
+        MAP.put(ANNOUNCEMENT_REMARK_TOO_LARGE, "公告备注不能超过500字");
+
+
 
 
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户已经为确认结算单状态");

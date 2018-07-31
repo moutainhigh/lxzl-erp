@@ -35,6 +35,7 @@ public class CustomerDO  extends BaseDO {
 	private Integer confirmStatementStatus; // 客户结算单确认状态 0否1是
 	private Integer confirmStatementUser; // 客户结算单确认人
 	private Date confirmStatementTime; // 客户结算单确认时间
+	private  Integer customerSource;//用户的来源(1:erp,2:大学生商城)
 
 	private Integer confirmBadAccountStatus; // 客户是否为坏账状态 0否1是
 	private Integer confirmBadAccountUser; // 客户坏账确认人
@@ -327,5 +328,13 @@ public class CustomerDO  extends BaseDO {
 
 	public void setConfirmBadAccountTime(Date confirmBadAccountTime) {
 		this.confirmBadAccountTime = confirmBadAccountTime;
+	}
+
+	public Integer getCustomerSource() {
+		return customerSource;
+	}
+
+	public void setCustomerSource(Integer customerSource) {
+		this.customerSource = customerSource;
 	}
 }
