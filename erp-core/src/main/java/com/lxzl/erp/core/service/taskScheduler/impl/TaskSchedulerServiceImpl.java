@@ -137,7 +137,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL+"/resumeTaskTrigger", requestJson, headerBuilder, "UTF-8");
             logger.info("manual charge response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
-            if (ErrorCode.SUCCESS.equals(taskExecutorResult.getCode())) {
+            if (TRIGGER_GROUP_SUCCESS_CODE.equals(taskExecutorResult.getCode())) {
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
             }
@@ -159,7 +159,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL+"/deleteTrigger", requestJson, headerBuilder, "UTF-8");
             logger.info("manual charge response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
-            if (ErrorCode.SUCCESS.equals(taskExecutorResult.getCode())) {
+            if (TRIGGER_GROUP_SUCCESS_CODE.equals(taskExecutorResult.getCode())) {
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
             }
@@ -181,7 +181,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL+"/updateTaskExecutor", requestJson, headerBuilder, "UTF-8");
             logger.info("manual charge response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
-            if (ErrorCode.SUCCESS.equals(taskExecutorResult.getCode())) {
+            if (TRIGGER_GROUP_SUCCESS_CODE.equals(taskExecutorResult.getCode())) {
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
             }
