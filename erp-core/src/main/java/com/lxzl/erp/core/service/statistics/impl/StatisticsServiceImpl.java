@@ -20,17 +20,13 @@ import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.statistics.FinanceStatisticsDataWeeklyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsSalesmanMonthMapper;
-import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataWeeklyDO;
-import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDealsCountBySubCompany;
 import com.lxzl.erp.dataaccess.domain.statistics.StatisticsSalesmanMonthDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -967,7 +963,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             int firstDayOfThisWeekInYear = firstDayOfThisWeekCalendar.get(Calendar.YEAR);
             int firstDayOfThisWeekInMonth = firstDayOfThisWeekCalendar.get(Calendar.MONTH) + 1; // 因为日历获取的月份比实际月份小1
             int firstDayOfThisWeekInWeekOfMonth = firstDayOfThisWeekCalendar.get(Calendar.WEEK_OF_MONTH);
-            FinanceStatisticsWeeklyParam paramVo = new FinanceStatisticsWeeklyParam();
+            FinanceStatisticsParam paramVo = new FinanceStatisticsParam();
             paramVo.setYear(firstDayOfThisWeekInYear);
             paramVo.setMonth(firstDayOfThisWeekInMonth);
             paramVo.setWeekOfMonth(firstDayOfThisWeekInWeekOfMonth);
@@ -976,7 +972,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             diffStatisticsDataWeeklyMap.put(key, lastMonthData);
         }
         String key = currentYear + "-" + currentMonth + "-" + currentWeekOfMonth;
-        FinanceStatisticsWeeklyParam paramVo = new FinanceStatisticsWeeklyParam();
+        FinanceStatisticsParam paramVo = new FinanceStatisticsParam();
         paramVo.setYear(currentYear);
         paramVo.setMonth(currentMonth);
         paramVo.setWeekOfMonth(currentWeekOfMonth);
@@ -999,7 +995,7 @@ public class StatisticsServiceImpl implements StatisticsService {
      */
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, Boolean> reStatisticsFinanceDataWeekly(FinanceStatisticsWeeklyParam paramVo){
+    public ServiceResult<String, Boolean> reStatisticsFinanceDataWeekly(FinanceStatisticsParam paramVo){
         ServiceResult<String, Boolean> serviceResult = verify(paramVo);
         if (ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             int year = paramVo.getYear();
@@ -1063,7 +1059,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         return statisticsInterval;
     }
 
-    private ServiceResult<String, Boolean> verify(FinanceStatisticsWeeklyParam param) {
+    private ServiceResult<String, Boolean> verify(FinanceStatisticsParam param) {
         return verify(param.getYear(), param.getMonth(), param.getWeekOfMonth());
     }
 
@@ -1091,7 +1087,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyToExcel(FinanceStatisticsWeeklyParam paramVo){
+    public ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyToExcel(FinanceStatisticsParam paramVo){
         ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> serviceResult = new ServiceResult<>();
         ServiceResult<String, Boolean> verifyResult = verify(paramVo);
         if (!ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
@@ -1110,7 +1106,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataMonthlyToExcel(FinanceStatisticsWeeklyParam paramVo){
+    public ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataMonthlyToExcel(FinanceStatisticsParam paramVo){
         ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> serviceResult = new ServiceResult<>();
         int maxWeekOfMonth = financeStatisticsWeeklySupport.getMaxWeekCountOfYearAndMonth(paramVo.getYear(), paramVo.getMonth());
         paramVo.setWeekOfMonth(maxWeekOfMonth);

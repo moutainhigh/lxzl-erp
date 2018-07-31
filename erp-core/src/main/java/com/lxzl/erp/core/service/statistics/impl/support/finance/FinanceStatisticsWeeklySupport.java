@@ -4,7 +4,7 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.StatisticsDealsCountType;
 import com.lxzl.erp.common.constant.StatisticsOrderOriginType;
 import com.lxzl.erp.common.constant.StatisticsRentLengthType;
-import com.lxzl.erp.common.domain.statistics.FinanceStatisticsWeeklyParam;
+import com.lxzl.erp.common.domain.statistics.FinanceStatisticsParam;
 import com.lxzl.erp.common.domain.statistics.pojo.FinanceStatisticsDataWeeklyExcel;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.DateUtil;
@@ -20,8 +20,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -38,7 +36,7 @@ public class FinanceStatisticsWeeklySupport {
      * @param param
      * @return
      */
-    private List<FinanceStatisticsDealsCountBySubCompany> statisticsCustomerCountWeekly(FinanceStatisticsWeeklyParam param) {
+    private List<FinanceStatisticsDealsCountBySubCompany> statisticsCustomerCountWeekly(FinanceStatisticsParam param) {
         if (param == null) {
             return null;
         }
@@ -46,7 +44,7 @@ public class FinanceStatisticsWeeklySupport {
         return statisticsMapper.statisticsCustomerCountWeekly(maps);
     }
 
-    private Map<String, Object> financeStatisticsWeeklyParamToMap(FinanceStatisticsWeeklyParam param) {
+    private Map<String, Object> financeStatisticsWeeklyParamToMap(FinanceStatisticsParam param) {
         Map<String, Object> maps = new HashMap<>();
         maps.put("orderOrigin", param.getOrderOrigin());
         maps.put("rentLengthType", param.getRentLengthType());
@@ -63,7 +61,7 @@ public class FinanceStatisticsWeeklySupport {
      * @param param
      * @return
      */
-    private List<FinanceStatisticsDealsCountBySubCompany> statisticsRentProductCountWeekly(FinanceStatisticsWeeklyParam param) {
+    private List<FinanceStatisticsDealsCountBySubCompany> statisticsRentProductCountWeekly(FinanceStatisticsParam param) {
         if (param == null) {
             return null;
         }
@@ -76,7 +74,7 @@ public class FinanceStatisticsWeeklySupport {
      * @param param
      * @return
      */
-    private List<FinanceStatisticsDealsCountBySubCompany> statisticsReturnProductCountWeekly(FinanceStatisticsWeeklyParam param) {
+    private List<FinanceStatisticsDealsCountBySubCompany> statisticsReturnProductCountWeekly(FinanceStatisticsParam param) {
         if (param == null) {
             return null;
         }
@@ -106,7 +104,7 @@ public class FinanceStatisticsWeeklySupport {
         return currentCalendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
     }
 
-    public List<FinanceStatisticsDataWeeklyDO> reStatisticsFinanceDataWeekly(FinanceStatisticsWeeklyParam paramVo) {
+    public List<FinanceStatisticsDataWeeklyDO> reStatisticsFinanceDataWeekly(FinanceStatisticsParam paramVo) {
         int year = paramVo.getYear();
         int month = paramVo.getMonth();
         int weekOfMonth = paramVo.getWeekOfMonth();
@@ -135,7 +133,7 @@ public class FinanceStatisticsWeeklySupport {
         return financeAllStatisticsDataWeekly;
     }
 
-    public List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataMonthly(FinanceStatisticsWeeklyParam paramVo) {
+    public List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataMonthly(FinanceStatisticsParam paramVo) {
         int year = paramVo.getYear();
         int month = paramVo.getMonth();
         int weekOfMonth = paramVo.getWeekOfMonth();
@@ -184,7 +182,7 @@ public class FinanceStatisticsWeeklySupport {
         financeStatisticsDataWeeklyMapper.saveList(financeAllStatisticsDataWeekly);
     }
 
-    public List<FinanceStatisticsDataWeeklyDO> statisticsDiffFinanceDataWeekly(FinanceStatisticsWeeklyParam paramVo){
+    public List<FinanceStatisticsDataWeeklyDO> statisticsDiffFinanceDataWeekly(FinanceStatisticsParam paramVo){
         int year = paramVo.getYear();
         int month = paramVo.getMonth();
         int weekOfMonth = paramVo.getWeekOfMonth();
@@ -415,7 +413,7 @@ public class FinanceStatisticsWeeklySupport {
      * @param isHistoryData
      * @return
      */
-    private List<FinanceStatisticsDataWeeklyDO> getDiffStatisticsFinanceDataWeekly(List<FinanceStatisticsDataWeeklyDO> currentWeekStatisticsDataWeeklyDOList, FinanceStatisticsWeeklyParam paramVo, boolean isHistoryData) {
+    private List<FinanceStatisticsDataWeeklyDO> getDiffStatisticsFinanceDataWeekly(List<FinanceStatisticsDataWeeklyDO> currentWeekStatisticsDataWeeklyDOList, FinanceStatisticsParam paramVo, boolean isHistoryData) {
         if (CollectionUtil.isEmpty(currentWeekStatisticsDataWeeklyDOList)) {
             currentWeekStatisticsDataWeeklyDOList = statisticsFinanceDataWeekly(paramVo, isHistoryData);
         }
@@ -440,8 +438,8 @@ public class FinanceStatisticsWeeklySupport {
      * @param paramVo
      * @return
      */
-    private List<FinanceStatisticsDataWeeklyDO> getLastWeekStatisticsFinanceDataWeekly(FinanceStatisticsWeeklyParam paramVo) {
-        FinanceStatisticsWeeklyParam lastWeekParamVo = new FinanceStatisticsWeeklyParam();
+    private List<FinanceStatisticsDataWeeklyDO> getLastWeekStatisticsFinanceDataWeekly(FinanceStatisticsParam paramVo) {
+        FinanceStatisticsParam lastWeekParamVo = new FinanceStatisticsParam();
         int lastWeek = paramVo.getWeekOfMonth() - 1;
         if (lastWeek <= 0) {
             return null;
@@ -451,7 +449,7 @@ public class FinanceStatisticsWeeklySupport {
         return statisticsFinanceDataWeekly(lastWeekParamVo, true);
     }
 
-    private List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataWeekly(FinanceStatisticsWeeklyParam paramVo, boolean isHistoryData){
+    private List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataWeekly(FinanceStatisticsParam paramVo, boolean isHistoryData){
         return statisticsFinanceDataWeekly(paramVo, isHistoryData, false);
     }
 
@@ -462,7 +460,7 @@ public class FinanceStatisticsWeeklySupport {
      * @param needReStatistics  是否需要重新统计（供重新统计历史周数据时使用）
      * @return
      */
-    private List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataWeekly(FinanceStatisticsWeeklyParam paramVo, boolean isHistoryData, boolean needReStatistics) {
+    private List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataWeekly(FinanceStatisticsParam paramVo, boolean isHistoryData, boolean needReStatistics) {
        int year = paramVo.getYear();
        int month = paramVo.getMonth();
        int weekOfMonth = paramVo.getWeekOfMonth();
@@ -481,7 +479,7 @@ public class FinanceStatisticsWeeklySupport {
         int maxWeek = currentCalendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
         if ( !isHistoryData || needReStatistics) {
             // 统计当月累计数据
-            FinanceStatisticsWeeklyParam param = new FinanceStatisticsWeeklyParam();
+            FinanceStatisticsParam param = new FinanceStatisticsParam();
             param.setOrderOrigin(statisticsOrderOriginType);
             if (paramVo.getStatisticsStartTime() == null) {
                 param.setStatisticsStartTime(DateUtil.getStartMonthDate(currentMonthDate));
@@ -509,7 +507,7 @@ public class FinanceStatisticsWeeklySupport {
                 rentProductDealsCountMap = ListUtil.listToMap(rentProductDealsCountBySubCompany, "subCompanyId");
                 List<FinanceStatisticsDealsCountBySubCompany> returnProductDealsCountBySubCompany =  statisticsReturnProductCountWeekly(param);
                 returnProductDealsCountMap = ListUtil.listToMap(returnProductDealsCountBySubCompany, "subCompanyId");
-                param.setNewCustomerKey("-" + year);
+                param.setNewCustomerKey("" + year);
                 List<FinanceStatisticsDealsCountBySubCompany> newCustomerDealsCountBySubCompany =  statisticsCustomerCountWeekly(param);
                 newCustomerDealsCountMap = ListUtil.listToMap(newCustomerDealsCountBySubCompany, "subCompanyId");
                 // 遍历各个执行分公司

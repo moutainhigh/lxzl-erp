@@ -1445,27 +1445,31 @@ ORDER BY esc.data_order DESC
 
     <select id="statisticsKACustomerCountWeekly" resultMap="FinanceStatisticsDataWeekly" parameterType="java.util.Map">
         SELECT eo.order_sub_company_id AS sub_company_id, COUNT(DISTINCT eo.buyer_customer_id) AS deals_count FROM erp_order eo
+        LEFT JOIN erp_order_product eop ON eop.order_id=eo.id AND eo.data_status=1 AND eop.data_status=1
+        LEFT JOIN erp_product ep ON ep.id=eop.product_id
         <if test="maps.newCustomerKey != null">
             LEFT JOIN erp_customer ec ON eo.buyer_customer_id=ec.id
+            LEFT JOIN erp_k3_mapping_customer ekmc ON ekmc.erp_customer_code = ec.customer_no
         </if>
-        WHERE eo.data_status=1 AND eo.order_status IN (16, 20, 22, 24)
+        WHERE eo.data_status=1 AND eo.order_status IN (16, 20, 22, 24) AND eop.product_count > 0
+        AND (CASE WHEN ep.k3_product_no LIKE '%.DIS.%' THEN  eop.product_unit_amount>0 ELSE 1=1 END)
         AND eo.order_sub_company_id NOT IN (1, 10 , 11)
         <if test="maps.statisticsStartTime != null and maps.statisticsEndTime != null">
             AND eo.delivery_time BETWEEN  #{maps.statisticsStartTime,jdbcType=TIMESTAMP} AND #{maps.statisticsEndTime,jdbcType=TIMESTAMP}
         </if>
         <if test="maps.rentLengthType != null">
             <if test="maps.rentLengthType == 1">
-               AND ((rent_type=1 AND rent_time_length >= 30) OR (rent_type=2 AND 6 > rent_time_length))
+               AND ((eo.rent_type=2 AND 6 > eo.rent_time_length)
             </if>
             <if test="maps.rentLengthType == 2">
-               AND rent_length_type=2
+                AND (eo.rent_type=2 AND eo.rent_time_length >= 6)
             </if>
             <if test="maps.rentLengthType == 3">
-                AND eo.rent_type=1 AND 30 > eo.rent_time_length
+                AND eo.rent_type=1
             </if>
         </if>
         <if test="maps.newCustomerKey != null">
-            AND ec.customer_no LIKE CONCAT('%','${maps.newCustomerKey}','%')
+            AND ekmc.k3_customer_code LIKE CONCAT('%','${maps.newCustomerKey}','%')
         </if>
         GROUP BY eo.order_sub_company_id
     </select>
@@ -1482,10 +1486,14 @@ ORDER BY esc.data_order DESC
             eo.delivery_sub_company_id AS sub_company_id,
         </if>
         COUNT(DISTINCT eo.buyer_customer_id) AS deals_count FROM erp_order eo
+        LEFT JOIN erp_order_product eop ON eop.order_id=eo.id AND eo.data_status=1 AND eop.data_status=1
+        LEFT JOIN erp_product ep ON ep.id=eop.product_id
         <if test="maps.newCustomerKey != null">
             LEFT JOIN erp_customer ec ON eo.buyer_customer_id=ec.id
+            LEFT JOIN erp_k3_mapping_customer ekmc ON ekmc.erp_customer_code = ec.customer_no
         </if>
-        WHERE eo.data_status=1 AND eo.order_status IN (16, 20, 22, 24)
+        WHERE eo.data_status=1 AND eo.order_status IN (16, 20, 22, 24) AND eop.product_count > 0
+        AND (CASE WHEN ep.k3_product_no LIKE '%.DIS.%' THEN  eop.product_unit_amount>0 ELSE 1=1 END)
         <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
             AND eo.order_sub_company_id NOT IN (1, 10 , 11)
         </if>
@@ -1500,17 +1508,17 @@ ORDER BY esc.data_order DESC
         </if>
         <if test="maps.rentLengthType != null">
             <if test="maps.rentLengthType == 1">
-                AND ((eo.rent_type=1 AND eo.rent_time_length >= 30) OR (eo.rent_type=2 AND 6 > eo.rent_time_length))
+                AND (eo.rent_type=2 AND 6 > eo.rent_time_length)
             </if>
             <if test="maps.rentLengthType == 2">
-                AND eo.rent_length_type=2
+                AND (eo.rent_type=2 AND eo.rent_time_length >= 6)
             </if>
             <if test="maps.rentLengthType == 3">
-                AND eo.rent_type=1 AND 30 > eo.rent_time_length
+                AND eo.rent_type=1
             </if>
         </if>
         <if test="maps.newCustomerKey != null">
-            AND ec.customer_no LIKE CONCAT('%','${maps.newCustomerKey}','%')
+            AND ekmc.k3_customer_code LIKE CONCAT('%','${maps.newCustomerKey}','%')
         </if>
         <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
             GROUP BY eo.order_sub_company_id
@@ -1535,7 +1543,7 @@ ORDER BY esc.data_order DESC
             eo.delivery_sub_company_id AS sub_company_id,
         </if>
         IFNULL(SUM(eop.product_count), 0) AS deals_count FROM erp_order_product eop
-        LEFT JOIN erp_order eo ON eop.order_id=eo.id AND eo.data_status=1
+        LEFT JOIN erp_order eo ON eop.order_id=eo.id AND eo.data_status=1 AND eop.data_status=1
         LEFT JOIN erp_product ep ON ep.id=eop.product_id
         WHERE ep.data_status=1 AND eo.order_status IN (16, 20, 22, 24) AND eop.product_count > 0
         AND (CASE WHEN ep.k3_product_no LIKE '%.DIS.%' THEN  eop.product_unit_amount>0 ELSE 1=1 END)
@@ -1553,13 +1561,13 @@ ORDER BY esc.data_order DESC
         </if>
         <if test="maps.rentLengthType != null">
             <if test="maps.rentLengthType == 1">
-                AND ((eo.rent_type=1 AND eo.rent_time_length >= 30) OR (eo.rent_type=2 AND 6 > eo.rent_time_length))
+                AND (eo.rent_type=2 AND 6 > eo.rent_time_length)
             </if>
             <if test="maps.rentLengthType == 2">
-                AND eo.rent_length_type=2
+                AND (eo.rent_type=2 AND eo.rent_time_length >= 6)
             </if>
             <if test="maps.rentLengthType == 3">
-                AND eo.rent_type=1 AND 30 > eo.rent_time_length
+                AND eo.rent_type=1
             </if>
         </if>
         <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
@@ -1585,8 +1593,8 @@ ORDER BY esc.data_order DESC
             eo.delivery_sub_company_id AS sub_company_id,
         </if>
         IFNULL(SUM(ekrod.real_product_count), 0) AS deals_count FROM erp_k3_return_order ekro
-        INNER JOIN erp_k3_return_order_detail ekrod ON ekrod.return_order_id = ekro.id
-        INNER JOIN erp_order eo ON eo.order_no=ekrod.order_no
+        INNER JOIN erp_k3_return_order_detail ekrod ON ekrod.return_order_id = ekro.id AND ekrod.data_status=1
+        INNER JOIN erp_order eo ON eo.order_no=ekrod.order_no AND eo.data_status=1
         INNER JOIN erp_order_product eop ON ekrod.order_item_type=1 AND (CASE WHEN ekrod.product_no LIKE '%.DIS.%' THEN eop.product_unit_amount>0  ELSE 1=1 END)
         AND eo.id=eop.order_id AND (ekrod.order_item_id=eop.id OR ekrod.order_entry=eop.FEntry_id) AND eop.data_status=1
         WHERE ekrod.order_item_type=1 AND ekrod.real_product_count > 0
@@ -1604,13 +1612,13 @@ ORDER BY esc.data_order DESC
         </if>
         <if test="maps.rentLengthType != null">
             <if test="maps.rentLengthType == 1">
-                AND ((eo.rent_type=1 AND eo.rent_time_length >= 30) OR (eo.rent_type=2 AND 6 > eo.rent_time_length))
+                AND (eo.rent_type=2 AND 6 > eo.rent_time_length)
             </if>
             <if test="maps.rentLengthType == 2">
-                AND eo.rent_length_type=2
+                AND (eo.rent_type=2 AND eo.rent_time_length >= 6)
             </if>
             <if test="maps.rentLengthType == 3">
-                AND eo.rent_type=1 AND 30 > eo.rent_time_length
+                AND eo.rent_type=1
             </if>
         </if>
         <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
