@@ -2174,10 +2174,16 @@ public class StatementServiceImpl implements StatementService {
                             continue;
                         }
 
-                        // 如果有押金还没交，不让退货
+                        // 如果有押金还没交，不让退货  (已冲正的押金可以退货)
                         if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
-                            result.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT);
-                            return result;
+                            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_CORRECTED.equals(statementOrderDetailDO.getStatementDetailStatus())){
+                                continue;
+                            }
+                            else
+                            {
+                                result.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT);
+                                return result;
+                            }
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
@@ -2360,11 +2366,16 @@ public class StatementServiceImpl implements StatementService {
                             }
                             continue;
                         }
-
-                        // 如果有押金还没交，不让退货
+                        // 如果有押金还没交，不让退货  (已冲正的押金可以退货)
                         if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
-                            result.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT);
-                            return result;
+                            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_CORRECTED.equals(statementOrderDetailDO.getStatementDetailStatus())){
+                                continue;
+                            }
+                            else
+                            {
+                                result.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT);
+                                return result;
+                            }
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
