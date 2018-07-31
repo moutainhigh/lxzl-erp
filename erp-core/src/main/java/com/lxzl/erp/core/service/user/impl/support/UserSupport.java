@@ -65,6 +65,10 @@ public class UserSupport {
         return userRoleService.isSuperAdmin(getCurrentUserId());
     }
 
+    public void setHttpSession(HttpSession httpSession){
+        this.httpSession = httpSession;
+    }
+
     /**
      * 判断用户是否属于总公司
      *
