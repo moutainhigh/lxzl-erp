@@ -5,13 +5,11 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.dingding.member.DingdingUserDTO;
 import com.lxzl.erp.common.domain.user.LoginParam;
 import com.lxzl.erp.common.domain.user.UpdatePasswordParam;
 import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.dingding.DingdingService;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
@@ -19,6 +17,7 @@ import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.userLoginLog.impl.support.UserLoginLogSupport;
+import com.lxzl.erp.core.session.SessionManagement;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMapper;
@@ -93,6 +92,8 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             userDO.setLastLoginTime(new Date());
             userMapper.update(userDO);
             session.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, user);
+            SessionManagement.getInstance().removeSession(session.getId());
+            SessionManagement.getInstance().addSessionId(user.getUserId().toString());
             result.setErrorCode(ErrorCode.SUCCESS);
             result.setResult(user);
         }
@@ -235,6 +236,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         userMapper.update(userDO);
         CommonCache.userMap.put(userDO.getId(), ConverterUtil.convert(userDO, User.class));
 
+        if (userDO.getIsDisabled() == 1) {
+            SessionManagement.getInstance().removeSession(userDO.getId().toString());
+        }
         for (Integer roleId : modifyRoleIdMap.keySet()) {
             UserRoleDO userRoleDO = null;
             if (roleId != null) {
@@ -359,7 +363,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         userDO.setUpdateTime(currentTime);
         userDO.setUpdateUser(currentUserId);
         userMapper.update(userDO);
-
+        SessionManagement.getInstance().removeSession(userDO.getId().toString());
         result.setResult(userDO.getId());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;

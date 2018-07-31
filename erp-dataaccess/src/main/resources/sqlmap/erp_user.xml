@@ -330,10 +330,4 @@
         FROM erp_user u WHERE u.real_name = #{realName,jdbcType=VARCHAR} AND u.is_disabled = 0
     </select>
 
-    <select id="findAllUserByUserRealName" parameterType="java.lang.String" resultMap="userResult">
-        SELECT
-        <include refid="columnList"/>
-        FROM erp_user u WHERE u.real_name = #{realName,jdbcType=VARCHAR}
-    </select>
-
 </mapper>

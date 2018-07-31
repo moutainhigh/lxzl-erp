@@ -185,10 +185,12 @@
         <mapper resource="sqlmap/erp_dynamic_sql.xml" />
         <mapper resource="sqlmap/erp_dynamic_sql_holder.xml" />
 
+        <mapper resource="sqlmap/erp_announcement.xml" />
 
         <mapper resource="sqlmap/erp_dingding_group_message_config.xml" />
 
         <mapper resource="sqlmap/erp_customer_statement_date_change_log.xml" />
+        <mapper resource="sqlmap/erp_finance_statistics_data_weekly.xml" />
     </mappers>
 
 </configuration>

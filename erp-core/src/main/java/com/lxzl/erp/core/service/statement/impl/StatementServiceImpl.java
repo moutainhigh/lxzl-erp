@@ -2142,18 +2142,17 @@ public class StatementServiceImpl implements StatementService {
                                     result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
                                     return result;
                                 }
-                                // 不考虑预期退货时间和随租随还
-//                                if (orderDO.getExpectReturnTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
-//                                    if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
-//                                        ProductDO product = productMapper.findById(orderProductDO.getProductId());
-//                                        if (product == null) {
-//                                            result.setErrorCode(ErrorCode.PRODUCT_NOT_EXISTS);
-//                                            return result;
-//                                        }
-//                                        if (product.getIsReturnAnyTime() != IsReturnAnyTime.RETURN_ANY_TIME_YES)
-//                                            continue;
-//                                    }
-//                                }
+                                if (orderDO.getExpectReturnTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
+                                    if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
+                                        ProductDO product = productMapper.findById(orderProductDO.getProductId());
+                                        if (product == null) {
+                                            result.setErrorCode(ErrorCode.PRODUCT_NOT_EXISTS);
+                                            return result;
+                                        }
+                                        if (product.getIsReturnAnyTime() != IsReturnAnyTime.RETURN_ANY_TIME_YES)
+                                            continue;
+                                    }
+                                }
 
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                                 if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
@@ -2331,18 +2330,17 @@ public class StatementServiceImpl implements StatementService {
                                     result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
                                     return result;
                                 }
-                                // 不考虑预期退货时间和随租随还
-//                                if (orderDO.getExpectReturnTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
-//                                    if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
-//                                        MaterialDO material = materialMapper.findById(orderMaterialDO.getMaterialId());
-//                                        if (material == null) {
-//                                            result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
-//                                            return result;
-//                                        }
-//                                        if (material.getIsReturnAnyTime() != IsReturnAnyTime.RETURN_ANY_TIME_YES)
-//                                            continue;
-//                                    }
-//                                }
+                                if (orderDO.getExpectReturnTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
+                                    if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
+                                        MaterialDO material = materialMapper.findById(orderMaterialDO.getMaterialId());
+                                        if (material == null) {
+                                            result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+                                            return result;
+                                        }
+                                        if (material.getIsReturnAnyTime() != IsReturnAnyTime.RETURN_ANY_TIME_YES)
+                                            continue;
+                                    }
+                                }
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                                 if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
                                     totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, thisReturnDepositAmount);
@@ -5185,6 +5183,9 @@ public class StatementServiceImpl implements StatementService {
                                 if (thisPeriodsByOrderInfoMap != null && thisPeriodsByOrderInfoMap.size() != 0) {
                                     statementOrderDetail.setStatementDetailRentEndAmount(new BigDecimal(thisPeriodsByOrderInfoMap.get("statementDetailRentAmount").toString()));
                                     statementOrderDetail.setStatementDetailEndAmount(new BigDecimal(thisPeriodsByOrderInfoMap.get("statementDetailAmount").toString()));
+                                    if (thisPeriodsByOrderInfoMap.get("reletOrderItemReferId")!=null) {
+                                        statementOrderDetail.setReletOrderItemReferId(Integer.parseInt(thisPeriodsByOrderInfoMap.get("reletOrderItemReferId").toString()));
+                                    }
                                     try {
                                         statementOrderDetail.setStatementExpectPayEndTime(new SimpleDateFormat("yyyy-MM-dd").parse(thisPeriodsByOrderInfoMap.get("statementExpectPayTime").toString()));
                                         statementOrderDetail.setStatementStartTime(new SimpleDateFormat("yyyy-MM-dd").parse(thisPeriodsByOrderInfoMap.get("statementStartTime").toString()));

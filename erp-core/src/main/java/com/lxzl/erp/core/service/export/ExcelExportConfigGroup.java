@@ -20,6 +20,7 @@ public class ExcelExportConfigGroup {
     public static ExcelExportConfig statisticsSalesmanDetailConfig = new ExcelExportConfig();
     public static ExcelExportConfig statementOrderPayDetailConfig = new ExcelExportConfig();
     public static ExcelExportConfig statementOrderCheckConfig = new ExcelExportConfig();
+    public static ExcelExportConfig statisticsFinanceWeeklyConfig = new ExcelExportConfig();
 
     static {
         initBankSlipDetailConfig();
@@ -28,6 +29,75 @@ public class ExcelExportConfigGroup {
         initStatisticsSalesmanDetailConfig();
         initStatementOrderPayDetailConfig();
         initStatementOrderCheckConfig();
+        initStatisticsFinanceWeeklyConfig();
+    }
+
+    private static void initStatisticsFinanceWeeklyConfig() {
+        statisticsFinanceWeeklyConfig.addConfig(new ColConfig("orderOrigin", "订单来源", new ExcelExportView() {
+            @Override
+            public Object view(Object o) {
+                if (o != null) {
+                    Integer orderOriginType = (Integer) o;
+                    if (StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_KA == orderOriginType) {
+                        return "KA";
+                    } else if (StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_TMK == orderOriginType) {
+                        return "电销";
+                    } else if (StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_BCC == orderOriginType) {
+                        return "大客户渠道";
+                    } else if (StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_ALL == orderOriginType) {
+                        return "合计";
+                    }
+                }
+                return null;
+            }
+        }))
+        .addConfig(new ColConfig("rentLengthType", "租赁类型", new ExcelExportView() {
+            @Override
+            public Object view(Object o) {
+                if (o != null) {
+                    Integer rentLengthType = (Integer) o;
+                    if (StatisticsRentLengthType.RENT_LENGTH_TYPE_SHORT == rentLengthType) {
+                        return "短租";
+                    } else if (StatisticsRentLengthType.RENT_LENGTH_TYPE_LONG == rentLengthType) {
+                        return "长租";
+                    } else if (StatisticsRentLengthType.RENT_LENGTH_TYPE_SHORTEST == rentLengthType){
+                        return "短短租";
+                    }
+                }
+                return null;
+            }
+        }))
+         .addConfig(new ColConfig("dealsCountType", "统计科目类型", new ExcelExportView() {
+             @Override
+             public Object view(Object o) {
+                 if (o != null) {
+                     Integer dealsCountType = (Integer) o;
+                     if (StatisticsDealsCountType.DEALS_COUNT_TYPE_CUSTOMER == dealsCountType) {
+                         return "成交客户数量";
+                     } else if (StatisticsDealsCountType.DEALS_COUNT_TYPE_NEW_CUSTOMER == dealsCountType) {
+                         return "成交新客户数量";
+                     } else if (StatisticsDealsCountType.DEALS_COUNT_TYPE_RENT_PRODUCT == dealsCountType){
+                         return "出库商品数量";
+                     } else if (StatisticsDealsCountType.DEALS_COUNT_TYPE_RETURN_PRODUCT == dealsCountType){
+                         return "退货商品数量";
+                     } else if (StatisticsDealsCountType.DEALS_COUNT_TYPE_INCREASE_PRODUCT == dealsCountType){
+                         return "净增商品数量";
+                     } else if (StatisticsDealsCountType.DEALS_COUNT_TYPE_ALL == dealsCountType){
+                         return "合计";
+                     }
+                 }
+                 return null;
+             }
+          }))
+          .addConfig(new ColConfig("shenZhenDealsCount","深圳"))
+          .addConfig(new ColConfig("beiJingZhenDealsCount","北京"))
+          .addConfig(new ColConfig("shangHaiDealsCount","上海"))
+          .addConfig(new ColConfig("guangZhouDealsCount","广州"))
+          .addConfig(new ColConfig("wuHanDealsCount","武汉"))
+          .addConfig(new ColConfig("nanJingDealsCount","南京"))
+          .addConfig(new ColConfig("chengDuDealsCount","成都"))
+          .addConfig(new ColConfig("xiaMenDealsCount","厦门"))
+          .addConfig(new ColConfig("sumDealsCount","合计"));
     }
 
 
@@ -287,6 +357,10 @@ public class ExcelExportConfigGroup {
                     return "租赁";
                 } else if (OrderType.ORDER_TYPE_RETURN.equals(businessType)) {
                     return "退货";
+                } else if (CommonConstant.ORDER_TYPE_RELET.equals(businessType)){
+                    return "续租";
+                } else if (CommonConstant.ORDER_TYPE_RELET_RETURN.equals(businessType)){
+                    return "续租退货";
                 }
                 return null;
             }
