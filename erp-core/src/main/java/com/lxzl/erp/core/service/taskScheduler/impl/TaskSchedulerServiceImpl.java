@@ -111,6 +111,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
             String requestJson = JSON.toJSONString(triggerCommitParam);
+
             String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL+"/pauseTaskTrigger", requestJson, headerBuilder, "UTF-8");
             logger.info("manual charge response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
@@ -201,6 +202,12 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             String requestJson = JSON.toJSONString(taskExecutorQueryParam);
             JSONObject jsonObject = JSON.parseObject(requestJson);
             jsonObject.put("pageNum",taskExecutorQueryParam.getPageNo());
+            if(jsonObject.get("triggerName") == null || "".equals(jsonObject.get("triggerName"))){
+                jsonObject.remove("triggerName");
+            }
+            if(jsonObject.get("triggerGroup") == null || "".equals(jsonObject.get("triggerGroup"))){
+                jsonObject.remove("triggerGroup");
+            }
 
             String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL+"/pageTaskExecutors", jsonObject.toJSONString(), headerBuilder, "UTF-8");
 
