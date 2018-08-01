@@ -3811,3 +3811,19 @@ CREATE TABLE `erp_finance_statistics_data_weekly` (
   PRIMARY KEY (`id`),
   KEY `index_year_month_week` (`year`,`month`,`week_of_month`)
 ) ENGINE=InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='财务按周统计当月数据记录表';
+
+DROP TABLE IF EXISTS `erp_order_operation_log`;
+CREATE TABLE `erp_order_operation_log` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_no` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '订单编号',
+  `order_status_before` int(11) NOT NULL DEFAULT '0' COMMENT '订单修改前状态，0-待提交,4-审核中,8-待发货,12-处理中,16-已发货,20-确认收货,24-全部归还,28-取消,32-结束',
+  `order_status_after` int(11) NOT NULL DEFAULT '0' COMMENT '订单修改后状态，0-待提交,4-审核中,8-待发货,12-处理中,16-已发货,20-确认收货,24-全部归还,28-取消,32-结束',
+  `operation_before` mediumtext COMMENT '修改前操作内容',
+  `operation_after` mediumtext COMMENT '修改后操作内容',
+  `business_type` int(11) DEFAULT NULL COMMENT '操作业务编码',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '添加人',
+  PRIMARY KEY (`id`),
+  KEY `order_no` (`order_no`),
+  KEY `business_type` (`business_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单操作日志';
