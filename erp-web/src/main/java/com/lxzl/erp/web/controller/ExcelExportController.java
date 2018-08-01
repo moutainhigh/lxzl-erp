@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.common.constant.StatisticsIntervalType;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlSelectParam;
@@ -68,12 +69,18 @@ public class ExcelExportController {
 
     @RequestMapping(value = "exportStatisticsFinanceDataWeekly", method = RequestMethod.POST)
     public Result exportStatisticsFinanceDataWeekly(FinanceStatisticsParam param, HttpServletResponse response) throws Exception {
+        if (param != null) {
+            param.setStatisticsInterval(StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY);
+        }
         ServiceResult<String, String> serviceResult = exportStatisticsFinanceDataService.exportStatisticsFinanceDataWeekly(param, response);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
 
     @RequestMapping(value = "exportStatisticsFinanceDataMonthly", method = RequestMethod.POST)
     public Result exportStatisticsFinanceDataMonthly(FinanceStatisticsParam param, HttpServletResponse response) throws Exception {
+        if (param != null) {
+            param.setStatisticsInterval(StatisticsIntervalType.STATISTICS_INTERVAL_MONTHLY);
+        }
         ServiceResult<String, String> serviceResult = exportStatisticsFinanceDataService.exportStatisticsFinanceDataMonthly(param, response);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
