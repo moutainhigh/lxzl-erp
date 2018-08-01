@@ -1233,7 +1233,25 @@ public class PageController extends BaseController {
 
     //添加定时任务
     @RequestMapping("/timed-manage/add-task")
-    public String timedTaskAdd() {
-        return "/timerService/taskScheduler";
+    public String timedManageAdd() {
+        return "/timerService/taskAdd";
+    }
+
+    //编辑定时任务
+    @RequestMapping("/timed-manage/edit-task")
+    public String timedManageEdit() {
+        return "/timerService/taskEdit";
+    }
+
+    //定时任务详情
+    @RequestMapping("/timed-manage/task-detail")
+    public String timedManageDetail() {
+        return "/timerService/taskDetail";
+    }
+
+    //定时任务更新执行者信息
+    @RequestMapping("/timed-manage/update-performer")
+    public String timedManageUpdatePerformer() {
+        return "/timerService/editPerformer";
     }
 }

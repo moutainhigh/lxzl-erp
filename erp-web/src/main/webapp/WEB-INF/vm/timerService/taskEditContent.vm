@@ -1,0 +1,136 @@
+<div class="panel-body p25">
+    <div class="section row">
+        <div class="col-md-3">
+            <label for="jobName" class="field-label">工作名称</label>
+            <label for="jobName" class="field prepend-icon">
+                <input type="text" name="jobName" id="jobName" class="gui-input" placeholder="工作名称">
+                <label for="jobName" class="field-icon"><i class="fa fa-tag"></i></label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="jobGroup" class="field-label">工作分组</label>
+            <label for="jobGroup" class="field prepend-icon">
+                <input type="text" name="jobGroup" id="jobGroup" class="gui-input" placeholder="工作分组" />
+                <label for="jobGroup" class="field-icon"><i class="fa fa-tag"></i></label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="triggerName" class="field-label"><em class="text-danger">*</em>触发器名称</label>
+            <label for="triggerName" class="field prepend-icon">
+                <input type="text" name="triggerName" id="triggerName" class="gui-input required" placeholder="触发器名称">
+                <label for="triggerName" class="field-icon"><i class="fa fa-tag"></i></label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="triggerGroup" class="field-label"><em class="text-danger">*</em>触发器分组</label>
+            <label for="triggerGroup" class="field prepend-icon">
+                <input type="text" name="triggerGroup" id="triggerGroup" class="gui-input required" placeholder="触发器分组">
+                <label for="triggerGroup" class="field-icon"><i class="fa fa-tag"></i></label>
+            </label>
+        </div>
+    </div>
+
+    <div class="section row">
+        <div class="col-md-3">
+            <label for="holidayDTOList" class="field-label"><em class="text-danger">*</em>指定不需要指定定时任务的日期</label>
+            <div class="field">
+                <div class="pull-left mr10">
+                    <select style="height:30px; width:100px;" id="yearSelect" name="year">
+                        <option value="">年</option>
+                    </select>
+                </div>
+                <div class="pull-left mr10">
+                    <select style="height:30px; width:100px;" id="monthSelect" name="month">
+                        <option value="">月</option>
+                    </select>
+                </div>
+                <div class="pull-left mr10">
+                    <select style="height:30px; width:100px;" id="daySelect" name="day">
+                        <option value="">日</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <label for="holidayName" class="field-label">假期名称</label>
+            <label for="holidayName" class="field prepend-icon">
+                <input type="text" name="holidayName" id="holidayName" class="gui-input" placeholder="假期名称">
+                <label for="holidayName" class="field-icon"><i class="fa fa-tag"></i></label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="cronExpression" class="field-label"><em class="text-danger">*</em>cron表达式</label>
+            <label for="cronExpression" class="field prepend-icon">
+                <input type="text" name="cronExpression" id="cronExpression" class="gui-input required" placeholder="cron表达式">
+                <label for="cronExpression" class="field-icon"><i class="fa fa-tag"></i></label>
+            </label>
+        </div>
+    </div>
+
+    <div class="section row">
+        <div class="col-md-6" id="executorRow">
+            <div class="section-divider mv40" id="spy2">
+                <span>任务执行者信息</span>
+            </div>
+            <div class="section row mn">
+                <div class="col-md-6" style="padding-left:0;">
+                    <div class="section">
+                        <label for="requestUrl" class="field prepend-icon">
+                            <input type="text" name="requestUrl" id="requestUrl" class="gui-input required" placeholder="请求url">
+                            <label for="requestUrl" class="field-icon"><i class="fa fa-tag"></i></label>
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label for="systemType" class="field prepend-icon">
+                            <input type="text" name="systemType" id="systemType" class="gui-input required" placeholder="系统类型">
+                            <label for="systemType" class="field-icon"><i class="fa fa-tag"></i></label>
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label class="field select">
+                            <select id="jobType" name="jobType" class="required">
+                                <option value="">请选择</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6" style="padding-right:0;">
+                    <label for="requestBody" class="field prepend-icon">
+                        <textarea class="gui-textarea" id="requestBody" name="requestBody" style="height: 170px;" placeholder="json字符串"></textarea>
+                        <label for="requestBody" class="field-icon"><i class="fa fa-map-marker"></i></label>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="section-divider mv40" id="spy3">
+                <span>任务描述</span>
+            </div>
+            <div class="section mn">
+                <label for="description" class="field prepend-icon">
+                    <textarea class="gui-textarea" id="description" name="description" placeholder="请输入任务描述" style="height: 170px;"></textarea>
+                    <label for="description" class="field-icon"><i class="fa fa-comments"></i></label>
+                </label>
+            </div>
+        </div>
+    </div>
+
+##    <div class="section row">
+##        <div class="col-md-12">
+##            <div class="section-divider mv40" id="spy2">
+##                <span>cron表达式</span>
+##            </div>
+##            <div class="smart-widget sm-right">
+##                <label for="remark" class="field prepend-icon">
+##                    <textarea class="gui-textarea" id="remark" name="remark" placeholder="请输入cron表达式" style="height: 170px;"></textarea>
+##                    <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
+##                </label>
+##            </div>
+##        </div>
+##    </div>
+</div>
+<div class="panel-footer text-right">
+    <button type="submit" class="button btn-primary">确定</button>
+    <button type="button" class="button btn-default goBack">返回</button>
+</div>
