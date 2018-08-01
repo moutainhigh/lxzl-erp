@@ -945,6 +945,30 @@
         </foreach>
     </update>
 
+
+    <update id="updateOrderProductPrice">
+
+        UPDATE erp_order_product SET product_unit_amount = #{productUnitAmount, jdbcType=INTEGER} where id = #{orderProductId, jdbcType=INTEGER};
+
+        UPDATE erp_order_product SET product_amount = (product_unit_amount * renting_product_count * rent_time_length) where id = #{orderProductId, jdbcType=INTEGER};
+
+        UPDATE erp_order SET  total_product_amount = (SELECT * from (SELECT SUM(product_amount) FROM erp_order_product WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) A) where order_no = #{orderNo, jdbcType=VARCHAR};
+
+        UPDATE erp_order SET  total_order_amount = (total_product_amount + total_material_amount + logistics_amount) where order_no = #{orderNo, jdbcType=VARCHAR};
+    </update>
+
+    <update id="updateOrderMaterialPrice">
+
+        UPDATE erp_order_material SET material_unit_amount = #{materialUnitAmount, jdbcType=INTEGER} where id = #{orderMaterialId, jdbcType=INTEGER};
+
+		UPDATE erp_order_material SET material_amount = (material_unit_amount * renting_material_count * rent_time_length) where id = #{orderMaterialId, jdbcType=INTEGER};
+
+		UPDATE erp_order SET  total_material_amount = (SELECT * from (SELECT SUM(material_amount) FROM erp_order_material WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) A) where order_no = #{orderNo, jdbcType=VARCHAR};
+
+		UPDATE erp_order SET  total_order_amount = (total_product_amount + total_material_amount + logistics_amount) where order_no = #{orderNo, jdbcType=VARCHAR};
+
+    </update>
+
     <!-- 根据订单号列表获取订单列表信息 -->
     <select id="listByOrderNOs" resultMap="OrderDO">
         SELECT

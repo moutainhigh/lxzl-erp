@@ -62,6 +62,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
+import com.lxzl.erp.dataaccess.dao.mysql.orderOperationLog.OrderOperationLogMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
@@ -84,6 +85,7 @@ import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
+import com.lxzl.erp.dataaccess.domain.orderOperationLog.OrderOperationLogDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
@@ -96,6 +98,8 @@ import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import org.apache.hadoop.mapred.IFile;
+import org.apache.velocity.runtime.directive.Foreach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -923,6 +927,114 @@ public class OrderServiceImpl implements OrderService {
         ServiceResult<String, String> serviceResult = changeOrderMethod(orderConfirmChangeParam, result, dborderDO);
 
         return serviceResult;
+    }
+
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String,String> updateOrderPrice(Order order){
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+        if (StringUtil.isEmpty(order.getOrderNo())) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+        OrderDO orderDO = orderMapper.findByOrderNo(order.getOrderNo());
+        if (orderDO == null){
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        Integer intItemCount = 0;
+        String strOperationBefore;
+        String strOperationAfter;
+        OrderOperationLogDO orderOperationLogDO = new OrderOperationLogDO();
+        orderOperationLogDO.setOrderNo(orderDO.getOrderNo());
+        orderOperationLogDO.setOrderStatusBefore(orderDO.getOrderStatus());
+        orderOperationLogDO.setOrderStatusAfter(orderDO.getOrderStatus());
+        orderOperationLogDO.setBusinessType(OrderBusinessType.ORDER_OPERATION_UPD_GOODS_PRICE);
+        orderOperationLogDO.setCreateTime(currentTime);
+        orderOperationLogDO.setCreateUser(loginUser.getUserId().toString());
+        if (CollectionUtil.isNotEmpty(order.getOrderProductList())){
+            for (OrderProduct orderProduct: order.getOrderProductList()){
+                if (orderProduct.getOrderProductId() == null || orderProduct.getProductUnitAmount() == null){
+                    continue;
+                }
+                OrderProductDO orderProductDO = getOrderProductDOById(orderDO, orderProduct.getOrderProductId());
+                if (BigDecimalUtil.compare(orderProductDO.getProductUnitAmount(), orderProduct.getProductUnitAmount()) == 0){
+                    continue;
+                }
+                orderMapper.updateOrderProductPrice(order.getOrderNo(),orderProduct.getOrderProductId(),orderProduct.getProductUnitAmount());
+                strOperationBefore = "商品项id:" + orderProduct.getOrderProductId() + "，商品单价：" + orderProductDO.getProductUnitAmount()+ "。";
+                strOperationAfter = "商品项id:" + orderProduct.getOrderProductId() + "，商品单价：" + orderProduct.getProductUnitAmount()+ "。";
+                orderOperationLogDO.setOperationBefore(strOperationBefore);
+                orderOperationLogDO.setOperationAfter(strOperationAfter);
+                orderOperationLogMapper.save(orderOperationLogDO);
+                intItemCount ++;
+            }
+        }
+        if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())){
+            for (OrderMaterial orderMaterial: order.getOrderMaterialList()){
+                if (orderMaterial.getOrderMaterialId() == null || orderMaterial.getMaterialUnitAmount() == null){
+                    continue;
+                }
+                OrderMaterialDO orderMaterialDO = getOrderMaterialDOById(orderDO, orderMaterial.getOrderMaterialId());
+                if (BigDecimalUtil.compare(orderMaterialDO.getMaterialUnitAmount(), orderMaterial.getMaterialUnitAmount()) == 0){
+                    continue;
+                }
+                orderMapper.updateOrderMaterialPrice(order.getOrderNo(),orderMaterial.getOrderMaterialId(),orderMaterial.getMaterialUnitAmount());
+                strOperationBefore = "配件项id:" + orderMaterial.getOrderMaterialId() + "，配件单价：" + orderMaterialDO.getMaterialUnitAmount()+ "。";
+                strOperationAfter = "配件项id:" + orderMaterial.getOrderMaterialId() + "，配件单价：" + orderMaterial.getMaterialUnitAmount()+ "。";
+                orderOperationLogDO.setOperationBefore(strOperationBefore);
+                orderOperationLogDO.setOperationAfter(strOperationAfter);
+                orderOperationLogMapper.save(orderOperationLogDO);
+                intItemCount ++;
+            }
+        }
+        if (intItemCount > 0){//重算订单
+            statementService.reCreateOrderStatement(orderDO.getOrderNo(), orderDO.getStatementDate());
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(intItemCount.toString());
+        return result;
+    }
+
+    /**
+     * 通过商品项id查找 订单DO中的商品项信息
+     *
+     * @param
+     * @return
+     * @author ZhaoZiXuan
+     */
+    private OrderProductDO getOrderProductDOById(OrderDO order, Integer id) {
+
+        if (CollectionUtil.isNotEmpty(order.getOrderProductDOList())) {
+
+            for (OrderProductDO orderProduct : order.getOrderProductDOList()) {
+                if (orderProduct.getId().equals(id)) {
+                    return orderProduct;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 通过配件项id查找 订单中的配件项信息
+     *
+     * @param
+     * @return
+     * @author ZhaoZiXuan
+     */
+    private OrderMaterialDO getOrderMaterialDOById(OrderDO order, Integer id) {
+
+        if (CollectionUtil.isNotEmpty(order.getOrderMaterialDOList())) {
+
+            for (OrderMaterialDO orderMaterial : order.getOrderMaterialDOList()) {
+                if (orderMaterial.getId().equals(id)) {
+                    return orderMaterial;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -4219,6 +4331,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private OrderOperationLogMapper orderOperationLogMapper;
 
     @Autowired
     private OrderMapper orderMapper;

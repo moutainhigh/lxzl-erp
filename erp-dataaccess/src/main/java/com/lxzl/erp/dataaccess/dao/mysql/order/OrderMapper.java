@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.order;
 
+import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
@@ -60,4 +61,8 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     List<OrderDO> findByNos(@Param("orderNos") Set<String> orderNos);
 
     List<OrderDO> findCanReletOrderForWorkbench(@Param("maps")Map<String, Object> maps);
+
+    Integer updateOrderProductPrice(@Param("orderNo") String orderNo, @Param("orderProductId") Integer orderProductId, @Param("productUnitAmount") BigDecimal productUnitAmount);
+
+    Integer updateOrderMaterialPrice(@Param("orderNo") String orderNo, @Param("orderMaterialId") Integer orderMaterialId, @Param("materialUnitAmount") BigDecimal materialUnitAmount);
 }
