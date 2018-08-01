@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.common.constant.StatisticsIntervalType;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.statistics.*;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIndexInfo;
@@ -187,6 +188,9 @@ public class StatisticsController extends BaseController {
      */
     @RequestMapping(value = "reStatisticsFinanceDataWeekly", method = RequestMethod.POST)
     public Result reStatisticsFinanceDataWeekly(@RequestBody @Validated FinanceStatisticsParam financeStatisticsParam, BindingResult validResult) {
+        if (financeStatisticsParam != null) {
+            financeStatisticsParam.setStatisticsInterval(StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY);
+        }
         ServiceResult<String, Boolean> serviceResult = statisticsService.reStatisticsFinanceDataWeekly(financeStatisticsParam);
         return resultGenerator.generate(serviceResult);
     }
