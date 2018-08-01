@@ -249,7 +249,7 @@ public interface OrderService extends VerifyReceiver {
      * @param
      * @return
      */
-    ServiceResult<String,String> updateOrderPrice(Order order);
+    ServiceResult<String,Integer> updateOrderPrice(Order order);
 
     void saveOrderProductInfo(List<OrderProductDO> orderProductDOList, Integer orderId, User loginUser, Date currentTime);
     void saveOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, Integer orderId, User loginUser, Date currentTime);

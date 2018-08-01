@@ -930,8 +930,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String,String> updateOrderPrice(Order order){
-        ServiceResult<String, String> result = new ServiceResult<>();
+    public ServiceResult<String,Integer> updateOrderPrice(Order order){
+        ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         if (StringUtil.isEmpty(order.getOrderNo())) {
@@ -993,7 +993,7 @@ public class OrderServiceImpl implements OrderService {
             statementService.reCreateOrderStatement(orderDO.getOrderNo(), orderDO.getStatementDate());
         }
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(intItemCount.toString());
+        result.setResult(intItemCount);
         return result;
     }
 
