@@ -744,6 +744,9 @@ public class K3ServiceImpl implements K3Service {
         if (k3ReturnOrderQueryParam.getReturnEndTime() != null) {
             requestData.put("createEndTime", DateUtil.formatDate(k3ReturnOrderQueryParam.getReturnEndTime(), DateUtil.SHORT_DATE_FORMAT_STR));
         }
+        if (k3ReturnOrderQueryParam.getReturnOrderNo() != null) {
+            requestData.put("returnOrderNo", k3ReturnOrderQueryParam.getReturnOrderNo());
+        }
         String requestJson = JSONObject.toJSONString(requestData);
         info.append("获取历史退货单请求："+requestJson+"\n");
         HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
