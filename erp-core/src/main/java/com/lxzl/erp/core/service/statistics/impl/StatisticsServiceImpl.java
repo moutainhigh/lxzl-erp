@@ -964,6 +964,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             int firstDayOfThisWeekInMonth = firstDayOfThisWeekCalendar.get(Calendar.MONTH) + 1; // 因为日历获取的月份比实际月份小1
             int firstDayOfThisWeekInWeekOfMonth = firstDayOfThisWeekCalendar.get(Calendar.WEEK_OF_MONTH);
             FinanceStatisticsParam paramVo = new FinanceStatisticsParam();
+            paramVo.setStatisticsInterval(StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY);
             paramVo.setYear(firstDayOfThisWeekInYear);
             paramVo.setMonth(firstDayOfThisWeekInMonth);
             paramVo.setWeekOfMonth(firstDayOfThisWeekInWeekOfMonth);
@@ -973,6 +974,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
         String key = currentYear + "-" + currentMonth + "-" + currentWeekOfMonth;
         FinanceStatisticsParam paramVo = new FinanceStatisticsParam();
+        paramVo.setStatisticsInterval(StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY);
         paramVo.setYear(currentYear);
         paramVo.setMonth(currentMonth);
         paramVo.setWeekOfMonth(currentWeekOfMonth);
