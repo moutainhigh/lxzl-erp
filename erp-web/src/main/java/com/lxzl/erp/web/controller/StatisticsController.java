@@ -191,6 +191,17 @@ public class StatisticsController extends BaseController {
         return resultGenerator.generate(serviceResult);
     }
 
+    /**
+     * 重新统计历史财务数据
+     * @return
+     */
+    @RequestMapping(value = "reStatisticsFinanceData", method = RequestMethod.POST)
+    public Result reStatisticsFinanceData(@RequestBody @Validated FinanceStatisticsParam financeStatisticsParam, BindingResult validResult) {
+
+        ServiceResult<String, Boolean> serviceResult = statisticsService.reStatisticsFinanceData(financeStatisticsParam);
+        return resultGenerator.generate(serviceResult);
+    }
+
     @Autowired
     private ResultGenerator resultGenerator;
 

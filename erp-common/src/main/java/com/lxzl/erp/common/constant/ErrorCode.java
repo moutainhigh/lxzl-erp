@@ -996,6 +996,7 @@ public class ErrorCode {
     public static final String STATISTICS_FINANCE_WEEKLY_PARAM_YEAR_INVALID = "J240000007";
     public static final String STATISTICS_FINANCE_WEEKLY_PARAM_MONTH_INVALID = "J240000008";
     public static final String STATISTICS_FINANCE_WEEKLY_PARAM_WEEK_INVALID = "J240000009";
+    public static final String STATISTICS_FINANCE_PARAM_INTERVAL_INVALID = "J240000010";
 
     // 定时任务错误信息
     public static final String QUARTZ_SCHED_NAME_NOT_NULL = "J250000001";
@@ -1987,6 +1988,7 @@ public class ErrorCode {
         MAP.put(STATISTICS_FINANCE_WEEKLY_PARAM_YEAR_INVALID, "您填写的年份不合法");
         MAP.put(STATISTICS_FINANCE_WEEKLY_PARAM_MONTH_INVALID, "您填写的月份不合法(月份范围：1-12)");
         MAP.put(STATISTICS_FINANCE_WEEKLY_PARAM_WEEK_INVALID, "您填写的周不合法或者超过了当月最大周");
+        MAP.put(STATISTICS_FINANCE_PARAM_INTERVAL_INVALID,"统计周期（按年、按月、按周）不能为空，且必须为有效值");
 
         MAP.put(QUARTZ_SCHED_NAME_NOT_NULL, "定时任务的Sched名称不能为空");
         MAP.put(QUARTZ_JOB_NAME_NOT_NULL, "定时任务的任务名称不能为空");

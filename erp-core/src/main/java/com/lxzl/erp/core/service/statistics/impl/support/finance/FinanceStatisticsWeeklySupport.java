@@ -99,7 +99,7 @@ public class FinanceStatisticsWeeklySupport {
     public int getMaxWeekCountOfYearAndMonth(int year, int month) {
         Calendar currentCalendar = Calendar.getInstance();
         currentCalendar.set(Calendar.YEAR, year);
-        currentCalendar.set(Calendar.MONTH, month);
+        currentCalendar.set(Calendar.MONTH, month - 1);
         currentCalendar.set(Calendar.DAY_OF_MONTH, 1);
         return currentCalendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
     }
@@ -134,6 +134,14 @@ public class FinanceStatisticsWeeklySupport {
     }
 
     public List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataMonthly(FinanceStatisticsParam paramVo) {
+        return statisticsFinanceDataMonthly(paramVo, false);
+    }
+
+    public List<FinanceStatisticsDataWeeklyDO> reStatisticsFinanceDataMonthly(FinanceStatisticsParam paramVo) {
+        return statisticsFinanceDataMonthly(paramVo, true);
+    }
+
+    public List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataMonthly(FinanceStatisticsParam paramVo, boolean needReStatistics) {
         int year = paramVo.getYear();
         int month = paramVo.getMonth();
         int weekOfMonth = paramVo.getWeekOfMonth();
@@ -141,35 +149,43 @@ public class FinanceStatisticsWeeklySupport {
         List<FinanceStatisticsDataWeeklyDO> financeAllStatisticsDataWeekly = new ArrayList<>();
         //统计KA
         paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_KA);
-        List<FinanceStatisticsDataWeeklyDO> financeKAStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
-        if (CollectionUtil.isNotEmpty(financeKAStatisticsDataWeekly)) {
+        List<FinanceStatisticsDataWeeklyDO> financeKAStatisticsDataWeekly = null;
+        if (!needReStatistics) {
+            financeKAStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
+        }
+        fillFinanceStatisticsData(paramVo, isHistoryData, financeAllStatisticsDataWeekly, financeKAStatisticsDataWeekly);
+        //统计电销
+        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_TMK);
+        List<FinanceStatisticsDataWeeklyDO> financeTMKStatisticsDataWeekly = null;
+        if (!needReStatistics) {
+            financeTMKStatisticsDataWeekly =  statisticsFinanceDataWeekly(paramVo, isHistoryData);
+        }
+        fillFinanceStatisticsData(paramVo, isHistoryData, financeAllStatisticsDataWeekly, financeTMKStatisticsDataWeekly);
+        // 统计大客户渠道
+        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_BCC);
+        List<FinanceStatisticsDataWeeklyDO> financeBCCStatisticsDataWeekly = null;
+        if (!needReStatistics) {
+            financeBCCStatisticsDataWeekly =  statisticsFinanceDataWeekly(paramVo, isHistoryData);
+        }
+        fillFinanceStatisticsData(paramVo, isHistoryData, financeAllStatisticsDataWeekly, financeBCCStatisticsDataWeekly);
+        //将此次重新统计的数据保存到数据库
+        if (needReStatistics && CollectionUtil.isNotEmpty(financeAllStatisticsDataWeekly)) {
+            freshStatisticsDataToDB(year, month, weekOfMonth, financeAllStatisticsDataWeekly);
+        }
+        return financeAllStatisticsDataWeekly;
+    }
+
+    private void fillFinanceStatisticsData(FinanceStatisticsParam paramVo, boolean isHistoryData, List<FinanceStatisticsDataWeeklyDO> financeAllStatisticsDataWeekly, List<FinanceStatisticsDataWeeklyDO> financeKAStatisticsDataWeekly) {
+        if (CollectionUtil.isEmpty(financeKAStatisticsDataWeekly)) {
             financeKAStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData, true);
             if (CollectionUtil.isNotEmpty(financeKAStatisticsDataWeekly)) {
                 financeAllStatisticsDataWeekly.addAll(financeKAStatisticsDataWeekly);
             }
+        } else {
+            financeAllStatisticsDataWeekly.addAll(financeKAStatisticsDataWeekly);
         }
-        //统计电销
-        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_TMK);
-        List<FinanceStatisticsDataWeeklyDO> financeTMKStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
-        if (CollectionUtil.isNotEmpty(financeTMKStatisticsDataWeekly)) {
-            financeTMKStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData, true);
-            if (CollectionUtil.isNotEmpty(financeTMKStatisticsDataWeekly)) {
-                financeAllStatisticsDataWeekly.addAll(financeTMKStatisticsDataWeekly);
-            }
-        }
-        // 统计大客户渠道
-        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_BCC);
-        List<FinanceStatisticsDataWeeklyDO> financeBCCStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
-        if (CollectionUtil.isNotEmpty(financeBCCStatisticsDataWeekly)) {
-            financeBCCStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData, true);
-            if (CollectionUtil.isNotEmpty(financeBCCStatisticsDataWeekly)) {
-                financeAllStatisticsDataWeekly.addAll(financeBCCStatisticsDataWeekly);
-            }
-        }
-        //将此次重新统计的数据保存到数据库
-        //freshStatisticsDataToDB(year, month, weekOfMonth, financeAllStatisticsDataWeekly);
-        return financeAllStatisticsDataWeekly;
     }
+
 
     private void freshStatisticsDataToDB(int year, int month, int weekOfMonth, List<FinanceStatisticsDataWeeklyDO> financeAllStatisticsDataWeekly) {
         Map<String,Object> deleteParamMap = new HashMap<>();

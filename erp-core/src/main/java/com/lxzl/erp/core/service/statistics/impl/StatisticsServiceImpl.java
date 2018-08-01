@@ -1011,6 +1011,57 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
         return serviceResult;
     }
+    /**
+     * 重新统计历史的某年某月的财务数据
+     * @param paramVo
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, Boolean> reStatisticsFinanceDataMonthLy(FinanceStatisticsParam paramVo) {
+        ServiceResult<String, Boolean> serviceResult = verify(paramVo);
+        if (ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            int year = paramVo.getYear();
+            int month = paramVo.getMonth();
+            int maxWeekOfMonth = financeStatisticsWeeklySupport.getMaxWeekCountOfYearAndMonth(year, month);
+            paramVo.setWeekOfMonth(maxWeekOfMonth);
+            financeStatisticsWeeklySupport.reStatisticsFinanceDataMonthly(paramVo);
+            serviceResult.setResult(true);
+        } else {
+            serviceResult.setResult(false);
+        }
+        return serviceResult;
+    }
+
+    /**
+     * 重新统计历史的财务数据
+     * @param paramVo
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, Boolean> reStatisticsFinanceData(FinanceStatisticsParam paramVo){
+        ServiceResult<String, Boolean> serviceResult = new ServiceResult<>();
+        if (paramVo == null || paramVo.getStatisticsInterval() == null) {
+            serviceResult.setErrorCode(ErrorCode.STATISTICS_FINANCE_PARAM_INTERVAL_INVALID);
+            serviceResult.setResult(false);
+            return serviceResult;
+        }
+        if (StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY == paramVo.getStatisticsInterval()) {
+            return reStatisticsFinanceDataWeekly(paramVo);
+        } else if (StatisticsIntervalType.STATISTICS_INTERVAL_MONTHLY == paramVo.getStatisticsInterval()){
+            return reStatisticsFinanceDataMonthLy(paramVo);
+        } else if (StatisticsIntervalType.STATISTICS_INTERVAL_YEARLY == paramVo.getStatisticsInterval()){
+            // TODO
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            serviceResult.setResult(true);
+            return serviceResult;
+        } else {
+            serviceResult.setErrorCode(ErrorCode.STATISTICS_FINANCE_PARAM_INTERVAL_INVALID);
+            serviceResult.setResult(false);
+            return serviceResult;
+        }
+    }
 
     class StatisticsInterval {
         Date statisticsStartTime = null;
@@ -1060,23 +1111,32 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private ServiceResult<String, Boolean> verify(FinanceStatisticsParam param) {
-        return verify(param.getYear(), param.getMonth(), param.getWeekOfMonth());
+        if (param == null || param.getStatisticsInterval() == null) {
+            ServiceResult<String, Boolean> result = new ServiceResult<>();
+            result.setErrorCode(ErrorCode.STATISTICS_FINANCE_PARAM_INTERVAL_INVALID);
+            result.setResult(false);
+            return result;
+        }
+        int year = param.getYear() == null ? 0 : param.getYear();
+        int month = param.getMonth() == null ? 0 : param.getMonth();
+        int week = param.getWeekOfMonth() == null ? 0 : param.getWeekOfMonth();
+        return verify(param.getStatisticsInterval(), year, month, week );
     }
 
-    private ServiceResult<String, Boolean> verify(int year, int month, int weekOfMonth) {
+    private ServiceResult<String, Boolean> verify(int interval, int year, int month, int weekOfMonth) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
-        if (year <= 0) {
+        if (needVerifyYear(interval) && year <= 0) {
             result.setErrorCode(ErrorCode.STATISTICS_FINANCE_WEEKLY_PARAM_YEAR_INVALID);
             result.setResult(false);
             return result;
         }
-        if (!(month > 0 && month <= 12)) {  //月份填写不在 1-12 之间
+        if (needVerifyMonth(interval) && !(month > 0 && month <= 12)) {  //月份填写不在 1-12 之间
             result.setErrorCode(ErrorCode.STATISTICS_FINANCE_WEEKLY_PARAM_MONTH_INVALID);
             result.setResult(false);
             return result;
         }
         int maxWeekOfMonth = financeStatisticsWeeklySupport.getMaxWeekCountOfYearAndMonth(year, month);
-        if (!(weekOfMonth > 0 && weekOfMonth <= maxWeekOfMonth)) {  // 周参数填写不在 1 到 当月最大周 之间
+        if (needVerifyWeek(interval) && !(weekOfMonth > 0 && weekOfMonth <= maxWeekOfMonth)) {  // 周参数填写不在 1 到 当月最大周 之间
             result.setErrorCode(ErrorCode.STATISTICS_FINANCE_WEEKLY_PARAM_WEEK_INVALID);
             result.setResult(false);
             return result;
@@ -1084,6 +1144,18 @@ public class StatisticsServiceImpl implements StatisticsService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(true);
         return result;
+    }
+
+    private boolean needVerifyYear(int interval) {
+        return StatisticsIntervalType.STATISTICS_INTERVAL_YEARLY == interval || StatisticsIntervalType.STATISTICS_INTERVAL_MONTHLY == interval || StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY == interval;
+    }
+
+    private boolean needVerifyMonth(int interval) {
+        return StatisticsIntervalType.STATISTICS_INTERVAL_MONTHLY == interval || StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY == interval;
+    }
+
+    private boolean needVerifyWeek(int interval) {
+        return StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY == interval;
     }
 
     @Override

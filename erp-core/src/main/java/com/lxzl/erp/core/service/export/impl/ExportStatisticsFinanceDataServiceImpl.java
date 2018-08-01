@@ -38,7 +38,9 @@ public class ExportStatisticsFinanceDataServiceImpl implements ExportStatisticsF
     public ServiceResult<String, String> exportStatisticsFinanceData(FinanceStatisticsParam param, HttpServletResponse response){
         ServiceResult<String, String> excelServiceResult = new ServiceResult<>();
         if (param == null || param.getStatisticsInterval() == null) {
-
+            excelServiceResult = excelExportService.export(new ArrayList<FinanceStatisticsDataWeeklyExcel>(), ExcelExportConfigGroup.statisticsFinanceWeeklyConfig, ExcelExportSupport.formatFileName("财务报表"), "sheet1", response);
+            excelServiceResult.setErrorCode(ErrorCode.STATISTICS_FINANCE_PARAM_INTERVAL_INVALID);
+            return excelServiceResult;
         }
         if (StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY == param.getStatisticsInterval()) {
             return exportStatisticsFinanceDataWeekly(param, response);

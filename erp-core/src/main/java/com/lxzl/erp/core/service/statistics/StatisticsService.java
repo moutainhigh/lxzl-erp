@@ -69,6 +69,8 @@ public interface StatisticsService extends BaseService {
 
     ServiceResult<String,Boolean> statisticsFinanceDataWeeklyNow();
     ServiceResult<String, Boolean> reStatisticsFinanceDataWeekly(FinanceStatisticsParam paramVo);
+    ServiceResult<String, Boolean> reStatisticsFinanceDataMonthLy(FinanceStatisticsParam paramVo);
+    ServiceResult<String, Boolean> reStatisticsFinanceData(FinanceStatisticsParam paramVo);
     ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyToExcel(FinanceStatisticsParam paramVo);
     ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataMonthlyToExcel(FinanceStatisticsParam paramVo);
 }
