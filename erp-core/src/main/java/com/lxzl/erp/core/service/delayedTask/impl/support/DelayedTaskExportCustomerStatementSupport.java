@@ -158,7 +158,7 @@ public class DelayedTaskExportCustomerStatementSupport {
 //            System.out.println(sb.toString());
                     }
                     // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-                    delayedTaskMapper.subQueueNumber1();
+                    delayedTaskMapper.subQueueNumber();
                 }
 
             }
@@ -227,7 +227,7 @@ public class DelayedTaskExportCustomerStatementSupport {
 //            System.out.println(sb.toString());
             }
             // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-            delayedTaskMapper.subQueueNumber1();
+            delayedTaskMapper.subQueueNumber();
         }
 
         ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam);
@@ -256,7 +256,7 @@ public class DelayedTaskExportCustomerStatementSupport {
 //            System.out.println(sb.toString());
             }
             // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-            delayedTaskMapper.subQueueNumber1();
+            delayedTaskMapper.subQueueNumber();
         }
         List<CheckStatementOrder> checkStatementOrderList = stringListServiceResult.getResult();
         if (CollectionUtil.isEmpty(checkStatementOrderList)) {
@@ -283,7 +283,7 @@ public class DelayedTaskExportCustomerStatementSupport {
 //            System.out.println(sb.toString());
             }
             // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-            delayedTaskMapper.subQueueNumber1();
+            delayedTaskMapper.subQueueNumber();
         }
 
         Map<String, BigDecimal> totalEverPeriodAmountMap = new HashMap<>();
@@ -792,7 +792,7 @@ public class DelayedTaskExportCustomerStatementSupport {
                                             messageThirdChannelService.sendMessage(messageThirdChannel);
                                         }
                                         // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-                                        delayedTaskMapper.subQueueNumber1();
+                                        delayedTaskMapper.subQueueNumber();
                                     }
                                 }
                             }
@@ -865,7 +865,7 @@ public class DelayedTaskExportCustomerStatementSupport {
                                                 messageThirdChannelService.sendMessage(messageThirdChannel);
                                             }
                                             // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-                                            delayedTaskMapper.subQueueNumber1();
+                                            delayedTaskMapper.subQueueNumber();
                                         }
                                     }
                                 }else {
@@ -910,7 +910,7 @@ public class DelayedTaskExportCustomerStatementSupport {
                                             messageThirdChannelService.sendMessage(messageThirdChannel);
                                         }
                                         // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-                                        delayedTaskMapper.subQueueNumber1();
+                                        delayedTaskMapper.subQueueNumber();
                                     }
                                 }
                                 Integer itemCount = returnCount + exportStatementOrderDetail.getItemCount();
@@ -1367,7 +1367,7 @@ public class DelayedTaskExportCustomerStatementSupport {
                     messageThirdChannelService.sendMessage(messageThirdChannel);
                 }
                 // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-                delayedTaskMapper.subQueueNumber1();
+                delayedTaskMapper.subQueueNumber();
             }
             //更新进度
             if (i!=listCount) {
@@ -1393,7 +1393,7 @@ public class DelayedTaskExportCustomerStatementSupport {
             delayedTaskDO.setRemark(null);
             delayedTaskMapper.update(delayedTaskDO);
             // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-            delayedTaskMapper.subQueueNumber1();
+            delayedTaskMapper.subQueueNumber();
             if (delayedTaskDO.getCreateUser() != null) {
                 MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
                 StringBuffer sb = new StringBuffer();
@@ -1425,7 +1425,7 @@ public class DelayedTaskExportCustomerStatementSupport {
 //            System.out.println(sb.toString());
             }
             // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-            delayedTaskMapper.subQueueNumber1();
+            delayedTaskMapper.subQueueNumber();
         }
 //        String file = "D:\\xxxxxxx\\"+ (customerName + "对账单") + ".xlsx";
 //            FileOutputStream o = new FileOutputStream(file);

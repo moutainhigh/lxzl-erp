@@ -376,7 +376,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                         messageThirdChannelService.sendMessage(messageThirdChannel);
                     }
                     // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-                    delayedTaskMapper.subQueueNumber1();
+                    delayedTaskMapper.subQueueNumber();
                 }
 
                 // TODO: 2018\7\27 0027 存储地址，发送钉钉消息晒啥
@@ -426,7 +426,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
 //            System.out.println(sb.toString());
                 }
                 // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-                delayedTaskMapper.subQueueNumber1();
+                delayedTaskMapper.subQueueNumber();
                 delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
                 result.setResult(delayedTask);
                 result.setErrorCode(ErrorCode.SUCCESS);

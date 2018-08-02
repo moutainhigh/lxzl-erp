@@ -19,8 +19,7 @@ public interface DelayedTaskMapper extends BaseMysqlDAO<DelayedTaskDO> {
 
 	Integer findProcessingCount();
 
-    void subQueueNumber1();
-	void subQueueNumber2();
+    void subQueueNumber();
 
 	Integer findDelayedTaskCountByParams(@Param("maps") Map<String, Object> maps);
 
