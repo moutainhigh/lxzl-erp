@@ -184,7 +184,8 @@
                                     {{/dataSource}}
                                 </script>
                                 <div class="workbench-row row pl35" id="professionOrderRow">
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    
+                                    <div class="col-md-3 pn pr35 mb20" id="saleRentingOrder">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">租赁订单</div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
