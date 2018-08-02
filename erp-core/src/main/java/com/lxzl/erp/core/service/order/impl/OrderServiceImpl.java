@@ -945,6 +945,7 @@ public class OrderServiceImpl implements OrderService {
         }
         String strOperationBefore;
         String strOperationAfter;
+        BigDecimal totalUnitAmount = BigDecimal.ZERO;
         List<OrderOperationLogDO> orderOperationLogDOList = new ArrayList<>();
         List<OrderProductDO> orderProductDOList = new ArrayList<>();
         List<OrderMaterialDO> orderMaterialDOList = new ArrayList<>();
@@ -954,6 +955,7 @@ public class OrderServiceImpl implements OrderService {
                     continue;
                 }
                 OrderProductDO orderProductDO = getOrderProductDOById(orderDO, orderProduct.getOrderProductId());
+                totalUnitAmount = BigDecimalUtil.add(orderProduct.getProductUnitAmount(), totalUnitAmount);//记录商品单价
                 if (BigDecimalUtil.compare(orderProductDO.getProductUnitAmount(), orderProduct.getProductUnitAmount()) == 0){
                     continue;
                 }
@@ -989,6 +991,7 @@ public class OrderServiceImpl implements OrderService {
                     continue;
                 }
                 OrderMaterialDO orderMaterialDO = getOrderMaterialDOById(orderDO, orderMaterial.getOrderMaterialId());
+                totalUnitAmount = BigDecimalUtil.add(orderMaterial.getMaterialUnitAmount(), totalUnitAmount);//记录配件单价
                 if (BigDecimalUtil.compare(orderMaterialDO.getMaterialUnitAmount(), orderMaterial.getMaterialUnitAmount()) == 0){
                     continue;
                 }
@@ -1021,6 +1024,10 @@ public class OrderServiceImpl implements OrderService {
         if (orderOperationLogDOList.size() > 0){
             //更新订单总价
             orderMapper.updateOrderTotalOrderAmount(orderDO.getOrderNo());
+            //若订单配件和商品单价之和为零，更新订单首付总额为零
+            if (BigDecimalUtil.compare(totalUnitAmount, BigDecimal.ZERO) == 0){
+                orderMapper.updateOrderFirstNeedPayAmount(orderDO.getOrderNo());
+            }
             //重算订单
             ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(orderDO.getOrderNo(), orderDO.getStatementDate());
             if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
