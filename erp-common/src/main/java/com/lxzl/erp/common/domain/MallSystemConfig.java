@@ -25,7 +25,7 @@ public class MallSystemConfig {
         return mallSystemAppSecret;
     }
 
-    public static void setMallSystemAppSecret(String mallSystemAppSecret) {
+    public  void setMallSystemAppSecret(String mallSystemAppSecret) {
         MallSystemConfig.mallSystemAppSecret = mallSystemAppSecret;
     }
 }
