@@ -263,6 +263,11 @@ public class PageController extends BaseController {
         return "/component/order/sectionSettlementModal";
     }
 
+    @RequestMapping("/order-manage/undergraduate-order-list")
+    public String undergraduateOrderList() {
+        return "/orderManage/undergraduateOrder";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
