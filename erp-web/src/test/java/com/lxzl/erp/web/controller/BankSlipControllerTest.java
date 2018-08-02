@@ -267,6 +267,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
         BankSlipDetailQueryParam bankSlipDetailQueryParam = new BankSlipDetailQueryParam();
         bankSlipDetailQueryParam.setPageNo(1);
         bankSlipDetailQueryParam.setPageSize(15);
+        bankSlipDetailQueryParam.setSubCompanyId(4);
 //        bankSlipDetailQueryParam.setSlipDayStart(new SimpleDateFormat("yyyy-MM-dd").parse("2015-04-22"));
 //        bankSlipDetailQueryParam.setSlipDayEnd(new SimpleDateFormat("yyyy-MM-dd").parse("2015-04-23"));
 //        bankSlipDetailQueryParam.setBankSlipId(203);
