@@ -67,6 +67,7 @@ public class ImageServiceImpl extends BaseServiceImpl implements ImageService {
             }
         } catch (Exception e) {
             logger.error("upload image file error");
+            e.printStackTrace();
             result.setErrorCode(ErrorCode.PRODUCT_IMAGE_UPLOAD_ERROR);
             return result;
         }
