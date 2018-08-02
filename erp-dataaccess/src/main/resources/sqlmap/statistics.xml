@@ -1459,13 +1459,13 @@ ORDER BY esc.data_order DESC
         </if>
         <if test="maps.rentLengthType != null">
             <if test="maps.rentLengthType == 1">
-               AND ((eo.rent_type=2 AND 6 > eo.rent_time_length)
+               AND ((eo.rent_type=2 AND 6 > eo.rent_time_length) OR (eo.rent_type=1 AND eo.rent_time_length >= 30))
             </if>
             <if test="maps.rentLengthType == 2">
                 AND (eo.rent_type=2 AND eo.rent_time_length >= 6)
             </if>
             <if test="maps.rentLengthType == 3">
-                AND eo.rent_type=1
+                AND (eo.rent_type=1 AND 30 > eo.rent_time_length)
             </if>
         </if>
         <if test="maps.newCustomerKey != null">
@@ -1508,13 +1508,13 @@ ORDER BY esc.data_order DESC
         </if>
         <if test="maps.rentLengthType != null">
             <if test="maps.rentLengthType == 1">
-                AND (eo.rent_type=2 AND 6 > eo.rent_time_length)
+                AND ((eo.rent_type=2 AND 6 > eo.rent_time_length) OR (eo.rent_type=1 AND eo.rent_time_length >= 30))
             </if>
             <if test="maps.rentLengthType == 2">
                 AND (eo.rent_type=2 AND eo.rent_time_length >= 6)
             </if>
             <if test="maps.rentLengthType == 3">
-                AND eo.rent_type=1
+                AND (eo.rent_type=1 AND 30 > eo.rent_time_length)
             </if>
         </if>
         <if test="maps.newCustomerKey != null">
@@ -1561,13 +1561,13 @@ ORDER BY esc.data_order DESC
         </if>
         <if test="maps.rentLengthType != null">
             <if test="maps.rentLengthType == 1">
-                AND (eo.rent_type=2 AND 6 > eo.rent_time_length)
+                AND ((eo.rent_type=2 AND 6 > eo.rent_time_length) OR (eo.rent_type=1 AND eo.rent_time_length >= 30))
             </if>
             <if test="maps.rentLengthType == 2">
                 AND (eo.rent_type=2 AND eo.rent_time_length >= 6)
             </if>
             <if test="maps.rentLengthType == 3">
-                AND eo.rent_type=1
+                AND (eo.rent_type=1 AND 30 > eo.rent_time_length)
             </if>
         </if>
         <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
@@ -1612,13 +1612,13 @@ ORDER BY esc.data_order DESC
         </if>
         <if test="maps.rentLengthType != null">
             <if test="maps.rentLengthType == 1">
-                AND (eo.rent_type=2 AND 6 > eo.rent_time_length)
+                AND ((eo.rent_type=2 AND 6 > eo.rent_time_length) OR (eo.rent_type=1 AND eo.rent_time_length >= 30))
             </if>
             <if test="maps.rentLengthType == 2">
                 AND (eo.rent_type=2 AND eo.rent_time_length >= 6)
             </if>
             <if test="maps.rentLengthType == 3">
-                AND eo.rent_type=1
+                AND (eo.rent_type=1 AND 30 > eo.rent_time_length)
             </if>
         </if>
         <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
