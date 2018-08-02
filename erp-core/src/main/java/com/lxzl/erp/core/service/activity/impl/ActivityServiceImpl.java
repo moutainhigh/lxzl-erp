@@ -28,11 +28,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public ServiceResult<String, Result> getActivityOrder(ActivityOrderParam param) {
         ServiceResult<String, Result> serviceResult = new ServiceResult<>();
-
-        if (param.getStatus() == null)
-            param.setStatus(1);
         param.setAdvancedState(1);
-
         ActivityOrderInterfaceParam activityOrderInterfaceParam = new ActivityOrderInterfaceParam();
         activityOrderInterfaceParam.setAppId(MallSystemConfig.mallSystemAppId);
         activityOrderInterfaceParam.setAppSecret(MallSystemConfig.mallSystemAppSecret);
