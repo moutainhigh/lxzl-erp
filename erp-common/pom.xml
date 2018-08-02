@@ -15,7 +15,7 @@
     <description>erp common pacakge</description>
 
     <dependencies>
-        <!-- se -->
+        <!-- s e -->
         <dependency>
             <groupId>com.lxzl.systemframework</groupId>
             <artifactId>lxse</artifactId>
