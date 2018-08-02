@@ -1379,7 +1379,6 @@ public class DelayedTaskExportCustomerStatementSupport {
         // TODO: 2018\7\27 0027 将XSSFWorkbook存储到指定位置
         String fileName = ConstantConfig.exportFileUrl + (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
 //        String fileName = "D:\\xxxxxxx\\"+ (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
-        String dingdingFileName = "http://export.52rental.com/erp/" + (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
         try {
             FileUtil.outputExcel(fileName,hssfWorkbook);
             // TODO: 2018\7\27 0027 存储地址，发送钉钉消息晒啥
@@ -1398,7 +1397,7 @@ public class DelayedTaskExportCustomerStatementSupport {
             if (delayedTaskDO.getCreateUser() != null) {
                 MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
                 StringBuffer sb = new StringBuffer();
-                sb.append("您要导出的[").append(customerName).append("]的对账单已导出，请下载：\n").append(dingdingFileName);
+                sb.append("您要导出的[").append(customerName).append("]的对账单已导出，请去任务列表进行下载");
                 messageThirdChannel.setMessageContent(sb.toString());
                 messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
                 messageThirdChannelService.sendMessage(messageThirdChannel);
