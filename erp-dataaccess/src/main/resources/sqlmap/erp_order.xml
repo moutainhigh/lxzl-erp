@@ -986,6 +986,11 @@
         where order_no = #{orderNo, jdbcType=VARCHAR};
     </update>
 
+    <update id="updateOrderFirstNeedPayAmount" parameterType="java.lang.String">
+
+        UPDATE erp_order SET  first_need_pay_amount = 0
+        where order_no = #{orderNo, jdbcType=VARCHAR};
+    </update>
 
     <update id="updateOrderMaterialPriceList" parameterType="java.util.ArrayList">
         UPDATE erp_order_material SET
