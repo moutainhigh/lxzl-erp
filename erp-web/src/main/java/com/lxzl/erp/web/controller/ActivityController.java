@@ -23,8 +23,5 @@ public class ActivityController {
     @RequestMapping(value = "/getActivityOrder", method = RequestMethod.POST)
     public Result getActivityorder(@RequestBody @Validated ActivityOrderParam param, BindingResult validResult) {
         return activityService.getActivityOrder(param).getResult();
-
     }
-
-
 }
