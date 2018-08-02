@@ -971,6 +971,10 @@ public class OrderServiceImpl implements OrderService {
                 orderOperationLogDOList.add(orderOperationLogDO);
                 //保存
                 orderProductDO.setProductUnitAmount(orderProduct.getProductUnitAmount());
+                BigDecimal productAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getRentTimeLength()), 2), new BigDecimal(orderProductDO.getProductCount()));
+                orderProductDO.setProductAmount(productAmount);
+                BigDecimal rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount()), 2), new BigDecimal(orderProductDO.getDepositCycle()));
+                orderProductDO.setRentDepositAmount(rentDepositAmount);
                 orderProductDOList.add(orderProductDO);
             }
             if (orderProductDOList.size() > 0){
@@ -1002,6 +1006,10 @@ public class OrderServiceImpl implements OrderService {
                 orderOperationLogDOList.add(orderOperationLogDO);
                 //保存
                 orderMaterialDO.setMaterialUnitAmount(orderMaterial.getMaterialUnitAmount());
+                BigDecimal materialAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getRentTimeLength()), 2), new BigDecimal(orderMaterialDO.getMaterialCount()));
+                orderMaterialDO.setMaterialAmount(materialAmount);
+                BigDecimal rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), 2), new BigDecimal(orderMaterialDO.getDepositCycle()));
+                orderMaterialDO.setRentDepositAmount(rentDepositAmount);
                 orderMaterialDOList.add(orderMaterialDO);
             }
             if (orderMaterialDOList.size() > 0){

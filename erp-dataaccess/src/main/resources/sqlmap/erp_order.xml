@@ -956,7 +956,13 @@
         <trim prefix=",">
             product_amount =
             <foreach item="item" collection="orderProductDOList" index="index" separator=" " open="case id" close="end">
-                when #{item.id} then #{item.productUnitAmount} * renting_product_count * rent_time_length
+                when #{item.id} then #{item.productAmount}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            rent_deposit_amount =
+            <foreach item="item" collection="orderProductDOList" index="index" separator=" " open="case id" close="end">
+                when #{item.id} then #{item.rentDepositAmount}
             </foreach>
         </trim>
         WHERE id in
@@ -968,6 +974,7 @@
     <update id="updateOrderTotalProductAmount" parameterType="java.lang.String">
 
         UPDATE erp_order SET  total_product_amount = (SELECT * from (SELECT SUM(product_amount) FROM erp_order_product WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) A)
+        ,total_product_rent_deposit_amount = (SELECT * from (SELECT SUM(rent_deposit_amount) FROM erp_order_product WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) B)
         where order_no = #{orderNo, jdbcType=VARCHAR};
 
     </update>
@@ -975,6 +982,7 @@
     <update id="updateOrderTotalOrderAmount" parameterType="java.lang.String">
 
         UPDATE erp_order SET  total_order_amount = (total_product_amount + total_material_amount + logistics_amount)
+        ,total_rent_deposit_amount = total_product_rent_deposit_amount + total_material_rent_deposit_amount
         where order_no = #{orderNo, jdbcType=VARCHAR};
     </update>
 
@@ -990,7 +998,13 @@
         <trim prefix=",">
             material_amount =
             <foreach item="item" collection="orderMaterialDOList" index="index" separator=" " open="case id" close="end">
-                when #{item.id} then #{item.materialUnitAmount} * renting_material_count * rent_time_length
+                when #{item.id} then #{item.materialAmount}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            rent_deposit_amount =
+            <foreach item="item" collection="orderMaterialDOList" index="index" separator=" " open="case id" close="end">
+                when #{item.id} then #{item.rentDepositAmount}
             </foreach>
         </trim>
         WHERE id in
@@ -1002,6 +1016,7 @@
     <update id="updateOrderTotalMaterialAmount" parameterType="java.lang.String">
 
      UPDATE erp_order SET  total_material_amount = (SELECT * from (SELECT SUM(material_amount) FROM erp_order_material WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) A)
+     ,total_material_rent_deposit_amount = (SELECT * from (SELECT SUM(rent_deposit_amount) FROM erp_order_material WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) B)
      where order_no = #{orderNo, jdbcType=VARCHAR};
 
     </update>
