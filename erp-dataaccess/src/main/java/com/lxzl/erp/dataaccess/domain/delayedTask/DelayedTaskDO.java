@@ -18,7 +18,9 @@ public class DelayedTaskDO  extends BaseDO {
 	private String remark;
 	private Integer dataStatus;
 	private String fileUrl;
+	@Transient
 	private String createUserRealName;   //添加人姓名
+	@Transient
 	private String updateUserRealName;   //修改人姓名
 
 	public String getFileUrl() {
