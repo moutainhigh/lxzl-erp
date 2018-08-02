@@ -180,6 +180,7 @@
                 'manage.order.relet.mixin.js',
                 'manage.order.relet.add.js',
                 'manage.order.relet.edit.js',
+                'manage.order.change.price.js',
                 'modal.submit.audit.js',
                 'manage.order.picking.js',
                 'manage.order.print.record.js',
