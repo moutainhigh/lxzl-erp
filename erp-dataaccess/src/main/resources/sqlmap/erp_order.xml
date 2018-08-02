@@ -973,8 +973,8 @@
 
     <update id="updateOrderTotalProductAmount" parameterType="java.lang.String">
 
-        UPDATE erp_order SET  total_product_amount = (SELECT * from (SELECT SUM(product_amount) FROM erp_order_product WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) A)
-        ,total_product_rent_deposit_amount = (SELECT * from (SELECT SUM(rent_deposit_amount) FROM erp_order_product WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) B)
+        UPDATE erp_order SET  total_product_amount = (SELECT * from (SELECT SUM(product_amount) FROM erp_order_product WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) stpa)
+        ,total_product_rent_deposit_amount = (SELECT * from (SELECT SUM(rent_deposit_amount) FROM erp_order_product WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) stprda)
         where order_no = #{orderNo, jdbcType=VARCHAR};
 
     </update>
@@ -1015,8 +1015,8 @@
 
     <update id="updateOrderTotalMaterialAmount" parameterType="java.lang.String">
 
-     UPDATE erp_order SET  total_material_amount = (SELECT * from (SELECT SUM(material_amount) FROM erp_order_material WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) A)
-     ,total_material_rent_deposit_amount = (SELECT * from (SELECT SUM(rent_deposit_amount) FROM erp_order_material WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) B)
+     UPDATE erp_order SET  total_material_amount = (SELECT * from (SELECT SUM(material_amount) FROM erp_order_material WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) stma)
+     ,total_material_rent_deposit_amount = (SELECT * from (SELECT SUM(rent_deposit_amount) FROM erp_order_material WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) stmrda)
      where order_no = #{orderNo, jdbcType=VARCHAR};
 
     </update>
