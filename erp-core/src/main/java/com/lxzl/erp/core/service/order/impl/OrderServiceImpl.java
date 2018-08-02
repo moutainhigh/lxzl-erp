@@ -990,7 +990,12 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         if (intItemCount > 0){//重算订单
-            statementService.reCreateOrderStatement(orderDO.getOrderNo(), orderDO.getStatementDate());
+            ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(orderDO.getOrderNo(), orderDO.getStatementDate());
+            if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+                result.setErrorCode(serviceResult.getErrorCode());
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return result;
+            }
         }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(intItemCount);
