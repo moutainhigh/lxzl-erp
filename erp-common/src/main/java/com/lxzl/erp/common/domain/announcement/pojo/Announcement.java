@@ -8,15 +8,19 @@ import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 public class Announcement extends BasePO {
     @NotNull(message = ErrorCode.ID_NOT_NULL, groups = {IdGroup.class})
     private Integer id;
     @NotBlank(message = ErrorCode.ANNOUNCEMENT_TITLE_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
+    @Size(max = 100,message = ErrorCode.ANNOUNCEMENT_TITLE_TOO_LARGE, groups = {AddGroup.class, UpdateGroup.class})
     private String title;
     @NotBlank(message = ErrorCode.ANNOUNCEMENT_CONTENT_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
+    @Size(max = 500,message = ErrorCode.ANNOUNCEMENT_CONTENT_TOO_LARGE, groups = {AddGroup.class, UpdateGroup.class})
     private String content;
+    @Size(max = 500,message = ErrorCode.ANNOUNCEMENT_REMARK_TOO_LARGE, groups = {AddGroup.class, UpdateGroup.class})
     private String remark;
     private Integer dataStatus;
     private Date createTime;   //添加时间

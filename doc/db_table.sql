@@ -382,6 +382,7 @@ CREATE TABLE `erp_customer` (
   `confirm_bad_account_status` INT(11) NOT NULL DEFAULT '0' COMMENT '是否为坏账客户 0否1是 默认为0',
   `confirm_bad_account_user` INT(20) COMMENT '坏账客户确认人',
   `confirm_bad_account_time` DATETIME COMMENT '坏账客户确认时间',
+  `user_source` INT(11) NOT NULL DEFAULT 1 COMMENT '用户来源,1-erp系统，2-大学生商城',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
@@ -3761,7 +3762,6 @@ CREATE TABLE `erp_announcement`  (
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='公告表';
 
-
 DROP TABLE if exists `erp_delayed_task`;
 CREATE TABLE `erp_delayed_task` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
@@ -3771,6 +3771,7 @@ CREATE TABLE `erp_delayed_task` (
 	`request_json` text COLLATE utf8_bin COMMENT '请求参数',
 	`thread_name` varchar(64) COMMENT '线程名称',
 	`progress_rate` double(5,4) COMMENT '处理进度，10%的处理进度时存储为0.0100',
+	`file_url` varchar(200) NOT NULL DEFAULT '' COMMENT '文件URL',
 	`remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -3787,3 +3788,42 @@ CREATE TABLE `erp_delayed_task_config_export_statement` (
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户对账单延迟导出配置表';
+
+DROP TABLE IF EXISTS `erp_finance_statistics_data_weekly`;
+CREATE TABLE `erp_finance_statistics_data_weekly` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识ID',
+  `order_origin` int(11) NOT NULL COMMENT '订单来源：1-KA  2-电销  3-大客户渠道',
+  `rent_length_type` int(11) NOT NULL COMMENT '租赁类型：1-短租 2-长租 3-短短租',
+  `sub_company_id` int(20) NOT NULL COMMENT '分公司ID',
+  `customer_deals_count` int(11) NOT NULL DEFAULT '0' COMMENT '客户成交数量',
+  `new_customer_deals_count` int(11) NOT NULL DEFAULT '0' COMMENT '新客户成交数量',
+  `rent_product_deals_count` int(11) NOT NULL DEFAULT '0' COMMENT '租赁商品成交数量',
+  `return_product_deals_count` int(11) NOT NULL DEFAULT '0' COMMENT '退货商品成交数量',
+  `increase_product_deals_count` int(11) NOT NULL DEFAULT '0' COMMENT '净增长商品成交数量',
+  `year` int(11) NOT NULL COMMENT '年份',
+  `month` int(11) NOT NULL COMMENT '月份',
+  `week_of_month` int(11) NOT NULL COMMENT '当月第几周',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `create_time` datetime NOT NULL COMMENT '添加时间',
+  `create_user` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  KEY `index_year_month_week` (`year`,`month`,`week_of_month`)
+) ENGINE=InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='财务按周统计当月数据记录表';
+
+DROP TABLE IF EXISTS `erp_order_operation_log`;
+CREATE TABLE `erp_order_operation_log` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_no` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '订单编号',
+  `order_status_before` int(11) NOT NULL DEFAULT '0' COMMENT '订单修改前状态，0-待提交,4-审核中,8-待发货,12-处理中,16-已发货,20-确认收货,24-全部归还,28-取消,32-结束',
+  `order_status_after` int(11) NOT NULL DEFAULT '0' COMMENT '订单修改后状态，0-待提交,4-审核中,8-待发货,12-处理中,16-已发货,20-确认收货,24-全部归还,28-取消,32-结束',
+  `operation_before` mediumtext COMMENT '修改前操作内容',
+  `operation_after` mediumtext COMMENT '修改后操作内容',
+  `business_type` int(11) DEFAULT NULL COMMENT '操作业务编码',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '添加人',
+  PRIMARY KEY (`id`),
+  KEY `order_no` (`order_no`),
+  KEY `business_type` (`business_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单操作日志';

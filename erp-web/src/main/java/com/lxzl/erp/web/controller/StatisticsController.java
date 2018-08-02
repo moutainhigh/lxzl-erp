@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
+import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataWeeklyDO;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -172,6 +175,26 @@ public class StatisticsController extends BaseController {
 //        ServiceResult<String, String> serviceResult = statisticsService.createStatisticsSalesmanMonth(date);
 //        return resultGenerator.generate(serviceResult);
 //    }
+
+    /**
+     * 统计财务本周数据
+     * @return
+     */
+    @RequestMapping(value = "statisticsFinanceDataWeeklyNow", method = RequestMethod.POST)
+    public Result statisticsFinanceDataWeeklyNow() {
+        ServiceResult<String, Boolean> serviceResult = statisticsService.statisticsFinanceDataWeeklyNow();
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 重新统计历史财务周数据
+     * @return
+     */
+    @RequestMapping(value = "reStatisticsFinanceDataWeekly", method = RequestMethod.POST)
+    public Result reStatisticsFinanceDataWeekly(@RequestBody @Validated FinanceStatisticsWeeklyParam financeStatisticsWeeklyParam, BindingResult validResult) {
+        ServiceResult<String, Boolean> serviceResult = statisticsService.reStatisticsFinanceDataWeekly(financeStatisticsWeeklyParam);
+        return resultGenerator.generate(serviceResult);
+    }
 
     @Autowired
     private ResultGenerator resultGenerator;

@@ -250,4 +250,11 @@ public interface StatementService extends BaseService {
      * @return
      */
     ServiceResult<String, Boolean> payStatementOrderDetail(List<Integer> mergeStatementItemList);
+
+    /**
+     * 批量退还应退的押金
+     * @param orderNo
+     * @return
+     */
+    String returnDeposit(String orderNo);
 }

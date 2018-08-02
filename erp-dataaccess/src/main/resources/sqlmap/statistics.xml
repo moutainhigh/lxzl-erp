@@ -1437,4 +1437,190 @@ ORDER BY esc.data_order DESC
         AND esod.statement_detail_paid_time >= #{maps.start} AND #{maps.end} > esod.statement_detail_paid_time
         group by k3rod.id
     </select>
+
+    <resultMap id="FinanceStatisticsDataWeekly" type="com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDealsCountBySubCompany">
+        <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId"/>
+        <result column="deals_count" jdbcType="INTEGER" property="dealsCount"/>
+    </resultMap>
+
+    <select id="statisticsKACustomerCountWeekly" resultMap="FinanceStatisticsDataWeekly" parameterType="java.util.Map">
+        SELECT eo.order_sub_company_id AS sub_company_id, COUNT(DISTINCT eo.buyer_customer_id) AS deals_count FROM erp_order eo
+        <if test="maps.newCustomerKey != null">
+            LEFT JOIN erp_customer ec ON eo.buyer_customer_id=ec.id
+        </if>
+        WHERE eo.data_status=1 AND eo.order_status IN (16, 20, 22, 24)
+        AND eo.order_sub_company_id NOT IN (1, 10 , 11)
+        <if test="maps.statisticsStartTime != null and maps.statisticsEndTime != null">
+            AND eo.delivery_time BETWEEN  #{maps.statisticsStartTime,jdbcType=TIMESTAMP} AND #{maps.statisticsEndTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="maps.rentLengthType != null">
+            <if test="maps.rentLengthType == 1">
+               AND ((rent_type=1 AND rent_time_length >= 30) OR (rent_type=2 AND 6 > rent_time_length))
+            </if>
+            <if test="maps.rentLengthType == 2">
+               AND rent_length_type=2
+            </if>
+            <if test="maps.rentLengthType == 3">
+                AND eo.rent_type=1 AND 30 > eo.rent_time_length
+            </if>
+        </if>
+        <if test="maps.newCustomerKey != null">
+            AND ec.customer_no LIKE CONCAT('%','${maps.newCustomerKey}','%')
+        </if>
+        GROUP BY eo.order_sub_company_id
+    </select>
+
+    <select id="statisticsCustomerCountWeekly" resultMap="FinanceStatisticsDataWeekly" parameterType="java.util.Map">
+        SELECT
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
+            eo.order_sub_company_id AS sub_company_id,
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==2">
+            eo.delivery_sub_company_id AS sub_company_id,
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==3">
+            eo.delivery_sub_company_id AS sub_company_id,
+        </if>
+        COUNT(DISTINCT eo.buyer_customer_id) AS deals_count FROM erp_order eo
+        <if test="maps.newCustomerKey != null">
+            LEFT JOIN erp_customer ec ON eo.buyer_customer_id=ec.id
+        </if>
+        WHERE eo.data_status=1 AND eo.order_status IN (16, 20, 22, 24)
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
+            AND eo.order_sub_company_id NOT IN (1, 10 , 11)
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==2">
+            AND eo.order_sub_company_id = 10
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==3">
+            AND eo.order_sub_company_id = 11
+        </if>
+        <if test="maps.statisticsStartTime != null and maps.statisticsEndTime != null">
+            AND eo.delivery_time BETWEEN  #{maps.statisticsStartTime,jdbcType=TIMESTAMP} AND #{maps.statisticsEndTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="maps.rentLengthType != null">
+            <if test="maps.rentLengthType == 1">
+                AND ((eo.rent_type=1 AND eo.rent_time_length >= 30) OR (eo.rent_type=2 AND 6 > eo.rent_time_length))
+            </if>
+            <if test="maps.rentLengthType == 2">
+                AND eo.rent_length_type=2
+            </if>
+            <if test="maps.rentLengthType == 3">
+                AND eo.rent_type=1 AND 30 > eo.rent_time_length
+            </if>
+        </if>
+        <if test="maps.newCustomerKey != null">
+            AND ec.customer_no LIKE CONCAT('%','${maps.newCustomerKey}','%')
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
+            GROUP BY eo.order_sub_company_id
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==2">
+            GROUP BY eo.delivery_sub_company_id
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==3">
+            GROUP BY eo.delivery_sub_company_id
+        </if>
+    </select>
+
+    <select id="statisticsRentProductCountWeekly" resultMap="FinanceStatisticsDataWeekly" parameterType="java.util.Map">
+        SELECT
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
+            eo.order_sub_company_id AS sub_company_id,
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==2">
+            eo.delivery_sub_company_id AS sub_company_id,
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==3">
+            eo.delivery_sub_company_id AS sub_company_id,
+        </if>
+        IFNULL(SUM(eop.product_count), 0) AS deals_count FROM erp_order_product eop
+        LEFT JOIN erp_order eo ON eop.order_id=eo.id AND eo.data_status=1
+        LEFT JOIN erp_product ep ON ep.id=eop.product_id
+        WHERE ep.data_status=1 AND eo.order_status IN (16, 20, 22, 24) AND eop.product_count > 0
+        AND (CASE WHEN ep.k3_product_no LIKE '%.DIS.%' THEN  eop.product_unit_amount>0 ELSE 1=1 END)
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
+            AND eo.order_sub_company_id NOT IN (1, 10 , 11)
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==2">
+            AND eo.order_sub_company_id = 10
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==3">
+            AND eo.order_sub_company_id = 11
+        </if>
+        <if test="maps.statisticsStartTime != null and maps.statisticsEndTime != null">
+            AND eo.delivery_time BETWEEN  #{maps.statisticsStartTime,jdbcType=TIMESTAMP} AND #{maps.statisticsEndTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="maps.rentLengthType != null">
+            <if test="maps.rentLengthType == 1">
+                AND ((eo.rent_type=1 AND eo.rent_time_length >= 30) OR (eo.rent_type=2 AND 6 > eo.rent_time_length))
+            </if>
+            <if test="maps.rentLengthType == 2">
+                AND eo.rent_length_type=2
+            </if>
+            <if test="maps.rentLengthType == 3">
+                AND eo.rent_type=1 AND 30 > eo.rent_time_length
+            </if>
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
+            GROUP BY eo.order_sub_company_id
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==2">
+            GROUP BY eo.delivery_sub_company_id
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==3">
+            GROUP BY eo.delivery_sub_company_id
+        </if>
+    </select>
+
+    <select id="statisticsReturnProductCountWeekly" resultMap="FinanceStatisticsDataWeekly" parameterType="java.util.Map">
+        SELECT
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
+            eo.order_sub_company_id AS sub_company_id,
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==2">
+            eo.delivery_sub_company_id AS sub_company_id,
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==3">
+            eo.delivery_sub_company_id AS sub_company_id,
+        </if>
+        IFNULL(SUM(ekrod.real_product_count), 0) AS deals_count FROM erp_k3_return_order ekro
+        INNER JOIN erp_k3_return_order_detail ekrod ON ekrod.return_order_id = ekro.id
+        INNER JOIN erp_order eo ON eo.order_no=ekrod.order_no
+        INNER JOIN erp_order_product eop ON ekrod.order_item_type=1 AND (CASE WHEN ekrod.product_no LIKE '%.DIS.%' THEN eop.product_unit_amount>0  ELSE 1=1 END)
+        AND eo.id=eop.order_id AND (ekrod.order_item_id=eop.id OR ekrod.order_entry=eop.FEntry_id) AND eop.data_status=1
+        WHERE ekrod.order_item_type=1 AND ekrod.real_product_count > 0
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
+            AND eo.order_sub_company_id NOT IN(1, 10 , 11)
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==2">
+            AND eo.order_sub_company_id=10
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==3">
+            AND eo.order_sub_company_id=11
+        </if>
+        <if test="maps.statisticsStartTime != null and maps.statisticsEndTime != null">
+            AND ekro.return_time BETWEEN  #{maps.statisticsStartTime,jdbcType=TIMESTAMP} AND #{maps.statisticsEndTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="maps.rentLengthType != null">
+            <if test="maps.rentLengthType == 1">
+                AND ((eo.rent_type=1 AND eo.rent_time_length >= 30) OR (eo.rent_type=2 AND 6 > eo.rent_time_length))
+            </if>
+            <if test="maps.rentLengthType == 2">
+                AND eo.rent_length_type=2
+            </if>
+            <if test="maps.rentLengthType == 3">
+                AND eo.rent_type=1 AND 30 > eo.rent_time_length
+            </if>
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==1">
+            GROUP BY eo.order_sub_company_id
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==2">
+            GROUP BY eo.delivery_sub_company_id
+        </if>
+        <if test="maps.orderOrigin != null and maps.orderOrigin ==3">
+            GROUP BY eo.delivery_sub_company_id
+        </if>
+    </select>
 </mapper>

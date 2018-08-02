@@ -801,6 +801,9 @@
                                     {{#listData}}
                                     <li class="text-info nowrap notice-item mt10" data-notice="{{noticeStr}}">{{title}}</li>
                                     {{/listData}}
+                                    {{^listData}}
+                                    <li class="nowrap mt10" style="list-style:none">暂无公告</li>
+                                    {{/listData}}
                                     {{/dataSource}}
                                 </script>
                                 <ul id="systemNoticeList" class="pl20"></ul>

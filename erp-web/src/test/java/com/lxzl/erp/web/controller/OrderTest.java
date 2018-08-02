@@ -476,8 +476,8 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testforceCancelOrder() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712290930356291065");
-        order.setVerifyUser(1);
+        order.setOrderNo("LXO-20180711-1000-00004");
+        order.setCancelOrderReasonType(1);
         TestResult testResult = getJsonTestResult("/order/forceCancel", order);
     }
 
