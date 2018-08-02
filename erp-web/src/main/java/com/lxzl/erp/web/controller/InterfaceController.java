@@ -229,12 +229,12 @@ public class InterfaceController extends BaseController {
     }
 
 
-    private static class InterfaceAddPersonParam{
-        @NotNull(message = ErrorCode.BUSINESS_APP_ID_NOT_NULL)
+    private static class InterfaceAddPersonParam {
+        @NotNull(message = ErrorCode.BUSINESS_APP_ID_NOT_NULL, groups = {AddCustomerPersonGroup.class})
         private String erpAppId;   //业务系统APP ID由ERP系统生成，提供给业务系统
-        @NotNull(message = ErrorCode.BUSINESS_APP_SECRET_NOT_NULL)
+        @NotNull(message = ErrorCode.BUSINESS_APP_SECRET_NOT_NULL, groups = {AddCustomerPersonGroup.class})
         private String erpAppSecret;   //业务系统app secret由ERP系统生成，提供给业务系统
-        @NotNull(message = ErrorCode.USER_NOT_NULL)
+        @NotNull(message = ErrorCode.USER_NOT_NULL, groups = {AddCustomerPersonGroup.class})
         private Customer customer;
 
         public String getErpAppId() {
