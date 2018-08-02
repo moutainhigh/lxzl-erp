@@ -79,7 +79,7 @@
 	</select>
 
 	<select id="findDelayedTaskByParams" resultMap="DelayedTaskDO" parameterType="map">
-		SELECT <include refid="column_List"/>
+		SELECT <include refid="column_List"/>,eu.real_name AS createUserRealName ,eu.real_name AS updateUserRealName
 		FROM erp_delayed_task edt
 		INNER JOIN erp_user eu ON eu.id = edt.create_user
 		<where>

@@ -290,15 +290,39 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void importBankSlip() throws Exception {
 
+        //测试京东
+//        BankSlip bankSlip = new BankSlip();
+//        bankSlip.setSubCompanyId(1);
+//        bankSlip.setBankType(BankType.JING_DONG);
+//        bankSlip.setSlipDay(new SimpleDateFormat("yyyy/MM/dd").parse("2018/07/12"));
+//        bankSlip.setExcelUrl("group1/M00/00/7B/wKgKyFthll2AL0gYAAAsCKm0Rmk60.xlsx");
+//        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
-//        北京(中国银行)
+        //测试银联
         BankSlip bankSlip = new BankSlip();
-//        bankSlip.setSubCompanyName("北京分公司");
         bankSlip.setSubCompanyId(1);
-        bankSlip.setBankType(BankType.CCB_BANK);
+        bankSlip.setBankType(BankType.CHINA_UNION_PAY_TYPE);
         bankSlip.setSlipDay(new SimpleDateFormat("yyyy/MM/dd").parse("2018/07/12"));
-        bankSlip.setExcelUrl("/group1/M00/00/68/wKgKyFtHEr-AHhRkAAAs2UKwAHs10.xlsx");
+        bankSlip.setExcelUrl( "group1/M00/00/7B/wKgKyFtinGKAIhyCAAAlaMeQWXk93.xlsx");
         TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
+
+        //测试北京(中国银行)
+//        BankSlip bankSlip = new BankSlip();
+//        bankSlip.setSubCompanyId(2);
+//        bankSlip.setBankType(BankType.BOC_BANK);
+//        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/10/20"));
+//        bankSlip.setExcelUrl("/group1/M00/00/23/wKgKyFq7nuuAdZVqAAA8N2O0BRI91.xlsx");
+//        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
+
+
+////        北京(中国银行)
+//        BankSlip bankSlip = new BankSlip();
+////        bankSlip.setSubCompanyName("北京分公司");
+//        bankSlip.setSubCompanyId(1);
+//        bankSlip.setBankType(BankType.CCB_BANK);
+//        bankSlip.setSlipDay(new SimpleDateFormat("yyyy/MM/dd").parse("2018/07/12"));
+//        bankSlip.setExcelUrl("/group1/M00/00/68/wKgKyFtHEr-AHhRkAAAs2UKwAHs10.xlsx");
+//        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
         //测试北京(中国银行)
 //        BankSlip bankSlip = new BankSlip();
