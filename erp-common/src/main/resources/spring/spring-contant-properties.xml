@@ -38,4 +38,11 @@
         <property name="dingdingSecret" value="${DINGDING-SECRET}"/>
         <property name="applyApprovingWorkflowCallBackUrl" value="${DINGDING-APPLY-APPROVING_WORKFLOW-CALLBACK-URL}"/>
     </bean>
+
+    <bean id="mallSystemConfig" class="com.lxzl.erp.common.domain.MallSystemConfig">
+        <property name="getActivityOrderUrl" value="${mall.interface.getActivityOrderUrl}"/>
+        <property name="mallSystemAppId" value="${mall.system.app.id}"/>
+        <property name="mallSystemAppSecret" value="${mall.system.app.secret}"/>
+    </bean>
+
 </beans>
