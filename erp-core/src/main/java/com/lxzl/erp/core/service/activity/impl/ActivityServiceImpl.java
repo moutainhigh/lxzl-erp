@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.MallSystemConfig;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.activity.ActivityOrderInterfaceParam;
 import com.lxzl.erp.common.domain.activity.ActivityOrderParam;
+import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.core.service.activity.ActivityService;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.common.exception.BusinessException;
@@ -37,7 +38,7 @@ public class ActivityServiceImpl implements ActivityService {
         activityOrderInterfaceParam.setAppSecret(MallSystemConfig.mallSystemAppSecret);
         activityOrderInterfaceParam.setActivityOrderParam(param);
         HttpPost httppost = new HttpPost(MallSystemConfig.getActivityOrderUrl);
-        httppost.setEntity(new StringEntity(JSONObject.toJSONString(activityOrderInterfaceParam),
+        httppost.setEntity(new StringEntity(FastJsonUtil.toJSONNoFeatures(activityOrderInterfaceParam),
                 ContentType.create("application/json", "UTF-8")));
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(5000).setConnectionRequestTimeout(1000)
