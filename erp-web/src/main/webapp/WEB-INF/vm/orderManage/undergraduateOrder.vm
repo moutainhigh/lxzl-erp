@@ -27,45 +27,39 @@
                                         <div class="col-md-12">
                                             <div class="col-md-2">
                                                 <div class="form-group mn">
-                                                    <input type="hidden" name="startRentStartTime" id="startRentStartTime" />
-                                                    <input type="hidden" name="endRentStartTime" id="endRentStartTime" />
-                                                    <div class="input-group date" id="rentTimePicker">
-                                                        <input type="text" name="rentTimePicker" id="rentTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="起租时间">
+                                                    <input type="hidden" name="orderStartTime" id="orderStartTime" />
+                                                    <input type="hidden" name="orderEndTime" id="orderEndTime" />
+                                                    <div class="input-group date" id="timePicker">
+                                                        <input type="text" id="timePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="起租时间">
                                                         <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
-                                                <div class="field form-group mn">
-                                                    <div class="pull-left" style="width: 100%">
-                                                        <div class="ib topbar-dropdown bradius multiple-box">
-                                                            <select id="orderStatusList" multiple="multiple" name="orderStatusList" data-type="optgroup">
-                                                                <optgroup label="请选择:">
-                                                                    <option value="">全部（订单状态）</option>
-                                                                </optgroup>
-                                                            </select>
-                                                        </div>
-                                                    </div>
+                                                <div class="input-group mn" style="width: 100%">
+                                                    <select class="form-control input-sm bradius" name="status" id="status">
+                                                        <option value="">请选择</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="field form-group mn" >
-                                                    <input type="text" name="orderSellerName" id="orderSellerName" class="form-control input-sm bradius" autocomplete="off" placeholder="用户姓名">
+                                                    <input type="text" name="fuzzyCustomerName" id="fuzzyCustomerName" class="form-control input-sm bradius" autocomplete="off" placeholder="用户姓名">
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="field form-group mn" >
-                                                    <input type="text" name="orderSellerName" id="orderSellerName" class="form-control input-sm bradius" autocomplete="off" placeholder="电话">
+                                                    <input type="text" name="phone" id="phone" class="form-control input-sm bradius" autocomplete="off" placeholder="电话">
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="field form-group mn" >
-                                                    <input type="text" name="orderSellerName" id="orderSellerName" class="form-control input-sm bradius" autocomplete="off" placeholder="优惠券码">
+                                                    <input type="text" name="fuzzyCouponCode" id="fuzzyCouponCode" class="form-control input-sm bradius" autocomplete="off" placeholder="优惠券码">
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="field form-group mn" >
-                                                    <input type="text" name="orderSellerName" id="orderSellerName" class="form-control input-sm bradius" autocomplete="off" placeholder="订单编码">
+                                                    <input type="text" name="fuzzyOrderNumber" id="fuzzyOrderNumber" class="form-control input-sm bradius" autocomplete="off" placeholder="订单编码">
                                                 </div>
                                             </div>
                                         </div>
@@ -96,7 +90,6 @@
                                         <th>编号</th>
                                         <th>用户信息</th>
                                         <th>学校信息</th>
-                                        <th>紧急联系人</th>
                                         <th>优惠券码</th>
                                         <th>下单日期</th>
                                         <th>租期</th>
@@ -112,35 +105,32 @@
                                     {{#dataSource}}
                                         {{#listData}}
                                         <tr class="{{trClass}}">
-                                            <td>{{orderNo}}</td>
+                                            <td>{{orderNumber}}</td>
                                             <td>
-                                                <p class="mn">{{orderConsignInfo.consigneeName}}</p>
-                                                <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{orderConsignInfo.consigneePhone}}</p>
-                                                <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}</p>
+                                                <p class="mn"><span class="mr10">{{customerName}}</span><span>{{idCardNo}}</span></p>
+                                                <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{phone}}</p>
+                                                <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{deliveryAddress}}</p>
                                             </td>
-                                            <td>{{orderSubCompanyName}}</td>
-                                            <td>{{buyerCustomerName}}</td>
-                                            <td></td>
-                                            <td>{{productSummary}}</td>
+                                            <td>
+                                                <p class="mn">{{schoolName}}</p>
+                                                <p class="mn mt5 mn">学号：{{schoolNumber}}</p>
+                                            </td>
+                                            <td>{{couponCode}}</td>
+                                            <td>{{#shortTime}}{{orderTime}}{{/shortTime}}</td>
+                                            <td>{{rentTimeLength}}</td>
+                                            <td>{{#shortTime}}{{rentStartTime}}{{/shortTime}}</td>
+                                            <td>￥{{#price}}{{monthRentPrice}}{{/price}}</td>
+                                            <td>￥{{#price}}{{monthRent}}{{/price}}</td>
                                             <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
-                                            <td>{{deliverySubCompanyName}}</td>
-                                            <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
-                                            <td>{{orderSellerName}}</td>
+                                            <td>{{remark}}</td>
                                             <td>
-                                                <p class="mn">{{createUserRealName}}</p>
-                                                <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                                <p class="mn {{statusClass}}">{{statusValue}}</p>
                                             </td>
-                                            <td>
-                                                <p class="mn {{payStatusClass}} {{trClass}}">{{payStatusValue}}</p>
-                                                <p class="mn mt5">{{#clockTime}}{{payTime}}{{/clockTime}}</p>
-                                            </td>
-                                            <td></td>
-                                            <td>{{buyerRemark}}</td>
                                         </tr>
                                         {{/listData}}
                                         {{^listData}}
                                         <tr>
-                                            <td valign="top" colspan="13" class="text-center">无数据</td>
+                                            <td valign="top" colspan="12" class="text-center">无数据</td>
                                         </tr>
                                         {{/listData}}
                                     {{/dataSource}}
