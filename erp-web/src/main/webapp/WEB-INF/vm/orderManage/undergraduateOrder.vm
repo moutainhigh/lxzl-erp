@@ -30,7 +30,7 @@
                                                     <input type="hidden" name="orderStartTime" id="orderStartTime" />
                                                     <input type="hidden" name="orderEndTime" id="orderEndTime" />
                                                     <div class="input-group date" id="timePicker">
-                                                        <input type="text" id="timePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="起租时间">
+                                                        <input type="text" name="timePickerInput" id="timePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="起租时间">
                                                         <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                                                     </div>
                                                 </div>
