@@ -263,6 +263,11 @@ public class PageController extends BaseController {
         return "/component/order/sectionSettlementModal";
     }
 
+    @RequestMapping("/order-manage/undergraduate-order-list")
+    public String undergraduateOrderList() {
+        return "/orderManage/undergraduateOrder";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
@@ -1004,6 +1009,11 @@ public class PageController extends BaseController {
         return "/financialManage/jurnalAmountDetail";
     }
 
+    @RequestMapping("/finance-manage/statistics")
+    public String financialStatistics() {
+        return "/financialManage/financialStatistics";
+    }
+
     /**
      * 系统功能开关设置
      * @return
@@ -1101,6 +1111,12 @@ public class PageController extends BaseController {
         return "/component/order/reletOrderModal";
     }
 
+    //订单修改单价Modal
+    @RequestMapping("/order-manage/change-price")
+    public String changePriceModal() {
+        return "/component/order/changePriceModal";
+    }
+
     //提交审核选择审核人及填写审核备注
     @RequestMapping("/submit-audit/modal")
     public String submitAuditModal() {
@@ -1196,12 +1212,27 @@ public class PageController extends BaseController {
         return "/component/common/remarkModal";
     }
 
-
     //查看工作流
     @RequestMapping("/view-work-flow/modal")
     public String viewWorkFlowModal() {
         return "/component/workFlow/viewWorkFlow";
     }
 
+    //系统消息Modal
+    @RequestMapping("/home/system-notice")
+    public String homeSystemNotice() {
+        return "/systemManage/noticeModal";
+    }
 
+    //系统消息列表
+    @RequestMapping("/system-manage/notice-list")
+    public String systemNoticeList() {
+        return "/systemManage/systemNoticeList";
+    }
+
+    //添加系统消息
+    @RequestMapping("/system-manage/notice-add")
+    public String addSystemNotice() {
+        return "/systemManage/addSystemNotice";
+    }
 }

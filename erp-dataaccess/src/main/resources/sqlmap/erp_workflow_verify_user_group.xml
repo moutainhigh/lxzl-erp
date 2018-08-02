@@ -125,4 +125,39 @@
         <include refid="set_column_sql"/>
         WHERE id = #{id, jdbcType=INTEGER}
     </update>
+
+    <select id="findGroupUUIDByUserIdAndVerifyStatus" resultType="String" >
+        SELECT ewvug.verify_user_group_id FROM erp_workflow_verify_user_group ewvug
+        WHERE ewvug.verify_user = #{userId} AND ewvug.data_status = 1
+        <if test="verifyStatus != null">
+            AND ewvug.verify_status = #{verifyStatus}
+        </if>
+    </select>
+
+    <update id="updateBatchVerifyUserGroup" parameterType="java.util.List">
+        update erp_workflow_verify_user_group
+        SET
+        <trim>
+            verify_status =
+            <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+                when #{item.id} then #{item.verifyStatus}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            update_time =
+            <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.updateTime,jdbcType=TIMESTAMP}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            update_user =
+            <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.updateUser,jdbcType=VARCHAR}
+            </foreach>
+        </trim>
+        WHERE id in
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
 </mapper>

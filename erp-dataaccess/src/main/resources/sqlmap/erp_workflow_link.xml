@@ -387,7 +387,6 @@
 
 	<select id="workbenchListCount" resultType="java.lang.Integer" parameterType="map">
 		select count(distinct ewl.id) from erp_workflow_link ewl
-		INNER JOIN erp_workflow_link_detail ewld on ewld.workflow_link_id = ewl.id and ewld.data_status = 1
 		<where>
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowType != null &amp;&amp; maps.workflowQueryParam.workflowType != ''">
 				and ewl.workflow_type = #{maps.workflowQueryParam.workflowType, jdbcType=INTEGER}
@@ -414,7 +413,15 @@
 				and ewl.data_status = 1
 			</if>
 			<if test="maps.verifyUserId!=null &amp;&amp; maps.verifyUserId != ''">
-				AND ewl.current_verify_user = #{maps.verifyUserId}
+				AND (ewl.current_verify_user = #{maps.verifyUserId}
+				<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
+					OR ewl.verify_user_group_id in
+					<foreach item="item" index="index" collection="maps.currentUserGroupList"
+							 open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+				)
 			</if>
 		</where>
 	</select>
@@ -428,7 +435,6 @@
 		(
 		select DISTINCT <include refid="column_List"/>
 		from erp_workflow_link ewl
-		INNER JOIN erp_workflow_link_detail ewld on ewld.workflow_link_id = ewl.id and ewld.data_status = 1
 		<where>
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowType != null &amp;&amp; maps.workflowQueryParam.workflowType != ''">
 				and ewl.workflow_type = #{maps.workflowQueryParam.workflowType, jdbcType=INTEGER}
@@ -455,7 +461,15 @@
 				and ewl.data_status = 1
 			</if>
 			<if test="maps.verifyUserId!=null &amp;&amp; maps.verifyUserId != ''">
-				AND  ewl.current_verify_user = #{maps.verifyUserId}
+				AND (ewl.current_verify_user = #{maps.verifyUserId}
+				<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
+					OR ewl.verify_user_group_id IN
+					<foreach item="item" index="index" collection="maps.currentUserGroupList"
+							 open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+				)
 			</if>
 		</where>
 		order by ewl.id DESC

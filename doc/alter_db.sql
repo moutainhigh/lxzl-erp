@@ -970,7 +970,7 @@ ALTER TABLE erp_customer ADD COLUMN `confirm_bad_account_status` INT(11) NOT NUL
 ALTER TABLE erp_customer ADD COLUMN `confirm_bad_account_user` INT(20) COMMENT '坏账客户确认人';
 ALTER TABLE erp_customer ADD COLUMN `confirm_bad_account_time` DATETIME COMMENT '坏账客户确认时间';
 
--------------------------------未执行-----------------------------
+
 ALTER TABLE erp_order_time_axis ADD `operation_type` int(11) DEFAULT NULL COMMENT '操作类型,1-创建订单，2-修改订单,3-订单提交审核,4-订单审核通过,5-订单审核拒绝,6-K3发货回调（系统）,7-订单确认收货,8-k3退货回调（K3操作员或系统）,9-取消订单,10-强制取消订单,11-结算支付';
 
 CREATE TABLE erp_dynamic_sql_holder  (
@@ -988,7 +988,73 @@ CREATE TABLE erp_dynamic_sql_holder  (
   PRIMARY KEY (id)
 )  ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='动态sql执行表';
 
+CREATE TABLE `erp_announcement`  (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `title` varchar(255) NOT NULL COMMENT '标题',
+  `content` text NOT NULL COMMENT '内容',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+	`remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+	`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+	`create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+	`update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='公告表';
+
+ALTER TABLE erp_k3_return_order_detail ADD INDEX index_order_item_id (order_item_id);
+
+-------------------------------未执行-----------------------------
 
 
+DROP TABLE if exists `erp_delayed_task`;
+CREATE TABLE `erp_delayed_task` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `task_type` int(11) NOT NULL COMMENT '任务类型，1为对账单导出',
+	`task_status` int(11) NOT NULL COMMENT '任务状态：1排队中；2处理中；3已完成；4已取消；5执行失败',
+	`queue_number` int(11) NOT NULL DEFAULT '0' COMMENT '排队数量',
+	`request_json` text COLLATE utf8_bin COMMENT '请求参数',
+	`thread_name` varchar(64) COMMENT '线程名称',
+	`progress_rate` double(5,4) COMMENT '处理进度，10%的处理进度时存储为0.0100',
+	`file_url` varchar(200) NOT NULL DEFAULT '' COMMENT '文件URL',
+	`remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='延迟任务列表';
 
+DROP TABLE if exists `erp_delayed_task_config_export_statement`;
+CREATE TABLE `erp_delayed_task_config_export_statement` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `customer_no` varchar(100) NOT NULL COMMENT '客户编号',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户对账单延迟导出配置表';
+
+DROP TABLE IF EXISTS `erp_finance_statistics_data_weekly`;
+CREATE TABLE `erp_finance_statistics_data_weekly` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识ID',
+  `order_origin` int(11) NOT NULL COMMENT '订单来源：1-KA  2-电销  3-大客户渠道',
+  `rent_length_type` int(11) NOT NULL COMMENT '租赁类型：1-短租 2-长租 3-短短租',
+  `sub_company_id` int(20) NOT NULL COMMENT '分公司ID',
+  `customer_deals_count` int(11) NOT NULL DEFAULT '0' COMMENT '客户成交数量',
+  `new_customer_deals_count` int(11) NOT NULL DEFAULT '0' COMMENT '新客户成交数量',
+  `rent_product_deals_count` int(11) NOT NULL DEFAULT '0' COMMENT '租赁商品成交数量',
+  `return_product_deals_count` int(11) NOT NULL DEFAULT '0' COMMENT '退货商品成交数量',
+  `increase_product_deals_count` int(11) NOT NULL DEFAULT '0' COMMENT '净增长商品成交数量',
+  `year` int(11) NOT NULL COMMENT '年份',
+  `month` int(11) NOT NULL COMMENT '月份',
+  `week_of_month` int(11) NOT NULL COMMENT '当月第几周',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `create_time` datetime NOT NULL COMMENT '添加时间',
+  `create_user` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  KEY `index_year_month_week` (`year`,`month`,`week_of_month`)
+) ENGINE=InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='财务按周统计当月数据记录表';
+
+ALTER TABLE `erp_customer` ADD COLUMN `user_source` int(11) NOT NULL DEFAULT 1 COMMENT '用户来源,1-erp系统，2-大学生商城' AFTER `confirm_bad_account_time`;
 

@@ -64,6 +64,41 @@ public class BatchServiceImpl implements BatchService {
         return ErrorCode.SUCCESS;
     }
 
+    @Override
+    public ServiceResult<String, String> batchReturnDeposit(List<String> orderNos) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+
+        Set<String> orderNoSet = new HashSet<>();
+        for (String orderNo : orderNos) {
+            orderNoSet.add(orderNo);
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        if (CollectionUtil.isNotEmpty(orderNoSet)) {
+            for (String orderNo : orderNoSet) {
+                if (StringUtil.isEmpty(orderNo)) {
+                    continue;
+                }
+
+                try {
+                    String message = statementService.returnDeposit(orderNo);
+                    sb.append(message);
+                } catch (Exception e) {
+                    sb.append("订单退押金【系统错误】：订单号[" + orderNo + "]" + e.getMessage() + "\n");
+                }
+
+            }
+        }
+
+        logger.info(sb.toString());
+        dingDingSupport.dingDingSendMessage(sb.toString());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+
     @Autowired
     private StatementService statementService;
     @Autowired

@@ -9,7 +9,6 @@ import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.*;
 import com.lxzl.erp.common.domain.statement.pojo.CheckStatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
-import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.statement.StatementService;
@@ -172,4 +171,5 @@ public class StatementController extends BaseController {
         ServiceResult<String, Boolean> serviceResult = statementService.payStatementOrderDetail(param.getMergeStatementItemList());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
 }

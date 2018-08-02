@@ -343,7 +343,7 @@ public class PaymentServiceImpl implements PaymentService {
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
-            String requestJson = FastJsonUtil.toJSONString(chargeRecordPageParam);
+            String requestJson = FastJsonUtil.toJSONNoFeatures(chargeRecordPageParam);
             JSONObject jsonObject = JSON.parseObject(requestJson);
             jsonObject.remove("count");
             jsonObject.remove("subCompanyId");

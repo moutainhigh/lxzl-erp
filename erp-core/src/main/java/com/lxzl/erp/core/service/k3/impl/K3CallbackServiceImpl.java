@@ -216,9 +216,10 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> callbackReturnDetail(K3ReturnOrder k3ReturnOrder, K3ReturnOrderDO k3ReturnOrderDO, Boolean isHandleRent) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
+
         String userId = null;
         if (StringUtil.isNotBlank(k3ReturnOrder.getUpdateUserRealName())) {
-            UserDO userDO = userMapper.findByUserRealName(k3ReturnOrder.getUpdateUserRealName().trim());
+            UserDO userDO = userMapper.findAllByUserRealName(k3ReturnOrder.getUpdateUserRealName().trim());
             if (userDO == null) {
                 serviceResult.setErrorCode(ErrorCode.USER_NOT_EXISTS);
                 return serviceResult;
@@ -284,7 +285,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
 
                     } else {
                         //兼容erp订单和k3订单配件项
-                        OrderMaterialDO orderMaterialDO = productSupport.getOrderMaterialDO(oldOrderMaterialDOMap, erpOrderMaterialDOMap, k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
+                        OrderMaterialDO orderMaterialDO = productSupport.getOrderMaterialDO(oldOrderMaterialDOMap, erpOrderMaterialDOMap, k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
                         if (orderMaterialDO != null) {
                             Integer materialCount = orderMaterialDO.getRentingMaterialCount() - k3ReturnOrderDetailDO.getProductCount();
                             if (materialCount < 0) {
@@ -414,9 +415,9 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                 if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())) {
                     if (CollectionUtil.isNotEmpty(orderProductDOList)) {
                         for (OrderProductDO orderProductDO : orderProductDOList) {
-                            if (StringUtil.isNotEmpty(k3ReturnOrderDetailDO.getOrderItemId()) && !"0".equals(k3ReturnOrderDetailDO.getOrderItemId())) {
+                            if (StringUtil.isNotEmpty(k3ReturnOrderDetailDO.getOrderItemId()) && !"0".equals(k3ReturnOrderDetailDO.getOrderItemId()) && k3ReturnOrderDetailDO.getOrderItemId().equals(String.valueOf(orderProductDO.getId()))) {
                                 erpOrderProductDOMap.put(k3ReturnOrderDetailDO.getOrderItemId(), orderProductDO);
-                            } else {
+                            } else if(StringUtil.isEmpty(k3ReturnOrderDetailDO.getOrderItemId()) && "0".equals(k3ReturnOrderDetailDO.getOrderItemId())){
                                 oldOrderProductDOMap.put(k3ReturnOrderDetailDO.getOrderNo() + "-" + orderProductDO.getFEntryID(), orderProductDO);
                             }
                         }
@@ -424,9 +425,9 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                 } else {
                     if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
                         for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
-                            if (StringUtil.isNotEmpty(k3ReturnOrderDetailDO.getOrderItemId()) && !"0".equals(k3ReturnOrderDetailDO.getOrderItemId())) {
+                            if(StringUtil.isNotEmpty(k3ReturnOrderDetailDO.getOrderItemId()) && k3ReturnOrderDetailDO.getOrderItemId().equals(String.valueOf(orderMaterialDO.getId())) && !"0".equals(k3ReturnOrderDetailDO.getOrderItemId())){
                                 erpOrderMaterialDOMap.put(k3ReturnOrderDetailDO.getOrderItemId(), orderMaterialDO);
-                            } else {
+                            }else if(StringUtil.isEmpty(k3ReturnOrderDetailDO.getOrderItemId()) && "0".equals(k3ReturnOrderDetailDO.getOrderItemId())){
                                 oldOrderMaterialDOMap.put(k3ReturnOrderDetailDO.getOrderNo() + "-" + orderMaterialDO.getFEntryID(), orderMaterialDO);
                             }
                         }

@@ -945,6 +945,87 @@
         </foreach>
     </update>
 
+    <update id="updateOrderProductPriceList" parameterType="java.util.ArrayList">
+        UPDATE erp_order_product SET
+        <trim>
+            product_unit_amount =
+            <foreach item="item" collection="orderProductDOList" index="index" separator=" " open="case id" close="end">
+                when #{item.id} then #{item.productUnitAmount}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            product_amount =
+            <foreach item="item" collection="orderProductDOList" index="index" separator=" " open="case id" close="end">
+                when #{item.id} then #{item.productAmount}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            rent_deposit_amount =
+            <foreach item="item" collection="orderProductDOList" index="index" separator=" " open="case id" close="end">
+                when #{item.id} then #{item.rentDepositAmount}
+            </foreach>
+        </trim>
+        WHERE id in
+        <foreach item="item" collection="orderProductDOList" index="index" separator="," open="(" close=")">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
+
+    <update id="updateOrderTotalProductAmount" parameterType="java.lang.String">
+
+        UPDATE erp_order SET  total_product_amount = (SELECT * from (SELECT SUM(product_amount) FROM erp_order_product WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) stpa)
+        ,total_product_rent_deposit_amount = (SELECT * from (SELECT SUM(rent_deposit_amount) FROM erp_order_product WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) stprda)
+        where order_no = #{orderNo, jdbcType=VARCHAR};
+
+    </update>
+
+    <update id="updateOrderTotalOrderAmount" parameterType="java.lang.String">
+
+        UPDATE erp_order SET  total_order_amount = (total_product_amount + total_material_amount + logistics_amount)
+        ,total_rent_deposit_amount = total_product_rent_deposit_amount + total_material_rent_deposit_amount
+        where order_no = #{orderNo, jdbcType=VARCHAR};
+    </update>
+
+    <update id="updateOrderFirstNeedPayAmount" parameterType="java.lang.String">
+
+        UPDATE erp_order SET  first_need_pay_amount = 0
+        where order_no = #{orderNo, jdbcType=VARCHAR};
+    </update>
+
+    <update id="updateOrderMaterialPriceList" parameterType="java.util.ArrayList">
+        UPDATE erp_order_material SET
+        <trim>
+            material_unit_amount =
+            <foreach item="item" collection="orderMaterialDOList" index="index" separator=" " open="case id" close="end">
+                when #{item.id} then #{item.materialUnitAmount}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            material_amount =
+            <foreach item="item" collection="orderMaterialDOList" index="index" separator=" " open="case id" close="end">
+                when #{item.id} then #{item.materialAmount}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            rent_deposit_amount =
+            <foreach item="item" collection="orderMaterialDOList" index="index" separator=" " open="case id" close="end">
+                when #{item.id} then #{item.rentDepositAmount}
+            </foreach>
+        </trim>
+        WHERE id in
+        <foreach item="item" collection="orderMaterialDOList" index="index" separator="," open="(" close=")">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
+
+    <update id="updateOrderTotalMaterialAmount" parameterType="java.lang.String">
+
+     UPDATE erp_order SET  total_material_amount = (SELECT * from (SELECT SUM(material_amount) FROM erp_order_material WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) stma)
+     ,total_material_rent_deposit_amount = (SELECT * from (SELECT SUM(rent_deposit_amount) FROM erp_order_material WHERE order_id in (SELECT id from erp_order where order_no = #{orderNo, jdbcType=VARCHAR}) ) stmrda)
+     where order_no = #{orderNo, jdbcType=VARCHAR};
+
+    </update>
+
     <!-- 根据订单号列表获取订单列表信息 -->
     <select id="listByOrderNOs" resultMap="OrderDO">
         SELECT
@@ -1244,6 +1325,7 @@
         <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
             #{item}
         </foreach>
+        AND eo.data_status = 1
     </select>
 
     <select id="findByNos" resultMap="OrderDO" parameterType="java.util.Set">
