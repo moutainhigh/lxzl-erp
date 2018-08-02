@@ -78,4 +78,14 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.orderOperationLog.OrderOperationLogDO">
 		UPDATE erp_order_operation_log <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+
+	<insert id="saveList" parameterType="java.util.ArrayList">
+		INSERT INTO erp_order_operation_log
+		(order_no,order_status_before,order_status_after,operation_before,operation_after,business_type,create_time,create_user)
+		VALUES
+		<foreach item="orderOperationLogDO" index="index" collection="orderOperationLogDOList" separator=",">
+			(#{orderOperationLogDO.orderNo},#{orderOperationLogDO.orderStatusBefore},#{orderOperationLogDO.orderStatusAfter},#{orderOperationLogDO.operationBefore},#{orderOperationLogDO.operationAfter},#{orderOperationLogDO.businessType},#{orderOperationLogDO.createTime},#{orderOperationLogDO.createUser})
+		</foreach>
+	</insert>
 </mapper>

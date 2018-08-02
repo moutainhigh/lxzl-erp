@@ -12,4 +12,6 @@ public interface OrderOperationLogMapper extends BaseMysqlDAO<OrderOperationLogD
 	List<OrderOperationLogDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+	Integer saveList(@Param("orderOperationLogDOList") List<OrderOperationLogDO> orderOperationLogDOList);
 }

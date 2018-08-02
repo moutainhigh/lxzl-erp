@@ -943,16 +943,11 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
-        Integer intItemCount = 0;
         String strOperationBefore;
         String strOperationAfter;
-        OrderOperationLogDO orderOperationLogDO = new OrderOperationLogDO();
-        orderOperationLogDO.setOrderNo(orderDO.getOrderNo());
-        orderOperationLogDO.setOrderStatusBefore(orderDO.getOrderStatus());
-        orderOperationLogDO.setOrderStatusAfter(orderDO.getOrderStatus());
-        orderOperationLogDO.setBusinessType(OrderBusinessType.ORDER_OPERATION_UPD_GOODS_PRICE);
-        orderOperationLogDO.setCreateTime(currentTime);
-        orderOperationLogDO.setCreateUser(loginUser.getUserId().toString());
+        List<OrderOperationLogDO> orderOperationLogDOList = new ArrayList<>();
+        List<OrderProductDO> orderProductDOList = new ArrayList<>();
+        List<OrderMaterialDO> orderMaterialDOList = new ArrayList<>();
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())){
             for (OrderProduct orderProduct: order.getOrderProductList()){
                 if (orderProduct.getOrderProductId() == null || orderProduct.getProductUnitAmount() == null){
@@ -962,13 +957,26 @@ public class OrderServiceImpl implements OrderService {
                 if (BigDecimalUtil.compare(orderProductDO.getProductUnitAmount(), orderProduct.getProductUnitAmount()) == 0){
                     continue;
                 }
-                orderMapper.updateOrderProductPrice(order.getOrderNo(),orderProduct.getOrderProductId(),orderProduct.getProductUnitAmount());
                 strOperationBefore = "商品项id:" + orderProduct.getOrderProductId() + "，商品单价：" + orderProductDO.getProductUnitAmount()+ "。";
                 strOperationAfter = "商品项id:" + orderProduct.getOrderProductId() + "，商品单价：" + orderProduct.getProductUnitAmount()+ "。";
+                OrderOperationLogDO orderOperationLogDO = new OrderOperationLogDO();
+                orderOperationLogDO.setOrderNo(orderDO.getOrderNo());
+                orderOperationLogDO.setOrderStatusBefore(orderDO.getOrderStatus());
+                orderOperationLogDO.setOrderStatusAfter(orderDO.getOrderStatus());
+                orderOperationLogDO.setBusinessType(OrderBusinessType.ORDER_OPERATION_UPD_GOODS_PRICE);
+                orderOperationLogDO.setCreateTime(currentTime);
+                orderOperationLogDO.setCreateUser(loginUser.getUserId().toString());
                 orderOperationLogDO.setOperationBefore(strOperationBefore);
                 orderOperationLogDO.setOperationAfter(strOperationAfter);
-                orderOperationLogMapper.save(orderOperationLogDO);
-                intItemCount ++;
+                orderOperationLogDOList.add(orderOperationLogDO);
+                //保存
+                orderProductDO.setProductUnitAmount(orderProduct.getProductUnitAmount());
+                orderProductDOList.add(orderProductDO);
+            }
+            if (orderProductDOList.size() > 0){
+                //批量更新商品项单价和商品总价
+                orderMapper.updateOrderProductPriceList(orderProductDOList);
+                orderMapper.updateOrderTotalProductAmount(orderDO.getOrderNo());
             }
         }
         if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())){
@@ -980,25 +988,43 @@ public class OrderServiceImpl implements OrderService {
                 if (BigDecimalUtil.compare(orderMaterialDO.getMaterialUnitAmount(), orderMaterial.getMaterialUnitAmount()) == 0){
                     continue;
                 }
-                orderMapper.updateOrderMaterialPrice(order.getOrderNo(),orderMaterial.getOrderMaterialId(),orderMaterial.getMaterialUnitAmount());
                 strOperationBefore = "配件项id:" + orderMaterial.getOrderMaterialId() + "，配件单价：" + orderMaterialDO.getMaterialUnitAmount()+ "。";
                 strOperationAfter = "配件项id:" + orderMaterial.getOrderMaterialId() + "，配件单价：" + orderMaterial.getMaterialUnitAmount()+ "。";
+                OrderOperationLogDO orderOperationLogDO = new OrderOperationLogDO();
+                orderOperationLogDO.setOrderNo(orderDO.getOrderNo());
+                orderOperationLogDO.setOrderStatusBefore(orderDO.getOrderStatus());
+                orderOperationLogDO.setOrderStatusAfter(orderDO.getOrderStatus());
+                orderOperationLogDO.setBusinessType(OrderBusinessType.ORDER_OPERATION_UPD_GOODS_PRICE);
+                orderOperationLogDO.setCreateTime(currentTime);
+                orderOperationLogDO.setCreateUser(loginUser.getUserId().toString());
                 orderOperationLogDO.setOperationBefore(strOperationBefore);
                 orderOperationLogDO.setOperationAfter(strOperationAfter);
-                orderOperationLogMapper.save(orderOperationLogDO);
-                intItemCount ++;
+                orderOperationLogDOList.add(orderOperationLogDO);
+                //保存
+                orderMaterialDO.setMaterialUnitAmount(orderMaterial.getMaterialUnitAmount());
+                orderMaterialDOList.add(orderMaterialDO);
+            }
+            if (orderMaterialDOList.size() > 0){
+                //批量更新配件项单价和配件总价
+                orderMapper.updateOrderMaterialPriceList(orderMaterialDOList);
+                orderMapper.updateOrderTotalMaterialAmount(orderDO.getOrderNo());
             }
         }
-        if (intItemCount > 0){//重算订单
+        if (orderOperationLogDOList.size() > 0){
+            //更新订单总价
+            orderMapper.updateOrderTotalOrderAmount(orderDO.getOrderNo());
+            //重算订单
             ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(orderDO.getOrderNo(), orderDO.getStatementDate());
             if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
                 result.setErrorCode(serviceResult.getErrorCode());
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 return result;
             }
+            //日志
+            orderOperationLogMapper.saveList(orderOperationLogDOList);
         }
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(intItemCount);
+        result.setResult(orderOperationLogDOList.size());
         return result;
     }
 
