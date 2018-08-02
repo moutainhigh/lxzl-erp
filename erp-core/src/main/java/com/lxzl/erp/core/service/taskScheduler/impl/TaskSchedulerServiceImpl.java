@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.taskScheduler.TaskExecutorCommitParam;
 import com.lxzl.erp.common.domain.taskScheduler.TaskExecutorQueryParam;
 import com.lxzl.erp.common.domain.taskScheduler.TaskSchedulerCommitParam;
 import com.lxzl.erp.common.domain.taskScheduler.TriggerCommitParam;
+import com.lxzl.erp.common.domain.taskScheduler.pojo.HolidayDTO;
 import com.lxzl.erp.common.domain.taskScheduler.pojo.TaskExecutor;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
@@ -41,8 +42,8 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
     @Override
     public ServiceResult<String, String> initTaskScheduler(TaskSchedulerCommitParam initTaskSchedulerCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        if(CollectionUtil.isNotEmpty(initTaskSchedulerCommitParam.getHolidayDTOList())){
-            if(StringUtil.isEmpty(initTaskSchedulerCommitParam.getHolidayName())){
+        if (CollectionUtil.isNotEmpty(initTaskSchedulerCommitParam.getHolidayDTOList())) {
+            if (StringUtil.isEmpty(initTaskSchedulerCommitParam.getHolidayName())) {
                 result.setErrorCode(ErrorCode.QUARTZ_HOLIDAY_NAME_NOT_NULL);
                 return result;
             }
@@ -54,11 +55,11 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
 
             String requestJson = JSON.toJSONString(initTaskSchedulerCommitParam);
             JSONObject jsonObject = JSON.parseObject(requestJson);
-            if(jsonObject.get("holidayDTOList") != null){
+            if (jsonObject.get("holidayDTOList") != null) {
                 jsonObject.remove("holidayDTOList");
-                jsonObject.put("holidayDTOs",initTaskSchedulerCommitParam.getHolidayDTOList());
+                jsonObject.put("holidayDTOs", initTaskSchedulerCommitParam.getHolidayDTOList());
             }
-            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL+"/initTask", jsonObject.toJSONString(), headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/initTask", jsonObject.toJSONString(), headerBuilder, "UTF-8");
             logger.info("manual charge response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
             if (TRIGGER_GROUP_SUCCESS_CODE.equals(taskExecutorResult.getCode())) {
@@ -74,8 +75,8 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
     @Override
     public ServiceResult<String, String> updateTaskScheduler(TaskSchedulerCommitParam initTaskSchedulerCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        if(CollectionUtil.isNotEmpty(initTaskSchedulerCommitParam.getHolidayDTOList())){
-            if(StringUtil.isEmpty(initTaskSchedulerCommitParam.getHolidayName())){
+        if (CollectionUtil.isNotEmpty(initTaskSchedulerCommitParam.getHolidayDTOList())) {
+            if (StringUtil.isEmpty(initTaskSchedulerCommitParam.getHolidayName())) {
                 result.setErrorCode(ErrorCode.QUARTZ_HOLIDAY_NAME_NOT_NULL);
                 return result;
             }
@@ -85,11 +86,11 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             headerBuilder.contentType("application/json");
             String requestJson = JSON.toJSONString(initTaskSchedulerCommitParam);
             JSONObject jsonObject = JSON.parseObject(requestJson);
-            if(jsonObject.get("holidayDTOList") != null){
+            if (jsonObject.get("holidayDTOList") != null) {
                 jsonObject.remove("holidayDTOList");
-                jsonObject.put("holidayDTOs",initTaskSchedulerCommitParam.getHolidayDTOList());
+                jsonObject.put("holidayDTOs", initTaskSchedulerCommitParam.getHolidayDTOList());
             }
-            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL+"/updateTaskScheduler", jsonObject.toJSONString(), headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/updateTaskScheduler", jsonObject.toJSONString(), headerBuilder, "UTF-8");
             logger.info("manual charge response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
             if (TRIGGER_GROUP_SUCCESS_CODE.equals(taskExecutorResult.getCode())) {
@@ -112,7 +113,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             headerBuilder.contentType("application/json");
             String requestJson = JSON.toJSONString(triggerCommitParam);
 
-            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL+"/pauseTaskTrigger", requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/pauseTaskTrigger", requestJson, headerBuilder, "UTF-8");
             logger.info("manual charge response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
             if (TRIGGER_GROUP_SUCCESS_CODE.equals(taskExecutorResult.getCode())) {
@@ -134,7 +135,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
             String requestJson = JSON.toJSONString(triggerCommitParam);
-            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL+"/resumeTaskTrigger", requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/resumeTaskTrigger", requestJson, headerBuilder, "UTF-8");
             logger.info("manual charge response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
             if (TRIGGER_GROUP_SUCCESS_CODE.equals(taskExecutorResult.getCode())) {
@@ -156,7 +157,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
             String requestJson = JSON.toJSONString(triggerCommitParam);
-            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL+"/deleteTrigger", requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/deleteTrigger", requestJson, headerBuilder, "UTF-8");
             logger.info("manual charge response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
             if (TRIGGER_GROUP_SUCCESS_CODE.equals(taskExecutorResult.getCode())) {
@@ -178,7 +179,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
             String requestJson = JSON.toJSONString(taskExecutorCommitParam);
-            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL+"/updateTaskExecutor", requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/updateTaskExecutor", requestJson, headerBuilder, "UTF-8");
             logger.info("manual charge response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
             if (TRIGGER_GROUP_SUCCESS_CODE.equals(taskExecutorResult.getCode())) {
@@ -201,33 +202,54 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             headerBuilder.contentType("application/json");
             String requestJson = JSON.toJSONString(taskExecutorQueryParam);
             JSONObject jsonObject = JSON.parseObject(requestJson);
-            jsonObject.put("pageNum",taskExecutorQueryParam.getPageNo());
-            if(jsonObject.get("triggerName") == null || "".equals(jsonObject.get("triggerName"))){
+            jsonObject.put("pageNum", taskExecutorQueryParam.getPageNo());
+            if (jsonObject.get("triggerName") == null || "".equals(jsonObject.get("triggerName"))) {
                 jsonObject.remove("triggerName");
             }
-            if(jsonObject.get("triggerGroup") == null || "".equals(jsonObject.get("triggerGroup"))){
+            if (jsonObject.get("triggerGroup") == null || "".equals(jsonObject.get("triggerGroup"))) {
                 jsonObject.remove("triggerGroup");
             }
 
-            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL+"/pageTaskExecutors", jsonObject.toJSONString(), headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/pageTaskExecutors", jsonObject.toJSONString(), headerBuilder, "UTF-8");
 
             logger.info("manual charge response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
             Map<String, Object> resultMap = taskExecutorResult.getResultMap();
             Page<TaskExecutor> page = JSON.parseObject(JSON.toJSONString(resultMap), Page.class);
+            Object pageTotalNum = resultMap.get("pageTotalNum");
             Object listObject = resultMap.get("list");
             List<TaskExecutor> list = new ArrayList<>();
-            if(listObject != null){
-                if(listObject instanceof List){
-                    list = (List) listObject;
+            if (listObject != null) {
+                if (listObject instanceof List) {
+                    list = JSON.parseArray(JSON.toJSONString(listObject), TaskExecutor.class);
                 }
             }
 
             Object countObject = resultMap.get("total");
             Integer count = null;
-            if(countObject != null){
-                if(countObject instanceof Integer){
+            if (countObject != null) {
+                if (countObject instanceof Integer) {
                     count = (Integer) countObject;
+                }
+            }
+
+            if (CollectionUtil.isNotEmpty(list)) {
+                for (TaskExecutor taskExecutor : list) {
+                    List<String> holidays = taskExecutor.getHolidays();
+                    if (CollectionUtil.isNotEmpty(holidays)) {
+                        List<HolidayDTO> holidayDTOList = new ArrayList<>();
+                        for (String holiday : holidays) {
+                            if (holiday.split("-").length == 3) {
+                                String[] split = holiday.split("-");
+                                HolidayDTO holidayDTO = new HolidayDTO();
+                                holidayDTO.setYear(split[0].matches("^[0-10000]*$") ? Integer.valueOf(split[0]) : null);
+                                holidayDTO.setMonth(split[1].matches("^[0-10000]*$") ? Integer.valueOf(split[1]) : null);
+                                holidayDTO.setDay(split[2].matches("^[0-10000]*$") ? Integer.valueOf(split[2]) : null);
+                                holidayDTOList.add(holidayDTO);
+                            }
+                        }
+                        taskExecutor.setHolidayDTOList(holidayDTOList);
+                    }
                 }
             }
 
@@ -235,6 +257,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             page.setTotalCount(count);
             page.setPageSize(taskExecutorQueryParam.getPageSize());
             page.setCurrentPage(taskExecutorQueryParam.getPageNo());
+            page.setPageCount(Integer.valueOf(pageTotalNum.toString()));
 
             result.setErrorCode(ErrorCode.SUCCESS);
             result.setResult(page);
@@ -254,7 +277,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             headerBuilder.contentType("application/json");
             String requestJson = JSON.toJSONString(taskExecutorQueryParam);
 
-            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL+"/detailTaskExecutor", requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/detailTaskExecutor", requestJson, headerBuilder, "UTF-8");
 
             logger.info("manual charge response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
@@ -262,14 +285,30 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
 
             Object listObject = resultMap.get("list");
             List<TaskExecutor> list = new ArrayList<>();
-            if(listObject != null){
-                if(listObject instanceof List){
+            if (listObject != null) {
+                if (listObject instanceof List) {
                     list = JSON.parseArray(JSON.toJSONString(listObject), TaskExecutor.class);
                 }
             }
             TaskExecutor taskExecutor = null;
-            if(CollectionUtil.isNotEmpty(list)){
+            if (CollectionUtil.isNotEmpty(list)) {
                 taskExecutor = list.get(0);
+            }
+
+            List<String> holidays = taskExecutor.getHolidays();
+            if (CollectionUtil.isNotEmpty(holidays)) {
+                List<HolidayDTO> holidayDTOList = new ArrayList<>();
+                for (String holiday : holidays) {
+                    if (holiday.split("-").length == 3) {
+                        String[] split = holiday.split("-");
+                        HolidayDTO holidayDTO = new HolidayDTO();
+                        holidayDTO.setYear(split[0].matches("^[0-10000]*$") ? Integer.valueOf(split[0]) : null);
+                        holidayDTO.setMonth(split[1].matches("^[0-10000]*$") ? Integer.valueOf(split[1]) : null);
+                        holidayDTO.setDay(split[2].matches("^[0-10000]*$") ? Integer.valueOf(split[2]) : null);
+                        holidayDTOList.add(holidayDTO);
+                    }
+                }
+                taskExecutor.setHolidayDTOList(holidayDTOList);
             }
 
             result.setErrorCode(ErrorCode.SUCCESS);

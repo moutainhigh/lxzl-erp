@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -45,6 +46,60 @@ public class TaskExecutor {
     private String jobCallbackClassName;  //工作任务异步回调的完整类名
     private String asyn;  //是否为异步执行 0:同步 1:异步 默认使用异步方式执行
     private String remark;  //备注
+    private String triggerDescription;  //触发器描述
+    private String triggerState;  //触发器状态
+    private String triggerStatusDesc;  //触发器状态描述
+    private String holidayName;  //假期名称
+    private List<String> holidays;  //假期数组
+    private List<HolidayDTO> HolidayDTOList;  //假期数组
+
+    public List<HolidayDTO> getHolidayDTOList() {
+        return HolidayDTOList;
+    }
+
+    public void setHolidayDTOList(List<HolidayDTO> holidayDTOList) {
+        HolidayDTOList = holidayDTOList;
+    }
+
+    public String getTriggerDescription() {
+        return triggerDescription;
+    }
+
+    public void setTriggerDescription(String triggerDescription) {
+        this.triggerDescription = triggerDescription;
+    }
+
+    public String getTriggerState() {
+        return triggerState;
+    }
+
+    public void setTriggerState(String triggerState) {
+        this.triggerState = triggerState;
+    }
+
+    public String getTriggerStatusDesc() {
+        return triggerStatusDesc;
+    }
+
+    public void setTriggerStatusDesc(String triggerStatusDesc) {
+        this.triggerStatusDesc = triggerStatusDesc;
+    }
+
+    public String getHolidayName() {
+        return holidayName;
+    }
+
+    public void setHolidayName(String holidayName) {
+        this.holidayName = holidayName;
+    }
+
+    public List<String> getHolidays() {
+        return holidays;
+    }
+
+    public void setHolidays(List<String> holidays) {
+        this.holidays = holidays;
+    }
 
     public String getRequestUrl() {
         return requestUrl;

@@ -1027,7 +1027,6 @@ public class ErrorCode {
     public static final String QUARTZ_HOLIDAY_NAME_NOT_CN = "J250000027";
     public static final String QUARTZ_HOLIDAY_NAME_IS_LENGTH = "J250000028";
     public static final String QUARTZ_CRON_EXPRESSION_IS_LENGTH = "J250000029";
-    public static final String QUARTZ_TASK_EXECUTOR_NO_NOT_NULL = "J250000030";
 
     // 动态SQL查询
     public static final String DYNAMIC_SQL_ERROR = "J260000001";
@@ -2038,7 +2037,6 @@ public class ErrorCode {
         MAP.put(QUARTZ_HOLIDAY_NAME_NOT_CN, "定时任务假期名称只能是英文和数字组成");
         MAP.put(QUARTZ_HOLIDAY_NAME_IS_LENGTH, "定时任务假期名称长度不能超过31");
         MAP.put(QUARTZ_CRON_EXPRESSION_IS_LENGTH, "定时任务cron表达式长度不能超过31");
-        MAP.put(QUARTZ_TASK_EXECUTOR_NO_NOT_NULL, "定时任务任务执行者编号不能为空");
 
 
         MAP.put(DYNAMIC_SQL_ERROR, "动态SQL查询语句不正确");
