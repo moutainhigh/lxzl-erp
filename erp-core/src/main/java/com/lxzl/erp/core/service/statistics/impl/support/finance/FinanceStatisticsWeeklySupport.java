@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.statistics.pojo.FinanceStatisticsDataWeeklyExc
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.core.service.statistics.impl.StatisticsServiceImpl;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.FinanceStatisticsDataWeeklyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
@@ -497,13 +498,16 @@ public class FinanceStatisticsWeeklySupport {
             // 统计当月累计数据
             FinanceStatisticsParam param = new FinanceStatisticsParam();
             param.setOrderOrigin(statisticsOrderOriginType);
+            StatisticsInterval statisticsInverval = createStatisticsInterval(year, month, weekOfMonth);
             if (paramVo.getStatisticsStartTime() == null) {
-                param.setStatisticsStartTime(DateUtil.getStartMonthDate(currentMonthDate));
+                //param.setStatisticsStartTime(DateUtil.getStartMonthDate(currentMonthDate));
+                param.setStatisticsStartTime(statisticsInverval.getStatisticsStartTime());
             } else {
                 param.setStatisticsStartTime(paramVo.getStatisticsStartTime());
             }
             if (paramVo.getStatisticsEndTime() == null) {
-                param.setStatisticsEndTime(DateUtil.getEndMonthDate(currentMonthDate));
+                //param.setStatisticsEndTime(DateUtil.getEndMonthDate(currentMonthDate));
+                param.setStatisticsEndTime(statisticsInverval.getStatisticsEndTime());
             } else {
                 param.setStatisticsEndTime(paramVo.getStatisticsEndTime());
             }
@@ -588,6 +592,54 @@ public class FinanceStatisticsWeeklySupport {
             return defaultValue;
         }
         return financeStatisticsDealsCountBySubCompany.getDealsCount();
+    }
+
+    public class StatisticsInterval {
+        Date statisticsStartTime = null;
+        Date statisticsEndTime = null;
+
+        public Date getStatisticsStartTime() {
+            return statisticsStartTime;
+        }
+
+        public void setStatisticsStartTime(Date statisticsStartTime) {
+            this.statisticsStartTime = statisticsStartTime;
+        }
+
+        public Date getStatisticsEndTime() {
+            return statisticsEndTime;
+        }
+
+        public void setStatisticsEndTime(Date statisticsEndTime) {
+            this.statisticsEndTime = statisticsEndTime;
+        }
+    }
+
+    public StatisticsInterval createStatisticsInterval(int year, int month, int weekOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month - 1);  // 因为日历获取的月份比实际月份小1
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Date firstDayInCurrentMonth = calendar.getTime();
+        Date statisticsStartTime = DateUtil.getStartMonthDate(firstDayInCurrentMonth); // 统计开始时间
+        Date statisticsEndTime = null;  //统计结束时间
+        Date endTimeInCurrentMonth = DateUtil.getEndMonthDate(firstDayInCurrentMonth);
+        calendar.set(Calendar.WEEK_OF_MONTH, weekOfMonth);
+        calendar.set(Calendar.DAY_OF_WEEK, 7);
+        calendar.set(Calendar.HOUR_OF_DAY ,23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        Date lastDayInWeek = calendar.getTime();
+        int monthOfLastDayInWeek = DateUtil.getMounth(lastDayInWeek);//周末所在月份
+        if (monthOfLastDayInWeek > month) {  // 如果周末所在月份大于当前统计的月份
+            statisticsEndTime = endTimeInCurrentMonth;  //月末为统计结束时间
+        } else {
+            statisticsEndTime = calendar.getTime();    //周末为统计结束时间
+        }
+        StatisticsInterval statisticsInterval = new StatisticsInterval();
+        statisticsInterval.setStatisticsStartTime(statisticsStartTime);
+        statisticsInterval.setStatisticsEndTime(statisticsEndTime);
+        return statisticsInterval;
     }
 
     @Autowired

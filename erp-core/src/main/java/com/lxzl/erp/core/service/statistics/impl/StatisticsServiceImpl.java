@@ -1003,7 +1003,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             int year = paramVo.getYear();
             int month = paramVo.getMonth();
             int weekOfMonth = paramVo.getWeekOfMonth();
-            StatisticsInterval statisticsInverval = createStatisticsInterval(year, month, weekOfMonth);
+            FinanceStatisticsWeeklySupport.StatisticsInterval statisticsInverval = financeStatisticsWeeklySupport.createStatisticsInterval(year, month, weekOfMonth);
             paramVo.setStatisticsStartTime(statisticsInverval.getStatisticsStartTime());
             paramVo.setStatisticsEndTime(statisticsInverval.getStatisticsEndTime());
             financeStatisticsWeeklySupport.reStatisticsFinanceDataWeekly(paramVo);
@@ -1065,52 +1065,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
     }
 
-    class StatisticsInterval {
-        Date statisticsStartTime = null;
-        Date statisticsEndTime = null;
 
-        public Date getStatisticsStartTime() {
-            return statisticsStartTime;
-        }
-
-        public void setStatisticsStartTime(Date statisticsStartTime) {
-            this.statisticsStartTime = statisticsStartTime;
-        }
-
-        public Date getStatisticsEndTime() {
-            return statisticsEndTime;
-        }
-
-        public void setStatisticsEndTime(Date statisticsEndTime) {
-            this.statisticsEndTime = statisticsEndTime;
-        }
-    }
-    private StatisticsInterval createStatisticsInterval(int year, int month, int weekOfMonth) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month - 1);  // 因为日历获取的月份比实际月份小1
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        Date firstDayInCurrentMonth = calendar.getTime();
-        Date statisticsStartTime = DateUtil.getStartMonthDate(firstDayInCurrentMonth); // 统计开始时间
-        Date statisticsEndTime = null;  //统计结束时间
-        Date endTimeInCurrentMonth = DateUtil.getEndMonthDate(firstDayInCurrentMonth);
-        calendar.set(Calendar.WEEK_OF_MONTH, weekOfMonth);
-        calendar.set(Calendar.DAY_OF_WEEK, 7);
-        calendar.set(Calendar.HOUR_OF_DAY ,23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        Date lastDayInWeek = calendar.getTime();
-        int monthOfLastDayInWeek = DateUtil.getMounth(lastDayInWeek);//周末所在月份
-        if (monthOfLastDayInWeek > month) {  // 如果周末所在月份大于当前统计的月份
-            statisticsEndTime = endTimeInCurrentMonth;  //月末为统计结束时间
-        } else {
-            statisticsEndTime = calendar.getTime();    //周末为统计结束时间
-        }
-        StatisticsInterval statisticsInterval = new StatisticsInterval();
-        statisticsInterval.setStatisticsStartTime(statisticsStartTime);
-        statisticsInterval.setStatisticsEndTime(statisticsEndTime);
-        return statisticsInterval;
-    }
 
     private ServiceResult<String, Boolean> verify(FinanceStatisticsParam param) {
         if (param == null || param.getStatisticsInterval() == null) {
