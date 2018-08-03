@@ -292,4 +292,8 @@ public class TaskExecutor {
     public void setRemark(String remark) {
         this.remark = remark;
     }
+
+    public String getDescription() {
+        return triggerDescription;
+    }
 }

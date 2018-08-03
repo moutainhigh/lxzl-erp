@@ -242,9 +242,9 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
                             if (holiday.split("-").length == 3) {
                                 String[] split = holiday.split("-");
                                 HolidayDTO holidayDTO = new HolidayDTO();
-                                holidayDTO.setYear(split[0].matches("^[0-10000]*$") ? Integer.valueOf(split[0]) : null);
-                                holidayDTO.setMonth(split[1].matches("^[0-10000]*$") ? Integer.valueOf(split[1]) : null);
-                                holidayDTO.setDay(split[2].matches("^[0-10000]*$") ? Integer.valueOf(split[2]) : null);
+                                holidayDTO.setYear(split[0].matches("^[0-9]*$") ? Integer.valueOf(split[0]) : null);
+                                holidayDTO.setMonth(split[1].matches("^[0-9]*$") ? Integer.valueOf(split[1]) : null);
+                                holidayDTO.setDay(split[2].matches("^[0-9]*$") ? Integer.valueOf(split[2]) : null);
                                 holidayDTOList.add(holidayDTO);
                             }
                         }
@@ -302,9 +302,9 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
                     if (holiday.split("-").length == 3) {
                         String[] split = holiday.split("-");
                         HolidayDTO holidayDTO = new HolidayDTO();
-                        holidayDTO.setYear(split[0].matches("^[0-10000]*$") ? Integer.valueOf(split[0]) : null);
-                        holidayDTO.setMonth(split[1].matches("^[0-10000]*$") ? Integer.valueOf(split[1]) : null);
-                        holidayDTO.setDay(split[2].matches("^[0-10000]*$") ? Integer.valueOf(split[2]) : null);
+                        holidayDTO.setYear(split[0].matches("^[0-9]*$") ? Integer.valueOf(split[0]) : null);
+                        holidayDTO.setMonth(split[1].matches("^[0-9]*$") ? Integer.valueOf(split[1]) : null);
+                        holidayDTO.setDay(split[2].matches("^[0-9]*$") ? Integer.valueOf(split[2]) : null);
                         holidayDTOList.add(holidayDTO);
                     }
                 }
