@@ -411,6 +411,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
 
                 // TODO: 2018\7\27 0027 将XSSFWorkbook存储到指定位置
                 String fileName = ConstantConfig.exportFileUrl + (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
+                String saveFileName = ConstantConfig.downloadStatementUrl + (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
 //                String fileName = "D:\\xxxxxxx\\"+ (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
                 try {
                     FileUtil.outputExcel(fileName,hssfWorkbook);
@@ -419,7 +420,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
                     delayedTaskDO.setThreadName(null);
                     delayedTaskDO.setProgressRate(1.0000);
-                    delayedTaskDO.setFileUrl(fileName);
+                    delayedTaskDO.setFileUrl(saveFileName);
                     delayedTaskDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
                     delayedTaskDO.setCreateTime(date);
                     delayedTaskDO.setUpdateTime(date);
