@@ -69,6 +69,7 @@
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group mn">
+                                                <input type="hidden" name="bankSlipId" id="bankSlipId" value="">
                                                 <input type="text" name="tradeSerialNo" id="tradeSerialNo" class="form-control input-sm bradius" autocomplete="off" placeholder="交易流水号">
                                             </div>
                                         </div>
