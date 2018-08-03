@@ -6938,7 +6938,6 @@ public class StatementServiceImpl implements StatementService {
             if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())) { // 商品项
                 // 兼容erp订单和k3订单商品项
                 orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
-
             }
 
             if (orderProductDO == null) {
@@ -6979,9 +6978,8 @@ public class StatementServiceImpl implements StatementService {
                             // 不一致的情况：1. 未交押金前进行退货。 2. 未交押金前对押金进行冲正的情况 （这两种情况暂不处理）
                             if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), orderProductDO.getRentDepositAmount()) != 0
                                     || BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), orderProductDO.getDepositAmount()) != 0) {
-                                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                                sb.append("订单号【" + orderNo + "】中的订单项押金和结算单支付押金不一致， 此接口不支持退此类押金。\n");
-                                return sb.toString();
+                                sb.append("订单号【" + orderNo + "】中的商品项【" + orderProductDO.getProductName() + "】押金和结算单支付押金不一致， 此接口不支持退此类押金。\n");
+                                continue;
                             }
 
                             // 这个订单商品项已经退的押金
@@ -7070,9 +7068,8 @@ public class StatementServiceImpl implements StatementService {
                             // 不一致的情况：1. 未交押金前进行退货。 2. 未交押金前对押金进行冲正的情况 （这两种情况暂不处理）
                             if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), orderMaterialDO.getRentDepositAmount()) != 0
                                     || BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), orderMaterialDO.getDepositAmount()) != 0) {
-                                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                                sb.append("订单号【" + orderNo + "】中的配件项项押金和结算单支付押金不一致， 此接口不支持退此类押金。\n");
-                                return sb.toString();
+                                sb.append("订单号【" + orderNo + "】中的配件项【" + orderMaterialDO.getMaterialName() + "】押金和结算单支付押金不一致， 此接口不支持退此类押金。\n");
+                                continue;
                             }
 
                             // 这个订单商品项已经退的押金
