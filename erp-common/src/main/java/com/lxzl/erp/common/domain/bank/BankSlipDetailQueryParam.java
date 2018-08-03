@@ -25,6 +25,24 @@ public class BankSlipDetailQueryParam extends BasePageParam {
     private Date slipDayEnd;   //导入结束时间日期
     private String otherSideAccountNo;   //对方账号
     private String tradeSerialNo;   //交易流水号
+    private Integer ownerSubCompanyId; //数据归属化公司
+    private Integer subCompanyId; //属地化分公司
+
+    public Integer getOwnerSubCompanyId() {
+        return ownerSubCompanyId;
+    }
+
+    public void setOwnerSubCompanyId(Integer ownerSubCompanyId) {
+        this.ownerSubCompanyId = ownerSubCompanyId;
+    }
+
+    public Integer getSubCompanyId() {
+        return subCompanyId;
+    }
+
+    public void setSubCompanyId(Integer subCompanyId) {
+        this.subCompanyId = subCompanyId;
+    }
 
     public Integer getBankSlipId() {
         return bankSlipId;
