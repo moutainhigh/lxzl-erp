@@ -48,7 +48,7 @@
     </div>
 
     <div class="section row">
-        <div class="col-md-6" id="executorRow">
+        <div class="col-md-6 hide" id="executorRow">
             <div class="section-divider mv40" id="spy2">
                 <span>任务执行者信息</span>
             </div>
@@ -126,12 +126,12 @@
                     </div>
                 </div>
             </div>
-            <div class="panel-body">
-                <div class="table-responsive hasTooltip">
-                    <script type="text/html" id="dataListTpl">
+            <div class="panel-body pn">
+                <div class="table-responsive hide" id="dateRow">
+                    <script type="text/html" id="chooseDateTpl">
                         <tbody>
-                        <tr class="productRow skuRow">
-                            <td>
+                        <tr>
+                            <td style="width:100px;">
                                 <label class="option block mn">
                                     <input type="checkbox" name="checkAll" value="">
                                     <span class="checkbox mn"></span>
@@ -139,13 +139,21 @@
                             </td>
                             <td>
                                 <div class="clearfix">
-                                    
+                                    {{#dateList}}
+                                    <div class="pull-left pr10 date-item clearfix" data-time="{{dateObj}}">
+                                        <label class="option block mn pull-left">
+                                            <input type="checkbox" name="checkItem">
+                                            <span class="checkbox mn"></span>
+                                        </label>
+                                        <span class="pull-left ml5" style="line-height:21px;">{{year}}-{{month}}-{{day}}</span>
+                                    </div>
+                                    {{/dateList}}
                                 </div>
                             </td>
                         </tr>
                         </tbody>
                     </script>
-                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                    <table class="table table-bordered admin-form theme-warning tc-checkbox-1 fs13" id="chooseDateTable"></table>
                 </div>
             </div>
         </div>
