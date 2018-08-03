@@ -241,6 +241,15 @@ public interface OrderService extends VerifyReceiver {
      */
     ServiceResult<String,String> supperUserChangeOrder(OrderConfirmChangeParam orderConfirmChangeParam);
 
+    /**
+     * 修改订单商品和配件单价，并重算订单
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/8/1 15:59
+     * @param
+     * @return
+     */
+    ServiceResult<String,Integer> updateOrderPrice(Order order);
 
     void saveOrderProductInfo(List<OrderProductDO> orderProductDOList, Integer orderId, User loginUser, Date currentTime);
     void saveOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, Integer orderId, User loginUser, Date currentTime);

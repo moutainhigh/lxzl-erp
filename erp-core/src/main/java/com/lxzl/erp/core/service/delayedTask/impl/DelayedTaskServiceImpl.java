@@ -137,9 +137,6 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
     @Autowired
     private DelayedTaskExportCustomerStatementSupport delayedTaskExportCustomerStatementSupport;
 
-
-
-
     @Override
     public ServiceResult<String, DelayedTask> addDelayedTask(DelayedTask delayedTask)  throws Exception {
         ServiceResult<String, DelayedTask> result = new ServiceResult<>();
@@ -297,14 +294,14 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 if (!ErrorCode.SUCCESS.equals(stringListServiceResult.getErrorCode())) {
                     result.setErrorCode(stringListServiceResult.getErrorCode());
                     //导出失败更新任务列表状态
-                    exoprtFailedUpdateDelayedTaskDO(result, date, delayedTaskDO);
+                    exoprtFailedUpdateDelayedTaskDO(result, date, delayedTaskDO,customerName);
                     return result;
                 }
                 List<CheckStatementOrder> checkStatementOrderList = stringListServiceResult.getResult();
                 if (CollectionUtil.isEmpty(checkStatementOrderList)) {
                     dingDingSupport.dingDingSendMessage(customerNoParam + "无对账单");
                     //导出失败更新任务列表状态
-                    exoprtFailedUpdateDelayedTaskDO(result, date, delayedTaskDO);
+                    exoprtFailedUpdateDelayedTaskDO(result, date, delayedTaskDO,customerName);
                     return result;
                 }
 
@@ -324,7 +321,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 ProcesscCustomerStatement processcCustomerStatement = new ProcesscCustomerStatement(statementOrderMonthQueryParam, result, checkStatementOrderList).invoke();
                 if (processcCustomerStatement.is()) {
                     //导出失败更新任务列表状态
-                    exoprtFailedUpdateDelayedTaskDO(result, date, delayedTaskDO);
+                    exoprtFailedUpdateDelayedTaskDO(result, date, delayedTaskDO,customerName);
                     if (delayedTaskDO.getCreateUser() != null) {
                         MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
                         StringBuffer sb = new StringBuffer();
@@ -355,6 +352,32 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
 //                String fileName = "D:\\xxxxxxx\\"+ (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
                 try {
                     FileUtil.outputExcel(fileName,hssfWorkbook);
+                    // TODO: 2018\7\27 0027 存储地址，发送钉钉消息晒啥
+                    delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_COMPLETED);//已完成
+                    delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
+                    delayedTaskDO.setThreadName(null);
+                    delayedTaskDO.setProgressRate(1.0000);
+                    delayedTaskDO.setFileUrl(fileName);
+                    delayedTaskDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+                    delayedTaskDO.setCreateTime(date);
+                    delayedTaskDO.setUpdateTime(date);
+                    delayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    delayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    delayedTaskDO.setRemark((customerName + "对账单") +".xlsx"+"导出成功");
+                    delayedTaskMapper.update(delayedTaskDO);
+                    if (delayedTaskDO.getCreateUser() != null) {
+                        MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
+                        StringBuffer sb = new StringBuffer();
+                        sb.append("您要导出的[").append(customerName).append("]的对账单已导出，请去任务列表进行下载");
+                        messageThirdChannel.setMessageContent(sb.toString());
+                        messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
+                        messageThirdChannelService.sendMessage(messageThirdChannel);
+                        System.out.println(sb.toString());
+                    }
+                    delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
+                    result.setResult(delayedTask);
+                    result.setErrorCode(ErrorCode.SUCCESS);
+                    return result;
                 } catch (Exception e) {
                     e.printStackTrace();
                     delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_EXECUTION_FAILED);//导出失败
@@ -365,7 +388,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     delayedTaskDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
                     delayedTaskDO.setCreateTime(date);
                     delayedTaskDO.setUpdateTime(date);
-                    delayedTaskDO.setRemark("导出异常");//业务异常
+                    delayedTaskDO.setRemark((customerName + "对账单") +".xlsx"+"导出异常");//业务异常
                     delayedTaskMapper.update(delayedTaskDO);
                     if (delayedTaskDO.getCreateUser() != null) {
                         MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
@@ -377,34 +400,11 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     }
                     // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
                     delayedTaskMapper.subQueueNumber();
+                    delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
+                    result.setResult(delayedTask);
+                    result.setErrorCode(ErrorCode.SUCCESS);
+                    return result;
                 }
-
-                // TODO: 2018\7\27 0027 存储地址，发送钉钉消息晒啥
-                delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_COMPLETED);//已完成
-                delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
-                delayedTaskDO.setThreadName(null);
-                delayedTaskDO.setProgressRate(1.0000);
-                delayedTaskDO.setFileUrl(fileName);
-                delayedTaskDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
-                delayedTaskDO.setCreateTime(date);
-                delayedTaskDO.setUpdateTime(date);
-                delayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                delayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                delayedTaskDO.setRemark(null);
-                delayedTaskMapper.update(delayedTaskDO);
-                if (delayedTaskDO.getCreateUser() != null) {
-                    MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
-                    StringBuffer sb = new StringBuffer();
-                    sb.append("您要导出的[").append(customerName).append("]的对账单已导出，请去任务列表进行下载");
-                    messageThirdChannel.setMessageContent(sb.toString());
-                    messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
-                    messageThirdChannelService.sendMessage(messageThirdChannel);
-                System.out.println(sb.toString());
-                }
-                delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
-                result.setResult(delayedTask);
-                result.setErrorCode(ErrorCode.SUCCESS);
-                return result;
             }catch (Exception e){
                 delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_EXECUTION_FAILED);//导出失败
                 delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
@@ -436,7 +436,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
     }
 
     //导出失败更新任务列表状态
-    private void exoprtFailedUpdateDelayedTaskDO(ServiceResult<String, DelayedTask> result, Date date, DelayedTaskDO delayedTaskDO) {
+    private void exoprtFailedUpdateDelayedTaskDO(ServiceResult<String, DelayedTask> result, Date date, DelayedTaskDO delayedTaskDO,String customerName) {
         if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
             delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_EXECUTION_FAILED);//排队中
             delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
@@ -449,7 +449,11 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
             delayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             delayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
             if (result.getErrorCode() != null) {
-                delayedTaskDO.setRemark(ErrorCode.getMessage(result.getErrorCode()));
+                if (customerName != "") {
+                    delayedTaskDO.setRemark((customerName + "对账单") +".xlsx"+"导出异常"+ErrorCode.getMessage(result.getErrorCode()));
+                }else {
+                    delayedTaskDO.setRemark(ErrorCode.getMessage(result.getErrorCode()));
+                }
             }
             delayedTaskMapper.update(delayedTaskDO);
         }

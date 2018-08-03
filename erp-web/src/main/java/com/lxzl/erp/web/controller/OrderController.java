@@ -195,6 +195,19 @@ public class OrderController extends BaseController {
         return resultGenerator.generate(orderService.supperUserChangeOrder(orderConfirmChangeParam));
     }
 
+    /**
+     * 修改订单商品和配件单价，并重算订单
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/8/1 17:53
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "updateOrderPrice", method = RequestMethod.POST)
+    public Result updateOrderPrice(@RequestBody  Order order, BindingResult validResult) {
+        return resultGenerator.generate(orderService.updateOrderPrice(order));
+    }
+
     @Autowired
     private ResultGenerator resultGenerator;
 
