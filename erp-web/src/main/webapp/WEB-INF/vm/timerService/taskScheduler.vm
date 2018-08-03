@@ -107,7 +107,7 @@
                                         <ul class="dropdown-menu pull-right" role="menu">
                                             {{#rowActionButtons}}
                                             <li>
-                                                <a href="${ctx}timed-manage/edit-task?no={{taskExecutorNo}}" class="{{class}}" 
+                                                <a href="${ctx}timed-manage/edit-task?id={{id}}" class="{{class}}" 
                                                 data-no="{{taskExecutorNo}}" data-id="{{id}}" data-name="{{triggerName}}" data-group="{{triggerGroup}}">{{text}}</a>
                                             </li>
                                             {{/rowActionButtons}}
