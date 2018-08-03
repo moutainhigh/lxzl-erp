@@ -1260,4 +1260,10 @@ public class PageController extends BaseController {
     public String timedManageUpdatePerformer() {
         return "/timerService/editPerformer";
     }
+    
+    //延时任务列表
+    @RequestMapping("/delayed-task/list")
+    public String deyayedTaskList() {
+        return "/delayedTask/deyayedTaskList";
+    }
 }
