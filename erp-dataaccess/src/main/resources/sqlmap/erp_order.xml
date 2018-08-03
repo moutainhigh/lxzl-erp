@@ -1339,6 +1339,38 @@
         and eo.data_status = 1
     </select>
 
+    <select id="findByOrderSellerId" resultMap="OrderDO" parameterType="java.lang.Integer">
+        select * from erp_order eo where eo.order_seller_id = #{orderSellerId , jdbcType=INTEGER} AND eo.data_status = 1
+    </select>
+
+    <update id="updateListForUser" parameterType="java.util.List">
+        update erp_order
+        SET
+        <trim>
+            order_sub_company_id =
+            <foreach item="orderDO" collection="updateOrderDOList" index="index" separator=" " open="case id" close="end">
+                when #{orderDO.id} then #{orderDO.orderSubCompanyId}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            update_user =
+            <foreach item="orderDO" collection="updateOrderDOList" index="index" separator=" " open="case id" close="end">
+                when #{orderDO.id} then #{orderDO.updateUser}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            update_time =
+            <foreach collection="updateOrderDOList" index="index" item="orderDO" separator=" " open="case id" close="end">
+                when #{orderDO.id} then #{orderDO.updateTime}
+            </foreach>
+        </trim>
+        WHERE id in
+        <foreach collection="updateOrderDOList" index="index" item="orderDO"
+                 separator="," open="(" close=")">
+            #{orderDO.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
+
     <select id="findCanReletOrderForWorkbench"  resultMap="OrderDO" parameterType="map">
         SELECT e_order.*
         <trim prefix=",">

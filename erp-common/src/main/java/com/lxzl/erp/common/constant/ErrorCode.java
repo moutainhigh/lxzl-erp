@@ -1026,6 +1026,11 @@ public class ErrorCode {
     public static final String ANNOUNCEMENT_REMARK_TOO_LARGE = "J280000005";
 
 
+    //延迟任务列表
+    public static final String TASK_TYPE_NOT_NULL = "J290000001";
+    public static final String TASK_REQUEST_JSON_NOT_EMPTY = "J290000002";
+    public static final String TASK_REQUEST_HAVE_FOR_THIS_USER_ID = "J290000003";
+
     //Mall
     public static final String MALL_SYSTEM_CONNECT_EXCEPTION = "Mall00001";
 
@@ -2019,6 +2024,10 @@ public class ErrorCode {
         MAP.put(ANNOUNCEMENT_REMARK_TOO_LARGE, "公告备注不能超过500字");
 
 
+
+        MAP.put(TASK_TYPE_NOT_NULL, "任务类型不能为空");
+        MAP.put(TASK_REQUEST_JSON_NOT_EMPTY, "延迟任务列表请求参数不能为空");
+        MAP.put(TASK_REQUEST_HAVE_FOR_THIS_USER_ID, "您已经有排队中或处理中的导出任务，请该任务完成后再进行导出");
 
 
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户已经为确认结算单状态");

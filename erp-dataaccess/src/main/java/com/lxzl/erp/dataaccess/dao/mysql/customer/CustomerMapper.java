@@ -45,4 +45,8 @@ public interface CustomerMapper extends BaseMysqlDAO<CustomerDO> {
     List<CustomerDO> findByCustomerNoList(@Param("customerNoList") List<String> customerNoList);
 
     List<CustomerDO> findByCustomerNameList(@Param("customerNameList")List<String> customerNameList);
+
+	List<CustomerDO> findCustomerByOwner(@Param("ownerId")Integer ownerId);
+
+	void updateListForUser(@Param("updateCustomerDOList") List<CustomerDO> updateCustomerDOList);
 }

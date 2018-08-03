@@ -76,4 +76,8 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     void updateOrderTotalOrderAmount(@Param("orderNo") String orderNo);
 
     void updateOrderFirstNeedPayAmount(@Param("orderNo") String orderNo);
+
+//    List<OrderDO> findByOrderSellerId(@Param("orderSellerId")Integer orderSellerId);
+
+//    void updateListForUser(@Param("updateOrderDOList")List<OrderDO> updateOrderDOList);
 }

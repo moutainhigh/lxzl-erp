@@ -1235,4 +1235,10 @@ public class PageController extends BaseController {
     public String addSystemNotice() {
         return "/systemManage/addSystemNotice";
     }
+
+    //延时任务列表
+    @RequestMapping("/delayed-task/list")
+    public String deyayedTaskList() {
+        return "/delayedTask/deyayedTaskList";
+    }
 }
