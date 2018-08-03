@@ -29,7 +29,13 @@
         </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
+        <li> 
+            <a class="pl10 pr10" href="${ctx}delayed-task/list">
+                <span class="glyphicons glyphicon-cloud-download fs16"></span>
+            </a>
+        </i>
         <li class="dropdown dropdown-item-slide">
+            
             <a class="dropdown-toggle pl10 pr10" data-toggle="dropdown" href="#">
                 <span class="octicon octicon-radio-tower fs18"></span>
                 <span class="badge badge-hero badge-danger" id="unreadMessageNumber"></span>

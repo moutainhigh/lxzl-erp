@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-订单管理-订单列表</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
+
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+
+                #parse("component/loading.vm")
+
+                <div class="panel panel-primary panel-border top">
+                    <div class="panel-menu p12">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <form id="searchForm" class="form-horizontal">
+                                    <div class="section row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-2">
+                                                <div class="form-group mn">
+                                                    <input type="hidden" name="orderStartTime" id="orderStartTime" />
+                                                    <input type="hidden" name="orderEndTime" id="orderEndTime" />
+                                                    <div class="input-group date" id="timePicker">
+                                                        <input type="text" id="timePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="起租时间">
+                                                        <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="input-group mn" style="width: 100%">
+                                                    <select class="form-control input-sm bradius" name="status" id="status">
+                                                        <option value="">请选择</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="field form-group mn" >
+                                                    <input type="text" name="fuzzyCustomerName" id="fuzzyCustomerName" class="form-control input-sm bradius" autocomplete="off" placeholder="用户姓名">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="field form-group mn" >
+                                                    <input type="text" name="phone" id="phone" class="form-control input-sm bradius" autocomplete="off" placeholder="电话">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="field form-group mn" >
+                                                    <input type="text" name="fuzzyCouponCode" id="fuzzyCouponCode" class="form-control input-sm bradius" autocomplete="off" placeholder="优惠券码">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="field form-group mn" >
+                                                    <input type="text" name="fuzzyOrderNumber" id="fuzzyOrderNumber" class="form-control input-sm bradius" autocomplete="off" placeholder="订单编码">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="short alt">
+                                    <div class="section row">
+                                        <div class="col-md-12">
+                                            <div class="pull-left ml15" style="position:absolute; bottom: 0; left:0; z-index:99;">
+                                                <div class="btn-group" id="actionCommonButtons">
+                                                    <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                                </div>
+                                            </div>
+                                            <div class="pull-right mn mr15">
+                                                <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                                <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body pn">
+                        <div class="table-responsive">
+                            <script type="text/html" id="dataListTpl">
+                                <thead>
+                                    <tr class="bg-light">
+                                        <th>编号</th>
+                                        <th>用户信息</th>
+                                        <th>学校信息</th>
+                                        <th>优惠券码</th>
+                                        <th>下单日期</th>
+                                        <th>租期</th>
+                                        <th>起租日</th>
+                                        <th>月租金</th>
+                                        <th>总租金</th>
+                                        <th>应付金额</th>
+                                        <th>备注</th>
+                                        <th>订单状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#dataSource}}
+                                        {{#listData}}
+                                        <tr class="{{trClass}}">
+                                            <td>{{orderNumber}}</td>
+                                            <td>
+                                                <p class="mn"><span class="mr10">{{customerName}}</span><span>{{idCardNo}}</span></p>
+                                                <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{phone}}</p>
+                                                <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{deliveryAddress}}</p>
+                                            </td>
+                                            <td>
+                                                <p class="mn">{{schoolName}}</p>
+                                                <p class="mn mt5 mn">学号：{{schoolNumber}}</p>
+                                            </td>
+                                            <td>{{couponCode}}</td>
+                                            <td>{{#shortTime}}{{orderTime}}{{/shortTime}}</td>
+                                            <td>{{rentTimeLength}}</td>
+                                            <td>{{#shortTime}}{{rentStartTime}}{{/shortTime}}</td>
+                                            <td>￥{{#price}}{{monthRentPrice}}{{/price}}</td>
+                                            <td>￥{{#price}}{{monthRent}}{{/price}}</td>
+                                            <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
+                                            <td>{{remark}}</td>
+                                            <td>
+                                                <p class="mn {{statusClass}}">{{statusValue}}</p>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="12" class="text-center">无数据</td>
+                                        </tr>
+                                        {{/listData}}
+                                    {{/dataSource}}
+                                </tbody>
+                            </script>
+                            <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                                #parse("component/pager.vm")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        #parse("layout/sidebarRight.vm")
+    </div>
+    #parse("layout/footer.vm")
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js','manage.order.undergraduate.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        UndergraduateOrder.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+    </script>
+
+</body>
+</html>
