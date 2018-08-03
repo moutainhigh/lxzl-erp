@@ -1,6 +1,9 @@
 package com.lxzl.erp.dataaccess.dao.mysql.order;
 
+import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -60,4 +63,17 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     List<OrderDO> findByNos(@Param("orderNos") Set<String> orderNos);
 
     List<OrderDO> findCanReletOrderForWorkbench(@Param("maps")Map<String, Object> maps);
+
+    //修改订单单价
+    void updateOrderProductPriceList(@Param("orderProductDOList") List<OrderProductDO> orderProductDOList);
+
+    void updateOrderMaterialPriceList(@Param("orderMaterialDOList") List<OrderMaterialDO> orderMaterialDOList);
+
+    void updateOrderTotalProductAmount(@Param("orderNo") String orderNo);
+
+    void updateOrderTotalMaterialAmount(@Param("orderNo") String orderNo);
+
+    void updateOrderTotalOrderAmount(@Param("orderNo") String orderNo);
+
+    void updateOrderFirstNeedPayAmount(@Param("orderNo") String orderNo);
 }

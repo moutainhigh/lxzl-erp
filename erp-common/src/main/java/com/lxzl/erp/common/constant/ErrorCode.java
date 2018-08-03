@@ -1025,10 +1025,14 @@ public class ErrorCode {
     public static final String ANNOUNCEMENT_CONTENT_TOO_LARGE = "J280000004";
     public static final String ANNOUNCEMENT_REMARK_TOO_LARGE = "J280000005";
 
+
     //延迟任务列表
     public static final String TASK_TYPE_NOT_NULL = "J290000001";
     public static final String TASK_REQUEST_JSON_NOT_EMPTY = "J290000002";
     public static final String TASK_REQUEST_HAVE_FOR_THIS_USER_ID = "J290000003";
+
+    //Mall
+    public static final String MALL_SYSTEM_CONNECT_EXCEPTION = "Mall00001";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -2041,6 +2045,9 @@ public class ErrorCode {
         MAP.put(SPLIT_STATEMENT_TIME_ERROR, "分段重算时间必须在订单起租时间与订单预计归还时间之间");
         MAP.put(RETURN_STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，该退货单结算单详情已存在，不能重复生成结算单");
         MAP.put(CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST, "客户为已经为确认坏账状态");
+
+
+        MAP.put(MALL_SYSTEM_CONNECT_EXCEPTION, "连接Mall-App系统异常");
 
     }
 
