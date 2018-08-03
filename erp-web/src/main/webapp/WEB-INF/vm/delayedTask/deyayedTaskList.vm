@@ -22,16 +22,9 @@
                 <div class="panel-menu p12">
                     <div class="row">
                         <div class="pull-left ml10">
-                            <script type="text/html" id="actionCommonButtonsTpl">
+                            <div class="btn-group" id="actionCommonButtons">
                                 <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
-                                {{#acitonCommonButtons}}
-                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
-                                    <i class="{{iClass}}"></i> {{text}}
-                                </a>
-                                {{/acitonCommonButtons}}
-                            </script>
-
-                            <div class="btn-group" id="actionCommonButtons"></div>
+                            </div>
                         </div>
                         <div class="pull-right mr10 text-right">
                             <form id="searchForm" class="form-horizontal">
@@ -77,9 +70,7 @@
                                 <th>处理进度</th>
                                 <th>备注</th>
                                 <th>创建人</th>
-                                {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
-                                {{/hasRowActionButtons}}
                             </tr>
                             </thead>
                             <tbody>
@@ -95,15 +86,11 @@
                                     <p class="mn">{{createUserRealName}}</p>
                                     <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
                                 </td>
-                                {{#hasRowActionButtons}}
                                 <td class="text-right">
                                     <div class="btn-group text-right">
-                                        {{#rowActionButtons}}
-                                        <a href="{{fileUrl}}" {{#blank}}target="_blank"{{/blank}} type="button" class="btn btn-default btn-xs {{class}}" data-workflowlinkid="{{workflowLinkId}}" data-workflowlinkno="{{instanceMarking}}">{{text}}</a>
-                                        {{/rowActionButtons}}
+                                        <a href="{{fileUrl}}" target="_blank" type="button" class="btn btn-default btn-xs downButton">下载</a>
                                     </div>
                                 </td>
-                                {{/hasRowActionButtons}}
                             </tr>
                             {{/listData}}
                             {{^listData}}
