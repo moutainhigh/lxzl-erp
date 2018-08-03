@@ -7025,7 +7025,6 @@ public class StatementServiceImpl implements StatementService {
         // 配件项
         for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList) {
             OrderMaterialDO orderMaterialDO = null;
-            // 暂时只考虑商品退押金，如果是商品
             if (productSupport.isMaterial(k3ReturnOrderDetailDO.getProductNo())) { // 商品项
                 // 兼容erp订单和k3订单商品项
                 orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
@@ -7112,7 +7111,7 @@ public class StatementServiceImpl implements StatementService {
 
         sb.append("订单号【" + orderNo + "】退还租金押金：" + totalReturnRentDepositAmount + " ， 退还押金：" + totalReturnDepositAmount + "\n");
 
-        //押金最后退
+        // 押金最后退
         if (BigDecimalUtil.compare(totalReturnRentDepositAmount, BigDecimal.ZERO) > 0
                 || BigDecimalUtil.compare(totalReturnDepositAmount, BigDecimal.ZERO) > 0) {
             ServiceResult<String, Boolean> returnDepositResult = paymentService.returnDeposit(orderDO.getBuyerCustomerNo(), totalReturnRentDepositAmount, totalReturnDepositAmount);
