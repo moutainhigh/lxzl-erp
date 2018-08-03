@@ -31,7 +31,7 @@
     <ul class="nav navbar-nav navbar-right">
         <li> 
             <a class="pl10 pr10" href="${ctx}delayed-task/list">
-                <span class="glyphicons glyphicon-cloud-download fs16"></span>
+                <span class="glyphicons glyphicons-cloud-download fs16"></span>
             </a>
         </i>
         <li class="dropdown dropdown-item-slide">
