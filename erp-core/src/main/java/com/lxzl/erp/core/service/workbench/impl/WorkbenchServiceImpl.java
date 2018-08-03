@@ -58,7 +58,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             //可续租单的提前时间值
             maps.put("reletTimeOfDay",CommonConstant.RELET_TIME_OF_RENT_TYPE_DAY ); //短租提前15天
             maps.put("reletTimeOfMonth",CommonConstant.RELET_TIME_OF_RENT_TYPE_MONTH); //长租提前30天
-
+            maps.put("workbenchName",workbenchQueryParam.getWorkbenchName());
             maps.put("workbenchQueryParam",workbenchQueryParam);
             //订单权限
             maps.put("orderPermissionParam",permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
@@ -322,6 +322,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             maps.put("reletTimeOfMonth",CommonConstant.RELET_TIME_OF_RENT_TYPE_MONTH); //长租提前30天
 
             maps.put("workbenchQueryParam",workbenchQueryParam);
+            maps.put("workbenchName",workbenchQueryParam.getWorkbenchName());
             //订单权限
             maps.put("orderPermissionParam",permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
             //退货单权限
@@ -390,7 +391,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             processingMap.put("paramsValue",ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
             processingMap.put("workbenchType",WorkbenchType.RETURN_ORDER_STATUS_PROCESSING);
             processingMap.put("count",k3ReturnOrderCountMap.get("returnOrderProcessingCount"));
-            k3ReturnOrderListMap.add(waitCommitMap);
+            k3ReturnOrderListMap.add(processingMap);
 
             //被驳回的退货单
             Map<String,Object> backedMap = new HashMap();
