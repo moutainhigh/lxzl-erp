@@ -14,18 +14,19 @@ import org.hibernate.validator.constraints.NotBlank;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TaskExecutorQueryParam extends BasePageParam {
 
+    @NotBlank(message = ErrorCode.QUARTZ_TASK_EXECUTOR_ID_NOT_NULL,groups = {QueryGroup.class})
+    private String id;
     private String triggerName;
     private String triggerGroup;
-    @NotBlank(message = ErrorCode.QUARTZ_TASK_EXECUTOR_NO_NOT_NULL,groups = {QueryGroup.class})
-    private String taskExecutorNo;
 
-    public String getTaskExecutorNo() {
-        return taskExecutorNo;
+    public String getId() {
+        return id;
     }
 
-    public void setTaskExecutorNo(String taskExecutorNo) {
-        this.taskExecutorNo = taskExecutorNo;
+    public void setId(String id) {
+        this.id = id;
     }
+
 
     public String getTriggerName() {
         return triggerName;
