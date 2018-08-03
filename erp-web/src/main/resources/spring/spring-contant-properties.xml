@@ -23,4 +23,7 @@
         <property name="staticDomain" value="${static.domain}"/>
         <property name="serviceDomain" value="${service.domain}"/>
     </bean>
+
+
+
 </beans>

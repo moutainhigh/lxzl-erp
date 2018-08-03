@@ -263,6 +263,11 @@ public class PageController extends BaseController {
         return "/component/order/sectionSettlementModal";
     }
 
+    @RequestMapping("/order-manage/undergraduate-order-list")
+    public String undergraduateOrderList() {
+        return "/orderManage/undergraduateOrder";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
@@ -1104,6 +1109,12 @@ public class PageController extends BaseController {
     @RequestMapping("/relet-order/modal")
     public String reletOrderModal() {
         return "/component/order/reletOrderModal";
+    }
+
+    //订单修改单价Modal
+    @RequestMapping("/order-manage/change-price")
+    public String changePriceModal() {
+        return "/component/order/changePriceModal";
     }
 
     //提交审核选择审核人及填写审核备注
