@@ -55,6 +55,8 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 import org.slf4j.Logger;
@@ -65,7 +67,11 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -173,6 +179,62 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         serviceResult.setResult(page);
         return serviceResult;
     }
+
+    /**
+     * 下载延迟任务列表中的对账单
+     * @return
+     */
+    @Override
+    public ServiceResult<String, String> downloadStatementOrderCheck(DelayedTask delayedTask, HttpServletResponse response){
+        ServiceResult<String, String> result = new ServiceResult<>();
+        String fileUrl = delayedTask.getFileUrl();
+        InputStream inputStream = null;
+        OutputStream stream = null;
+        if (fileUrl != null && fileUrl.equals("")) {
+            try {
+                inputStream = FileUtil.getFileInputStream(fileUrl);
+                if (inputStream == null) {
+                    result.setErrorCode(ErrorCode.EXCEL_SHEET_IS_NULL);
+                    return result;
+                }
+                Workbook work = WorkbookFactory.create(inputStream);
+                String[] split = fileUrl.split("/");
+                response.reset();
+                response.setHeader("Content-disposition", "attachment; filename=" + split[2]);
+                response.setContentType("application/json;charset=utf-8");
+                stream = response.getOutputStream();
+                work.write(stream);
+                stream.flush();
+                inputStream.close();
+                stream.close();
+            }catch (Exception e){
+                e.printStackTrace();
+                logger.error("inputStream close IOException:" + e.getMessage());
+                result.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+                return result;
+            }finally{
+                if (inputStream != null) {
+                    try {
+                        inputStream.close(); // 关闭流
+                    } catch (IOException e) {
+                        logger.error("inputStream close IOException:" + e.getMessage());
+                    }
+                }
+                if (stream != null) {
+                    try {
+                        stream.flush();
+                        stream.close();
+                    } catch (IOException e) {
+                        logger.error("inputStream close IOException:" + e.getMessage());
+                    }
+                }
+
+            }
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
     /*
      *导出客户对账单调用方法
      */

@@ -1409,7 +1409,7 @@ public class DelayedTaskExportCustomerStatementSupport {
             delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
             delayedTaskDO.setThreadName(null);
             delayedTaskDO.setProgressRate(0.0000);
-            delayedTaskDO.setFileUrl(fileName);
+            delayedTaskDO.setFileUrl(null);
             delayedTaskDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             delayedTaskDO.setCreateTime(date);
             delayedTaskDO.setUpdateTime(date);
