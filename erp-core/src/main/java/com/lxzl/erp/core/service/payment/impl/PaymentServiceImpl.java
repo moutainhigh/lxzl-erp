@@ -281,6 +281,15 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public ServiceResult<String, String> wechatCharge(String customerNo, BigDecimal amount, String openId, String ip) {
+        return charge(customerNo, amount, openId, ip, PaymentSystemConfig.paymentSystemWeixinChargeURL);
+    }
+
+    @Override
+    public ServiceResult<String, String> alipayCharge(String customerNo, BigDecimal amount, String openId, String ip) {
+        return charge(customerNo, amount, openId, ip, PaymentSystemConfig.paymentSystemAlipayChargeUrl);
+    }
+
+    private ServiceResult<String, String> charge(String customerNo, BigDecimal amount, String openId, String ip, String chargeURL) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
@@ -312,7 +321,7 @@ public class PaymentServiceImpl implements PaymentService {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(weixinPayParam);
-            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemWeixinChargeURL, requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(chargeURL, requestJson, headerBuilder, "UTF-8");
             logger.info("wechat charge response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
@@ -406,8 +415,6 @@ public class PaymentServiceImpl implements PaymentService {
             if (StringUtil.isEmpty(chargeRecordPageParam.getBusinessCustomerNo())) {
                 paymentChargeRecordPageParam.setBusinessCustomerNo(null);
             }
-
-
 
 
 //            if ((chargeRecordPageParam.getCustomerName() != null && chargeRecordPageParam.getCustomerName() != "") && (chargeRecordPageParam.getBusinessCustomerNo() != null && chargeRecordPageParam.getBusinessCustomerNo() != "")) {
@@ -513,7 +520,7 @@ public class PaymentServiceImpl implements PaymentService {
                     chargeRecordList.add(chargeRecord);
                     if (chargeRecord.getBusinessCustomerNo().startsWith("LX")) {
                         customerNoList.add(chargeRecord.getBusinessCustomerNo());
-                    }else if(StringUtil.isNotEmpty(chargeRecord.getCustomerName())){
+                    } else if (StringUtil.isNotEmpty(chargeRecord.getCustomerName())) {
                         customerNameList.add(chargeRecord.getCustomerName());
                     }
                 }
@@ -542,15 +549,15 @@ public class PaymentServiceImpl implements PaymentService {
                     customerNameMap = ListUtil.listToMap(customerDONameList, "customerName");
                 }
 
-                if (CollectionUtil.isNotEmpty(chargeRecordList)){
-                    for (ChargeRecord chargeRecord : chargeRecordList){
-                        if (customerNoMap.get(chargeRecord.getBusinessCustomerNo()) != null){
+                if (CollectionUtil.isNotEmpty(chargeRecordList)) {
+                    for (ChargeRecord chargeRecord : chargeRecordList) {
+                        if (customerNoMap.get(chargeRecord.getBusinessCustomerNo()) != null) {
                             CustomerDO customerDO = customerNoMap.get(chargeRecord.getBusinessCustomerNo());
                             chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
                             chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
                             chargeRecord.setCustomerName(customerDO.getCustomerName());
                             chargeRecord.setErpCustomerNo(customerDO.getCustomerNo());
-                        }else if(customerNameMap.get(chargeRecord.getCustomerName()) != null){
+                        } else if (customerNameMap.get(chargeRecord.getCustomerName()) != null) {
                             CustomerDO customerDO = customerNameMap.get(chargeRecord.getCustomerName());
                             chargeRecord.setErpCustomerNo(customerDO.getCustomerNo());
                         }
