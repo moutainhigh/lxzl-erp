@@ -22,6 +22,8 @@ public interface CustomerMapper extends BaseMysqlDAO<CustomerDO> {
 
 	CustomerDO findByName(@Param("customerName") String customerName);
 
+	CustomerDO findByRealNameAndPersonNo(@Param("realName") String realName,@Param("personNo") String personNo);
+
 	List<CustomerDO> findCustomerCompanyByParams(@Param("maps") Map<String, Object> paramMap);
 
 	Integer findCustomerCompanyCountByParams(@Param("maps") Map<String, Object> paramMap);
@@ -43,4 +45,8 @@ public interface CustomerMapper extends BaseMysqlDAO<CustomerDO> {
     List<CustomerDO> findByCustomerNoList(@Param("customerNoList") List<String> customerNoList);
 
     List<CustomerDO> findByCustomerNameList(@Param("customerNameList")List<String> customerNameList);
+
+	List<CustomerDO> findCustomerByOwner(@Param("ownerId")Integer ownerId);
+
+	void updateListForUser(@Param("updateCustomerDOList") List<CustomerDO> updateCustomerDOList);
 }

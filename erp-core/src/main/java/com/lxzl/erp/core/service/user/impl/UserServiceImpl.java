@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.user.UpdatePasswordParam;
 import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.dingding.DingdingService;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
@@ -18,9 +19,14 @@ import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.userLoginLog.impl.support.UserLoginLogSupport;
 import com.lxzl.erp.core.session.SessionManagement;
+import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMapper;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.user.UserRoleDO;
@@ -35,10 +41,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service("UserService")
 public class UserServiceImpl extends BaseServiceImpl implements UserService {
@@ -69,6 +72,15 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     @Autowired
     private DingdingService dingdingService;
+
+    @Autowired
+    private CustomerMapper customerMapper;
+
+    @Autowired
+    private SubCompanyMapper subCompanyMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
@@ -236,7 +248,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         userMapper.update(userDO);
         CommonCache.userMap.put(userDO.getId(), ConverterUtil.convert(userDO, User.class));
 
-        if (userDO.getIsDisabled() == 1) {
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(userDO.getIsDisabled())) {
             SessionManagement.getInstance().removeSession(userDO.getId().toString());
         }
         for (Integer roleId : modifyRoleIdMap.keySet()) {
@@ -264,6 +276,44 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
                 }
             }
         }
+
+        //如果更改的业务员的所属分公司改变后，就改变客户列表中的所属分公司
+        Integer currentUserId = userDO.getId();
+        Integer companyId = userSupport.getCompanyIdByUser(currentUserId);
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(companyId);
+
+        List<CustomerDO> customerDOList = customerMapper.findCustomerByOwner(currentUserId);
+        List<CustomerDO> updateCustomerDOList = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(customerDOList)){
+            for (CustomerDO customerDO : customerDOList){
+                if (!customerDO.getOwnerSubCompanyId().equals(subCompanyDO.getId()) ){
+                    customerDO.setOwnerSubCompanyId(subCompanyDO.getId());
+                    customerDO.setUpdateUser(loginUser.getUserId().toString());
+                    customerDO.setUpdateTime(currentTime);
+                    updateCustomerDOList.add(customerDO);
+                }
+            }
+            if (CollectionUtil.isNotEmpty(updateCustomerDOList)){
+                customerMapper.updateListForUser(updateCustomerDOList);
+            }
+        }
+
+        //这是更改订单部分的订单所属分公司的代码，暂时不做处理
+//        List<OrderDO> orderDOList =orderMapper.findByOrderSellerId(currentUserId);
+//        List<OrderDO> updateOrderDOList = new ArrayList<>();
+//        if (CollectionUtil.isNotEmpty(orderDOList)){
+//            for (OrderDO orderDO : orderDOList){
+//                if (!orderDO.getOrderSubCompanyId().equals(subCompanyDO.getId()) ){
+//                    orderDO.setOrderSubCompanyId(subCompanyDO.getId());
+//                    orderDO.setUpdateUser(loginUser.getUserId().toString());
+//                    orderDO.setUpdateTime(currentTime);
+//                    updateOrderDOList.add(orderDO);
+//                }
+//            }
+//            if (CollectionUtil.isNotEmpty(updateOrderDOList)){
+//                orderMapper.updateListForUser(updateOrderDOList);
+//            }
+//        }
 
         result.setResult(userDO.getId());
         result.setErrorCode(ErrorCode.SUCCESS);

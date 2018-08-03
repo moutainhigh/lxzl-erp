@@ -19,12 +19,14 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingIndustryMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingSubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.area.AreaCityDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingIndustryDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3MappingSubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
@@ -38,16 +40,6 @@ import java.util.Map;
 
 @Service
 public class K3CustomerConverter implements ConvertK3DataService{
-
-    @Autowired
-    private UserMapper userMapper;
-    @Autowired
-    private UserSupport userSupport;
-    @Autowired
-    private SubCompanyMapper subCompanyMapper;
-    @Autowired
-    private AreaCityMapper areaCityMapper;
-
     @Override
     public Object getK3PostWebServiceData(Integer postK3OperatorType,Object data) throws Exception{
         Customer customer = (Customer)data;
@@ -97,13 +89,16 @@ public class K3CustomerConverter implements ConvertK3DataService{
         }
         industryNumber = industryNumber==null?"":industryNumber;
         formOrganization.setIndustryNumber(industryNumber);
-        AreaCityDO areaCityDO = areaCityMapper.findById(subCompanyDO.getCity());
-        String name = null;
-        if(subCompanyDO.getCity()==null){
-            name = subCompanyDO.getSubCompanyName();
-        }else{
-            name = areaCityDO.getAbbCn();
-        }
+//        AreaCityDO areaCityDO = areaCityMapper.findById(subCompanyDO.getCity());
+//        String name = null;
+//        if(subCompanyDO.getCity()==null){
+//            name = subCompanyDO.getSubCompanyName();
+//        }else{
+//            name = areaCityDO.getAbbCn();
+//        }
+
+        K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByErpCode(subCompanyDO.getSubCompanyCode());
+        String name = k3MappingSubCompanyDO.getSubCompanyName();
 
         formOrganization.setNumber(k3MappingCustomerDO.getK3CustomerCode());
         formOrganization.setName(customer.getCustomerName());
@@ -148,6 +143,13 @@ public class K3CustomerConverter implements ConvertK3DataService{
         String s = "{\"data\":[],\"result\":\"OK\",\"status\":0}";
         ServiceResult serviceResult = JSON.parseObject(s,ServiceResult.class);
     }
+
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private UserSupport userSupport;
+    @Autowired
+    private SubCompanyMapper subCompanyMapper;
     @Autowired
     private K3MappingCustomerMapper k3MappingCustomerMapper;
     @Autowired
@@ -156,4 +158,6 @@ public class K3CustomerConverter implements ConvertK3DataService{
     private CustomerMapper customerMapper;
     @Autowired
     private K3MappingIndustryMapper k3MappingIndustryMapper;
+    @Autowired
+    private K3MappingSubCompanyMapper k3MappingSubCompanyMapper;
 }

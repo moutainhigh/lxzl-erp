@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.export.impl;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.ReturnReasonType;
+import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.statement.CheckStatementOrderDetailBase;
 import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
@@ -17,6 +18,7 @@ import com.lxzl.erp.core.service.export.ExportExcelCustomFormatService;
 import com.lxzl.erp.core.service.export.ExcelExportConfigGroup;
 import com.lxzl.erp.core.service.export.ExcelExportService;
 import com.lxzl.erp.core.service.export.impl.support.ExcelExportSupport;
+import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
@@ -113,6 +115,9 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
     @Autowired
     private ProductSupport productSupport;
 
+    @Autowired
+    private PaymentService paymentService;
+
     @Override
     public ServiceResult<String, String> queryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam, HttpServletResponse response) throws Exception {
 
@@ -133,6 +138,21 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         XSSFWorkbook hssfWorkbook = null;
         BigDecimal beforePeriodUnpaid = new BigDecimal(0);
         BigDecimal allPeriodUnpaid = new BigDecimal(0);
+        //查询账户余额
+        Boolean findCustomerAccount = true;
+        BigDecimal accountBalance = BigDecimal.ZERO;
+        CustomerAccount customerAccount = null;
+        try {
+            customerAccount = paymentService.queryCustomerAccount(customerNoParam);
+        }catch (Exception e){
+            findCustomerAccount = false;
+        }
+        if (customerAccount == null) {
+            findCustomerAccount = false;
+        }
+        if (findCustomerAccount) {
+            accountBalance = customerAccount.getBalanceAmount();
+        }
 
         statementOrderMonthQueryParam = new StatementOrderMonthQueryParam();
         statementOrderMonthQueryParam.setStatementOrderCustomerNo(customerNoParam);
@@ -1021,11 +1041,15 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             XSSFRow hssfRow3 = sheetAt.createRow(lastRowNum + 4);
             XSSFRow hssfRow4 = sheetAt.createRow(lastRowNum + 5);
             XSSFRow hssfRow5 = sheetAt.createRow(lastRowNum + 6);
+            XSSFRow hssfRow6 = sheetAt.createRow(lastRowNum + 7);
+            XSSFRow hssfRow7 = sheetAt.createRow(lastRowNum + 8);
             hssfRow1.setHeightInPoints(30);
             hssfRow2.setHeightInPoints(30);
             hssfRow3.setHeightInPoints(30);
             hssfRow4.setHeightInPoints(30);
             hssfRow5.setHeightInPoints(30);
+            hssfRow6.setHeightInPoints(30);
+            hssfRow7.setHeightInPoints(30);
 
 
             XSSFCell cell201 = hssfRow1.createCell(25);
@@ -1033,6 +1057,8 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             XSSFCell cell203 = hssfRow3.createCell(25);
             XSSFCell cell204 = hssfRow4.createCell(25);
             XSSFCell cell205 = hssfRow5.createCell(25);
+            XSSFCell cell206 = hssfRow6.createCell(25);
+            XSSFCell cell207 = hssfRow7.createCell(25);
 
             // 本期应付
             cell201.setCellValue(Double.parseDouble(amountExcelExportView.view(totalEverPeriodAmountMap.get(checkStatementOrder.getMonthTime())).toString()));
@@ -1057,6 +1083,27 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             cell205.setCellValue(allPeriodUnpaid.doubleValue());
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell205, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
 
+            if (findCustomerAccount) {
+                // TODO: 2018\7\31 0031  账户余额
+                cell206.setCellValue(accountBalance.doubleValue());
+                ExcelExportSupport.setCellStyle(hssfWorkbook, cell206, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
+                // TODO: 2018\7\31 0031  尚需支付
+                BigDecimal needPayAmount = BigDecimalUtil.sub(allPeriodUnpaid,accountBalance);
+                if (BigDecimalUtil.compare(needPayAmount, BigDecimal.ZERO) < 0) {
+                    needPayAmount = BigDecimal.ZERO;
+                }
+                cell207.setCellValue(needPayAmount.doubleValue());
+                ExcelExportSupport.setCellStyle(hssfWorkbook, cell207, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
+            }else {
+                // TODO: 2018\7\31 0031  账户余额
+                cell206.setCellValue("未查询到该客户账户余额或查询出错");
+                ExcelExportSupport.setCellStyle(hssfWorkbook, cell206, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
+                // TODO: 2018\7\31 0031  尚需支付
+                cell207.setCellValue("未查询到该客户账户余额或查询出错");
+                ExcelExportSupport.setCellStyle(hssfWorkbook, cell207, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
+            }
+
+
             if (StringUtil.isNotBlank(previousSheetName) || !sheetName.equals(previousSheetName)) {
                 allPeriodUnpaid = BigDecimalUtil.sub(allPeriodUnpaid, currentPeriodUnpaid);
             }
@@ -1066,12 +1113,16 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             XSSFCell cell153 = hssfRow3.createCell(20);
             XSSFCell cell154 = hssfRow4.createCell(20);
             XSSFCell cell155 = hssfRow5.createCell(20);
+            XSSFCell cell156 = hssfRow6.createCell(20);
+            XSSFCell cell157 = hssfRow7.createCell(20);
 
             createCell(hssfWorkbook, hssfRow1, 21, 4);
             createCell(hssfWorkbook, hssfRow2, 21, 4);
             createCell(hssfWorkbook, hssfRow3, 21, 4);
             createCell(hssfWorkbook, hssfRow4, 21, 4);
             createCell(hssfWorkbook, hssfRow5, 21, 4);
+            createCell(hssfWorkbook, hssfRow6, 21, 4);
+            createCell(hssfWorkbook, hssfRow7, 21, 4);
 
             cell151.setCellValue("本月应付");
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell151, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
@@ -1083,12 +1134,18 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell154, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
             cell155.setCellValue("累计未付");
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell155, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
+            cell156.setCellValue("账户余额");
+            ExcelExportSupport.setCellStyle(hssfWorkbook, cell156, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
+            cell157.setCellValue("尚需支付");
+            ExcelExportSupport.setCellStyle(hssfWorkbook, cell157, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
 
             hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 2, lastRowNum + 2, 20, 24));
             hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 3, lastRowNum + 3, 20, 24));
             hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 4, lastRowNum + 4, 20, 24));
             hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 5, lastRowNum + 5, 20, 24));
             hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 6, lastRowNum + 6, 20, 24));
+            hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 7, lastRowNum + 7, 20, 24));
+            hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 8, lastRowNum + 8, 20, 24));
 
             if (StringUtil.isBlank(previousSheetName) || !previousSheetName.equals(sheetName)) {
                 previousSheetName = sheetName;

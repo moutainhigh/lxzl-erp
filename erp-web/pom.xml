@@ -34,6 +34,16 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 		</profile>
+		<!-- 开发环境，默认激活 -->
+		<profile>
+			<id>test2</id>
+			<properties>
+				<env>test2</env>
+			</properties>
+			<!--<activation>-->
+				<!--<activeByDefault>true</activeByDefault>-->
+			<!--</activation>-->
+		</profile>
 		<!-- 开发测试 -->
 		<profile>
 			<id>devtest</id>
@@ -120,27 +130,27 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<source>${project.build.targetJdk}</source>
-					<target>${project.build.targetJdk}</target>
-					<charset>${project.build.sourceEncoding}</charset>
-					<encoding>${project.build.sourceEncoding}</encoding>
-					<docencoding>${project.build.sourceEncoding}</docencoding>
-					<maxmem>${jm.build.jvmsize}</maxmem>
-				</configuration>
-				<executions>
-					<execution>
-						<id>do-javadoc</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+			<!--<plugin>-->
+				<!--<groupId>org.apache.maven.plugins</groupId>-->
+				<!--<artifactId>maven-javadoc-plugin</artifactId>-->
+				<!--<configuration>-->
+					<!--<source>${project.build.targetJdk}</source>-->
+					<!--<target>${project.build.targetJdk}</target>-->
+					<!--<charset>${project.build.sourceEncoding}</charset>-->
+					<!--<encoding>${project.build.sourceEncoding}</encoding>-->
+					<!--<docencoding>${project.build.sourceEncoding}</docencoding>-->
+					<!--<maxmem>${jm.build.jvmsize}</maxmem>-->
+				<!--</configuration>-->
+				<!--<executions>-->
+					<!--<execution>-->
+						<!--<id>do-javadoc</id>-->
+						<!--<phase>prepare-package</phase>-->
+						<!--<goals>-->
+							<!--<goal>jar</goal>-->
+						<!--</goals>-->
+					<!--</execution>-->
+				<!--</executions>-->
+			<!--</plugin>-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>

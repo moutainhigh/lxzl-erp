@@ -16,7 +16,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMapper;
 import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.user.RoleDO;
@@ -59,11 +58,15 @@ public class UserSupport {
 
     public Integer getCurrentUserId() {
         User user = (User) httpSession.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        return user == null? null:user.getUserId();
+        return user == null ? null : user.getUserId();
     }
 
-    public boolean isSuperUser(){
+    public boolean isSuperUser() {
         return userRoleService.isSuperAdmin(getCurrentUserId());
+    }
+
+    public void setHttpSession(HttpSession httpSession){
+        this.httpSession = httpSession;
     }
 
     /**
@@ -80,7 +83,10 @@ public class UserSupport {
 
     public Integer getCurrentUserCompanyId() {
         User user = (User) httpSession.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        List<Role> userRoleList = userService.getUserById(user.getUserId()).getResult().getRoleList();
+        User result = userService.getUserById(user.getUserId()).getResult();
+        if (result == null)
+            return CommonConstant.HEAD_COMPANY_ID;
+        List<Role> userRoleList = result.getRoleList();
         for (Role role : userRoleList) {
             return role.getSubCompanyId();
         }
@@ -129,6 +135,7 @@ public class UserSupport {
         }
         return flag;
     }
+
     private boolean checkRoleListHaveChannelCompany(List<Role> userRoleList) {
         boolean flag = false;
         for (Role role : userRoleList) {
@@ -163,8 +170,8 @@ public class UserSupport {
         if (CollectionUtil.isNotEmpty(userRoleList)) {
             for (Role role : userRoleList) {
                 DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
-                if (DepartmentType.DEPARTMENT_TYPE_SERVICE.equals(departmentDO.getDepartmentType())||
-                        DepartmentType.DEPARTMENT_TYPE_WAREHOUSE.equals(departmentDO.getDepartmentType())||
+                if (DepartmentType.DEPARTMENT_TYPE_SERVICE.equals(departmentDO.getDepartmentType()) ||
+                        DepartmentType.DEPARTMENT_TYPE_WAREHOUSE.equals(departmentDO.getDepartmentType()) ||
                         DepartmentType.DEPARTMENT_TYPE_BUSINESS_AFFAIRS.equals(departmentDO.getDepartmentType())) {
                     return true;
                 }
@@ -196,6 +203,7 @@ public class UserSupport {
         List<Role> userRoleList = getCurrentUser().getRoleList();
         return checkRoleListHaveChannelCompany(userRoleList);
     }
+
     /**
      * 是否属于渠道分公司
      */
@@ -203,6 +211,7 @@ public class UserSupport {
         List<Role> userRoleList = user.getRoleList();
         return checkRoleListHaveChannelCompany(userRoleList);
     }
+
     /**
      * 是否是商务人员
      */
@@ -218,6 +227,7 @@ public class UserSupport {
         }
         return false;
     }
+
     /**
      * 是否是电销人员
      */
@@ -233,6 +243,7 @@ public class UserSupport {
         }
         return false;
     }
+
     /**
      * 是否是风控人员
      */
@@ -282,7 +293,6 @@ public class UserSupport {
     }
 
 
-
     /**
      * 是否是库房人员
      */
@@ -314,7 +324,7 @@ public class UserSupport {
         Map<Integer, DepartmentDO> departmentDOMap = ListUtil.listToMap(departmentDOList, "id");
         UserDO userDO = userMapper.findByUserId(getCurrentUserId());
         List<Role> userRoleList = userService.getUserById(userDO.getId()).getResult().getRoleList();
-        if(CollectionUtil.isNotEmpty(userRoleList)){
+        if (CollectionUtil.isNotEmpty(userRoleList)) {
             for (Role role : userRoleList) {
                 if (role.getDepartmentId().equals(departmentId) && departmentDOMap.containsKey(role.getDepartmentId())) {
                     return departmentDOMap.get(role.getDepartmentId());

@@ -65,6 +65,8 @@ public class Customer extends BasePO {
 	@Transient
 	private String confirmBadAccountUserName; // 客户坏账确认人姓名
 
+	private Integer customerSource;//用户的来源(1:erp,2:大学生商城)
+
 	private String ownerName; //业务员姓名
 	private String unionUserName; //联合业务员姓名
 	private String unionAreaProvinceName;// 联合省名
@@ -493,5 +495,13 @@ public class Customer extends BasePO {
 
 	public void setConfirmBadAccountUserName(String confirmBadAccountUserName) {
 		this.confirmBadAccountUserName = confirmBadAccountUserName;
+	}
+
+	public Integer getCustomerSource() {
+		return customerSource;
+	}
+
+	public void setCustomerSource(Integer customerSource) {
+		this.customerSource = customerSource;
 	}
 }

@@ -200,6 +200,12 @@
 		LEFT JOIN  erp_customer ec ON ebsc.customer_no = ec.customer_no
 
 		<where>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.ownerSubCompanyId != null ">
+				and ebs.sub_company_id = #{maps.bankSlipDetailQueryParam.ownerSubCompanyId,jdbcType=INTEGER}
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.subCompanyId != null ">
+				and ebsd.sub_company_id = #{maps.bankSlipDetailQueryParam.subCompanyId,jdbcType=INTEGER}
+			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != ''">
 				and ebsd.payer_name like CONCAT('%','${maps.bankSlipDetailQueryParam.payerName}','%' )
 			</if>
@@ -262,6 +268,12 @@
 		LEFT JOIN  erp_customer ec ON ebsc.customer_no = ec.customer_no
 		LEFT JOIN  erp_sub_company esc ON esc.id = ec.owner_sub_company_id  AND esc.data_status = 1
 		<where>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.ownerSubCompanyId != null ">
+				and ebs.sub_company_id = #{maps.bankSlipDetailQueryParam.ownerSubCompanyId,jdbcType=INTEGER}
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.subCompanyId != null ">
+				and ebsd.sub_company_id = #{maps.bankSlipDetailQueryParam.subCompanyId,jdbcType=INTEGER}
+			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != ''">
 				and ebsd.payer_name like CONCAT('%','${maps.bankSlipDetailQueryParam.payerName}','%' )
 			</if>
