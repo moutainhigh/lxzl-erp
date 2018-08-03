@@ -101,30 +101,17 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
      * */
     @Test
     public void queryOrderTest() throws Exception{
-        WorkbenchOrderQueryParam param = new WorkbenchOrderQueryParam();
-        List<OrderQueryParam> list = new ArrayList<>();
-        OrderQueryParam orderQueryParam1 = new OrderQueryParam();
-        orderQueryParam1.setOrderStatus(OrderStatus.ORDER_STATUS_VERIFYING);
-        list.add(orderQueryParam1);
+        WorkbenchQueryParam param = new WorkbenchQueryParam();
+        param.setIsDisabled(1);
+        param.setIsRecycleBin(1);
+        //业务工作台
+        param.setWorkbenchName(CommonConstant.COMMON_ZERO);
+        //商务工作台
+//        param.setWorkbenchName(CommonConstant.COMMON_ONE);
+        //商务+业务工作台
+//        param.setWorkbenchName(CommonConstant.COMMON_TWO);
 
-        OrderQueryParam orderQueryParam2 = new OrderQueryParam();
-        orderQueryParam2.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
-        list.add(orderQueryParam2);
-
-        OrderQueryParam orderQueryParam3 = new OrderQueryParam();
-        orderQueryParam3.setIsReturnOverDue(CommonConstant.DATA_STATUS_ENABLE);
-        list.add(orderQueryParam3);
-
-        OrderQueryParam orderQueryParam4 = new OrderQueryParam();
-        orderQueryParam4.setPayStatus(PayStatus.PAY_STATUS_INIT);
-        list.add(orderQueryParam4);
-
-        OrderQueryParam orderQueryParam5 = new OrderQueryParam();
-        orderQueryParam5.setIsCanReletOrder(CommonConstant.COMMON_CONSTANT_YES);
-        list.add(orderQueryParam5);
-
-        param.setOrderQueryParamList(list);
-        TestResult testResult = getJsonTestResult("/workbench/queryOrder", param);
+        TestResult testResult = getJsonTestResult("/workbench/queryWorkbenchCount", param);
     }
 
 
