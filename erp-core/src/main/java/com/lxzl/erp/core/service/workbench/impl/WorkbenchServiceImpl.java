@@ -46,6 +46,9 @@ public class WorkbenchServiceImpl implements WorkbenchService{
         List<Map<String,Object>> k3ReturnOrderListMap = new ArrayList<>();
         List<Map<String,Object>> customerListMap = new ArrayList<>();
         List<Map<String,Object>> workflowListMap = new ArrayList<>();
+        List<Map<String,Object>> workflowBusinessAffairsListMap = new ArrayList<>();
+        List<Map<String,Object>> bankSlipDetailListMap = new ArrayList<>();
+        List<Map<String,Object>> statementOrderBusinessAffairsListMap = new ArrayList<>();
 
         Map<String,Object> maps = new HashMap<>();
 
@@ -246,14 +249,18 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
             Map<String,Integer> orderCountMap = workbenchMapper.findOrderWorkbenchCount(paramMap);
             Map<String,Integer> k3ReturnOrderCountMap = workbenchMapper.findK3ReturnOrderWorkbenchCount(paramMap);
+            Map<String,Integer> workflowBusinessAffairsCountMap = workbenchMapper.findWorkflowBusinessAffairsWorkbenchCount(paramMap);
+            Map<String,Integer> bankSlipDetailBusinessAffairsCountMap = workbenchMapper.findBankSlipDetailBusinessAffairsWorkbenchCount(paramMap);
+            Map<String,Integer> statementOrderBusinessAffairsCountMap = workbenchMapper.findStatementOrderBusinessAffairsWorkbenchCount(paramMap);
+
 
             //----------------------商务待审核工作数量---------------------------
-            Map<String,Object> workflowLinkWaitVerifyMap = new HashMap();
-            workflowLinkWaitVerifyMap.put("params","verifyStatus");
-            workflowLinkWaitVerifyMap.put("paramsValue",VerifyStatus.VERIFY_STATUS_COMMIT);
-            workflowLinkWaitVerifyMap.put("workbenchType",WorkbenchType.WORK_FLOW_LINK_WAIT_VERIFY);  //审核中的工作流
-//            workflowLinkWaitVerifyMap.put("count",workbenchDO.getWorkflowLinkWaitVerifyCount());
-//            listMap.add(workflowLinkWaitVerifyMap);
+            Map<String,Object> workflowLinkWaitVerifyBusinessAffairsMap = new HashMap();
+            workflowLinkWaitVerifyBusinessAffairsMap.put("params","verifyStatus");
+            workflowLinkWaitVerifyBusinessAffairsMap.put("paramsValue",VerifyStatus.VERIFY_STATUS_COMMIT);
+            workflowLinkWaitVerifyBusinessAffairsMap.put("workbenchType",WorkbenchType.WORK_FLOW_LINK_WAIT_VERIFY);  //审核中的工作流
+            workflowLinkWaitVerifyBusinessAffairsMap.put("count",workflowBusinessAffairsCountMap.get("waitVerifyWorkflowBusinessAffairsWorkbenchCount"));
+            workflowBusinessAffairsListMap.add(workflowLinkWaitVerifyBusinessAffairsMap);
             //----------------------商务待审核工作流数量---------------------------
 
             //----------------------待认领银行流水数量---------------------------
@@ -261,8 +268,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             bankSlipDetailWaitClaimMap.put("params","bankSlipDetailStatus");
             bankSlipDetailWaitClaimMap.put("paramsValue",BankSlipDetailStatus.UN_CLAIMED);
             bankSlipDetailWaitClaimMap.put("workbenchType",WorkbenchType.BANK_SLIP_DETAIL_WAIT_CLAIM);  //待认领银行流水数量
-//            bankSlipDetailWaitClaimMap.put("count",workbenchDO.getBankSlipDetailWaitClaimCount());
-//            listMap.add(bankSlipDetailWaitClaimMap);
+            bankSlipDetailWaitClaimMap.put("count",bankSlipDetailBusinessAffairsCountMap.get("waitClaimCount"));
+            bankSlipDetailListMap.add(bankSlipDetailWaitClaimMap);
             //----------------------待认领银行流水数量---------------------------
 
             //----------------------未支付的结算单数量---------------------------
@@ -270,8 +277,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             statementOrderUnpaidMap.put("params","statementOrderStatus");
             statementOrderUnpaidMap.put("paramsValue",StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
             statementOrderUnpaidMap.put("workbenchType",WorkbenchType.STATEMENT_ORDER_STATUS_INIT);
-//            statementOrderUnpaidMap.put("count",workbenchDO.getStatementOrderUnpaidCount());
-//            listMap.add(statementOrderUnpaidMap);
+            statementOrderUnpaidMap.put("count",statementOrderBusinessAffairsCountMap.get("unpaidStatementOrderBusinessAffairsWorkbenchCount"));
+            statementOrderBusinessAffairsListMap.add(statementOrderUnpaidMap);
             //----------------------未支付的结算单数量---------------------------
 
             //----------------------部分支付的结算单数量---------------------------
@@ -279,8 +286,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             statementOrderStatusSettledPartMap.put("params","statementOrderStatus");
             statementOrderStatusSettledPartMap.put("paramsValue",StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
             statementOrderStatusSettledPartMap.put("workbenchType",WorkbenchType.STATEMENT_ORDER_STATUS_SETTLED_PART);
-//            statementOrderStatusSettledPartMap.put("count",workbenchDO.getStatementOrderSettledPartCount());
-//            listMap.add(statementOrderStatusSettledPartMap);
+            statementOrderStatusSettledPartMap.put("count",statementOrderBusinessAffairsCountMap.get("settledPartStatementOrderBusinessAffairsWorkbenchCount"));
+            statementOrderBusinessAffairsListMap.add(statementOrderStatusSettledPartMap);
             //----------------------部分支付的结算单数量---------------------------
             //----------------------------审核中的订单---------------------------
             Map<String,Object> verifyingOrderMap = new HashMap();
@@ -311,6 +318,9 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
             workbench.setOrderListMap(orderListMap);
             workbench.setK3ReturnOrderListMap(k3ReturnOrderListMap);
+            workbench.setWorkflowBusinessAffairsListMap(workflowBusinessAffairsListMap);
+            workbench.setBankSlipDetailBusinessAffairsListMap(bankSlipDetailListMap);
+            workbench.setStatementOrderBusinessAffairsListMap(statementOrderBusinessAffairsListMap);
 
             redisManager.add("BUSINESS_WORKBENCH_"+userSupport.getCurrentUserId().toString(),workbench,180L);
         }
@@ -364,6 +374,9 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             Map<String,Integer> k3ReturnOrderCountMap = workbenchMapper.findK3ReturnOrderWorkbenchCount(maps);
             Map<String,Integer> customerCountMap = workbenchMapper.findCustomerWorkbenchCount(maps);
             Map<String,Integer> workflowCountMap = workbenchMapper.findWorkflowWorkbenchCountForSales(maps);
+            Map<String,Integer> workflowBusinessAffairsCountMap = workbenchMapper.findWorkflowBusinessAffairsWorkbenchCount(maps);
+            Map<String,Integer> bankSlipDetailBusinessAffairsCountMap = workbenchMapper.findBankSlipDetailBusinessAffairsWorkbenchCount(maps);
+            Map<String,Integer> statementOrderBusinessAffairsCountMap = workbenchMapper.findStatementOrderBusinessAffairsWorkbenchCount(maps);
 
             //审核中的订单
             Map<String,Object> verifyingOrderMap = new HashMap();
@@ -477,13 +490,14 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             rejectWorkflowMap.put("count",workflowCountMap.get("workflowRejectCount"));
             workflowListMap.add(rejectWorkflowMap);
 
+
             //----------------------商务待审核工作数量---------------------------
-            Map<String,Object> workflowLinkWaitVerifyMap = new HashMap();
-            workflowLinkWaitVerifyMap.put("params","verifyStatus");
-            workflowLinkWaitVerifyMap.put("paramsValue",VerifyStatus.VERIFY_STATUS_COMMIT);
-            workflowLinkWaitVerifyMap.put("workbenchType",WorkbenchType.WORK_FLOW_LINK_WAIT_VERIFY);  //审核中的工作流
-//            workflowLinkWaitVerifyMap.put("count",workbenchDO.getWorkflowLinkWaitVerifyCount());
-//            listMap.add(workflowLinkWaitVerifyMap);
+            Map<String,Object> workflowLinkWaitVerifyBusinessAffairsMap = new HashMap();
+            workflowLinkWaitVerifyBusinessAffairsMap.put("params","verifyStatus");
+            workflowLinkWaitVerifyBusinessAffairsMap.put("paramsValue",VerifyStatus.VERIFY_STATUS_COMMIT);
+            workflowLinkWaitVerifyBusinessAffairsMap.put("workbenchType",WorkbenchType.WORK_FLOW_LINK_WAIT_VERIFY);  //审核中的工作流
+            workflowLinkWaitVerifyBusinessAffairsMap.put("count",workflowBusinessAffairsCountMap.get("waitVerifyWorkflowBusinessAffairsWorkbenchCount"));
+            workflowBusinessAffairsListMap.add(workflowLinkWaitVerifyBusinessAffairsMap);
             //----------------------商务待审核工作流数量---------------------------
 
             //----------------------待认领银行流水数量---------------------------
@@ -491,8 +505,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             bankSlipDetailWaitClaimMap.put("params","bankSlipDetailStatus");
             bankSlipDetailWaitClaimMap.put("paramsValue",BankSlipDetailStatus.UN_CLAIMED);
             bankSlipDetailWaitClaimMap.put("workbenchType",WorkbenchType.BANK_SLIP_DETAIL_WAIT_CLAIM);  //待认领银行流水数量
-//            bankSlipDetailWaitClaimMap.put("count",workbenchDO.getBankSlipDetailWaitClaimCount());
-//            listMap.add(bankSlipDetailWaitClaimMap);
+            bankSlipDetailWaitClaimMap.put("count",bankSlipDetailBusinessAffairsCountMap.get("waitClaimCount"));
+            bankSlipDetailListMap.add(bankSlipDetailWaitClaimMap);
             //----------------------待认领银行流水数量---------------------------
 
             //----------------------未支付的结算单数量---------------------------
@@ -500,8 +514,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             statementOrderUnpaidMap.put("params","statementOrderStatus");
             statementOrderUnpaidMap.put("paramsValue",StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
             statementOrderUnpaidMap.put("workbenchType",WorkbenchType.STATEMENT_ORDER_STATUS_INIT);
-//            statementOrderUnpaidMap.put("count",workbenchDO.getStatementOrderUnpaidCount());
-//            listMap.add(statementOrderUnpaidMap);
+            statementOrderUnpaidMap.put("count",statementOrderBusinessAffairsCountMap.get("unpaidStatementOrderBusinessAffairsWorkbenchCount"));
+            statementOrderBusinessAffairsListMap.add(statementOrderUnpaidMap);
             //----------------------未支付的结算单数量---------------------------
 
             //----------------------部分支付的结算单数量---------------------------
@@ -509,14 +523,17 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             statementOrderStatusSettledPartMap.put("params","statementOrderStatus");
             statementOrderStatusSettledPartMap.put("paramsValue",StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
             statementOrderStatusSettledPartMap.put("workbenchType",WorkbenchType.STATEMENT_ORDER_STATUS_SETTLED_PART);
-//            statementOrderStatusSettledPartMap.put("count",workbenchDO.getStatementOrderSettledPartCount());
-//            listMap.add(statementOrderStatusSettledPartMap);
+            statementOrderStatusSettledPartMap.put("count",statementOrderBusinessAffairsCountMap.get("settledPartStatementOrderBusinessAffairsWorkbenchCount"));
+            statementOrderBusinessAffairsListMap.add(statementOrderStatusSettledPartMap);
             //----------------------部分支付的结算单数量---------------------------
 
             workbench.setOrderListMap(orderListMap);
             workbench.setK3ReturnOrderListMap(k3ReturnOrderListMap);
             workbench.setCustomerListMap(customerListMap);
             workbench.setWorkflowListMap(workflowListMap);
+            workbench.setWorkflowBusinessAffairsListMap(workflowBusinessAffairsListMap);
+            workbench.setBankSlipDetailBusinessAffairsListMap(bankSlipDetailListMap);
+            workbench.setStatementOrderBusinessAffairsListMap(statementOrderBusinessAffairsListMap);
 
             redisManager.add("BUSINESS_AND_SALES_WORKBENCH_"+userSupport.getCurrentUserId().toString(),workbench,180L);
         }

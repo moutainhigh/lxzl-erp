@@ -314,8 +314,39 @@
 	</sql>
 
 
-	<sql id="business_workbench">
-		(SELECT COUNT(1) AS waitVerifyCount FROM `erp_workflow_verify_user_group` WHERE verify_user = #{maps.verifyUserId} AND data_status = 1 AND verify_status = 1) workflow_link,
+	<select id="findWorkflowBusinessAffairsWorkbenchCount" resultType="java.util.HashMap" parameterType="map">
+		SELECT
+		workflow_link.waitVerifyWorkflowBusinessAffairsWorkbenchCount
+		FROM
+		<include refid="workflow_business_affairs_workbench"/>
+	</select>
+
+	<select id="findBankSlipDetailBusinessAffairsWorkbenchCount" resultType="java.util.HashMap" parameterType="map">
+		SELECT
+		bank_slip_detail.waitClaimCount
+		FROM
+		<include refid="bank_slip_detail_business_affairs_workbench"/>
+	</select>
+
+	<select id="findStatementOrderBusinessAffairsWorkbenchCount" resultType="java.util.HashMap" parameterType="map">
+		SELECT
+		statement_order.unpaidStatementOrderBusinessAffairsWorkbenchCount,
+		statement_order.settledPartStatementOrderBusinessAffairsWorkbenchCount
+		FROM
+		<include refid="statement_order_business_affairs_workbench"/>
+	</select>
+
+	<sql id="workflow_business_affairs_workbench">
+		(SELECT COUNT(1) AS waitVerifyWorkflowBusinessAffairsWorkbenchCount FROM `erp_workflow_verify_user_group`
+		<where>
+			AND data_status = 1 AND verify_status = 1
+			<if test="maps.verifyUserId != null">
+				AND verify_user = #{maps.verifyUserId}
+			</if>
+		</where>) workflow_link
+	</sql>
+
+	<sql id="bank_slip_detail_business_affairs_workbench">
 		(SELECT  COUNT(DISTINCT ebsd.id) AS waitClaimCount FROM erp_bank_slip_detail ebsd
 		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
 		<where>
@@ -329,13 +360,16 @@
 				and ebs.slip_status !=2
 			</if>
 			<if test="maps.departmentType != null &amp;&amp;(maps.departmentType == 2 or maps.departmentType == 3 )">
-				and ebs.slip_status ==1
+				and ebs.slip_status = 1
 			</if>
 			<if  test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
 				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND ebs.slip_status = 1 ))
 			</if>
-		</where>) bank_slip_detail,
-		(SELECT count(CASE WHEN eso.statement_status = 0 THEN eso.id ELSE NULL  END ) AS unpaidCount,count(CASE WHEN eso.statement_status = 4 THEN eso.id ELSE NULL END) AS settledPartCount  FROM erp_statement_order eso
+		</where>) bank_slip_detail
+	</sql>
+
+	<sql id="statement_order_business_affairs_workbench">
+		(SELECT count(CASE WHEN eso.statement_status = 0 THEN eso.id ELSE NULL  END ) AS unpaidStatementOrderBusinessAffairsWorkbenchCount,count(CASE WHEN eso.statement_status = 4 THEN eso.id ELSE NULL END) AS settledPartStatementOrderBusinessAffairsWorkbenchCount  FROM erp_statement_order eso
 		INNER JOIN erp_customer ec on eso.customer_id = ec.id
 		<where>
 			<![CDATA[ AND eso.statement_expect_pay_time <= #{maps.statementExpectPayEndTime} ]]>
