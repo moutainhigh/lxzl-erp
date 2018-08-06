@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.base.PermissionParam;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
 import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
@@ -4974,7 +4975,7 @@ public class StatementServiceImpl implements StatementService {
      * @Date : Created in 2018/6/21 9:29
      */
     @Override
-    public ServiceResult<String, List<CheckStatementOrder>> exportQueryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam) {
+    public ServiceResult<String, List<CheckStatementOrder>> exportQueryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam,Integer userId) {
         ServiceResult<String, List<CheckStatementOrder>> result = new ServiceResult<>();
 
         CustomerDO customerDO = customerMapper.findByNo(statementOrderMonthQueryParam.getStatementOrderCustomerNo());
@@ -4990,7 +4991,9 @@ public class StatementServiceImpl implements StatementService {
         statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderEndTime);
         Map<String, Object> maps = new HashMap<>();
         maps.put("statementOrderMonthQueryParam", statementOrderMonthQueryParam);
-        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
+        PermissionParam permissionParam = new PermissionParam();
+        permissionParam.setPermissionUserIdList(permissionSupport.getCanAccessPassiveUserList(userId));
+        maps.put("permissionParam", permissionParam);
         //todo 查处结算单总表
         List<CheckStatementOrderDO> statementOrderDOList = statementOrderMapper.exportListMonthPage(maps);
         //todo 查处结算单详情
@@ -7151,6 +7154,4 @@ public class StatementServiceImpl implements StatementService {
     private OrderSupport orderSupport;
     @Autowired
     private DataDictionaryMapper dataDictionaryMapper;
-
-
 }
