@@ -48,5 +48,8 @@
 	<bean id="quartzManager" class="com.lxzl.se.core.quartz.component.QuartzManager">
 		<property name="dynamicQuartz" ref="dynamicQuartz" />
 	</bean>
-	
+
+	<bean id="remoteQuartzConfig" class="com.lxzl.erp.common.domain.RemoteQuartzConfig">
+		<property name="remoteQuartzURL" value="${remoteQuartz.server}" />
+	</bean>
 </beans>
