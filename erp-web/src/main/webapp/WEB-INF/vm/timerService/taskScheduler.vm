@@ -60,6 +60,7 @@
                             <tr>
                                 <th>触发器名称</th>
                                 <th>触发器分组</th>
+                                <th>状态</th>
                                 <th>工作名称</th>
                                 <th>工作分组</th>
                                 <th>job类型</th>
@@ -84,14 +85,15 @@
                             <tr data-rowdata="{{rowData}}">
                                 <td>{{triggerName}}</td>
                                 <td>{{triggerGroup}}</td>
+                                <td>{{triggerStatusDesc}}</td>
                                 <td>{{jobName}}</td>
                                 <td>{{jobGroup}}</td>
                                 <td>{{jobTypeVal}}</td>
-                                <td>{{requestUrl}}</td>
+                                <td style="max-width:200px; word-wrap:break-word;">{{requestUrl}}</td>
                                 <td>{{requestBody}}</td>
                                 <td>{{cronExpression}}</td>
                                 <td>{{executeResult}}</td>
-                                <td>{{taskExecutorNo}}</td>
+                                <td style="max-width:200px; word-wrap:break-word;">{{taskExecutorNo}}</td>
                                 <td>{{retryCount}}</td>
                                 <td>{{retryInterval}}</td>
                                 <td>{{systemType}}</td>
