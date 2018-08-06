@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.constant.BankSlipDetailStatus;
 import com.lxzl.erp.common.constant.BankType;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
@@ -266,8 +267,10 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     public void pageBankSlipDetail() throws Exception {
         BankSlipDetailQueryParam bankSlipDetailQueryParam = new BankSlipDetailQueryParam();
         bankSlipDetailQueryParam.setPageNo(1);
-        bankSlipDetailQueryParam.setPageSize(15);
-        bankSlipDetailQueryParam.setSubCompanyId(4);
+        bankSlipDetailQueryParam.setPageSize(Integer.MAX_VALUE);
+        bankSlipDetailQueryParam.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
+        bankSlipDetailQueryParam.setLoanSign(1);
+//        bankSlipDetailQueryParam.setSubCompanyId(4);
 //        bankSlipDetailQueryParam.setSlipDayStart(new SimpleDateFormat("yyyy-MM-dd").parse("2015-04-22"));
 //        bankSlipDetailQueryParam.setSlipDayEnd(new SimpleDateFormat("yyyy-MM-dd").parse("2015-04-23"));
 //        bankSlipDetailQueryParam.setBankSlipId(203);
