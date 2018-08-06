@@ -20,17 +20,13 @@ import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.statistics.FinanceStatisticsDataWeeklyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsSalesmanMonthMapper;
-import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataWeeklyDO;
-import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDealsCountBySubCompany;
 import com.lxzl.erp.dataaccess.domain.statistics.StatisticsSalesmanMonthDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -967,7 +963,8 @@ public class StatisticsServiceImpl implements StatisticsService {
             int firstDayOfThisWeekInYear = firstDayOfThisWeekCalendar.get(Calendar.YEAR);
             int firstDayOfThisWeekInMonth = firstDayOfThisWeekCalendar.get(Calendar.MONTH) + 1; // 因为日历获取的月份比实际月份小1
             int firstDayOfThisWeekInWeekOfMonth = firstDayOfThisWeekCalendar.get(Calendar.WEEK_OF_MONTH);
-            FinanceStatisticsWeeklyParam paramVo = new FinanceStatisticsWeeklyParam();
+            FinanceStatisticsParam paramVo = new FinanceStatisticsParam();
+            paramVo.setStatisticsInterval(StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY);
             paramVo.setYear(firstDayOfThisWeekInYear);
             paramVo.setMonth(firstDayOfThisWeekInMonth);
             paramVo.setWeekOfMonth(firstDayOfThisWeekInWeekOfMonth);
@@ -976,7 +973,8 @@ public class StatisticsServiceImpl implements StatisticsService {
             diffStatisticsDataWeeklyMap.put(key, lastMonthData);
         }
         String key = currentYear + "-" + currentMonth + "-" + currentWeekOfMonth;
-        FinanceStatisticsWeeklyParam paramVo = new FinanceStatisticsWeeklyParam();
+        FinanceStatisticsParam paramVo = new FinanceStatisticsParam();
+        paramVo.setStatisticsInterval(StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY);
         paramVo.setYear(currentYear);
         paramVo.setMonth(currentMonth);
         paramVo.setWeekOfMonth(currentWeekOfMonth);
@@ -999,13 +997,13 @@ public class StatisticsServiceImpl implements StatisticsService {
      */
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, Boolean> reStatisticsFinanceDataWeekly(FinanceStatisticsWeeklyParam paramVo){
+    public ServiceResult<String, Boolean> reStatisticsFinanceDataWeekly(FinanceStatisticsParam paramVo){
         ServiceResult<String, Boolean> serviceResult = verify(paramVo);
         if (ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             int year = paramVo.getYear();
             int month = paramVo.getMonth();
             int weekOfMonth = paramVo.getWeekOfMonth();
-            StatisticsInterval statisticsInverval = createStatisticsInterval(year, month, weekOfMonth);
+            FinanceStatisticsWeeklySupport.StatisticsInterval statisticsInverval = financeStatisticsWeeklySupport.createStatisticsInterval(year, month, weekOfMonth);
             paramVo.setStatisticsStartTime(statisticsInverval.getStatisticsStartTime());
             paramVo.setStatisticsEndTime(statisticsInverval.getStatisticsEndTime());
             financeStatisticsWeeklySupport.reStatisticsFinanceDataWeekly(paramVo);
@@ -1015,72 +1013,87 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
         return serviceResult;
     }
-
-    class StatisticsInterval {
-        Date statisticsStartTime = null;
-        Date statisticsEndTime = null;
-
-        public Date getStatisticsStartTime() {
-            return statisticsStartTime;
-        }
-
-        public void setStatisticsStartTime(Date statisticsStartTime) {
-            this.statisticsStartTime = statisticsStartTime;
-        }
-
-        public Date getStatisticsEndTime() {
-            return statisticsEndTime;
-        }
-
-        public void setStatisticsEndTime(Date statisticsEndTime) {
-            this.statisticsEndTime = statisticsEndTime;
-        }
-    }
-    private StatisticsInterval createStatisticsInterval(int year, int month, int weekOfMonth) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month - 1);  // 因为日历获取的月份比实际月份小1
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        Date firstDayInCurrentMonth = calendar.getTime();
-        Date statisticsStartTime = DateUtil.getStartMonthDate(firstDayInCurrentMonth); // 统计开始时间
-        Date statisticsEndTime = null;  //统计结束时间
-        Date endTimeInCurrentMonth = DateUtil.getEndMonthDate(firstDayInCurrentMonth);
-        calendar.set(Calendar.WEEK_OF_MONTH, weekOfMonth);
-        calendar.set(Calendar.DAY_OF_WEEK, 7);
-        calendar.set(Calendar.HOUR_OF_DAY ,23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        Date lastDayInWeek = calendar.getTime();
-        int monthOfLastDayInWeek = DateUtil.getMounth(lastDayInWeek);//周末所在月份
-        if (monthOfLastDayInWeek > month) {  // 如果周末所在月份大于当前统计的月份
-            statisticsEndTime = endTimeInCurrentMonth;  //月末为统计结束时间
+    /**
+     * 重新统计历史的某年某月的财务数据
+     * @param paramVo
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, Boolean> reStatisticsFinanceDataMonthLy(FinanceStatisticsParam paramVo) {
+        ServiceResult<String, Boolean> serviceResult = verify(paramVo);
+        if (ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            int year = paramVo.getYear();
+            int month = paramVo.getMonth();
+            int maxWeekOfMonth = financeStatisticsWeeklySupport.getMaxWeekCountOfYearAndMonth(year, month);
+            paramVo.setWeekOfMonth(maxWeekOfMonth);
+            financeStatisticsWeeklySupport.reStatisticsFinanceDataMonthly(paramVo);
+            serviceResult.setResult(true);
         } else {
-            statisticsEndTime = calendar.getTime();    //周末为统计结束时间
+            serviceResult.setResult(false);
         }
-        StatisticsInterval statisticsInterval = new StatisticsInterval();
-        statisticsInterval.setStatisticsStartTime(statisticsStartTime);
-        statisticsInterval.setStatisticsEndTime(statisticsEndTime);
-        return statisticsInterval;
+        return serviceResult;
     }
 
-    private ServiceResult<String, Boolean> verify(FinanceStatisticsWeeklyParam param) {
-        return verify(param.getYear(), param.getMonth(), param.getWeekOfMonth());
+    /**
+     * 重新统计历史的财务数据
+     * @param paramVo
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, Boolean> reStatisticsFinanceData(FinanceStatisticsParam paramVo){
+        ServiceResult<String, Boolean> serviceResult = new ServiceResult<>();
+        if (paramVo == null || paramVo.getStatisticsInterval() == null) {
+            serviceResult.setErrorCode(ErrorCode.STATISTICS_FINANCE_PARAM_INTERVAL_INVALID);
+            serviceResult.setResult(false);
+            return serviceResult;
+        }
+        if (StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY == paramVo.getStatisticsInterval()) {
+            return reStatisticsFinanceDataWeekly(paramVo);
+        } else if (StatisticsIntervalType.STATISTICS_INTERVAL_MONTHLY == paramVo.getStatisticsInterval()){
+            return reStatisticsFinanceDataMonthLy(paramVo);
+        } else if (StatisticsIntervalType.STATISTICS_INTERVAL_YEARLY == paramVo.getStatisticsInterval()){
+            // TODO
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            serviceResult.setResult(true);
+            return serviceResult;
+        } else {
+            serviceResult.setErrorCode(ErrorCode.STATISTICS_FINANCE_PARAM_INTERVAL_INVALID);
+            serviceResult.setResult(false);
+            return serviceResult;
+        }
     }
 
-    private ServiceResult<String, Boolean> verify(int year, int month, int weekOfMonth) {
+
+
+    private ServiceResult<String, Boolean> verify(FinanceStatisticsParam param) {
+        if (param == null || param.getStatisticsInterval() == null) {
+            ServiceResult<String, Boolean> result = new ServiceResult<>();
+            result.setErrorCode(ErrorCode.STATISTICS_FINANCE_PARAM_INTERVAL_INVALID);
+            result.setResult(false);
+            return result;
+        }
+        int year = param.getYear() == null ? 0 : param.getYear();
+        int month = param.getMonth() == null ? 0 : param.getMonth();
+        int week = param.getWeekOfMonth() == null ? 0 : param.getWeekOfMonth();
+        return verify(param.getStatisticsInterval(), year, month, week );
+    }
+
+    private ServiceResult<String, Boolean> verify(int interval, int year, int month, int weekOfMonth) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
-        if (year <= 0) {
+        if (needVerifyYear(interval) && year <= 0) {
             result.setErrorCode(ErrorCode.STATISTICS_FINANCE_WEEKLY_PARAM_YEAR_INVALID);
             result.setResult(false);
             return result;
         }
-        if (!(month > 0 && month <= 12)) {  //月份填写不在 1-12 之间
+        if (needVerifyMonth(interval) && !(month > 0 && month <= 12)) {  //月份填写不在 1-12 之间
             result.setErrorCode(ErrorCode.STATISTICS_FINANCE_WEEKLY_PARAM_MONTH_INVALID);
             result.setResult(false);
             return result;
         }
         int maxWeekOfMonth = financeStatisticsWeeklySupport.getMaxWeekCountOfYearAndMonth(year, month);
-        if (!(weekOfMonth > 0 && weekOfMonth <= maxWeekOfMonth)) {  // 周参数填写不在 1 到 当月最大周 之间
+        if (needVerifyWeek(interval) && !(weekOfMonth > 0 && weekOfMonth <= maxWeekOfMonth)) {  // 周参数填写不在 1 到 当月最大周 之间
             result.setErrorCode(ErrorCode.STATISTICS_FINANCE_WEEKLY_PARAM_WEEK_INVALID);
             result.setResult(false);
             return result;
@@ -1090,8 +1103,20 @@ public class StatisticsServiceImpl implements StatisticsService {
         return result;
     }
 
+    private boolean needVerifyYear(int interval) {
+        return StatisticsIntervalType.STATISTICS_INTERVAL_YEARLY == interval || StatisticsIntervalType.STATISTICS_INTERVAL_MONTHLY == interval || StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY == interval;
+    }
+
+    private boolean needVerifyMonth(int interval) {
+        return StatisticsIntervalType.STATISTICS_INTERVAL_MONTHLY == interval || StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY == interval;
+    }
+
+    private boolean needVerifyWeek(int interval) {
+        return StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY == interval;
+    }
+
     @Override
-    public ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyToExcel(FinanceStatisticsWeeklyParam paramVo){
+    public ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyToExcel(FinanceStatisticsParam paramVo){
         ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> serviceResult = new ServiceResult<>();
         ServiceResult<String, Boolean> verifyResult = verify(paramVo);
         if (!ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
@@ -1110,7 +1135,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataMonthlyToExcel(FinanceStatisticsWeeklyParam paramVo){
+    public ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataMonthlyToExcel(FinanceStatisticsParam paramVo){
         ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> serviceResult = new ServiceResult<>();
         int maxWeekOfMonth = financeStatisticsWeeklySupport.getMaxWeekCountOfYearAndMonth(paramVo.getYear(), paramVo.getMonth());
         paramVo.setWeekOfMonth(maxWeekOfMonth);
