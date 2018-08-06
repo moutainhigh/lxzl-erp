@@ -22,4 +22,6 @@ public class BankType {
     public static final Integer STOCK_CASH = 13; //库存现金
     public static final Integer SWIFT_PASS = 14; //威富通
     public static final Integer UNKNOWN_CHANNEL_PAY_TYPE = 15; //支付未知渠道
+    public static final Integer JING_DONG = 16; //京东
+    public static final Integer CHINA_UNION_PAY_TYPE = 17; //银联
 }

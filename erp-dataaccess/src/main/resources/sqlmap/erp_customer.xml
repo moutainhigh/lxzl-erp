@@ -730,4 +730,37 @@
 			)t4 on t4.customer_no = ec.customer_no
 		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>
+
+	<select id="findCustomerByOwner" resultMap="CustomerDO" parameterType="java.lang.Integer">
+		SELECT * FROM erp_customer ec where ec.owner = #{ownerId,jdbcType=INTEGER} AND ec.data_status = 1
+	</select>
+
+	<update id="updateListForUser" parameterType="java.util.List">
+		update erp_customer
+		SET
+		<trim>
+			owner_sub_company_id =
+			<foreach item="customerDO" collection="updateCustomerDOList" index="index" separator=" " open="case id" close="end">
+				when #{customerDO.id} then #{customerDO.ownerSubCompanyId}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_user =
+			<foreach item="customerDO" collection="updateCustomerDOList" index="index" separator=" " open="case id" close="end">
+				when #{customerDO.id} then #{customerDO.updateUser}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach collection="updateCustomerDOList" index="index" item="customerDO" separator=" " open="case id" close="end">
+				when #{customerDO.id} then #{customerDO.updateTime}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="updateCustomerDOList" index="index" item="customerDO"
+				 separator="," open="(" close=")">
+			#{customerDO.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+
 </mapper>
