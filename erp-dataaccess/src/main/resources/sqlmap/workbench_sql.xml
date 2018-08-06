@@ -340,9 +340,7 @@
 		(SELECT COUNT(DISTINCT verify_user_group_id) AS waitVerifyWorkflowBusinessAffairsWorkbenchCount FROM `erp_workflow_verify_user_group`
 		<where>
 			AND data_status = 1 AND verify_status = 1
-			<if test="maps.verifyUserId != null">
-				AND verify_user = #{maps.verifyUserId}
-			</if>
+			AND verify_user = #{maps.businessAffairsVerifyUserId}
 		</where>) workflow_link
 	</sql>
 
