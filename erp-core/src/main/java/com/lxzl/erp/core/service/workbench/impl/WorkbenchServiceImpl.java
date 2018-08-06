@@ -220,9 +220,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
             Map<String, Object> paramMap = new HashMap<>();
             //只有审核人数据
-            if (!userSupport.isSuperUser()) {
-                paramMap.put("verifyUserId", userSupport.getCurrentUserId().toString());
-            }
+            //----------------------商务待审核工作流---------------------------
+            paramMap.put("businessAffairsVerifyUserId", userSupport.getCurrentUserId().toString());
             //----------------------商务待审核工作流---------------------------
 
             //----------------------待认领银行流水---------------------------
@@ -339,6 +338,9 @@ public class WorkbenchServiceImpl implements WorkbenchService{
                 maps.put("verifyUserId", userSupport.getCurrentUserId().toString());
                 maps.put("currentUserGroupList",workflowVerifyUserGroupMapper.findGroupUUIDByUserId(userSupport.getCurrentUserId()));
             }
+
+            //----------------------商务待审核工作流---------------------------
+            maps.put("businessAffairsVerifyUserId", userSupport.getCurrentUserId().toString());
             //----------------------商务待审核工作流---------------------------
 
             //----------------------待认领银行流水---------------------------
