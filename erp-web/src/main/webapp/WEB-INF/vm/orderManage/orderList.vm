@@ -308,6 +308,7 @@
                 'manage.order.receipt.confirm.js',
                 'manage.order.relet.mixin.js',
                 'manage.order.relet.add.js',
+                'manage.order.change.price.js',
                 'modal.input.js',
                 'modal.submit.audit.js');
     </script>

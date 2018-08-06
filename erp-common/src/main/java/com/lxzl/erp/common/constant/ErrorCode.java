@@ -991,6 +991,11 @@ public class ErrorCode {
     public static final String CONFIRM_STATUS_NOT_NULL = "J240000002";
     public static final String CONFIRM_STATUS_ERROR = "J240000003";
     public static final String STATISTICS_SALESMAN_MONTH_HASH_PEER_EXISTS = "J240000004";
+    public static final String STATISTICS_FINANCE_WEEKLY_PARAM_INVALID = "J240000005";
+    public static final String STATISTICS_FINANCE_WEEKLY_DATA_NOT_EXISTS = "J240000006";
+    public static final String STATISTICS_FINANCE_WEEKLY_PARAM_YEAR_INVALID = "J240000007";
+    public static final String STATISTICS_FINANCE_WEEKLY_PARAM_MONTH_INVALID = "J240000008";
+    public static final String STATISTICS_FINANCE_WEEKLY_PARAM_WEEK_INVALID = "J240000009";
 
     // 定时任务错误信息
     public static final String QUARTZ_SCHED_NAME_NOT_NULL = "J250000001";
@@ -1016,6 +1021,18 @@ public class ErrorCode {
     //公告
     public static final String ANNOUNCEMENT_TITLE_NOT_NULL = "J280000001";
     public static final String ANNOUNCEMENT_CONTENT_NOT_NULL = "J280000002";
+    public static final String ANNOUNCEMENT_TITLE_TOO_LARGE = "J280000003";
+    public static final String ANNOUNCEMENT_CONTENT_TOO_LARGE = "J280000004";
+    public static final String ANNOUNCEMENT_REMARK_TOO_LARGE = "J280000005";
+
+
+    //延迟任务列表
+    public static final String TASK_TYPE_NOT_NULL = "J290000001";
+    public static final String TASK_REQUEST_JSON_NOT_EMPTY = "J290000002";
+    public static final String TASK_REQUEST_HAVE_FOR_THIS_USER_ID = "J290000003";
+
+    //Mall
+    public static final String MALL_SYSTEM_CONNECT_EXCEPTION = "Mall00001";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1155,7 +1172,7 @@ public class ErrorCode {
         MAP.put(BULK_MATERIAL_STATUS_NOT_REPAIR, "编号【%s 】的散料只有处于设备空闲或者租赁中,才能进行新增维修操作");
         MAP.put(PRODUCT_NOT_SAME, "收货商品不一致，请联系相关人员");
         MAP.put(MATERIAL_NOT_SAME, "收货配件不一致，请联系相关人员");
-        MAP.put(CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL, "企业客户首次所需设备的sku的ID不能为空");
+        MAP.put(CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL, "企业客户所需设备的sku的ID不能为空");
         MAP.put(CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL, "企业客户首次所需设备的单台价值不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL, "企业客户首次所需设备的租赁数量不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_RENT_LENGTH_NOT_NULL, "企业客户首次所需设备的租赁期限不能空");
@@ -1974,6 +1991,11 @@ public class ErrorCode {
         MAP.put(CONFIRM_STATUS_NOT_NULL, "确认状态不能为空");
         MAP.put(CONFIRM_STATUS_ERROR, "确认状态错误");
         MAP.put(STATISTICS_SALESMAN_MONTH_HASH_PEER_EXISTS, "该月业务员提成统计月结数据已生成，请勿重复生成");
+        MAP.put(STATISTICS_FINANCE_WEEKLY_PARAM_INVALID, "导出财务周报时，参数年、月以及当月第几周为必填参数且不能为空，请核对后并正确填写");
+        MAP.put(STATISTICS_FINANCE_WEEKLY_DATA_NOT_EXISTS, "该周统计的财务月累计数据不存在");
+        MAP.put(STATISTICS_FINANCE_WEEKLY_PARAM_YEAR_INVALID, "您填写的年份不合法");
+        MAP.put(STATISTICS_FINANCE_WEEKLY_PARAM_MONTH_INVALID, "您填写的月份不合法(月份范围：1-12)");
+        MAP.put(STATISTICS_FINANCE_WEEKLY_PARAM_WEEK_INVALID, "您填写的周不合法或者超过了当月最大周");
 
         MAP.put(QUARTZ_SCHED_NAME_NOT_NULL, "定时任务的Sched名称不能为空");
         MAP.put(QUARTZ_JOB_NAME_NOT_NULL, "定时任务的任务名称不能为空");
@@ -1997,6 +2019,15 @@ public class ErrorCode {
 
         MAP.put(ANNOUNCEMENT_TITLE_NOT_NULL, "公告标题不能为空");
         MAP.put(ANNOUNCEMENT_CONTENT_NOT_NULL, "公告内容不能为空");
+        MAP.put(ANNOUNCEMENT_TITLE_TOO_LARGE, "公告标题不能超过100字");
+        MAP.put(ANNOUNCEMENT_CONTENT_TOO_LARGE, "公告内容不能超过500字");
+        MAP.put(ANNOUNCEMENT_REMARK_TOO_LARGE, "公告备注不能超过500字");
+
+
+
+        MAP.put(TASK_TYPE_NOT_NULL, "任务类型不能为空");
+        MAP.put(TASK_REQUEST_JSON_NOT_EMPTY, "延迟任务列表请求参数不能为空");
+        MAP.put(TASK_REQUEST_HAVE_FOR_THIS_USER_ID, "您已经有排队中或处理中的导出任务，请该任务完成后再进行导出");
 
 
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户已经为确认结算单状态");
@@ -2014,6 +2045,9 @@ public class ErrorCode {
         MAP.put(SPLIT_STATEMENT_TIME_ERROR, "分段重算时间必须在订单起租时间与订单预计归还时间之间");
         MAP.put(RETURN_STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，该退货单结算单详情已存在，不能重复生成结算单");
         MAP.put(CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST, "客户为已经为确认坏账状态");
+
+
+        MAP.put(MALL_SYSTEM_CONNECT_EXCEPTION, "连接Mall-App系统异常");
 
     }
 

@@ -184,7 +184,7 @@
                                     {{/dataSource}}
                                 </script>
                                 <div class="workbench-row row pl20" id="professionOrderRow">
-                                    <div class="col-md-3 pn pr20 mb20">
+                                    <div class="col-md-3 pn pr20 mb20" id="saleRentingOrder">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">租赁订单</div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -803,6 +803,9 @@
                                         <span class="over-ellipsis notice-title">{{title}}</span>
                                         <span class="notice-time ml20">{{#shortTime}}{{createTime}}{{/shortTime}}</span>
                                     </li>
+                                    {{/listData}}
+                                    {{^listData}}
+                                    <li class="nowrap mt10" style="list-style:none">暂无公告</li>
                                     {{/listData}}
                                     {{/dataSource}}
                                 </script>

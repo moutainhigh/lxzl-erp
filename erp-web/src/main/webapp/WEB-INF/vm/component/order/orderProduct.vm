@@ -44,7 +44,10 @@
             <tr class="productRow" productRowKey="{{productId}}">
                 <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                 <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
-                <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
+                <td>
+                    <p class="mn"><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</p>
+                    {{#showK3ProductNo}}<p class="mn mt10"><span class="badge badge-default mr5">K3编码</span>{{k3ProductNo}}</p>{{/showK3ProductNo}}
+                </td>
 ##               <td>{{k3ProductNo}}</td>
                 <td>{{propertiesToStr}}</td>
                 <td>￥{{currentSkuPrice}}</td>
