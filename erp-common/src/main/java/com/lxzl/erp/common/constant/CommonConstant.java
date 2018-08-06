@@ -70,4 +70,6 @@ public class CommonConstant {
     public static final Integer ORDER_TYPE_RELET = 6;//续租状态，对账单导出专用
     public static final Integer ORDER_TYPE_RELET_RETURN = 7;//续租退货状态，对账单导出专用
 
+    public static final long WORKBENCH_REDIS_SAVE_TIME = 180L;
+
 }

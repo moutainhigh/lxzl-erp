@@ -205,7 +205,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             workbench.setCustomerListMap(customerListMap);
             workbench.setWorkflowListMap(workflowListMap);
 
-            redisManager.add("SALES_WORKBENCH_"+userSupport.getCurrentUserId().toString(),workbench,180L);
+            redisManager.add("SALES_WORKBENCH_"+userSupport.getCurrentUserId().toString(),workbench,CommonConstant.WORKBENCH_REDIS_SAVE_TIME);
         }
 
         //商务工作台
@@ -322,7 +322,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             workbench.setBankSlipDetailBusinessAffairsListMap(bankSlipDetailListMap);
             workbench.setStatementOrderBusinessAffairsListMap(statementOrderBusinessAffairsListMap);
 
-            redisManager.add("BUSINESS_WORKBENCH_"+userSupport.getCurrentUserId().toString(),workbench,180L);
+            redisManager.add("BUSINESS_WORKBENCH_"+userSupport.getCurrentUserId().toString(),workbench,CommonConstant.WORKBENCH_REDIS_SAVE_TIME);
         }
 
         if (CommonConstant.COMMON_TWO.equals(workbenchQueryParam.getWorkbenchName())){
@@ -535,7 +535,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             workbench.setBankSlipDetailBusinessAffairsListMap(bankSlipDetailListMap);
             workbench.setStatementOrderBusinessAffairsListMap(statementOrderBusinessAffairsListMap);
 
-            redisManager.add("BUSINESS_AND_SALES_WORKBENCH_"+userSupport.getCurrentUserId().toString(),workbench,180L);
+            redisManager.add("BUSINESS_AND_SALES_WORKBENCH_"+userSupport.getCurrentUserId().toString(),workbench,CommonConstant.WORKBENCH_REDIS_SAVE_TIME);
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
