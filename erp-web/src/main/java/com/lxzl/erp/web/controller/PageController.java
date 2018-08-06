@@ -1236,6 +1236,36 @@ public class PageController extends BaseController {
         return "/systemManage/addSystemNotice";
     }
 
+    //定时任务执行者列表
+    @RequestMapping("/timed-manage/executor-list")
+    public String timerManageList() {
+        return "/timerService/taskScheduler";
+    }
+
+    //添加定时任务
+    @RequestMapping("/timed-manage/add-task")
+    public String timedManageAdd() {
+        return "/timerService/taskAdd";
+    }
+
+    //编辑定时任务
+    @RequestMapping("/timed-manage/edit-task")
+    public String timedManageEdit() {
+        return "/timerService/taskEdit";
+    }
+
+    //定时任务详情
+    @RequestMapping("/timed-manage/task-detail")
+    public String timedManageDetail() {
+        return "/timerService/taskDetail";
+    }
+
+    //定时任务更新执行者信息
+    @RequestMapping("/timed-manage/update-performer")
+    public String timedManageUpdatePerformer() {
+        return "/timerService/editPerformer";
+    }
+    
     //延时任务列表
     @RequestMapping("/delayed-task/list")
     public String deyayedTaskList() {
