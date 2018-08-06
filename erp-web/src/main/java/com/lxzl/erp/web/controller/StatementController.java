@@ -162,7 +162,7 @@ public class StatementController extends BaseController {
 
     @RequestMapping(value = "exportQueryStatementOrderCheckParam", method = RequestMethod.POST)
     public Result exportQueryStatementOrderCheckParam(@RequestBody StatementOrderMonthQueryParam statementOrderMonthQueryParam, BindingResult validResult) {
-        ServiceResult<String, List<CheckStatementOrder>> serviceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam);
+        ServiceResult<String, List<CheckStatementOrder>> serviceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam,null);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

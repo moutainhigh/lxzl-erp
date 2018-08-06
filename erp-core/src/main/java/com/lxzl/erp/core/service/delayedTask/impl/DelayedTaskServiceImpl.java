@@ -143,9 +143,6 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
     @Autowired
     private DelayedTaskExportCustomerStatementSupport delayedTaskExportCustomerStatementSupport;
 
-    @Autowired(required = false)
-    private HttpSession httpSession;
-
     @Override
     public ServiceResult<String, DelayedTask> addDelayedTask(DelayedTask delayedTask)  throws Exception {
         ServiceResult<String, DelayedTask> result = new ServiceResult<>();
@@ -153,7 +150,8 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         //导出客户对账单
         if (DelayedTaskType.DELAYED_TASK_EXPORT_CUSTOMER_STATEMENT.equals(delayedTask.getTaskType())) {
             StatementOrderMonthQueryParam param = FastJsonUtil.toBean(delayedTask.getRequestJson(), StatementOrderMonthQueryParam.class);
-                result = getCustomerStatementDelayedTask(param,result,delayedTask);
+            Integer userId = userSupport.getCurrentUserId();
+            result = getCustomerStatementDelayedTask(param,result,delayedTask,userId);
         }
         return result;
     }
@@ -247,7 +245,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
     /*
      *导出客户对账单调用方法
      */
-    public ServiceResult<String, DelayedTask> getCustomerStatementDelayedTask(StatementOrderMonthQueryParam statementOrderMonthQueryParam,ServiceResult<String, DelayedTask> result,DelayedTask delayedTask) throws Exception {
+    public ServiceResult<String, DelayedTask> getCustomerStatementDelayedTask(StatementOrderMonthQueryParam statementOrderMonthQueryParam,ServiceResult<String, DelayedTask> result,DelayedTask delayedTask,Integer userId) throws Exception {
         DelayedTaskConfigExportStatementDO delayedTaskConfigExportStatementDO = delayedTaskConfigExportStatementMapper.findByCustomerNo(statementOrderMonthQueryParam.getStatementOrderCustomerNo());
         Date date = new Date();
         //是特殊表中的用户，则开始线程导出对账单数据
@@ -305,7 +303,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     delayedTaskMapper.save(newdelayedTaskDO);
                 }
                 //调用线程导出对账单
-                delayedTaskExportCustomerStatementSupport.exportCustomerStatementAsynchronous(newdelayedTaskDO, date,statementOrderMonthQueryParam,httpSession);
+                delayedTaskExportCustomerStatementSupport.exportCustomerStatementAsynchronous(newdelayedTaskDO, date,statementOrderMonthQueryParam,userId);
                 delayedTask = ConverterUtil.convert(newdelayedTaskDO, DelayedTask.class);
                 result.setResult(delayedTask);
                 result.setErrorCode(ErrorCode.SUCCESS);
@@ -361,7 +359,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     accountBalance = customerAccount.getBalanceAmount();
                 }
 
-                ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam);
+                ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam,userId);
                 if (!ErrorCode.SUCCESS.equals(stringListServiceResult.getErrorCode())) {
                     result.setErrorCode(stringListServiceResult.getErrorCode());
                     //导出失败更新任务列表状态

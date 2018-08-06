@@ -22,6 +22,7 @@ import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
@@ -117,6 +118,8 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
     @Autowired
     private PaymentService paymentService;
+    @Autowired
+    private UserSupport userSupport;
 
     @Override
     public ServiceResult<String, String> queryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam, HttpServletResponse response) throws Exception {
@@ -158,8 +161,8 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         statementOrderMonthQueryParam.setStatementOrderCustomerNo(customerNoParam);
 //        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderStartTime);
         statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderEndTime);
-
-        ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam);
+        Integer userId = userSupport.getCurrentUserId();
+        ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam,userId);
         if (!ErrorCode.SUCCESS.equals(stringListServiceResult.getErrorCode())) {
             result.setErrorCode(stringListServiceResult.getErrorCode());
             return result;

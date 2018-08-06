@@ -129,13 +129,13 @@ public class DelayedTaskExportCustomerStatementSupport {
 
     private ExecutorService threadPoolTaskExecutor = Executors.newFixedThreadPool(10, new ThreadFactoryDefault("delayedTask"));
 
-    public void exportCustomerStatementAsynchronous(final DelayedTaskDO delayedTaskDO, final Date date, final StatementOrderMonthQueryParam statementOrderMonthQueryParam, final HttpSession httpSession) {
+    public void exportCustomerStatementAsynchronous(final DelayedTaskDO delayedTaskDO, final Date date, final StatementOrderMonthQueryParam statementOrderMonthQueryParam, final Integer userId) {
         threadPoolTaskExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 try {
                     if (DelayedTaskType.DELAYED_TASK_EXPORT_CUSTOMER_STATEMENT.equals(delayedTaskDO.getTaskType())) {
-                        exportCustomerStatement(delayedTaskDO,date,statementOrderMonthQueryParam,httpSession);
+                        exportCustomerStatement(delayedTaskDO,date,statementOrderMonthQueryParam,userId);
                     }
                 }catch (Exception e){
                     delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_EXECUTION_FAILED);//导出失败
@@ -168,9 +168,9 @@ public class DelayedTaskExportCustomerStatementSupport {
     /*
      * 线程导出对账单调用的方法，传入httpSession是因为线程中获取不到session
      */
-    private void exportCustomerStatement(DelayedTaskDO delayedTaskDO, Date date, StatementOrderMonthQueryParam statementOrderMonthQueryParam,HttpSession httpSession) {
-        //存储session
-        userSupport.setHttpSession(httpSession);
+    private void exportCustomerStatement(DelayedTaskDO delayedTaskDO, Date date, StatementOrderMonthQueryParam statementOrderMonthQueryParam,Integer userId) {
+//        //存储session
+//        userSupport.setHttpSession(httpSession);
         //将对象的状态变成处理中并进行更新
         delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_PROCESSING);//处理中
         delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
@@ -230,7 +230,7 @@ public class DelayedTaskExportCustomerStatementSupport {
             delayedTaskMapper.subQueueNumber();
         }
 
-        ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam);
+        ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam,userId);
         if (!ErrorCode.SUCCESS.equals(stringListServiceResult.getErrorCode())) {
             delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_EXECUTION_FAILED);//导出失败
             delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);

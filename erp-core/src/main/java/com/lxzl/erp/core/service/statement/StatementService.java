@@ -242,7 +242,7 @@ public interface StatementService extends BaseService {
      * @Author : XiaoLuYu
      * @Date : Created in 2018/6/21 9:32
      */
-    ServiceResult<String, List<CheckStatementOrder>> exportQueryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam);
+    ServiceResult<String, List<CheckStatementOrder>> exportQueryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam,Integer userId);
 
     /**
      * 支付结算单项
