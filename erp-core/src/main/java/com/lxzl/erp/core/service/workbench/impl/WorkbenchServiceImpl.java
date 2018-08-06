@@ -20,7 +20,9 @@ import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workbench.WorkbenchMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowVerifyUserGroupMapper;
+import com.lxzl.erp.dataaccess.dao.redis.RedisManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisConnectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -49,6 +51,13 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
         //业务工作台
         if (CommonConstant.COMMON_ZERO.equals(workbenchQueryParam.getWorkbenchName())){
+
+            Workbench workbenchRedis = redisManager.get("SALES_WORKBENCH_" + userSupport.getCurrentUserId().toString(), Workbench.class);
+            if (workbenchRedis != null){
+                serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                serviceResult.setResult(workbenchRedis);
+                return serviceResult;
+            }
             //工作流审核人组
             if (!userSupport.isSuperUser()) {
                 maps.put("verifyUserId", userSupport.getCurrentUserId().toString());
@@ -130,7 +139,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             processingMap.put("paramsValue",ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
             processingMap.put("workbenchType",WorkbenchType.RETURN_ORDER_STATUS_PROCESSING);
             processingMap.put("count",k3ReturnOrderCountMap.get("returnOrderProcessingCount"));
-            k3ReturnOrderListMap.add(waitCommitMap);
+            k3ReturnOrderListMap.add(processingMap);
 
             //被驳回的退货单
             Map<String,Object> backedMap = new HashMap();
@@ -193,10 +202,19 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             workbench.setCustomerListMap(customerListMap);
             workbench.setWorkflowListMap(workflowListMap);
 
+            redisManager.add("SALES_WORKBENCH_"+userSupport.getCurrentUserId().toString(),workbench,180L);
         }
 
         //商务工作台
         if (CommonConstant.COMMON_ONE.equals(workbenchQueryParam.getWorkbenchName())){
+
+            Workbench workbenchRedis = redisManager.get("BUSINESS_WORKBENCH_" + userSupport.getCurrentUserId().toString(), Workbench.class);
+            if (workbenchRedis != null){
+                serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                serviceResult.setResult(workbenchRedis);
+                return serviceResult;
+            }
+
             Map<String, Object> paramMap = new HashMap<>();
             //只有审核人数据
             if (!userSupport.isSuperUser()) {
@@ -293,9 +311,19 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
             workbench.setOrderListMap(orderListMap);
             workbench.setK3ReturnOrderListMap(k3ReturnOrderListMap);
+
+            redisManager.add("BUSINESS_WORKBENCH_"+userSupport.getCurrentUserId().toString(),workbench,180L);
         }
 
         if (CommonConstant.COMMON_TWO.equals(workbenchQueryParam.getWorkbenchName())){
+
+            Workbench workbenchRedis = redisManager.get("BUSINESS_AND_SALES_WORKBENCH_" + userSupport.getCurrentUserId().toString(), Workbench.class);
+            if (workbenchRedis != null){
+                serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                serviceResult.setResult(workbenchRedis);
+                return serviceResult;
+            }
+
             //只有审核人数据
             if (!userSupport.isSuperUser()) {
                 maps.put("verifyUserId", userSupport.getCurrentUserId().toString());
@@ -489,6 +517,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             workbench.setK3ReturnOrderListMap(k3ReturnOrderListMap);
             workbench.setCustomerListMap(customerListMap);
             workbench.setWorkflowListMap(workflowListMap);
+
+            redisManager.add("BUSINESS_AND_SALES_WORKBENCH_"+userSupport.getCurrentUserId().toString(),workbench,180L);
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -539,6 +569,9 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
     @Autowired
     private WorkbenchMapper workbenchMapper;
+
+    @Autowired
+    private RedisManager redisManager;
 
 }
 

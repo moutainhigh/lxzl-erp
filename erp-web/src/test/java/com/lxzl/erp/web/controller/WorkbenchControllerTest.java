@@ -105,9 +105,9 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
         param.setIsDisabled(0);
         param.setIsRecycleBin(0);
         //业务工作台
-//        param.setWorkbenchName(CommonConstant.COMMON_ZERO);
+        param.setWorkbenchName(CommonConstant.COMMON_ZERO);
         //商务工作台
-        param.setWorkbenchName(CommonConstant.COMMON_ONE);
+//        param.setWorkbenchName(CommonConstant.COMMON_ONE);
         //商务+业务工作台
 //        param.setWorkbenchName(CommonConstant.COMMON_TWO);
 
