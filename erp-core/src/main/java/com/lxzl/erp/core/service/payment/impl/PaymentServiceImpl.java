@@ -375,8 +375,8 @@ public class PaymentServiceImpl implements PaymentService {
 
         ServiceResult<String, Page<ChargeRecord>> result = new ServiceResult<>();
 
-        CustomerDO customerName = null==chargeRecordPageParam.getCustomerName()?null:customerMapper.findByName(chargeRecordPageParam.getCustomerName());
-        CustomerDO customerNo = null==chargeRecordPageParam.getBusinessCustomerNo()?null:customerMapper.findByNo(chargeRecordPageParam.getBusinessCustomerNo());
+        CustomerDO customerName = null == chargeRecordPageParam.getCustomerName() || "".equals(chargeRecordPageParam.getCustomerName()) ? null : customerMapper.findByName(chargeRecordPageParam.getCustomerName());
+        CustomerDO customerNo = null == chargeRecordPageParam.getBusinessCustomerNo() || "".equals(chargeRecordPageParam.getBusinessCustomerNo()) ? null : customerMapper.findByNo(chargeRecordPageParam.getBusinessCustomerNo());
 
         if (customerName != null) {
             chargeRecordPageParam.setBusinessCustomerNo(customerName.getCustomerNo());
@@ -429,7 +429,7 @@ public class PaymentServiceImpl implements PaymentService {
                     chargeRecordList.add(chargeRecord);
                     if (chargeRecord.getBusinessCustomerNo().startsWith("LX")) {
                         customerNoList.add(chargeRecord.getBusinessCustomerNo());
-                    }else if(StringUtil.isNotEmpty(chargeRecord.getCustomerName())){
+                    } else if (StringUtil.isNotEmpty(chargeRecord.getCustomerName())) {
                         customerNameList.add(chargeRecord.getCustomerName());
                     }
                 }
@@ -458,15 +458,15 @@ public class PaymentServiceImpl implements PaymentService {
                     customerNameMap = ListUtil.listToMap(customerDONameList, "customerName");
                 }
 
-                if (CollectionUtil.isNotEmpty(chargeRecordList)){
-                    for (ChargeRecord chargeRecord : chargeRecordList){
-                        if (customerNoMap.get(chargeRecord.getBusinessCustomerNo()) != null){
+                if (CollectionUtil.isNotEmpty(chargeRecordList)) {
+                    for (ChargeRecord chargeRecord : chargeRecordList) {
+                        if (customerNoMap.get(chargeRecord.getBusinessCustomerNo()) != null) {
                             CustomerDO customerDO = customerNoMap.get(chargeRecord.getBusinessCustomerNo());
                             chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
                             chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
                             chargeRecord.setCustomerName(customerDO.getCustomerName());
                             chargeRecord.setErpCustomerNo(customerDO.getCustomerNo());
-                        }else if(customerNameMap.get(chargeRecord.getCustomerName()) != null){
+                        } else if (customerNameMap.get(chargeRecord.getCustomerName()) != null) {
                             CustomerDO customerDO = customerNameMap.get(chargeRecord.getCustomerName());
                             chargeRecord.setErpCustomerNo(customerDO.getCustomerNo());
                         }
