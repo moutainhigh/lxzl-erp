@@ -23,9 +23,9 @@
                         <div class="section row">
                             <form class="admin-form">
                                 <div class="col-md-3">
-                                    <label for="customerOrigin" class="field-label">财务统计类型</label>
+                                    <label for="statisticsInterval" class="field-label">财务统计类型</label>
                                     <label class="field select">
-                                        <select id="customerOrigin" class="bradius" name="customerOrigin" data-defaultvalue="1">
+                                        <select id="statisticsInterval" class="bradius" name="statisticsInterval" data-defaultvalue="1">
                                             <option value="">请选择</option>
                                         </select>
                                         <i class="arrow"></i>
