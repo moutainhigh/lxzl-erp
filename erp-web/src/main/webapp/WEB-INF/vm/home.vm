@@ -167,25 +167,24 @@
                             <div class="panel-heading">
                                 <span class="panel-title fw700 fs16">工作台</span>
                             </div>
-                            <div class="panel-body">
-                                <script type="text/html" id="professionOrdeTpl">
-                                    {{#dataSource}}
-                                    {{#listData}}
-                                    <div class="col-md-3 pn pr35 mb20">
-                                        <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
-                                        <a href="{{#hasdata}}${ctx}order-manage/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
-                                            class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
-                                            <div class="top-line"></div>
-                                            <p class="title pn mn text-default">{{orderColTitle}}</p>
-                                            <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
-                                        </a>
-                                    </div>
-                                    {{/listData}}
-                                    {{/dataSource}}
-                                </script>
-                                <div class="workbench-row row pl35" id="professionOrderRow">
-                                    
-                                    <div class="col-md-3 pn pr35 mb20" id="saleRentingOrder">
+                            <script type="text/html" id="professionOrdeTpl">
+                                {{#dataSource}}
+                                {{#listData}}
+                                <div class="col-md-3 pn pr20 mb20">
+                                    <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
+                                    <a href="{{#hasdata}}${ctx}order-manage/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
+                                        class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                                        <div class="top-line"></div>
+                                        <p class="title pn mn text-default">{{orderColTitle}}</p>
+                                        <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
+                                    </a>
+                                </div>
+                                {{/listData}}
+                                {{/dataSource}}
+                            </script>
+                            <div class="panel-body" id="businessWorkbench">
+                                <div class="workbench-row row pl20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">租赁订单</div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -193,7 +192,7 @@
                                             <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                         </a>
                                     </div>
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5"></div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -201,7 +200,7 @@
                                             <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                         </a>
                                     </div>
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5"></div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -209,7 +208,7 @@
                                             <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                         </a>
                                     </div>
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5"></div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -222,7 +221,7 @@
                                 <script type="text/html" id="professionReturnOrderTpl">
                                     {{#dataSource}}
                                     {{#listData}}
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
                                         <a href="{{#hasdata}}${ctx}return-order-k3/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
                                             class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
@@ -234,8 +233,8 @@
                                     {{/listData}}
                                     {{/dataSource}}
                                 </script>
-                                <div class="workbench-row row pl35" id="professionReturnOrderRow">
-                                    <div class="col-md-3 pn pr35 mb20">
+                                <div class="workbench-row row pl20" id="professionReturnOrderRow">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">退货单</div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -243,7 +242,7 @@
                                             <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                         </a>
                                     </div>
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5"></div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -251,7 +250,7 @@
                                             <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                         </a>
                                     </div>
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5"></div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -259,7 +258,7 @@
                                             <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                         </a>
                                     </div>
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5"></div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -270,12 +269,12 @@
                                 </div>
 
                                 
-                                <div class="workbench-row row pl35">
+                                <div class="workbench-row row pl20">
                                     <div class="col-md-6 pn">
                                         <script type="text/html" id="companyTpl">
                                             {{#dataSource}}
                                             {{#listData}}
-                                            <div class="col-md-6 pn pr35 mb20">
+                                            <div class="col-md-6 pn pr20 mb20">
                                                 <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
                                                 <a href="{{#hasdata}}${ctx}customer-business-manage/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
                                                     class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
@@ -288,7 +287,7 @@
                                             {{/dataSource}}
                                         </script>
                                         <div class="row pn mn" id="companyRow">
-                                            <div class="col-md-6 pn pr35 mb20">
+                                            <div class="col-md-6 pn pr20 mb20">
                                                 <div class="rowTitle fs16 fw700 mb5 border-left">客户</div>
                                                 <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                                     <div class="top-line"></div>
@@ -296,7 +295,7 @@
                                                     <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                                 </a>
                                             </div>
-                                            <div class="col-md-6 pn pr35 mb20">
+                                            <div class="col-md-6 pn pr20 mb20">
                                                 <div class="rowTitle fs16 fw700 mb5"></div>
                                                 <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                                     <div class="top-line"></div>
@@ -310,7 +309,7 @@
                                         <script type="text/html" id="personTpl">
                                             {{#dataSource}}
                                             {{#listData}}
-                                            <div class="col-md-6 pn pr35 mb20">
+                                            <div class="col-md-6 pn pr20 mb20">
                                                 <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
                                                 <a href="{{#hasdata}}${ctx}customer-manage/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
                                                     class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
@@ -323,7 +322,7 @@
                                             {{/dataSource}}
                                         </script>
                                         <div class="row pn mn" id="personRow">
-                                            <div class="col-md-6 pn pr35 mb20">
+                                            <div class="col-md-6 pn pr20 mb20">
                                                 <div class="rowTitle fs16 fw700 mb5"></div>
                                                 <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                                     <div class="top-line"></div>
@@ -331,7 +330,7 @@
                                                     <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                                 </a>
                                             </div>
-                                            <div class="col-md-6 pn pr35 mb20">
+                                            <div class="col-md-6 pn pr20 mb20">
                                                 <div class="rowTitle fs16 fw700 mb5"></div>
                                                 <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                                     <div class="top-line"></div>
@@ -346,7 +345,7 @@
                                 <script type="text/html" id="professionAuditTpl">
                                     {{#dataSource}}
                                     {{#listData}}
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
                                         <a href="{{#hasdata}}${ctx}audit-manage/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
                                             class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
@@ -358,8 +357,8 @@
                                     {{/listData}}
                                     {{/dataSource}}
                                 </script>
-                                <div class="workbench-row row pl35" id="professionAuditRow">
-                                    <div class="col-md-3 pn pr35 mb20">
+                                <div class="workbench-row row pl20" id="professionAuditRow">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">工作流</div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -367,7 +366,7 @@
                                             <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                         </a>
                                     </div>
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5"></div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -384,7 +383,7 @@
                                 <span class="panel-title fw700 fs16"><i class="fa fa-pencil hidden"></i>工作台</span>
                             </div>
                             <div class="panel-body">
-                                <div class="workbench-row row pl35">
+                                <div class="workbench-row row pl20">
                                     <script type="text/html" id="workflowTpl">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">工作流</div>
                                         <a href="{{#hasdata}}${ctx}audit-manage/list?status=1&isWorkbench=1{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
@@ -398,7 +397,7 @@
                                             <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
                                         </a>
                                     </script>
-                                    <div class="col-md-3 pn pr35 mb20" id="workflowCol">
+                                    <div class="col-md-3 pn pr20 mb20" id="workflowCol">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">工作流</div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -416,7 +415,7 @@
                                             <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
                                         </a>
                                     </script>
-                                    <div class="col-md-3 pn pr35 mb20" id="financeCol">
+                                    <div class="col-md-3 pn pr20 mb20" id="financeCol">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">资金流水</div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -429,7 +428,7 @@
                                 <script type="text/html" id="statementTpl">
                                     {{#dataSource}}
                                     {{#listData}}
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
                                         <a href="{{#hasdata}}${ctx}statement-order/list?{{params}}={{paramsValue}}&isWorkbench=1{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
                                             class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
@@ -441,8 +440,8 @@
                                     {{/listData}}
                                     {{/dataSource}}
                                 </script>
-                                <div class="workbench-row row pl35" id="statementRow">
-                                    <div class="col-md-3 pn pr35 mb20">
+                                <div class="workbench-row row pl20" id="statementRow">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">结算单</div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -450,7 +449,7 @@
                                             <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                         </a>
                                     </div>
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5"></div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -460,8 +459,8 @@
                                     </div>
                                 </div>
 
-                                <div class="workbench-row row pl35" id="businessOrderRow">
-                                    <div class="col-md-3 pn pr35 mb20">
+                                <div class="workbench-row row pl20" id="businessOrderRow">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">租赁订单</div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -469,7 +468,7 @@
                                             <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                         </a>
                                     </div>
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5"></div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -481,7 +480,7 @@
                                 <script type="text/html" id="businessOrdeTpl">
                                     {{#dataSource}}
                                     {{#listData}}
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
                                         <a href="{{#hasdata}}${ctx}order-manage/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
                                             class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
@@ -494,8 +493,8 @@
                                     {{/dataSource}}
                                 </script>
 
-                                <div class="workbench-row row pl35" id="returnOrderRow">
-                                    <div class="col-md-3 pn pr35 mb20">
+                                <div class="workbench-row row pl20" id="returnOrderRow">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">退货单</div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -507,7 +506,7 @@
                                 <script type="text/html" id="returnOrderTpl">
                                     {{#dataSource}}
                                     {{#listData}}
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
                                         <a href="{{#hasdata}}${ctx}return-order-k3/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
                                             class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
@@ -527,7 +526,7 @@
                                 <span class="panel-title fw700 fs16"><i class="fa fa-pencil hidden"></i>工作台</span>
                             </div>
                             <div class="panel-body">
-                                <div class="workbench-row row pl35">
+                                <div class="workbench-row row pl20">
                                     <script type="text/html" id="waitAuditWorkflowTpl">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">工作流</div>
                                         <a href="{{#hasdata}}${ctx}audit-manage/list?status=1&isWorkbench=1{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
@@ -541,7 +540,7 @@
                                             <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
                                         </a>
                                     </script>
-                                    <div class="col-md-3 pn pr35 mb20" id="waitAuditWorkflowCol">
+                                    <div class="col-md-3 pn pr20 mb20" id="waitAuditWorkflowCol">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">工作流</div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -554,7 +553,7 @@
                                         <script type="text/html" id="AuditAndRejectTpl">
                                             {{#dataSource}}
                                             {{#listData}}
-                                            <div class="col-md-6 pn pr35 mb20">
+                                            <div class="col-md-6 pn pr20 mb20">
                                                 <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
                                                 <a href="{{#hasdata}}${ctx}audit-manage/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
                                                     class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
@@ -567,7 +566,7 @@
                                             {{/dataSource}}
                                         </script>
                                         <div class="row pn mn" id="AuditAndRejectRow">
-                                            <div class="col-md-6 pn pr35 mb20">
+                                            <div class="col-md-6 pn pr20 mb20">
                                                 <div class="rowTitle fs16 fw700 mb5"></div>
                                                 <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                                     <div class="top-line"></div>
@@ -575,7 +574,7 @@
                                                     <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                                 </a>
                                             </div>
-                                            <div class="col-md-6 pn pr35 mb20">
+                                            <div class="col-md-6 pn pr20 mb20">
                                                 <div class="rowTitle fs16 fw700 mb5"></div>
                                                 <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                                     <div class="top-line"></div>
@@ -595,7 +594,7 @@
                                             <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}text-success{{/hasdata}} fs36 fw700 pn mn mb10">{{count}}</p>
                                         </a>
                                     </script>
-                                    <div class="col-md-3 pn pr35 mb20" id="multiPrivilegeFinanceCol">
+                                    <div class="col-md-3 pn pr20 mb20" id="multiPrivilegeFinanceCol">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">资金流水</div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -608,7 +607,7 @@
                                 <script type="text/html" id="multiPrivilegeStatementTpl">
                                     {{#dataSource}}
                                     {{#listData}}
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
                                         <a href="{{#hasdata}}${ctx}statement-order/list?{{params}}={{paramsValue}}&isWorkbench=1{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
                                             class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
@@ -620,8 +619,8 @@
                                     {{/listData}}
                                     {{/dataSource}}
                                 </script>
-                                <div class="workbench-row row pl35" id="multiPrivilegeStatementRow">
-                                    <div class="col-md-3 pn pr35 mb20">
+                                <div class="workbench-row row pl20" id="multiPrivilegeStatementRow">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">结算单</div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -629,7 +628,7 @@
                                             <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                         </a>
                                     </div>
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5"></div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -639,8 +638,8 @@
                                     </div>
                                 </div>
 
-                                <div class="workbench-row row pl35" id="multiPrivilegeOrderRow">
-                                    <div class="col-md-3 pn pr35 mb20">
+                                <div class="workbench-row row pl20" id="multiPrivilegeOrderRow">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">租赁订单</div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -648,7 +647,7 @@
                                             <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                         </a>
                                     </div>
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5"></div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -656,7 +655,7 @@
                                             <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                         </a>
                                     </div>
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5"></div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -664,7 +663,7 @@
                                             <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                         </a>
                                     </div>
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5"></div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -676,7 +675,7 @@
                                 <script type="text/html" id="multiPrivilegeOrdeTpl">
                                     {{#dataSource}}
                                     {{#listData}}
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
                                         <a href="{{#hasdata}}${ctx}order-manage/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
                                             class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
@@ -689,8 +688,8 @@
                                     {{/dataSource}}
                                 </script>
 
-                                <div class="workbench-row row pl35" id="multiPrivilegeReturnRow">
-                                    <div class="col-md-3 pn pr35 mb20">
+                                <div class="workbench-row row pl20" id="multiPrivilegeReturnRow">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 border-left">退货单</div>
                                         <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                             <div class="top-line"></div>
@@ -702,7 +701,7 @@
                                 <script type="text/html" id="multiPrivilegeReturnTpl">
                                     {{#dataSource}}
                                     {{#listData}}
-                                    <div class="col-md-3 pn pr35 mb20">
+                                    <div class="col-md-3 pn pr20 mb20">
                                         <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
                                         <a href="{{#hasdata}}${ctx}return-order-k3/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
                                             class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
@@ -715,12 +714,12 @@
                                     {{/dataSource}}
                                 </script>
 
-                                <div class="workbench-row row pl35">
+                                <div class="workbench-row row pl20">
                                     <div class="col-md-6 pn">
                                         <script type="text/html" id="multiPrivilegeCompanyTpl">
                                             {{#dataSource}}
                                             {{#listData}}
-                                            <div class="col-md-6 pn pr35 mb20">
+                                            <div class="col-md-6 pn pr20 mb20">
                                                 <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
                                                 <a href="{{#hasdata}}${ctx}customer-business-manage/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
                                                     class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
@@ -733,7 +732,7 @@
                                             {{/dataSource}}
                                         </script>
                                         <div class="row pn mn" id="multiPrivilegeCompanyRow">
-                                            <div class="col-md-6 pn pr35 mb20">
+                                            <div class="col-md-6 pn pr20 mb20">
                                                 <div class="rowTitle fs16 fw700 mb5 border-left">客户</div>
                                                 <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                                     <div class="top-line"></div>
@@ -741,7 +740,7 @@
                                                     <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                                 </a>
                                             </div>
-                                            <div class="col-md-6 pn pr35 mb20">
+                                            <div class="col-md-6 pn pr20 mb20">
                                                 <div class="rowTitle fs16 fw700 mb5"></div>
                                                 <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                                     <div class="top-line"></div>
@@ -755,7 +754,7 @@
                                         <script type="text/html" id="multiPrivilegePersonTpl">
                                             {{#dataSource}}
                                             {{#listData}}
-                                            <div class="col-md-6 pn pr35 mb20">
+                                            <div class="col-md-6 pn pr20 mb20">
                                                 <div class="rowTitle fs16 fw700 mb5 {{#title}}border-left{{/title}}">{{title}}</div>
                                                 <a href="{{#hasdata}}${ctx}customer-manage/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
                                                     class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
@@ -768,7 +767,7 @@
                                             {{/dataSource}}
                                         </script>
                                         <div class="row pn mn" id="multiPrivilegePersonRow">
-                                            <div class="col-md-6 pn pr35 mb20">
+                                            <div class="col-md-6 pn pr20 mb20">
                                                 <div class="rowTitle fs16 fw700 mb5"></div>
                                                 <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                                     <div class="top-line"></div>
@@ -776,7 +775,7 @@
                                                     <p class="num text-muted fw700 pn mn mb10" style="line-height:54px;">--</p>
                                                 </a>
                                             </div>
-                                            <div class="col-md-6 pn pr35 mb20">
+                                            <div class="col-md-6 pn pr20 mb20">
                                                 <div class="rowTitle fs16 fw700 mb5"></div>
                                                 <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
                                                     <div class="top-line"></div>
