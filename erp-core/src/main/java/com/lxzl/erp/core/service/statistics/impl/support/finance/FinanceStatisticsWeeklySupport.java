@@ -4,11 +4,12 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.StatisticsDealsCountType;
 import com.lxzl.erp.common.constant.StatisticsOrderOriginType;
 import com.lxzl.erp.common.constant.StatisticsRentLengthType;
-import com.lxzl.erp.common.domain.statistics.FinanceStatisticsWeeklyParam;
+import com.lxzl.erp.common.domain.statistics.FinanceStatisticsParam;
 import com.lxzl.erp.common.domain.statistics.pojo.FinanceStatisticsDataWeeklyExcel;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.core.service.statistics.impl.StatisticsServiceImpl;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.FinanceStatisticsDataWeeklyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
@@ -20,8 +21,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -38,7 +37,7 @@ public class FinanceStatisticsWeeklySupport {
      * @param param
      * @return
      */
-    private List<FinanceStatisticsDealsCountBySubCompany> statisticsCustomerCountWeekly(FinanceStatisticsWeeklyParam param) {
+    private List<FinanceStatisticsDealsCountBySubCompany> statisticsCustomerCountWeekly(FinanceStatisticsParam param) {
         if (param == null) {
             return null;
         }
@@ -46,7 +45,7 @@ public class FinanceStatisticsWeeklySupport {
         return statisticsMapper.statisticsCustomerCountWeekly(maps);
     }
 
-    private Map<String, Object> financeStatisticsWeeklyParamToMap(FinanceStatisticsWeeklyParam param) {
+    private Map<String, Object> financeStatisticsWeeklyParamToMap(FinanceStatisticsParam param) {
         Map<String, Object> maps = new HashMap<>();
         maps.put("orderOrigin", param.getOrderOrigin());
         maps.put("rentLengthType", param.getRentLengthType());
@@ -63,7 +62,7 @@ public class FinanceStatisticsWeeklySupport {
      * @param param
      * @return
      */
-    private List<FinanceStatisticsDealsCountBySubCompany> statisticsRentProductCountWeekly(FinanceStatisticsWeeklyParam param) {
+    private List<FinanceStatisticsDealsCountBySubCompany> statisticsRentProductCountWeekly(FinanceStatisticsParam param) {
         if (param == null) {
             return null;
         }
@@ -76,7 +75,7 @@ public class FinanceStatisticsWeeklySupport {
      * @param param
      * @return
      */
-    private List<FinanceStatisticsDealsCountBySubCompany> statisticsReturnProductCountWeekly(FinanceStatisticsWeeklyParam param) {
+    private List<FinanceStatisticsDealsCountBySubCompany> statisticsReturnProductCountWeekly(FinanceStatisticsParam param) {
         if (param == null) {
             return null;
         }
@@ -101,12 +100,12 @@ public class FinanceStatisticsWeeklySupport {
     public int getMaxWeekCountOfYearAndMonth(int year, int month) {
         Calendar currentCalendar = Calendar.getInstance();
         currentCalendar.set(Calendar.YEAR, year);
-        currentCalendar.set(Calendar.MONTH, month);
+        currentCalendar.set(Calendar.MONTH, month - 1);
         currentCalendar.set(Calendar.DAY_OF_MONTH, 1);
         return currentCalendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
     }
 
-    public List<FinanceStatisticsDataWeeklyDO> reStatisticsFinanceDataWeekly(FinanceStatisticsWeeklyParam paramVo) {
+    public List<FinanceStatisticsDataWeeklyDO> reStatisticsFinanceDataWeekly(FinanceStatisticsParam paramVo) {
         int year = paramVo.getYear();
         int month = paramVo.getMonth();
         int weekOfMonth = paramVo.getWeekOfMonth();
@@ -135,7 +134,15 @@ public class FinanceStatisticsWeeklySupport {
         return financeAllStatisticsDataWeekly;
     }
 
-    public List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataMonthly(FinanceStatisticsWeeklyParam paramVo) {
+    public List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataMonthly(FinanceStatisticsParam paramVo) {
+        return statisticsFinanceDataMonthly(paramVo, false);
+    }
+
+    public List<FinanceStatisticsDataWeeklyDO> reStatisticsFinanceDataMonthly(FinanceStatisticsParam paramVo) {
+        return statisticsFinanceDataMonthly(paramVo, true);
+    }
+
+    public List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataMonthly(FinanceStatisticsParam paramVo, boolean needReStatistics) {
         int year = paramVo.getYear();
         int month = paramVo.getMonth();
         int weekOfMonth = paramVo.getWeekOfMonth();
@@ -143,35 +150,43 @@ public class FinanceStatisticsWeeklySupport {
         List<FinanceStatisticsDataWeeklyDO> financeAllStatisticsDataWeekly = new ArrayList<>();
         //统计KA
         paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_KA);
-        List<FinanceStatisticsDataWeeklyDO> financeKAStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
-        if (CollectionUtil.isNotEmpty(financeKAStatisticsDataWeekly)) {
+        List<FinanceStatisticsDataWeeklyDO> financeKAStatisticsDataWeekly = null;
+        if (!needReStatistics) {
+            financeKAStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
+        }
+        fillFinanceStatisticsData(paramVo, isHistoryData, financeAllStatisticsDataWeekly, financeKAStatisticsDataWeekly);
+        //统计电销
+        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_TMK);
+        List<FinanceStatisticsDataWeeklyDO> financeTMKStatisticsDataWeekly = null;
+        if (!needReStatistics) {
+            financeTMKStatisticsDataWeekly =  statisticsFinanceDataWeekly(paramVo, isHistoryData);
+        }
+        fillFinanceStatisticsData(paramVo, isHistoryData, financeAllStatisticsDataWeekly, financeTMKStatisticsDataWeekly);
+        // 统计大客户渠道
+        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_BCC);
+        List<FinanceStatisticsDataWeeklyDO> financeBCCStatisticsDataWeekly = null;
+        if (!needReStatistics) {
+            financeBCCStatisticsDataWeekly =  statisticsFinanceDataWeekly(paramVo, isHistoryData);
+        }
+        fillFinanceStatisticsData(paramVo, isHistoryData, financeAllStatisticsDataWeekly, financeBCCStatisticsDataWeekly);
+        //将此次重新统计的数据保存到数据库
+        if (needReStatistics && CollectionUtil.isNotEmpty(financeAllStatisticsDataWeekly)) {
+            freshStatisticsDataToDB(year, month, weekOfMonth, financeAllStatisticsDataWeekly);
+        }
+        return financeAllStatisticsDataWeekly;
+    }
+
+    private void fillFinanceStatisticsData(FinanceStatisticsParam paramVo, boolean isHistoryData, List<FinanceStatisticsDataWeeklyDO> financeAllStatisticsDataWeekly, List<FinanceStatisticsDataWeeklyDO> financeKAStatisticsDataWeekly) {
+        if (CollectionUtil.isEmpty(financeKAStatisticsDataWeekly)) {
             financeKAStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData, true);
             if (CollectionUtil.isNotEmpty(financeKAStatisticsDataWeekly)) {
                 financeAllStatisticsDataWeekly.addAll(financeKAStatisticsDataWeekly);
             }
+        } else {
+            financeAllStatisticsDataWeekly.addAll(financeKAStatisticsDataWeekly);
         }
-        //统计电销
-        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_TMK);
-        List<FinanceStatisticsDataWeeklyDO> financeTMKStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
-        if (CollectionUtil.isNotEmpty(financeTMKStatisticsDataWeekly)) {
-            financeTMKStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData, true);
-            if (CollectionUtil.isNotEmpty(financeTMKStatisticsDataWeekly)) {
-                financeAllStatisticsDataWeekly.addAll(financeTMKStatisticsDataWeekly);
-            }
-        }
-        // 统计大客户渠道
-        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_BCC);
-        List<FinanceStatisticsDataWeeklyDO> financeBCCStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
-        if (CollectionUtil.isNotEmpty(financeBCCStatisticsDataWeekly)) {
-            financeBCCStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData, true);
-            if (CollectionUtil.isNotEmpty(financeBCCStatisticsDataWeekly)) {
-                financeAllStatisticsDataWeekly.addAll(financeBCCStatisticsDataWeekly);
-            }
-        }
-        //将此次重新统计的数据保存到数据库
-        //freshStatisticsDataToDB(year, month, weekOfMonth, financeAllStatisticsDataWeekly);
-        return financeAllStatisticsDataWeekly;
     }
+
 
     private void freshStatisticsDataToDB(int year, int month, int weekOfMonth, List<FinanceStatisticsDataWeeklyDO> financeAllStatisticsDataWeekly) {
         Map<String,Object> deleteParamMap = new HashMap<>();
@@ -184,7 +199,7 @@ public class FinanceStatisticsWeeklySupport {
         financeStatisticsDataWeeklyMapper.saveList(financeAllStatisticsDataWeekly);
     }
 
-    public List<FinanceStatisticsDataWeeklyDO> statisticsDiffFinanceDataWeekly(FinanceStatisticsWeeklyParam paramVo){
+    public List<FinanceStatisticsDataWeeklyDO> statisticsDiffFinanceDataWeekly(FinanceStatisticsParam paramVo){
         int year = paramVo.getYear();
         int month = paramVo.getMonth();
         int weekOfMonth = paramVo.getWeekOfMonth();
@@ -415,7 +430,7 @@ public class FinanceStatisticsWeeklySupport {
      * @param isHistoryData
      * @return
      */
-    private List<FinanceStatisticsDataWeeklyDO> getDiffStatisticsFinanceDataWeekly(List<FinanceStatisticsDataWeeklyDO> currentWeekStatisticsDataWeeklyDOList, FinanceStatisticsWeeklyParam paramVo, boolean isHistoryData) {
+    private List<FinanceStatisticsDataWeeklyDO> getDiffStatisticsFinanceDataWeekly(List<FinanceStatisticsDataWeeklyDO> currentWeekStatisticsDataWeeklyDOList, FinanceStatisticsParam paramVo, boolean isHistoryData) {
         if (CollectionUtil.isEmpty(currentWeekStatisticsDataWeeklyDOList)) {
             currentWeekStatisticsDataWeeklyDOList = statisticsFinanceDataWeekly(paramVo, isHistoryData);
         }
@@ -440,8 +455,8 @@ public class FinanceStatisticsWeeklySupport {
      * @param paramVo
      * @return
      */
-    private List<FinanceStatisticsDataWeeklyDO> getLastWeekStatisticsFinanceDataWeekly(FinanceStatisticsWeeklyParam paramVo) {
-        FinanceStatisticsWeeklyParam lastWeekParamVo = new FinanceStatisticsWeeklyParam();
+    private List<FinanceStatisticsDataWeeklyDO> getLastWeekStatisticsFinanceDataWeekly(FinanceStatisticsParam paramVo) {
+        FinanceStatisticsParam lastWeekParamVo = new FinanceStatisticsParam();
         int lastWeek = paramVo.getWeekOfMonth() - 1;
         if (lastWeek <= 0) {
             return null;
@@ -451,7 +466,7 @@ public class FinanceStatisticsWeeklySupport {
         return statisticsFinanceDataWeekly(lastWeekParamVo, true);
     }
 
-    private List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataWeekly(FinanceStatisticsWeeklyParam paramVo, boolean isHistoryData){
+    private List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataWeekly(FinanceStatisticsParam paramVo, boolean isHistoryData){
         return statisticsFinanceDataWeekly(paramVo, isHistoryData, false);
     }
 
@@ -462,7 +477,7 @@ public class FinanceStatisticsWeeklySupport {
      * @param needReStatistics  是否需要重新统计（供重新统计历史周数据时使用）
      * @return
      */
-    private List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataWeekly(FinanceStatisticsWeeklyParam paramVo, boolean isHistoryData, boolean needReStatistics) {
+    private List<FinanceStatisticsDataWeeklyDO> statisticsFinanceDataWeekly(FinanceStatisticsParam paramVo, boolean isHistoryData, boolean needReStatistics) {
        int year = paramVo.getYear();
        int month = paramVo.getMonth();
        int weekOfMonth = paramVo.getWeekOfMonth();
@@ -481,15 +496,18 @@ public class FinanceStatisticsWeeklySupport {
         int maxWeek = currentCalendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
         if ( !isHistoryData || needReStatistics) {
             // 统计当月累计数据
-            FinanceStatisticsWeeklyParam param = new FinanceStatisticsWeeklyParam();
+            FinanceStatisticsParam param = new FinanceStatisticsParam();
             param.setOrderOrigin(statisticsOrderOriginType);
+            StatisticsInterval statisticsInverval = createStatisticsInterval(year, month, weekOfMonth);
             if (paramVo.getStatisticsStartTime() == null) {
-                param.setStatisticsStartTime(DateUtil.getStartMonthDate(currentMonthDate));
+                //param.setStatisticsStartTime(DateUtil.getStartMonthDate(currentMonthDate));
+                param.setStatisticsStartTime(statisticsInverval.getStatisticsStartTime());
             } else {
                 param.setStatisticsStartTime(paramVo.getStatisticsStartTime());
             }
             if (paramVo.getStatisticsEndTime() == null) {
-                param.setStatisticsEndTime(DateUtil.getEndMonthDate(currentMonthDate));
+                //param.setStatisticsEndTime(DateUtil.getEndMonthDate(currentMonthDate));
+                param.setStatisticsEndTime(statisticsInverval.getStatisticsEndTime());
             } else {
                 param.setStatisticsEndTime(paramVo.getStatisticsEndTime());
             }
@@ -509,7 +527,7 @@ public class FinanceStatisticsWeeklySupport {
                 rentProductDealsCountMap = ListUtil.listToMap(rentProductDealsCountBySubCompany, "subCompanyId");
                 List<FinanceStatisticsDealsCountBySubCompany> returnProductDealsCountBySubCompany =  statisticsReturnProductCountWeekly(param);
                 returnProductDealsCountMap = ListUtil.listToMap(returnProductDealsCountBySubCompany, "subCompanyId");
-                param.setNewCustomerKey("-" + year);
+                param.setNewCustomerKey("" + year);
                 List<FinanceStatisticsDealsCountBySubCompany> newCustomerDealsCountBySubCompany =  statisticsCustomerCountWeekly(param);
                 newCustomerDealsCountMap = ListUtil.listToMap(newCustomerDealsCountBySubCompany, "subCompanyId");
                 // 遍历各个执行分公司
@@ -574,6 +592,54 @@ public class FinanceStatisticsWeeklySupport {
             return defaultValue;
         }
         return financeStatisticsDealsCountBySubCompany.getDealsCount();
+    }
+
+    public class StatisticsInterval {
+        Date statisticsStartTime = null;
+        Date statisticsEndTime = null;
+
+        public Date getStatisticsStartTime() {
+            return statisticsStartTime;
+        }
+
+        public void setStatisticsStartTime(Date statisticsStartTime) {
+            this.statisticsStartTime = statisticsStartTime;
+        }
+
+        public Date getStatisticsEndTime() {
+            return statisticsEndTime;
+        }
+
+        public void setStatisticsEndTime(Date statisticsEndTime) {
+            this.statisticsEndTime = statisticsEndTime;
+        }
+    }
+
+    public StatisticsInterval createStatisticsInterval(int year, int month, int weekOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month - 1);  // 因为日历获取的月份比实际月份小1
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Date firstDayInCurrentMonth = calendar.getTime();
+        Date statisticsStartTime = DateUtil.getStartMonthDate(firstDayInCurrentMonth); // 统计开始时间
+        Date statisticsEndTime = null;  //统计结束时间
+        Date endTimeInCurrentMonth = DateUtil.getEndMonthDate(firstDayInCurrentMonth);
+        calendar.set(Calendar.WEEK_OF_MONTH, weekOfMonth);
+        calendar.set(Calendar.DAY_OF_WEEK, 7);
+        calendar.set(Calendar.HOUR_OF_DAY ,23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        Date lastDayInWeek = calendar.getTime();
+        int monthOfLastDayInWeek = DateUtil.getMounth(lastDayInWeek);//周末所在月份
+        if (monthOfLastDayInWeek > month) {  // 如果周末所在月份大于当前统计的月份
+            statisticsEndTime = endTimeInCurrentMonth;  //月末为统计结束时间
+        } else {
+            statisticsEndTime = calendar.getTime();    //周末为统计结束时间
+        }
+        StatisticsInterval statisticsInterval = new StatisticsInterval();
+        statisticsInterval.setStatisticsStartTime(statisticsStartTime);
+        statisticsInterval.setStatisticsEndTime(statisticsEndTime);
+        return statisticsInterval;
     }
 
     @Autowired

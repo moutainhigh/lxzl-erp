@@ -23,13 +23,22 @@
                         <div class="section row">
                             <form class="admin-form">
                                 <div class="col-md-3">
-                                    <label for="monthTime" class="field-label">选择年月</label>
-                                    <label for="monthTime" class="input-group" style="height:42px;">
-                                        <input type="text" name="monthTime" id="monthTime" data-type="date" data-format="yyyy-MM" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择年月"  style="height:42px;">
-                                        <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                    <label for="statisticsInterval" class="field-label">财务统计类型</label>
+                                    <label class="field select">
+                                        <select id="statisticsInterval" class="bradius" name="statisticsInterval" data-defaultvalue="1">
+                                            <option value="">请选择</option>
+                                        </select>
+                                        <i class="arrow"></i>
                                     </label>
                                 </div>
                                 <div class="col-md-3">
+                                    <label for="monthTime" class="field-label">选择年月</label>
+                                    <label for="monthTime" class="input-group" style="height:42px;">
+                                        <input type="text" name="monthTime" id="monthTime" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择年月" style="height:42px;" readonly="readonly">
+                                        <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                    </label>
+                                </div>
+                                <div class="col-md-3" id="weekInput">
                                     <label for="weekNumber" class="field-label">第几周</label>
                                     <label for="weekNumber" class="field prepend-icon">
                                         <input type="text" name="weekNumber" id="weekNumber" class="gui-input number bradius" />
@@ -40,13 +49,9 @@
                         </div>
                         <div class="section row mt20">
                             <div class="col-md-12">
-                                <form id="exportForm" class="hide">
-                                    <input type="text" name="year"/>
-                                    <input type="text" name="month"/>
-                                    <input type="text" name="weekOfMonth"/>
-                                </form>
-                                <a id="recountButton" class="btn btn-default btn-sm mr20">重新统计</a>
-                                <a id="exportButton" class="btn btn-default btn-sm">导出财务周报</a>
+                                <form id="exportForm" class="hide"></form>
+                                <a id="exportButton" class="btn btn-default btn-sm mr20">导出财务统计</a>
+                                <a id="recountButton" class="btn btn-default btn-sm">重新统计</a>
                             </div>
                         </div>
                     </div>

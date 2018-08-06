@@ -1,13 +1,14 @@
 package com.lxzl.erp.core.service.export.impl;
 
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.StatisticsIntervalType;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.statistics.FinanceStatisticsWeeklyParam;
+import com.lxzl.erp.common.domain.statistics.FinanceStatisticsParam;
 import com.lxzl.erp.common.domain.statistics.pojo.FinanceStatisticsDataWeeklyExcel;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.core.service.export.ExcelExportConfigGroup;
 import com.lxzl.erp.core.service.export.ExcelExportService;
-import com.lxzl.erp.core.service.export.ExportStatisticsFinanceDataWeeklyService;
+import com.lxzl.erp.core.service.export.ExportStatisticsFinanceDataService;
 import com.lxzl.erp.core.service.export.impl.support.ExcelExportSupport;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ import java.util.List;
  */
 
 @Service
-public class ExportStatisticsFinanceDataWeeklyServiceImpl implements ExportStatisticsFinanceDataWeeklyService {
+public class ExportStatisticsFinanceDataServiceImpl implements ExportStatisticsFinanceDataService {
 
     @Autowired
     private StatisticsService statisticsService;
@@ -34,7 +35,27 @@ public class ExportStatisticsFinanceDataWeeklyServiceImpl implements ExportStati
     private ExcelExportService excelExportService;
 
     @Override
-    public ServiceResult<String, String> exportStatisticsFinanceDataWeekly(FinanceStatisticsWeeklyParam param, HttpServletResponse response) {
+    public ServiceResult<String, String> exportStatisticsFinanceData(FinanceStatisticsParam param, HttpServletResponse response){
+        ServiceResult<String, String> excelServiceResult = new ServiceResult<>();
+        if (param == null || param.getStatisticsInterval() == null) {
+            excelServiceResult = excelExportService.export(new ArrayList<FinanceStatisticsDataWeeklyExcel>(), ExcelExportConfigGroup.statisticsFinanceWeeklyConfig, ExcelExportSupport.formatFileName("财务报表"), "sheet1", response);
+            excelServiceResult.setErrorCode(ErrorCode.STATISTICS_FINANCE_PARAM_INTERVAL_INVALID);
+            return excelServiceResult;
+        }
+        if (StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY == param.getStatisticsInterval()) {
+            return exportStatisticsFinanceDataWeekly(param, response);
+        } else if (StatisticsIntervalType.STATISTICS_INTERVAL_MONTHLY == param.getStatisticsInterval()){
+            return exportStatisticsFinanceDataMonthly(param, response);
+        } else if (StatisticsIntervalType.STATISTICS_INTERVAL_YEARLY == param.getStatisticsInterval()){
+            // TODO
+        }
+        excelServiceResult = excelExportService.export(new ArrayList<FinanceStatisticsDataWeeklyExcel>(), ExcelExportConfigGroup.statisticsFinanceWeeklyConfig, ExcelExportSupport.formatFileName("财务报表"), "sheet1", response);
+        excelServiceResult.setErrorCode(ErrorCode.STATISTICS_FINANCE_WEEKLY_PARAM_INVALID);
+        return excelServiceResult;
+    }
+
+    @Override
+    public ServiceResult<String, String> exportStatisticsFinanceDataWeekly(FinanceStatisticsParam param, HttpServletResponse response) {
         ServiceResult<String, String> excelServiceResult = new ServiceResult<>();
 
         if (param == null || param.getYear() == null|| param.getMonth() == null || param.getWeekOfMonth() == null) {
@@ -51,7 +72,7 @@ public class ExportStatisticsFinanceDataWeeklyServiceImpl implements ExportStati
     }
 
     @Override
-    public ServiceResult<String, String> exportStatisticsFinanceDataMonthly(FinanceStatisticsWeeklyParam param, HttpServletResponse response) {
+    public ServiceResult<String, String> exportStatisticsFinanceDataMonthly(FinanceStatisticsParam param, HttpServletResponse response) {
         ServiceResult<String, String> excelServiceResult = new ServiceResult<>();
 
         if (param == null || param.getYear() == null|| param.getMonth() == null) {

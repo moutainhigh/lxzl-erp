@@ -3,13 +3,10 @@ package com.lxzl.erp.core.service.statistics;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.statistics.*;
 import com.lxzl.erp.common.domain.statistics.pojo.*;
-import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataWeeklyDO;
-import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDealsCountBySubCompany;
 import com.lxzl.se.core.service.BaseService;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -71,7 +68,9 @@ public interface StatisticsService extends BaseService {
     ServiceResult<String,String> createStatisticsSalesmanMonth(Date date);
 
     ServiceResult<String,Boolean> statisticsFinanceDataWeeklyNow();
-    ServiceResult<String, Boolean> reStatisticsFinanceDataWeekly(FinanceStatisticsWeeklyParam paramVo);
-    ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyToExcel(FinanceStatisticsWeeklyParam paramVo);
-    ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataMonthlyToExcel(FinanceStatisticsWeeklyParam paramVo);
+    ServiceResult<String, Boolean> reStatisticsFinanceDataWeekly(FinanceStatisticsParam paramVo);
+    ServiceResult<String, Boolean> reStatisticsFinanceDataMonthLy(FinanceStatisticsParam paramVo);
+    ServiceResult<String, Boolean> reStatisticsFinanceData(FinanceStatisticsParam paramVo);
+    ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyToExcel(FinanceStatisticsParam paramVo);
+    ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataMonthlyToExcel(FinanceStatisticsParam paramVo);
 }

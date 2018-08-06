@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.common.constant.StatisticsIntervalType;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.statistics.*;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIndexInfo;
@@ -9,7 +10,6 @@ import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
-import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataWeeklyDO;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +19,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -191,8 +187,22 @@ public class StatisticsController extends BaseController {
      * @return
      */
     @RequestMapping(value = "reStatisticsFinanceDataWeekly", method = RequestMethod.POST)
-    public Result reStatisticsFinanceDataWeekly(@RequestBody @Validated FinanceStatisticsWeeklyParam financeStatisticsWeeklyParam, BindingResult validResult) {
-        ServiceResult<String, Boolean> serviceResult = statisticsService.reStatisticsFinanceDataWeekly(financeStatisticsWeeklyParam);
+    public Result reStatisticsFinanceDataWeekly(@RequestBody @Validated FinanceStatisticsParam financeStatisticsParam, BindingResult validResult) {
+        if (financeStatisticsParam != null) {
+            financeStatisticsParam.setStatisticsInterval(StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY);
+        }
+        ServiceResult<String, Boolean> serviceResult = statisticsService.reStatisticsFinanceDataWeekly(financeStatisticsParam);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 重新统计历史财务数据
+     * @return
+     */
+    @RequestMapping(value = "reStatisticsFinanceData", method = RequestMethod.POST)
+    public Result reStatisticsFinanceData(@RequestBody @Validated FinanceStatisticsParam financeStatisticsParam, BindingResult validResult) {
+
+        ServiceResult<String, Boolean> serviceResult = statisticsService.reStatisticsFinanceData(financeStatisticsParam);
         return resultGenerator.generate(serviceResult);
     }
 
