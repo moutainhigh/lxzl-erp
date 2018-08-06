@@ -150,7 +150,8 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         //导出客户对账单
         if (DelayedTaskType.DELAYED_TASK_EXPORT_CUSTOMER_STATEMENT.equals(delayedTask.getTaskType())) {
             StatementOrderMonthQueryParam param = FastJsonUtil.toBean(delayedTask.getRequestJson(), StatementOrderMonthQueryParam.class);
-                result = getCustomerStatementDelayedTask(param,result,delayedTask);
+            Integer userId = userSupport.getCurrentUserId();
+            result = getCustomerStatementDelayedTask(param,result,delayedTask,userId);
         }
         return result;
     }
@@ -190,7 +191,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         String fileUrl = delayedTask.getFileUrl();
         InputStream inputStream = null;
         OutputStream stream = null;
-        if (fileUrl != null && fileUrl.equals("")) {
+        if (fileUrl != null && !fileUrl.equals("")) {
             try {
                 inputStream = FileUtil.getFileInputStream(fileUrl);
                 if (inputStream == null) {
@@ -218,6 +219,8 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                         inputStream.close(); // 关闭流
                     } catch (IOException e) {
                         logger.error("inputStream close IOException:" + e.getMessage());
+                        result.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+                        return result;
                     }
                 }
                 if (stream != null) {
@@ -225,20 +228,24 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                         stream.flush();
                         stream.close();
                     } catch (IOException e) {
-                        logger.error("inputStream close IOException:" + e.getMessage());
+                        logger.error("OutputStream close IOException:" + e.getMessage());
+                        result.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+                        return result;
                     }
                 }
-
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
             }
+        }else {
+            result.setErrorCode(ErrorCode.FILE_IS_NULL);
+            return result;
         }
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
     }
 
     /*
      *导出客户对账单调用方法
      */
-    public ServiceResult<String, DelayedTask> getCustomerStatementDelayedTask(StatementOrderMonthQueryParam statementOrderMonthQueryParam,ServiceResult<String, DelayedTask> result,DelayedTask delayedTask) throws Exception {
+    public ServiceResult<String, DelayedTask> getCustomerStatementDelayedTask(StatementOrderMonthQueryParam statementOrderMonthQueryParam,ServiceResult<String, DelayedTask> result,DelayedTask delayedTask,Integer userId) throws Exception {
         DelayedTaskConfigExportStatementDO delayedTaskConfigExportStatementDO = delayedTaskConfigExportStatementMapper.findByCustomerNo(statementOrderMonthQueryParam.getStatementOrderCustomerNo());
         Date date = new Date();
         //是特殊表中的用户，则开始线程导出对账单数据
@@ -296,7 +303,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     delayedTaskMapper.save(newdelayedTaskDO);
                 }
                 //调用线程导出对账单
-                delayedTaskExportCustomerStatementSupport.exportCustomerStatementAsynchronous(newdelayedTaskDO, date,statementOrderMonthQueryParam,getSession());
+                delayedTaskExportCustomerStatementSupport.exportCustomerStatementAsynchronous(newdelayedTaskDO, date,statementOrderMonthQueryParam,userId);
                 delayedTask = ConverterUtil.convert(newdelayedTaskDO, DelayedTask.class);
                 result.setResult(delayedTask);
                 result.setErrorCode(ErrorCode.SUCCESS);
@@ -352,7 +359,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     accountBalance = customerAccount.getBalanceAmount();
                 }
 
-                ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam);
+                ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam,userId);
                 if (!ErrorCode.SUCCESS.equals(stringListServiceResult.getErrorCode())) {
                     result.setErrorCode(stringListServiceResult.getErrorCode());
                     //导出失败更新任务列表状态
@@ -1701,34 +1708,34 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
      *
      * @return
      */
-    public static HttpSession getSession() {
-        HttpServletRequest request = getRequest();
-        String tempSessionId = request.getParameter("sessionId");
-        HttpSession session = request.getSession();
-        String sessionId = session.getId();
-        if(StringUtil.isNotEmpty(tempSessionId) && !tempSessionId.equals(sessionId)){
-            sessionId = tempSessionId;
-            if(sessionMap.containsKey(sessionId)){
-                session = sessionMap.get(sessionId);
-            }
-        }
-        if(!sessionMap.containsKey(sessionId)){
-            sessionMap.put(sessionId, session);
-        }
-        return session;
-    }
-
-
-    private static final Map<String, HttpSession> sessionMap = new HashMap<String, HttpSession>();
-
-    public static HttpSession getSession(String sessionId){
-        HttpSession session = sessionMap.get(sessionId);
-        return session == null ? getSession() : session;
-    }
-
-    public static void removeSession(String sessionId){
-        if(sessionMap.containsKey(sessionId)){
-            sessionMap.remove(sessionId);
-        }
-    }
+//    public static HttpSession getSession() {
+//        HttpServletRequest request = getRequest();
+//        String tempSessionId = request.getParameter("sessionId");
+//        HttpSession session = request.getSession();
+//        String sessionId = session.getId();
+//        if(StringUtil.isNotEmpty(tempSessionId) && !tempSessionId.equals(sessionId)){
+//            sessionId = tempSessionId;
+//            if(sessionMap.containsKey(sessionId)){
+//                session = sessionMap.get(sessionId);
+//            }
+//        }
+//        if(!sessionMap.containsKey(sessionId)){
+//            sessionMap.put(sessionId, session);
+//        }
+//        return session;
+//    }
+//
+//
+//    private static final Map<String, HttpSession> sessionMap = new HashMap<String, HttpSession>();
+//
+//    public static HttpSession getSession(String sessionId){
+//        HttpSession session = sessionMap.get(sessionId);
+//        return session == null ? getSession() : session;
+//    }
+//
+//    public static void removeSession(String sessionId){
+//        if(sessionMap.containsKey(sessionId)){
+//            sessionMap.remove(sessionId);
+//        }
+//    }
 }
