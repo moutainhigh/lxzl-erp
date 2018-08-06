@@ -119,7 +119,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="15" class="text-center">没有查询到任务执行者</td>
+                                <td valign="top" colspan="17" class="text-center">没有查询到任务执行者</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
