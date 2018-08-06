@@ -46,7 +46,7 @@ public class ActivityServiceImpl implements ActivityService {
             resultString = EntityUtils.toString(httpresponse.getEntity());
         } catch (IOException e) {
             e.printStackTrace();
-//            serviceResult.setErrorCode(ErrorCode.MALL_SYSTEM_CONNECT_EXCEPTION);
+            serviceResult.setErrorCode(ErrorCode.MALL_SYSTEM_CONNECT_EXCEPTION);
             return serviceResult;
         }
         try {

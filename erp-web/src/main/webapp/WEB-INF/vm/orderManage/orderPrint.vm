@@ -218,7 +218,7 @@
                         <th class="text-center">总价</th>
                         <th class="text-center">支付方式</th>
                         <th class="text-center">押金</th>
-                        <th class="text-center" style="white-space: nowrap;">首付租金</th>
+                        <th class="text-center" style="white-space: nowrap;">首付金额</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -286,7 +286,7 @@
                         <th class="text-center">期限</th>
                         <th class="text-center">支付方式</th>
                         <th class="text-center">押金</th>
-                        <th class="text-center" style="white-space: nowrap;">首付租金</th>
+                        <th class="text-center" style="white-space: nowrap;">首付金额</th>
                     </tr>
                     </thead>
                     <tbody>

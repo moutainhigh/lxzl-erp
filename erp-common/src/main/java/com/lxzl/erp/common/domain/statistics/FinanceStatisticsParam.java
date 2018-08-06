@@ -12,12 +12,13 @@ import java.util.Date;
  * Time: 18:16
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FinanceStatisticsWeeklyParam extends BasePageParam {
+public class FinanceStatisticsParam extends BasePageParam {
     private Integer orderOrigin;
     private Integer rentLengthType;
     private Date statisticsStartTime;
     private Date statisticsEndTime;
     private String newCustomerKey;
+    private Integer statisticsInterval;
     private Integer year;
     private Integer month;
     private Integer weekOfMonth;
@@ -60,6 +61,14 @@ public class FinanceStatisticsWeeklyParam extends BasePageParam {
 
     public void setNewCustomerKey(String newCustomerKey) {
         this.newCustomerKey = newCustomerKey;
+    }
+
+    public Integer getStatisticsInterval() {
+        return statisticsInterval;
+    }
+
+    public void setStatisticsInterval(Integer statisticsInterval) {
+        this.statisticsInterval = statisticsInterval;
     }
 
     public Integer getYear() {

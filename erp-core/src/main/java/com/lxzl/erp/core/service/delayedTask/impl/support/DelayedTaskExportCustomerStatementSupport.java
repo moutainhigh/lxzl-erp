@@ -271,7 +271,7 @@ public class DelayedTaskExportCustomerStatementSupport {
             delayedTaskDO.setUpdateTime(date);
             delayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             delayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
-            delayedTaskDO.setRemark(customerNoParam + "无对账单");
+            delayedTaskDO.setRemark(customerDO.getCustomerName() + "无对账单");
             delayedTaskMapper.update(delayedTaskDO);
             if (delayedTaskDO.getCreateUser() != null) {
                 MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
@@ -781,7 +781,7 @@ public class DelayedTaskExportCustomerStatementSupport {
                                         delayedTaskDO.setUpdateTime(date);
                                         delayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                                         delayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                                        delayedTaskDO.setRemark("退货时间或续租时间parse出错");
+                                        delayedTaskDO.setRemark((customerName + "对账单") +".xlsx"+"导出异常:"+"退货时间或续租时间parse出错");
                                         delayedTaskMapper.update(delayedTaskDO);
                                         if (delayedTaskDO.getCreateUser() != null) {
                                             MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
@@ -854,7 +854,7 @@ public class DelayedTaskExportCustomerStatementSupport {
                                             delayedTaskDO.setUpdateTime(date);
                                             delayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                                             delayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                                            delayedTaskDO.setRemark("退货时间parse出错");
+                                            delayedTaskDO.setRemark((customerName + "对账单") +".xlsx"+"导出异常:"+"退货时间parse出错");
                                             delayedTaskMapper.update(delayedTaskDO);
                                             if (delayedTaskDO.getCreateUser() != null) {
                                                 MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
@@ -899,7 +899,7 @@ public class DelayedTaskExportCustomerStatementSupport {
                                         delayedTaskDO.setUpdateTime(date);
                                         delayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                                         delayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                                        delayedTaskDO.setRemark("退货时间parse出错");
+                                        delayedTaskDO.setRemark((customerName + "对账单") +".xlsx"+"导出异常:"+"退货时间parse出错");
                                         delayedTaskMapper.update(delayedTaskDO);
                                         if (delayedTaskDO.getCreateUser() != null) {
                                             MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
@@ -1356,7 +1356,7 @@ public class DelayedTaskExportCustomerStatementSupport {
                 delayedTaskDO.setUpdateTime(date);
                 delayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 delayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                delayedTaskDO.setRemark("月份时间parse出错");
+                delayedTaskDO.setRemark((customerName + "对账单") +".xlsx"+"导出异常:"+"月份时间parse出错");
                 delayedTaskMapper.update(delayedTaskDO);
                 if (delayedTaskDO.getCreateUser() != null) {
                     MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
@@ -1378,6 +1378,7 @@ public class DelayedTaskExportCustomerStatementSupport {
         }
         // TODO: 2018\7\27 0027 将XSSFWorkbook存储到指定位置
         String fileName = ConstantConfig.exportFileUrl + (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
+        String saveFileName = ConstantConfig.downloadStatementUrl + (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
 //        String fileName = "D:\\xxxxxxx\\"+ (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
         try {
             FileUtil.outputExcel(fileName,hssfWorkbook);
@@ -1386,11 +1387,11 @@ public class DelayedTaskExportCustomerStatementSupport {
             delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
             delayedTaskDO.setThreadName(null);
             delayedTaskDO.setProgressRate(1.0000);
-            delayedTaskDO.setFileUrl(fileName);
+            delayedTaskDO.setFileUrl(saveFileName);
             delayedTaskDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             delayedTaskDO.setCreateTime(date);
             delayedTaskDO.setUpdateTime(date);
-            delayedTaskDO.setRemark(null);
+            delayedTaskDO.setRemark((customerName + "对账单") +".xlsx"+"导出成功");
             delayedTaskMapper.update(delayedTaskDO);
             // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
             delayedTaskMapper.subQueueNumber();
@@ -1409,11 +1410,11 @@ public class DelayedTaskExportCustomerStatementSupport {
             delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
             delayedTaskDO.setThreadName(null);
             delayedTaskDO.setProgressRate(0.0000);
-            delayedTaskDO.setFileUrl(fileName);
+            delayedTaskDO.setFileUrl(null);
             delayedTaskDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             delayedTaskDO.setCreateTime(date);
             delayedTaskDO.setUpdateTime(date);
-            delayedTaskDO.setRemark("导出异常");//业务异常
+            delayedTaskDO.setRemark((customerName + "对账单")+"导出异常");//业务异常
             delayedTaskMapper.update(delayedTaskDO);
             if (delayedTaskDO.getCreateUser() != null) {
                 MessageThirdChannel messageThirdChannel = new MessageThirdChannel();

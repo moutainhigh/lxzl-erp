@@ -31,10 +31,11 @@ public class UserControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateUser() throws Exception {
         User user = new User();
-        user.setUserId(500004);
+        user.setUserId(500355);
+        user.setIsDisabled(0);
         List<Role> roleList = new ArrayList<>();
         Role role = new Role();
-        role.setRoleId(600002);
+        role.setRoleId(600119);
         roleList.add(role);
         user.setRoleList(roleList);
         TestResult testResult = getJsonTestResult("/user/update",user);
@@ -93,6 +94,14 @@ public class UserControllerTest extends ERPUnTransactionalTest {
         User user = new User();
         user.setUserId(500023);
         TestResult testResult = getJsonTestResult("/user/enableUser",user);
+    }
+
+    @Test
+    public void testNull() {
+        Integer a = null;
+        if(a == 1){
+            System.out.println("111111");
+        }
     }
 
 }
