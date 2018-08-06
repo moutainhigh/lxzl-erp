@@ -363,7 +363,19 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 if (CollectionUtil.isEmpty(checkStatementOrderList)) {
                     dingDingSupport.dingDingSendMessage(customerNoParam + "无对账单");
                     //导出失败更新任务列表状态
-                    exoprtFailedUpdateDelayedTaskDO(result, date, delayedTaskDO,customerName);
+                    delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_EXECUTION_FAILED);//排队中
+                    delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
+                    delayedTaskDO.setThreadName(null);
+                    delayedTaskDO.setProgressRate(0.0000);
+                    delayedTaskDO.setFileUrl(null);
+                    delayedTaskDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+                    delayedTaskDO.setCreateTime(date);
+                    delayedTaskDO.setUpdateTime(date);
+                    delayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    delayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    delayedTaskDO.setRemark(customerNoParam + "无对账单");
+
+                    delayedTaskMapper.update(delayedTaskDO);
                     return result;
                 }
 
