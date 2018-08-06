@@ -405,4 +405,109 @@
 			</foreach>
 		</if>
 	</sql>
+
+	<sql id="order_control_workbench">
+		<if test="maps.orderPermissionParam!=null">
+			AND (
+			<if test="maps.orderPermissionParam.permissionUserIdList!= null" >
+				(eo.create_user in
+				<foreach item="item" index="index" collection="maps.orderPermissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.union_user in
+				<foreach item="item" index="index" collection="maps.orderPermissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.owner in
+				<foreach item="item" index="index" collection="maps.orderPermissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+			<if test="maps.orderPermissionParam.permissionSubCompanyId!= null" >
+				OR (
+				eo.order_sub_company_id = #{maps.orderPermissionParam.permissionSubCompanyId, jdbcType=INTEGER}
+				)
+			</if>
+			<if test="maps.orderPermissionParam.permissionSubCompanyId!= null" >
+				OR (
+				eo.delivery_sub_company_id = #{maps.orderPermissionParam.permissionSubCompanyId, jdbcType=INTEGER}
+				)
+			</if>
+			)
+		</if>
+	</sql>
+	<sql id="k3_return_order_control_workbench">
+		<if test="maps.k3ReturnOrderPermissionParam!=null">
+			AND
+			(
+			1=1
+			<if test="maps.k3ReturnOrderPermissionParam.permissionSubCompanyIdForDelivery!= null &amp;&amp; maps.k3ReturnOrderPermissionParam.permissionUserIdList!= null">
+				AND (ekro.delivery_sub_company_id = #{maps.k3ReturnOrderPermissionParam.permissionSubCompanyIdForDelivery} OR
+				ekro.create_user in
+				<foreach item="item" index="index" collection="maps.k3ReturnOrderPermissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+			<if test="maps.k3ReturnOrderPermissionParam.permissionSubCompanyIdForDelivery!= null &amp;&amp; maps.k3ReturnOrderPermissionParam.permissionUserIdList== null">
+				AND ekro.delivery_sub_company_id = #{maps.k3ReturnOrderPermissionParam.permissionSubCompanyIdForDelivery}
+			</if>
+			<if test="maps.k3ReturnOrderPermissionParam.permissionSubCompanyIdForDelivery== null &amp;&amp; maps.k3ReturnOrderPermissionParam.permissionUserIdList!= null">
+				AND ekro.create_user in
+				<foreach item="item" index="index" collection="maps.k3ReturnOrderPermissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			)
+		</if>
+	</sql>
+	<sql id="customer_company_control_workbench">
+		<if test="maps.companyCustomerPermissionParam!=null &amp;&amp; maps.companyCustomerPermissionParam.permissionUserIdList != null">
+			AND
+			<if test="maps.companyCustomerPermissionParam.permissionUserIdList!= null" >
+				(ecc.create_user in
+				<foreach item="item" index="index" collection="maps.companyCustomerPermissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.union_user in
+				<foreach item="item" index="index" collection="maps.companyCustomerPermissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.owner in
+				<foreach item="item" index="index" collection="maps.companyCustomerPermissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+		</if>
+	</sql>
+
+	<sql id="person_customer_control_workbench">
+		<if test="maps.personCustomerPermissionParam != null &amp;&amp; maps.personCustomerPermissionParam.permissionUserIdList != null">
+			AND
+			<if test="maps.personCustomerPermissionParam.permissionUserIdList!= null" >
+				(ec.create_user in
+				<foreach item="item" index="index" collection="maps.personCustomerPermissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.union_user in
+				<foreach item="item" index="index" collection="maps.personCustomerPermissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.owner in
+				<foreach item="item" index="index" collection="maps.personCustomerPermissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+		</if>
+	</sql>
 </mapper>
