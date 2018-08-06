@@ -28,10 +28,11 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
      * */
     @Test
     public void queryWaitVerifyWorkflowLinkCount() throws Exception {
-        WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
+        WorkbenchQueryParam workbenchQueryParam = new WorkbenchQueryParam();
 //        workflowLinkQueryParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
 //        workflowLinkQueryParam.setIsWorkbench(true);
-        TestResult testResult = getJsonTestResult("/workbench/queryWaitVerifyWorkflowLinkCount", workflowLinkQueryParam);
+        workbenchQueryParam.setWorkbenchName(2);
+        TestResult testResult = getJsonTestResult("/workbench/queryWorkbenchCount", workbenchQueryParam);
     }
     /**
      * 待审核的工作流 1
@@ -42,8 +43,8 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
         workflowLinkQueryParam.setPageNo(1);
         workflowLinkQueryParam.setPageSize(Integer.MAX_VALUE);
-//        workflowLinkQueryParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
-//        workflowLinkQueryParam.setIsWorkbench(1);
+        workflowLinkQueryParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+        workflowLinkQueryParam.setIsWorkbench(1);
         TestResult testResult = getJsonTestResult("/workflow/queryWorkflowLinkPage", workflowLinkQueryParam);
       }
     /**
