@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.workbench.WorkbenchMapper">
+
+	<!--<resultMap id="WorkbenchDO" type="com.lxzl.erp.dataaccess.domain.workbench.WorkbenchDO">-->
+		<!--<id column="bankSlipDetailWaitClaimCount" jdbcType="INTEGER" property="bankSlipDetailWaitClaimCount" />-->
+		<!--<result column="bankSlipDetailWaitClaimCount" jdbcType="INTEGER" property="bankSlipDetailWaitClaimCount" />-->
+		<!--<result column="statementOrderUnpaidCount" jdbcType="INTEGER" property="statementOrderUnpaidCount" />-->
+		<!--<result column="statementOrderSettledPartCount" jdbcType="INTEGER" property="statementOrderSettledPartCount" />-->
+		<!--<result column="orderVerifyingCount" jdbcType="INTEGER" property="orderVerifyingCount" />-->
+		<!--<result column="orderWaitDeliveryCount" jdbcType="INTEGER" property="orderWaitDeliveryCount" />-->
+		<!--<result column="orderOverDueCount" jdbcType="INTEGER" property="orderOverDueCount" />-->
+		<!--<result column="canReletOrderCount" jdbcType="INTEGER" property="canReletOrderCount" />-->
+		<!--<result column="returnOrderWaitCommitCount" jdbcType="INTEGER" property="returnOrderWaitCommitCount" />-->
+		<!--<result column="returnOrderVerifyingCount" jdbcType="INTEGER" property="returnOrderVerifyingCount" />-->
+		<!--<result column="returnOrderProcessingCount" jdbcType="INTEGER" property="returnOrderProcessingCount" />-->
+		<!--<result column="returnOrderBackedCount" jdbcType="INTEGER" property="returnOrderBackedCount" />-->
+		<!--<result column="companyCustomerVerifyingCount" jdbcType="INTEGER" property="companyCustomerVerifyingCount" />-->
+		<!--<result column="companyCustomerRejectCount" jdbcType="INTEGER" property="companyCustomerRejectCount" />-->
+		<!--<result column="personCustomerVerifyingCount" jdbcType="INTEGER" property="personCustomerVerifyingCount" />-->
+		<!--<result column="personCustomerRejectCount" jdbcType="INTEGER" property="personCustomerRejectCount" />-->
+		<!--<result column="workflowVerifyingCount" jdbcType="INTEGER" property="workflowVerifyingCount" />-->
+		<!--<result column="workflowRejectCount" jdbcType="INTEGER" property="workflowRejectCount" />-->
+	<!--</resultMap>-->
+
+	<select id="findOrderWorkbenchCount" resultType="java.util.Map" parameterType="map">
+		SELECT
+		<if test="maps.workbenchName != null &amp;&amp; maps.workbenchName != 1">
+			order_wait_delivery.orderWaitDeliveryCount,
+			can_relet_order.canReletOrderCount,
+		</if>
+		order_verifying.orderVerifyingCount,
+		order_over_due.orderOverDueCount
+		FROM
+		<include refid="order_workbench"/>
+	</select>
+
+	<select id="findK3ReturnOrderWorkbenchCount" resultType="java.util.Map" parameterType="map">
+		SELECT
+		<if test="maps.workbenchName != null &amp;&amp; maps.workbenchName != 1">
+			return_order_wait_commit.returnOrderWaitCommitCount,
+			return_order_processing.returnOrderProcessingCount,
+			return_order_backed.returnOrderBackedCount,
+		</if>
+		return_order_verifying.returnOrderVerifyingCount
+		FROM
+		<include refid="k3_return_order_workbench"/>
+	</select>
+
+	<select id="findCustomerWorkbenchCount" resultType="java.util.Map" parameterType="map">
+		SELECT
+		company_customer_verifying.companyCustomerVerifyingCount,
+		company_customer_reject.companyCustomerRejectCount,
+		person_customer_verifying.personCustomerVerifyingCount,
+		person_customer_reject.personCustomerRejectCount
+		FROM
+		<include refid="customer_workbench"/>
+	</select>
+
+	<select id="findWorkflowWorkbenchCountForSales" resultType="java.util.Map" parameterType="map">
+		SELECT
+		workflow_verifying.workflowVerifyingCount,
+		workflow_reject.workflowRejectCount
+		FROM
+		<include refid="workflow_workbench"/>
+	</select>
+
+	<!--<select id="findBusinessAffairsListCount" parameterType="map" resultMap="WorkbenchDO">-->
+	<!--SELECT-->
+	<!--workflow_link.waitVerifyCount AS workflowLinkWaitVerifyCount,-->
+	<!--bank_slip_detail.waitClaimCount AS bankSlipDetailWaitClaimCount,-->
+	<!--statement_order.unpaidCount AS statementOrderUnpaidCount,-->
+	<!--statement_order.settledPartCount AS statementOrderSettledPartCount,-->
+	<!--order_verifying.orderVerifyingCount,-->
+	<!--order_over_due.orderOverDueCount,-->
+	<!--return_order_verifying.returnOrderVerifyingCount-->
+	<!--FROM-->
+	<!--<include refid="business_workbench"/>-->
+	<!--</select>-->
+
+	<!--<select id="findSalesAndBusinessWorkbenchCount" resultMap="WorkbenchDO" parameterType="map">-->
+	<!--SELECT-->
+	<!--workflow_link.waitVerifyCount AS workflowLinkWaitVerifyCount,-->
+	<!--bank_slip_detail.waitClaimCount AS bankSlipDetailWaitClaimCount,-->
+	<!--statement_order.unpaidCount AS statementOrderUnpaidCount,-->
+	<!--statement_order.settledPartCount AS statementOrderSettledPartCount,-->
+	<!--order_verifying.orderVerifyingCount,-->
+	<!--order_wait_delivery.orderWaitDeliveryCount,-->
+	<!--order_over_due.orderOverDueCount,-->
+	<!--can_relet_order.canReletOrderCount,-->
+	<!--return_order_wait_commit.returnOrderWaitCommitCount,-->
+	<!--return_order_verifying.returnOrderVerifyingCount,-->
+	<!--return_order_processing.returnOrderProcessingCount,-->
+	<!--return_order_backed.returnOrderBackedCount,-->
+	<!--company_customer_verifying.companyCustomerVerifyingCount,-->
+	<!--company_customer_reject.companyCustomerRejectCount,-->
+	<!--person_customer_verifying.personCustomerVerifyingCount,-->
+	<!--person_customer_reject.personCustomerRejectCount,-->
+	<!--workflow_verifying.workflowVerifyingCount,-->
+	<!--workflow_reject.workflowRejectCount-->
+	<!--FROM-->
+	<!--<include refid="sales_workbench"/>,-->
+	<!--<include refid="business_workbench"/>-->
+	<!--</select>-->
+
+	<sql id="order_workbench">
+		<if test="maps.workbenchName != null &amp;&amp; maps.workbenchName != 1">
+			(select
+			COUNT(1) orderWaitDeliveryCount
+			from erp_order eo
+			INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+			<where>
+				eo.order_status = 8 AND eo.data_status = 1
+				<if test="maps.workbenchQueryParam.isRecycleBin != null &amp;&amp; maps.workbenchQueryParam.isRecycleBin==1">
+					and eo.order_status = 28
+				</if>
+				<if test="maps.workbenchQueryParam.isRecycleBin != null &amp;&amp; maps.workbenchQueryParam.isRecycleBin==0">
+					and eo.order_status != 28
+				</if>
+				<include refid="permission_sql.order_control_workbench"/>
+			</where>
+			) order_wait_delivery ,
+			(SELECT
+			COUNT(DISTINCT e_order.id) canReletOrderCount
+			FROM
+			(
+			SELECT eo.id FROM erp_order eo
+			INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id
+			AND ec.data_status = 1
+			<where>
+				<if test="maps.reletTimeOfDay != null &amp;&amp; maps.reletTimeOfMonth != null">
+					(case
+					when eo.rent_type = 1 then   curdate() + INTERVAL #{maps.reletTimeOfDay, jdbcType=INTEGER} DAY > eo.expect_return_time
+					when eo.rent_type = 2 then   curdate() + INTERVAL #{maps.reletTimeOfMonth, jdbcType=INTEGER} DAY > eo.expect_return_time
+					end)
+					AND eo.order_status in (20,22)
+				</if>
+				<if test="maps.workbenchQueryParam.isRecycleBin != null &amp;&amp; maps.workbenchQueryParam.isRecycleBin==1">
+					and eo.order_status = 28
+				</if>
+				<if test="maps.workbenchQueryParam.isRecycleBin != null &amp;&amp; maps.workbenchQueryParam.isRecycleBin==0">
+					and eo.order_status != 28
+				</if>
+				AND eo.data_status = 1
+				<include refid="permission_sql.order_control_workbench"/>
+			</where>
+			ORDER BY
+			eo.create_time DESC
+			) e_order
+			LEFT JOIN erp_relet_order ero ON ero.order_id = e_order.id
+			AND ero.data_status = 1
+			WHERE
+			ero.id is null
+			or
+			(
+			ero.relet_order_status = 8 and CURDATE() > ero.rent_start_time
+			)
+			) can_relet_order,
+		</if>
+		(select COUNT(1) orderVerifyingCount from erp_order eo INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id
+		AND ec.data_status = 1
+		<where>
+			eo.order_status = 4  AND eo.data_status = 1
+			<if test="maps.workbenchQueryParam.isRecycleBin != null &amp;&amp; maps.workbenchQueryParam.isRecycleBin==1">
+				and eo.order_status = 28
+			</if>
+			<if test="maps.workbenchQueryParam.isRecycleBin != null &amp;&amp; maps.workbenchQueryParam.isRecycleBin==0">
+				and eo.order_status != 28
+			</if>
+			<include refid="permission_sql.order_control_workbench"/>
+		</where>
+		) order_verifying ,
+		(select COUNT(1) orderOverDueCount from erp_order eo INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+		<where>
+			curdate() > eo.expect_return_time AND eo.order_status IN (16, 20, 22) AND eo.data_status = 1
+			<if test="maps.workbenchQueryParam.isRecycleBin != null &amp;&amp; maps.workbenchQueryParam.isRecycleBin==1">
+				and eo.order_status = 28
+			</if>
+			<if test="maps.workbenchQueryParam.isRecycleBin != null &amp;&amp; maps.workbenchQueryParam.isRecycleBin==0">
+				and eo.order_status != 28
+			</if>
+			<include refid="permission_sql.order_control_workbench"/>
+		</where>
+		) order_over_due
+	</sql>
+
+	<sql id="k3_return_order_workbench">
+		<if test="maps.workbenchName != null &amp;&amp; maps.workbenchName != 1">
+			(select
+			count(1) returnOrderWaitCommitCount
+			from erp_k3_return_order ekro
+			<where>
+				ekro.return_order_status = 0 AND ekro.data_status = 1
+				<include refid="permission_sql.k3_return_order_control_workbench"/>
+			</where>
+			) return_order_wait_commit ,
+			(select
+			count(1) returnOrderProcessingCount
+			from erp_k3_return_order ekro
+			<where>
+				ekro.return_order_status = 12 AND ekro.data_status = 1
+				<include refid="permission_sql.k3_return_order_control_workbench"/>
+			</where>
+			) return_order_processing ,
+			(select
+			count(1) returnOrderBackedCount
+			from erp_k3_return_order ekro
+			<where>
+				ekro.return_order_status = 24 AND ekro.data_status = 1
+				<include refid="permission_sql.k3_return_order_control_workbench"/>
+			</where>
+			) return_order_backed ,
+		</if>
+		(select count(1) returnOrderVerifyingCount from erp_k3_return_order ekro
+		<where>
+			ekro.return_order_status = 4 AND ekro.data_status = 1
+			<include refid="permission_sql.k3_return_order_control_workbench"/>
+		</where>
+		) return_order_verifying
+	</sql>
+
+	<sql id="customer_workbench">
+		(SELECT
+		count(1) companyCustomerVerifyingCount
+		FROM erp_customer ec
+		INNER JOIN erp_customer_company ecc ON  ecc.customer_id = ec.id AND ecc.data_status = 1
+		<where>
+			ec.customer_status = 1 AND ec.customer_type = 1 AND ec.data_status = 1
+			<if test="maps.workbenchQueryParam != null &amp;&amp; maps.workbenchQueryParam.isDisabled != null">
+				AND ec.is_disabled = #{maps.workbenchQueryParam.isDisabled, jdbcType=INTEGER}
+			</if>
+			<include refid="permission_sql.customer_company_control_workbench"/>
+		</where>
+		) company_customer_verifying ,
+		(SELECT
+		count(1) companyCustomerRejectCount
+		FROM erp_customer ec
+		INNER JOIN erp_customer_company ecc ON  ecc.customer_id = ec.id AND ecc.data_status = 1
+		<where>
+			ec.customer_status = 3 AND ec.customer_type = 1 AND ec.data_status = 1
+			<if test="maps.workbenchQueryParam != null &amp;&amp; maps.workbenchQueryParam.isDisabled != null">
+				AND ec.is_disabled = #{maps.workbenchQueryParam.isDisabled, jdbcType=INTEGER}
+			</if>
+			<include refid="permission_sql.customer_company_control_workbench"/>
+		</where>
+		) company_customer_reject ,
+		(SELECT
+		count(1) personCustomerVerifyingCount
+		FROM erp_customer ec
+		<where>
+			ec.customer_status = 1 AND ec.customer_type = 2 AND ec.data_status = 1
+			<if test="maps.workbenchQueryParam != null &amp;&amp; maps.workbenchQueryParam.isDisabled != null">
+				AND ec.is_disabled = #{maps.workbenchQueryParam.isDisabled, jdbcType=INTEGER}
+			</if>
+			<include refid="permission_sql.person_customer_control_workbench"/>
+		</where>
+		) person_customer_verifying ,
+		(SELECT
+		count(1) personCustomerRejectCount
+		FROM erp_customer ec
+		<where>
+			ec.customer_status = 3 AND ec.customer_type = 2 AND ec.data_status = 1
+			<if test="maps.workbenchQueryParam != null &amp;&amp; maps.workbenchQueryParam.isDisabled != null">
+				AND ec.is_disabled = #{maps.workbenchQueryParam.isDisabled, jdbcType=INTEGER}
+			</if>
+			<include refid="permission_sql.person_customer_control_workbench"/>
+		</where>
+		) person_customer_reject
+	</sql>
+
+	<sql id="workflow_workbench">
+		( SELECT
+		count(distinct ewl.id) workflowVerifyingCount
+		FROM erp_workflow_link ewl
+		INNER JOIN erp_workflow_link_detail ewld on ewld.workflow_link_id = ewl.id and ewld.data_status = 1
+		<where>
+			ewl.current_verify_status = 1 AND ewl.data_status = 1
+			<if test="maps.verifyUserId!=null &amp;&amp; maps.verifyUserId != ''">
+				AND (ewl.create_user = #{maps.verifyUserId}
+				OR ewl.update_user = #{maps.verifyUserId}
+				OR ewl.current_verify_user = #{maps.verifyUserId}
+				<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
+					OR ewld.verify_user_group_id IN
+					<foreach item="item" index="index" collection="maps.currentUserGroupList"
+							 open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+				)
+			</if>
+		</where>
+		) workflow_verifying ,
+		( SELECT
+		count(distinct ewl.id) workflowRejectCount
+		FROM erp_workflow_link ewl
+		INNER JOIN erp_workflow_link_detail ewld on ewld.workflow_link_id = ewl.id and ewld.data_status = 1
+		<where>
+			ewl.current_verify_status = 3 AND ewl.data_status = 1
+			<if test="maps.verifyUserId!=null &amp;&amp; maps.verifyUserId != ''">
+				AND (ewl.create_user = #{maps.verifyUserId}
+				OR ewl.update_user = #{maps.verifyUserId}
+				OR ewl.current_verify_user = #{maps.verifyUserId}
+				<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
+					OR ewld.verify_user_group_id IN
+					<foreach item="item" index="index" collection="maps.currentUserGroupList"
+							 open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+				)
+			</if>
+		</where>
+		) workflow_reject
+	</sql>
+
+
+	<select id="findWorkflowBusinessAffairsWorkbenchCount" resultType="java.util.HashMap" parameterType="map">
+		SELECT
+		workflow_link.waitVerifyWorkflowBusinessAffairsWorkbenchCount
+		FROM
+		<include refid="workflow_business_affairs_workbench"/>
+	</select>
+
+	<select id="findBankSlipDetailBusinessAffairsWorkbenchCount" resultType="java.util.HashMap" parameterType="map">
+		SELECT
+		bank_slip_detail.waitClaimCount
+		FROM
+		<include refid="bank_slip_detail_business_affairs_workbench"/>
+	</select>
+
+	<select id="findStatementOrderBusinessAffairsWorkbenchCount" resultType="java.util.HashMap" parameterType="map">
+		SELECT
+		statement_order.unpaidStatementOrderBusinessAffairsWorkbenchCount,
+		statement_order.settledPartStatementOrderBusinessAffairsWorkbenchCount
+		FROM
+		<include refid="statement_order_business_affairs_workbench"/>
+	</select>
+
+	<sql id="workflow_business_affairs_workbench">
+		(SELECT COUNT(DISTINCT verify_user_group_id) AS waitVerifyWorkflowBusinessAffairsWorkbenchCount FROM `erp_workflow_verify_user_group`
+		<where>
+			AND data_status = 1 AND verify_status = 1
+			<if test="maps.verifyUserId != null">
+				AND verify_user = #{maps.verifyUserId}
+			</if>
+		</where>) workflow_link
+	</sql>
+
+	<sql id="bank_slip_detail_business_affairs_workbench">
+		(SELECT  COUNT(DISTINCT ebsd.id) AS waitClaimCount FROM erp_bank_slip_detail ebsd
+		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
+		<where>
+			and ebsd.loan_sign = 1
+			and ebsd.detail_status = 1
+			and ebsd.data_status = 1
+			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 0">
+				and 1=2
+			</if>
+			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 1">
+				and ebs.slip_status !=2
+			</if>
+			<if test="maps.departmentType != null &amp;&amp;(maps.departmentType == 2 or maps.departmentType == 3 )">
+				and ebs.slip_status = 1
+			</if>
+			<if  test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
+				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND ebs.slip_status = 1 ))
+			</if>
+		</where>) bank_slip_detail
+	</sql>
+
+	<sql id="statement_order_business_affairs_workbench">
+		(SELECT count(CASE WHEN eso.statement_status = 0 THEN eso.id ELSE NULL  END ) AS unpaidStatementOrderBusinessAffairsWorkbenchCount,count(CASE WHEN eso.statement_status = 4 THEN eso.id ELSE NULL END) AS settledPartStatementOrderBusinessAffairsWorkbenchCount  FROM erp_statement_order eso
+		INNER JOIN erp_customer ec on eso.customer_id = ec.id
+		<where>
+			<![CDATA[ AND eso.statement_expect_pay_time <= #{maps.statementExpectPayEndTime} ]]>
+			and (eso.statement_status = 0 or eso.statement_status = 4)
+			and eso.data_status = 1
+			<include refid="permission_sql.statement_order_control"/>
+		</where>) statement_order
+	</sql>
+
+</mapper>

@@ -37,8 +37,9 @@
 		</property>
 	</bean>-->
 
-    <!--
+
 	<import resource="spring/spring-redis.xml" />
+	<!--
 	<import resource="spring/spring-filter.xml" />
     <import resource="spring/spring-rpc/spring-rpc.xml" />
     <import resource="spring/spring-mq/spring-mq.xml" />

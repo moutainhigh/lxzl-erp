@@ -59,6 +59,7 @@ public class CommonConstant {
 
     public static final Integer COMMON_ZERO = 0;
     public static final Integer COMMON_ONE = 1;
+    public static final Integer COMMON_TWO = 2;
     public static final Integer WORKFLOW_STEP_TWO = 2;
 
     public static final Integer RELET_TIME_OF_RENT_TYPE_MONTH = 30;  //按月租提前30天
@@ -68,5 +69,7 @@ public class CommonConstant {
 
     public static final Integer ORDER_TYPE_RELET = 6;//续租状态，对账单导出专用
     public static final Integer ORDER_TYPE_RELET_RETURN = 7;//续租退货状态，对账单导出专用
+
+    public static final long WORKBENCH_REDIS_SAVE_TIME = 180L;
 
 }
