@@ -21,78 +21,105 @@
             <div class="panel panel-primary panel-border top">
                 <div class="panel-menu p12">
                     <div class="row">
-                        <div class="pull-left ml10">
-                            <script type="text/html" id="actionCommonButtonsTpl">
-                                <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
-                                {{#acitonCommonButtons}}
-                                <a href="javascript:;" class="btn btn-primary btn-sm designateBtn" title="批量指派">
-                                    <i class="fa fa-tag"></i> 批量指派
-                                </a>
-                                {{/acitonCommonButtons}}
-                            </script>
-                            <div class="btn-group" id="actionCommonButtons"></div>
-
-                            <script type="text/html" id="exportButtonsTpl">
-                                {{#exportButtons}}
-                                <div style="display: inline-block">
-                                    <form id="exportForm">
-                                        <input type="hidden" name="pageSize" value="1000000000">
-                                        <input type="hidden" name="pageNo" value="1">
-                                        <input type="hidden" name="loanSign" value="1">
-                                        <input type="hidden" class="payerName" name="payerName" value="">
-                                        <input type="hidden" class="bankSlipId" name="bankSlipId" value="">
-                                        <input type="hidden" class="isLocalization" name="isLocalization" value="">
-                                        <input type="hidden" class="detailStatus" name="detailStatus" value="">
-                                        <input type="hidden" class="slipDayStart" name="slipDayStart" value="">
-                                        <input type="hidden" class="slipDayEnd" name="slipDayEnd" value="">
-                                        <input type="submit" class="btn btn-primary btn-sm exportBtn"  value="导出">
-                                    </form>
-                                    <iframe id="exportFrame" name="exportFrame" src="about:blank" style="display:none;"></iframe>
-                                </div>
-                                {{/exportButtons}}
-                            </script>
-                            <div class="btn-group" id="exportButton" style="margin-left:-5px;"></div>
-                        </div>
-                        <div class="pull-right mr10 text-right">
+                        <div class="col-lg-12">
                             <form id="searchForm" class="form-horizontal">
-                                <div class="pull-right">
-                                    <button type="submit" class="btn btn-primary btn-sm">查询</button>
-                                    <button type="reset" class="btn btn-default btn-sm">重置</button>
-                                </div>
-                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                    <div class="input-group">
-                                        <input type="text" name="payerName" id="payerName" class="form-control input-sm bradius" autocomplete="off" placeholder="付款人姓名">
+                                <div class="section row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-2">
+                                            <div class="form-group mn">
+                                                <input type="hidden" name="slipDayStart" id="slipDayStart" />
+                                                <input type="hidden" name="slipDayEnd" id="slipDayEnd" />
+                                                <div class="input-group date" id="slipTimePicker">
+                                                    <input type="text" name="slipTimePicker" id="slipTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择导入时间">
+                                                    <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="field form-group mn">
+                                                <div class="input-group" style="width: 100%">
+                                                    <select class="form-control input-sm bradius" name="ownerSubCompanyId" id="ownerSubCompanyId">
+                                                        <option value="">请选择</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="field form-group mn">
+                                                <div class="input-group" style="width: 100%">
+                                                    <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId">
+                                                        <option value="">请选择</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="input-group mn" style="width: 100%">
+                                                <select class="form-control input-sm bradius" name="detailStatus" id="detailStatus">
+                                                    <option value="">请选择</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="input-group mn" style="width: 100%">
+                                                <select class="form-control input-sm bradius" name="isLocalization" id="isLocalization">
+                                                    <option value="">请选择</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group mn">
+                                                <input type="hidden" name="bankSlipId" id="bankSlipId" value="">
+                                                <input type="text" name="tradeSerialNo" id="tradeSerialNo" class="form-control input-sm bradius" autocomplete="off" placeholder="交易流水号">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="field form-group pull-right">
-                                    <div class="input-group">
-                                        <input type="hidden" name="bankSlipId" id="bankSlipId" class="form-control input-sm bradius" autocomplete="off" placeholder="银行流水ID">
+                                <div class="section row mt15">
+                                    <div class="col-md-12">
+                                        <div class="col-md-2">
+                                            <div class="form-group mn">
+                                                <input type="text" name="payerName" id="payerName" class="form-control input-sm bradius" autocomplete="off" placeholder="付款人姓名">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                    <div class="input-group">
-                                        <input type="text" name="tradeSerialNo" id="tradeSerialNo" class="form-control input-sm bradius" autocomplete="off" placeholder="交易流水号">
-                                    </div>
-                                </div>
-                                <div class="form-group pull-right mn mr10">
-                                    <div class="input-group">
-                                        <select class="form-control input-sm bradius" name="isLocalization" id="isLocalization"></select>
-                                    </div>
-                                </div>
-                                <div class="form-group pull-right mn mr10">
-                                    <div class="input-group">
-                                        <select class="form-control input-sm bradius" name="detailStatus" id="detailStatus"></select>
-                                    </div>
-                                </div>
-                                <div class="form-group pull-right mn mr10" style="width: 195px;">
-                                    <input type="hidden" name="slipDayStart" id="slipDayStart" />
-                                    <input type="hidden" name="slipDayEnd" id="slipDayEnd" />
-                                    <div class="input-group date" id="slipTimePicker">
-                                        <input type="text" name="slipTimePicker" id="slipTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择导入时间">
-                                        <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                <hr class="short alt">
+                                <div class="section row">
+                                    <div class="col-md-12">
+                                        <div class="pull-left ml10" style="position:absolute; bottom: 0; left:0; z-index:99;">
+                                            <script type="text/html" id="actionCommonButtonsTpl">
+                                                <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                                {{#acitonCommonButtons}}
+                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="批量指派">
+                                                    <i class="fa fa-tag"></i> {{text}}
+                                                </a>
+                                                {{/acitonCommonButtons}}
+                                            </script>
+                                            <div class="btn-group" id="actionCommonButtons"></div>
+                                        </div>
+                                        <div class="pull-right mn mr15">
+                                            <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                            <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
+                        </div>
+                        <div class="hide">
+                            <form id="exportForm">
+                                <input type="hidden" name="pageSize" value="1000000000">
+                                <input type="hidden" name="pageNo" value="1">
+                                <input type="hidden" name="loanSign" value="1">
+                                <input type="hidden" class="payerName" name="payerName" value="">
+                                <input type="hidden" class="bankSlipId" name="bankSlipId" value="">
+                                <input type="hidden" class="isLocalization" name="isLocalization" value="">
+                                <input type="hidden" class="detailStatus" name="detailStatus" value="">
+                                <input type="hidden" class="slipDayStart" name="slipDayStart" value="">
+                                <input type="hidden" class="slipDayEnd" name="slipDayEnd" value="">
+                                <input type="submit" class="btn btn-primary btn-sm exportBtn"  value="导出">
+                            </form>
+                            <iframe id="exportFrame" name="exportFrame" src="about:blank" style="display:none;"></iframe>
                         </div>
                     </div>
                 </div>

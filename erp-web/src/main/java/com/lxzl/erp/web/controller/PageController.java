@@ -263,6 +263,11 @@ public class PageController extends BaseController {
         return "/component/order/sectionSettlementModal";
     }
 
+    @RequestMapping("/order-manage/undergraduate-order-list")
+    public String undergraduateOrderList() {
+        return "/orderManage/undergraduateOrder";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
@@ -1106,6 +1111,12 @@ public class PageController extends BaseController {
         return "/component/order/reletOrderModal";
     }
 
+    //订单修改单价Modal
+    @RequestMapping("/order-manage/change-price")
+    public String changePriceModal() {
+        return "/component/order/changePriceModal";
+    }
+
     //提交审核选择审核人及填写审核备注
     @RequestMapping("/submit-audit/modal")
     public String submitAuditModal() {
@@ -1223,5 +1234,41 @@ public class PageController extends BaseController {
     @RequestMapping("/system-manage/notice-add")
     public String addSystemNotice() {
         return "/systemManage/addSystemNotice";
+    }
+
+    //定时任务执行者列表
+    @RequestMapping("/timed-manage/executor-list")
+    public String timerManageList() {
+        return "/timerService/taskScheduler";
+    }
+
+    //添加定时任务
+    @RequestMapping("/timed-manage/add-task")
+    public String timedManageAdd() {
+        return "/timerService/taskAdd";
+    }
+
+    //编辑定时任务
+    @RequestMapping("/timed-manage/edit-task")
+    public String timedManageEdit() {
+        return "/timerService/taskEdit";
+    }
+
+    //定时任务详情
+    @RequestMapping("/timed-manage/task-detail")
+    public String timedManageDetail() {
+        return "/timerService/taskDetail";
+    }
+
+    //定时任务更新执行者信息
+    @RequestMapping("/timed-manage/update-performer")
+    public String timedManageUpdatePerformer() {
+        return "/timerService/editPerformer";
+    }
+    
+    //延时任务列表
+    @RequestMapping("/delayed-task/list")
+    public String deyayedTaskList() {
+        return "/delayedTask/deyayedTaskList";
     }
 }

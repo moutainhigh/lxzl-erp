@@ -242,7 +242,7 @@ public interface StatementService extends BaseService {
      * @Author : XiaoLuYu
      * @Date : Created in 2018/6/21 9:32
      */
-    ServiceResult<String, List<CheckStatementOrder>> exportQueryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam);
+    ServiceResult<String, List<CheckStatementOrder>> exportQueryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam,Integer userId);
 
     /**
      * 支付结算单项
@@ -250,4 +250,11 @@ public interface StatementService extends BaseService {
      * @return
      */
     ServiceResult<String, Boolean> payStatementOrderDetail(List<Integer> mergeStatementItemList);
+
+    /**
+     * 批量退还应退的押金
+     * @param orderNo
+     * @return
+     */
+    String returnDeposit(String orderNo);
 }

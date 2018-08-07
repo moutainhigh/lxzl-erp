@@ -25,4 +25,8 @@ public class WorkbenchType {
     public static final Integer WORKFLOW__STATUS_REJECT = 15; //被驳回的工作流
     public static final Integer STATEMENT_ORDER_STATUS_INIT = 16; //未结算
     public static final Integer STATEMENT_ORDER_STATUS_SETTLED_PART = 17; //部分结算
+    public static final Integer WORK_FLOW_LINK_WAIT_VERIFY = 18 ; //待审核的工作流
+    public static final Integer BANK_SLIP_DETAIL_WAIT_CLAIM = 19; //待认领的银行流水
+
+
 }

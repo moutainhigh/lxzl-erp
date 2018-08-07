@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @Author: Sunzhipeng
  * @Description:
@@ -54,5 +56,16 @@ public class DelayedTaskController {
     public Result pageDelayedTask(@RequestBody @Validated(AddGroup.class)DelayedTaskQueryParam DelayedTaskQueryParam , BindingResult validResult) {
         ServiceResult<String, Page<DelayedTask>> serviceResult = delayedTaskService.pageDelayedTask(DelayedTaskQueryParam);
         return resultGenerator.generate(serviceResult);
+    }
+    /**
+     * 下载延迟任务列表中的对账单
+     * @param DelayedTask
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "downloadStatementOrderCheck", method = RequestMethod.POST)
+    public Result downloadStatementOrderCheck(DelayedTask DelayedTask , HttpServletResponse response) throws Exception {
+        ServiceResult<String, String> serviceResult = delayedTaskService.downloadStatementOrderCheck(DelayedTask, response);
+        return resultGenerator.generate(serviceResult.getErrorCode());
     }
 }

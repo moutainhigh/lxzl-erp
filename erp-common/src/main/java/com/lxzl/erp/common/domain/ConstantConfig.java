@@ -4,11 +4,16 @@ public class ConstantConfig {
 
     public static String uploadFileUrl;
     public static String exportFileUrl;
+    public static String downloadStatementUrl;
     public static String imageDomain;
     public static String baseDomain;
     public static String staticCommonDomain;
     public static String staticDomain;
     public static String serviceDomain;
+
+    public void setDownloadStatementUrl(String downloadStatementUrl) {
+        ConstantConfig.downloadStatementUrl = downloadStatementUrl;
+    }
 
     public void setUploadFileUrl(String uploadFileUrl) {
         ConstantConfig.uploadFileUrl = uploadFileUrl;

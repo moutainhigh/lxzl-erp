@@ -170,6 +170,7 @@
         <mapper resource="sqlmap/erp_relet_order.xml" />
 
         <mapper resource="sqlmap/erp_print_log.xml" />
+        <mapper resource="sqlmap/erp_order_operation_log.xml" />
 
         <mapper resource="sqlmap/erp_order_split_detail.xml" />
         <mapper resource="sqlmap/erp_order_joint_product.xml" />
@@ -194,6 +195,8 @@
 
         <mapper resource="sqlmap/erp_delayed_task.xml" />
         <mapper resource="sqlmap/erp_delayed_task_config_export_statement.xml" />
+
+        <mapper resource="sqlmap/workbench_sql.xml" />
     </mappers>
 
 </configuration>

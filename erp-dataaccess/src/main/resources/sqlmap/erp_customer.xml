@@ -215,7 +215,7 @@
 	<select id="findByNo" resultMap="CustomerDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/>,<include refid="risk_column_List"/> FROM erp_customer ec
 		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
-		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
+		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1 limit 1
 	</select>
 
 	<select id="findByCustomerNoList" resultMap="CustomerDO" >
@@ -240,7 +240,7 @@
 
 	<select id="findByName" resultMap="CustomerDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> FROM erp_customer ec
-		WHERE ec.customer_name = #{customerName, jdbcType=VARCHAR} AND ec.data_status = 1
+		WHERE ec.customer_name = #{customerName, jdbcType=VARCHAR} AND ec.data_status = 1 limit 1
 	</select>
 
 	<select id="findByRealNameAndPersonNo" resultMap="CustomerDO" parameterType="java.lang.String">
@@ -730,4 +730,37 @@
 			)t4 on t4.customer_no = ec.customer_no
 		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>
+
+	<select id="findCustomerByOwner" resultMap="CustomerDO" parameterType="java.lang.Integer">
+		SELECT * FROM erp_customer ec where ec.owner = #{ownerId,jdbcType=INTEGER} AND ec.data_status = 1
+	</select>
+
+	<update id="updateListForUser" parameterType="java.util.List">
+		update erp_customer
+		SET
+		<trim>
+			owner_sub_company_id =
+			<foreach item="customerDO" collection="updateCustomerDOList" index="index" separator=" " open="case id" close="end">
+				when #{customerDO.id} then #{customerDO.ownerSubCompanyId}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_user =
+			<foreach item="customerDO" collection="updateCustomerDOList" index="index" separator=" " open="case id" close="end">
+				when #{customerDO.id} then #{customerDO.updateUser}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach collection="updateCustomerDOList" index="index" item="customerDO" separator=" " open="case id" close="end">
+				when #{customerDO.id} then #{customerDO.updateTime}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="updateCustomerDOList" index="index" item="customerDO"
+				 separator="," open="(" close=")">
+			#{customerDO.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+
 </mapper>
