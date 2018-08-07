@@ -12,7 +12,7 @@ import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderPayParam;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
 import com.lxzl.erp.common.domain.erpInterface.subCompany.InterfaceSubCompanyQueryParam;
-import com.lxzl.erp.common.domain.erpInterface.weiXin.InterfaceWeixinChargeParam;
+import com.lxzl.erp.common.domain.erpInterface.weiXin.InterfaceChargeParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
@@ -162,13 +162,19 @@ public class InterfaceController extends BaseController {
     }
 
     @RequestMapping(value = "wechatCharge", method = RequestMethod.POST)
-    public Result wechatCharge(@RequestBody @Validated InterfaceWeixinChargeParam interfaceWeixinChargeParam, BindingResult validResult) {
-        boolean erpIdentity = businessSystemConfigService.verifyErpIdentity(interfaceWeixinChargeParam.getErpAppId(), interfaceWeixinChargeParam.getErpAppSecret());
+    public Result wechatCharge(@RequestBody @Validated InterfaceChargeParam interfaceChargeParam, BindingResult validResult) {
+        boolean erpIdentity = businessSystemConfigService.verifyErpIdentity(interfaceChargeParam.getErpAppId(), interfaceChargeParam.getErpAppSecret());
         if (erpIdentity) {
-            ServiceResult<String, String> serviceResult = paymentService.wechatCharge(interfaceWeixinChargeParam.getCustomerNo(), interfaceWeixinChargeParam.getAmount(), interfaceWeixinChargeParam.getOpenId(), NetworkUtil.getIpAddress(request));
+            ServiceResult<String, String> serviceResult = paymentService.wechatCharge(interfaceChargeParam.getCustomerNo(), interfaceChargeParam.getAmount(), interfaceChargeParam.getOpenId(), NetworkUtil.getIpAddress(request));
             return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
         }
         return resultGenerator.generate(ErrorCode.BUSINESS_SYSTEM_ERROR);
+    }
+
+    @RequestMapping(value = "alipayCharge", method = RequestMethod.POST)
+    public Result alipayCharge(@RequestBody InterfaceChargeParam parm, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = paymentService.alipayCharge(parm.getCustomerNo(),parm.getAmount(),parm.getOpenId(),NetworkUtil.getIpAddress(request));
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     @RequestMapping(value = "queryChargeRecordPage", method = RequestMethod.POST)
