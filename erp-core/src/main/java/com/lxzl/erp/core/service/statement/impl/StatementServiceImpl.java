@@ -35,6 +35,7 @@ import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
 import com.lxzl.erp.core.service.statement.impl.support.StatementPaySupport;
 import com.lxzl.erp.core.service.statement.impl.support.StatementReturnSupport;
+import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMaterialBulkMapper;
@@ -4991,9 +4992,12 @@ public class StatementServiceImpl implements StatementService {
         statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderEndTime);
         Map<String, Object> maps = new HashMap<>();
         maps.put("statementOrderMonthQueryParam", statementOrderMonthQueryParam);
-        PermissionParam permissionParam = new PermissionParam();
-        permissionParam.setPermissionUserIdList(permissionSupport.getCanAccessPassiveUserList(userId));
-        maps.put("permissionParam", permissionParam);
+        //超级管理员不加权限控制
+        if(userId != null&&!userRoleService.isSuperAdmin(userId)){
+            PermissionParam permissionParam = new PermissionParam();
+            permissionParam.setPermissionUserIdList(permissionSupport.getCanAccessPassiveUserList(userId));
+            maps.put("permissionParam", permissionParam);
+        }
         //todo 查处结算单总表
         List<CheckStatementOrderDO> statementOrderDOList = statementOrderMapper.exportListMonthPage(maps);
         //todo 查处结算单详情
@@ -7154,4 +7158,6 @@ public class StatementServiceImpl implements StatementService {
     private OrderSupport orderSupport;
     @Autowired
     private DataDictionaryMapper dataDictionaryMapper;
+    @Autowired
+    private UserRoleService userRoleService;
 }
