@@ -6,7 +6,7 @@ import com.lxzl.erp.common.domain.base.BasePO;
 import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WeixinChargeParam extends BasePO {
+public class ChargeParam extends BasePO {
 
     private String customerNo;
     private BigDecimal amount;

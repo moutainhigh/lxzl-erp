@@ -281,6 +281,15 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public ServiceResult<String, String> wechatCharge(String customerNo, BigDecimal amount, String openId, String ip) {
+        return charge(customerNo, amount, openId, ip, PaymentSystemConfig.paymentSystemWeixinChargeURL);
+    }
+
+    @Override
+    public ServiceResult<String, String> alipayCharge(String customerNo, BigDecimal amount, String openId, String ip) {
+        return charge(customerNo, amount, openId, ip, PaymentSystemConfig.paymentSystemAlipayChargeUrl);
+    }
+
+    private ServiceResult<String, String> charge(String customerNo, BigDecimal amount, String openId, String ip, String chargeURL) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
@@ -312,7 +321,7 @@ public class PaymentServiceImpl implements PaymentService {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(weixinPayParam);
-            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemWeixinChargeURL, requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(chargeURL, requestJson, headerBuilder, "UTF-8");
             logger.info("wechat charge response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
