@@ -451,9 +451,9 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 }
 
                 // TODO: 2018\7\27 0027 将XSSFWorkbook存储到指定位置
-                String fileName = ConstantConfig.exportFileUrl + (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
                 String simpleDate = dateFormat.format(date);
+                String fileName = ConstantConfig.exportFileUrl + (customerName + "对账单") +simpleDate+ ".xlsx";
                 String saveFileName = (customerName + "对账单") +simpleDate+ ".xlsx";
 //                String fileName = "D:\\xxxxxxx\\"+ (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
                 try {
