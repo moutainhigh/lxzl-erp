@@ -98,6 +98,31 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BusinessException(e.getMessage());
         }
     }
+    /**
+     * 查询客户账户(对账单调用该接口，传入用户id不用通过session来进行获取用户id)
+     */
+    @Override
+    public CustomerAccount queryCustomerAccountNoSession(String customerNo,Integer userId) {
+        CustomerAccountQueryParam param = new CustomerAccountQueryParam();
+        param.setBusinessCustomerNo(customerNo);
+        param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        param.setBusinessOperateUser(userId.toString());
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = FastJsonUtil.toJSONString(param);
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryCustomerAccountURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("query customer account response:{}", response);
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                return JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), CustomerAccount.class);
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
 
     @Override
     public String returnDepositExpand(String customerNo, BigDecimal businessReturnRentAmount, BigDecimal businessReturnOtherAmount, BigDecimal businessReturnRentDepositAmount,

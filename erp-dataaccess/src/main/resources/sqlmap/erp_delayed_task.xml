@@ -17,10 +17,11 @@
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="file_url" jdbcType="VARCHAR" property="fileUrl" />
+		<result column="is_sync" jdbcType="BIT" property="isSync" />
 	</resultMap>
 
 	<sql id="column_List">
-		edt.id,edt.task_type,edt.task_status,edt.queue_number,edt.request_json,edt.thread_name,edt.progress_rate,edt.remark,edt.data_status,edt.create_time,edt.create_user,edt.update_time,edt.update_user,edt.file_url
+		edt.id,edt.task_type,edt.task_status,edt.queue_number,edt.request_json,edt.thread_name,edt.progress_rate,edt.remark,edt.data_status,edt.create_time,edt.create_user,edt.update_time,edt.update_user,edt.file_url,edt.is_sync
 	</sql>
 
 	<select id="findById" resultMap="DelayedTaskDO" parameterType="java.lang.String">
@@ -97,6 +98,9 @@
 			<if test="true">
 				AND edt.data_status = 1
 			</if>
+			<if test="true">
+				AND edt.is_sync = 0
+			</if>
 		</where>
 		ORDER BY edt.update_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
@@ -127,6 +131,9 @@
 			</if>
 			<if test="true">
 				AND edt.data_status = 1
+			</if>
+			<if test="true">
+				AND edt.is_sync = 0
 			</if>
 		</where>
 	</select>
@@ -170,6 +177,9 @@
 			</if>
 			<if test="fileUrl != null">
 				file_url = #{fileUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="isSync != null">
+				is_sync = #{isSync,jdbcType=BIT},
 			</if>
 		</set>
 	</sql>
