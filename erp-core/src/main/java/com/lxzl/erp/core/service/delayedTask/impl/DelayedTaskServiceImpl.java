@@ -188,6 +188,14 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         Integer totalCount = delayedTaskMapper.findDelayedTaskCountByParams(maps);
         List<DelayedTaskDO> delayedTaskDOList = delayedTaskMapper.findDelayedTaskByParams(maps);
         List<DelayedTask> delayedTaskList = ConverterUtil.convertList(delayedTaskDOList, DelayedTask.class);
+
+        if (CollectionUtil.isNotEmpty(delayedTaskList)) {
+            for (DelayedTask delayedTask:delayedTaskList) {
+                if (delayedTask.getTaskStatus() == 3) {
+                    delayedTask.setFileUrl(ConstantConfig.downloadStatementUrl+delayedTask.getFileUrl());
+                }
+            }
+        }
         Page<DelayedTask> page = new Page<>(delayedTaskList, totalCount, delayedTaskQueryParam.getPageNo(), delayedTaskQueryParam.getPageSize());
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(page);
@@ -481,6 +489,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                         System.out.println(sb.toString());
                     }
                     delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
+                    delayedTask.setFileUrl(ConstantConfig.downloadStatementUrl+delayedTask.getFileUrl());
                     result.setResult(delayedTask);
                     result.setErrorCode(ErrorCode.SUCCESS);
                     return result;
