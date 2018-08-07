@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  * @Time : Created in 18:53
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class InterfaceWeixinChargeParam  extends ErpIdentityParam {
+public class InterfaceChargeParam extends ErpIdentityParam {
     @NotNull(message = ErrorCode.CUSTOMER_NO_NOT_NULL)
     private String customerNo;
     @NotNull(message = ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO)
