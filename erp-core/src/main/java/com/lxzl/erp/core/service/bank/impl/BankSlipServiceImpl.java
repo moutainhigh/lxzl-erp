@@ -165,7 +165,9 @@ public class BankSlipServiceImpl implements BankSlipService {
                 !BankType.SHANGHAI_PUDONG_DEVELOPMENT_BANK.equals(bankType) &&
                 !BankType.ALIPAY.equals(bankType) &&
                 !BankType.HAN_KOU_BANK.equals(bankType) &&
-                !BankType.STOCK_CASH.equals(bankType)) {
+                !BankType.STOCK_CASH.equals(bankType) &&
+                !BankType.JING_DONG.equals(bankType) &&
+                !BankType.CHINA_UNION_PAY_TYPE.equals(bankType)) {
             serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
             return serviceResult;
         }

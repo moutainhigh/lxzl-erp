@@ -384,9 +384,8 @@ public class PaymentServiceImpl implements PaymentService {
 
         ServiceResult<String, Page<ChargeRecord>> result = new ServiceResult<>();
 
-        CustomerDO customerName = customerMapper.findByName(chargeRecordPageParam.getCustomerName());
-        CustomerDO customerNo = customerMapper.findByNo(chargeRecordPageParam.getBusinessCustomerNo());
-
+        CustomerDO customerName = null == chargeRecordPageParam.getCustomerName() || "".equals(chargeRecordPageParam.getCustomerName()) ? null : customerMapper.findByName(chargeRecordPageParam.getCustomerName());
+        CustomerDO customerNo = null == chargeRecordPageParam.getBusinessCustomerNo() || "".equals(chargeRecordPageParam.getBusinessCustomerNo()) ? null : customerMapper.findByNo(chargeRecordPageParam.getBusinessCustomerNo());
 
         if (customerName != null) {
             chargeRecordPageParam.setBusinessCustomerNo(customerName.getCustomerNo());
@@ -404,11 +403,6 @@ public class PaymentServiceImpl implements PaymentService {
             String requestJson = null;
 
             PaymentChargeRecordPageParam paymentChargeRecordPageParam = ConverterUtil.convert(chargeRecordPageParam, PaymentChargeRecordPageParam.class);
-            if (StringUtil.isEmpty(chargeRecordPageParam.getCustomerName())) {
-                paymentChargeRecordPageParam.setBusinessCustomerName(null);
-            } else {
-                paymentChargeRecordPageParam.setBusinessCustomerName(chargeRecordPageParam.getCustomerName());
-            }
             if (chargeRecordPageParam.getSubCompanyId() != null) {
                 paymentChargeRecordPageParam.setChargeBodyId(chargeRecordPageParam.getSubCompanyId().toString());
             }
@@ -416,83 +410,7 @@ public class PaymentServiceImpl implements PaymentService {
                 paymentChargeRecordPageParam.setBusinessCustomerNo(null);
             }
 
-
-//            if ((chargeRecordPageParam.getCustomerName() != null && chargeRecordPageParam.getCustomerName() != "") && (chargeRecordPageParam.getBusinessCustomerNo() != null && chargeRecordPageParam.getBusinessCustomerNo() != "")) {
-//                if (chargeRecordPageParam.getChargeType() != null) {
-//                    if (chargeRecordPageParam.getChargeStatus() != null) {
-//                        requestJson = FastJsonUtil.toJSONString(chargeRecordPageParam);
-//                        jsonObject = JSON.parseObject(requestJson);
-//                        jsonObject.remove("customerName");
-//                        jsonObject.remove("count");
-//                        requestJson = jsonObject.toJSONString();
-//                    } else {
-//                        requestJson = FastJsonUtil.toJSONString(chargeRecordPageParam);
-//                        jsonObject = JSON.parseObject(requestJson);
-//                        jsonObject.remove("chargeStatus");
-//                        jsonObject.remove("customerName");
-//                        jsonObject.remove("count");
-//                        requestJson = jsonObject.toJSONString();
-//                    }
-//                } else {
-//                    if (chargeRecordPageParam.getChargeStatus() != null) {
-//                        requestJson = FastJsonUtil.toJSONString(chargeRecordPageParam);
-//                        jsonObject = JSON.parseObject(requestJson);
-//                        jsonObject.remove("chargeType");
-//                        jsonObject.remove("customerName");
-//                        jsonObject.remove("count");
-//                        requestJson = jsonObject.toJSONString();
-//                    } else {
-//                        requestJson = FastJsonUtil.toJSONString(chargeRecordPageParam);
-//                        jsonObject = JSON.parseObject(requestJson);
-//                        jsonObject.remove("chargeStatus");
-//                        jsonObject.remove("chargeType");
-//                        jsonObject.remove("customerName");
-//                        jsonObject.remove("count");
-//                        requestJson = jsonObject.toJSONString();
-//                    }
-//                }
-//            } else {
-//                if (chargeRecordPageParam.getChargeType() != null) {
-//                    if (chargeRecordPageParam.getChargeStatus() != null) {
-//                        requestJson = FastJsonUtil.toJSONString(chargeRecordPageParam);
-//                        jsonObject = JSON.parseObject(requestJson);
-//                        jsonObject.remove("customerName");
-//                        jsonObject.remove("businessCustomerNo");
-//                        jsonObject.remove("count");
-//                        requestJson = jsonObject.toJSONString();
-//                    } else {
-//                        requestJson = FastJsonUtil.toJSONString(chargeRecordPageParam);
-//                        jsonObject = JSON.parseObject(requestJson);
-//                        jsonObject.remove("chargeStatus");
-//                        jsonObject.remove("customerName");
-//                        jsonObject.remove("businessCustomerNo");
-//                        jsonObject.remove("count");
-//                        requestJson = jsonObject.toJSONString();
-//                    }
-//                } else {
-//                    if (chargeRecordPageParam.getChargeStatus() != null) {
-//                        requestJson = FastJsonUtil.toJSONString(chargeRecordPageParam);
-//                        jsonObject = JSON.parseObject(requestJson);
-//                        jsonObject.remove("chargeType");
-//                        jsonObject.remove("customerName");
-//                        jsonObject.remove("businessCustomerNo");
-//                        jsonObject.remove("count");
-//                        requestJson = jsonObject.toJSONString();
-//                    } else {
-//                        requestJson = FastJsonUtil.toJSONString(chargeRecordPageParam);
-//                        jsonObject = JSON.parseObject(requestJson);
-//                        jsonObject.remove("chargeStatus");
-//                        jsonObject.remove("chargeType");
-//                        jsonObject.remove("customerName");
-//                        jsonObject.remove("businessCustomerNo");
-//                        jsonObject.remove("count");
-//                        requestJson = jsonObject.toJSONString();
-//                    }
-//                }
-//            }
-
             requestJson = JSON.toJSONString(paymentChargeRecordPageParam);
-
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {

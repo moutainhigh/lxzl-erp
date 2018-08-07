@@ -31,6 +31,7 @@
                                                     <input type="hidden" name="orderEndTime" id="orderEndTime" />
                                                     <div class="input-group date" id="timePicker">
                                                         <input type="text" name="timePickerInput" id="timePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="起租时间">
+
                                                         <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                                                     </div>
                                                 </div>
@@ -122,9 +123,13 @@
                                             <td>￥{{#price}}{{monthRentPrice}}{{/price}}</td>
                                             <td>￥{{#price}}{{monthRent}}{{/price}}</td>
                                             <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
+<<<<<<< HEAD
                                             <td data-remark="{{remark}}">
                                                 <div class="textOverflow order-remark" style="max-width:100px; cursor: pointer;">{{remark}}</div>
                                             </td>
+=======
+                                            <td>{{remark}}</td>
+>>>>>>> e6a870f2fc99c6d61f053358f3bfc0c824f6a6d2
                                             <td>
                                                 <p class="mn {{statusClass}}">{{statusValue}}</p>
                                             </td>

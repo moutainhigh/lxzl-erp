@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.delayedTask.DelayedTaskConfigExportStatementMapper">
+
+	<resultMap id="DelayedTaskConfigExportStatementDO" type="com.lxzl.erp.dataaccess.domain.delayedTask.DelayedTaskConfigExportStatementDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+	</resultMap>
+
+	<sql id="column_List">
+		edtces.id,edtces.customer_no,edtces.data_status
+	</sql>
+
+	<select id="findById" resultMap="DelayedTaskConfigExportStatementDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_delayed_task_config_export_statement edtces 
+		WHERE edtces.id = #{id, jdbcType=INTEGER} AND edtces.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(edtces.id) FROM erp_delayed_task_config_export_statement edtces 
+		<where>
+			<if test="true">
+				AND edtces.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="DelayedTaskConfigExportStatementDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_delayed_task_config_export_statement edtces 
+		<where>
+			<if test="true">
+				AND edtces.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="customerNo != null">
+				customer_no = #{customerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.delayedTask.DelayedTaskConfigExportStatementDO">
+		INSERT INTO erp_delayed_task_config_export_statement <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.delayedTask.DelayedTaskConfigExportStatementDO">
+		UPDATE erp_delayed_task_config_export_statement <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<select id="findByCustomerNo" resultMap="DelayedTaskConfigExportStatementDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_delayed_task_config_export_statement edtces
+		WHERE edtces.customer_no = #{statementOrderCustomerNo, jdbcType=VARCHAR} AND edtces.data_status = 1
+	</select>
+</mapper>

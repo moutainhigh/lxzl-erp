@@ -5,11 +5,13 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -72,6 +74,17 @@ public class FileUtil {
             return null;
         }
         return inputStream;
+    }
+    /**
+     * 输入EXCEL文件
+     *
+     * @param fileName 文件名
+     */
+    public static void outputExcel(String fileName,XSSFWorkbook hssfWorkbook) throws Exception{
+        FileOutputStream fos = null;
+        fos = new FileOutputStream(new File(fileName));
+        hssfWorkbook.write(fos);
+        fos.close();
     }
 
     private static String UPLOAD_FILE_URL;

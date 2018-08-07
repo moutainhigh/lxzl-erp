@@ -292,17 +292,17 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
         //取消审核组人员在审核中的变成取消
         List<WorkflowVerifyUserGroupDO> workflowVerifyUserGroupDOList = workflowVerifyUserGroupMapper.findByVerifyUserGroupId(workflowLinkDO.getVerifyUserGroupId());
-        if(CollectionUtil.isNotEmpty(workflowVerifyUserGroupDOList)){
+        if (CollectionUtil.isNotEmpty(workflowVerifyUserGroupDOList)) {
             List<WorkflowVerifyUserGroupDO> updateWorkflowVerifyUserGroupDOList = new ArrayList<>();
-            for(WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO : workflowVerifyUserGroupDOList){
-                if(VerifyStatus.VERIFY_STATUS_COMMIT.equals(workflowVerifyUserGroupDO.getVerifyStatus())){
+            for (WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO : workflowVerifyUserGroupDOList) {
+                if (VerifyStatus.VERIFY_STATUS_COMMIT.equals(workflowVerifyUserGroupDO.getVerifyStatus())) {
                     workflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_CANCEL);
                     workflowVerifyUserGroupDO.setUpdateUser(userId);
                     workflowVerifyUserGroupDO.setUpdateTime(currentTime);
                     updateWorkflowVerifyUserGroupDOList.add(workflowVerifyUserGroupDO);
                 }
             }
-            if(CollectionUtil.isNotEmpty(updateWorkflowVerifyUserGroupDOList)){
+            if (CollectionUtil.isNotEmpty(updateWorkflowVerifyUserGroupDOList)) {
                 SqlLogInterceptor.setExecuteSql("skip print  workflowVerifyUserGroupMapper.updateBatchVerifyUserGroup  sql ......");
                 workflowVerifyUserGroupMapper.updateBatchVerifyUserGroup(updateWorkflowVerifyUserGroupDOList);
             }
@@ -766,18 +766,16 @@ public class WorkflowServiceImpl implements WorkflowService {
     public ServiceResult<String, Page<WorkflowLink>> getWorkflowLinkPage(WorkflowLinkQueryParam workflowLinkQueryParam) {
         ServiceResult<String, Page<WorkflowLink>> result = new ServiceResult<>();
         //工作台判断
-        if(workflowLinkQueryParam.getIsWorkbench() != null && CommonConstant.COMMON_CONSTANT_YES.equals(workflowLinkQueryParam.getIsWorkbench())){
+        if (workflowLinkQueryParam.getIsWorkbench() != null && CommonConstant.COMMON_CONSTANT_YES.equals(workflowLinkQueryParam.getIsWorkbench())) {
 
             PageQuery pageQuery = new PageQuery(workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("start", pageQuery.getStart());
             paramMap.put("pageSize", pageQuery.getPageSize());
             //只有审核人数据
-            if (!userSupport.isSuperUser()) {
-                List<String> currentUserGroupList = workflowVerifyUserGroupMapper.findGroupUUIDByUserIdAndVerifyStatus(userSupport.getCurrentUserId(),workflowLinkQueryParam.getVerifyStatus());
-                paramMap.put("currentUserGroupList", currentUserGroupList);
-                paramMap.put("verifyUserId", userSupport.getCurrentUserId().toString());
-            }
+            List<String> currentUserGroupList = workflowVerifyUserGroupMapper.findGroupUUIDByUserIdAndVerifyStatus(userSupport.getCurrentUserId(), workflowLinkQueryParam.getVerifyStatus());
+            paramMap.put("currentUserGroupList", currentUserGroupList);
+            paramMap.put("verifyUserId", userSupport.getCurrentUserId().toString());
             paramMap.put("workflowQueryParam", workflowLinkQueryParam);
 
             Integer dataCount = workflowLinkMapper.workbenchListCount(paramMap);
