@@ -27,6 +27,13 @@ public interface PaymentService extends BaseService {
      * @return 客户帐户信息
      */
     CustomerAccount queryCustomerAccount(String customerNo);
+    /**
+     * 查询客户账户(对账单调用该接口，传入用户id不用通过session来进行获取用户id)
+     *
+     * @param customerNo 客户编码
+     * @return 客户帐户信息
+     */
+    CustomerAccount queryCustomerAccountNoSession(String customerNo,Integer userId);
 
     /**
      * 不登录状态查询客户账户
@@ -94,6 +101,14 @@ public interface PaymentService extends BaseService {
      * @return
      */
     ServiceResult<String, String> wechatCharge(String customerNo,BigDecimal amount,String openId, String ip);
+
+    /**
+     * 支付宝充值
+     *
+     * @param ip
+     * @return
+     */
+    ServiceResult<String, String> alipayCharge(String customerNo,BigDecimal amount,String openId, String ip);
 
     /**
      * 给微信端充值客户记录分页

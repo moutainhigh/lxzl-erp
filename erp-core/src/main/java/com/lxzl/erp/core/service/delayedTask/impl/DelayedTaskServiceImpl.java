@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.delayedTask.DelayedTaskQueryParam;
 import com.lxzl.erp.common.domain.delayedTask.pojo.DelayedTask;
+import com.lxzl.erp.common.domain.delayedTask.pojo.ao.StatementPayAmountAO;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.ReturnReasonType;
 import com.lxzl.erp.common.domain.messagethirdchannel.pojo.MessageThirdChannel;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
@@ -150,7 +151,20 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         //导出客户对账单
         if (DelayedTaskType.DELAYED_TASK_EXPORT_CUSTOMER_STATEMENT.equals(delayedTask.getTaskType())) {
             StatementOrderMonthQueryParam param = FastJsonUtil.toBean(delayedTask.getRequestJson(), StatementOrderMonthQueryParam.class);
-                result = getCustomerStatementDelayedTask(param,result,delayedTask);
+            if (param.getStatementOrderCustomerNo() == null || "".equals(param.getStatementOrderCustomerNo())) {
+                result.setErrorCode(ErrorCode.CUSTOMER_NO_NOT_NULL);
+                return result;
+            }
+            if (param.getStatementOrderStartTime() == null ) {
+                result.setErrorCode(ErrorCode.START_TIME_NOT_NULL);
+                return result;
+            }
+            if (param.getStatementOrderEndTime() == null) {
+                result.setErrorCode(ErrorCode.END_TIME_NOT_NULL);
+                return result;
+            }
+            Integer userId = userSupport.getCurrentUserId();
+            result = getCustomerStatementDelayedTask(param,result,delayedTask,userId);
         }
         return result;
     }
@@ -174,6 +188,14 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         Integer totalCount = delayedTaskMapper.findDelayedTaskCountByParams(maps);
         List<DelayedTaskDO> delayedTaskDOList = delayedTaskMapper.findDelayedTaskByParams(maps);
         List<DelayedTask> delayedTaskList = ConverterUtil.convertList(delayedTaskDOList, DelayedTask.class);
+
+        if (CollectionUtil.isNotEmpty(delayedTaskList)) {
+            for (DelayedTask delayedTask:delayedTaskList) {
+                if (delayedTask.getTaskStatus() == 3) {
+                    delayedTask.setFileUrl(ConstantConfig.downloadStatementUrl+delayedTask.getFileUrl());
+                }
+            }
+        }
         Page<DelayedTask> page = new Page<>(delayedTaskList, totalCount, delayedTaskQueryParam.getPageNo(), delayedTaskQueryParam.getPageSize());
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(page);
@@ -190,7 +212,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         String fileUrl = delayedTask.getFileUrl();
         InputStream inputStream = null;
         OutputStream stream = null;
-        if (fileUrl != null && fileUrl.equals("")) {
+        if (fileUrl != null && !fileUrl.equals("")) {
             try {
                 inputStream = FileUtil.getFileInputStream(fileUrl);
                 if (inputStream == null) {
@@ -218,6 +240,8 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                         inputStream.close(); // 关闭流
                     } catch (IOException e) {
                         logger.error("inputStream close IOException:" + e.getMessage());
+                        result.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+                        return result;
                     }
                 }
                 if (stream != null) {
@@ -225,20 +249,24 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                         stream.flush();
                         stream.close();
                     } catch (IOException e) {
-                        logger.error("inputStream close IOException:" + e.getMessage());
+                        logger.error("OutputStream close IOException:" + e.getMessage());
+                        result.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+                        return result;
                     }
                 }
-
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
             }
+        }else {
+            result.setErrorCode(ErrorCode.FILE_IS_NULL);
+            return result;
         }
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
     }
 
     /*
      *导出客户对账单调用方法
      */
-    public ServiceResult<String, DelayedTask> getCustomerStatementDelayedTask(StatementOrderMonthQueryParam statementOrderMonthQueryParam,ServiceResult<String, DelayedTask> result,DelayedTask delayedTask) throws Exception {
+    public ServiceResult<String, DelayedTask> getCustomerStatementDelayedTask(StatementOrderMonthQueryParam statementOrderMonthQueryParam,ServiceResult<String, DelayedTask> result,DelayedTask delayedTask,Integer userId) throws Exception {
         DelayedTaskConfigExportStatementDO delayedTaskConfigExportStatementDO = delayedTaskConfigExportStatementMapper.findByCustomerNo(statementOrderMonthQueryParam.getStatementOrderCustomerNo());
         Date date = new Date();
         //是特殊表中的用户，则开始线程导出对账单数据
@@ -267,6 +295,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     newdelayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     newdelayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     newdelayedTaskDO.setRemark(null);
+                    newdelayedTaskDO.setSync(false);
                     delayedTaskMapper.save(newdelayedTaskDO);
                 } else if (processingCount == 10 ) {//处理中的刚好为10个，这个存为排队中
                     newdelayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_QUEUE);//排队中
@@ -280,6 +309,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     newdelayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     newdelayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     newdelayedTaskDO.setRemark(null);
+                    newdelayedTaskDO.setSync(false);
                     delayedTaskMapper.save(newdelayedTaskDO);
                 } else {
                     newdelayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_PROCESSING);//处理中
@@ -293,10 +323,11 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     newdelayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     newdelayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     newdelayedTaskDO.setRemark(null);
+                    newdelayedTaskDO.setSync(false);
                     delayedTaskMapper.save(newdelayedTaskDO);
                 }
                 //调用线程导出对账单
-                delayedTaskExportCustomerStatementSupport.exportCustomerStatementAsynchronous(newdelayedTaskDO, date,statementOrderMonthQueryParam,getSession());
+                delayedTaskExportCustomerStatementSupport.exportCustomerStatementAsynchronous(newdelayedTaskDO, date,statementOrderMonthQueryParam,userId);
                 delayedTask = ConverterUtil.convert(newdelayedTaskDO, DelayedTask.class);
                 result.setResult(delayedTask);
                 result.setErrorCode(ErrorCode.SUCCESS);
@@ -318,6 +349,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 delayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 delayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
                 delayedTaskDO.setRemark(null);
+                delayedTaskDO.setSync(true);
                 delayedTaskMapper.save(delayedTaskDO);
 
                 XSSFWorkbook hssfWorkbook = null;
@@ -331,6 +363,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 BigDecimal beforePeriodUnpaid = new BigDecimal(0);
                 BigDecimal allPeriodUnpaid = new BigDecimal(0);
 
+
                 statementOrderMonthQueryParam = new StatementOrderMonthQueryParam();
                 statementOrderMonthQueryParam.setStatementOrderCustomerNo(customerNoParam);
     //        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderStartTime);
@@ -343,6 +376,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 try {
                     customerAccount = paymentService.queryCustomerAccount(customerNoParam);
                 }catch (Exception e){
+                    logger.error("导出对账单查询账户余额异常:" , e);
                     findCustomerAccount = false;
                 }
                 if (customerAccount == null) {
@@ -352,7 +386,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     accountBalance = customerAccount.getBalanceAmount();
                 }
 
-                ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam);
+                ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam,userId);
                 if (!ErrorCode.SUCCESS.equals(stringListServiceResult.getErrorCode())) {
                     result.setErrorCode(stringListServiceResult.getErrorCode());
                     //导出失败更新任务列表状态
@@ -389,6 +423,9 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     allPeriodUnpaid = BigDecimalUtil.add(allPeriodUnpaid, BigDecimalUtil.sub(checkStatementOrder.getStatementAmount(), checkStatementOrder.getStatementPaidAmount()));
                 }
 
+                StatementPayAmountAO statementPayAmountAO = new StatementPayAmountAO();
+                statementPayAmountAO.setBeforePeriodUnpaid(beforePeriodUnpaid);
+                statementPayAmountAO.setAllPeriodUnpaid(allPeriodUnpaid);
                 String previousSheetName = "";
     //        String customerName = "";
                 //处理对账单业务逻辑
@@ -410,7 +447,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 Integer listCount = checkStatementOrderList.size();
                 for(int i = 1 ; i <= listCount ; i++){
                     CheckStatementOrder checkStatementOrder = checkStatementOrderList.get(i-1);
-                    SetCheckStatementOrder setCheckStatementOrder = new SetCheckStatementOrder(hssfWorkbook, customerName, statementOrderStartTime, beforePeriodUnpaid, allPeriodUnpaid, totalEverPeriodAmountMap, totalEverPeriodPaidAmountMap, previousSheetName, simpleDateFormat, checkStatementOrder,findCustomerAccount,accountBalance).invoke();
+                    SetCheckStatementOrder setCheckStatementOrder = new SetCheckStatementOrder(hssfWorkbook, customerName, statementOrderStartTime, statementPayAmountAO, totalEverPeriodAmountMap, totalEverPeriodPaidAmountMap, previousSheetName, simpleDateFormat, checkStatementOrder,findCustomerAccount,accountBalance).invoke();
                     customerName = setCheckStatementOrder.getCustomerName();
                     hssfWorkbook = setCheckStatementOrder.getHssfWorkbook();
                     //更新进度
@@ -422,8 +459,10 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 }
 
                 // TODO: 2018\7\27 0027 将XSSFWorkbook存储到指定位置
-                String fileName = ConstantConfig.exportFileUrl + (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
-                String saveFileName = ConstantConfig.downloadStatementUrl + (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
+                SimpleDateFormat fileDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+                String simpleDate = fileDateFormat.format(date);
+                String fileName = ConstantConfig.exportFileUrl + (customerName + "对账单") +simpleDate+ ".xlsx";
+                String saveFileName = (customerName + "对账单") +simpleDate+ ".xlsx";
 //                String fileName = "D:\\xxxxxxx\\"+ (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
                 try {
                     FileUtil.outputExcel(fileName,hssfWorkbook);
@@ -450,11 +489,13 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                         System.out.println(sb.toString());
                     }
                     delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
+                    delayedTask.setFileUrl(ConstantConfig.downloadStatementUrl+delayedTask.getFileUrl());
                     result.setResult(delayedTask);
                     result.setErrorCode(ErrorCode.SUCCESS);
                     return result;
                 } catch (Exception e) {
                     e.printStackTrace();
+                    logger.error("导出对账单文件导出异常:" , e);
                     delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_EXECUTION_FAILED);//导出失败
                     delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
                     delayedTaskDO.setThreadName(null);
@@ -473,14 +514,13 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                         messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
                         messageThirdChannelService.sendMessage(messageThirdChannel);
                     }
-                    // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-                    delayedTaskMapper.subQueueNumber();
                     delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
                     result.setResult(delayedTask);
                     result.setErrorCode(ErrorCode.SUCCESS);
                     return result;
                 }
             }catch (Exception e){
+                logger.error("导出对账单异常:" , e);
                 delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_EXECUTION_FAILED);//导出失败
                 delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
                 delayedTaskDO.setThreadName(null);
@@ -500,8 +540,6 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     messageThirdChannelService.sendMessage(messageThirdChannel);
 //            System.out.println(sb.toString());
                 }
-                // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-                delayedTaskMapper.subQueueNumber();
                 delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
                 result.setResult(delayedTask);
                 result.setErrorCode(ErrorCode.SUCCESS);
@@ -1162,8 +1200,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         private XSSFWorkbook hssfWorkbook;
         private String customerName;
         private Date statementOrderStartTime;
-        private BigDecimal beforePeriodUnpaid;
-        private BigDecimal allPeriodUnpaid;
+        private StatementPayAmountAO statementPayAmountAO;
         private Map<String, BigDecimal> totalEverPeriodAmountMap;
         private Map<String, BigDecimal> totalEverPeriodPaidAmountMap;
         private String previousSheetName;
@@ -1172,12 +1209,11 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         private Boolean findCustomerAccount;
         private BigDecimal accountBalance;
         //装配excel
-        public SetCheckStatementOrder(XSSFWorkbook hssfWorkbook, String customerName, Date statementOrderStartTime, BigDecimal beforePeriodUnpaid, BigDecimal allPeriodUnpaid, Map<String, BigDecimal> totalEverPeriodAmountMap, Map<String, BigDecimal> totalEverPeriodPaidAmountMap, String previousSheetName, SimpleDateFormat simpleDateFormat, CheckStatementOrder checkStatementOrder,Boolean findCustomerAccount,BigDecimal accountBalance) {
+        public SetCheckStatementOrder(XSSFWorkbook hssfWorkbook, String customerName, Date statementOrderStartTime, StatementPayAmountAO statementPayAmountAO, Map<String, BigDecimal> totalEverPeriodAmountMap, Map<String, BigDecimal> totalEverPeriodPaidAmountMap, String previousSheetName, SimpleDateFormat simpleDateFormat, CheckStatementOrder checkStatementOrder,Boolean findCustomerAccount,BigDecimal accountBalance) {
             this.hssfWorkbook = hssfWorkbook;
             this.customerName = customerName;
             this.statementOrderStartTime = statementOrderStartTime;
-            this.beforePeriodUnpaid = beforePeriodUnpaid;
-            this.allPeriodUnpaid = allPeriodUnpaid;
+            this.statementPayAmountAO = statementPayAmountAO;
             this.totalEverPeriodAmountMap = totalEverPeriodAmountMap;
             this.totalEverPeriodPaidAmountMap = totalEverPeriodPaidAmountMap;
             this.previousSheetName = previousSheetName;
@@ -1195,12 +1231,8 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
             return customerName;
         }
 
-        public BigDecimal getBeforePeriodUnpaid() {
-            return beforePeriodUnpaid;
-        }
-
-        public BigDecimal getAllPeriodUnpaid() {
-            return allPeriodUnpaid;
+        public StatementPayAmountAO getStatementPayAmountAO() {
+            return statementPayAmountAO;
         }
 
         public String getPreviousSheetName() {
@@ -1533,6 +1565,8 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
             XSSFCell cell206 = hssfRow6.createCell(25);
             XSSFCell cell207 = hssfRow7.createCell(25);
 
+            BigDecimal beforePeriodUnpaid = statementPayAmountAO.getBeforePeriodUnpaid();
+            BigDecimal allPeriodUnpaid = statementPayAmountAO.getAllPeriodUnpaid();
             // 本期应付
             cell201.setCellValue(Double.parseDouble(amountExcelExportView.view(totalEverPeriodAmountMap.get(checkStatementOrder.getMonthTime())).toString()));
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell201, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
@@ -1546,6 +1580,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
 
             if (StringUtil.isNotBlank(previousSheetName) || !sheetName.equals(previousSheetName)) {
                 beforePeriodUnpaid = BigDecimalUtil.sub(allPeriodUnpaid, currentPeriodUnpaid);
+                statementPayAmountAO.setBeforePeriodUnpaid(beforePeriodUnpaid);
             }
 
             // 截止上期未付
@@ -1558,7 +1593,9 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
 
             if (StringUtil.isNotBlank(previousSheetName) || !sheetName.equals(previousSheetName)) {
                 allPeriodUnpaid = BigDecimalUtil.sub(allPeriodUnpaid, currentPeriodUnpaid);
+                statementPayAmountAO.setAllPeriodUnpaid(allPeriodUnpaid);
             }
+
             //账户余额、尚需支付
             if (findCustomerAccount) {
                 //账户余额
@@ -1701,34 +1738,34 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
      *
      * @return
      */
-    public static HttpSession getSession() {
-        HttpServletRequest request = getRequest();
-        String tempSessionId = request.getParameter("sessionId");
-        HttpSession session = request.getSession();
-        String sessionId = session.getId();
-        if(StringUtil.isNotEmpty(tempSessionId) && !tempSessionId.equals(sessionId)){
-            sessionId = tempSessionId;
-            if(sessionMap.containsKey(sessionId)){
-                session = sessionMap.get(sessionId);
-            }
-        }
-        if(!sessionMap.containsKey(sessionId)){
-            sessionMap.put(sessionId, session);
-        }
-        return session;
-    }
-
-
-    private static final Map<String, HttpSession> sessionMap = new HashMap<String, HttpSession>();
-
-    public static HttpSession getSession(String sessionId){
-        HttpSession session = sessionMap.get(sessionId);
-        return session == null ? getSession() : session;
-    }
-
-    public static void removeSession(String sessionId){
-        if(sessionMap.containsKey(sessionId)){
-            sessionMap.remove(sessionId);
-        }
-    }
+//    public static HttpSession getSession() {
+//        HttpServletRequest request = getRequest();
+//        String tempSessionId = request.getParameter("sessionId");
+//        HttpSession session = request.getSession();
+//        String sessionId = session.getId();
+//        if(StringUtil.isNotEmpty(tempSessionId) && !tempSessionId.equals(sessionId)){
+//            sessionId = tempSessionId;
+//            if(sessionMap.containsKey(sessionId)){
+//                session = sessionMap.get(sessionId);
+//            }
+//        }
+//        if(!sessionMap.containsKey(sessionId)){
+//            sessionMap.put(sessionId, session);
+//        }
+//        return session;
+//    }
+//
+//
+//    private static final Map<String, HttpSession> sessionMap = new HashMap<String, HttpSession>();
+//
+//    public static HttpSession getSession(String sessionId){
+//        HttpSession session = sessionMap.get(sessionId);
+//        return session == null ? getSession() : session;
+//    }
+//
+//    public static void removeSession(String sessionId){
+//        if(sessionMap.containsKey(sessionId)){
+//            sessionMap.remove(sessionId);
+//        }
+//    }
 }

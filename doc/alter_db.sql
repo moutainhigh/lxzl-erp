@@ -1058,3 +1058,5 @@ CREATE TABLE `erp_finance_statistics_data_weekly` (
 
 ALTER TABLE `erp_customer` ADD COLUMN `user_source` int(11) NOT NULL DEFAULT 1 COMMENT '用户来源,1-erp系统，2-大学生商城' AFTER `confirm_bad_account_time`;
 
+ALTER TABLE `erp_delayed_task` ADD COLUMN `is_sync`  tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否同步输出，1是同步输出，0是线程异步处理';
+

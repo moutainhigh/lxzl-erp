@@ -31,6 +31,7 @@
         <property name="paymentSystemQueryCustomerAccountLogPageURL" value="${PAYMENT_SYSTEM_QUERY_CUSTOMER_ACCOUNT_LOG_PAGE_URL}"/>
         <property name="paymentSystemReturnDepositExpandURL" value="${PAYMENT_SYSTEM_RETURN_DEPOSIT_EXPAND_URL}"/>
         <property name="paymentSystemPublicTransferPlusChargeURL" value="${PAYMENT_SYSTEM_PUBLIC_TRANSFER_PLUS_CHARGE_URL}"/>
+        <property name="paymentSystemAlipayChargeUrl" value="${PAYMENT_SYSTEM_ALIPAY_CHARGE_URL}"/>
     </bean>
 
     <bean id="dingDingConfig" class="com.lxzl.erp.common.domain.DingDingConfig">

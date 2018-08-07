@@ -98,6 +98,31 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BusinessException(e.getMessage());
         }
     }
+    /**
+     * 查询客户账户(对账单调用该接口，传入用户id不用通过session来进行获取用户id)
+     */
+    @Override
+    public CustomerAccount queryCustomerAccountNoSession(String customerNo,Integer userId) {
+        CustomerAccountQueryParam param = new CustomerAccountQueryParam();
+        param.setBusinessCustomerNo(customerNo);
+        param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        param.setBusinessOperateUser(userId.toString());
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = FastJsonUtil.toJSONString(param);
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryCustomerAccountURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("query customer account response:{}", response);
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                return JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), CustomerAccount.class);
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
 
     @Override
     public String returnDepositExpand(String customerNo, BigDecimal businessReturnRentAmount, BigDecimal businessReturnOtherAmount, BigDecimal businessReturnRentDepositAmount,
@@ -281,6 +306,15 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public ServiceResult<String, String> wechatCharge(String customerNo, BigDecimal amount, String openId, String ip) {
+        return charge(customerNo, amount, openId, ip, PaymentSystemConfig.paymentSystemWeixinChargeURL);
+    }
+
+    @Override
+    public ServiceResult<String, String> alipayCharge(String customerNo, BigDecimal amount, String openId, String ip) {
+        return charge(customerNo, amount, openId, ip, PaymentSystemConfig.paymentSystemAlipayChargeUrl);
+    }
+
+    private ServiceResult<String, String> charge(String customerNo, BigDecimal amount, String openId, String ip, String chargeURL) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
@@ -312,7 +346,7 @@ public class PaymentServiceImpl implements PaymentService {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(weixinPayParam);
-            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemWeixinChargeURL, requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(chargeURL, requestJson, headerBuilder, "UTF-8");
             logger.info("wechat charge response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
