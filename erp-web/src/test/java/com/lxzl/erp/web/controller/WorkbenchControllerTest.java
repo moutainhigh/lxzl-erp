@@ -28,10 +28,11 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
      * */
     @Test
     public void queryWaitVerifyWorkflowLinkCount() throws Exception {
-        WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
+        WorkbenchQueryParam workbenchQueryParam = new WorkbenchQueryParam();
 //        workflowLinkQueryParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
 //        workflowLinkQueryParam.setIsWorkbench(true);
-        TestResult testResult = getJsonTestResult("/workbench/queryWaitVerifyWorkflowLinkCount", workflowLinkQueryParam);
+        workbenchQueryParam.setWorkbenchName(2);
+        TestResult testResult = getJsonTestResult("/workbench/queryWorkbenchCount", workbenchQueryParam);
     }
     /**
      * 待审核的工作流 1
@@ -42,8 +43,8 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
         workflowLinkQueryParam.setPageNo(1);
         workflowLinkQueryParam.setPageSize(Integer.MAX_VALUE);
-//        workflowLinkQueryParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
-//        workflowLinkQueryParam.setIsWorkbench(1);
+        workflowLinkQueryParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+        workflowLinkQueryParam.setIsWorkbench(1);
         TestResult testResult = getJsonTestResult("/workflow/queryWorkflowLinkPage", workflowLinkQueryParam);
       }
     /**
@@ -101,30 +102,17 @@ public class WorkbenchControllerTest extends ERPUnTransactionalTest {
      * */
     @Test
     public void queryOrderTest() throws Exception{
-        WorkbenchOrderQueryParam param = new WorkbenchOrderQueryParam();
-        List<OrderQueryParam> list = new ArrayList<>();
-        OrderQueryParam orderQueryParam1 = new OrderQueryParam();
-        orderQueryParam1.setOrderStatus(OrderStatus.ORDER_STATUS_VERIFYING);
-        list.add(orderQueryParam1);
+        WorkbenchQueryParam param = new WorkbenchQueryParam();
+        param.setIsDisabled(0);
+        param.setIsRecycleBin(0);
+        //业务工作台
+//        param.setWorkbenchName(CommonConstant.COMMON_ZERO);
+        //商务工作台
+//        param.setWorkbenchName(CommonConstant.COMMON_ONE);
+        //商务+业务工作台
+        param.setWorkbenchName(CommonConstant.COMMON_TWO);
 
-        OrderQueryParam orderQueryParam2 = new OrderQueryParam();
-        orderQueryParam2.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
-        list.add(orderQueryParam2);
-
-        OrderQueryParam orderQueryParam3 = new OrderQueryParam();
-        orderQueryParam3.setIsReturnOverDue(CommonConstant.DATA_STATUS_ENABLE);
-        list.add(orderQueryParam3);
-
-        OrderQueryParam orderQueryParam4 = new OrderQueryParam();
-        orderQueryParam4.setPayStatus(PayStatus.PAY_STATUS_INIT);
-        list.add(orderQueryParam4);
-
-        OrderQueryParam orderQueryParam5 = new OrderQueryParam();
-        orderQueryParam5.setIsCanReletOrder(CommonConstant.COMMON_CONSTANT_YES);
-        list.add(orderQueryParam5);
-
-        param.setOrderQueryParamList(list);
-        TestResult testResult = getJsonTestResult("/workbench/queryOrder", param);
+        TestResult testResult = getJsonTestResult("/workbench/queryWorkbenchCount", param);
     }
 
 

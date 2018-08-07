@@ -91,7 +91,7 @@ public class DisposeExportDataServiceImpl implements DisposeExportDataService {
         }
         ServiceResult<String, HSSFWorkbook> hSSFWorkbookResult = excelExportService.getHSSFWorkbook(serviceResult, ExcelExportConfigGroup.statementOrderConfig, "sheet1");
         List<StatementOrderDetail> statementOrderDetailList = serviceResult.getResult() == null ? null : serviceResult.getResult().getStatementOrderDetailList();
-        ServiceResult<String, String> serviceResult1 = excelExportService.export(statementOrderDetailList, ExcelExportConfigGroup.statementOrderDetailConfig, response, hSSFWorkbookResult.getResult(), ExcelExportSupport.formatFileName("结算单详情"), "sheet1", 2);
+        ServiceResult<String, String> serviceResult1 = excelExportService.export(statementOrderDetailList, ExcelExportConfigGroup.statementOrderDetailConfig, response, hSSFWorkbookResult.getResult(), "结算单详情", "sheet1", 2);
 
         return serviceResult1;
     }

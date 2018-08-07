@@ -119,6 +119,7 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/logout")
     public Result logout() {
         session.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, null);
+        session.invalidate();
         return resultGenerator.generate(ErrorCode.SUCCESS);
     }
 
