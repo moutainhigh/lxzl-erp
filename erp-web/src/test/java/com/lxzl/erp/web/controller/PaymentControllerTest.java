@@ -7,7 +7,7 @@ import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerAccountLogParam;
 import com.lxzl.erp.common.domain.payment.ChargeRecordPageParam;
 import com.lxzl.erp.common.domain.payment.CustomerAccountLogParam;
-import com.lxzl.erp.common.domain.payment.WeixinChargeParam;
+import com.lxzl.erp.common.domain.payment.ChargeParam;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -61,7 +61,7 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void weixinPay() throws Exception {
-        WeixinChargeParam param = new WeixinChargeParam();
+        ChargeParam param = new ChargeParam();
 
         param.setCustomerNo("LXCC-1000-20180124-13746");
         param.setOpenId("o_ORluM1fFEVm9LMePBFvyBzbdr8");
@@ -130,5 +130,14 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
         param.setPageSize(10);
 //        param.setCustomerAccountLogType(5);
         TestResult testResult = getJsonTestResult("/payment/weixinQueryCustomerAccountLogPage", param);
+    }
+
+    @Test
+    public void alipayCharge()  throws Exception {
+        ChargeParam param = new ChargeParam();
+        param.setCustomerNo("LXCC-1000-20180124-13746");
+        param.setOpenId("o_ORluM1fFEVm9LMePBFvyBzbdr8");
+        param.setAmount(new BigDecimal(0.01));
+        TestResult testResult = getJsonTestResult("/payment/alipayCharge", param);
     }
 }

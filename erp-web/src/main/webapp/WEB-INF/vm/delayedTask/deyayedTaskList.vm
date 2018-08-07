@@ -88,7 +88,7 @@
                                 </td>
                                 <td class="text-right">
                                     <div class="btn-group text-right">
-                                        <a href="{{fileUrl}}" target="_blank" type="button" class="btn btn-default btn-xs downButton">下载</a>
+                                        <a href="${ctx}{{fileUrl}}" target="_blank" type="button" class="btn btn-default btn-xs downButton">下载</a>
                                     </div>
                                 </td>
                             </tr>

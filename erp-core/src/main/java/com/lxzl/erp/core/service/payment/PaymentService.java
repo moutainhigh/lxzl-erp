@@ -103,6 +103,14 @@ public interface PaymentService extends BaseService {
     ServiceResult<String, String> wechatCharge(String customerNo,BigDecimal amount,String openId, String ip);
 
     /**
+     * 支付宝充值
+     *
+     * @param ip
+     * @return
+     */
+    ServiceResult<String, String> alipayCharge(String customerNo,BigDecimal amount,String openId, String ip);
+
+    /**
      * 给微信端充值客户记录分页
      * @param customerNo
      * @return
