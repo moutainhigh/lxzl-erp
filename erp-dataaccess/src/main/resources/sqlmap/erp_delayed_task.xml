@@ -32,17 +32,20 @@
 	<select id="findQueueLast" resultMap="DelayedTaskDO" >
 		SELECT <include refid="column_List"/> FROM erp_delayed_task edt
 		WHERE edt.data_status = 1 AND task_status = 1
+		AND edt.is_sync = 0
 		limit 0,1;
 	</select>
 
 	<select id="findProcessingCount" resultType="java.lang.Integer" >
 		SELECT IFNULL(count(edt.id),0) FROM erp_delayed_task edt
 		WHERE edt.data_status = 1 AND task_status = 2
+		AND edt.is_sync = 0
 	</select>
 
 	<select id="findByUserId" resultMap="DelayedTaskDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> FROM erp_delayed_task edt
 		WHERE edt.create_user = #{currentUserId, jdbcType=VARCHAR} AND edt.data_status = 1 AND edt.task_status in (1,2)
+		AND edt.is_sync = 0
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -59,7 +62,8 @@
 		set edt.queue_number = edt.queue_number-1
 		WHERE edt.task_status = 1
 		AND edt.data_status = 1
-		AND edt.queue_number != 0
+		AND edt.queue_number > 0
+		AND edt.is_sync = 0
 	</update>
 
 	<select id="listPage" resultMap="DelayedTaskDO" parameterType="map">

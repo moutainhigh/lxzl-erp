@@ -505,8 +505,6 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                         messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
                         messageThirdChannelService.sendMessage(messageThirdChannel);
                     }
-                    // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-                    delayedTaskMapper.subQueueNumber();
                     delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
                     result.setResult(delayedTask);
                     result.setErrorCode(ErrorCode.SUCCESS);
@@ -533,8 +531,6 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     messageThirdChannelService.sendMessage(messageThirdChannel);
 //            System.out.println(sb.toString());
                 }
-                // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-                delayedTaskMapper.subQueueNumber();
                 delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
                 result.setResult(delayedTask);
                 result.setErrorCode(ErrorCode.SUCCESS);
