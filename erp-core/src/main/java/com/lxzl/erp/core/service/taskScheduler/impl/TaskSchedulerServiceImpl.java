@@ -180,7 +180,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
         }
     }
 
-    @Override 
+    @Override
     public ServiceResult<String, String> updateTaskExecutor(TaskExecutorCommitParam taskExecutorCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
 
