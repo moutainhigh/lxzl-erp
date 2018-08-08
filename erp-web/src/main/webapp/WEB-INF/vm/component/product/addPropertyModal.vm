@@ -1,0 +1,47 @@
+<div id="addPropertyModal" class="popup-basic popup-lg admin-form mfp-with-anim ">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i><span class="modalTitle">添加商品属性值</span></span>
+        </div>
+        <form method="post" class="inputForm">
+            <div class="panel-body p25">
+                <div class="section row">
+                    <div class="col-md-6">
+                        <label for="propertyValueName" class="field-label">分段时间点</label>
+                        <label for="propertyValueName" class="field prepend-icon">
+                            <input type="text" name="propertyValueName" id="propertyValueName" class="gui-input required"/>
+                            <label for="propertyValueName" class="field-icon"><i class="fa fa-tag"></i></label>
+                        </label>
+                    </div>
+                    <div class="col-md-6 hide" id="materialModelCol">
+                        <label for="materialModelId" class="field-label">属性值</label>
+                        <label class="field select">
+                            <select id="materialModelId" name="materialModelId"></select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                    <div class="col-md-6 hide" id="capacityCol">
+                        <label for="propertyCapacityValue" class="field-label">分段时间点</label>
+                        <label for="propertyCapacityValue" class="field prepend-icon">
+                            <input type="text" name="propertyCapacityValue" id="propertyCapacityValue" class="gui-input required"/>
+                            <label for="propertyCapacityValue" class="field-icon"><i class="fa fa-tag"></i></label>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-6">
+                        <label for="dataOrder" class="field-label">分段时间点</label>
+                        <label for="dataOrder" class="field prepend-icon">
+                            <input type="text" name="dataOrder" id="dataOrder" class="gui-input required"/>
+                            <label for="dataOrder" class="field-icon"><i class="fa fa-tag"></i></label>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <button type="submit" class="button btn-primary">确定</button>
+                <button type="button" class="button btn-default cancelButton">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
