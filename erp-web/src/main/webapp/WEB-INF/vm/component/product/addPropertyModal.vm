@@ -21,7 +21,7 @@
                         </label>
                     </div>
                     <div class="col-md-6 hide" id="capacityCol">
-                        <label for="propertyCapacityValue" class="field-label">分段时间点</label>
+                        <label for="propertyCapacityValue" class="field-label">属性值</label>
                         <label for="propertyCapacityValue" class="field prepend-icon">
                             <input type="text" name="propertyCapacityValue" id="propertyCapacityValue" class="gui-input required"/>
                             <label for="propertyCapacityValue" class="field-icon"><i class="fa fa-tag"></i></label>
