@@ -188,7 +188,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             if(!isJSONValid(taskExecutorCommitParam.getRequestBody())){
                 result.setErrorCode(ErrorCode.QUARTZ_TASK_EXECUTOR_REQUEST_BODY_ERROR);
                 return result;
-            }
+            } 
         }
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
