@@ -80,4 +80,8 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
 //    List<OrderDO> findByOrderSellerId(@Param("orderSellerId")Integer orderSellerId);
 
 //    void updateListForUser(@Param("updateOrderDOList")List<OrderDO> updateOrderDOList);
+
+    //修改订单租赁方案
+    void updateOrderRentPlan(@Param("orderDOList") List<OrderDO> orderDOList, @Param("payMode") Integer payMode, @Param("depositCycle") Integer depositCycle, @Param("paymentCycle") Integer paymentCycle);
+
 }
