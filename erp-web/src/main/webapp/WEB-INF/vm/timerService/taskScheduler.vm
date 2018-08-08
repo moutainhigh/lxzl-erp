@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <div class="panel-body pn">
-                    <div class="table-responsive" style="overflow-x: scroll;">
+                    <div class="table-responsive" style="overflow-x: scroll; min-height:235px;">
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr>
