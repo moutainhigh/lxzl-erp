@@ -73,6 +73,68 @@
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 
+
+	<resultMap id="FinanceStatisticsDataMeta" type="com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataMeta">
+		<result column="year" jdbcType="INTEGER" property="year" />
+		<result column="month" jdbcType="INTEGER" property="month" />
+		<result column="week_of_month" jdbcType="INTEGER" property="weekOfMonth" />
+	</resultMap>
+
+	<select id="countFinanceStatisticsDataMetaPage" resultType="java.lang.Integer" parameterType="map">
+		SELECT COUNT(year) FROM (
+		    SELECT year, month
+		    <if test="maps.statisticsInterval != null and maps.statisticsInterval == 1">
+			  , week_of_month
+		    </if>
+		    FROM erp_finance_statistics_data_weekly efsdw
+		    WHERE data_status = 1
+		    <if test="maps.year != null">
+		        AND year=#{maps.year, jdbcType=INTEGER}
+		    </if>
+		    <if test="maps.month != null">
+		        AND month=#{maps.month, jdbcType=INTEGER}
+		    </if>
+		    <if test="maps.statisticsInterval != null and maps.statisticsInterval == 1 and maps.weekOfMonth != null">
+		        AND week_of_month=#{maps.weekOfMonth, jdbcType=INTEGER}
+		    </if>
+		    GROUP BY year, month
+		    <if test="maps.statisticsInterval != null and maps.statisticsInterval == 1">
+		        , week_of_month
+		    </if>
+		    ORDER BY year DESC , month DESC
+		    <if test="maps.statisticsInterval != null and maps.statisticsInterval == 1">
+		        , week_of_month DESC
+		    </if>
+		) A
+	</select>
+
+	<select id="listFinanceStatisticsDataMetaPage" resultMap="FinanceStatisticsDataMeta" parameterType="map">
+		SELECT year, month
+		<if test="maps.statisticsInterval != null and maps.statisticsInterval == 1">
+		, week_of_month
+		</if>
+		FROM erp_finance_statistics_data_weekly
+		WHERE data_status = 1
+		<if test="maps.year != null">
+			AND year=#{maps.year, jdbcType=INTEGER}
+		</if>
+		<if test="maps.month != null">
+			AND month=#{maps.month, jdbcType=INTEGER}
+		</if>
+		<if test="maps.statisticsInterval != null and maps.statisticsInterval == 1 and maps.weekOfMonth != null">
+			AND week_of_month=#{maps.weekOfMonth, jdbcType=INTEGER}
+		</if>
+		GROUP BY year, month
+		<if test="maps.statisticsInterval != null and maps.statisticsInterval == 1">
+			, week_of_month
+		</if>
+		ORDER BY year DESC , month DESC
+		<if test="maps.statisticsInterval != null and maps.statisticsInterval == 1">
+			, week_of_month DESC
+		</if>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
 	<sql id="set_column_sql">
 		<set>
 			<if test="orderOrigin != null">

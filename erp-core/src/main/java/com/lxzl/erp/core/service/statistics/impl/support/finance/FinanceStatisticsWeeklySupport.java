@@ -14,6 +14,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.FinanceStatisticsDataWeeklyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataMeta;
 import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataWeeklyDO;
 import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDealsCountBySubCompany;
 import com.lxzl.se.common.util.StringUtil;
@@ -32,6 +33,24 @@ import java.util.*;
 @Component
 public class FinanceStatisticsWeeklySupport {
 
+    public Integer countFinanceStatisticsDataMetaPage(FinanceStatisticsParam param) {
+        if (param == null) {
+            return null;
+        }
+        Map<String, Object> maps = financeStatisticsWeeklyParamToMap(param);
+        return financeStatisticsDataWeeklyMapper.countFinanceStatisticsDataMetaPage(maps);
+    }
+
+    public List<FinanceStatisticsDataMeta> listFinanceStatisticsDataMetaPage(FinanceStatisticsParam param) {
+        if (param == null) {
+            return null;
+        }
+        Map<String, Object> maps = financeStatisticsWeeklyParamToMap(param);
+        return financeStatisticsDataWeeklyMapper.listFinanceStatisticsDataMetaPage(maps);
+    }
+
+
+
     /**
      * 统计成交客户数量 { 订单所属公司为八个分公司（KA）的订单按订单所属分公司分组统计，订单所属公司为电销或者大客户渠道的订单则按执行分公司分组统计}
      * @param param
@@ -47,6 +66,10 @@ public class FinanceStatisticsWeeklySupport {
 
     private Map<String, Object> financeStatisticsWeeklyParamToMap(FinanceStatisticsParam param) {
         Map<String, Object> maps = new HashMap<>();
+        maps.put("statisticsInterval", param.getStatisticsInterval());
+        maps.put("year", param.getYear());
+        maps.put("month", param.getMonth());
+        maps.put("weekOfMonth", param.getWeekOfMonth());
         maps.put("orderOrigin", param.getOrderOrigin());
         maps.put("rentLengthType", param.getRentLengthType());
         maps.put("statisticsStartTime", param.getStatisticsStartTime());
@@ -54,6 +77,8 @@ public class FinanceStatisticsWeeklySupport {
         if (StringUtil.isNotBlank(param.getNewCustomerKey())) {
             maps.put("newCustomerKey", param.getNewCustomerKey());
         }
+        maps.put("start", param.getStart());
+        maps.put("pageSize", param.getPageSize());
         return maps;
     }
 
