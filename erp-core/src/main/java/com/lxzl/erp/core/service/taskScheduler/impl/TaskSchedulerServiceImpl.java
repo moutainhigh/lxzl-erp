@@ -49,6 +49,15 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             }
         }
 
+        TaskExecutor taskExecutor = initTaskSchedulerCommitParam.getTaskExecutor();
+        if(StringUtil.isNotBlank(taskExecutor.getRequestBody())){
+            if(!isJSONValid(taskExecutor.getRequestBody())){
+                result.setErrorCode(ErrorCode.QUARTZ_TASK_EXECUTOR_REQUEST_BODY_ERROR);
+                return result;
+            }
+        }
+
+
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
@@ -175,6 +184,12 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
     public ServiceResult<String, String> updateTaskExecutor(TaskExecutorCommitParam taskExecutorCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
 
+        if(StringUtil.isNotBlank(taskExecutorCommitParam.getRequestBody())){
+            if(!isJSONValid(taskExecutorCommitParam.getRequestBody())){
+                result.setErrorCode(ErrorCode.QUARTZ_TASK_EXECUTOR_REQUEST_BODY_ERROR);
+                return result;
+            }
+        }
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
@@ -317,6 +332,15 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new BusinessException(e.getMessage());
+        }
+    }
+
+    public final static boolean isJSONValid(String test) {
+        try {
+            JSONObject.parseObject(test);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }

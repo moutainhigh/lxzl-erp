@@ -1030,6 +1030,7 @@ public class ErrorCode {
     public static final String QUARTZ_CRON_EXPRESSION_IS_LENGTH = "J250000029";
     public static final String QUARTZ_TASK_EXECUTOR_SYSTEM_TYPE_NOT_NUMBER = "J250000030";
     public static final String QUARTZ_TASK_EXECUTOR_JOB_TYPE_NOT_NUMBER = "J250000031";
+    public static final String QUARTZ_TASK_EXECUTOR_REQUEST_BODY_ERROR = "J250000032";
 
     // 动态SQL查询
     public static final String DYNAMIC_SQL_ERROR = "J260000001";
@@ -2052,6 +2053,7 @@ public class ErrorCode {
         MAP.put(QUARTZ_CRON_EXPRESSION_IS_LENGTH, "定时任务cron表达式长度不能超过31");
         MAP.put(QUARTZ_TASK_EXECUTOR_SYSTEM_TYPE_NOT_NUMBER, "定时任务执行者系统类型不是数字");
         MAP.put(QUARTZ_TASK_EXECUTOR_JOB_TYPE_NOT_NUMBER, "定时任务执行者任务类型不是数字");
+        MAP.put(QUARTZ_TASK_EXECUTOR_REQUEST_BODY_ERROR, "定时任务执行者json字符串格式不正确");
 
 
         MAP.put(DYNAMIC_SQL_ERROR, "动态SQL查询语句不正确");
