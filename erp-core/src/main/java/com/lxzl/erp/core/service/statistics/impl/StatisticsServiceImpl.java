@@ -23,6 +23,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsSalesmanMonthMapper;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataMeta;
 import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataWeeklyDO;
 import com.lxzl.erp.dataaccess.domain.statistics.StatisticsSalesmanMonthDO;
 import com.lxzl.se.common.util.StringUtil;
@@ -1113,6 +1114,45 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private boolean needVerifyWeek(int interval) {
         return StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY == interval;
+    }
+
+    @Override
+    public ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> findStatisticsFinanceDataDetail(FinanceStatisticsParam paramVo) {
+        ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> serviceResult = new ServiceResult<>();
+        if (paramVo == null && paramVo.getStatisticsInterval() == null) {
+            serviceResult.setErrorCode(ErrorCode.STATISTICS_FINANCE_PARAM_INTERVAL_INVALID);
+        }
+        if (StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY == paramVo.getStatisticsInterval()) {
+            return statisticsFinanceDataWeeklyToExcel(paramVo);
+        } else if(StatisticsIntervalType.STATISTICS_INTERVAL_MONTHLY == paramVo.getStatisticsInterval()) {
+            return statisticsFinanceDataMonthlyToExcel(paramVo);
+        } else if(StatisticsIntervalType.STATISTICS_INTERVAL_YEARLY == paramVo.getStatisticsInterval()){
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            serviceResult.setResult(new ArrayList<FinanceStatisticsDataWeeklyExcel>());
+            return serviceResult;
+        } else {
+            serviceResult.setErrorCode(ErrorCode.STATISTICS_FINANCE_PARAM_INTERVAL_INVALID);
+            serviceResult.setResult(new ArrayList<FinanceStatisticsDataWeeklyExcel>());
+            return serviceResult;
+        }
+    }
+
+    @Override
+    public ServiceResult<String, Page<FinanceStatisticsDataMeta>> findAllStatisticsFinanceDataMeta(FinanceStatisticsParam paramVo){
+        ServiceResult<String, Page<FinanceStatisticsDataMeta>> serviceResult = new ServiceResult<>();
+        int totalCount = financeStatisticsWeeklySupport.countFinanceStatisticsDataMetaPage(paramVo);
+        List<FinanceStatisticsDataMeta> financeStatisticsDataMetaList = financeStatisticsWeeklySupport.listFinanceStatisticsDataMetaPage(paramVo);
+        Page<FinanceStatisticsDataMeta> page = new Page<>(financeStatisticsDataMetaList, totalCount, paramVo.getPageNo(), paramVo.getPageSize());
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(page);
+        /*ServiceResult<String, Boolean> verifyResult = verify(paramVo);
+        if (!ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
+            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            serviceResult.setResult(new ArrayList<FinanceStatisticsDataWeeklyExcel>());
+        } else {
+
+        }*/
+        return serviceResult;
     }
 
     @Override
