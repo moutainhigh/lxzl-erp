@@ -28,50 +28,33 @@ public class DingDingConfig {
      */
     public static String applyApprovingWorkflowCallBackUrl;
 
-    /**
-     * 接口---发起审批实例
-     */
-    private static String interfaceApplyApprovingWorkflow = "applyApprovingWorkflow";
 
-    /**
-     * 接口---往钉钉网关上注册erp系统的userId接口
-     */
-    private static String interfaceInputMember = "inputMember";
-
-    /**
-     * 接口---注销钉钉网关工作流接口
-     */
-    private static String delApprovingWorkflow = "delApprovingWorkflow";
-    /**
-     * 接口---发起审批实例
-     */
-    private static String interfaceSendSystemMessage = "sendDingTalkMsg";
     /**
      * 获取注销钉钉网关工作流接口的url
      */
     public static String getDelApprovingWorkflowUrl() {
-        return dingDingGatewayUrl + "/" + delApprovingWorkflow;
+        return dingDingGatewayUrl + "/" + DingTalkGatewayRUSTApi.delApprovingWorkflow.uri;
     }
 
     /**
      * 获取发起审批实例的url
      */
     public static String getApplyApprovingWorkflowUrl() {
-        return dingDingGatewayUrl + "/" + interfaceApplyApprovingWorkflow;
+        return dingDingGatewayUrl + "/" + DingTalkGatewayRUSTApi.interfaceApplyApprovingWorkflow.uri;
     }
 
     /**
      * 获取发起审批实例的url
      */
     public static String getInputMemberUrl() {
-        return dingDingGatewayUrl + "/" + interfaceInputMember;
+        return dingDingGatewayUrl + "/" + DingTalkGatewayRUSTApi.interfaceInputMember.uri;
     }
 
     /**
      * 获取发送系统消息的url
      */
     public static String getSendSystemMessageUrl() {
-        return dingDingGatewayUrl + "/" + interfaceSendSystemMessage;
+        return dingDingGatewayUrl + "/" +  DingTalkGatewayRUSTApi.interfaceSendSystemMessage.uri;
     }
 
     public void setApplyApprovingWorkflowCallBackUrl(String applyApprovingWorkflowCallBackUrl) {
@@ -84,5 +67,23 @@ public class DingDingConfig {
 
     public void setDingDingGatewayUrl(String dingDingGatewayUrl) {
         DingDingConfig.dingDingGatewayUrl = dingDingGatewayUrl;
+    }
+
+    private enum DingTalkGatewayRUSTApi {
+        //发起审批实例
+        interfaceApplyApprovingWorkflow("applyApprovingWorkflow"),
+        //往钉钉网关上注册erp系统的userId接口
+        interfaceInputMember("inputMember"),
+        //注销钉钉网关工作流接口
+        delApprovingWorkflow("delApprovingWorkflow"),
+        //发起钉钉消息
+        interfaceSendSystemMessage("sendDingTalkMsg");
+
+        private String uri;
+
+        DingTalkGatewayRUSTApi(String uri) {
+            String interfaceNamespace = "api/";
+            this.uri = interfaceNamespace + uri;
+        }
     }
 }
