@@ -8,7 +8,7 @@ import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerQueryPa
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderPayParam;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
-import com.lxzl.erp.common.domain.erpInterface.weiXin.InterfaceWeixinChargeParam;
+import com.lxzl.erp.common.domain.erpInterface.weiXin.InterfaceChargeParam;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.JSONUtil;
 import com.lxzl.erp.core.service.businessSystemConfig.BusinessSystemConfigService;
@@ -87,13 +87,13 @@ public class InterfaceControllerTest extends ERPTransactionalTest{
 
     @Test
     public void wechatCharge() throws Exception {
-        InterfaceWeixinChargeParam interfaceWeixinChargeParam = new InterfaceWeixinChargeParam();
-        interfaceWeixinChargeParam.setErpAppId("111");
-        interfaceWeixinChargeParam.setErpAppSecret("222");
-        interfaceWeixinChargeParam.setCustomerNo("LXCC-1000-20180129-00062");
-        interfaceWeixinChargeParam.setAmount(new BigDecimal(12));
-        interfaceWeixinChargeParam.setOpenId("o_ORluFbHAHEKaa_PCRo1bky4R6U");
-        TestResult testResult = getJsonTestResult("/interface/wechatCharge", interfaceWeixinChargeParam);
+        InterfaceChargeParam interfaceChargeParam = new InterfaceChargeParam();
+        interfaceChargeParam.setErpAppId("111");
+        interfaceChargeParam.setErpAppSecret("222");
+        interfaceChargeParam.setCustomerNo("LXCC-1000-20180129-00062");
+        interfaceChargeParam.setAmount(new BigDecimal(12));
+        interfaceChargeParam.setOpenId("o_ORluFbHAHEKaa_PCRo1bky4R6U");
+        TestResult testResult = getJsonTestResult("/interface/wechatCharge", interfaceChargeParam);
     }
 
     @Test

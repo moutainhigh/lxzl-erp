@@ -138,6 +138,7 @@ public class DelayedTaskExportCustomerStatementSupport {
                         exportCustomerStatement(delayedTaskDO,date,statementOrderMonthQueryParam,userId);
                     }
                 }catch (Exception e){
+                    logger.error("导出对账单异常:" , e);
                     delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_EXECUTION_FAILED);//导出失败
                     delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
                     delayedTaskDO.setThreadName(null);
@@ -188,8 +189,9 @@ public class DelayedTaskExportCustomerStatementSupport {
         BigDecimal accountBalance = BigDecimal.ZERO;
         CustomerAccount customerAccount = null;
         try {
-            customerAccount = paymentService.queryCustomerAccount(customerNoParam);
+            customerAccount = paymentService.queryCustomerAccountNoSession(customerNoParam,userId);
         }catch (Exception e){
+            logger.error("导出对账单查询账户余额异常:" , e);
             findCustomerAccount = false;
         }
         if (customerAccount == null) {
@@ -930,7 +932,10 @@ public class DelayedTaskExportCustomerStatementSupport {
             CheckStatementOrder checkStatementOrder = checkStatementOrderList.get(i-1);
             try {
                 Date monthTime = simpleDateFormat.parse(checkStatementOrder.getMonthTime());
-                if (monthTime.getTime()<statementOrderStartTime.getTime()) {
+                String statementOrderStartTimeString = simpleDateFormat.format(statementOrderStartTime);
+                Date statementOrderStartTimeDate = simpleDateFormat.parse(statementOrderStartTimeString);
+
+                if (monthTime.getTime()<statementOrderStartTimeDate.getTime()) {
                     continue;
                 }
                 if (StringUtil.isBlank(customerName)) {
@@ -1132,7 +1137,6 @@ public class DelayedTaskExportCustomerStatementSupport {
                     exportStatementOrderDetailBase.setRentTimeLength(exportStatementOrderDetailBase.getRentTimeLength() == null ? "无" : exportStatementOrderDetailBase.getRentTimeLength());
                     exportStatementOrderDetailBase.setCurrentPeriodStartAndEnd(formatPeriodStartAndEnd(exportStatementOrderDetail.getStatementStartTime(), exportStatementOrderDetail.getStatementEndTime()) + exportStatementOrderDetailBase.getRentTimeLength());    //本期起止（当前期数起止）
                     //-------------------以上是本期结算单-----------------------------
-
 
                     exportList.add(exportStatementOrderDetailBase);
                 }
@@ -1377,8 +1381,10 @@ public class DelayedTaskExportCustomerStatementSupport {
             }
         }
         // TODO: 2018\7\27 0027 将XSSFWorkbook存储到指定位置
-        String fileName = ConstantConfig.exportFileUrl + (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
-        String saveFileName = ConstantConfig.downloadStatementUrl + (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
+        SimpleDateFormat fileDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        String simpleDate = fileDateFormat.format(date);
+        String fileName = ConstantConfig.exportFileUrl + (customerName + "对账单") +simpleDate+ ".xlsx";
+        String saveFileName = (customerName + "对账单") +simpleDate+ ".xlsx";
 //        String fileName = "D:\\xxxxxxx\\"+ (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
         try {
             FileUtil.outputExcel(fileName,hssfWorkbook);
@@ -1406,6 +1412,7 @@ public class DelayedTaskExportCustomerStatementSupport {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("导出对账单文件导出异常:" , e);
             delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_EXECUTION_FAILED);//导出失败
             delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
             delayedTaskDO.setThreadName(null);

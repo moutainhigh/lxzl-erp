@@ -22,12 +22,10 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class  TaskSchedulerCommitParam {
 
-    @NotBlank(message = ErrorCode.QUARTZ_JOB_NAME_NOT_NULL,groups = {UpdateGroup.class})
-    @Pattern(message = ErrorCode.QUARTZ_JOB_NAME_NOT_CN,regexp = "^[A-Za-z0-9]+$",groups = {AddGroup.class, UpdateGroup.class})
+    @Pattern(message = ErrorCode.QUARTZ_JOB_NAME_NOT_CN,regexp = "^[A-Za-z0-9]+$|^$",groups = {AddGroup.class, UpdateGroup.class})
     @Length(max = 31,message = ErrorCode.QUARTZ_JOB_NAME_IS_LENGTH,groups = {AddGroup.class, UpdateGroup.class})
     private String jobName;  //工作名称 —- 无特殊要求建议不传、使用默认值
-    @NotBlank(message = ErrorCode.QUARTZ_JOB_GROUP_NOT_NULL,groups = {UpdateGroup.class})
-    @Pattern(message = ErrorCode.QUARTZ_JOB_GROUP_NOT_CN,regexp = "^[A-Za-z0-9]+$",groups = {AddGroup.class, UpdateGroup.class})
+    @Pattern(message = ErrorCode.QUARTZ_JOB_GROUP_NOT_CN,regexp = "^[A-Za-z0-9]+$|^$",groups = {AddGroup.class, UpdateGroup.class})
     @Length(max = 31,message = ErrorCode.QUARTZ_JOB_GROUP_IS_LENGTH,groups = {AddGroup.class, UpdateGroup.class})
     private String jobGroup;  //工作分组—-无特殊要求建议不传、使用默认值
     @NotBlank(message = ErrorCode.QUARTZ_TRIGGER_NAME_NOT_NULL,groups = {AddGroup.class, UpdateGroup.class})
@@ -43,7 +41,7 @@ public class  TaskSchedulerCommitParam {
     private String cronExpression;  //定时任务cron表达式
     @Valid
     private List<HolidayDTO> holidayDTOList;  //指定不需要指定定时任务的日期列表
-    @Pattern(message = ErrorCode.QUARTZ_HOLIDAY_NAME_NOT_CN,regexp = "^[A-Za-z0-9]+$",groups = {AddGroup.class, UpdateGroup.class})
+    @Pattern(message = ErrorCode.QUARTZ_HOLIDAY_NAME_NOT_CN,regexp = "^[A-Za-z0-9]+$|^$",groups = {AddGroup.class, UpdateGroup.class})
     @Length(max = 31,message = ErrorCode.QUARTZ_HOLIDAY_NAME_IS_LENGTH,groups = {AddGroup.class, UpdateGroup.class})
     private String holidayName;  //当holidayDTOs不为空时必须指定	假期名称
     private String description;  //任务描述

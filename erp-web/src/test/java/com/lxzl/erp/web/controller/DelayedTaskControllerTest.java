@@ -21,7 +21,7 @@ public class DelayedTaskControllerTest extends ERPUnTransactionalTest {
     public void addDelayedTask() throws Exception{
         DelayedTask delayedTask = new DelayedTask();
         delayedTask.setTaskType(1);
-        String requestString = "{\"statementOrderCustomerNo\": \"LXCC-027-20180702-00003\", \"statementOrderStartTime\": 1522512000000,\"statementOrderEndTime\": 1530403200000}";
+        String requestString = "{\"statementOrderCustomerNo\": \"LXCC-027-20180718-00083\", \"statementOrderStartTime\": 1519862400000,\"statementOrderEndTime\": 1533081600000}";
         delayedTask.setRequestJson(requestString);
         String json = FastJsonUtil.toJSONString(delayedTask);
         System.out.println(json);

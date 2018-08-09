@@ -1115,7 +1115,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * 修改订单的公共方法
+     * 确认收货修改订单的公共方法
      * @Author : sunzhipeng
      * @param orderConfirmChangeParam
      * @return

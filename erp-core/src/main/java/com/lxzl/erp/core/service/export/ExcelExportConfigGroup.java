@@ -90,7 +90,7 @@ public class ExcelExportConfigGroup {
              }
           }))
           .addConfig(new ColConfig("shenZhenDealsCount","深圳"))
-          .addConfig(new ColConfig("beiJingZhenDealsCount","北京"))
+          .addConfig(new ColConfig("beiJingDealsCount","北京"))
           .addConfig(new ColConfig("shangHaiDealsCount","上海"))
           .addConfig(new ColConfig("guangZhouDealsCount","广州"))
           .addConfig(new ColConfig("wuHanDealsCount","武汉"))
@@ -295,6 +295,10 @@ public class ExcelExportConfigGroup {
                     return "威富通";
                 }else if (BankType.UNKNOWN_CHANNEL_PAY_TYPE.equals(bankType)) {
                     return "支付未知渠道";
+                }else if (BankType.JING_DONG.equals(bankType)) {
+                    return "京东";
+                }else if (BankType.CHINA_UNION_PAY_TYPE.equals(bankType)) {
+                    return "银联";
                 }
                 return "";
             }

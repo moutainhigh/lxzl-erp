@@ -54,15 +54,13 @@
                     </div>
                 </div>
                 <div class="panel-body pn">
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="overflow-x: scroll; min-height:235px;">
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr>
                                 <th>触发器名称</th>
                                 <th>触发器分组</th>
                                 <th>状态</th>
-                                <th>工作名称</th>
-                                <th>工作分组</th>
                                 <th>job类型</th>
                                 <th>请求的url</th>
                                 <th>请求的内容</th>
@@ -72,7 +70,6 @@
                                 <th>重试次数</th>
                                 <th>重试间隔</th>
                                 <th>系统类型</th>
-                                <th>备注</th>
                                 <th>创建人</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
@@ -86,8 +83,6 @@
                                 <td>{{triggerName}}</td>
                                 <td>{{triggerGroup}}</td>
                                 <td>{{triggerStatusDesc}}</td>
-                                <td>{{jobName}}</td>
-                                <td>{{jobGroup}}</td>
                                 <td>{{jobTypeVal}}</td>
                                 <td style="max-width:200px; word-wrap:break-word;">{{requestUrl}}</td>
                                 <td>{{requestBody}}</td>
@@ -97,7 +92,6 @@
                                 <td>{{retryCount}}</td>
                                 <td>{{retryInterval}}</td>
                                 <td>{{systemType}}</td>
-                                <td>{{remark}}</td>
                                 <td>
                                     <p class="mn">{{createUserRealName}}</p>
                                     <p class="mn mt5">{{#clockShorTime}}{{createDate}}{{/clockShorTime}}</p>

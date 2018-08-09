@@ -17,10 +17,11 @@
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="file_url" jdbcType="VARCHAR" property="fileUrl" />
+		<result column="is_sync" jdbcType="BIT" property="isSync" />
 	</resultMap>
 
 	<sql id="column_List">
-		edt.id,edt.task_type,edt.task_status,edt.queue_number,edt.request_json,edt.thread_name,edt.progress_rate,edt.remark,edt.data_status,edt.create_time,edt.create_user,edt.update_time,edt.update_user,edt.file_url
+		edt.id,edt.task_type,edt.task_status,edt.queue_number,edt.request_json,edt.thread_name,edt.progress_rate,edt.remark,edt.data_status,edt.create_time,edt.create_user,edt.update_time,edt.update_user,edt.file_url,edt.is_sync
 	</sql>
 
 	<select id="findById" resultMap="DelayedTaskDO" parameterType="java.lang.String">
@@ -31,17 +32,20 @@
 	<select id="findQueueLast" resultMap="DelayedTaskDO" >
 		SELECT <include refid="column_List"/> FROM erp_delayed_task edt
 		WHERE edt.data_status = 1 AND task_status = 1
+		AND edt.is_sync = 0
 		limit 0,1;
 	</select>
 
 	<select id="findProcessingCount" resultType="java.lang.Integer" >
 		SELECT IFNULL(count(edt.id),0) FROM erp_delayed_task edt
 		WHERE edt.data_status = 1 AND task_status = 2
+		AND edt.is_sync = 0
 	</select>
 
 	<select id="findByUserId" resultMap="DelayedTaskDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> FROM erp_delayed_task edt
 		WHERE edt.create_user = #{currentUserId, jdbcType=VARCHAR} AND edt.data_status = 1 AND edt.task_status in (1,2)
+		AND edt.is_sync = 0
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -58,7 +62,8 @@
 		set edt.queue_number = edt.queue_number-1
 		WHERE edt.task_status = 1
 		AND edt.data_status = 1
-		AND edt.queue_number != 0
+		AND edt.queue_number > 0
+		AND edt.is_sync = 0
 	</update>
 
 	<select id="listPage" resultMap="DelayedTaskDO" parameterType="map">
@@ -97,6 +102,9 @@
 			<if test="true">
 				AND edt.data_status = 1
 			</if>
+			<if test="true">
+				AND edt.is_sync = 0
+			</if>
 		</where>
 		ORDER BY edt.update_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
@@ -127,6 +135,9 @@
 			</if>
 			<if test="true">
 				AND edt.data_status = 1
+			</if>
+			<if test="true">
+				AND edt.is_sync = 0
 			</if>
 		</where>
 	</select>
@@ -170,6 +181,9 @@
 			</if>
 			<if test="fileUrl != null">
 				file_url = #{fileUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="isSync != null">
+				is_sync = #{isSync,jdbcType=BIT},
 			</if>
 		</set>
 	</sql>

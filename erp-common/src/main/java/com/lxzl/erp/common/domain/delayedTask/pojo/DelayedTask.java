@@ -33,6 +33,15 @@ public class DelayedTask extends BasePO {
 	private String updateUser;   //修改人
 	private String createUserRealName;   //添加人姓名
 	private String updateUserRealName;   //修改人姓名
+	private Boolean isSync;   //是否同步输出，1是同步输出，0是线程异步处理
+
+	public Boolean getSync() {
+		return isSync;
+	}
+
+	public void setSync(Boolean sync) {
+		isSync = sync;
+	}
 
 	public String getFileUrl() {
 		return fileUrl;
