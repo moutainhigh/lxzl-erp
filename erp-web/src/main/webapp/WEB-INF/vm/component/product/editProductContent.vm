@@ -135,11 +135,11 @@
                             <div class="panel">
                                 <div class="panel-heading pn ph8">
                                     <span>{{propertyName}}</span>
-                                    <div class="pull-right btn-group">
-                                        <button class="btn btn-primary btn-sm addProperty" style="border-radius: 5px" data-info="{{propertyStr}}">
-                                            <i class="fa fa-plus"></i>添加
-                                        </button>
-                                    </div>
+##                                    <div class="pull-right btn-group">
+##                                        <button class="btn btn-primary btn-sm addProperty" style="border-radius: 5px" data-info="{{propertyStr}}">
+##                                            <i class="fa fa-plus"></i>添加
+##                                        </button>
+##                                    </div>
                                 </div>
                                 <div class="panel-body nano nano-default affix rtlnao" style="height: 200px">
                                     <div class="nano-content">
@@ -181,11 +181,11 @@
                             <div class="panel">
                                 <div class="panel-heading pn ph8">
                                     <span>{{propertyName}}</span>
-                                    <div class="pull-right btn-group">
-                                        <button class="btn btn-primary btn-sm addProperty" style="border-radius: 5px" data-info="{{propertyStr}}">
-                                            <i class="fa fa-plus"></i>添加
-                                        </button>
-                                    </div>
+##                                    <div class="pull-right btn-group">
+##                                        <button class="btn btn-primary btn-sm addProperty" style="border-radius: 5px" data-info="{{propertyStr}}">
+##                                            <i class="fa fa-plus"></i>添加
+##                                        </button>
+##                                    </div>
                                 </div>
                                 <div class="panel-body nano nano-default affix rtlnao" style="height: 200px">
                                     <div class="nano-content">
