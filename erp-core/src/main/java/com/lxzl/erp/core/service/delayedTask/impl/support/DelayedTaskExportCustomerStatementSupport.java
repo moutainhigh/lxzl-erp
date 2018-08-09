@@ -932,7 +932,10 @@ public class DelayedTaskExportCustomerStatementSupport {
             CheckStatementOrder checkStatementOrder = checkStatementOrderList.get(i-1);
             try {
                 Date monthTime = simpleDateFormat.parse(checkStatementOrder.getMonthTime());
-                if (monthTime.getTime()<statementOrderStartTime.getTime()) {
+                String statementOrderStartTimeString = simpleDateFormat.format(statementOrderStartTime);
+                Date statementOrderStartTimeDate = simpleDateFormat.parse(statementOrderStartTimeString);
+
+                if (monthTime.getTime()<statementOrderStartTimeDate.getTime()) {
                     continue;
                 }
                 if (StringUtil.isBlank(customerName)) {
