@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-系统管理-系统公告</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/summernote/summernote.css">
+    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/summernote/summernote-bs3.css">
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
+
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+
+                #parse("component/loading.vm")
+
+                <div class="panel panel-primary panel-border top">
+
+                    <div id="resultContent" class="popup-basic p25 mfp-with-anim mfp-hide"></div>
+
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                                #parse("component/pager.vm")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        #parse("layout/sidebarRight.vm")
+    </div>
+    #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/summernote/summernote.min.js"></script>
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js','manage.system.notice.list.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        // SystemNoticeManage.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+
+    </script>
+</body>
+</html>
