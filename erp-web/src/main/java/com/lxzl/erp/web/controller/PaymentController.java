@@ -81,12 +81,6 @@ public class PaymentController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "alipayCharge", method = RequestMethod.POST)
-    public Result alipayCharge(@RequestBody ChargeParam parm, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = paymentService.alipayCharge(parm.getCustomerNo(),parm.getAmount(),parm.getOpenId(),NetworkUtil.getIpAddress(request));
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
-
     @RequestMapping(value = "queryChargeRecordPage", method = RequestMethod.POST)
     public Result queryChargeRecordPage(@RequestBody Customer customer, BindingResult validResult) {
         ServiceResult<String, Page<ChargeRecord>> serviceResult = paymentService.queryChargeRecordPage(customer.getCustomerNo());

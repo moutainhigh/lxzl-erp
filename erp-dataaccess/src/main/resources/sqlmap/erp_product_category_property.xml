@@ -20,6 +20,7 @@
         <result column="create_time" property="createTime"/>
         <result column="update_user" property="updateUser"/>
         <result column="update_time" property="updateTime"/>
+        <result column="is_capacity_material" property="isCapacityMaterial"/>
         <collection property="productCategoryPropertyValueDOList" resultMap="ProductCategoryPropertyValueDO" />
     </resultMap>
 
@@ -67,6 +68,7 @@
         <trim prefix=",">
             <include refid="value_column_List" />
         </trim>
+        ,emp.is_capacity_material AS is_capacity_material
         FROM(
             select
             <include refid="column_List"/>
@@ -82,6 +84,7 @@
             ORDER BY data_order DESC
         ) category_main
         LEFT JOIN erp_product_category_property_value epcpv on category_main.id = epcpv.property_id
+        LEFT JOIN erp_material_type emp ON category_main.material_type = emp.id
         <where>
             <if test="maps.categoryId != null">
                 and epcpv.category_id = #{maps.categoryId, jdbcType=INTEGER}
