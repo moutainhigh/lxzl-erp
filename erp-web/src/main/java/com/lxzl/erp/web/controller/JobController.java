@@ -56,36 +56,13 @@ public class JobController {
             logger.error("配对错误！");
             return;
         }
-        System.out.println("appId" + appId); 
-        System.out.println("appSecret" + appSecret);
-        System.out.println("♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥");
-        System.out.println("♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥《测试定时任务打印》♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥");
-        System.out.println("♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥");
-    }
-
-    @RequestMapping(value = "testAddOnlineBankSlipQueryParam",method = RequestMethod.POST)
-    public void testAddOnlineBankSlipQueryParam(@RequestBody @Validated(QueryGroup.class) AddOnlineBankSlipQueryParam addOnlineBankSlipQueryParam, BindingResult validResult, HttpServletRequest request) throws ParseException {
-        String appId = request.getHeader("appId");
-        String appSecret = request.getHeader("appSecret");
-
-        if(!TaskSchedulerSystemConfig.paymentSystemAppId.equals(appId) || !TaskSchedulerSystemConfig.paymentSystemAppSecret.equals(appSecret)){
-            logger.error("配对错误！");
-            return;
-        }
         System.out.println("appId" + appId);
         System.out.println("appSecret" + appSecret);
         System.out.println("♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥");
-        System.out.println("♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥《测试定时任务打印》♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥");
+        System.out.println("♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥《test测试定时任务打印》♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥");
         System.out.println("♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥");
-
-
-        ServiceResult<String, String> serviceResult = bankSlipService.addOnlineBankSlip(addOnlineBankSlipQueryParam);
-        if(ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            System.out.println("导入快付通数据成功数据");
-        }
-
     }
-
+    
     @Autowired
     private BankSlipService bankSlipService;
     @Autowired
