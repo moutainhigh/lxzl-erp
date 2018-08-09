@@ -1,20 +1,6 @@
 <div class="panel-body p25">
     <div class="section row">
         <div class="col-md-3">
-            <label for="jobName" class="field-label">工作名称</label>
-            <label for="jobName" class="field prepend-icon">
-                <input type="text" name="jobName" id="jobName" class="gui-input letterOrNumber" placeholder="(无特殊要求不建议填写)">
-                <label for="jobName" class="field-icon"><i class="fa fa-tag"></i></label>
-            </label>
-        </div>
-        <div class="col-md-3">
-            <label for="jobGroup" class="field-label">工作分组</label>
-            <label for="jobGroup" class="field prepend-icon">
-                <input type="text" name="jobGroup" id="jobGroup" class="gui-input letterOrNumber" placeholder="(无特殊要求不建议填写)" />
-                <label for="jobGroup" class="field-icon"><i class="fa fa-tag"></i></label>
-            </label>
-        </div>
-        <div class="col-md-3">
             <label for="triggerName" class="field-label"><em class="text-danger">*</em>触发器名称</label>
             <label for="triggerName" class="field prepend-icon">
                 <input type="text" name="triggerName" id="triggerName" class="gui-input required letterOrNumber" placeholder="触发器名称">
@@ -28,9 +14,6 @@
                 <label for="triggerGroup" class="field-icon"><i class="fa fa-tag"></i></label>
             </label>
         </div>
-    </div>
-
-    <div class="section row">
         <div class="col-md-3">
             <label for="holidayName" class="field-label">假期名称</label>
             <label for="holidayName" class="field prepend-icon">
