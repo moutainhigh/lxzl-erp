@@ -1026,6 +1026,27 @@
 
     </update>
 
+    <update id="updateOrderRentPlan" parameterType="java.util.ArrayList">
+        UPDATE  erp_order_product
+        <set>
+            <if test="payMode != null">
+                pay_mode = #{payMode,jdbcType=INTEGER},
+            </if>
+            <if test="depositCycle != null &amp;&amp; paymentCycle != null">
+                deposit_cycle = #{depositCycle,jdbcType=INTEGER},payment_cycle = #{paymentCycle,jdbcType=INTEGER},
+            </if>
+        </set>
+        <where>
+            order_id IN
+            <trim prefix="(" suffix=")">
+                SELECT id from erp_order where order_no in
+                <foreach collection="orderDOList" index="index" item="item" separator="," open="(" close=")">
+                    #{item.orderNo,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+        </where>
+    </update>
+
     <!-- 根据订单号列表获取订单列表信息 -->
     <select id="listByOrderNOs" resultMap="OrderDO">
         SELECT

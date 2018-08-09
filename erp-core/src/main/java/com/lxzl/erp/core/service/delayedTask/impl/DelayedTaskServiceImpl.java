@@ -188,6 +188,14 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         Integer totalCount = delayedTaskMapper.findDelayedTaskCountByParams(maps);
         List<DelayedTaskDO> delayedTaskDOList = delayedTaskMapper.findDelayedTaskByParams(maps);
         List<DelayedTask> delayedTaskList = ConverterUtil.convertList(delayedTaskDOList, DelayedTask.class);
+
+        if (CollectionUtil.isNotEmpty(delayedTaskList)) {
+            for (DelayedTask delayedTask:delayedTaskList) {
+                if (delayedTask.getTaskStatus() == 3) {
+                    delayedTask.setFileUrl(ConstantConfig.downloadStatementUrl+delayedTask.getFileUrl());
+                }
+            }
+        }
         Page<DelayedTask> page = new Page<>(delayedTaskList, totalCount, delayedTaskQueryParam.getPageNo(), delayedTaskQueryParam.getPageSize());
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(page);
@@ -451,8 +459,8 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 }
 
                 // TODO: 2018\7\27 0027 将XSSFWorkbook存储到指定位置
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-                String simpleDate = dateFormat.format(date);
+                SimpleDateFormat fileDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+                String simpleDate = fileDateFormat.format(date);
                 String fileName = ConstantConfig.exportFileUrl + (customerName + "对账单") +simpleDate+ ".xlsx";
                 String saveFileName = (customerName + "对账单") +simpleDate+ ".xlsx";
 //                String fileName = "D:\\xxxxxxx\\"+ (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
@@ -481,6 +489,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                         System.out.println(sb.toString());
                     }
                     delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
+                    delayedTask.setFileUrl(ConstantConfig.downloadStatementUrl+delayedTask.getFileUrl());
                     result.setResult(delayedTask);
                     result.setErrorCode(ErrorCode.SUCCESS);
                     return result;
@@ -1231,8 +1240,12 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         }
 
         public SetCheckStatementOrder invoke() throws ParseException {
+            simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+            String statementOrderStartTimeString = simpleDateFormat.format(statementOrderStartTime);
+            Date statementOrderStartTimeDate = simpleDateFormat.parse(statementOrderStartTimeString);
             Date monthTime = simpleDateFormat.parse(checkStatementOrder.getMonthTime());
-            if (monthTime.getTime()<statementOrderStartTime.getTime()) {
+
+            if (monthTime.getTime()<statementOrderStartTimeDate.getTime()) {
                 return this;
             }
             if (StringUtil.isBlank(customerName)) {
@@ -1582,11 +1595,6 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
             cell205.setCellValue(allPeriodUnpaid.doubleValue());
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell205, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
 
-            if (StringUtil.isNotBlank(previousSheetName) || !sheetName.equals(previousSheetName)) {
-                allPeriodUnpaid = BigDecimalUtil.sub(allPeriodUnpaid, currentPeriodUnpaid);
-                statementPayAmountAO.setAllPeriodUnpaid(allPeriodUnpaid);
-            }
-
             //账户余额、尚需支付
             if (findCustomerAccount) {
                 //账户余额
@@ -1606,6 +1614,10 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 // 尚需支付
                 cell207.setCellValue("未查询到该客户账户余额或查询出错");
                 ExcelExportSupport.setCellStyle(hssfWorkbook, cell207, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
+            }
+            if (StringUtil.isNotBlank(previousSheetName) || !sheetName.equals(previousSheetName)) {
+                allPeriodUnpaid = BigDecimalUtil.sub(allPeriodUnpaid, currentPeriodUnpaid);
+                statementPayAmountAO.setAllPeriodUnpaid(allPeriodUnpaid);
             }
             XSSFCell cell151 = hssfRow1.createCell(20);
             XSSFCell cell152 = hssfRow2.createCell(20);

@@ -61,9 +61,9 @@
                         </label>
                     </div>
                     <div class="section">
-                        <label for="systemType" class="field prepend-icon">
-                            <input type="text" name="systemType" id="systemType" class="gui-input required checkInteger" placeholder="系统类型">
-                            <label for="systemType" class="field-icon"><i class="fa fa-tag"></i></label>
+                        <label for="systemType" class="field select">
+                            <select id="systemType" name="systemType" class="required"></select>
+                            <i class="arrow"></i>
                         </label>
                     </div>
                     <div class="section">
