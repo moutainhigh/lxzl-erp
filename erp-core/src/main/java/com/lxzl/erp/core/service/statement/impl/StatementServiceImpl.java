@@ -35,6 +35,7 @@ import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
 import com.lxzl.erp.core.service.statement.impl.support.StatementPaySupport;
 import com.lxzl.erp.core.service.statement.impl.support.StatementReturnSupport;
+import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMaterialBulkMapper;
@@ -2177,10 +2178,16 @@ public class StatementServiceImpl implements StatementService {
                             continue;
                         }
 
-                        // 如果有押金还没交，不让退货
+                        // 如果有押金还没交，不让退货  (已冲正的押金可以退货)
                         if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
-                            result.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT);
-                            return result;
+                            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_CORRECTED.equals(statementOrderDetailDO.getStatementDetailStatus())){
+                                continue;
+                            }
+                            else
+                            {
+                                result.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT);
+                                return result;
+                            }
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
@@ -2364,11 +2371,16 @@ public class StatementServiceImpl implements StatementService {
                             }
                             continue;
                         }
-
-                        // 如果有押金还没交，不让退货
+                        // 如果有押金还没交，不让退货  (已冲正的押金可以退货)
                         if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
-                            result.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT);
-                            return result;
+                            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_CORRECTED.equals(statementOrderDetailDO.getStatementDetailStatus())){
+                                continue;
+                            }
+                            else
+                            {
+                                result.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT);
+                                return result;
+                            }
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
@@ -4991,9 +5003,12 @@ public class StatementServiceImpl implements StatementService {
         statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderEndTime);
         Map<String, Object> maps = new HashMap<>();
         maps.put("statementOrderMonthQueryParam", statementOrderMonthQueryParam);
-        PermissionParam permissionParam = new PermissionParam();
-        permissionParam.setPermissionUserIdList(permissionSupport.getCanAccessPassiveUserList(userId));
-        maps.put("permissionParam", permissionParam);
+        //超级管理员不加权限控制
+        if(userId != null&&!userRoleService.isSuperAdmin(userId)){
+            PermissionParam permissionParam = new PermissionParam();
+            permissionParam.setPermissionUserIdList(permissionSupport.getCanAccessPassiveUserList(userId));
+            maps.put("permissionParam", permissionParam);
+        }
         //todo 查处结算单总表
         List<CheckStatementOrderDO> statementOrderDOList = statementOrderMapper.exportListMonthPage(maps);
         //todo 查处结算单详情
@@ -7154,4 +7169,6 @@ public class StatementServiceImpl implements StatementService {
     private OrderSupport orderSupport;
     @Autowired
     private DataDictionaryMapper dataDictionaryMapper;
+    @Autowired
+    private UserRoleService userRoleService;
 }

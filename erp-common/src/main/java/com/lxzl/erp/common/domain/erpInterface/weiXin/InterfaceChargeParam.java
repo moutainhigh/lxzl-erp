@@ -1,16 +1,25 @@
-package com.lxzl.erp.common.domain.payment;
+package com.lxzl.erp.common.domain.erpInterface.weiXin;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.erpInterface.ErpIdentityParam;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
+/**
+ * @Author : XiaoLuYu
+ * @Date : Created in 2018/1/29
+ * @Time : Created in 18:53
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WeixinChargeParam extends BasePO {
-
+public class InterfaceChargeParam extends ErpIdentityParam {
+    @NotNull(message = ErrorCode.CUSTOMER_NO_NOT_NULL)
     private String customerNo;
-    private BigDecimal amount;
-    private String openId;
+    @NotNull(message = ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO)
+    private BigDecimal amount;  //充值金额
+    @NotNull(message = ErrorCode.OPEN_ID_NOT_NULL)
+    private String openId; //公众号唯一标识
 
     public String getCustomerNo() {
         return customerNo;

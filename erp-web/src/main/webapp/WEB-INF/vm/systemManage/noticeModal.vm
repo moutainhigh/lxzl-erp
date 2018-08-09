@@ -13,7 +13,7 @@
                     </div>
                     <div class="row">
                         <ul>
-                            <li class="mb10">{{content}}</li>
+                            <li class="mb10" id="noticeContent">{{content}}</li>
                         </ul>
                     </div>
                     {{/noticeObj}}
