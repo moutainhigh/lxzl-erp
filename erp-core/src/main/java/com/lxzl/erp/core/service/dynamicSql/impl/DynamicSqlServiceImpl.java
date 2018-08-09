@@ -53,21 +53,13 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
 
 
     @Override
-    public ServiceResult<String, List<List<Object>>> executeBySql(DynamicSqlParam dynamicSqlParam) {
+    public ServiceResult<String, List<List<Object>>> executeBySql(DynamicSqlParam dynamicSqlParam, Set<DynamicSqlTpye> allowMethod) {
         ServiceResult<String, List<List<Object>>> serviceResult = new ServiceResult<>();
-        if (dynamicSqlParam.getLimit() == null || dynamicSqlParam.getLimit() <= 0) {
-            dynamicSqlParam.setLimit(totalReturnCount);
-        }
-
-        if (dynamicSqlParam.getSql() == null)
-            throw new BusinessException(ErrorCode.SQL_CONTENT_NOT_NULL);
         String sql = dynamicSqlParam.getSql().trim();
         List<DynamicSqlItem> dynamicSqlItems = analysisAndRebuildDynamicSql(sql);
-
-        if (!isSimilarDynamicSqlTpye(dynamicSqlItems))
+        DynamicSqlTpye dynamicSqlTpye = checkDynamicSqlParam(dynamicSqlParam, dynamicSqlItems);
+        if(!allowMethod.contains(dynamicSqlTpye))
             throw new BusinessException(ErrorCode.DYNAMIC_SQL_ILLEGAL_OPERATION);
-
-        DynamicSqlTpye dynamicSqlTpye = findHighestDynamicSqlTpye(dynamicSqlItems);
 
         switch (dynamicSqlTpye) {
             case DELETE:
@@ -344,6 +336,21 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         return result;
     }
 
+
+
+    private DynamicSqlTpye checkDynamicSqlParam(DynamicSqlParam dynamicSqlParam, List<DynamicSqlItem> dynamicSqlItems) {
+        if (dynamicSqlParam.getLimit() == null || dynamicSqlParam.getLimit() <= 0) {
+            dynamicSqlParam.setLimit(totalReturnCount);
+        }
+        if (dynamicSqlParam.getSql() == null)
+            throw new BusinessException(ErrorCode.SQL_CONTENT_NOT_NULL);
+
+        if (!isSimilarDynamicSqlTpye(dynamicSqlItems))
+            throw new BusinessException(ErrorCode.DYNAMIC_SQL_ILLEGAL_OPERATION);
+
+        return findHighestDynamicSqlTpye(dynamicSqlItems);
+    }
+
     private List<DynamicSqlItem> analysisAndRebuildDynamicSql(String sql) {
         StringBuilder word = new StringBuilder();
         List<DynamicSqlItem> dynamicSqlItems = new LinkedList<>();
@@ -376,7 +383,8 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
                             dynamicSqlItem.hasLimit = false;
                     break;
 
-                case ' ':case '\t':
+                case ' ':
+                case '\t':
                     if (stringParameterStateItem.isNotStringParameter())
                         checkKeyWork = true;
 

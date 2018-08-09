@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.common.constant.DynamicSqlTpye;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dynamicSql.AdoptExecuteParam;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * <p>Description: </p>
  *
@@ -34,8 +38,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class DynamicSqlController extends BaseController {
 
     @RequestMapping(value = "select", method = RequestMethod.POST)
-    public Result executeBySql(@RequestBody DynamicSqlParam dynamicSqlParam) {
-        return resultGenerator.generate(dynamicSqlService.executeBySql(dynamicSqlParam));
+    public Result select(@RequestBody DynamicSqlParam dynamicSqlParam) {
+        return resultGenerator.generate(dynamicSqlService.executeBySql(dynamicSqlParam,
+                new HashSet<DynamicSqlTpye>() {
+                    {
+                        add(DynamicSqlTpye.SELECT);
+                    }
+                }));
+    }
+
+    @RequestMapping(value = "executeDML", method = RequestMethod.POST)
+    public Result executeDML(@RequestBody DynamicSqlParam dynamicSqlParam) {
+        return resultGenerator.generate(dynamicSqlService.executeBySql(dynamicSqlParam,
+                new HashSet<DynamicSqlTpye>() {
+                    {
+                        add(DynamicSqlTpye.INSERT);
+                        add(DynamicSqlTpye.UPDATE);
+                    }
+                }));
     }
 
     @RequestMapping(value = "adoptList", method = RequestMethod.POST)
