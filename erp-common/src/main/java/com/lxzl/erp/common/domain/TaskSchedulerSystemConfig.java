@@ -7,22 +7,22 @@ package com.lxzl.erp.common.domain;
  */
 public class TaskSchedulerSystemConfig {
 
-    public static String paymentSystemAppId;
-    public static String paymentSystemAppSecret;
+    public static String taskSchedulerSystemAppId;
+    public static String taskSchedulerAppSecret;
 
-    public static void setPaymentSystemAppId(String paymentSystemAppId) {
-        TaskSchedulerSystemConfig.paymentSystemAppId = paymentSystemAppId;
+    public static String getTaskSchedulerSystemAppId() {
+        return taskSchedulerSystemAppId;
     }
 
-    public static void setPaymentSystemAppSecret(String paymentSystemAppSecret) {
-        TaskSchedulerSystemConfig.paymentSystemAppSecret = paymentSystemAppSecret;
+    public static void setTaskSchedulerSystemAppId(String taskSchedulerSystemAppId) {
+        TaskSchedulerSystemConfig.taskSchedulerSystemAppId = taskSchedulerSystemAppId;
     }
 
-    public static String getPaymentSystemAppId() {
-        return paymentSystemAppId;
+    public static String getTaskSchedulerAppSecret() {
+        return taskSchedulerAppSecret;
     }
 
-    public static String getPaymentSystemAppSecret() {
-        return paymentSystemAppSecret;
+    public static void setTaskSchedulerAppSecret(String taskSchedulerAppSecret) {
+        TaskSchedulerSystemConfig.taskSchedulerAppSecret = taskSchedulerAppSecret;
     }
 }

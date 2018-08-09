@@ -47,8 +47,8 @@
     </bean>
 
     <bean id="taskSchedulerSystemConfig" class="com.lxzl.erp.common.domain.TaskSchedulerSystemConfig">
-        <property name="paymentSystemAppId" value="${TASK_SCHEDULER_APP_ID}"/>
-        <property name="paymentSystemAppSecret" value="${TASK_SCHEDULER_APP_SECRET}"/>
+        <property name="taskSchedulerSystemAppId" value="${TASK_SCHEDULER_APP_ID}"/>
+        <property name="taskSchedulerAppSecret" value="${TASK_SCHEDULER_APP_SECRET}"/>
     </bean>
 
 </beans>
