@@ -78,6 +78,7 @@
 			<filter>src/main/resources/dingding/${env}-dingding.properties</filter>
 			<filter>src/main/resources/mall/${env}-mall.properties</filter>
 			<filter>src/main/resources/payment/${env}-payment.properties</filter>
+			<filter>src/main/resources/taskScheduler/${env}-taskScheduler.properties</filter>
 		</filters>
 		<resources>
 			<resource>
