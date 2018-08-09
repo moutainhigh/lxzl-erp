@@ -55,6 +55,8 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
                 result.setErrorCode(ErrorCode.QUARTZ_TASK_EXECUTOR_REQUEST_BODY_ERROR);
                 return result;
             }
+        }else {
+            taskExecutor.setRequestBody("{}");
         }
 
 
@@ -189,6 +191,8 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
                 result.setErrorCode(ErrorCode.QUARTZ_TASK_EXECUTOR_REQUEST_BODY_ERROR);
                 return result;
             }
+        }else {
+            taskExecutorCommitParam.setRequestBody("{}");
         }
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
