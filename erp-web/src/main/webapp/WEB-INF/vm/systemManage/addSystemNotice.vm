@@ -3,7 +3,7 @@
         <div class="panel-heading">
             <span class="panel-title"><i class="fa fa-pencil"></i><span id="modalTitle"></span></span>
         </div>
-        <form method="post" id="noticeForm" description="">
+        <form method="post" id="noticeForm" description="提交审核">
             <div class="panel-body p25">
                 <div class="section row">
                     <div class="col-md-12">
@@ -18,10 +18,8 @@
                 <div class="section row">
                     <div class="col-md-12">
                         <label for="content" class="field-label">内容</label>
-                        <div class="panal">
-                            <div class="panel-body pn of-h" id="summer-demo">
-                                <div class="summernote" style="height: 300px;"></div>
-                            </div>
+                        <div class="panel-body pn of-h" id="summer-demo">
+                            <div class="summernote" style="height: 400px;">This is the <b>Summernote</b> Editor...</div>
                         </div>
                     </div>
                 </div>
