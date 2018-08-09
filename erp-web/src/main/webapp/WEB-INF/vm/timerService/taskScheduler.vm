@@ -61,8 +61,6 @@
                                 <th>触发器名称</th>
                                 <th>触发器分组</th>
                                 <th>状态</th>
-                                <th>工作名称</th>
-                                <th>工作分组</th>
                                 <th>job类型</th>
                                 <th>请求的url</th>
                                 <th>请求的内容</th>
@@ -85,8 +83,6 @@
                                 <td>{{triggerName}}</td>
                                 <td>{{triggerGroup}}</td>
                                 <td>{{triggerStatusDesc}}</td>
-                                <td>{{jobName}}</td>
-                                <td>{{jobGroup}}</td>
                                 <td>{{jobTypeVal}}</td>
                                 <td style="max-width:200px; word-wrap:break-word;">{{requestUrl}}</td>
                                 <td>{{requestBody}}</td>
