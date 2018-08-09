@@ -36,6 +36,7 @@ public class ProductCategoryProperty extends BasePO {
     private Date createTime;
     private String updateUser;
     private Date updateTime;
+    private Integer isCapacityMaterial;
 
     @Valid
     private List<ProductCategoryPropertyValue> productCategoryPropertyValueList;
@@ -166,5 +167,13 @@ public class ProductCategoryProperty extends BasePO {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Integer getIsCapacityMaterial() {
+        return isCapacityMaterial;
+    }
+
+    public void setIsCapacityMaterial(Integer isCapacityMaterial) {
+        this.isCapacityMaterial = isCapacityMaterial;
     }
 }
