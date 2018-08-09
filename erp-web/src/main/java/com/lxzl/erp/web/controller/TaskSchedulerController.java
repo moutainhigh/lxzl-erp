@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.taskScheduler.TriggerCommitParam;
 import com.lxzl.erp.common.domain.taskScheduler.pojo.TaskExecutor;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.QueryGroup;
+import com.lxzl.erp.common.domain.validGroup.TaskTrigger.DeleteTaskTriggerGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -51,19 +52,19 @@ public class TaskSchedulerController {
     }
 
     @RequestMapping(value = "pauseTaskTrigger", method = RequestMethod.POST)
-    public Result pauseTaskTrigger(@RequestBody @Validated TriggerCommitParam triggerCommitParam, BindingResult validResult) {
+    public Result pauseTaskTrigger(@RequestBody @Validated(QueryGroup.class) TriggerCommitParam triggerCommitParam, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = taskSchedulerService.pauseTaskTrigger(triggerCommitParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     @RequestMapping(value = "resumeTaskTrigger", method = RequestMethod.POST)
-    public Result resumeTaskTrigger(@RequestBody @Validated TriggerCommitParam triggerCommitParam, BindingResult validResult) {
+    public Result resumeTaskTrigger(@RequestBody @Validated(QueryGroup.class) TriggerCommitParam triggerCommitParam, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = taskSchedulerService.resumeTaskTrigger(triggerCommitParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     @RequestMapping(value = "deleteTaskTrigger", method = RequestMethod.POST)
-    public Result deleteTrigger(@RequestBody @Validated TriggerCommitParam triggerCommitParam, BindingResult validResult) {
+    public Result deleteTrigger(@RequestBody @Validated(DeleteTaskTriggerGroup.class) TriggerCommitParam triggerCommitParam, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = taskSchedulerService.deleteTaskTrigger(triggerCommitParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }

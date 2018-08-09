@@ -46,4 +46,9 @@
         <property name="mallSystemAppSecret" value="${mall.system.app.secret}"/>
     </bean>
 
+    <bean id="taskSchedulerSystemConfig" class="com.lxzl.erp.common.domain.TaskSchedulerSystemConfig">
+        <property name="taskSchedulerSystemAppId" value="${TASK_SCHEDULER_APP_ID}"/>
+        <property name="taskSchedulerAppSecret" value="${TASK_SCHEDULER_APP_SECRET}"/>
+    </bean>
+
 </beans>

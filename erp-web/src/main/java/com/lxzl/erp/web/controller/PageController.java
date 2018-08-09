@@ -158,6 +158,12 @@ public class PageController extends BaseController {
         return "/productManage/skuList";
     }
 
+    //添加商品属性值
+    @RequestMapping("/product-manage/add-property")
+    public String productManageAddProperty() {
+        return "/component/product/addPropertyModal";
+    }
+
     //条形码打印
     @RequestMapping("/print-manage/barcode")
     public String printManageBarcode() {
@@ -1265,10 +1271,11 @@ public class PageController extends BaseController {
     public String timedManageUpdatePerformer() {
         return "/timerService/editPerformer";
     }
-    
+
     //延时任务列表
     @RequestMapping("/delayed-task/list")
     public String deyayedTaskList() {
         return "/delayedTask/deyayedTaskList";
     }
+
 }

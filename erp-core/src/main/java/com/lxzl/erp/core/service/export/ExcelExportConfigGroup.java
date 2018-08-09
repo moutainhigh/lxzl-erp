@@ -90,7 +90,7 @@ public class ExcelExportConfigGroup {
              }
           }))
           .addConfig(new ColConfig("shenZhenDealsCount","深圳"))
-          .addConfig(new ColConfig("beiJingZhenDealsCount","北京"))
+          .addConfig(new ColConfig("beiJingDealsCount","北京"))
           .addConfig(new ColConfig("shangHaiDealsCount","上海"))
           .addConfig(new ColConfig("guangZhouDealsCount","广州"))
           .addConfig(new ColConfig("wuHanDealsCount","武汉"))

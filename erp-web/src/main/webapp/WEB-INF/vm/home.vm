@@ -852,7 +852,7 @@
                                     <li class="text-info notice-item mt10" data-notice="{{noticeStr}}">
                                         <span class="notice-circle"></span>
                                         <span class="over-ellipsis notice-title">{{title}}</span>
-                                        <span class="notice-time ml20">{{#shortTime}}{{createTime}}{{/shortTime}}</span>
+                                        <span class="notice-time ml10">{{#shortTime}}{{createTime}}{{/shortTime}}</span>
                                     </li>
                                     {{/listData}}
                                     {{^listData}}
@@ -860,7 +860,7 @@
                                     {{/listData}}
                                     {{/dataSource}}
                                 </script>
-                                <ul id="systemNoticeList" class="pl40"></ul>
+                                <ul id="systemNoticeList" class="pl20"></ul>
                             </div>
                         </div>
                     </div>
