@@ -354,6 +354,7 @@ public class DateUtil {
         ca.set(Calendar.HOUR_OF_DAY ,0);
         ca.set(Calendar.MINUTE, 0);
         ca.set(Calendar.SECOND, 0);
+        ca.set(Calendar.MILLISECOND, 0);
         return ca.getTime();
     }
 
