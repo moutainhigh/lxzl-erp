@@ -3,36 +3,37 @@
         <div class="panel-heading">
             <span class="panel-title"><i class="fa fa-pencil"></i><span class="modalTitle">添加商品属性值</span></span>
         </div>
-        <form method="post" class="inputForm">
+        <form method="post" id="inputForm">
             <div class="panel-body p25">
                 <div class="section row">
-                    <div class="col-md-6">
-                        <label for="propertyValueName" class="field-label">分段时间点</label>
+                    <div class="col-md-6 mb15">
+                        <label for="propertyValueName" class="field-label">属性值名称</label>
                         <label for="propertyValueName" class="field prepend-icon">
                             <input type="text" name="propertyValueName" id="propertyValueName" class="gui-input required"/>
                             <label for="propertyValueName" class="field-icon"><i class="fa fa-tag"></i></label>
                         </label>
                     </div>
-                    <div class="col-md-6 hide" id="materialModelCol">
+                    <div class="col-md-6 mb15 hide" id="materialModelCol">
                         <label for="materialModelId" class="field-label">属性值</label>
-                        <label class="field select">
-                            <select id="materialModelId" name="materialModelId"></select>
-                            <i class="arrow"></i>
-                        </label>
+                        <div class="smart-widget sm-right smr-50">
+                            <label class="field">
+                                <input type="text" name="materialModelName" id="materialModelName" class="gui-input" readonly placeholder="请选属性值" />
+                                <input type="hidden" name="materialModelId" id="materialModelId" class="gui-input" />
+                            </label>
+                            <button type="button" class="button btn-primary bradiusN" id="chooseMaterialModal"> <i class="fa fa-search"></i></button>
+                        </div>
                     </div>
-                    <div class="col-md-6 hide" id="capacityCol">
+                    <div class="col-md-6 mb15 hide" id="capacityCol">
                         <label for="propertyCapacityValue" class="field-label">属性值</label>
                         <label for="propertyCapacityValue" class="field prepend-icon">
-                            <input type="text" name="propertyCapacityValue" id="propertyCapacityValue" class="gui-input required"/>
+                            <input type="text" name="propertyCapacityValue" id="propertyCapacityValue" class="gui-input required checkInteger"/>
                             <label for="propertyCapacityValue" class="field-icon"><i class="fa fa-tag"></i></label>
                         </label>
                     </div>
-                </div>
-                <div class="section row">
                     <div class="col-md-6">
-                        <label for="dataOrder" class="field-label">分段时间点</label>
+                        <label for="dataOrder" class="field-label">排序</label>
                         <label for="dataOrder" class="field prepend-icon">
-                            <input type="text" name="dataOrder" id="dataOrder" class="gui-input required"/>
+                            <input type="text" name="dataOrder" id="dataOrder" class="gui-input" placeholder="0"/>
                             <label for="dataOrder" class="field-icon"><i class="fa fa-tag"></i></label>
                         </label>
                     </div>
