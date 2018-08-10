@@ -527,16 +527,16 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        param.setIsPendingDelivery(1);
 //        param.setOrderNo("LXO-20180307-1000-00014");
 //        param.setDeliverySubCompanyId(2);
-//        param.setOrderStatus(20);
+//        param.setOrderStatus(4);
 //        param.setPayStatus(0);
 //        param.setOrderNo("LXO-20180608-027-00059");
 //        param.setOrderSellerId(500355);
 //        param.setOrderSellerName("诚");
 //          param.setIsReturnOverDue(1);
-          param.setIsCanReletOrder(1);
-          param.setPageNo(1);
-          param.setPageSize(15);
-
+        param.setIsCanReletOrder(1);
+        param.setIsRecycleBin(0);
+        param.setPageNo(4);
+        param.setPageSize(15);
 
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
