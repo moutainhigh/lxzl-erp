@@ -49,6 +49,17 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             }
         }
 
+        TaskExecutor taskExecutor = initTaskSchedulerCommitParam.getTaskExecutor();
+        if(StringUtil.isNotBlank(taskExecutor.getRequestBody())){
+            if(!isJSONValid(taskExecutor.getRequestBody())){
+                result.setErrorCode(ErrorCode.QUARTZ_TASK_EXECUTOR_REQUEST_BODY_ERROR);
+                return result;
+            }
+        }else {
+            taskExecutor.setRequestBody("{}");
+        }
+
+
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
@@ -60,7 +71,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
                 jsonObject.put("holidayDTOs", initTaskSchedulerCommitParam.getHolidayDTOList());
             }
             String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/initTask", jsonObject.toJSONString(), headerBuilder, "UTF-8");
-            logger.info("manual charge response:{}", response);
+            logger.info("task scheduler response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
             if (TRIGGER_GROUP_SUCCESS_CODE.equals(taskExecutorResult.getCode())) {
                 result.setErrorCode(ErrorCode.SUCCESS);
@@ -91,7 +102,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
                 jsonObject.put("holidayDTOs", initTaskSchedulerCommitParam.getHolidayDTOList());
             }
             String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/updateTaskScheduler", jsonObject.toJSONString(), headerBuilder, "UTF-8");
-            logger.info("manual charge response:{}", response);
+            logger.info("task scheduler response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
             if (TRIGGER_GROUP_SUCCESS_CODE.equals(taskExecutorResult.getCode())) {
                 result.setErrorCode(ErrorCode.SUCCESS);
@@ -114,7 +125,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             String requestJson = JSON.toJSONString(triggerCommitParam);
 
             String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/pauseTaskTrigger", requestJson, headerBuilder, "UTF-8");
-            logger.info("manual charge response:{}", response);
+            logger.info("task trigger response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
             if (TRIGGER_GROUP_SUCCESS_CODE.equals(taskExecutorResult.getCode())) {
                 result.setErrorCode(ErrorCode.SUCCESS);
@@ -136,7 +147,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             headerBuilder.contentType("application/json");
             String requestJson = JSON.toJSONString(triggerCommitParam);
             String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/resumeTaskTrigger", requestJson, headerBuilder, "UTF-8");
-            logger.info("manual charge response:{}", response);
+            logger.info("task trigger response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
             if (TRIGGER_GROUP_SUCCESS_CODE.equals(taskExecutorResult.getCode())) {
                 result.setErrorCode(ErrorCode.SUCCESS);
@@ -158,7 +169,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
             headerBuilder.contentType("application/json");
             String requestJson = JSON.toJSONString(triggerCommitParam);
             String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/deleteTrigger", requestJson, headerBuilder, "UTF-8");
-            logger.info("manual charge response:{}", response);
+            logger.info("task trigger response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
             if (TRIGGER_GROUP_SUCCESS_CODE.equals(taskExecutorResult.getCode())) {
                 result.setErrorCode(ErrorCode.SUCCESS);
@@ -175,12 +186,20 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
     public ServiceResult<String, String> updateTaskExecutor(TaskExecutorCommitParam taskExecutorCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
 
+        if(StringUtil.isNotBlank(taskExecutorCommitParam.getRequestBody())){
+            if(!isJSONValid(taskExecutorCommitParam.getRequestBody())){
+                result.setErrorCode(ErrorCode.QUARTZ_TASK_EXECUTOR_REQUEST_BODY_ERROR);
+                return result;
+            }
+        }else {
+            taskExecutorCommitParam.setRequestBody("{}");
+        }
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
             String requestJson = JSON.toJSONString(taskExecutorCommitParam);
             String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/updateTaskExecutor", requestJson, headerBuilder, "UTF-8");
-            logger.info("manual charge response:{}", response);
+            logger.info("task executor response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
             if (TRIGGER_GROUP_SUCCESS_CODE.equals(taskExecutorResult.getCode())) {
                 result.setErrorCode(ErrorCode.SUCCESS);
@@ -212,7 +231,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
 
             String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/pageTaskExecutors", jsonObject.toJSONString(), headerBuilder, "UTF-8");
 
-            logger.info("manual charge response:{}", response);
+            logger.info("task executor response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
             Map<String, Object> resultMap = taskExecutorResult.getResultMap();
             Page<TaskExecutor> page = JSON.parseObject(JSON.toJSONString(resultMap), Page.class);
@@ -279,7 +298,7 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
 
             String response = HttpClientUtil.post(RemoteQuartzConfig.remoteQuartzURL + "/detailTaskExecutor", requestJson, headerBuilder, "UTF-8");
 
-            logger.info("manual charge response:{}", response);
+            logger.info("task executor response:{}", response);
             TaskExecutorResult taskExecutorResult = JSON.parseObject(response, TaskExecutorResult.class);
             Map<String, Object> resultMap = taskExecutorResult.getResultMap();
 
@@ -317,6 +336,15 @@ public class TaskSchedulerServiceImpl implements TaskSchedulerService {
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new BusinessException(e.getMessage());
+        }
+    }
+
+    public final static boolean isJSONValid(String test) {
+        try {
+            JSONObject.parseObject(test);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }
