@@ -20,7 +20,7 @@ public class DynamicSql extends BasePO {
 	private String sqlTitle;   //sql语句标题
 	@NotBlank(message = ErrorCode.SQL_CONTENT_NOT_NULL,groups = {AddGroup.class})
 	private String sqlContent;   //sql语句内容
-	private Integer sqlType;
+	private Integer sqlType; //sql语句的类型下标(0默认，1查询，2更新，4删除，8其他)
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
