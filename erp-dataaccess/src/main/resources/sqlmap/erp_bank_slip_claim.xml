@@ -170,23 +170,47 @@
 	</select>
 
 	<select id="findBankSlipClaimPaySuccessByName" resultMap="BankSlipClaimDO">
-		SELECT payer_name,company_name,customer_no FROM
+		SELECT
+		payer_name,
+		company_name,
+		customer_no
+		FROM
 		(
-			SELECT
-				bsd.payer_name,cc.company_name,bsc.customer_no
-			FROM
-				erp_bank_slip_claim AS bsc
-			INNER JOIN erp_bank_slip_detail AS bsd ON bsc.bank_slip_detail_id = bsd.id
-			INNER JOIN erp_customer_company AS cc ON cc.customer_no = bsc.customer_no
-			WHERE
-				bsd.payer_name IN
-				<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-					#{item.simpleCompanyName,jdbcType=VARCHAR}
-				</foreach>
-			AND bsc.data_status = 1
-			AND bsc.recharge_status = 2
-			GROUP BY bsc.bank_slip_detail_id HAVING COUNT(1) = 1 ORDER BY bsc.id DESC
-		) ebsc GROUP BY ebsc.payer_name DESC
+		SELECT
+		bsd.payer_name,
+		cc.company_name,
+		bsc.customer_no,
+		bsc.id
+		FROM (
+		SELECT Bebsc.* FROM ( -- 查询出只有被一个人认领的记录
+		SELECT
+		claim_serial_no,
+		COUNT(1) line
+		FROM
+		erp_bank_slip_claim
+		WHERE
+		data_status = 1
+		AND recharge_status = 2
+		GROUP BY
+		claim_serial_no) AS Aebsc
+		INNER JOIN erp_bank_slip_claim AS Bebsc ON Bebsc.claim_serial_no = Aebsc.claim_serial_no
+		AND Aebsc.line = 1
+		AND Bebsc.other_side_account_no != ''
+		) AS bsc
+		INNER JOIN erp_bank_slip_detail AS bsd ON bsc.bank_slip_detail_id = bsd.id
+		INNER JOIN erp_customer_company AS cc ON cc.customer_no = bsc.customer_no
+		WHERE
+		bsd.payer_name IN
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+			#{item.simpleCompanyName,jdbcType=VARCHAR}
+		</foreach>
+		AND bsc.data_status = 1
+		AND bsc.recharge_status = 2
+		ORDER BY
+		bsc.id DESC
+		) ebsc
+		GROUP BY
+		ebsc.payer_name,company_name,customer_no
 	</select>
 
 	<update id="deleteBankSlipClaimDO" parameterType="java.util.List">
