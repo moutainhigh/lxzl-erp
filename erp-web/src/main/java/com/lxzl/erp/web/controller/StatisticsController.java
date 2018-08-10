@@ -1,8 +1,10 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.constant.StatisticsIntervalType;
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.statistics.*;
+import com.lxzl.erp.common.domain.statistics.pojo.FinanceStatisticsDataWeeklyExcel;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIndexInfo;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanMonth;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
@@ -10,6 +12,7 @@ import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
+import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataMeta;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -203,6 +208,26 @@ public class StatisticsController extends BaseController {
     public Result reStatisticsFinanceData(@RequestBody @Validated FinanceStatisticsParam financeStatisticsParam, BindingResult validResult) {
 
         ServiceResult<String, Boolean> serviceResult = statisticsService.reStatisticsFinanceData(financeStatisticsParam);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 获取所有财务统计数据（分页）
+     * @return
+     */
+    @RequestMapping(value = "getStatisticsFinanceDataListPagable", method = RequestMethod.POST)
+    public Result getStatisticsFinanceDataListPagable(@RequestBody @Validated FinanceStatisticsParam financeStatisticsParam, BindingResult validResult) {
+        ServiceResult<String, Page<FinanceStatisticsDataMeta>> serviceResult = statisticsService.findAllStatisticsFinanceDataMeta(financeStatisticsParam);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 获取财务统计数据详情
+     * @return
+     */
+    @RequestMapping(value = "getStatisticsFinanceDataDetail", method = RequestMethod.POST)
+    public Result getStatisticsFinanceDataDetail(@RequestBody @Validated FinanceStatisticsParam financeStatisticsParam, BindingResult validResult) {
+        ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> serviceResult = statisticsService.findStatisticsFinanceDataDetail(financeStatisticsParam);
         return resultGenerator.generate(serviceResult);
     }
 

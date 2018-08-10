@@ -42,7 +42,8 @@
                 'api.data.js',
                 'manage.product.mixin.js',
                 'manage.product.util.js',
-                'manage.product.add.js');
+                'manage.product.add.js',
+                'modal.choose.material.modal.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

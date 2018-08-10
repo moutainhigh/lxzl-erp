@@ -19,6 +19,7 @@ public class ProductCategoryPropertyDO extends BaseDO {
     private Integer dataOrder;
     private Integer dataStatus;
     private String remark;
+    private Integer isCapacityMaterial;
     private List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList;
 
     public Integer getId() {
@@ -71,6 +72,14 @@ public class ProductCategoryPropertyDO extends BaseDO {
 
     public Integer getIsRequired() {
         return isRequired;
+    }
+
+    public Integer getIsCapacityMaterial() {
+        return isCapacityMaterial;
+    }
+
+    public void setIsCapacityMaterial(Integer isCapacityMaterial) {
+        this.isCapacityMaterial = isCapacityMaterial;
     }
 
     public void setIsRequired(Integer isRequired) {

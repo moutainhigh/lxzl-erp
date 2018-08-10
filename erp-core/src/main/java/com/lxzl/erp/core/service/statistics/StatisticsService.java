@@ -1,8 +1,10 @@
 package com.lxzl.erp.core.service.statistics;
 
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.statistics.*;
 import com.lxzl.erp.common.domain.statistics.pojo.*;
+import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataMeta;
 import com.lxzl.se.core.service.BaseService;
 
 import java.util.Date;
@@ -73,4 +75,6 @@ public interface StatisticsService extends BaseService {
     ServiceResult<String, Boolean> reStatisticsFinanceData(FinanceStatisticsParam paramVo);
     ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyToExcel(FinanceStatisticsParam paramVo);
     ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataMonthlyToExcel(FinanceStatisticsParam paramVo);
+    ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> findStatisticsFinanceDataDetail(FinanceStatisticsParam paramVo);
+    ServiceResult<String, Page<FinanceStatisticsDataMeta>> findAllStatisticsFinanceDataMeta(FinanceStatisticsParam paramVo);
 }
