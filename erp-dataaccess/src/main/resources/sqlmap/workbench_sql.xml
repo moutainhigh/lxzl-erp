@@ -130,8 +130,8 @@
 			<where>
 				<if test="maps.reletTimeOfDay != null &amp;&amp; maps.reletTimeOfMonth != null">
 					(case
-					when eo.rent_type = 1 then   curdate() + INTERVAL #{maps.reletTimeOfDay, jdbcType=INTEGER} DAY > eo.expect_return_time
-					when eo.rent_type = 2 then   curdate() + INTERVAL #{maps.reletTimeOfMonth, jdbcType=INTEGER} DAY > eo.expect_return_time
+					when eo.rent_type = 1 then   curdate() + INTERVAL #{maps.reletTimeOfDay, jdbcType=INTEGER} DAY >= eo.expect_return_time
+					when eo.rent_type = 2 then   curdate() + INTERVAL #{maps.reletTimeOfMonth, jdbcType=INTEGER} DAY >= eo.expect_return_time
 					end)
 					AND eo.order_status in (20,22)
 				</if>
