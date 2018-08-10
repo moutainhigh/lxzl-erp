@@ -269,8 +269,32 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         dynamicSqlDO.setCreateUser(userSupport.getCurrentUserId().toString());
         dynamicSqlDO.setUpdateTime(now);
         dynamicSqlDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        DynamicSqlTpye dynamicSqlTpye = findHighestDynamicSqlTpye(analysisAndRebuildDynamicSql(dynamicSql.getSqlContent()));
+        dynamicSqlDO.setSqlType(dynamicSqlTpye.getLevel());
         dynamicSqlMapper.save(dynamicSqlDO);
 
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(dynamicSqlDO.getId().toString());
+        return result;
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> updateDynamicSql(DynamicSql dynamicSql) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date now = new Date();
+        DynamicSqlDO dynamicSqlDO = dynamicSqlMapper.findById(dynamicSql.getDynamicSqlId());
+        if (dynamicSqlDO == null) {
+            result.setErrorCode(ErrorCode.DYNAMIC_SQL_NOT_EXISTS);
+            return result;
+        }
+        dynamicSqlDO.setSqlTitle(dynamicSql.getSqlTitle());
+        dynamicSqlDO.setSqlContent(dynamicSql.getSqlContent());
+        dynamicSqlDO.setUpdateTime(now);
+        dynamicSqlDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        DynamicSqlTpye dynamicSqlTpye = findHighestDynamicSqlTpye(analysisAndRebuildDynamicSql(dynamicSql.getSqlContent()));
+        dynamicSqlDO.setSqlType(dynamicSqlTpye.getLevel());
+        dynamicSqlMapper.update(dynamicSqlDO);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(dynamicSqlDO.getId().toString());
         return result;

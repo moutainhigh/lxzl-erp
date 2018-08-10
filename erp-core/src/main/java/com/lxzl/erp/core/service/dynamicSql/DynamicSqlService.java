@@ -39,6 +39,8 @@ public interface DynamicSqlService {
 
     ServiceResult<String, String> saveDynamicSql(DynamicSql dynamicSql);
 
+    ServiceResult<String, String> updateDynamicSql(DynamicSql dynamicSql);
+
     ServiceResult<String, String> deleteDynamicSql(DynamicSql dynamicSql);
 
     ServiceResult<String, DynamicSql> detailDynamicSql(DynamicSql dynamicSql);

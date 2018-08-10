@@ -20,6 +20,7 @@ public class DynamicSql extends BasePO {
 	private String sqlTitle;   //sql语句标题
 	@NotBlank(message = ErrorCode.SQL_CONTENT_NOT_NULL,groups = {AddGroup.class})
 	private String sqlContent;   //sql语句内容
+	private Integer sqlType;
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -27,77 +28,83 @@ public class DynamicSql extends BasePO {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 
-
-	public Integer getDynamicSqlId(){
+	public Integer getDynamicSqlId() {
 		return dynamicSqlId;
 	}
 
-	public void setDynamicSqlId(Integer dynamicSqlId){
+	public void setDynamicSqlId(Integer dynamicSqlId) {
 		this.dynamicSqlId = dynamicSqlId;
 	}
 
-	public String getSqlTitle(){
+	public String getSqlTitle() {
 		return sqlTitle;
 	}
 
-	public void setSqlTitle(String sqlTitle){
+	public void setSqlTitle(String sqlTitle) {
 		this.sqlTitle = sqlTitle;
 	}
 
-	public String getSqlContent(){
+	public String getSqlContent() {
 		return sqlContent;
 	}
 
-	public void setSqlContent(String sqlContent){
+	public void setSqlContent(String sqlContent) {
 		this.sqlContent = sqlContent;
 	}
 
-	public Integer getDataStatus(){
+	public Integer getSqlType() {
+		return sqlType;
+	}
+
+	public void setSqlType(Integer sqlType) {
+		this.sqlType = sqlType;
+	}
+
+	public Integer getDataStatus() {
 		return dataStatus;
 	}
 
-	public void setDataStatus(Integer dataStatus){
+	public void setDataStatus(Integer dataStatus) {
 		this.dataStatus = dataStatus;
 	}
 
-	public String getRemark(){
+	public String getRemark() {
 		return remark;
 	}
 
-	public void setRemark(String remark){
+	public void setRemark(String remark) {
 		this.remark = remark;
 	}
 
-	public Date getCreateTime(){
+	public Date getCreateTime() {
 		return createTime;
 	}
 
-	public void setCreateTime(Date createTime){
+	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
 
-	public String getCreateUser(){
+	public String getCreateUser() {
 		return createUser;
 	}
 
-	public void setCreateUser(String createUser){
+	public void setCreateUser(String createUser) {
 		this.createUser = createUser;
 	}
 
-	public Date getUpdateTime(){
+	public Date getUpdateTime() {
 		return updateTime;
 	}
 
-	public void setUpdateTime(Date updateTime){
+	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
 
-	public String getUpdateUser(){
+	public String getUpdateUser() {
 		return updateUser;
 	}
 
-	public void setUpdateUser(String updateUser){
+	public void setUpdateUser(String updateUser) {
 		this.updateUser = updateUser;
 	}
-
 }

@@ -79,6 +79,12 @@ public class DynamicSqlController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public Result updateDynamicSql(@RequestBody @Validated({AddGroup.class}) DynamicSql dynamicSql, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = dynamicSqlService.updateDynamicSql(dynamicSql);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "delete", method = RequestMethod.POST)
     public Result deleteDynamicSql(@RequestBody @Validated({IdGroup.class}) DynamicSql dynamicSql, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = dynamicSqlService.deleteDynamicSql(dynamicSql);
