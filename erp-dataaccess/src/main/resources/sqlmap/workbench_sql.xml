@@ -65,44 +65,6 @@
 		<include refid="workflow_workbench"/>
 	</select>
 
-	<!--<select id="findBusinessAffairsListCount" parameterType="map" resultMap="WorkbenchDO">-->
-	<!--SELECT-->
-	<!--workflow_link.waitVerifyCount AS workflowLinkWaitVerifyCount,-->
-	<!--bank_slip_detail.waitClaimCount AS bankSlipDetailWaitClaimCount,-->
-	<!--statement_order.unpaidCount AS statementOrderUnpaidCount,-->
-	<!--statement_order.settledPartCount AS statementOrderSettledPartCount,-->
-	<!--order_verifying.orderVerifyingCount,-->
-	<!--order_over_due.orderOverDueCount,-->
-	<!--return_order_verifying.returnOrderVerifyingCount-->
-	<!--FROM-->
-	<!--<include refid="business_workbench"/>-->
-	<!--</select>-->
-
-	<!--<select id="findSalesAndBusinessWorkbenchCount" resultMap="WorkbenchDO" parameterType="map">-->
-	<!--SELECT-->
-	<!--workflow_link.waitVerifyCount AS workflowLinkWaitVerifyCount,-->
-	<!--bank_slip_detail.waitClaimCount AS bankSlipDetailWaitClaimCount,-->
-	<!--statement_order.unpaidCount AS statementOrderUnpaidCount,-->
-	<!--statement_order.settledPartCount AS statementOrderSettledPartCount,-->
-	<!--order_verifying.orderVerifyingCount,-->
-	<!--order_wait_delivery.orderWaitDeliveryCount,-->
-	<!--order_over_due.orderOverDueCount,-->
-	<!--can_relet_order.canReletOrderCount,-->
-	<!--return_order_wait_commit.returnOrderWaitCommitCount,-->
-	<!--return_order_verifying.returnOrderVerifyingCount,-->
-	<!--return_order_processing.returnOrderProcessingCount,-->
-	<!--return_order_backed.returnOrderBackedCount,-->
-	<!--company_customer_verifying.companyCustomerVerifyingCount,-->
-	<!--company_customer_reject.companyCustomerRejectCount,-->
-	<!--person_customer_verifying.personCustomerVerifyingCount,-->
-	<!--person_customer_reject.personCustomerRejectCount,-->
-	<!--workflow_verifying.workflowVerifyingCount,-->
-	<!--workflow_reject.workflowRejectCount-->
-	<!--FROM-->
-	<!--<include refid="sales_workbench"/>,-->
-	<!--<include refid="business_workbench"/>-->
-	<!--</select>-->
-
 	<sql id="order_workbench">
 		<if test="maps.workbenchName != null &amp;&amp; maps.workbenchName != 1">
 			(select
