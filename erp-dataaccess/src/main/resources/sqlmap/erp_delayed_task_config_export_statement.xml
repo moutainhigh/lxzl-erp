@@ -57,6 +57,6 @@
 
 	<select id="findByCustomerNo" resultMap="DelayedTaskConfigExportStatementDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> FROM erp_delayed_task_config_export_statement edtces
-		WHERE edtces.customer_no = #{statementOrderCustomerNo, jdbcType=VARCHAR} AND edtces.data_status = 1
+		WHERE edtces.customer_no = #{statementOrderCustomerNo, jdbcType=VARCHAR} AND edtces.data_status = 1 LIMIT 1
 	</select>
 </mapper>
