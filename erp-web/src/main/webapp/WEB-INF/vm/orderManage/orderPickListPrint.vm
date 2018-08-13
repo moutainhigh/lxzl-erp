@@ -26,10 +26,10 @@
             position: relative;
         }
         .printHead {
-            height:1.5cm;
+            height:1.2cm;
         }
         .printHead .print-col {
-            height: 1.5cm;
+            height: 1.2cm;
             width:33.33%;
             float: left;
         }
@@ -96,19 +96,20 @@
 
         .qrcodeCanvas {
             height:0.8cm;
-            width:0.8cm;
+            width:128px;
             float: right;
             position: absolute;
-            right: 0.5cm;
-            top:0.5cm;
+            right: 0;
+            top:0;
         }
 
         .orderNo {
             position: absolute;
-            bottom: 0.1cm;
+            bottom: 2px;
             margin: 0;
             padding: 0;
             right: 0;
+            font-size: 12px;
         }
 
         .table .bg-light {
@@ -224,15 +225,15 @@
         {{#data}}
         <div class="page">
             <div class="printHead">
-                <div class="print-col" style="height:1cm; margin-top:0.25cm;">
+                <div class="print-col" style="height:1cm; margin-top:0.1cm;">
                     <img src="${staticCommon}rental/img/logos/beerLogo.png" class="img-responsive pull-left" alt="凌雄租赁">
                 </div>
-                <div class="print-col" style="line-height: 1.5cm;">
+                <div class="print-col" style="line-height: 1.2cm;">
                     <p  class="pn mn text-center printH1"><b>商品备货单</b></p>
                 </div>
                 <div class="print-col text-right" style="position:relative;">
 ##                    <img src="" class="img-responsive pull-right" id="barcode" alt="凌雄租赁" />
-                    <canvas id="qrcodeCanvas{{pagerIndex}}" style="width:120px; height:40px;"></canvas>
+                    <canvas id="qrcodeCanvas{{pagerIndex}}" class="qrcodeCanvas"></canvas>
                     <p class="orderNo" id="orderNo{{pagerIndex}}"></p>
                 </div>
             </div>
