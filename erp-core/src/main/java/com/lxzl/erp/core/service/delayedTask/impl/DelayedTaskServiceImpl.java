@@ -433,14 +433,14 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 if (processcCustomerStatement.is()) {
                     //导出失败更新任务列表状态
                     exoprtFailedUpdateDelayedTaskDO(result, date, delayedTaskDO,customerName);
-                    if (delayedTaskDO.getCreateUser() != null) {
-                        MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
-                        StringBuffer sb = new StringBuffer();
-                        sb.append("您要导出的[").append(customerName).append("]的对账单导出失败");
-                        messageThirdChannel.setMessageContent(sb.toString());
-                        messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
-                        messageThirdChannelService.sendMessage(messageThirdChannel);
-                    }
+//                    if (delayedTaskDO.getCreateUser() != null) {
+//                        MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
+//                        StringBuffer sb = new StringBuffer();
+//                        sb.append("您要导出的[").append(customerName).append("]的对账单导出失败");
+//                        messageThirdChannel.setMessageContent(sb.toString());
+//                        messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
+//                        messageThirdChannelService.sendMessage(messageThirdChannel);
+//                    }
                     return result;
                 }
                 SimpleDateFormat simpleDateFormat = processcCustomerStatement.getSimpleDateFormat();
@@ -479,15 +479,15 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     delayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     delayedTaskDO.setRemark((customerName + "对账单") +".xlsx"+"导出成功");
                     delayedTaskMapper.update(delayedTaskDO);
-                    if (delayedTaskDO.getCreateUser() != null) {
-                        MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
-                        StringBuffer sb = new StringBuffer();
-                        sb.append("您要导出的[").append(customerName).append("]的对账单已导出，请去任务列表进行下载");
-                        messageThirdChannel.setMessageContent(sb.toString());
-                        messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
-                        messageThirdChannelService.sendMessage(messageThirdChannel);
-                        System.out.println(sb.toString());
-                    }
+//                    if (delayedTaskDO.getCreateUser() != null) {
+//                        MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
+//                        StringBuffer sb = new StringBuffer();
+//                        sb.append("您要导出的[").append(customerName).append("]的对账单已导出，请去任务列表进行下载");
+//                        messageThirdChannel.setMessageContent(sb.toString());
+//                        messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
+//                        messageThirdChannelService.sendMessage(messageThirdChannel);
+//                        System.out.println(sb.toString());
+//                    }
                     delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
                     delayedTask.setFileUrl(ConstantConfig.downloadStatementUrl+delayedTask.getFileUrl());
                     result.setResult(delayedTask);
@@ -506,14 +506,14 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     delayedTaskDO.setUpdateTime(date);
                     delayedTaskDO.setRemark((customerName + "对账单") +".xlsx"+"导出异常");//业务异常
                     delayedTaskMapper.update(delayedTaskDO);
-                    if (delayedTaskDO.getCreateUser() != null) {
-                        MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
-                        StringBuffer sb = new StringBuffer();
-                        sb.append("您要导出的[").append(statementOrderMonthQueryParam.getStatementOrderCustomerNo()).append("]的对账单导出失败，导出异常");
-                        messageThirdChannel.setMessageContent(sb.toString());
-                        messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
-                        messageThirdChannelService.sendMessage(messageThirdChannel);
-                    }
+//                    if (delayedTaskDO.getCreateUser() != null) {
+//                        MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
+//                        StringBuffer sb = new StringBuffer();
+//                        sb.append("您要导出的[").append(statementOrderMonthQueryParam.getStatementOrderCustomerNo()).append("]的对账单导出失败，导出异常");
+//                        messageThirdChannel.setMessageContent(sb.toString());
+//                        messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
+//                        messageThirdChannelService.sendMessage(messageThirdChannel);
+//                    }
                     delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
                     result.setResult(delayedTask);
                     result.setErrorCode(ErrorCode.SUCCESS);
@@ -531,15 +531,15 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 delayedTaskDO.setUpdateTime(date);
                 delayedTaskDO.setRemark(ErrorCode.getMessage(ErrorCode.BUSINESS_EXCEPTION));//业务异常
                 delayedTaskMapper.update(delayedTaskDO);
-                if (delayedTaskDO.getCreateUser() != null) {
-                    MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
-                    StringBuffer sb = new StringBuffer();
-                    sb.append("您要导出的[").append(statementOrderMonthQueryParam.getStatementOrderCustomerNo()).append("]的对账单导出失败");
-                    messageThirdChannel.setMessageContent(sb.toString());
-                    messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
-                    messageThirdChannelService.sendMessage(messageThirdChannel);
-//            System.out.println(sb.toString());
-                }
+//                if (delayedTaskDO.getCreateUser() != null) {
+//                    MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
+//                    StringBuffer sb = new StringBuffer();
+//                    sb.append("您要导出的[").append(statementOrderMonthQueryParam.getStatementOrderCustomerNo()).append("]的对账单导出失败");
+//                    messageThirdChannel.setMessageContent(sb.toString());
+//                    messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
+//                    messageThirdChannelService.sendMessage(messageThirdChannel);
+////            System.out.println(sb.toString());
+//                }
                 delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
                 result.setResult(delayedTask);
                 result.setErrorCode(ErrorCode.SUCCESS);
