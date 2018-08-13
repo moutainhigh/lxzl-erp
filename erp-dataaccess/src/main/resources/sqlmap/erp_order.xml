@@ -1547,7 +1547,8 @@
         eoci.consignee_name AS consign_consignee_name,
         eoci.consignee_phone AS consign_consignee_phone,
         eoci.address AS consign_address,
-        eorder. OWNER,
+        eorder.owner,
+        eorder.order_no,
         eorder.pay_status,
         eorder.pay_time,
         eorder.total_order_amount,
@@ -1555,7 +1556,9 @@
         eorder.rent_type,
         eorder.rent_time_length,
         eorder.delivery_time,
-        eu.real_name AS order_seller_name
+        eu.real_name AS order_seller_name,
+        ec.customer_no AS buyer_customer_no,
+        eorder.expect_delivery_time
         FROM
         (
         SELECT
