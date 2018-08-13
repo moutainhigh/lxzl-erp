@@ -1674,9 +1674,9 @@ public class BankSlipServiceImpl implements BankSlipService {
                         iter.remove();
                     }
                 }
+            }else{
+                lastTwoBankSlipDetailDOList=lastBankSlipDetailDOList;
             }
-        }else{
-            lastTwoBankSlipDetailDOList=lastBankSlipDetailDOList;
         }
 
         //自动认领付款人名称和已有的公司简单名称相同的数据
