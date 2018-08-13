@@ -46,22 +46,18 @@ public class DynamicSqlController extends BaseController {
     @RequestMapping(value = "select", method = RequestMethod.POST)
     public Result select(@RequestBody DynamicSqlParam dynamicSqlParam) {
         return resultGenerator.generate(dynamicSqlService.executeBySql(dynamicSqlParam,
-                new HashSet<DynamicSqlTpye>() {
-                    {
-                        add(DynamicSqlTpye.SELECT);
-                    }
-                }));
+                new HashSet<DynamicSqlTpye>() {{
+                    add(DynamicSqlTpye.SELECT);
+        }}));
     }
 
     @RequestMapping(value = "executeDML", method = RequestMethod.POST)
     public Result executeDML(@RequestBody DynamicSqlParam dynamicSqlParam) {
         return resultGenerator.generate(dynamicSqlService.executeBySql(dynamicSqlParam,
-                new HashSet<DynamicSqlTpye>() {
-                    {
-                        add(DynamicSqlTpye.INSERT);
-                        add(DynamicSqlTpye.UPDATE);
-                    }
-                }));
+                new HashSet<DynamicSqlTpye>() {{
+                    add(DynamicSqlTpye.INSERT);
+                    add(DynamicSqlTpye.UPDATE);
+                }}));
     }
 
     @RequestMapping(value = "adoptList", method = RequestMethod.POST)
@@ -70,7 +66,7 @@ public class DynamicSqlController extends BaseController {
     }
 
     @RequestMapping(value = "adopt", method = RequestMethod.POST)
-    public Result adoptExecuteBySql(@RequestBody @Validated({AddGroup.class}) AdoptExecuteParam adoptExecuteParam) {
+    public Result adoptExecuteBySql(@RequestBody @Validated({AddGroup.class}) AdoptExecuteParam adoptExecuteParam, BindingResult validResult) {
         final ServiceResult<String, DynamicSqlHolderDO> serviceResult =
                 dynamicSqlService.adoptDynamicSqlHolder(adoptExecuteParam.getDynamicSqlHolderId());
         final String time = new SimpleDateFormat("yyyy-MM-dd HHmmss").format(serviceResult.getResult().getCreateTime());
@@ -85,7 +81,7 @@ public class DynamicSqlController extends BaseController {
     }
 
     @RequestMapping(value = "reject", method = RequestMethod.POST)
-    public Result rejectExecuteBySql(@RequestBody @Validated({AddGroup.class}) AdoptExecuteParam adoptExecuteParam) {
+    public Result rejectExecuteBySql(@RequestBody @Validated({AddGroup.class}) AdoptExecuteParam adoptExecuteParam, BindingResult validResult) {
         final ServiceResult<String, DynamicSqlHolderDO> serviceResult =
                 dynamicSqlService.rejectDynamicSqlHolder(adoptExecuteParam.getDynamicSqlHolderId(), adoptExecuteParam.getResult());
         final String time = new SimpleDateFormat("yyyy-MM-dd HHmmss").format(serviceResult.getResult().getCreateTime());
