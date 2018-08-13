@@ -423,9 +423,9 @@ public class ImportBankSlip {
             }
 
             //自动认领付款人名称和已有的公司简单名称相同的数据
-            if (CollectionUtil.isNotEmpty(lastBankSlipDetailDOList)) {
+            if (CollectionUtil.isNotEmpty(lastTwoBankSlipDetailDOList)) {
                 List<CustomerCompanyDO> customerCompanyDOList = new ArrayList<>();
-                for (BankSlipDetailDO bankSlipDetailDO : lastBankSlipDetailDOList) {
+                for (BankSlipDetailDO bankSlipDetailDO : lastTwoBankSlipDetailDOList) {
                     if (bankSlipDetailDO.getPayerName() != null) {
                         String simpleName = StrReplaceUtil.nameToSimple(bankSlipDetailDO.getPayerName());
                         CustomerCompanyDO customerCompanyDO = new CustomerCompanyDO();
@@ -438,7 +438,7 @@ public class ImportBankSlip {
                     if (CollectionUtil.isNotEmpty(dbCustomerCompanyDOList)) {
                         Map<String, CustomerCompanyDO> customerCompanyDOMap = ListUtil.listToMap(dbCustomerCompanyDOList, "simpleCompanyName");
 
-                        Iterator<BankSlipDetailDO> iter = lastBankSlipDetailDOList.iterator();
+                        Iterator<BankSlipDetailDO> iter = lastTwoBankSlipDetailDOList.iterator();
                         aaa:
                         while (iter.hasNext()) {
                             BankSlipDetailDO bankSlipDetailDO = iter.next();
