@@ -19,7 +19,7 @@
                     <div class="col-md-12">
                         <label for="content" class="field-label">内容</label>
                         <div class="panel-body pn of-h" id="summer-demo">
-                            <div class="summernote" style="height: 400px;">This is the <b>Summernote</b> Editor...</div>
+                            <div class="summernote" style="height: 400px;">请输入内容...</div>
                         </div>
                     </div>
                 </div>

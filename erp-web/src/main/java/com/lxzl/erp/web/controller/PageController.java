@@ -1243,8 +1243,8 @@ public class PageController extends BaseController {
     }
 
     //添加系统消息
-    @RequestMapping("/system-manage/notice-edit")
-    public String editSystemNotice() {
+    @RequestMapping("/system-manage/notice-add-page")
+    public String addSystemNoticePage() {
         return "/systemManage/addNoticePage";
     }
 
