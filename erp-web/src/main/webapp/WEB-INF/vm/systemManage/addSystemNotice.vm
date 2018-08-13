@@ -18,9 +18,10 @@
                 <div class="section row">
                     <div class="col-md-12">
                         <label for="content" class="field-label">内容</label>
-                        <div class="panel-body pn of-h" id="summer-demo">
-                            <div class="summernote" style="height: 400px;">请输入内容...</div>
-                        </div>
+                        <label for="content" class="field prepend-icon">
+                            <textarea class="gui-textarea required area-item" name="content" placeholder="请输入内容" maxlength="500"></textarea>
+                            <label for="content" class="field-icon"><i class="fa fa-tag"></i></label>
+                        </label>
                     </div>
                 </div>
                 <div class="section row">

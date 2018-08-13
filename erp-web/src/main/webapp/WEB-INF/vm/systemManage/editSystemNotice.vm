@@ -17,13 +17,14 @@
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
             <section id="content" class="animated fadeIn">
+                #parse("component/loading.vm")
                 <div class="row">
                     <div class="col-md-12 center-block">
                         <div class="admin-form theme-primary">
                             <div class="tray tray-center p30 va-t animated-delay" data-animate="1100">
                                 <div class="panel panel-default panel-border top">
                                     <div class="panel-heading">
-                                        <span class="panel-title"><i class="fa fa-pencil"></i>添加公告</span>
+                                        <span class="panel-title"><i class="fa fa-pencil"></i>编辑公告</span>
                                     </div>
                                     <div class="panel-body p25 of-h">
                                         <div class="section row">
@@ -71,13 +72,13 @@
     <script type="text/javascript" src="${staticCommon}vendor/plugins/summernote/summernote.min.js"></script>
     <script type="text/javascript" src="${staticCommon}vendor/plugins/summernote/summernote-zh-CN.js"></script>
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.system.notice.add.js');
+        management_load_script('${staticManagement}/js','manage.system.notice.edit.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
         Rental.init();
         Layout.init();
-        AddSystemNoticeManage.init()
+        EditSystemNoticeManage.init()
         
         //UI效果初始化
         Core.init();

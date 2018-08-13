@@ -1253,6 +1253,12 @@ public class PageController extends BaseController {
         return "/systemManage/addNoticePage";
     }
 
+    //添加系统消息
+    @RequestMapping("/system-manage/notice-edit")
+    public String editSystemNotice() {
+        return "/systemManage/editSystemNotice";
+    }
+
     //定时任务执行者列表
     @RequestMapping("/timed-manage/executor-list")
     public String timerManageList() {
