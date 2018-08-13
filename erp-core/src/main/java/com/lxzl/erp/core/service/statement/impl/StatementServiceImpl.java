@@ -6934,7 +6934,6 @@ public class StatementServiceImpl implements StatementService {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String returnDeposit(String orderNo) {
-        Map<Integer, K3ReturnOrderDO> k3ReturnOrderDOMap = new HashMap<>();
         StringBuilder sb = new StringBuilder();
 
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
@@ -6950,23 +6949,11 @@ public class StatementServiceImpl implements StatementService {
         // 获取此订单所有的退货详情单
         Map<Integer, BigDecimal> orderProduct2ReturnRentDepositAmount = new HashMap<>(); // 计算每个订单商品项应该退还的租金押金
         Map<Integer, BigDecimal> orderProduct2ReturnDepositAmount = new HashMap<>(); // 计算每个订单商品项应该退还的押金
+
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderNo);
         for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList) {
-            // 首先判断此退货详情单关联的退货单是否为生成结算状态
-            K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderDOMap.get(k3ReturnOrderDetailDO.getReturnOrderId());
-            if (k3ReturnOrderDO == null) {
-                k3ReturnOrderDO = k3ReturnOrderMapper.findById(k3ReturnOrderDetailDO.getReturnOrderId());
-                k3ReturnOrderDOMap.put(k3ReturnOrderDetailDO.getReturnOrderId(), k3ReturnOrderDO);
-            }
-
-            // 没有生成结算的不处理
-            if (!CommonConstant.COMMON_CONSTANT_YES.equals(k3ReturnOrderDO.getSuccessStatus())) {
-                continue;
-            }
-
             OrderProductDO orderProductDO = null;
-            // 暂时只考虑商品退押金，如果是商品
-            if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())) {
+            if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())) { // 商品项
                 // 兼容erp订单和k3订单商品项
                 orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
             }
@@ -6980,6 +6967,13 @@ public class StatementServiceImpl implements StatementService {
                 continue;
             }
 
+            // 首先判断此退货详情单关联的退货单是否为生成结算状态
+            K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(k3ReturnOrderDetailDO.getReturnOrderId());
+
+            // 没有生成结算的不处理
+            if (!CommonConstant.COMMON_CONSTANT_YES.equals(k3ReturnOrderDO.getSuccessStatus())) {
+                continue;
+            }
 
             BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), returnCount);
             BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), returnCount);
@@ -6987,7 +6981,6 @@ public class StatementServiceImpl implements StatementService {
             orderProduct2ReturnRentDepositAmount.put(orderProductDO.getId(), BigDecimalUtil.add(thisReturnRentDepositAmount, orderProduct2ReturnRentDepositAmount.get(orderProductDO.getId())));
             orderProduct2ReturnDepositAmount.put(orderProductDO.getId(), BigDecimalUtil.add(thisReturnDepositAmount, orderProduct2ReturnDepositAmount.get(orderProductDO.getId())));
         }
-
         // 根据订单商品项关联的押金类型的结算详情单的押金金额，对比上面计算出的应该支付的押金金额，计算还需要退还多少押金
         List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
         if (CollectionUtil.isNotEmpty(orderProductDOList) && orderProduct2ReturnRentDepositAmount.size() > 0) {
@@ -6998,6 +6991,15 @@ public class StatementServiceImpl implements StatementService {
                         // 找到已经支付过的押金结算单
                         if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())
                                 && StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
+
+                            // 暂时只处理订单项押金和支付押金数一致的结算单
+                            // 不一致的情况：1. 未交押金前进行退货。 2. 未交押金前对押金进行冲正的情况 （这两种情况暂不处理）
+                            if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), orderProductDO.getRentDepositAmount()) != 0
+                                    || BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), orderProductDO.getDepositAmount()) != 0) {
+                                sb.append("订单号【" + orderNo + "】中的商品项【" + orderProductDO.getProductName() + "】押金和结算单支付押金不一致， 此接口不支持退此类押金。\n");
+                                continue;
+                            }
+
                             // 这个订单商品项已经退的押金
                             BigDecimal returnedRentDepositAmount = statementOrderDetailDO.getStatementDetailRentDepositReturnAmount();
                             BigDecimal returnedDepositAmount = statementOrderDetailDO.getStatementDetailDepositReturnAmount();
@@ -7036,9 +7038,98 @@ public class StatementServiceImpl implements StatementService {
             }
         }
 
+        Map<Integer, BigDecimal> orderMaterial2ReturnRentDepositAmount = new HashMap<>(); // 配件项
+        Map<Integer, BigDecimal> orderMaterial2ReturnDepositAmount = new HashMap<>(); // 配件项
+        // 配件项
+        for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList) {
+            OrderMaterialDO orderMaterialDO = null;
+            if (productSupport.isMaterial(k3ReturnOrderDetailDO.getProductNo())) { // 商品项
+                // 兼容erp订单和k3订单商品项
+                orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
+            }
+
+            if (orderMaterialDO == null) {
+                continue;
+            }
+
+            BigDecimal returnCount = new BigDecimal(k3ReturnOrderDetailDO.getRealProductCount());
+            if (BigDecimalUtil.compare(returnCount, BigDecimal.ZERO) <= 0) {
+                continue;
+            }
+
+            // 首先判断此退货详情单关联的退货单是否为生成结算状态
+            K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(k3ReturnOrderDetailDO.getReturnOrderId());
+
+            // 没有生成结算的不处理
+            if (!CommonConstant.COMMON_CONSTANT_YES.equals(k3ReturnOrderDO.getSuccessStatus())) {
+                continue;
+            }
+
+            BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getRentDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
+            BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
+
+            orderMaterial2ReturnRentDepositAmount.put(orderMaterialDO.getId(), BigDecimalUtil.add(thisReturnRentDepositAmount, orderMaterial2ReturnRentDepositAmount.get(orderMaterialDO.getId())));
+            orderMaterial2ReturnDepositAmount.put(orderMaterialDO.getId(), BigDecimalUtil.add(thisReturnDepositAmount, orderMaterial2ReturnDepositAmount.get(orderMaterialDO.getId())));
+        }
+        // 根据订单商品项关联的押金类型的结算详情单的押金金额，对比上面计算出的应该支付的押金金额，计算还需要退还多少押金
+        List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
+        if (CollectionUtil.isNotEmpty(orderMaterialDOList) && orderMaterial2ReturnRentDepositAmount.size() > 0) {
+            for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId());
+                if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+                    for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+                        // 找到已经支付过的押金结算单
+                        if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())
+                                && StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
+                            // 暂时只处理订单项押金和支付押金数一致的结算单
+                            // 不一致的情况：1. 未交押金前进行退货。 2. 未交押金前对押金进行冲正的情况 （这两种情况暂不处理）
+                            if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), orderMaterialDO.getRentDepositAmount()) != 0
+                                    || BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), orderMaterialDO.getDepositAmount()) != 0) {
+                                sb.append("订单号【" + orderNo + "】中的配件项【" + orderMaterialDO.getMaterialName() + "】押金和结算单支付押金不一致， 此接口不支持退此类押金。\n");
+                                continue;
+                            }
+
+                            // 这个订单商品项已经退的押金
+                            BigDecimal returnedRentDepositAmount = statementOrderDetailDO.getStatementDetailRentDepositReturnAmount();
+                            BigDecimal returnedDepositAmount = statementOrderDetailDO.getStatementDetailDepositReturnAmount();
+
+                            // 这个订单商品项应该退的押金
+                            BigDecimal shouldReturnRentDepositAmount = orderMaterial2ReturnRentDepositAmount.get(orderMaterialDO.getId());
+                            BigDecimal shouldReturnDepositAmount = orderMaterial2ReturnDepositAmount.get(orderMaterialDO.getId());
+
+                            // 计算这个订单商品项还应该退的押金
+                            BigDecimal toReturnRentDepositAmount = BigDecimalUtil.sub(shouldReturnRentDepositAmount, returnedRentDepositAmount);
+                            BigDecimal toReturnDepositAmount = BigDecimalUtil.sub(shouldReturnDepositAmount, returnedDepositAmount);
+
+                            StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
+                            // 还应该退的押金大于零，并且未退押金大于还应该退的押金
+                            if (BigDecimalUtil.compare(toReturnRentDepositAmount, BigDecimal.ZERO) > 0
+                                    && BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), statementOrderDetailDO.getStatementDetailRentDepositReturnAmount()), toReturnRentDepositAmount) >= 0) {
+                                totalReturnRentDepositAmount = BigDecimalUtil.add(totalReturnRentDepositAmount, toReturnRentDepositAmount);
+                                statementOrderDetailDO.setStatementDetailRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositReturnAmount(), toReturnRentDepositAmount));
+                                statementOrderDetailDO.setStatementDetailRentDepositReturnTime(currentTime);
+                                statementOrderDO.setStatementRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositReturnAmount(), toReturnRentDepositAmount));
+                            }
+
+                            if (BigDecimalUtil.compare(toReturnDepositAmount, BigDecimal.ZERO) > 0
+                                    && BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), toReturnDepositAmount) >= 0) {
+                                totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, toReturnDepositAmount);
+                                statementOrderDetailDO.setStatementDetailDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositReturnAmount(), toReturnDepositAmount));
+                                statementOrderDetailDO.setStatementDetailDepositReturnTime(currentTime);
+                                statementOrderDO.setStatementDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositReturnAmount(), toReturnDepositAmount));
+                            }
+
+                            statementOrderDetailMapper.update(statementOrderDetailDO);
+                            statementOrderMapper.update(statementOrderDO);
+                        }
+                    }
+                }
+            }
+        }
+
         sb.append("订单号【" + orderNo + "】退还租金押金：" + totalReturnRentDepositAmount + " ， 退还押金：" + totalReturnDepositAmount + "\n");
 
-        //押金最后退
+        // 押金最后退
         if (BigDecimalUtil.compare(totalReturnRentDepositAmount, BigDecimal.ZERO) > 0
                 || BigDecimalUtil.compare(totalReturnDepositAmount, BigDecimal.ZERO) > 0) {
             ServiceResult<String, Boolean> returnDepositResult = paymentService.returnDeposit(orderDO.getBuyerCustomerNo(), totalReturnRentDepositAmount, totalReturnDepositAmount);
