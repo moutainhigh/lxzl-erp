@@ -1557,7 +1557,8 @@
         eorder.rent_time_length,
         eorder.delivery_time,
         eu.real_name AS order_seller_name,
-        ec.customer_no AS buyer_customer_no
+        ec.customer_no AS buyer_customer_no,
+        eorder.expect_delivery_time
         FROM
         (
         SELECT
