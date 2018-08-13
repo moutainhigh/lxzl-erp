@@ -1,17 +1,22 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.constant.DynamicSqlTpye;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.dingding.message.DingdingMessageDTO;
 import com.lxzl.erp.common.domain.dynamicSql.AdoptExecuteParam;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlParam;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSqlQueryParam;
 import com.lxzl.erp.common.domain.dynamicSql.pojo.DynamicSql;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.util.validate.constraints.In;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
+import com.lxzl.erp.core.service.dingding.DingdingService;
 import com.lxzl.erp.core.service.dynamicSql.DynamicSqlService;
+import com.lxzl.erp.dataaccess.domain.dynamicSql.DynamicSqlHolderDO;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import com.lxzl.se.web.controller.BaseController;
@@ -23,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -65,12 +71,32 @@ public class DynamicSqlController extends BaseController {
 
     @RequestMapping(value = "adopt", method = RequestMethod.POST)
     public Result adoptExecuteBySql(@RequestBody @Validated({AddGroup.class}) AdoptExecuteParam adoptExecuteParam) {
-        return resultGenerator.generate(dynamicSqlService.adoptDynamicSqlHolder(adoptExecuteParam.getDynamicSqlHolderId()));
+        final ServiceResult<String, DynamicSqlHolderDO> serviceResult =
+                dynamicSqlService.adoptDynamicSqlHolder(adoptExecuteParam.getDynamicSqlHolderId());
+        final String time = new SimpleDateFormat("yyyy-MM-dd HHmmss").format(serviceResult.getResult().getCreateTime());
+        final Integer userId = Integer.parseInt(serviceResult.getResult().getCreateUser());
+        if (serviceResult.getErrorCode().equals(ErrorCode.SUCCESS))
+            dingdingService.sendMessageToDingding(new DingdingMessageDTO() {{
+                setReceiverUserId(userId);
+                setMessageTitle("SQL执行审批结果");
+                setMessageContent("你在【" + time + "】提交的SQL已经通过，请登录ERP查看结果。");
+            }});
+        return resultGenerator.generate(serviceResult);
     }
 
     @RequestMapping(value = "reject", method = RequestMethod.POST)
     public Result rejectExecuteBySql(@RequestBody @Validated({AddGroup.class}) AdoptExecuteParam adoptExecuteParam) {
-        return resultGenerator.generate(dynamicSqlService.rejectDynamicSqlHolder(adoptExecuteParam.getDynamicSqlHolderId(), adoptExecuteParam.getResult()));
+        final ServiceResult<String, DynamicSqlHolderDO> serviceResult =
+                dynamicSqlService.rejectDynamicSqlHolder(adoptExecuteParam.getDynamicSqlHolderId(), adoptExecuteParam.getResult());
+        final String time = new SimpleDateFormat("yyyy-MM-dd HHmmss").format(serviceResult.getResult().getCreateTime());
+        final Integer userId = Integer.parseInt(serviceResult.getResult().getCreateUser());
+        if (serviceResult.getErrorCode().equals(ErrorCode.SUCCESS))
+            dingdingService.sendMessageToDingding(new DingdingMessageDTO() {{
+                setReceiverUserId(userId);
+                setMessageTitle("SQL执行审批结果");
+                setMessageContent("你在【" + time + "】提交的SQL已被拒绝，请登录ERP查看结果。");
+            }});
+        return resultGenerator.generate(serviceResult);
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
@@ -108,4 +134,7 @@ public class DynamicSqlController extends BaseController {
 
     @Autowired
     private DynamicSqlService dynamicSqlService;
+
+    @Autowired
+    private DingdingService dingdingService;
 }
