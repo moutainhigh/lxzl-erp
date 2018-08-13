@@ -1,7 +1,9 @@
 package com.lxzl.erp.core.service.k3.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.K3Config;
 import com.lxzl.erp.common.domain.Page;
@@ -9,6 +11,8 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
 import com.lxzl.erp.common.domain.k3.K3SendRecordBatchParam;
 import com.lxzl.erp.common.domain.k3.K3SendRecordParam;
+import com.lxzl.erp.common.domain.k3.QueryK3StockParam;
+import com.lxzl.erp.common.domain.k3.pojo.K3ProductStock;
 import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderConsignInfo;
@@ -26,12 +30,10 @@ import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderConfirml;
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderConfirmlEntry;
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderOelet;
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderOeletEntry;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.*;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Service;
+import com.lxzl.erp.core.service.k3.K3Support;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.k3.support.RecordTypeSupport;
 import com.lxzl.erp.core.service.order.OrderService;
@@ -65,6 +67,8 @@ import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import org.apache.avro.generic.GenericData;
+import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -991,6 +995,91 @@ public class K3ServiceImpl implements K3Service {
         return null;
     }
 
+    @Override
+    public ServiceResult<String, List<K3ProductStock>> queryK3Stock(QueryK3StockParam queryK3StockParam) {
+        ServiceResult<String, List<K3ProductStock>> serviceResult = new ServiceResult<>();
+
+        if(queryK3StockParam.getK3Code() == null){
+            serviceResult.setErrorCode(ErrorCode.K3_SEL_STOCK_K3_CODE_NOT_NULL);
+            return serviceResult;
+        }
+
+//        if(queryK3StockParam.getWarehouseType() == null){
+//            queryK3StockParam.setWarehouseType(CommonConstant.K3_SEL_STOCK_WARE_TYPE_THREE);
+//        }
+
+        //如果是确认库存操作，并且客户数量为空的话就不能查询
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(queryK3StockParam.getQueryType()) && queryK3StockParam.getProductCount() == null){
+            serviceResult.setErrorCode(ErrorCode.K3_SEL_STOCK_CUSTOMER_QUERY_COUNT_NOT_NULL_IN_CONFIRM_STOCK);
+            return serviceResult;
+        }
+
+//        //如果是确认库存操作,并且仓库类型为借出仓和全部时，不能查询
+//        if(CommonConstant.COMMON_CONSTANT_YES.equals(queryK3StockParam.getQueryType()) &&
+//                (CommonConstant.K3_SEL_STOCK_WARE_TYPE_TWO.equals(queryK3StockParam.getWarehouseType()) || CommonConstant.K3_SEL_STOCK_WARE_TYPE_THREE.equals(queryK3StockParam.getWarehouseType()))){
+//            serviceResult.setErrorCode(ErrorCode.K3_SEL_STOCK_CAN_NOT_QUERY_IN_CONFIRM_STOCK);
+//            return serviceResult;
+//        }
+
+        //封装参数，方便给K3库存接口查询
+        FromSEOrderConfirmlSelStock fromSEOrderConfirmlSelStock = new FromSEOrderConfirmlSelStock();
+        K3MappingSubCompanyDO k3MappingSubCompanyDO = new K3MappingSubCompanyDO();
+        if (queryK3StockParam.getSubCompanyId() != null){
+            k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findById(queryK3StockParam.getSubCompanyId());
+            fromSEOrderConfirmlSelStock.setAcctKey(k3MappingSubCompanyDO.getK3SubCompanyCode()); //分公司仓位
+        }
+        fromSEOrderConfirmlSelStock.setfNumber(queryK3StockParam.getK3Code());     //物料编号
+        fromSEOrderConfirmlSelStock.setWareType(queryK3StockParam.getWarehouseType()); //仓位类型
+
+        //获取结果
+        ServiceResult<String, String> queryK3Result = k3Support.queryK3Stock(fromSEOrderConfirmlSelStock);
+        if (!ErrorCode.SUCCESS.equals(queryK3Result.getErrorCode())){
+            serviceResult.setErrorCode(queryK3Result.getErrorCode());
+            return serviceResult;
+        }
+        List<K3ProductStock> k3ProductStockList = new ArrayList<>();
+        List queryList =   JSONArray.parseArray(queryK3Result.getResult());
+        List<Map<String,Object>> listMap = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(queryList)){
+            listMap = (List<Map<String,Object>>)queryList;
+        }
+        //对不同查询做判断
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(queryK3StockParam.getQueryType())){
+            //确认库存操作
+                for (Map<String,Object> k3StockMap : listMap){
+                    if (MapUtils.isNotEmpty(k3StockMap)){
+                        K3ProductStock k3ProductStock = new K3ProductStock();
+                        if (queryK3StockParam.getProductCount() > (Integer)k3StockMap.get("FQty")){
+                            k3ProductStock.setIsStockEnough(CommonConstant.COMMON_CONSTANT_NO);
+                        }else{
+                            k3ProductStock.setIsStockEnough(CommonConstant.COMMON_CONSTANT_YES);
+                        }
+                        k3ProductStock.setSubCompanyName(k3StockMap.get("StockName").toString());
+                        k3ProductStockList.add(k3ProductStock);
+                    }
+                }
+        }else{
+            //查询库存操作
+            for (Map<String,Object> k3StockMap : listMap){
+                if (MapUtils.isNotEmpty(k3StockMap)){
+                    K3ProductStock k3ProductStock = new K3ProductStock();
+                    if (queryK3StockParam.getProductCount() > (Integer)k3StockMap.get("FQty")){
+                        k3ProductStock.setIsStockEnough(CommonConstant.COMMON_CONSTANT_NO);
+                    }else{
+                        k3ProductStock.setIsStockEnough(CommonConstant.COMMON_CONSTANT_YES);
+                    }
+                    k3ProductStock.setSubCompanyName(k3StockMap.get("StockName").toString());
+                    k3ProductStock.setProductStockCount((Integer)k3StockMap.get("FQty"));
+                    k3ProductStockList.add(k3ProductStock);
+                }
+            }
+        }
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(k3ProductStockList);
+        return serviceResult;
+    }
+
     @Autowired
     private K3MappingBrandMapper k3MappingBrandMapper;
 
@@ -1053,5 +1142,8 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private SubCompanyMapper subCompanyMapper;
+
+    @Autowired
+    private K3Support k3Support;
 
 }

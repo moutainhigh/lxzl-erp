@@ -72,4 +72,8 @@ public class CommonConstant {
 
     public static final long WORKBENCH_REDIS_SAVE_TIME = 180L; //工作台redis缓存时间，三分钟
 
+    public static final Integer K3_SEL_STOCK_WARE_TYPE_ONE = 1; //k3库存查询库位类型，1-分公司仓
+    public static final Integer K3_SEL_STOCK_WARE_TYPE_TWO = 2; //k3库存查询库位类型，2-借出仓
+    public static final Integer K3_SEL_STOCK_WARE_TYPE_THREE = 3; //k3库存查询库位类型，3-全部
+
 }
