@@ -535,9 +535,8 @@ public class OrderTest extends ERPUnTransactionalTest {
 //          param.setIsReturnOverDue(1);
         param.setIsCanReletOrder(1);
         param.setIsRecycleBin(0);
-        param.setPageNo(1);
+        param.setPageNo(4);
         param.setPageSize(15);
-
 
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
