@@ -22,6 +22,9 @@ public class WeixinPayParam extends PaymentIdentityParam {
     private String payDescription;
     private String openId;
     private String clientIp;
+    private String businessCustomerName;//客户名称
+    private String chargeBodyName;//分公司名称
+    private Integer chargeBodyId;//分公司ID
 
     private Integer customerId;
 
@@ -103,5 +106,29 @@ public class WeixinPayParam extends PaymentIdentityParam {
 
     public void setCustomerId(Integer customerId) {
         this.customerId = customerId;
+    }
+
+    public String getBusinessCustomerName() {
+        return businessCustomerName;
+    }
+
+    public void setBusinessCustomerName(String businessCustomerName) {
+        this.businessCustomerName = businessCustomerName;
+    }
+
+    public String getChargeBodyName() {
+        return chargeBodyName;
+    }
+
+    public void setChargeBodyName(String chargeBodyName) {
+        this.chargeBodyName = chargeBodyName;
+    }
+
+    public Integer getChargeBodyId() {
+        return chargeBodyId;
+    }
+
+    public void setChargeBodyId(Integer chargeBodyId) {
+        this.chargeBodyId = chargeBodyId;
     }
 }
