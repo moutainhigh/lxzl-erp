@@ -5,6 +5,8 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.statistics.*;
 import com.lxzl.erp.common.domain.statistics.pojo.*;
 import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataMeta;
+import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsRentProductDetail;
+import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsReturnProductDetail;
 import com.lxzl.se.core.service.BaseService;
 
 import java.util.Date;
@@ -75,6 +77,10 @@ public interface StatisticsService extends BaseService {
     ServiceResult<String, Boolean> reStatisticsFinanceData(FinanceStatisticsParam paramVo);
     ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyToExcel(FinanceStatisticsParam paramVo);
     ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataMonthlyToExcel(FinanceStatisticsParam paramVo);
+    ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyTotalToExcel(FinanceStatisticsParam paramVo);
+    ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataMonthlyTotalToExcel(FinanceStatisticsParam paramVo);
     ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> findStatisticsFinanceDataDetail(FinanceStatisticsParam paramVo);
     ServiceResult<String, Page<FinanceStatisticsDataMeta>> findAllStatisticsFinanceDataMeta(FinanceStatisticsParam paramVo);
+    ServiceResult<String, List<FinanceStatisticsRentProductDetail>> statisticsRentProductDetail(FinanceStatisticsParam paramVo);
+    ServiceResult<String, List<FinanceStatisticsReturnProductDetail>> statisticsReturnProductDetail(FinanceStatisticsParam paramVo);
 }

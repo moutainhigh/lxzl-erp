@@ -3,8 +3,10 @@ package com.lxzl.erp.core.service.export.impl;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.core.service.export.ExcelExportConfig;
 import com.lxzl.erp.core.service.export.ExcelExportService;
+import com.lxzl.erp.core.service.export.ExcelMultiSheetConfig;
 import com.lxzl.erp.core.service.export.impl.support.ExcelExportSupport;
 import com.lxzl.se.common.domain.Result;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -15,6 +17,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -46,6 +49,34 @@ public class ExcelExportServiceImpl<T> implements ExcelExportService<T> {
         try {
             //导出设计表格
             serviceResult = ExcelExportSupport.export(list, config,response,hssfWorkbook,ExcelExportSupport.formatFileName(fileName),sheetName,row);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, String> export(List<ExcelMultiSheetConfig> excelMultiSheetConfigList, HttpServletResponse response, String fileName) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        try {
+            //导出设计表格
+            //serviceResult = ExcelExportSupport.export(list, config,response,hssfWorkbook,ExcelExportSupport.formatFileName(fileName),sheetName,row);
+            HSSFWorkbook hssfWorkbook = null;
+            if (CollectionUtil.isNotEmpty(excelMultiSheetConfigList)) {
+                for (ExcelMultiSheetConfig excelMultiSheetConfig : excelMultiSheetConfigList) {
+                    hssfWorkbook = ExcelExportSupport.createHSSFSheetAttachToHSSFWorkbook(excelMultiSheetConfig.getBaseData(), excelMultiSheetConfig.getExcelExportConfig(), excelMultiSheetConfig.getSheetName(), hssfWorkbook);
+                }
+            }
+            if (hssfWorkbook != null) {
+                response.reset();
+                response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xls");
+                response.setContentType("application/json;charset=utf-8");
+                OutputStream stream = response.getOutputStream();
+                hssfWorkbook.write(stream);
+                stream.flush();
+                stream.close();
+                serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

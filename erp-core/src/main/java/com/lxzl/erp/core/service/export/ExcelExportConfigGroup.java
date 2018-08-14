@@ -21,6 +21,8 @@ public class ExcelExportConfigGroup {
     public static ExcelExportConfig statementOrderPayDetailConfig = new ExcelExportConfig();
     public static ExcelExportConfig statementOrderCheckConfig = new ExcelExportConfig();
     public static ExcelExportConfig statisticsFinanceWeeklyConfig = new ExcelExportConfig();
+    public static ExcelExportConfig statisticsRentProductDetailConfig = new ExcelExportConfig();
+    public static ExcelExportConfig statisticsReturnProductDetailConfig = new ExcelExportConfig();
 
     static {
         initBankSlipDetailConfig();
@@ -30,6 +32,110 @@ public class ExcelExportConfigGroup {
         initStatementOrderPayDetailConfig();
         initStatementOrderCheckConfig();
         initStatisticsFinanceWeeklyConfig();
+        initStatisticsRentProductDetailConfig();
+        initStatisticsReturnProductDetailConfig();
+    }
+    private static ExcelExportView createRentTypeExcelExportView() {
+        ExcelExportView rentTypeExcelExportView = new ExcelExportView() {
+            @Override
+            public Object view(Object o) {
+                if (o != null) {
+                    Integer rentLengthType = (Integer) o;
+                    if (RentLengthType.RENT_LENGTH_TYPE_SHORT == rentLengthType) {
+                        return "短租";
+                    } else if (RentLengthType.RENT_LENGTH_TYPE_LONG == rentLengthType) {
+                        return "长租";
+                    }
+                }
+                return null;
+            }
+        };
+        return rentTypeExcelExportView;
+    }
+
+    private static  ExcelExportView createSubCompanyExcelExportView() {
+        ExcelExportView subCompanyExcelExportView = new ExcelExportView() {
+            @Override
+            public Object view(Object o) {
+                if (o != null) {
+                    Integer rentLengthType = (Integer) o;
+                    if (1 == rentLengthType) {
+                        return "总公司";
+                    } else if (2 == rentLengthType) {
+                        return "深圳分公司";
+                    } else if (3 == rentLengthType) {
+                        return "上海分公司";
+                    } else if (4 == rentLengthType) {
+                        return "北京分公司";
+                    } else if (5 == rentLengthType) {
+                        return "广州分公司";
+                    } else if (6 == rentLengthType) {
+                        return "南京分公司";
+                    } else if (7 == rentLengthType) {
+                        return "厦门分公司";
+                    } else if (8 == rentLengthType) {
+                        return "武汉分公司";
+                    } else if (9 == rentLengthType) {
+                        return "成都分公司";
+                    } else if (10 == rentLengthType) {
+                        return "电销";
+                    } else if (11 == rentLengthType) {
+                        return "大客户";
+                    }
+                }
+                return null;
+            }
+        };
+        return subCompanyExcelExportView;
+    }
+
+    private static void initStatisticsRentProductDetailConfig() {
+        statisticsRentProductDetailConfig.addConfig(new ColConfig("orderNo", "订单编号"))
+                .addConfig(new ColConfig("orderSubCompanyId", "订单分公司", createSubCompanyExcelExportView()))
+                .addConfig(new ColConfig("deliverySubCompanyId", "发货分公司", createSubCompanyExcelExportView()))
+                .addConfig(new ColConfig("customerName","客户名称"))
+                .addConfig(new ColConfig("rentType","租赁类型", createRentTypeExcelExportView()))
+                .addConfig(new ColConfig("rentTimeLength","租赁时长"))
+                .addConfig(new ColConfig("productName","商品名称"))
+                .addConfig(new ColConfig("k3ProductNo","商品编号"))
+                .addConfig(new ColConfig("productCount","商品数量"))
+                .addConfig(new ColConfig("productUnitAmount","商品单价"))
+                .addConfig(new ColConfig("rentStartTime","订单起租时间", DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("expectReturnTime","订单截止时间", DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("isNewProduct", "是否全新", new ExcelExportView() {
+                    @Override
+                    public Object view(Object o) {
+                        if (o != null) {
+                            Integer isNewProduct = (Integer) o;
+                            if (CommonConstant.YES == isNewProduct) {
+                                return "是";
+                            } else if (CommonConstant.NO == isNewProduct) {
+                                return "否";
+                            }
+                        }
+                        return null;
+                    }
+                }))
+                .addConfig(new ColConfig("deliveryTime","发货时间", DateExcelExportView.getInstance()));
+    }
+
+    private static void initStatisticsReturnProductDetailConfig() {
+        statisticsReturnProductDetailConfig.addConfig(new ColConfig("returnOrderNo", "退货单号"))
+                .addConfig(new ColConfig("productNo", "商品编号"))
+                .addConfig(new ColConfig("productName", "商品名称"))
+                .addConfig(new ColConfig("productUnitAmount", "商品单价"))
+                .addConfig(new ColConfig("productCount", "商品预计退货数量"))
+                .addConfig(new ColConfig("realProductCount", "商品实际退货数量"))
+                .addConfig(new ColConfig("orderNo", "订单编号"))
+                .addConfig(new ColConfig("orderSubCompanyId", "订单分公司", createSubCompanyExcelExportView()))
+                .addConfig(new ColConfig("deliverySubCompanyId", "发货分公司", createSubCompanyExcelExportView()))
+                .addConfig(new ColConfig("customerNo", "客户编号"))
+                .addConfig(new ColConfig("customerName", "客户名称"))
+                .addConfig(new ColConfig("rentType","租赁类型", createRentTypeExcelExportView()))
+                .addConfig(new ColConfig("rentTimeLength","租赁时长"))
+                .addConfig(new ColConfig("returnTime","退货时间", DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("rentStartTime","订单起租时间",DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("expectReturnTime","订单截止时间", DateExcelExportView.getInstance()));
     }
 
     private static void initStatisticsFinanceWeeklyConfig() {
