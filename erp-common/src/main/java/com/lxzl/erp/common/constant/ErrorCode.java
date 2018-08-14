@@ -1883,7 +1883,7 @@ public class ErrorCode {
         MAP.put(ONLY_SUCCESS_RETURN_ORDER_ALLOW_RE_STATEMENT, "仅处理成功的退货单允许重算");
         MAP.put(K3_QUERY_STOCK_SUB_COMPANY_CODE_NOT_NULL, "K3库存查询的分公司号不能为空");
         MAP.put(K3_SEL_STOCK_K3_CODE_NOT_NULL, "K3库存查询的物料编号不能为空");
-        MAP.put(K3_SEL_STOCK_QUERY_FAILED, "K3库存查询失败或者不存在该商品库存");
+        MAP.put(K3_SEL_STOCK_QUERY_FAILED, "K3库存该商品不存在");
         MAP.put(K3_SEL_STOCK_CUSTOMER_QUERY_COUNT_NOT_NULL_IN_CONFIRM_STOCK, "确认库存时K3库存查询的客户需求数量不能为空");
         MAP.put(K3_SEL_STOCK_CAN_NOT_QUERY_IN_CONFIRM_STOCK, "确认库存时K3库存查询的仓位类型不能选择借出仓和全部仓位");
 
