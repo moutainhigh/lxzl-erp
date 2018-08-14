@@ -218,6 +218,13 @@
 		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1 limit 1
 	</select>
 
+	<select id="findByNoForCharge" resultMap="CustomerDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/>,<include refid="risk_column_List"/>,esc.sub_company_name AS ownerSubCompanyName  FROM erp_customer ec
+		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
+		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id
+		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1 limit 1
+	</select>
+
 	<select id="findByCustomerNoList" resultMap="CustomerDO" >
 		SELECT <include refid="column_List"/>,esc.sub_company_name AS ownerSubCompanyName FROM erp_customer ec
 		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id

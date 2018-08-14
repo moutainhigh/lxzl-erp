@@ -115,7 +115,8 @@
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
                                                     {{#rowActionButtons}}
-                                                    <a href="${ctx}{{menuUrl}}?id={{productId}}" type="button" class="btn btn-default btn-xs {{class}}" data-productId="{{productId}}">{{text}}</a>
+                                                    <a href="${ctx}{{menuUrl}}?id={{productId}}" type="button" class="btn btn-default btn-xs {{class}}" 
+                                                    data-productId="{{productId}}" data-name="{{productName}}" data-no="{{k3ProductNo}}">{{text}}</a>
                                                     {{/rowActionButtons}}
                                                 </div>
                                             </td>
@@ -154,6 +155,7 @@
     <script type="text/javascript">
         management_load_script('${staticManagement}js',
                 'api.data.js',
+                'modal.confirm.stock.js',
                 'manage.product.js',
                 'manage.product.util.js');
     </script>
