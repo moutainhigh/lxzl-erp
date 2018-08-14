@@ -54,6 +54,7 @@
                                 <tr>
                                     <th>sql语句标题</th>
                                     <th>sql语句内容</th>
+                                    <th>sql语句类型</th>
                                     <th>备注</th>
                                     <th>创建人</th>
                                     {{#hasRowActionButtons}}
@@ -64,9 +65,10 @@
                                 <tbody>
                                 {{#dataSource}}
                                 {{#listData}}
-                                <tr>
+                                <tr data-str="{{dataToStr}}">
                                     <td>{{sqlTitle}}</td>
                                     <td><pre class="sqlContent">{{sqlContent}}</pre></td>
+                                    <td>{{sqlTypeValue}}</td>
                                     <td>{{remark}}</td>
                                     <td>
                                         <p class="mn">{{createUserRealName}}</p>
