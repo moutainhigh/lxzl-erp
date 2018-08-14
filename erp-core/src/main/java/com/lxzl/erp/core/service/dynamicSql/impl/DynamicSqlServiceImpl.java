@@ -227,6 +227,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         updateDynamicSqlHolderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         updateDynamicSqlHolderDO.setUpdateTime(new Date());
         dynamicSqlHolderMapper.update(updateDynamicSqlHolderDO);
+        updateDynamicSqlHolderDO.setCreateTime(dynamicSqlHolderDO.getCreateTime());
         updateDynamicSqlHolderDO.setCreateUser(dynamicSqlHolderDO.getCreateUser());
         serviceResult.setResult(updateDynamicSqlHolderDO);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -260,6 +261,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         updateDynamicSqlHolderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         updateDynamicSqlHolderDO.setUpdateTime(new Date());
         dynamicSqlHolderMapper.update(updateDynamicSqlHolderDO);
+        updateDynamicSqlHolderDO.setCreateTime(dynamicSqlHolderDO.getCreateTime());
         updateDynamicSqlHolderDO.setCreateUser(dynamicSqlHolderDO.getCreateUser());
         serviceResult.setResult(updateDynamicSqlHolderDO);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
