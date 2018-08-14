@@ -195,6 +195,8 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         if (dynamicSqlHolderId == null)
             throw new BusinessException(ErrorCode.DYNAMICSQLHOLDERID_NOT_NULL);
         DynamicSqlHolderDO dynamicSqlHolderDO = dynamicSqlHolderMapper.findById(dynamicSqlHolderId);
+        if (dynamicSqlHolderDO == null)
+            throw new BusinessException(ErrorCode.DYNAMICSQLHOLDERID_NOT_NULL);
         DynamicSqlTpye dynamicSqlTpye = DynamicSqlTpye.valueOf(dynamicSqlHolderDO.getSqlTpye());
         final String sql = dynamicSqlHolderDO.getSqlContent();
         List<DynamicSqlItem> dynamicSqlItems = analysisAndRebuildDynamicSql(sql);
@@ -225,6 +227,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         updateDynamicSqlHolderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         updateDynamicSqlHolderDO.setUpdateTime(new Date());
         dynamicSqlHolderMapper.update(updateDynamicSqlHolderDO);
+        updateDynamicSqlHolderDO.setCreateUser(dynamicSqlHolderDO.getCreateUser());
         serviceResult.setResult(updateDynamicSqlHolderDO);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
@@ -232,6 +235,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
 
 
     @Override
+    @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, DynamicSqlHolderDO> rejectDynamicSqlHolder(Integer dynamicSqlHolderId, String rejectResult) {
         ServiceResult<String, DynamicSqlHolderDO> serviceResult = new ServiceResult<>();
         if (!userSupport.isSuperUser()) {
@@ -244,14 +248,19 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
 
         if (rejectResult == null)
             rejectResult = "该动态sql的执行被拒绝";
+        DynamicSqlHolderDO dynamicSqlHolderDO = dynamicSqlHolderMapper.findById(dynamicSqlHolderId);
+
+        if (dynamicSqlHolderDO == null)
+            throw new BusinessException(ErrorCode.DYNAMICSQLHOLDERID_NOT_NULL);
 
         DynamicSqlHolderDO updateDynamicSqlHolderDO = new DynamicSqlHolderDO();
         updateDynamicSqlHolderDO.setId(dynamicSqlHolderId);
         updateDynamicSqlHolderDO.setStatus(DynamicSqlHolderDO.Status.REJECT.value);
         updateDynamicSqlHolderDO.setResults(rejectResult);
         updateDynamicSqlHolderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        dynamicSqlHolderMapper.update(updateDynamicSqlHolderDO);
         updateDynamicSqlHolderDO.setUpdateTime(new Date());
+        dynamicSqlHolderMapper.update(updateDynamicSqlHolderDO);
+        updateDynamicSqlHolderDO.setCreateUser(dynamicSqlHolderDO.getCreateUser());
         serviceResult.setResult(updateDynamicSqlHolderDO);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
