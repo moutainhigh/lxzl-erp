@@ -79,8 +79,7 @@ public class K3Support {
                 serviceResult.setErrorCode(ErrorCode.SUCCESS);
                 serviceResult.setResult(responseMap.get("Data").toString());
                 return serviceResult;
-            }
-            else{
+            }else{
                 serviceResult.setErrorCode(ErrorCode.K3_SEL_STOCK_QUERY_FAILED);
                 serviceResult.setResult(responseMap.get("Message").toString());
                 return serviceResult;
