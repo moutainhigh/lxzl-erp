@@ -169,7 +169,7 @@
 		)Debsc ON Debsc.claim_serial_no = ebsc.claim_serial_no
 	</select>
 
-	<select id="findBankSlipClaimPaySuccessByName" resultMap="BankSipAutomaticClaimDTO">
+	<select id="findBankSlipClaimPaySuccessByName" resultMap="BankSlipClaimDO">
 		SELECT ebsc.payer_name,cc.company_name,cc.customer_no FROM
 		(
 		SELECT

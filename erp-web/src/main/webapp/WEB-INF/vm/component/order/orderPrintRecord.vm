@@ -6,7 +6,6 @@
                 <tr class="bg-light">
                     <th class="">打印人</th>
                     <th class="">打印时间</th>
-                    <th class="">打印单据类型</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -15,7 +14,6 @@
                 <tr>
                     <td>{{createUserRealName}}</td>
                     <td>{{#clockTime}}{{createTime}}{{/clockTime}}</td>
-                    <td>{{referTypeVal}}</td>
                 </tr>
                 {{/listData}}
                 {{^listData}}

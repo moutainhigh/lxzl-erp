@@ -4,8 +4,6 @@
     <title>凌雄ERP-系统管理-系统公告</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
-    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/summernote/summernote.css">
-    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/summernote/summernote-bs3.css">
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
@@ -27,9 +25,9 @@
                                 <script type="text/html" id="actionCommonButtonsTpl">
                                     <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
                                     {{#acitonCommonButtons}}
-                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
+                                    <button class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
                                         <i class="{{iClass}}"></i> {{text}}
-                                    </a>
+                                    </button>
                                     {{/acitonCommonButtons}}
                                 </script>
                                 <div class="btn-group" id="actionCommonButtons"></div>
@@ -80,7 +78,7 @@
                                 {{#listData}}
                                 <tr data-notice="{{noticeStr}}">
                                     <td><div class="over-ellipsis" style="max-width:300px;">{{title}}</div></td>
-                                    <td><div class="over-ellipsis notice-content" style="max-width:300px;"></div></td>
+                                    <td><div class="over-ellipsis notice-content" style="max-width:300px;">{{content}}</div></td>
                                     <td>{{remark}}</td>
                                     <td>
                                         <p class="mn">{{createUserRealName}}</p>
@@ -130,7 +128,6 @@
         #parse("layout/sidebarRight.vm")
     </div>
     #parse("layout/footer.vm")
-    <script type="text/javascript" src="${staticCommon}vendor/plugins/summernote/summernote.min.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js','manage.system.notice.list.js');
     </script>
