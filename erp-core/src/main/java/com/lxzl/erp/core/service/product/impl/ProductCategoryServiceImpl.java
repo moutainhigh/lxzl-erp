@@ -420,7 +420,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
         //判断更改的商品分类属性值名称是否有相同的
         if (productCategoryPropertyValueNameSet.size() != (productCategoryPropertyValueDOList.size() + productCategoryPropertyValueList.size())){
-            result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_NAME_NOT_SAME);
+            result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_VALUE_NAME_NOT_SAME);
             return result;
         }
 
