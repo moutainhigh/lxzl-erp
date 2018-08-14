@@ -29,7 +29,7 @@
                             <div class="col-md-6">
                                 <label for="productCount" class="field-label">客户需求</label>
                                 <label for="productCount" class="field prepend-icon">
-                                    <input type="text" name="productCount" id="productCount" class="gui-input required"/>
+                                    <input type="text" name="productCount" id="productCount" class="gui-input required productCount" placeholder="请输入正整数"/>
                                     <label for="productCount" class="field-icon"><i class="fa fa-tag"></i>
                                     </label>
                                 </label>
