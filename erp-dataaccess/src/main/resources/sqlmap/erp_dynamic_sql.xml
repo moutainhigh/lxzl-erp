@@ -6,6 +6,7 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="sql_title" jdbcType="VARCHAR" property="sqlTitle" />
 		<result column="sql_content" jdbcType="VARCHAR" property="sqlContent" />
+		<result column="sql_type" jdbcType="INTEGER" property="sqlType" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -15,7 +16,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eds.id,eds.sql_title,eds.sql_content,eds.data_status,eds.remark,eds.create_time,eds.create_user,eds.update_time,eds.update_user
+		eds.id,eds.sql_title,eds.sql_content,eds.sql_type,eds.data_status,eds.remark,eds.create_time,eds.create_user,eds.update_time,eds.update_user
 	</sql>
 
 	<select id="findById" resultMap="DynamicSqlDO" parameterType="java.lang.Integer">
@@ -49,6 +50,9 @@
 			</if>
 			<if test="sqlContent != null">
 				sql_content = #{sqlContent,jdbcType=VARCHAR},
+			</if>
+			<if test="sqlType != null">
+				sql_type = #{sqlType,jdbcType=VARCHAR},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
