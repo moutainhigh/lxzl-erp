@@ -274,6 +274,11 @@ public class PageController extends BaseController {
         return "/orderManage/undergraduateOrder";
     }
 
+    @RequestMapping("/order-manage/pick-list-print")
+    public String orderPickListPrint() {
+        return "/orderManage/orderPickListPrint";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
@@ -1236,10 +1241,21 @@ public class PageController extends BaseController {
         return "/systemManage/systemNoticeList";
     }
 
-    //添加系统消息
     @RequestMapping("/system-manage/notice-add")
     public String addSystemNotice() {
         return "/systemManage/addSystemNotice";
+    }
+
+    //添加系统消息
+    @RequestMapping("/system-manage/notice-add-page")
+    public String addSystemNoticePage() {
+        return "/systemManage/addNoticePage";
+    }
+
+    //编辑系统消息
+    @RequestMapping("/system-manage/notice-edit")
+    public String editSystemNotice() {
+        return "/systemManage/editSystemNotice";
     }
 
     //定时任务执行者列表
