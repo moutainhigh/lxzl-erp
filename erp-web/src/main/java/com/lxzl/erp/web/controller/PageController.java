@@ -1236,7 +1236,6 @@ public class PageController extends BaseController {
         return "/systemManage/systemNoticeList";
     }
 
-    //添加系统消息
     @RequestMapping("/system-manage/notice-add")
     public String addSystemNotice() {
         return "/systemManage/addSystemNotice";
@@ -1248,7 +1247,7 @@ public class PageController extends BaseController {
         return "/systemManage/addNoticePage";
     }
 
-    //添加系统消息
+    //编辑系统消息
     @RequestMapping("/system-manage/notice-edit")
     public String editSystemNotice() {
         return "/systemManage/editSystemNotice";
