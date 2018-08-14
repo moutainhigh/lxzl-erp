@@ -1063,8 +1063,12 @@ public class K3ServiceImpl implements K3Service {
             for (Map<String,Object> k3StockMap : listMap){
                 if (MapUtils.isNotEmpty(k3StockMap)){
                     K3ProductStock k3ProductStock = new K3ProductStock();
-                    if (queryK3StockParam.getProductCount() > (Integer)k3StockMap.get("FQty")){
-                        k3ProductStock.setIsStockEnough(CommonConstant.COMMON_CONSTANT_NO);
+                    if (queryK3StockParam.getProductCount() != null){
+                        if (queryK3StockParam.getProductCount() > (Integer)k3StockMap.get("FQty")){
+                            k3ProductStock.setIsStockEnough(CommonConstant.COMMON_CONSTANT_NO);
+                        }else{
+                            k3ProductStock.setIsStockEnough(CommonConstant.COMMON_CONSTANT_YES);
+                        }
                     }else{
                         k3ProductStock.setIsStockEnough(CommonConstant.COMMON_CONSTANT_YES);
                     }
