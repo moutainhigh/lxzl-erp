@@ -274,11 +274,6 @@ public class PageController extends BaseController {
         return "/orderManage/undergraduateOrder";
     }
 
-    @RequestMapping("/order-manage/pick-list-print")
-    public String orderPickListPrint() {
-        return "/orderManage/orderPickListPrint";
-    }
-
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
@@ -1294,4 +1289,5 @@ public class PageController extends BaseController {
     public String deyayedTaskList() {
         return "/delayedTask/deyayedTaskList";
     }
+
 }

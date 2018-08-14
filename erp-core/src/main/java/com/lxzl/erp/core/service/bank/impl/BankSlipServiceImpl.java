@@ -1674,6 +1674,8 @@ public class BankSlipServiceImpl implements BankSlipService {
                         iter.remove();
                     }
                 }
+            }else{
+                lastTwoBankSlipDetailDOList=lastBankSlipDetailDOList;
             }
         }
 

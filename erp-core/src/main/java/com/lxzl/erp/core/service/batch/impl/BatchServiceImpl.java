@@ -80,12 +80,12 @@ public class BatchServiceImpl implements BatchService {
                 if (StringUtil.isEmpty(orderNo)) {
                     continue;
                 }
-
+                sb.append(dingDingSupport.getEnvironmentString());
                 try {
                     String message = statementService.returnDeposit(orderNo);
                     sb.append(message);
                 } catch (Exception e) {
-                    sb.append("订单退押金【系统错误】：订单号[" + orderNo + "]" + e.getMessage() + "\n");
+                    sb.append("订单退押金【系统错误】：订单号【" + orderNo + "】" + e.getMessage() + "\n");
                 }
 
             }
