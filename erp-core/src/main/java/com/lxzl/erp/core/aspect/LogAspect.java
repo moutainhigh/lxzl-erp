@@ -36,46 +36,44 @@ public class LogAspect {
 
     @Around("controllerLogMethodCut()||controllerLogCut()")
     public Object controllerLogRequest(ProceedingJoinPoint pjp) throws Throwable {
-
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes sra = (ServletRequestAttributes) ra;
         HttpServletRequest request = sra.getRequest();
-
-        String url = request.getServletPath().toString();
+        String url = request.getServletPath();
         if("".equals(url)){
             url = request.getPathInfo();
         }
         if("".equals(url)){
             url = request.getRequestURI();
         }
-        log.info("**********************************************  Request To Controller ("+url+") **********************************************");
-        log.info("------------------------  Request Parameters  ------------------------");
-        Object[] os = pjp.getArgs();
-        Object result = null;
-        try{
-            for(Object o : os ){
-                if(o instanceof ServletResponse){
-                    continue;
-                }else if(o instanceof Model){
-                    log.info("org.springframework.ui.Model  ---------   "+JSON.toJSONString(o));
-                }else if(o instanceof ServletRequest){
-                    log.info("ServletRequest ParameterMap  ---------   "+JSON.toJSONString(((ServletRequest) o).getParameterMap()));
-                }else if(!(o instanceof BindingResult)){
-                    log.info(JSON.toJSONString(o));
-                }
-            }
-        }catch (Error e){
-            log.info("Controller Log Error ---------   "+e.getMessage());
-        }finally {
-            result = pjp.proceed();
-        }
-        return result;
+        log.info("***  Request To Controller ("+url+") ***");
+        //log.info("---  Request Parameters  ---");
+//        Object[] os = pjp.getArgs();
+//        Object result = null;
+//        try{
+//            for(Object o : os ){
+//                if(o instanceof ServletResponse){
+//                    continue;
+//                }else if(o instanceof Model){
+//                    log.info("org.springframework.ui.Model  ---------   "+JSON.toJSONString(o));
+//                }else if(o instanceof ServletRequest){
+//                    log.info("ServletRequest ParameterMap  ---------   "+JSON.toJSONString(((ServletRequest) o).getParameterMap()));
+//                }else if(!(o instanceof BindingResult)){
+//                    log.info(JSON.toJSONString(o));
+//                }
+//            }
+//        }catch (Error e){
+//            log.info("Controller Log Error ---------   "+e.getMessage());
+//        }finally {
+//            result = pjp.proceed();
+//        }
+        return pjp.proceed();
     }
     @AfterReturning(value="controllerLogMethodCut()||controllerLogCut()",returning="obj")
     public Object controllerLogResponse(Object obj) throws Throwable {
-        log.info("------------------------  Response Result  ------------------------");
-        log.info(JSON.toJSONString(obj));
-        log.info("**********************************************  Request End **********************************************");
+        //log.info("----  Response Result  ----");
+        //log.info(JSON.toJSONString(obj));
+        log.info("****  Request End ****");
         return obj;
     }
 }
