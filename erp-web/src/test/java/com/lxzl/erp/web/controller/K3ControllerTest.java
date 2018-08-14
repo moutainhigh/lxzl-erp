@@ -19,6 +19,8 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.order.ChangeOrderItemParam;
 import com.lxzl.erp.common.domain.order.OrderConfirmChangeToK3Param;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FromSEOrderConfirmlSelStock;
+import com.lxzl.erp.core.service.k3.K3Support;
 import com.lxzl.erp.core.service.order.impl.support.PenaltySupport;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingBrandMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCategoryMapper;
@@ -52,6 +54,8 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     private K3MappingCategoryMapper k3MappingCategoryMapper;
     @Autowired
     private K3MappingBrandMapper k3MappingBrandMapper;
+    @Autowired
+    private K3Support k3Support;
 
     @Test
     public void queryOrder() throws Exception {
@@ -141,9 +145,15 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void sendToK3() throws Exception {
-        K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
-        k3ReturnOrder.setReturnOrderNo("LXK3RO20180428102808133");
-        TestResult testResult = getJsonTestResult("/k3/sendToK3", k3ReturnOrder);
+//        K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
+//        k3ReturnOrder.setReturnOrderNo("LXK3RO20180428102808133");
+//        TestResult testResult = getJsonTestResult("/k3/sendToK3", k3ReturnOrder);
+        FromSEOrderConfirmlSelStock fromSEOrderConfirmlSelStock = new FromSEOrderConfirmlSelStock();
+        fromSEOrderConfirmlSelStock.setAcctKey("00");
+        fromSEOrderConfirmlSelStock.setWareType(3);
+        fromSEOrderConfirmlSelStock.setfNumber("10.DIS.DE.170");
+        k3Support.queryK3Stock(fromSEOrderConfirmlSelStock);
+
     }
 
     @Test
@@ -741,5 +751,18 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
 
         TestResult testResult = getJsonTestResult("/k3/batchImportK3HistoricalRefundList", batchImportK3HistoricalRefundListParam);
     }
+
+    @Test
+    public void queryK3SelStock() throws Exception {
+        QueryK3StockParam queryK3StockParam = new QueryK3StockParam();
+        queryK3StockParam.setSubCompanyId(9);
+        queryK3StockParam.setK3Code("10.LPC.TH.T430");
+        queryK3StockParam.setWarehouseType(1);
+        queryK3StockParam.setProductCount(400);
+        queryK3StockParam.setQueryType(1); //1-确认库存，0-库存查询
+        TestResult testResult = getJsonTestResult("/k3/queryK3Stock", queryK3StockParam);
+    }
+
+
 
 }
