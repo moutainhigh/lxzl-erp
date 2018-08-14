@@ -274,6 +274,11 @@ public class PageController extends BaseController {
         return "/orderManage/undergraduateOrder";
     }
 
+    @RequestMapping("/order-manage/confirm-stock")
+    public String orderManageConfirmStock() {
+        return "/component/order/confirmStockModal";
+    }
+    
     @RequestMapping("/order-manage/pick-list-print")
     public String orderPickListPrint() {
         return "/orderManage/orderPickListPrint";

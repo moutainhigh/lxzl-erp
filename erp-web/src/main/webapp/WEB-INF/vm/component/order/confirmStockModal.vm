@@ -1,0 +1,94 @@
+<div id="confirmStockModal" class="popup-basic popup-lg admin-form mfp-with-anim ">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i><span class="modalTitle">库存查询</span></span>
+        </div>
+        <div class="panel-menu p25" style="padding-bottom:0;">
+            <div class="row">
+                <div class="col-lg-12">
+                    <form method="post" id="modalForm">
+                        <div class="section row">
+                            <div class="col-md-6">
+                                <label for="productName" class="field-label">商品名称</label>
+                                <label for="productName" class="field prepend-icon">
+                                    <input type="text" name="productName" id="productName" class="gui-input required" />
+                                    <label for="productName" class="field-icon"><i class="fa fa-tag"></i>
+                                    </label>
+                                </label>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="k3Code" class="field-label">商品编号</label>
+                                <label for="k3Code" class="field prepend-icon">
+                                    <input type="text" name="k3Code" id="k3Code" class="gui-input required" />
+                                    <label for="k3Code" class="field-icon"><i class="fa fa-tag"></i>
+                                    </label>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="section row">
+                            <div class="col-md-6">
+                                <label for="productCount" class="field-label">客户需求</label>
+                                <label for="productCount" class="field prepend-icon">
+                                    <input type="text" name="productCount" id="productCount" class="gui-input required" />
+                                    <label for="productCount" class="field-icon"><i class="fa fa-tag"></i>
+                                    </label>
+                                </label>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="subCompanyId" class="field-label">分公司</label>
+                                <label class="field select">
+                                    <select id="subCompanyId" name="subCompanyId"></select>
+                                    <i class="arrow"></i>
+                                </label>
+                            </div>
+                        </div>
+                        <hr class="short alt">
+                        <div class="section row mn">
+                            <div class="col-md-12 pn">
+                                <div class="pull-right mn">
+                                    <button type="button" id="confirmBtn" class="btn btn-primary btn-sm">确认库存</button>
+                                    <button type="button" id="queryBtn" class="btn btn-default btn-sm">查询库存</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body p25 hide" id="stockSection">
+            <div class="section row mn">
+                <div class="table-responsive">
+                    <script type="text/html" id="productStockTpl">
+                        <thead>
+                        <tr class="bg-light">
+                            <th class="text-center">仓库</th>
+                            <th class="text-center">需求库存是否满足</th>
+                            <th class="text-center">库存数量</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#dataSource}}
+                        {{#listData}}
+                        <tr class="productRow" productRowKey="{{productId}}">
+                            <td class="text-center">{{subCompanyName}}</td>
+                            <td class="text-center {{isEnoughClass}}">{{isEnough}}</td>
+                            <td class="text-center">{{productStockCount}}</td>
+                        </tr>
+                        {{/listData}}
+                        {{^listData}}
+                        <tr>
+                            <td valign="top" colspan="3" class="text-center">无库存</td>
+                        </tr>
+                        {{/listData}}
+                        {{/dataSource}}
+                        </tbody>
+                    </script>
+                    <table class="table admin-form theme-warning fs13" id="productStockTable" style="border: 1px solid #e5e5e5;"></table>
+                </div>
+            </div>
+        </div>    
+        <div class="panel-footer text-right">
+            <button type="button" id="cancelButton" class="button btn-default">关闭</button>
+        </div>
+    </div>
+</div>
