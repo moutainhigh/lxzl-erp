@@ -1058,7 +1058,9 @@ CREATE TABLE `erp_finance_statistics_data_weekly` (
 
 ALTER TABLE `erp_customer` ADD COLUMN `user_source` int(11) NOT NULL DEFAULT 1 COMMENT '用户来源,1-erp系统，2-大学生商城' AFTER `confirm_bad_account_time`;
 
-ALTER TABLE `erp_delayed_task` ADD COLUMN `is_sync`  tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否同步输出，1是同步输出，0是线程异步处理';DROP TABLE IF EXISTS `erp_return_order_rollback_log`;
+ALTER TABLE `erp_delayed_task` ADD COLUMN `is_sync`  tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否同步输出，1是同步输出，0是线程异步处理';
+
+DROP TABLE IF EXISTS `erp_return_order_rollback_log`;
 CREATE TABLE `erp_return_order_rollback_log` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `return_order_no` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '退货单编号',

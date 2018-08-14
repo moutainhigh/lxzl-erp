@@ -83,7 +83,7 @@ public interface PaymentService extends BaseService {
 
     /**
      * 微信支付
-     * @param customerNozZ
+     * @param customerNo
      * @param businessOrderNo
      * @param businessOrderRemark
      * @param payAmount

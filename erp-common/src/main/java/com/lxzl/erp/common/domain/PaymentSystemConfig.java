@@ -90,9 +90,13 @@ public class PaymentSystemConfig {
 
     public static void setPaymentSystemReturnOtherAndPayDepositURL(String paymentSystemReturnOtherAndPayDepositURL) {
         PaymentSystemConfig.paymentSystemReturnOtherAndPayDepositURL = paymentSystemReturnOtherAndPayDepositURL;
-    }    public String getPaymentSystemAlipayChargeUrl() {
+    }
+
+    public String getPaymentSystemAlipayChargeUrl() {
         return paymentSystemAlipayChargeUrl;
-    }    public void setPaymentSystemAlipayChargeUrl(String paymentSystemAlipayChargeUrl) {
+    }
+
+    public void setPaymentSystemAlipayChargeUrl(String paymentSystemAlipayChargeUrl) {
         PaymentSystemConfig.paymentSystemAlipayChargeUrl = paymentSystemAlipayChargeUrl;
     }
 }

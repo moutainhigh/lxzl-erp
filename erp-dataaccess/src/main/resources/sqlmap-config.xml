@@ -196,6 +196,7 @@
         <mapper resource="sqlmap/erp_delayed_task_config_export_statement.xml" />
 
         <mapper resource="sqlmap/workbench_sql.xml" />
-        <mapper resource="sqlmap/erp_return_order_rollback_log.xml" />    </mappers>
+        <mapper resource="sqlmap/erp_return_order_rollback_log.xml" />
+    </mappers>
 
 </configuration>
