@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * <p>Description: </p>
@@ -66,7 +65,7 @@ public class DynamicSqlController extends BaseController {
     }
 
     @RequestMapping(value = "adopt", method = RequestMethod.POST)
-    public Result adoptExecuteBySql(@RequestBody @Validated({AddGroup.class}) AdoptExecuteParam adoptExecuteParam, BindingResult validResult) {
+    public Result adoptExecuteBySql(@RequestBody @Validated AdoptExecuteParam adoptExecuteParam, BindingResult validResult) {
         final ServiceResult<String, DynamicSqlHolderDO> serviceResult =
                 dynamicSqlService.adoptDynamicSqlHolder(adoptExecuteParam.getDynamicSqlHolderId());
         final String time = new SimpleDateFormat("yyyy-MM-dd HHmmss").format(serviceResult.getResult().getCreateTime());
@@ -81,7 +80,7 @@ public class DynamicSqlController extends BaseController {
     }
 
     @RequestMapping(value = "reject", method = RequestMethod.POST)
-    public Result rejectExecuteBySql(@RequestBody @Validated({AddGroup.class}) AdoptExecuteParam adoptExecuteParam, BindingResult validResult) {
+    public Result rejectExecuteBySql(@RequestBody @Validated AdoptExecuteParam adoptExecuteParam, BindingResult validResult) {
         final ServiceResult<String, DynamicSqlHolderDO> serviceResult =
                 dynamicSqlService.rejectDynamicSqlHolder(adoptExecuteParam.getDynamicSqlHolderId(), adoptExecuteParam.getResult());
         final String time = new SimpleDateFormat("yyyy-MM-dd HHmmss").format(serviceResult.getResult().getCreateTime());
