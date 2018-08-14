@@ -755,7 +755,7 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryK3SelStock() throws Exception {
         QueryK3StockParam queryK3StockParam = new QueryK3StockParam();
-        queryK3StockParam.setSubCompanyCode("2000");
+        queryK3StockParam.setSubCompanyId(9);
         queryK3StockParam.setK3Code("10.LPC.TH.T430");
         queryK3StockParam.setWarehouseType(1);
         queryK3StockParam.setProductCount(400);
