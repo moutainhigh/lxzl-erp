@@ -152,6 +152,7 @@
                                 <div class="panel-footer pn pv5 ph15">
                                     <div class="row">
                                         <div class="form-group mn pull-right">
+                                            <button class="btn btn-xs btn-primary mr15 confirmStock">确定库存</button>
                                             <button class="btn btn-xs btn-primary mr15 confirmChoose">确定</button>
                                             <button class="btn btn-xs btn-default mr15 cancelChoose">取消</button>
                                         </div>
