@@ -1674,6 +1674,8 @@ public class BankSlipServiceImpl implements BankSlipService {
                         iter.remove();
                     }
                 }
+            }else{
+                lastTwoBankSlipDetailDOList=lastBankSlipDetailDOList;
             }
         }
 
@@ -1689,7 +1691,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             List<CustomerCompanyDO> dbCustomerCompanyDOList = customerCompanyMapper.findCustomerCompanyByName(customerCompanyDOList);
             if (CollectionUtil.isNotEmpty(dbCustomerCompanyDOList)) {
                 Map<String, CustomerCompanyDO> dbCustomerCompanyDOMap = ListUtil.listToMap(dbCustomerCompanyDOList, "simpleCompanyName");
-                Iterator<BankSlipDetailDO> iter = lastBankSlipDetailDOList.iterator();
+                Iterator<BankSlipDetailDO> iter = lastTwoBankSlipDetailDOList.iterator();
                 aaa:
                 while (iter.hasNext()) {
                     BankSlipDetailDO bankSlipDetailDO = iter.next();

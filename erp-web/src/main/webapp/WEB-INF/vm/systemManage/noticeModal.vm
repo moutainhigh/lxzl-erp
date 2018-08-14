@@ -12,7 +12,7 @@
                         <div class="col-md-3">{{#clockTime}}{{createTime}}{{/clockTime}}</div>
                     </div>
                     <div class="row">
-                        <div class="pl20" id="noticeContent">{{content}}</div>
+                        <div class="pl20" id="noticeContent"></div>
                     </div>
                     {{/noticeObj}}
                 </script>
