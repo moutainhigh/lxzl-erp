@@ -274,6 +274,11 @@ public class PageController extends BaseController {
         return "/orderManage/undergraduateOrder";
     }
 
+    @RequestMapping("/order-manage/confirm-stock")
+    public String orderManageConfirmStock() {
+        return "/component/order/confirmStockModal";
+    }
+    
     @RequestMapping("/order-manage/pick-list-print")
     public String orderPickListPrint() {
         return "/orderManage/orderPickListPrint";
@@ -284,27 +289,33 @@ public class PageController extends BaseController {
     public String returnOrderManageList() {
         return "/returnOrderManage/returnOrderList";
     }
+
     @RequestMapping("/order-return-manage/detail")
     public String returnOrderManageDtail() {
         return "/returnOrderManage/returnOrderDetail";
     }
+
     @RequestMapping("/order-return-manage/add")
     public String returnOrderManageAdd() {
         return "/returnOrderManage/returnOrderAdd";
     }
+
     @RequestMapping("/order-return-manage/edit")
     public String returnOrderManageEdit() {
         return "/returnOrderManage/returnOrderEdit";
     }
+
     @RequestMapping(value = "/return-order-k3/print")
     public String returnOrderManagePrint() {
         return "/returnOrderManage/returnOrderPrint";
     }
+
     //输入退还当服务费等信息
     @RequestMapping("/return-order-end-info-modal/input")
     public String inputReturnOrderEndInfoModal() {
         return "/component/returnOrder/inputEndInfoModal";
     }
+
     @RequestMapping("/input-return-material-info-modal/input")
     public String inputReturnMaterialModal() {
         return "/component/returnOrder/inputReturnMaterialModal";
@@ -369,7 +380,9 @@ public class PageController extends BaseController {
     }
 
     @RequestMapping("/customer-consign-info/add")
-    public String customerConsignInfoAdd() { return "/component/customerConsignInfo/add";}
+    public String customerConsignInfoAdd() {
+        return "/component/customerConsignInfo/add";
+    }
 
     @RequestMapping("/customer-consign-info/edit")
     public String customerConsignInfoEdit() {
@@ -385,6 +398,7 @@ public class PageController extends BaseController {
     public String customerSetSettlementDateModal() {
         return "/component/customer/setSettlementDateModal";
     }
+
     @RequestMapping("/customer/set-short-rental-upper-limit-modal")
     public String customerSetShortRentalUpperLimit() {
         return "/component/customer/setShortRentalUpperLimit";
@@ -425,14 +439,14 @@ public class PageController extends BaseController {
         CustomerQueryParam customerQueryParam = new CustomerQueryParam();
         customerQueryParam.setCustomerNo(no);
         ServiceResult<String, Customer> serviceResult = customerService.detailCustomer(customerQueryParam.getCustomerNo());
-        if(serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
-            if(serviceResult.getResult().getCustomerType().equals(CustomerType.CUSTOMER_TYPE_COMPANY)) {
-                return "redirect:/customer-business-manage/detail?no="+no;
+        if (serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+            if (serviceResult.getResult().getCustomerType().equals(CustomerType.CUSTOMER_TYPE_COMPANY)) {
+                return "redirect:/customer-business-manage/detail?no=" + no;
             } else {
-                return "redirect:/customer-manage/detail?no="+no;
+                return "redirect:/customer-manage/detail?no=" + no;
             }
         }
-        return "redirect:/customer-business-manage/detail?no="+no;
+        return "redirect:/customer-business-manage/detail?no=" + no;
     }
 
     @RequestMapping(value = "customer-common-manage/to-detail-by-consignInfoId", method = RequestMethod.GET)
@@ -440,7 +454,7 @@ public class PageController extends BaseController {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
         customerConsignInfo.setCustomerConsignInfoId(id);
         ServiceResult<String, CustomerConsignInfo> detailCustomerConsignInfoResult = customerService.detailCustomerConsignInfo(customerConsignInfo);
-        if(detailCustomerConsignInfoResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+        if (detailCustomerConsignInfoResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
 
             String customerNo = detailCustomerConsignInfoResult.getResult().getCustomerNo();
 
@@ -448,14 +462,14 @@ public class PageController extends BaseController {
             customerQueryParam.setCustomerNo(customerNo);
             ServiceResult<String, Customer> serviceResult = customerService.detailCustomer(customerQueryParam.getCustomerNo());
 
-            if(serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
-                if(serviceResult.getResult().getCustomerType().equals(CustomerType.CUSTOMER_TYPE_COMPANY)) {
-                    return "redirect:/customer-business-manage/detail?no="+customerNo+"&consigninfoid="+id;
+            if (serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                if (serviceResult.getResult().getCustomerType().equals(CustomerType.CUSTOMER_TYPE_COMPANY)) {
+                    return "redirect:/customer-business-manage/detail?no=" + customerNo + "&consigninfoid=" + id;
                 } else {
-                    return "redirect:/customer-manage/detail?no="+customerNo+"&consigninfoid="+id;
+                    return "redirect:/customer-manage/detail?no=" + customerNo + "&consigninfoid=" + id;
                 }
             }
-            return "redirect:/customer-business-manage/detail?no="+customerNo+"&consigninfoid="+id;
+            return "redirect:/customer-business-manage/detail?no=" + customerNo + "&consigninfoid=" + id;
         }
         return "redirect:/error";
     }
@@ -618,18 +632,22 @@ public class PageController extends BaseController {
     public String deploymentOrderManageList() {
         return "/deploymentOrderManage/deploymentOrderList";
     }
+
     @RequestMapping("/order-deployment-manage/add")
     public String deploymentOrderManageAdd() {
         return "/deploymentOrderManage/deploymentOrderAdd";
     }
+
     @RequestMapping("/order-deployment-manage/edit")
     public String deploymentOrderManageEdit() {
         return "/deploymentOrderManage/deploymentOrderEdit";
     }
+
     @RequestMapping("/order-deployment-manage/detail")
     public String deploymentOrderManageDetail() {
         return "/deploymentOrderManage/deploymentOrderDetail";
     }
+
     @RequestMapping("/order-deployment-manage/stock-up-material-modal")
     public String deploymentOrderManageStockUpMaterialModal() {
         return "/component/deploymentOrder/stockUpMaterialModal";
@@ -640,22 +658,27 @@ public class PageController extends BaseController {
     public String transferOrdermanageList() {
         return "/transferOrderManage/in/inList";
     }
+
     @RequestMapping("/order-transfer-in-manage/detail")
     public String transferOrdermanageDetail() {
         return "/transferOrderManage/in/inDetail";
     }
+
     @RequestMapping("/order-transfer-in-manage/add")
     public String transferOrdermanageAdd() {
         return "/transferOrderManage/in/inAdd";
     }
+
     @RequestMapping("/order-transfer-in-manage/edit")
     public String transferOrdermanageEdit() {
         return "/transferOrderManage/in/inEdit";
     }
+
     @RequestMapping("/order-transfer-manage/equiment-list")
     public String transferOrderInManageEquimentList() {
         return "/component/transferOrder/equimentList";
     }
+
     @RequestMapping("/order-transfer-manage/bulk-material-list")
     public String transferOrderInManageMaterialList() {
         return "/component/transferOrder/bulkMaterialList";
@@ -667,18 +690,22 @@ public class PageController extends BaseController {
     public String transferOutOrdermanageList() {
         return "/transferOrderManage/out/outList";
     }
+
     @RequestMapping("/order-transfer-out-manage/detail")
     public String transferOutOrdermanageDetail() {
         return "/transferOrderManage/out/outDetail";
     }
+
     @RequestMapping("/order-transfer-out-manage/add")
     public String transferOutOrdermanageAdd() {
         return "/transferOrderManage/out/outAdd";
     }
+
     @RequestMapping("/order-transfer-out-manage/edit")
     public String transferOutOrdermanageEdit() {
         return "/transferOrderManage/out/outEdit";
     }
+
     @RequestMapping("/order-transfer-out-manage/stock-up-material-modal")
     public String transferOutOrdermanageStockUpMaterialModal() {
         return "/component/transferOrder/stockUpMaterialModal";
@@ -689,42 +716,52 @@ public class PageController extends BaseController {
     public String peerManageSupplierList() {
         return "/peerManage/peerSupplier/peerSupplierList";
     }
+
     @RequestMapping("/peer-manage/supplier-detail")
     public String peerManageSupplierDetail() {
         return "/peerManage/peerSupplier/peerSupplierDetail";
     }
+
     @RequestMapping("/peer-manage/supplier-add")
     public String peerManageSupplierAdd() {
         return "/peerManage/peerSupplier/peerSupplierAdd";
     }
+
     @RequestMapping("/peer-manage/supplier-edit")
     public String peerManageSupplierEdit() {
         return "/peerManage/peerSupplier/peerSupplierEdit";
     }
+
     @RequestMapping("/peer-manage/order-list")
     public String peerManageOrderList() {
         return "/peerManage/peerOrder/peerOrderList";
     }
+
     @RequestMapping("/peer-manage/order-detail")
     public String peerManageOrderDetail() {
         return "/peerManage/peerOrder/peerOrderDetail";
     }
+
     @RequestMapping("/peer-manage/order-add")
     public String peerManageOrderAdd() {
         return "/peerManage/peerOrder/peerOrderAdd";
     }
+
     @RequestMapping("/peer-manage/order-edit")
     public String peerManageOrderEdit() {
         return "/peerManage/peerOrder/peerOrderEdit";
     }
+
     @RequestMapping("/peer-supplier-modal/choose")
     public String choosePeerSuppliserModal() {
         return "/component/peer/choosePeerSupplierModal";
     }
+
     @RequestMapping("/peer-order-manage/equiment-list")
     public String peerOrderManageEquimentList() {
         return "/component/peer/equimentList";
     }
+
     @RequestMapping("/peer-order-manage/bulk-material-list")
     public String peerOrderManageBulkMaterialList() {
         return "/component/peer/bulkMaterialList";
@@ -735,14 +772,17 @@ public class PageController extends BaseController {
     public String statementOrderList() {
         return "/statementOrderManage/statementOrderList";
     }
+
     @RequestMapping("/statement-order/detail")
     public String statementOrderDetail() {
         return "/statementOrderManage/statementOrderDetail";
     }
+
     @RequestMapping("/statement-order/useCoupon")
     public String statementOrderUseCoupon() {
         return "/component/statementOrder/useCoupon";
     }
+
     @RequestMapping("/statement-order/list-export")
     public String statementOrderListExport() {
         return "/component/statementOrder/exportModal";
@@ -753,19 +793,23 @@ public class PageController extends BaseController {
     public String monthStatementOrderList() {
         return "/statementOrderManage/monthlyStatementOrderList";
     }
+
     @RequestMapping("/statement-monthly-order/detail")
     public String monthStatementOrderDetail() {
         return "/statementOrderManage/monthlyStatementOrderDetail";
     }
+
     // 冲正单
     @RequestMapping("/correct-order/list")
     public String correctOrderList() {
         return "/statementOrderManage/correctOrderList";
     }
+
     @RequestMapping("/correct-order/detail")
     public String correctOrderDetail() {
         return "/statementOrderManage/correctOrderDetail";
     }
+
     @RequestMapping("/correct-order/add")
     public String addCorrectOrder() {
         return "/component/statementOrder/addCorrectOrder";
@@ -776,22 +820,27 @@ public class PageController extends BaseController {
     public String statisticsIncomeList() {
         return "/statisticsManage/incomeList";
     }
+
     @RequestMapping("/detail/unreceivable-list")
     public String detailManageUnReceivableList() {
         return "/statisticsManage/detailUnreceivableList";
     }
+
     @RequestMapping("/statistics/unreceivable-list")
     public String statisticsManageUnReceivableList() {
         return "/statisticsManage/statisticsUnreceivableList";
     }
+
     @RequestMapping("/statistics/awaitReceive-list")
     public String statisticsManageReceiveList() {
         return "/statisticsManage/awaitReceiveDetailList";
     }
+
     @RequestMapping("/statistics/awaitReceiveSummary-list")
     public String statisticsManageReceiveSummaryList() {
         return "/statisticsManage/awaitReceiveSummaryList";
     }
+
     @RequestMapping("/statistics/salesmanDeduct-list")
     public String statisticsManageSalesmanDeductList() {
         return "/statisticsManage/salesmanDeduct";
@@ -816,6 +865,7 @@ public class PageController extends BaseController {
     public String inboxList() {
         return "/siteMessageManage/inboxList";
     }
+
     //站内信息发件箱
     @RequestMapping("/site-message/outbox-list")
     public String outboxList() {
@@ -828,42 +878,52 @@ public class PageController extends BaseController {
     public String changeOrderManageList() {
         return "/changeOrderManage/changeOrderList";
     }
+
     @RequestMapping("/change-order/detail")
     public String changeOrderManageDetail() {
         return "/changeOrderManage/changeOrderDetail";
     }
+
     @RequestMapping("/change-order/add")
     public String changeOrderManageAdd() {
         return "/changeOrderManage/changeOrderAdd";
     }
+
     @RequestMapping("/change-order/edit")
     public String changeOrderManageEdit() {
         return "/changeOrderManage/changeOrderEdit";
     }
+
     @RequestMapping("/change-order/equiment-list")
     public String changeOrderManageEquimentList() {
         return "/component/changeOrder/equimentList";
     }
+
     @RequestMapping("/change-order/bulk-material-list")
     public String changeOrderMaterialList() {
         return "/component/changeOrder/bulkMaterialList";
     }
+
     @RequestMapping("/change-order/material-in-storage")
     public String changeOrderMaterialInStorage() {
         return "/component/changeOrder/materialInStorage";
     }
+
     @RequestMapping("/change-order/complete-input")
     public String changeOrderCompleteInput() {
         return "/component/changeOrder/completeInput";
     }
+
     @RequestMapping("/change-order/equipment-remark-modal")
     public String changeOrderEquipmentRemarkModal() {
         return "/component/changeOrder/equipmentRemark";
     }
+
     @RequestMapping("/change-order/update-equipment-diff-price")
     public String changeOrderUpdateEquipmentDiffPrice() {
         return "/component/changeOrder/updateEquipmentPriceDiff";
     }
+
     @RequestMapping("/change-order/update-material-diff-price")
     public String changeOrderUpdateMaterialDiffPrice() {
         return "/component/changeOrder/updateMaterialPriceDiff";
@@ -874,50 +934,62 @@ public class PageController extends BaseController {
     public String k3OrderManageList() {
         return "/k3Manage/k3OrderList";
     }
+
     @RequestMapping("/k3-order/detail")
     public String k3OrderManageDetail() {
         return "/k3Manage/k3OrderDetail";
     }
+
     @RequestMapping("/return-order-k3/list")
     public String k3ReturnOrderList() {
         return "/k3Manage/K3ReturnOrder";
     }
+
     @RequestMapping("/return-order-k3/detail")
     public String k3ReturnOrderDetail() {
         return "/k3Manage/K3ReturnOrderDetail";
     }
+
     @RequestMapping("/return-order-k3/add")
     public String k3ReturnOrderAdd() {
         return "/k3Manage/k3ReturnOrderAdd";
     }
+
     @RequestMapping("/return-order-k3/edit")
     public String k3ReturnOrderEdit() {
         return "/k3Manage/k3ReturnOrderEdit";
     }
+
     @RequestMapping("/k3-order/item-choose")
     public String k3OrderChooseItem() {
         return "/component/k3Manage/chooseOrderItemModal";
     }
+
     @RequestMapping("/change-order-k3/list")
     public String k3ChangeOrderList() {
         return "/k3Manage/k3ChangeOrder";
     }
+
     @RequestMapping("/change-order-k3/detail")
     public String k3ChangeOrderDetail() {
         return "/k3Manage/k3ChangeOrderDetail";
     }
+
     @RequestMapping("/change-order-k3/add")
     public String k3ChangeOrderAdd() {
         return "/k3Manage/k3ChangeOrderAdd";
     }
+
     @RequestMapping("/change-order-k3/edit")
     public String k3ChangeOrderEdit() {
         return "/k3Manage/k3ChangeOrderEdit";
     }
+
     @RequestMapping("/k3-data/list")
     public String k3DataManageList() {
         return "/k3Manage/sendTok3";
     }
+
     @RequestMapping("/send-data-to-k3/modal")
     public String sendDataToK3Modal() {
         return "/k3Manage/bathSendTok3Modal";
@@ -928,6 +1000,7 @@ public class PageController extends BaseController {
     public String companyManageList() {
         return "/companyManage/companyList";
     }
+
     @RequestMapping("/add-short-receivable-amount/modal")
     public String addShortReceivableAmountModal() {
         return "/component/company/addShortReceivableAmountModal";
@@ -938,18 +1011,22 @@ public class PageController extends BaseController {
     public String groupedProductList() {
         return "/groupedProductManage/groupedProductList";
     }
+
     @RequestMapping("/grouped-product/detail")
     public String groupedProductDetail() {
         return "/groupedProductManage/groupedProductDetail";
     }
+
     @RequestMapping("/grouped-product/add")
     public String groupedProductAdd() {
         return "/groupedProductManage/groupedProductAdd";
     }
+
     @RequestMapping("/grouped-product/edit")
     public String groupedProductEdit() {
         return "/groupedProductManage/groupedProductEdit";
     }
+
     @RequestMapping("/grouped-product/chooseProduct")
     public String groupChooseProduct() {
         return "/component/groupedProduct/chooseProductModal";
@@ -961,14 +1038,17 @@ public class PageController extends BaseController {
     public String customerReturnVisitRecordList() {
         return "/customerReturnVisitRecordManage/returnVisitRecordList";
     }
+
     @RequestMapping("/customer-return-visit-record/detail")
     public String customerReturnVisitRecordDetail() {
         return "/customerReturnVisitRecordManage/returnVisitRecordDetail";
     }
+
     @RequestMapping("/customer-return-visit-record/add")
     public String customerReturnVisitRecordAdd() {
         return "/customerReturnVisitRecordManage/returnVisitRecordAdd";
     }
+
     @RequestMapping("/customer-return-visit-record/edit")
     public String customerReturnVisitRecordEdit() {
         return "/customerReturnVisitRecordManage/returnVisitRecordEdit";
@@ -980,41 +1060,62 @@ public class PageController extends BaseController {
     public String couponGroupManage() {
         return "/couponManage/couponGroupList";
     }
+
     @RequestMapping("/coupon-manage/group-detail")
     public String couponGroupDetailManage() {
         return "/couponManage/couponGroupDetail";
     }
+
     @RequestMapping("/coupon-manage/card-list")
     public String couponManage() {
         return "/couponManage/couponCardList";
     }
+
     @RequestMapping("/coupon-manage/add-coupon")
-    public String couponManageAdd(){return "/component/couponManage/couponAddList";}
+    public String couponManageAdd() {
+        return "/component/couponManage/couponAddList";
+    }
+
     @RequestMapping("/coupon-manage/add-coupon-pici")
-    public String couponManagePiCiAdd(){return "/component/couponManage/couponPiCiAddList";}
+    public String couponManagePiCiAdd() {
+        return "/component/couponManage/couponPiCiAddList";
+    }
+
     @RequestMapping("/coupon-manage/edit-coupon")
-    public  String couponManageEdit(){return "/component/couponManage/couponEdit";}
+    public String couponManageEdit() {
+        return "/component/couponManage/couponEdit";
+    }
+
     @RequestMapping("/coupon-manage/provide-coupon")
-    public String couponManageProvide(){return "/component/couponManage/couponProvide";}
+    public String couponManageProvide() {
+        return "/component/couponManage/couponProvide";
+    }
+
     @RequestMapping("/coupon-manage/coupon-trade")
-    public String couponManageTrade(){return "/component/couponManage/couponTradeDetail";}
+    public String couponManageTrade() {
+        return "/component/couponManage/couponTradeDetail";
+    }
 
     /**
      * 资金流水附件信息列表
+     *
      * @return
      */
     @RequestMapping("/jurnal-amount-attachment/list")
     public String jurnalAmountAttachmentList() {
         return "/financialManage/jurnalAmountAttachmentList";
     }
+
     /**
      * 资金流水列表
+     *
      * @return
      */
     @RequestMapping("/jurnal-amount/list")
     public String jurnalAmountList() {
         return "/financialManage/jurnalAmountList";
     }
+
     @RequestMapping("/jurnal-amount/detail")
     public String jurnalAmountDetail() {
         return "/financialManage/jurnalAmountDetail";
@@ -1027,12 +1128,14 @@ public class PageController extends BaseController {
 
     /**
      * 系统功能开关设置
+     *
      * @return
      */
     @RequestMapping("/system-manage/interface-switch")
     public String systemManageInterfaceSwitchList() {
         return "/systemManage/interfaceSwitchList";
     }
+
     @RequestMapping("/system-manage/switch-modal")
     public String interfaceSwitchModal() {
         return "/systemManage/switchModal";
@@ -1049,6 +1152,12 @@ public class PageController extends BaseController {
         return "/dataAnalysisManage/dynamicSql";
     }
 
+    @RequestMapping("/data-analysis/sql-update")
+    public String systemManageDynamicUpdateSql() {
+        return "/dataAnalysisManage/dynamicSqlUpdate";
+    }
+
+
     @RequestMapping("/data-analysis/sql-list")
     public String systemManageDynamicSqlList() {
         return "/dataAnalysisManage/dynamicSqlList";
@@ -1057,6 +1166,11 @@ public class PageController extends BaseController {
     @RequestMapping("/data-analysis/sql-add")
     public String systemManageDynamicAddSql() {
         return "/dataAnalysisManage/addSqlModal";
+    }
+
+    @RequestMapping("/data-analysis/sql-edit")
+    public String systemManageDynamicEditSql() {
+        return "/dataAnalysisManage/editSqlModal";
     }
 
     @RequestMapping("/data-analysis/execute-list")
@@ -1072,7 +1186,9 @@ public class PageController extends BaseController {
 
     //上传附件
     @RequestMapping("/jurnal-attachment-list/file/upload")
-    public String jurnalAttachmentList() {return "/component/jurnalAmount/upload";}
+    public String jurnalAttachmentList() {
+        return "/component/jurnalAmount/upload";
+    }
 
     //选择所有客户(公司、个人)
     @RequestMapping("/all-customer-modal/choose")
@@ -1199,6 +1315,7 @@ public class PageController extends BaseController {
     public String chooseCustomerCanReturnMaterialModal() {
         return "/component/customer/chooseCanReturnMaterial";
     }
+
     //选择客户可换物料
     @RequestMapping("/customer-can-change-material-modal/choose")
     public String chooseCustomerCanChangeMaterialModal() {

@@ -63,7 +63,7 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
     public void weixinPay() throws Exception {
         ChargeParam param = new ChargeParam();
 
-        param.setCustomerNo("LXCC-1000-20180124-13746");
+        param.setCustomerNo("LXCC-027-20180726-00111");
         param.setOpenId("o_ORluM1fFEVm9LMePBFvyBzbdr8");
         param.setAmount(new BigDecimal(0.01));
         TestResult testResult = getJsonTestResult("/payment/wechatCharge", param);
@@ -81,11 +81,11 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
 
 
         ChargeRecordPageParam param = new ChargeRecordPageParam();
-        param.setPageNo(3);
-        param.setPageSize(10);
-//        param.setBusinessCustomerNo("LXCC-010-20180310-00448");
-//        param.setSubCompanyId(1);
-//        param.setCustomerName("腾讯");
+//        param.setPageNo(1);
+//        param.setPageSize(10);
+        param.setBusinessCustomerNo("LXCC-027-20180726-00111");
+//        param.setSubCompanyId(8);
+//        param.setCustomerName("续租唧");
 //        param.setChargeType(2);
 //        param.setChargeBodyId("2");
 //        param.setChargeStatus(20);
@@ -135,9 +135,9 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
     @Test
     public void alipayCharge()  throws Exception {
         ChargeParam param = new ChargeParam();
-        param.setCustomerNo("LXCC-1000-20180124-13746");
+        param.setCustomerNo("LXCC-027-20180726-00111");
         param.setOpenId("o_ORluM1fFEVm9LMePBFvyBzbdr8");
         param.setAmount(new BigDecimal(0.01));
-        TestResult testResult = getJsonTestResult("/payment/alipayCharge", param);
+        TestResult testResult = getJsonTestResult("/payment/wechatCharge", param);
     }
 }
