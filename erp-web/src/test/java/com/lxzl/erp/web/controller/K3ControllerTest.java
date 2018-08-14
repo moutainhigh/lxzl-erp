@@ -766,7 +766,7 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void queryK3SelStockJSON() throws Exception {
-        String str = "{\"productName\":\"苹果IPADPRO-64G\",\"k3Code\":\"10.TPC.AP.IPADPRO-64G\",\"productCount\":\"200\",\"subCompanyId\":\"11\",\"queryType\":1,\"warehouseType\":1}";
+        String str = "{\"productName\":\"苹果IPADPRO-64G\",\"k3Code\":\"10.TPC.AP.IPADPRO-64G\",\"productCount\":\"\",\"subCompanyId\":\"\",\"queryType\":0,\"warehouseType\":1}";
         QueryK3StockParam queryK3StockParam =JSON.parseObject(str, QueryK3StockParam.class);
 
         TestResult testResult = getJsonTestResult("/k3/queryK3Stock", queryK3StockParam);
