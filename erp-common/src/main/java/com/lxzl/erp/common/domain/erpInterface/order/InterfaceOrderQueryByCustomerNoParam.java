@@ -16,7 +16,7 @@ public class InterfaceOrderQueryByCustomerNoParam extends BasePageParam implemen
     private String buyerRealName;
     private Integer buyerCustomerId;
     @NotNull(message = ErrorCode.CUSTOMER_NO_NOT_NULL)
-    private String buyerCustomerNo;
+    private List<String> buyerCustomerNoList;
     private String consigneeName;
     private String consigneePhone;
     private Integer rentType;
@@ -84,12 +84,12 @@ public class InterfaceOrderQueryByCustomerNoParam extends BasePageParam implemen
         this.buyerCustomerId = buyerCustomerId;
     }
 
-    public String getBuyerCustomerNo() {
-        return buyerCustomerNo;
+    public List<String> getBuyerCustomerNoList() {
+        return buyerCustomerNoList;
     }
 
-    public void setBuyerCustomerNo(String buyerCustomerNo) {
-        this.buyerCustomerNo = buyerCustomerNo;
+    public void setBuyerCustomerNoList(List<String> buyerCustomerNoList) {
+        this.buyerCustomerNoList = buyerCustomerNoList;
     }
 
     public String getConsigneeName() {
