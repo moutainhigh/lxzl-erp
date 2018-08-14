@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryByCustomerNoParam;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
@@ -2761,6 +2762,18 @@ public class OrderServiceImpl implements OrderService {
         result.setResult(page);
         return result;
     }
+
+    @Override
+    public ServiceResult<String, List<Order>> queryAllOrderByCustomerNo(InterfaceOrderQueryByCustomerNoParam interfaceOrderQueryParam) {
+        ServiceResult<String, List<Order>> result = new ServiceResult<>();
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("orderQueryParam", interfaceOrderQueryParam);
+        List<OrderDO> orderDOList = orderMapper.findOrderByCustomerNo(maps);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(ConverterUtil.convertList(orderDOList, Order.class));
+        return result;
+    }
+
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
