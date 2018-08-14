@@ -274,6 +274,11 @@ public class PageController extends BaseController {
         return "/orderManage/undergraduateOrder";
     }
 
+    @RequestMapping("/order-manage/confirm-stock")
+    public String orderManageConfirmStock() {
+        return "/component/order/confirmStockModal";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
