@@ -192,11 +192,10 @@
 
         <mapper resource="sqlmap/erp_customer_statement_date_change_log.xml" />
         <mapper resource="sqlmap/erp_finance_statistics_data_weekly.xml" />
-
         <mapper resource="sqlmap/erp_delayed_task.xml" />
         <mapper resource="sqlmap/erp_delayed_task_config_export_statement.xml" />
 
         <mapper resource="sqlmap/workbench_sql.xml" />
-    </mappers>
+        <mapper resource="sqlmap/erp_return_order_rollback_log.xml" />    </mappers>
 
 </configuration>

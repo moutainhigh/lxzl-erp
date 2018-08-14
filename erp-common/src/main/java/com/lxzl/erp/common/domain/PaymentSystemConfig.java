@@ -24,6 +24,7 @@ public class PaymentSystemConfig {
     public static String paymentSystemQueryCustomerAccountLogPageURL;
     public static String paymentSystemReturnDepositExpandURL;
     public static String paymentSystemPublicTransferPlusChargeURL;
+    public static String paymentSystemReturnOtherAndPayDepositURL;
 
     public static String paymentSystemAlipayChargeUrl;
 
@@ -87,11 +88,11 @@ public class PaymentSystemConfig {
         PaymentSystemConfig.paymentSystemReturnDepositExpandURL = paymentSystemReturnDepositExpandURL;
     }
 
-    public String getPaymentSystemAlipayChargeUrl() {
+    public static void setPaymentSystemReturnOtherAndPayDepositURL(String paymentSystemReturnOtherAndPayDepositURL) {
+        PaymentSystemConfig.paymentSystemReturnOtherAndPayDepositURL = paymentSystemReturnOtherAndPayDepositURL;
+    }    public String getPaymentSystemAlipayChargeUrl() {
         return paymentSystemAlipayChargeUrl;
-    }
-
-    public void setPaymentSystemAlipayChargeUrl(String paymentSystemAlipayChargeUrl) {
+    }    public void setPaymentSystemAlipayChargeUrl(String paymentSystemAlipayChargeUrl) {
         PaymentSystemConfig.paymentSystemAlipayChargeUrl = paymentSystemAlipayChargeUrl;
     }
 }

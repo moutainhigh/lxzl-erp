@@ -691,4 +691,35 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    @Override
+    public String returnOtherFeeAndPayDeposit(String customerNo, BigDecimal returnOtherAmount, BigDecimal payDepositAmount, BigDecimal payRentDepositAmount, String remark) {
+        ReturnOtherAndPayDepositParam param = new ReturnOtherAndPayDepositParam();
+        param.setBusinessCustomerNo(customerNo);
+        param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        Integer operateUser = userSupport.getCurrentUserId() == null ? CommonConstant.SUPER_USER_ID : userSupport.getCurrentUserId();
+        param.setBusinessOperateUser(operateUser.toString());
+        param.setReturnOtherAmount(returnOtherAmount);
+        param.setPayDepositAmount(payDepositAmount);
+        param.setPayRentDepositAmount(payRentDepositAmount);
+        param.setRemark(remark);
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = FastJsonUtil.toJSONString(param);
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemReturnOtherAndPayDepositURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("returnDepositExpand response:", response);
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (paymentResult == null) {
+                throw new BusinessException("支付网关没有响应，强制取消已支付订单失败");
+            }
+            if (!ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                throw new BusinessException(paymentResult.getDescription());
+            }
+            return ErrorCode.SUCCESS;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+        }
+    }
 }
