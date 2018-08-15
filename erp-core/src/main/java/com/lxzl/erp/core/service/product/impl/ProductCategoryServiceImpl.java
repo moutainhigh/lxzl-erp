@@ -688,10 +688,9 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             return serviceResult;
         }
 
-//        ProductCategoryPropertyValue productCategoryPropertyValue = new ProductCategoryPropertyValue();
-//        BeanUtils.copyProperties(productCategoryPropertyValueDO,productCategoryPropertyValue);
-//        productCategoryPropertyValue.setCategoryPropertyValueId(productCategoryPropertyValueDO.getId());
-        ProductCategoryPropertyValue productCategoryPropertyValue = ConverterUtil.convert(productCategoryPropertyValueDO,ProductCategoryPropertyValue.class);
+        ProductCategoryPropertyValue productCategoryPropertyValue = new ProductCategoryPropertyValue();
+        BeanUtils.copyProperties(productCategoryPropertyValueDO,productCategoryPropertyValue);
+        productCategoryPropertyValue.setCategoryPropertyValueId(productCategoryPropertyValueDO.getId());
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(productCategoryPropertyValue);
