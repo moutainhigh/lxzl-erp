@@ -1843,4 +1843,30 @@
         LIMIT #{maps.start},#{maps.pageSize};
     </select>
 
+    <update id="batchUpdateOrderStatus" parameterType="java.util.List">
+        update erp_order
+        SET
+        <trim>
+            order_status =
+            <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.orderStatus}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            update_time =
+            <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.updateTime,jdbcType=TIMESTAMP}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            update_user =
+            <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.updateUser,jdbcType=DECIMAL}
+            </foreach>
+        </trim>
+        WHERE id in
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
 </mapper>
