@@ -5,6 +5,7 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.product.ProductCategoryPageParam;
+import com.lxzl.erp.common.domain.product.ProductCategoryPropertyPageParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.product.ProductQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.*;
@@ -239,34 +240,15 @@ public class ProductTest extends ERPUnTransactionalTest {
 
     @Test
     public void updateCategoryPropertyValue() throws Exception {
-        ProductCategoryProperty productCategoryProperty = new ProductCategoryProperty();
-        productCategoryProperty.setCategoryPropertyId(5);
+        ProductCategoryPropertyValue productCategoryPropertyValue = new ProductCategoryPropertyValue();
 
-
-        List<ProductCategoryPropertyValue> productCategoryPropertyValueList = new ArrayList<>();
-        ProductCategoryPropertyValue productCategoryPropertyValue1 = new ProductCategoryPropertyValue();
-        ProductCategoryPropertyValue productCategoryPropertyValue2 = new ProductCategoryPropertyValue();
-
-        productCategoryPropertyValue1.setCategoryPropertyValueId(10);
-        productCategoryPropertyValue1.setPropertyValueName("I4_6400");
+        productCategoryPropertyValue.setCategoryPropertyValueId(278);
+        productCategoryPropertyValue.setPropertyValueName("GTX660 2G");
 //        productCategoryPropertyValue1.setPropertyCapacityValue(2048.00);
-        productCategoryPropertyValue1.setMaterialModelId(19);
+        productCategoryPropertyValue.setMaterialModelId(19);
 
-        productCategoryPropertyValue2.setCategoryPropertyValueId(11);
-        productCategoryPropertyValue2.setPropertyValueName("i7-001");
-//        productCategoryPropertyValue2.setPropertyCapacityValue(32);
-        productCategoryPropertyValue2.setMaterialModelId(32);
-
-
-        productCategoryPropertyValueList.add(productCategoryPropertyValue1);
-        productCategoryPropertyValueList.add(productCategoryPropertyValue2);
-
-        productCategoryProperty.setProductCategoryPropertyValueList(productCategoryPropertyValueList);
-
-
-        TestResult testResult = getJsonTestResult("/product/updateCategoryPropertyValue", productCategoryProperty);
+        TestResult testResult = getJsonTestResult("/product/updateCategoryPropertyValue", productCategoryPropertyValue);
     }
-
 
     @Test
     public void pageProductCategory() throws Exception {
@@ -284,5 +266,30 @@ public class ProductTest extends ERPUnTransactionalTest {
         productCategory.setCategoryId(800001);
 
         TestResult testResult = getJsonTestResult("/product/detailProductCategory", productCategory);
+    }
+
+    @Test
+    public void pageProductCategoryProperty() throws Exception {
+        ProductCategoryPropertyPageParam param = new ProductCategoryPropertyPageParam();
+        param.setPageNo(1);
+        param.setPageSize(15);
+
+        TestResult testResult = getJsonTestResult("/product/pageProductCategoryProperty", param);
+    }
+
+    @Test
+    public void detailProductCategoryProperty() throws Exception {
+        ProductCategoryProperty param = new ProductCategoryProperty();
+        param.setCategoryPropertyId(10);
+
+        TestResult testResult = getJsonTestResult("/product/detailProductCategoryProperty", param);
+    }
+
+    @Test
+    public void detailProductCategoryPropertyValue() throws Exception {
+        ProductCategoryPropertyValue param = new ProductCategoryPropertyValue();
+        param.setCategoryPropertyValueId(161);
+
+        TestResult testResult = getJsonTestResult("/product/detailProductCategoryPropertyValue", param);
     }
 }
