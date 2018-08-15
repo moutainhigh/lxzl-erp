@@ -271,7 +271,7 @@ public class ProductTest extends ERPUnTransactionalTest {
     @Test
     public void pageProductCategoryProperty() throws Exception {
         ProductCategoryPropertyPageParam param = new ProductCategoryPropertyPageParam();
-        param.setPageNo(1);
+        param.setPageNo(2);
         param.setPageSize(15);
 
         TestResult testResult = getJsonTestResult("/product/pageProductCategoryProperty", param);
