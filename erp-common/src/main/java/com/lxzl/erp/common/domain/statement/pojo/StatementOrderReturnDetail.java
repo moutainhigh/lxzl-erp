@@ -22,6 +22,8 @@ public class StatementOrderReturnDetail extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+	private Integer returnOrderId;//退货单id
+	private Integer returnOrderDetailId;//退货单项id
 
 
 	public Integer getStatementOrderReturnDetailId(){
@@ -136,4 +138,19 @@ public class StatementOrderReturnDetail extends BasePO {
 		this.updateUser = updateUser;
 	}
 
+	public Integer getReturnOrderId() {
+		return returnOrderId;
+	}
+
+	public void setReturnOrderId(Integer returnOrderId) {
+		this.returnOrderId = returnOrderId;
+	}
+
+	public Integer getReturnOrderDetailId() {
+		return returnOrderDetailId;
+	}
+
+	public void setReturnOrderDetailId(Integer returnOrderDetailId) {
+		this.returnOrderDetailId = returnOrderDetailId;
+	}
 }
