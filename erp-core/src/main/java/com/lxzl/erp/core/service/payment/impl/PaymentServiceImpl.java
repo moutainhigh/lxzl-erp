@@ -426,10 +426,10 @@ public class PaymentServiceImpl implements PaymentService {
             if (chargeRecordPageParam.getSubCompanyId() != null) {
                 paymentChargeRecordPageParam.setChargeBodyId(chargeRecordPageParam.getSubCompanyId().toString());
             }
-            if (chargeRecordPageParam.getCustomerName() != null) {
+            if (chargeRecordPageParam.getCustomerName() != null&&!"".equals(chargeRecordPageParam.getCustomerName())) {
                 paymentChargeRecordPageParam.setBusinessCustomerName(chargeRecordPageParam.getCustomerName());
             }
-            if (StringUtil.isEmpty(chargeRecordPageParam.getBusinessCustomerNo())) {
+            if (StringUtil.isEmpty(chargeRecordPageParam.getBusinessCustomerNo())||"".equals(chargeRecordPageParam.getBusinessCustomerNo())) {
                 paymentChargeRecordPageParam.setBusinessCustomerNo(null);
             }
 

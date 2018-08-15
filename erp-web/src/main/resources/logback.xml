@@ -16,7 +16,7 @@
 			<MaxHistory>30</MaxHistory>
 		</rollingPolicy>
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<Pattern>%date [%thread] %-5level %logger{80} - %file:%line - %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd  HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %file:%line - %msg%n</Pattern>
 		</layout>
 	</appender>
 	<appender name="all_warn"
@@ -33,7 +33,7 @@
 			<MaxHistory>30</MaxHistory>
 		</rollingPolicy>
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<Pattern>%date [%thread] %-5level %logger{80} - %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd  HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</Pattern>
 		</layout>
 	</appender>
 	<appender name="all_info"
@@ -48,7 +48,7 @@
 			<MaxHistory>30</MaxHistory>
 		</rollingPolicy>
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<Pattern>%date [%thread] %-5level %logger{80} - %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd  HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</Pattern>
 		</layout>
 	</appender>
 	<appender name="all_debug"
@@ -63,7 +63,7 @@
 			<MaxHistory>30</MaxHistory>
 		</rollingPolicy>
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<Pattern>%date [%thread] %-5level %logger{80} - %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd  HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</Pattern>
 		</layout>
 	</appender>
 	<appender name="sql"
@@ -78,7 +78,7 @@
 			<MaxHistory>30</MaxHistory>
 		</rollingPolicy>
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<Pattern>%date [%thread] %-5level %logger{80} - %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd  HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</Pattern>
 		</layout>
 	</appender>
 	<appender name="mq_message"
@@ -93,7 +93,7 @@
 			<MaxHistory>30</MaxHistory>
 		</rollingPolicy>
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<Pattern>%date [%thread] %-5level %logger{80} - %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd  HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</Pattern>
 		</layout>
 	</appender>
 	<appender name="dubbo"
@@ -108,7 +108,7 @@
 			<MaxHistory>30</MaxHistory>
 		</rollingPolicy>
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<Pattern>%date [%thread] %-5level %logger{80} - %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd  HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</Pattern>
 		</layout>
 	</appender>
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
@@ -131,7 +131,7 @@
 			<MaxHistory>30</MaxHistory>
 		</rollingPolicy>
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<Pattern>%date [%thread] %-5level %logger{80} - %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd  HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</Pattern>
 		</layout>
 	</appender>
 

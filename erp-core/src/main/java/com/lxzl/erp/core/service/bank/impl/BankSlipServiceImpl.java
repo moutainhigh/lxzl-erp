@@ -1621,23 +1621,25 @@ public class BankSlipServiceImpl implements BankSlipService {
         if (CollectionUtil.isNotEmpty(lastBankSlipDetailDOList)) {
             List<CustomerCompanyDO> customerCompanyDOList = new ArrayList<>();
             for (BankSlipDetailDO bankSlipDetailDO : lastBankSlipDetailDOList) {
-                String simpleName = StrReplaceUtil.nameToSimple(bankSlipDetailDO.getPayerName());
-                CustomerCompanyDO customerCompanyDO = new CustomerCompanyDO();
-                customerCompanyDO.setSimpleCompanyName(simpleName);
-                customerCompanyDOList.add(customerCompanyDO);
+                if (!StringUtil.isEmpty(bankSlipDetailDO.getPayerName())) {
+                    String simpleName = StrReplaceUtil.nameToSimple(bankSlipDetailDO.getPayerName());
+                    CustomerCompanyDO customerCompanyDO = new CustomerCompanyDO();
+                    customerCompanyDO.setSimpleCompanyName(simpleName);
+                    customerCompanyDOList.add(customerCompanyDO);
+                }
             }
             //List<CustomerCompanyDO> dbCustomerCompanyDOList = customerCompanyMapper.findCustomerCompanyByName(customerCompanyDOList);
             List<BankSipAutomaticClaimDTO> bankSipAutomaticClaimDTOList = bankSlipClaimMapper.findBankSlipClaimPaySuccessByName(customerCompanyDOList);
             if (CollectionUtil.isNotEmpty(bankSipAutomaticClaimDTOList)) {
-                Map<String, BankSipAutomaticClaimDTO> bankSipAutomaticClaimDTOMap = ListUtil.listToMap(bankSipAutomaticClaimDTOList, "payerName");
+                Map<String, BankSipAutomaticClaimDTO> bankSipAutomaticClaimDTOMap = this.bankSipAutomaticClaimToMap(bankSipAutomaticClaimDTOList);
                 Iterator<BankSlipDetailDO> iter = lastBankSlipDetailDOList.iterator();
-                aaa:
+                nameIsNull:
                 while (iter.hasNext()) {
                     BankSlipDetailDO bankSlipDetailDO = iter.next();
                     String simple = StrReplaceUtil.nameToSimple(bankSlipDetailDO.getPayerName());
-                    if (simple == null || "".equals(simple)) {
+                    if (StringUtil.isEmpty(simple)) {
                         iter.remove();
-                        continue aaa;
+                        continue nameIsNull;
                     }
                     if (bankSipAutomaticClaimDTOMap.containsKey(simple)) {
                         BankSipAutomaticClaimDTO bankSipAutomaticClaimDTO = bankSipAutomaticClaimDTOMap.get(simple);
@@ -1674,6 +1676,8 @@ public class BankSlipServiceImpl implements BankSlipService {
                         iter.remove();
                     }
                 }
+            }else{
+                lastTwoBankSlipDetailDOList=lastBankSlipDetailDOList;
             }
         }
 
@@ -1690,13 +1694,13 @@ public class BankSlipServiceImpl implements BankSlipService {
             if (CollectionUtil.isNotEmpty(dbCustomerCompanyDOList)) {
                 Map<String, CustomerCompanyDO> dbCustomerCompanyDOMap = ListUtil.listToMap(dbCustomerCompanyDOList, "simpleCompanyName");
                 Iterator<BankSlipDetailDO> iter = lastTwoBankSlipDetailDOList.iterator();
-                aaa:
+                isNameNull:
                 while (iter.hasNext()) {
                     BankSlipDetailDO bankSlipDetailDO = iter.next();
                     String simple = StrReplaceUtil.nameToSimple(bankSlipDetailDO.getPayerName());
-                    if (simple == null || "".equals(simple)) {
+                    if (StringUtil.isEmpty(simple)) {
                         iter.remove();
-                        continue aaa;
+                        continue isNameNull;
                     }
                     if (dbCustomerCompanyDOMap.containsKey(simple)) {
                         CustomerCompanyDO customerCompanyDO = dbCustomerCompanyDOMap.get(simple);
@@ -2170,5 +2174,15 @@ public class BankSlipServiceImpl implements BankSlipService {
             return true;
         }
         return false;
+    }
+
+    private Map<String, BankSipAutomaticClaimDTO> bankSipAutomaticClaimToMap(List<BankSipAutomaticClaimDTO> bankSipAutomaticClaimList) {
+        Map<String, BankSipAutomaticClaimDTO> bankSipAutomaticClaimMap = new HashMap<>();
+        for (BankSipAutomaticClaimDTO bankSipAutomaticClaimDTO : bankSipAutomaticClaimList) {
+            if (null != bankSipAutomaticClaimDTO && !StringUtil.isEmpty(bankSipAutomaticClaimDTO.getPayerName())) {
+                bankSipAutomaticClaimMap.put(bankSipAutomaticClaimDTO.getPayerName(), bankSipAutomaticClaimDTO);
+            }
+        }
+        return bankSipAutomaticClaimMap;
     }
 }
