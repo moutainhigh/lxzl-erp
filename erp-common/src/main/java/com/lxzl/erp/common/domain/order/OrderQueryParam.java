@@ -45,6 +45,9 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     private Integer isCanReletOrder; //是否为可续租的订单
 
+    private Date startExpectDeliveryTime;  //送货开始时间
+    private Date endExpectDeliveryTime;  //送货结束时间
+
     public Integer getOrderId() {
         return orderId;
     }
@@ -278,5 +281,21 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setIsCanReletOrder(Integer isCanReletOrder) {
         this.isCanReletOrder = isCanReletOrder;
+    }
+
+    public Date getStartExpectDeliveryTime() {
+        return startExpectDeliveryTime;
+    }
+
+    public void setStartExpectDeliveryTime(Date startExpectDeliveryTime) {
+        this.startExpectDeliveryTime = startExpectDeliveryTime;
+    }
+
+    public Date getEndExpectDeliveryTime() {
+        return endExpectDeliveryTime;
+    }
+
+    public void setEndExpectDeliveryTime(Date endExpectDeliveryTime) {
+        this.endExpectDeliveryTime = endExpectDeliveryTime;
     }
 }
