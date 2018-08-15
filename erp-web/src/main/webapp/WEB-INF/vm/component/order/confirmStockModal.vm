@@ -11,7 +11,7 @@
                             <div class="col-md-6">
                                 <label for="productName" class="field-label">商品名称</label>
                                 <label for="productName" class="field prepend-icon">
-                                    <input type="text" name="productName" id="productName" class="gui-input required" />
+                                    <input type="text" name="productName" id="productName" class="gui-input required" style="background:#f4f6f6;" readonly/>
                                     <label for="productName" class="field-icon"><i class="fa fa-tag"></i>
                                     </label>
                                 </label>
@@ -19,7 +19,7 @@
                             <div class="col-md-6">
                                 <label for="k3Code" class="field-label">商品编号</label>
                                 <label for="k3Code" class="field prepend-icon">
-                                    <input type="text" name="k3Code" id="k3Code" class="gui-input required" />
+                                    <input type="text" name="k3Code" id="k3Code" class="gui-input required" style="background:#f4f6f6;" readonly/>
                                     <label for="k3Code" class="field-icon"><i class="fa fa-tag"></i>
                                     </label>
                                 </label>
@@ -29,7 +29,7 @@
                             <div class="col-md-6">
                                 <label for="productCount" class="field-label">客户需求</label>
                                 <label for="productCount" class="field prepend-icon">
-                                    <input type="text" name="productCount" id="productCount" class="gui-input required" />
+                                    <input type="text" name="productCount" id="productCount" class="gui-input required productCount" placeholder="请输入正整数"/>
                                     <label for="productCount" class="field-icon"><i class="fa fa-tag"></i>
                                     </label>
                                 </label>
@@ -45,9 +45,12 @@
                         <hr class="short alt">
                         <div class="section row mn">
                             <div class="col-md-12 pn">
-                                <div class="pull-right mn">
-                                    <button type="button" id="confirmBtn" class="btn btn-primary btn-sm">确认库存</button>
-                                    <button type="button" id="queryBtn" class="btn btn-default btn-sm">查询库存</button>
+                                <script type="text/html" id="stockuttonsTpl">
+                                    {{#stockButtons}}
+                                    <button type="button" id="{{class}}" class="btn {{iClass}} btn-sm">{{text}}</button>
+                                    {{/stockButtons}}
+                                </script>
+                                <div class="pull-right mn" id="stockButtons">
                                 </div>
                             </div>
                         </div>
@@ -55,7 +58,32 @@
                 </div>
             </div>
         </div>
-        <div class="panel-body p25 hide" id="stockSection">
+        <div class="panel-body p25 hide" id="confirmSection">
+            <div class="section row mn">
+                <div class="table-responsive">
+                    <script type="text/html" id="confirmStockTpl">
+                        <thead>
+                        <tr class="bg-light">
+                            <th class="text-center">仓库</th>
+                            <th class="text-center">需求库存是否满足</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#dataSource}}
+                        {{#listData}}
+                        <tr>
+                            <td class="text-center">{{subCompanyName}}</td>
+                            <td class="text-center {{isEnoughClass}}">{{isEnough}}</td>
+                        </tr>
+                        {{/listData}}
+                        {{/dataSource}}
+                        </tbody>
+                    </script>
+                    <table class="table admin-form theme-warning fs13" id="confirmStockTable" style="border: 1px solid #e5e5e5;"></table>
+                </div>
+            </div>
+        </div>  
+        <div class="panel-body p25 hide" id="querySection">
             <div class="section row mn">
                 <div class="table-responsive">
                     <script type="text/html" id="productStockTpl">
@@ -69,15 +97,10 @@
                         <tbody>
                         {{#dataSource}}
                         {{#listData}}
-                        <tr class="productRow" productRowKey="{{productId}}">
+                        <tr>
                             <td class="text-center">{{subCompanyName}}</td>
                             <td class="text-center {{isEnoughClass}}">{{isEnough}}</td>
                             <td class="text-center">{{productStockCount}}</td>
-                        </tr>
-                        {{/listData}}
-                        {{^listData}}
-                        <tr>
-                            <td valign="top" colspan="3" class="text-center">无库存</td>
                         </tr>
                         {{/listData}}
                         {{/dataSource}}
