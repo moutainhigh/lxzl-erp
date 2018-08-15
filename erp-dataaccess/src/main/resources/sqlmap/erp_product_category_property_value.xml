@@ -11,6 +11,7 @@
         <result column="property_id" property="propertyId"/>
         <result column="category_id" property="categoryId"/>
         <result column="material_type" property="materialType"/>
+        <result column="category_name" property="categoryName"/>
         <result column="data_order" property="dataOrder"/>
         <result column="property_capacity_value" property="propertyCapacityValue"/>
         <result column="material_model_id" jdbcType="INTEGER" property="materialModelId" />
@@ -20,6 +21,7 @@
         <result column="create_time" property="createTime"/>
         <result column="update_user" property="updateUser"/>
         <result column="update_time" property="updateTime"/>
+
     </resultMap>
 
     <sql id="column_List">
@@ -28,9 +30,10 @@
 
     <select id="findById" resultMap="ProductCategoryPropertyValueDO" parameterType="java.lang.Integer">
         select
-        <include refid="column_List"/>, epcp.property_name, epcp.material_type
+        <include refid="column_List"/>, epcp.property_name, epcp.material_type,epc.category_name
         from erp_product_category_property_value epcpv
         INNER JOIN erp_product_category_property epcp on epcp.id = epcpv.property_id and epcp.data_status = 1
+        INNER JOIN erp_product_category epc on epc.id = epcpv.category_id and epc.data_status = 1
         where epcpv.id = #{id, jdbcType=INTEGER} and epcpv.data_status = 1
     </select>
 

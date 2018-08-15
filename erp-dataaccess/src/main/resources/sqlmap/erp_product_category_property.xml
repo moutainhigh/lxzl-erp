@@ -21,6 +21,8 @@
         <result column="update_user" property="updateUser"/>
         <result column="update_time" property="updateTime"/>
         <result column="is_capacity_material" property="isCapacityMaterial"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="material_type_name" property="materialTypeName"/>
         <collection property="productCategoryPropertyValueDOList" resultMap="ProductCategoryPropertyValueDO" />
     </resultMap>
 
@@ -47,9 +49,12 @@
     </sql>
 
     <select id="findById" resultMap="ProductCategoryPropertyDO" parameterType="java.lang.Integer">
-        select
-        <include refid="column_List"/>
-        from erp_product_category_property epcp where epcp.id = #{id, jdbcType=INTEGER} AND epcp.data_status = 1
+        select <include refid="column_List"/>,<include refid="value_column_List"/>,epc.category_name,emt.material_type_name
+        FROM erp_product_category_property epcp
+        LEFT JOIN erp_product_category_property_value epcpv ON epcpv.property_id = epcp.id AND epcpv.data_status = 1
+        INNER JOIN erp_product_category epc ON epc.id = epcp.category_id AND epc.data_status = 1
+        LEFT JOIN erp_material_type emt ON emt.id = epcp.material_type AND emt.data_status = 1
+        where epcp.id = #{id, jdbcType=INTEGER} AND epcp.data_status = 1
     </select>
 
 
@@ -197,4 +202,29 @@
         SELECT <include refid="column_List"/> FROM erp_product_category_property epcp WHERE
         epcp.category_id = #{categoryId, jdbcType=INTEGER} AND epcp.data_status = 1
     </select>
+
+    <select id="findCategoryPropertyCountByParams" resultType="java.lang.Integer" parameterType="map">
+        SELECT count(epcp.id) FROM erp_product_category_property epcp
+        <where>
+            <if test="maps.isQueryAll == null">
+              AND epcp.data_status = 1
+            </if>
+        </where>
+    </select>
+
+    <select id="findCategoryPropertyByParams" resultMap="ProductCategoryPropertyDO" parameterType="map">
+        SELECT <include refid="column_List"/>,epc.category_name,emt.material_type_name
+        FROM erp_product_category_property epcp
+        INNER JOIN erp_product_category epc ON epc.id = epcp.category_id AND epc.data_status = 1
+        INNER JOIN erp_material_type emt ON emt.id = epcp.material_type AND emt.data_status = 1
+        <where>
+            <if test="maps.isQueryAll == null">
+                AND epcp.data_status = 1
+            </if>
+        </where>
+        ORDER BY epcp.create_time DESC
+        LIMIT #{maps.start},#{maps.pageSize};
+    </select>
+
+
 </mapper>

@@ -5,6 +5,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.CancelGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -17,7 +18,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductCategoryProperty extends BasePO {
 
-    @NotNull(message = ErrorCode.CATEGORY_PROPERTY_ID_NOT_NULL,groups={CancelGroup.class,UpdateGroup.class})
+    @NotNull(message = ErrorCode.CATEGORY_PROPERTY_ID_NOT_NULL,groups={CancelGroup.class,UpdateGroup.class,IdGroup.class})
     private Integer categoryPropertyId;
     @NotBlank(message = ErrorCode.PROPERTY_NAME_NOT_NULL,groups={AddGroup.class})
     private String propertyName;
@@ -37,6 +38,9 @@ public class ProductCategoryProperty extends BasePO {
     private String updateUser;
     private Date updateTime;
     private Integer isCapacityMaterial;
+
+    private String categoryName;// 分类名称
+    private String materialTypeName;// 配件类型名称
 
     @Valid
     private List<ProductCategoryPropertyValue> productCategoryPropertyValueList;
@@ -175,5 +179,21 @@ public class ProductCategoryProperty extends BasePO {
 
     public void setIsCapacityMaterial(Integer isCapacityMaterial) {
         this.isCapacityMaterial = isCapacityMaterial;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getMaterialTypeName() {
+        return materialTypeName;
+    }
+
+    public void setMaterialTypeName(String materialTypeName) {
+        this.materialTypeName = materialTypeName;
     }
 }
