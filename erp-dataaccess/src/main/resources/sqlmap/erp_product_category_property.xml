@@ -49,7 +49,7 @@
     </sql>
 
     <select id="findById" resultMap="ProductCategoryPropertyDO" parameterType="java.lang.Integer">
-        select <include refid="column_List"/>,<include refid="value_column_List"/>,epc.category_name,emt.material_type_name
+        select <include refid="column_List"/>,<include refid="value_column_List"/>,epc.category_name,emt.material_type_name,emt.is_capacity_material AS is_capacity_material
         FROM erp_product_category_property epcp
         LEFT JOIN erp_product_category_property_value epcpv ON epcpv.property_id = epcp.id AND epcpv.data_status = 1
         INNER JOIN erp_product_category epc ON epc.id = epcp.category_id AND epc.data_status = 1

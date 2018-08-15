@@ -280,7 +280,7 @@ public class ProductTest extends ERPUnTransactionalTest {
     @Test
     public void detailProductCategoryProperty() throws Exception {
         ProductCategoryProperty param = new ProductCategoryProperty();
-        param.setCategoryPropertyId(10);
+        param.setCategoryPropertyId(26);
 
         TestResult testResult = getJsonTestResult("/product/detailProductCategoryProperty", param);
     }
