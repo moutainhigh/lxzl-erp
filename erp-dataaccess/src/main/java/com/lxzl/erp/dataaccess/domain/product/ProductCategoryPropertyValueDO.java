@@ -23,7 +23,7 @@ public class ProductCategoryPropertyValueDO extends BaseDO {
     @Transient
     private Integer materialType;
     @Transient
-    private Integer categoryName;
+    private String categoryName;
 
     public Integer getId() {
         return id;
@@ -121,11 +121,11 @@ public class ProductCategoryPropertyValueDO extends BaseDO {
         this.materialModelId = materialModelId;
     }
 
-    public Integer getCategoryName() {
+    public String getCategoryName() {
         return categoryName;
     }
 
-    public void setCategoryName(Integer categoryName) {
+    public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
 }
