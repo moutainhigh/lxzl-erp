@@ -7185,8 +7185,6 @@ public class StatementServiceImpl implements StatementService {
      */
     private String autoRepayDepositRollReturn(K3ReturnOrderDO k3ReturnOrderDO){
         if(k3ReturnOrderDO==null)return ErrorCode.SUCCESS;
-        List<StatementOrderReturnDetailDO> depositReturnRecordList=statementOrderReturnDetailMapper.findByReturnOrderId(k3ReturnOrderDO.getId());
-        if(CollectionUtil.isEmpty(depositReturnRecordList))return ErrorCode.SUCCESS;
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList=k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
         if(CollectionUtil.isEmpty(k3ReturnOrderDetailDOList))return ErrorCode.SUCCESS;
         CustomerDO customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
@@ -7202,11 +7200,10 @@ public class StatementServiceImpl implements StatementService {
 
         Date currentTime=new Date();
         String userId=userSupport.getCurrentUserId().toString();
+        List<StatementOrderReturnDetailDO> depositReturnRecordList=statementOrderReturnDetailMapper.findByReturnOrderId(k3ReturnOrderDO.getId());
         Map<Integer, List<StatementOrderReturnDetailDO>> depositReturnRecordCatch = getDepositReturnRecordCatch(depositReturnRecordList);
         for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDetailDOList){
             if(k3ReturnOrderDetailDO==null)continue;
-            List<StatementOrderReturnDetailDO> returnRecords=depositReturnRecordCatch.get(k3ReturnOrderDetailDO.getId());
-            if(CollectionUtil.isEmpty(returnRecords))continue;
             BigDecimal returnCount = new BigDecimal(k3ReturnOrderDetailDO.getRealProductCount());
             if(BigDecimalUtil.compare(returnCount,BigDecimal.ZERO)<=0)continue;
             List<StatementOrderDetailDO> depositList=null;
@@ -7229,7 +7226,8 @@ public class StatementServiceImpl implements StatementService {
                 depositList = statementOrderDetailMapper.findOrderItemStatementByType(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
             }
             if(CollectionUtil.isEmpty(depositList))continue;
-
+            List<StatementOrderReturnDetailDO> returnRecords=depositReturnRecordCatch.get(k3ReturnOrderDetailDO.getId());
+            if(CollectionUtil.isEmpty(returnRecords))continue;
             for(StatementOrderDetailDO statementOrderDetailDO:depositList){
                 Integer statementOrderId=statementOrderDetailDO.getStatementOrderId();
                 if(!statementOrderCatch.containsKey(statementOrderId)){
@@ -7328,13 +7326,15 @@ public class StatementServiceImpl implements StatementService {
 
     private Map<Integer, List<StatementOrderReturnDetailDO>> getDepositReturnRecordCatch(List<StatementOrderReturnDetailDO> depositReturnRecordList) {
         Map<Integer,List<StatementOrderReturnDetailDO>> depositReturnRecordCatch=new HashMap<>();
-        for(StatementOrderReturnDetailDO statementOrderReturnDetailDO:depositReturnRecordList){
-            Integer returnOrderDetailId=statementOrderReturnDetailDO.getReturnOrderDetailId();
-            if(!depositReturnRecordCatch.containsKey(returnOrderDetailId)){
-                depositReturnRecordCatch.put(returnOrderDetailId,new ArrayList<StatementOrderReturnDetailDO>());
+        if(CollectionUtil.isNotEmpty(depositReturnRecordList)){
+            for(StatementOrderReturnDetailDO statementOrderReturnDetailDO:depositReturnRecordList){
+                Integer returnOrderDetailId=statementOrderReturnDetailDO.getReturnOrderDetailId();
+                if(!depositReturnRecordCatch.containsKey(returnOrderDetailId)){
+                    depositReturnRecordCatch.put(returnOrderDetailId,new ArrayList<StatementOrderReturnDetailDO>());
+                }
+                List<StatementOrderReturnDetailDO> list=depositReturnRecordCatch.get(returnOrderDetailId);
+                list.add(statementOrderReturnDetailDO);
             }
-            List<StatementOrderReturnDetailDO> list=depositReturnRecordCatch.get(returnOrderDetailId);
-            list.add(statementOrderReturnDetailDO);
         }
         return depositReturnRecordCatch;
     }
