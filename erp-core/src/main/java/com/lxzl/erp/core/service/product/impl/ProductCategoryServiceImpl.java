@@ -651,9 +651,9 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         maps.put("productCategoryPageParam", productCategoryPropertyPageParam);
 
         Integer totalCount = productCategoryPropertyMapper.findCategoryPropertyCountByParams(maps);
-        List<ProductCategoryPropertyDO> productcategoryPropertyDOList = productCategoryPropertyMapper.findCategoryPropertyByParams(maps);
+        List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findCategoryPropertyByParams(maps);
 
-        List<ProductCategoryProperty> productCategoryPropertyList = ConverterUtil.convertList(productcategoryPropertyDOList, ProductCategoryProperty.class);
+        List<ProductCategoryProperty> productCategoryPropertyList = ConverterUtil.convertList(productCategoryPropertyDOList, ProductCategoryProperty.class);
         Page<ProductCategoryProperty> page = new Page<>(productCategoryPropertyList, totalCount, productCategoryPropertyPageParam.getPageNo(), productCategoryPropertyPageParam.getPageSize());
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
