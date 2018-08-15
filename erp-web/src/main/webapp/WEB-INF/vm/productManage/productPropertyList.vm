@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-商品管理-属性列表</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
+
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+
+                #parse("component/loading.vm")
+
+                <div class="panel panel-primary panel-border top">
+                    <div class="panel-menu p12">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="btn-group" id="actionCommonButtons">
+                                    <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body pn">
+                        <div class="table-responsive">
+                            <script type="text/html" id="dataListTpl">
+                                <thead>
+                                    <tr>
+                                        <th>属性名称</th>
+                                        <th>属性类型</th>
+                                        <th>分类名称</th>
+                                        <th>配件类型</th>
+                                        <th>是否为输入属性</th>
+                                        <th>备注</th>
+                                        <th>创建</th>
+                                        <th>修改</th>
+                                        <th class="text-right">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#dataSource}}
+                                        {{#listData}}
+                                        <tr>
+                                            <td>{{propertyName}}</td>
+                                            <td>{{propertyTypeVal}}</td>
+                                            <td>{{categoryName}}</td>
+                                            <td>{{materialTypeName}}</td>
+                                            <td>{{isInputVal}}</td>
+                                            <td>{{remark}}</td>
+                                            <td>
+                                                <p class="mn">{{createUserRealName}}</p>
+                                                <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
+                                            </td>
+                                            <td>
+                                                <p class="mn">{{updateUserRealName}}</p>
+                                                <p class="mn mt5">{{#clockTime}}{{updateTime}}{{/clockTime}}</p>
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="btn-group text-right">
+                                                    <a href="${ctx}product-manage/property-detail?id={{categoryPropertyId}}" type="button" class="btn btn-default btn-xs viewButton">查看</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="8" class="text-center">无数据</td>
+                                        </tr>
+                                        {{/listData}}
+                                    {{/dataSource}}
+                                </tbody>
+                            </script>
+                            <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                                #parse("component/pager.vm")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        #parse("layout/sidebarRight.vm")
+    </div>
+    #parse("layout/footer.vm")
+
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
+    <script type="text/javascript">
+        management_load_script('${staticManagement}js','manage.product.property.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        ProductPropertyManage.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+
+    </script>
+
+
+
+</body>
+</html>
