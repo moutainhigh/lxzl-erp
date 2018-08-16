@@ -147,17 +147,17 @@ public class ProductController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "addProductCategoryProperty", method = RequestMethod.POST)
-    public Result addProductCategoryProperty(@RequestBody @Validated(AddGroup.class) ProductCategoryProperty productCategoryProperty, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = productCategoryService.addProductCategoryProperty(productCategoryProperty);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
+//    @RequestMapping(value = "addProductCategoryProperty", method = RequestMethod.POST)
+//    public Result addProductCategoryProperty(@RequestBody @Validated(AddGroup.class) ProductCategoryProperty productCategoryProperty, BindingResult validResult) {
+//        ServiceResult<String, Integer> serviceResult = productCategoryService.addProductCategoryProperty(productCategoryProperty);
+//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+//    }
 
-    @RequestMapping(value = "deleteProductCategoryPropertyValue", method = RequestMethod.POST)
-    public Result deleteProductCategoryPropertyValue(@RequestBody @Validated(CancelGroup.class) ProductCategoryProperty productCategoryProperty, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = productCategoryService.deleteProductCategoryPropertyValue(productCategoryProperty);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
+//    @RequestMapping(value = "deleteProductCategoryPropertyValue", method = RequestMethod.POST)
+//    public Result deleteProductCategoryPropertyValue(@RequestBody @Validated(CancelGroup.class) ProductCategoryProperty productCategoryProperty, BindingResult validResult) {
+//        ServiceResult<String, Integer> serviceResult = productCategoryService.deleteProductCategoryPropertyValue(productCategoryProperty);
+//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+//    }
 
     @RequestMapping(value = "updateCategoryPropertyValue", method = RequestMethod.POST)
     public Result updateCategoryPropertyValue(@RequestBody @Validated(UpdateGroup.class) ProductCategoryPropertyValue productCategoryPropertyValue, BindingResult validResult) {
