@@ -235,4 +235,216 @@
 	<select id="findAmountByBankSlipDetailIdAndCreateUser" resultMap="BankSlipClaimDO">
 		SELECT <include refid="column_List"/> FROM  erp_bank_slip_claim ebsc WHERE  ebsc.bank_slip_detail_id = #{bankSlipDetailId,jdbcType=INTEGER} AND ebsc.create_user = #{userId,jdbcType=VARCHAR} AND ebsc.data_status = 1
 	</select>
+
+	<resultMap id="BankSlipClaimDetail" type="com.lxzl.erp.common.domain.bank.pojo.BankSlipClaimDetail">
+		<result column="bank_slip_id" jdbcType="INTEGER" property="bankSlipId" />
+		<result column="bank_slip_detail_id" jdbcType="INTEGER" property="bankSlipDetailId" />
+		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+		<result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+		<result column="bank_type" jdbcType="INTEGER" property="bankType"/>
+		<result column="detail_trade_amount" jdbcType="DECIMAL" property="tradeAmount"/>
+		<result column="claim_amount" jdbcType="DECIMAL" property="claimAmount" />
+		<result column="detail_trade_time" jdbcType="TIMESTAMP" property="tradeTime"/>
+		<result column="detail_payer_name" jdbcType="VARCHAR" property="payerName"/>
+		<result column="detail_status" jdbcType="INTEGER" property="detailStatus" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+		<result column="claim_update_time" jdbcType="TIMESTAMP" property="claimUpdateTime" />
+		<result column="claim_update_user" jdbcType="VARCHAR" property="claimUpdateUser" />
+		<result column="claim_update_user_name" jdbcType="VARCHAR" property="claimUpdateUserName" />
+		<result column="slip_detail_update_time" jdbcType="TIMESTAMP" property="slipDetailUpdateTime" />
+		<result column="slip_detail_update_user" jdbcType="VARCHAR" property="slipDetailUpdateUser" />
+		<result column="slip_detail_update_user_name" jdbcType="VARCHAR" property="slipDetailUpdateUserName" />
+		<result column="slip_detail_remark" jdbcType="VARCHAR" property="slipDetailRemark" />
+		<result column="claim_remark" jdbcType="VARCHAR" property="claimRemark" />
+		<result column="is_localization" jdbcType="INTEGER" property="isLocalization" />
+		<result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
+		<result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
+		<result column="owner_sub_company_id" jdbcType="INTEGER" property="ownerSubCompanyId" />
+		<result column="owner_sub_company_name" jdbcType="VARCHAR" property="ownerSubCompanyName" />
+	</resultMap>
+
+	<resultMap id="BankSlipClaimPage" type="com.lxzl.erp.common.domain.bank.pojo.BankSlipClaimPage">
+		<result column="claim_count" jdbcType="INTEGER" property="claimCount" />
+		<result column="total_amount" jdbcType="DECIMAL" property="totalAmount" />
+	</resultMap>
+
+	<select id="findBankSlipClaimPageCountAndAmountByParams" resultMap="BankSlipClaimPage" parameterType="map">
+		SELECT COUNT(DISTINCT (ebsc.id)) AS claim_count,
+		SUM(ebsc.claim_amount) AS total_amount
+		FROM erp_bank_slip_claim ebsc
+		LEFT JOIN erp_bank_slip_detail ebsd ON ebsd.id = ebsc.bank_slip_detail_id and ebsd.data_status =1
+		LEFT JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status=1
+		LEFT JOIN erp_customer ec ON ebsc.customer_no = ec.customer_no AND ec.data_status = 1
+		LEFT JOIN erp_user eu ON eu.id = ebsc.update_user
+		LEFT JOIN erp_user eu1 ON eu.id = ebsd.update_user
+		WHERE ebsc.data_status=1
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.bankSlipId!=null">
+			AND  ebs.id = #{maps.bankSlipClaimDetailQueryParam.bankSlipId,jdbcType=INTEGER}
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.bankSlipDetailId!=null">
+			AND  ebsd.id = #{maps.bankSlipClaimDetailQueryParam.bankSlipDetailId,jdbcType=INTEGER}
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.customerName!=null&amp;&amp; maps.bankSlipClaimDetailQueryParam.customerName != ''">
+			AND ec.customer_name LIKE CONCAT('%','${maps.bankSlipClaimDetailQueryParam.customerName}','%' )
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.customerNo!=null&amp;&amp; maps.bankSlipClaimDetailQueryParam.customerNo != ''">
+			AND ebsc.customer_no LIKE CONCAT('%','${maps.bankSlipClaimDetailQueryParam.customerNo}','%' )
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.bankType != null">
+			and ebs.bank_type = #{maps.bankSlipClaimDetailQueryParam.bankType,jdbcType=INTEGER}
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startTradeAmount != null">
+			<![CDATA[ and ebsd.detail_trade_amount >= #{maps.bankSlipClaimDetailQueryParam.startTradeAmount,jdbcType=DECIMAL} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endTradeAmount != null">
+			<![CDATA[ and ebsd.detail_trade_amount <= #{maps.bankSlipClaimDetailQueryParam.endTradeAmount,jdbcType=DECIMAL} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startClaimAmount != null">
+			<![CDATA[ and ebsc.claim_amount >= #{maps.bankSlipClaimDetailQueryParam.startClaimAmount,jdbcType=DECIMAL} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endClaimAmount != null">
+			<![CDATA[ and ebsc.claim_amount <= #{maps.bankSlipClaimDetailQueryParam.endClaimAmount,jdbcType=DECIMAL} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startTradeTime != null">
+			<![CDATA[ and ebsd.detail_trade_time >= #{maps.bankSlipClaimDetailQueryParam.startTradeTime,jdbcType=TIMESTAMP} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endTradeTime != null">
+			<![CDATA[ and ebsd.detail_trade_time < #{maps.bankSlipClaimDetailQueryParam.endTradeTime,jdbcType=TIMESTAMP} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.payerName != ''">
+			and ebsd.payer_name like CONCAT('%','${maps.bankSlipClaimDetailQueryParam.payerName}','%' )
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.detailStatus != null ">
+			and ebsd.detail_status = #{maps.bankSlipClaimDetailQueryParam.detailStatus,jdbcType=INTEGER}
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.detailStatus == null ">
+			and ebsd.detail_status in (2,3)
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startClaimUpdateTime != null">
+			<![CDATA[ and ebsc.update_time >= #{maps.bankSlipClaimDetailQueryParam.startClaimUpdateTime,jdbcType=TIMESTAMP} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endClaimUpdateTime != null">
+			<![CDATA[ and ebsc.update_time < #{maps.bankSlipClaimDetailQueryParam.endClaimUpdateTime,jdbcType=TIMESTAMP} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.claimUpdateUserName!=null&amp;&amp; maps.bankSlipClaimDetailQueryParam.claimUpdateUserName != ''">
+			AND eu.real_name LIKE CONCAT('%','${maps.bankSlipClaimDetailQueryParam.claimUpdateUserName}','%' )
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startSlipDetailUpdateTime != null">
+			<![CDATA[ and ebsd.update_time >= #{maps.bankSlipClaimDetailQueryParam.startSlipDetailUpdateTime,jdbcType=TIMESTAMP} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endSlipDetailUpdateTime != null">
+			<![CDATA[ and ebsd.update_time < #{maps.bankSlipClaimDetailQueryParam.endSlipDetailUpdateTime,jdbcType=TIMESTAMP} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.slipDetailUpdateUserName!=null&amp;&amp; maps.bankSlipClaimDetailQueryParam.slipDetailUpdateUserName != ''">
+			AND eu1.real_name LIKE CONCAT('%','${maps.bankSlipClaimDetailQueryParam.slipDetailUpdateUserName}','%' )
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.subCompanyId!=null">
+			AND ebsd.sub_company_id = #{maps.bankSlipClaimDetailQueryParam.subCompanyId}
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.ownerSubCompanyId!=null">
+			AND ebs.sub_company_id = #{maps.bankSlipClaimDetailQueryParam.ownerSubCompanyId}
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.isLocalization!=null">
+			AND ebsd.is_localization = #{maps.bankSlipClaimDetailQueryParam.isLocalization}
+		</if>
+		<if test="maps.userSubCompanyId != null">
+			AND (ebsd.sub_company_id = #{maps.userSubCompanyId} OR ebs.sub_company_id = #{maps.userSubCompanyId})
+		</if>
+	</select>
+
+	<select id="findBankSlipClaimDetailByParams" resultMap="BankSlipClaimDetail" parameterType="map">
+		SELECT ebs.id AS bank_slip_id,ebsd.id AS bank_slip_detail_id,ebsc.customer_no AS customer_no,ec.customer_name AS customer_name,
+		ebs.bank_type AS bank_type,ebsd.trade_amount AS detail_trade_amount,ebsc.claim_amount AS claim_amount,ebsd.trade_time AS detail_trade_time,
+		ebsd.payer_name AS detail_payer_name,ebsd.detail_status AS detail_status,ebsd.create_time AS create_time,ebsd.create_user AS create_user,
+		eu2.real_name AS create_user_name,ebsc.update_time AS claim_update_time,ebsc.update_user AS claim_update_user,eu.real_name AS claim_update_user_name,
+		ebsd.update_time AS slip_detail_update_time,ebsd.update_user AS slip_detail_update_user,eu1.real_name AS slip_detail_update_user_name,ebsd.remark AS slip_detail_remark,
+		ebsc.remark AS claim_remark,ebsd.is_localization AS is_localization,ebs.sub_company_id AS sub_company_id,esc.sub_company_name AS sub_company_name,
+		ebsd.sub_company_id AS owner_sub_company_id,esc1.sub_company_name AS owner_sub_company_name
+		FROM erp_bank_slip_claim ebsc
+		LEFT JOIN erp_bank_slip_detail ebsd ON ebsd.id = ebsc.bank_slip_detail_id and ebsd.data_status =1
+		LEFT JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status=1
+		LEFT JOIN erp_customer ec ON ebsc.customer_no = ec.customer_no AND ec.data_status = 1
+		LEFT JOIN  erp_sub_company esc ON esc.id = ebs.sub_company_id AND esc.data_status = 1
+		LEFT JOIN  erp_sub_company esc1 ON esc1.id = ebsd.sub_company_id AND esc1.data_status = 1
+		LEFT JOIN erp_user eu ON eu.id = ebsc.update_user
+		LEFT JOIN erp_user eu1 ON eu1.id = ebsd.update_user
+		LEFT JOIN erp_user eu2 ON eu2.id = ebsd.create_user
+		WHERE ebsc.data_status=1
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.bankSlipId!=null">
+			AND  ebs.id = #{maps.bankSlipClaimDetailQueryParam.bankSlipId,jdbcType=INTEGER}
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.bankSlipDetailId!=null">
+			AND  ebsd.id = #{maps.bankSlipClaimDetailQueryParam.bankSlipDetailId,jdbcType=INTEGER}
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.customerName!=null&amp;&amp; maps.bankSlipClaimDetailQueryParam.customerName != ''">
+			AND ec.customer_name LIKE CONCAT('%','${maps.bankSlipClaimDetailQueryParam.customerName}','%' )
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.customerNo!=null&amp;&amp; maps.bankSlipClaimDetailQueryParam.customerNo != ''">
+			AND ebsc.customer_no LIKE CONCAT('%','${maps.bankSlipClaimDetailQueryParam.customerNo}','%' )
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.bankType != null">
+			and ebs.bank_type = #{maps.bankSlipClaimDetailQueryParam.bankType,jdbcType=INTEGER}
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startTradeAmount != null">
+			<![CDATA[ and ebsd.detail_trade_amount >= #{maps.bankSlipClaimDetailQueryParam.startTradeAmount,jdbcType=DECIMAL} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endTradeAmount != null">
+			<![CDATA[ and ebsd.detail_trade_amount <= #{maps.bankSlipClaimDetailQueryParam.endTradeAmount,jdbcType=DECIMAL} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startClaimAmount != null">
+			<![CDATA[ and ebsc.claim_amount >= #{maps.bankSlipClaimDetailQueryParam.startClaimAmount,jdbcType=DECIMAL} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endClaimAmount != null">
+			<![CDATA[ and ebsc.claim_amount <= #{maps.bankSlipClaimDetailQueryParam.endClaimAmount,jdbcType=DECIMAL} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startTradeTime != null">
+			<![CDATA[ and ebsd.detail_trade_time >= #{maps.bankSlipClaimDetailQueryParam.startTradeTime,jdbcType=TIMESTAMP} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endTradeTime != null">
+			<![CDATA[ and ebsd.detail_trade_time < #{maps.bankSlipClaimDetailQueryParam.endTradeTime,jdbcType=TIMESTAMP} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.payerName != ''">
+			and ebsd.payer_name like CONCAT('%','${maps.bankSlipClaimDetailQueryParam.payerName}','%' )
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.detailStatus != null ">
+			and ebsd.detail_status = #{maps.bankSlipClaimDetailQueryParam.detailStatus,jdbcType=INTEGER}
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.detailStatus == null ">
+			and ebsd.detail_status in (2,3)
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startClaimUpdateTime != null">
+			<![CDATA[ and ebsc.update_time >= #{maps.bankSlipClaimDetailQueryParam.startClaimUpdateTime,jdbcType=TIMESTAMP} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endClaimUpdateTime != null">
+			<![CDATA[ and ebsc.update_time < #{maps.bankSlipClaimDetailQueryParam.endClaimUpdateTime,jdbcType=TIMESTAMP} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.claimUpdateUserName!=null&amp;&amp; maps.bankSlipClaimDetailQueryParam.claimUpdateUserName != ''">
+			AND eu.real_name LIKE CONCAT('%','${maps.bankSlipClaimDetailQueryParam.claimUpdateUserName}','%' )
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startSlipDetailUpdateTime != null">
+			<![CDATA[ and ebsd.update_time >= #{maps.bankSlipClaimDetailQueryParam.startSlipDetailUpdateTime,jdbcType=TIMESTAMP} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endSlipDetailUpdateTime != null">
+			<![CDATA[ and ebsd.update_time < #{maps.bankSlipClaimDetailQueryParam.endSlipDetailUpdateTime,jdbcType=TIMESTAMP} ]]>
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.slipDetailUpdateUserName!=null&amp;&amp; maps.bankSlipClaimDetailQueryParam.slipDetailUpdateUserName != ''">
+			AND eu1.real_name LIKE CONCAT('%','${maps.bankSlipClaimDetailQueryParam.slipDetailUpdateUserName}','%' )
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.subCompanyId!=null">
+			AND ebsd.sub_company_id = #{maps.bankSlipClaimDetailQueryParam.subCompanyId}
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.ownerSubCompanyId!=null">
+			AND ebs.sub_company_id = #{maps.bankSlipClaimDetailQueryParam.ownerSubCompanyId}
+		</if>
+		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.isLocalization!=null">
+			AND ebsd.is_localization = #{maps.bankSlipClaimDetailQueryParam.isLocalization}
+		</if>
+		<if test="maps.userSubCompanyId != null">
+			AND (ebsd.sub_company_id = #{maps.userSubCompanyId} OR ebs.sub_company_id = #{maps.userSubCompanyId})
+		</if>
+		ORDER BY ebsd.update_time ASC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
 </mapper>
