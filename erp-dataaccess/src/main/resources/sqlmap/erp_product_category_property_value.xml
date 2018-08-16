@@ -184,6 +184,7 @@
         select  <include refid="column_List"/>
         from erp_product_category_property_value epcpv
         where epcpv.property_value_name = #{propertyValueName, jdbcType=VARCHAR} and epcpv.property_id = #{propertyId, jdbcType=INTEGER} AND epcpv.category_id= #{categoryId, jdbcType=INTEGER} and epcpv.data_status = 1
+        limit 1
     </select>
 
 
