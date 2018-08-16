@@ -332,6 +332,9 @@
                 </div>
             </form>
         </section>
+        <a href="javascript:;" target="_blank" class="hide" id="openNewTab">
+            <span id="triggerLink"></span>
+        </a>
     </section>
     #parse("layout/sidebarRight.vm")
 </div>
