@@ -550,7 +550,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     }
     @Test
     public void pageBankSlipClaimDetailTestJson() throws Exception {
-        String json = "{\"pageNo\":1,\"pageSize\":15,\"startSlipDetailUpdateTime\":\"\",\"endSlipDetailUpdateTime\":\"\",\"sureTimePickerInput\":\"\",\"startTradeTime\":\"1533052800000\",\"endTradeTime\":\"1534003199999\",\"tradeDatePickerInput\":\"2018-08-01 - 2018-08-11\",\"bankType\":\"\",\"amountdealRange\":\"\",\"claimMoneyRange\":\"\",\"detailType\":\"\",\"customerName\":\"\",\"customerNo\":\"\",\"payerName\":\"\",\"bankSlipId\":\"\",\"bankSlipDetailId\":\"\"}";
+        String json = "{\"pageNo\":1,\"pageSize\":15,\"startTradeTime\":\"\",\"endTradeTime\":\"\",\"tradeTimePickerInput\":\"\",\"startClaimUpdateTime\":\"\",\"endClaimUpdateTime\":\"\",\"claimTimePickerInput\":\"\",\"startSlipDetailUpdateTime\":\"\",\"endSlipDetailUpdateTime\":\"\",\"sureTimePickerInput\":\"\",\"bankType\":\"\",\"startTradeAmount\":1,\"endTradeAmount\":1111,\"startClaimAmount\":\"\",\"endClaimAmount\":\"\",\"detailType\":\"\",\"customerName\":\"\",\"customerNo\":\"\",\"payerName\":\"\",\"bankSlipId\":\"\",\"bankSlipDetailId\":\"\"}";
 //        bankSlipQueryParam.setBankType();
 //        bankSlipQueryParam.setSlipMonth();
 //        bankSlipQueryParam.setSlipStatus();

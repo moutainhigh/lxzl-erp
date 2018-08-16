@@ -296,10 +296,10 @@
 			and ebs.bank_type = #{maps.bankSlipClaimDetailQueryParam.bankType,jdbcType=INTEGER}
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startTradeAmount != null">
-			<![CDATA[ and ebsd.detail_trade_amount >= #{maps.bankSlipClaimDetailQueryParam.startTradeAmount,jdbcType=DECIMAL} ]]>
+			<![CDATA[ and ebsd.trade_amount >= #{maps.bankSlipClaimDetailQueryParam.startTradeAmount,jdbcType=DECIMAL} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endTradeAmount != null">
-			<![CDATA[ and ebsd.detail_trade_amount <= #{maps.bankSlipClaimDetailQueryParam.endTradeAmount,jdbcType=DECIMAL} ]]>
+			<![CDATA[ and ebsd.trade_amount <= #{maps.bankSlipClaimDetailQueryParam.endTradeAmount,jdbcType=DECIMAL} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startClaimAmount != null">
 			<![CDATA[ and ebsc.claim_amount >= #{maps.bankSlipClaimDetailQueryParam.startClaimAmount,jdbcType=DECIMAL} ]]>
@@ -311,7 +311,7 @@
 			<![CDATA[ and ebsd.trade_time >= #{maps.bankSlipClaimDetailQueryParam.startTradeTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endTradeTime != null">
-			<![CDATA[ and ebsd.trade_time < #{maps.bankSlipClaimDetailQueryParam.endTradeTime,jdbcType=TIMESTAMP} ]]>
+			<![CDATA[ and ebsd.trade_time <= #{maps.bankSlipClaimDetailQueryParam.endTradeTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.payerName != ''">
 			and ebsd.payer_name like CONCAT('%','${maps.bankSlipClaimDetailQueryParam.payerName}','%' )
@@ -326,7 +326,7 @@
 			<![CDATA[ and ebsc.update_time >= #{maps.bankSlipClaimDetailQueryParam.startClaimUpdateTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endClaimUpdateTime != null">
-			<![CDATA[ and ebsc.update_time < #{maps.bankSlipClaimDetailQueryParam.endClaimUpdateTime,jdbcType=TIMESTAMP} ]]>
+			<![CDATA[ and ebsc.update_time <= #{maps.bankSlipClaimDetailQueryParam.endClaimUpdateTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.claimUpdateUserName!=null&amp;&amp; maps.bankSlipClaimDetailQueryParam.claimUpdateUserName != ''">
 			AND eu.real_name LIKE CONCAT('%','${maps.bankSlipClaimDetailQueryParam.claimUpdateUserName}','%' )
@@ -335,7 +335,7 @@
 			<![CDATA[ and ebsd.update_time >= #{maps.bankSlipClaimDetailQueryParam.startSlipDetailUpdateTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endSlipDetailUpdateTime != null">
-			<![CDATA[ and ebsd.update_time < #{maps.bankSlipClaimDetailQueryParam.endSlipDetailUpdateTime,jdbcType=TIMESTAMP} ]]>
+			<![CDATA[ and ebsd.update_time <= #{maps.bankSlipClaimDetailQueryParam.endSlipDetailUpdateTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.slipDetailUpdateUserName!=null&amp;&amp; maps.bankSlipClaimDetailQueryParam.slipDetailUpdateUserName != ''">
 			AND eu1.real_name LIKE CONCAT('%','${maps.bankSlipClaimDetailQueryParam.slipDetailUpdateUserName}','%' )
@@ -388,10 +388,10 @@
 			and ebs.bank_type = #{maps.bankSlipClaimDetailQueryParam.bankType,jdbcType=INTEGER}
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startTradeAmount != null">
-			<![CDATA[ and ebsd.detail_trade_amount >= #{maps.bankSlipClaimDetailQueryParam.startTradeAmount,jdbcType=DECIMAL} ]]>
+			<![CDATA[ and ebsd.trade_amount >= #{maps.bankSlipClaimDetailQueryParam.startTradeAmount,jdbcType=DECIMAL} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endTradeAmount != null">
-			<![CDATA[ and ebsd.detail_trade_amount <= #{maps.bankSlipClaimDetailQueryParam.endTradeAmount,jdbcType=DECIMAL} ]]>
+			<![CDATA[ and ebsd.trade_amount <= #{maps.bankSlipClaimDetailQueryParam.endTradeAmount,jdbcType=DECIMAL} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startClaimAmount != null">
 			<![CDATA[ and ebsc.claim_amount >= #{maps.bankSlipClaimDetailQueryParam.startClaimAmount,jdbcType=DECIMAL} ]]>
@@ -403,7 +403,7 @@
 			<![CDATA[ and ebsd.trade_time >= #{maps.bankSlipClaimDetailQueryParam.startTradeTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endTradeTime != null">
-			<![CDATA[ and ebsd.trade_time < #{maps.bankSlipClaimDetailQueryParam.endTradeTime,jdbcType=TIMESTAMP} ]]>
+			<![CDATA[ and ebsd.trade_time <= #{maps.bankSlipClaimDetailQueryParam.endTradeTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.payerName != ''">
 			and ebsd.payer_name like CONCAT('%','${maps.bankSlipClaimDetailQueryParam.payerName}','%' )
@@ -418,7 +418,7 @@
 			<![CDATA[ and ebsc.update_time >= #{maps.bankSlipClaimDetailQueryParam.startClaimUpdateTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endClaimUpdateTime != null">
-			<![CDATA[ and ebsc.update_time < #{maps.bankSlipClaimDetailQueryParam.endClaimUpdateTime,jdbcType=TIMESTAMP} ]]>
+			<![CDATA[ and ebsc.update_time <= #{maps.bankSlipClaimDetailQueryParam.endClaimUpdateTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.claimUpdateUserName!=null&amp;&amp; maps.bankSlipClaimDetailQueryParam.claimUpdateUserName != ''">
 			AND eu.real_name LIKE CONCAT('%','${maps.bankSlipClaimDetailQueryParam.claimUpdateUserName}','%' )
@@ -427,7 +427,7 @@
 			<![CDATA[ and ebsd.update_time >= #{maps.bankSlipClaimDetailQueryParam.startSlipDetailUpdateTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endSlipDetailUpdateTime != null">
-			<![CDATA[ and ebsd.update_time < #{maps.bankSlipClaimDetailQueryParam.endSlipDetailUpdateTime,jdbcType=TIMESTAMP} ]]>
+			<![CDATA[ and ebsd.update_time <= #{maps.bankSlipClaimDetailQueryParam.endSlipDetailUpdateTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.slipDetailUpdateUserName!=null&amp;&amp; maps.bankSlipClaimDetailQueryParam.slipDetailUpdateUserName != ''">
 			AND eu1.real_name LIKE CONCAT('%','${maps.bankSlipClaimDetailQueryParam.slipDetailUpdateUserName}','%' )
