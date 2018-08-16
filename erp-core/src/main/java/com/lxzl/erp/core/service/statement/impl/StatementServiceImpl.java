@@ -7346,7 +7346,7 @@ public class StatementServiceImpl implements StatementService {
                 OrderDO orderDO=orderMapper.findByNo(k3ReturnOrderDetailDO.getOrderNo());
                 if(!needDealStatus.contains(orderDO.getOrderStatus()))continue;
 
-                if(CollectionUtil.isNotEmpty(k3ReturnOrderDetailMapper.findListByOrderNo(k3ReturnOrderDetailDO.getOrderNo()))){
+                if(CollectionUtil.isEmpty(k3ReturnOrderDetailMapper.findListByOrderNo(k3ReturnOrderDetailDO.getOrderNo()))){
                     orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
                     orderDO.setUpdateTime(currentTime);
                     orderDO.setUpdateUser(userId);
