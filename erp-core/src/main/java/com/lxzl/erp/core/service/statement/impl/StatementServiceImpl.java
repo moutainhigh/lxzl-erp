@@ -1399,7 +1399,7 @@ public class StatementServiceImpl implements StatementService {
         BigDecimal totalPaidAmount = statementOrderDO.getStatementPaidAmount();
 
         for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDO.getStatementOrderDetailDOList()) {
-            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementOrderDetailDO.getStatementDetailStatus())) {
+            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementOrderDetailDO.getStatementDetailStatus())||StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                 statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
 
                 // 查询有没有冲正业务金额
@@ -4655,11 +4655,11 @@ public class StatementServiceImpl implements StatementService {
      * @param k3ReturnOrderDetailDO
      */
 
-    private void deleteK3ReturnOrderDetailRefRentStatement(K3ReturnOrderDetailDO k3ReturnOrderDetailDO, boolean paidReturn) {
-        if (k3ReturnOrderDetailDO == null) return;
+    private List<StatementOrderDetailDO> deleteK3ReturnOrderDetailRefRentStatement(K3ReturnOrderDetailDO k3ReturnOrderDetailDO, boolean paidReturn) {
+        if (k3ReturnOrderDetailDO == null) return null;
         Integer orderItemType = productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo()) ? OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT : OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL;
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findReturnByOrderItemTypeAndId(orderItemType, k3ReturnOrderDetailDO.getId());
-        if (CollectionUtil.isEmpty(statementOrderDetailDOList)) return;
+        if (CollectionUtil.isEmpty(statementOrderDetailDOList)) return null;
         Map<Date, StatementOrderDO> statementOrderCatch = new HashMap<>();
         List<StatementOrderDetailDO> needDeleteList = new ArrayList<>();
         for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
@@ -4685,6 +4685,7 @@ public class StatementServiceImpl implements StatementService {
         //删除结算详情
         if (CollectionUtil.isNotEmpty(needDeleteList))
             statementOrderDetailMapper.deleteStatementOrderDetailList(needDeleteList);
+        return needDeleteList;
     }
 
     /**
@@ -5751,12 +5752,17 @@ public class StatementServiceImpl implements StatementService {
      *
      * @param k3ReturnOrderDetailDOS
      */
-    private void clearReturnReturnOrderItems(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOS, boolean paidReturn) {
+    private List<StatementOrderDetailDO> clearReturnReturnOrderItems(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOS, boolean paidReturn) {
+        List<StatementOrderDetailDO> hasDeleteReturnStatementList=new ArrayList<>();
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOS)) {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOS) {
-                deleteK3ReturnOrderDetailRefRentStatement(k3ReturnOrderDetailDO, paidReturn);
+                List<StatementOrderDetailDO> deleteStatemementList=deleteK3ReturnOrderDetailRefRentStatement(k3ReturnOrderDetailDO, paidReturn);
+                if(CollectionUtil.isNotEmpty(deleteStatemementList)){
+                    hasDeleteReturnStatementList.addAll(deleteStatemementList);
+                }
             }
         }
+        return hasDeleteReturnStatementList;
     }
 
     /**
@@ -7159,8 +7165,14 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.ONLY_SUCCESS_RETURN_ORDER_ALLOW_RE_STATEMENT);
             return result;
         }
+        if(!validateCanRoll(k3ReturnOrderDO.getK3ReturnOrderDetailDOList(),k3ReturnOrderDO.getReturnTime())){
+            result.setErrorCode(ErrorCode.SUCCESS_RELET_ORDER_EXIST);
+            return result;
+        }
         //清除退货租金结算
-        clearReturnReturnOrderItems(k3ReturnOrderDO.getK3ReturnOrderDetailDOList(), true);
+        List<StatementOrderDetailDO> hasDeleteReturnStatementList=clearReturnReturnOrderItems(k3ReturnOrderDO.getK3ReturnOrderDetailDOList(), true);
+        //将退货关联的已支付结算单，改成部分支付或未支付
+        updateRefOrderItemStatementDetailStatus(hasDeleteReturnStatementList);
         //增加操作记录
         statementReturnSupport.saveReturnOrderRollLogToDB(k3ReturnOrderDO,userSupport.getCurrentUserId().toString());
         //处理退过的押金(必须放在最后)
@@ -7172,6 +7184,57 @@ public class StatementServiceImpl implements StatementService {
         }
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    private void updateRefOrderItemStatementDetailStatus(List<StatementOrderDetailDO> hasDeleteReturnStatementList) {
+        if(CollectionUtil.isNotEmpty(hasDeleteReturnStatementList)){
+            Map<Integer,StatementOrderDetailDO> statementDetailCatch=new HashMap<>();
+            for(StatementOrderDetailDO statementOrderDetailDO:hasDeleteReturnStatementList){
+                if(statementOrderDetailDO.getReturnReferId()==null)continue;
+                statementDetailCatch.put(statementOrderDetailDO.getReturnReferId(),statementOrderDetailDO);
+            }
+
+            if(statementDetailCatch.size()>0){
+                List<StatementOrderDetailDO> refOrderItemStatements= statementOrderDetailMapper.findByIdList(new ArrayList<>(statementDetailCatch.keySet()));
+                if(CollectionUtil.isNotEmpty(refOrderItemStatements)){
+                    List<StatementOrderDetailDO> needUpdateList=new ArrayList<>();
+                    for (StatementOrderDetailDO statementOrderDetailDO:refOrderItemStatements){
+                        if(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())){
+                            StatementOrderDetailDO returnStatementDetail=statementDetailCatch.get(statementOrderDetailDO.getId());
+                            if(BigDecimalUtil.compare(returnStatementDetail.getStatementDetailAmount(), BigDecimal.ZERO)<0){
+                                statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
+                                needUpdateList.add(statementOrderDetailDO);
+                            }
+                        }
+                    }
+                    if(CollectionUtil.isNotEmpty(needUpdateList)){
+                        statementOrderDetailMapper.batchUpdate(needUpdateList);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * check if there are succussful relet order behind
+     * @param k3ReturnOrderDetailDOList
+     * @param returnTime
+     * @return
+     */
+    private boolean validateCanRoll(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList,Date returnTime){
+        if(CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOList)){
+            Set<String> orderNoSet=new HashSet<>();
+            for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDetailDOList){
+                orderNoSet.add(k3ReturnOrderDetailDO.getOrderNo());
+            }
+            List<ReletOrderDO> list=reletOrderMapper.findReletedOrdersByOrderNos(orderNoSet);
+            for(ReletOrderDO reletOrderDO:list){
+                if(DateUtil.daysBetween(returnTime,reletOrderDO.getRentStartTime())>0){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 
@@ -7502,7 +7565,8 @@ public class StatementServiceImpl implements StatementService {
     @Autowired
     private UserRoleService userRoleService;
     @Autowired
-    private StatementOrderReturnDetailMapper statementOrderReturnDetailMapper;    @Autowired
+    private StatementOrderReturnDetailMapper statementOrderReturnDetailMapper;
+    @Autowired
     private ReletOrderSupport reletOrderSupport;
 
 }

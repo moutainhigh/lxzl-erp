@@ -852,6 +852,7 @@ public class ErrorCode {
     public static final String K3_RETURN_ORDER_PRODUCT_COUNT_ERROR = "J17000035";
     public static final String K3_RETURN_ORDER_MATERIAL_COUNT_ERROR = "J17000036";
     public static final String ONLY_SUCCESS_RETURN_ORDER_ALLOW_RE_STATEMENT = "J17000037";
+    public static final String SUCCESS_RELET_ORDER_EXIST = "J17000038";
 
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
@@ -1875,6 +1876,7 @@ public class ErrorCode {
         MAP.put(K3_RETURN_ORDER_PRODUCT_COUNT_ERROR, "订单号：【%s 】，商品：【%s 】可退货数量为【%s 】台，超过可退数量");
         MAP.put(K3_RETURN_ORDER_MATERIAL_COUNT_ERROR, "订单号：【%s 】，配件：【%s 】可退货数量为【%s 】台，超过可退数量");
         MAP.put(ONLY_SUCCESS_RETURN_ORDER_ALLOW_RE_STATEMENT, "仅处理成功的退货单允许重算");
+        MAP.put(SUCCESS_RELET_ORDER_EXIST, "退货后已成功续租，退货单无法回滚");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
