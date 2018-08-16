@@ -240,9 +240,9 @@ public class ProductTest extends ERPUnTransactionalTest {
         ProductCategoryPropertyValue productCategoryPropertyValue = new ProductCategoryPropertyValue();
 
         productCategoryPropertyValue.setCategoryPropertyValueId(278);
-        productCategoryPropertyValue.setPropertyValueName("GTX660 2G");
+        productCategoryPropertyValue.setPropertyValueName("GTX650 2G");
 //        productCategoryPropertyValue1.setPropertyCapacityValue(2048.00);
-        productCategoryPropertyValue.setMaterialModelId(19);
+        productCategoryPropertyValue.setMaterialModelId(24);
 
         TestResult testResult = getJsonTestResult("/product/updateCategoryPropertyValue", productCategoryPropertyValue);
     }

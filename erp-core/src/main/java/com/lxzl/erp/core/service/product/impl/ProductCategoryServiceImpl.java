@@ -26,12 +26,14 @@ import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyValueMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuPropertyMapper;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialModelDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,10 +118,18 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
+
         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = ProductCategoryPropertyConverter.convertProductCategoryPropertyValue(productCategoryPropertyValue);
         ProductCategoryPropertyDO productCategoryPropertyDO = productCategoryPropertyMapper.findById(productCategoryPropertyValueDO.getPropertyId());
         if (productCategoryPropertyDO == null) {
             result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS);
+            return result;
+        }
+
+        //对分类属性值名称重复做判断
+        ProductCategoryPropertyValueDO ProductCategoryPropertyValueNameDO = productCategoryPropertyValueMapper.findByPropertyValueNameAndCategoryIdAndPropertyId(productCategoryPropertyValue.getPropertyValueName(),productCategoryPropertyValueDO.getCategoryId(),productCategoryPropertyValueDO.getPropertyId());
+        if (ProductCategoryPropertyValueNameDO != null) {
+            result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_VALUE_NAME_NOT_SAME);
             return result;
         }
 
@@ -403,6 +413,13 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             return result;
         }
 
+        //判断修改的商品属性值是否已经被使用
+        List<ProductSkuPropertyDO> productSkuPropertyDOList = productSkuPropertyMapper.findByPropertyValueId(productCategoryPropertyValueDO.getId());
+        if (CollectionUtil.isNotEmpty(productSkuPropertyDOList)){
+            result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_VALUE_HAD_USED_NOT_UPDATE);
+            return result;
+        }
+
         ProductCategoryPropertyDO productCategoryPropertyDO = productCategoryPropertyMapper.findById(productCategoryPropertyValueDO.getPropertyId());
         if (productCategoryPropertyDO == null) {
             result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS);
@@ -410,11 +427,15 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         }
 
         productCategoryPropertyValueDO.setPropertyValueName(productCategoryPropertyValue.getPropertyValueName());
-        productCategoryPropertyValueDO.setPropertyCapacityValue(productCategoryPropertyValue.getPropertyCapacityValue());
-        productCategoryPropertyValueDO.setMaterialModelId(productCategoryPropertyValue.getMaterialModelId());
+        if (productCategoryPropertyValue.getPropertyCapacityValue() != null){
+            productCategoryPropertyValueDO.setPropertyCapacityValue(productCategoryPropertyValue.getPropertyCapacityValue());
+        }
+        if (productCategoryPropertyValue.getMaterialModelId() != null){
+            productCategoryPropertyValueDO.setMaterialModelId(productCategoryPropertyValue.getMaterialModelId());
+        }
 
         //判断更改的属性名称是否有相同的
-        ProductCategoryPropertyValueDO productCategoryPropertyValueDOByName = productCategoryPropertyValueMapper.findByPropertyValueNameAndCategoryId(productCategoryPropertyValue.getPropertyValueName(), productCategoryPropertyValueDO.getCategoryId());
+        ProductCategoryPropertyValueDO productCategoryPropertyValueDOByName = productCategoryPropertyValueMapper.findByPropertyValueNameAndCategoryIdAndPropertyId(productCategoryPropertyValue.getPropertyValueName(), productCategoryPropertyValueDO.getCategoryId(),productCategoryPropertyDO.getId());
         if (productCategoryPropertyValueDOByName != null){
             result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_VALUE_NAME_NOT_SAME);
             return result;
@@ -752,4 +773,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Autowired
     private UserSupport userSupport;
+
+    @Autowired
+    private ProductSkuPropertyMapper productSkuPropertyMapper;
 }
