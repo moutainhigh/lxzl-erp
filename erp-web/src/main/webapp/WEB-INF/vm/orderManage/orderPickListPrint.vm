@@ -148,11 +148,35 @@
         </div>
     </div>
 
+    <script type="text/html" id="orderBaseInfoTpl">
+        {{#order}}
+        <div class="row" style="padding:5px 10px;">
+            <div class="col-xs-3">
+                <dl class="dl-horizontal dl-horizontal-rental mbn">
+                    <dt><label>交货日期</label><span class="mr5">：</span></dt>
+                    <dd>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}&nbsp;</dd>
+                </dl>
+            </div>
+            <div class="col-xs-3">
+                <dl class="dl-horizontal dl-horizontal-rental mbn">
+                    <dt><label>配送方式</label><span class="mr5">：</span></dt>
+                    <dd>{{deliveryModeValue}}&nbsp;</dd>
+                </dl>
+            </div>
+            <div class="col-xs-6">
+                <dl class="dl-horizontal dl-horizontal-rental mbn">
+                    <dt><label>备注信息</label><span class="mr5">：</span></dt>
+                    <dd>{{buyerRemark}}&nbsp;</dd>
+                </dl>
+            </div>
+        </div>
+        {{/order}}
+    </script>
+
     <script type="text/html" id="dataListTpl">
         {{#hasListData}}
         <div class="row">
             <div class="col-md-12">
-                <div style="padding-left:10px; height:24px;line-height:24px;">交货日期：</div>
                 <table class="table table-bordered mbn">
                     <thead>
                     <tr style="background:#d5d5d5;">
@@ -232,7 +256,6 @@
                     <p  class="pn mn text-center printH1"><b>商品备货单</b></p>
                 </div>
                 <div class="print-col text-right" style="position:relative;">
-##                    <img src="" class="img-responsive pull-right" id="barcode" alt="凌雄租赁" />
                     <canvas id="qrcodeCanvas{{pagerIndex}}" class="qrcodeCanvas"></canvas>
                     <p class="orderNo" id="orderNo{{pagerIndex}}"></p>
                 </div>
@@ -318,6 +341,22 @@
             <div class="col-md-12">
                 <div id="orderAmountInfo">
 
+                </div>
+            </div>
+        </div>
+        <div class="row p15 pbn">
+            <div class="section">
+                <div class="col-xs-6">
+                    <dl class="dl-horizontal dl-horizontal-rental mbn">
+                        <dt><label>业务员/联系方式</label><span>：</span></dt>
+                        <dd class="customerOwnerUser"></dd>
+                    </dl>
+                </div>
+                <div class="col-xs-6">
+                    <dl class="dl-horizontal dl-horizontal-rental mbn">
+                        <dt><label>联合业务员/联系方式</label><span>：</span></dt>
+                        <dd class="customerUnionUser"></dd>
+                    </dl>
                 </div>
             </div>
         </div>
