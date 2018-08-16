@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-客户管理-企业客户列表-添加企业客户</title>
+    <title>凌雄ERP-商品管理-商品属性-属性详情</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
 </head>
@@ -74,11 +74,14 @@
                     <div class="panel-menu br-l br-r">
                         <div class="row">
                             <div class="pull-left ml10">
-                                <div class="btn-group" id="actionButtons">
-                                    <button type="button" class="btn btn-primary btn-sm" id="addPropertyVal" title="添加属性值">
-                                        <i class="fa fa-plus"></i> 添加属性值
+                                <script type="text/html" id="actionButtonsTpl">
+                                    {{#acitonButtons}}
+                                    <button type="button" id="{{class}}" class="btn btn-primary btn-sm" title="{{menuName}}">
+                                        <i class="{{iClass}}"></i> {{text}}
                                     </button>
-                                </div>
+                                    {{/acitonButtons}}
+                                </script>
+                                <div class="btn-group" id="actionButtons"></div>
                             </div>
                         </div>
                     </div>
@@ -86,11 +89,11 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr class="bg-light">
-                                <th>属性值</th>
+                                <th>属性值名称</th>
                                 <th>属性排序</th>
                                 <th>备注</th>
-                                <th>创建</th>
-                                <th>修改</th>
+                                <th>创建人</th>
+                                <th>修改人</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
                                 {{/hasRowActionButtons}}
@@ -99,7 +102,7 @@
                             <tbody>
                             {{#dataSource}}
                             {{#listData}}
-                            <tr>
+                            <tr data-info="{{propertyValInfo}}">
                                 <td>{{propertyValueName}}</td>
                                 <td>{{dataOrder}}</td>
                                 <td>{{remark}}</td>
@@ -132,6 +135,11 @@
                             </tbody>
                         </script>
                         <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                            #parse("component/pager.vm")
+                        </div>
                     </div>
                 </div>
             </div>
