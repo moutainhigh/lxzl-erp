@@ -548,4 +548,19 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
 
         System.out.println(JSON.toJSONString(result));
     }
+    @Test
+    public void pageBankSlipClaimDetailTestJson() throws Exception {
+        String json = "{\"pageNo\":1,\"pageSize\":15,\"startSlipDetailUpdateTime\":\"\",\"endSlipDetailUpdateTime\":\"\",\"sureTimePickerInput\":\"\",\"startTradeTime\":\"1533052800000\",\"endTradeTime\":\"1534003199999\",\"tradeDatePickerInput\":\"2018-08-01 - 2018-08-11\",\"bankType\":\"\",\"amountdealRange\":\"\",\"claimMoneyRange\":\"\",\"detailType\":\"\",\"customerName\":\"\",\"customerNo\":\"\",\"payerName\":\"\",\"bankSlipId\":\"\",\"bankSlipDetailId\":\"\"}";
+//        bankSlipQueryParam.setBankType();
+//        bankSlipQueryParam.setSlipMonth();
+//        bankSlipQueryParam.setSlipStatus();
+//        bankSlipQueryParam.setSubCompanyName("南京分公司");
+//        bankSlipQueryParam.setSubCompanyId(5);
+//        bankSlipQueryParam.setBankSlipId(2);
+        BankSlipClaimDetailQueryParam bankSlipClaimDetailQueryParam = JSON.parseObject(json, BankSlipClaimDetailQueryParam.class);
+        TestResult result = getJsonTestResult("/bankSlip/pageBankSlipClaimDetail", bankSlipClaimDetailQueryParam);
+
+        System.out.println(JSON.toJSONString(result));
+    }
+
 }

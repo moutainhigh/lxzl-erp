@@ -308,10 +308,10 @@
 			<![CDATA[ and ebsc.claim_amount <= #{maps.bankSlipClaimDetailQueryParam.endClaimAmount,jdbcType=DECIMAL} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startTradeTime != null">
-			<![CDATA[ and ebsd.detail_trade_time >= #{maps.bankSlipClaimDetailQueryParam.startTradeTime,jdbcType=TIMESTAMP} ]]>
+			<![CDATA[ and ebsd.trade_time >= #{maps.bankSlipClaimDetailQueryParam.startTradeTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endTradeTime != null">
-			<![CDATA[ and ebsd.detail_trade_time < #{maps.bankSlipClaimDetailQueryParam.endTradeTime,jdbcType=TIMESTAMP} ]]>
+			<![CDATA[ and ebsd.trade_time < #{maps.bankSlipClaimDetailQueryParam.endTradeTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.payerName != ''">
 			and ebsd.payer_name like CONCAT('%','${maps.bankSlipClaimDetailQueryParam.payerName}','%' )
@@ -400,10 +400,10 @@
 			<![CDATA[ and ebsc.claim_amount <= #{maps.bankSlipClaimDetailQueryParam.endClaimAmount,jdbcType=DECIMAL} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.startTradeTime != null">
-			<![CDATA[ and ebsd.detail_trade_time >= #{maps.bankSlipClaimDetailQueryParam.startTradeTime,jdbcType=TIMESTAMP} ]]>
+			<![CDATA[ and ebsd.trade_time >= #{maps.bankSlipClaimDetailQueryParam.startTradeTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.endTradeTime != null">
-			<![CDATA[ and ebsd.detail_trade_time < #{maps.bankSlipClaimDetailQueryParam.endTradeTime,jdbcType=TIMESTAMP} ]]>
+			<![CDATA[ and ebsd.trade_time < #{maps.bankSlipClaimDetailQueryParam.endTradeTime,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.payerName != ''">
 			and ebsd.payer_name like CONCAT('%','${maps.bankSlipClaimDetailQueryParam.payerName}','%' )
