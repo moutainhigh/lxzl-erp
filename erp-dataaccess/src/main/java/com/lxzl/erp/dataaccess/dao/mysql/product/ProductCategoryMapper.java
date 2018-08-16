@@ -11,9 +11,9 @@ import java.util.Map;
 public interface ProductCategoryMapper extends BaseMysqlDAO<ProductCategoryDO> {
     List<ProductCategoryDO> findAllCategory(@Param("maps") Map<String, Object> paramMap);
 
-    Integer findProductCategoryCountByParams(@Param("maps")Map<String, Object> maps);
+    Integer findProductCategoryCountByParams(@Param("maps") Map<String, Object> maps);
 
-    List<ProductCategoryDO> findProductCategoryByParams(@Param("maps")Map<String, Object> maps);
+    List<ProductCategoryDO> findProductCategoryByParams(@Param("maps") Map<String, Object> maps);
 
-    List<ProductCategoryDO> findByParentCategoryId(@Param("parentCategoryId")Integer parentCategoryId);
+    List<ProductCategoryDO> findByParentCategoryId(@Param("parentCategoryId") Integer parentCategoryId);
 }

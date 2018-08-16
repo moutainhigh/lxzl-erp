@@ -136,4 +136,10 @@
         INSERT INTO erp_product_sku_property
         <include refid="set_column_sql"/>
     </insert>
+
+    <select id="findByPropertyValueIdForUpdateValue" resultMap="ProductSkuPropertyDO" parameterType="map">
+        select
+        <include refid="column_List"/>
+        from erp_product_sku_property epsp where epsp.property_value_id =  #{propertyValueId, jdbcType=INTEGER} and epsp.data_status = 1
+    </select>
 </mapper>

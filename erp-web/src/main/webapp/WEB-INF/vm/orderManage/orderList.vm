@@ -145,6 +145,20 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="section row mt15">
+                                        <div class="col-md-12">
+                                            <div class="col-md-2">
+                                                <div class="form-group mn">
+                                                    <input type="hidden" name="startExpectDeliveryTime" id="startExpectDeliveryTime" />
+                                                    <input type="hidden" name="endExpectDeliveryTime" id="endExpectDeliveryTime" />
+                                                    <div class="input-group date" id="deliveryTimePicker">
+                                                        <input type="text" name="deliveryTimePicker" id="deliveryTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="送货时间">
+                                                        <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <hr class="short alt">
                                     <div class="section row">
                                         <div class="col-md-12">
