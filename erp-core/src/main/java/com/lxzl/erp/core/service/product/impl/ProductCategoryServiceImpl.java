@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.ProductCategoryPageParam;
 import com.lxzl.erp.common.domain.product.ProductCategoryPropertyPageParam;
+import com.lxzl.erp.common.domain.product.ProductCategoryPropertyValuePageParam;
 import com.lxzl.erp.common.domain.product.ProductCategoryQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategory;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategoryProperty;
@@ -648,7 +649,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         Map<String,Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("productCategoryPageParam", productCategoryPropertyPageParam);
+        maps.put("productCategoryPropertyPageParam", productCategoryPropertyPageParam);
 
         Integer totalCount = productCategoryPropertyMapper.findCategoryPropertyCountByParams(maps);
         List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findCategoryPropertyByParams(maps);
@@ -675,6 +676,27 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(productCategoryProperty);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, Page<ProductCategoryPropertyValue>> pageProductCategoryPropertyValue(ProductCategoryPropertyValuePageParam productCategoryPropertyValuePageParam) {
+        ServiceResult<String, Page<ProductCategoryPropertyValue>> serviceResult = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(productCategoryPropertyValuePageParam.getPageNo(),productCategoryPropertyValuePageParam.getPageSize());
+
+        Map<String,Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("productCategoryPropertyValuePageParam", productCategoryPropertyValuePageParam);
+
+        Integer totalCount = productCategoryPropertyValueMapper.findCategoryPropertyValueCountByParams(maps);
+        List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findCategoryPropertyValueByParams(maps);
+
+        List<ProductCategoryPropertyValue> productCategoryPropertyValueList = ConverterUtil.convertList(productCategoryPropertyValueDOList, ProductCategoryPropertyValue.class);
+        Page<ProductCategoryPropertyValue> page = new Page<>(productCategoryPropertyValueList, totalCount, productCategoryPropertyValuePageParam.getPageNo(), productCategoryPropertyValuePageParam.getPageSize());
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(page);
         return serviceResult;
     }
 

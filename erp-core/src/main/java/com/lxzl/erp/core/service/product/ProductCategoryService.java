@@ -4,6 +4,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.ProductCategoryPageParam;
 import com.lxzl.erp.common.domain.product.ProductCategoryPropertyPageParam;
+import com.lxzl.erp.common.domain.product.ProductCategoryPropertyValuePageParam;
 import com.lxzl.erp.common.domain.product.ProductCategoryQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategory;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategoryProperty;
@@ -115,11 +116,17 @@ public interface ProductCategoryService extends BaseService {
     ServiceResult<String,ProductCategoryProperty> detailProductCategoryProperty(Integer categoryPropertyId);
 
     /**
+     * 商品分类属性值列表
+     * @param productCategoryPropertyValuePageParam
+     * @return
+     */
+    ServiceResult<String,Page<ProductCategoryPropertyValue>> pageProductCategoryPropertyValue(ProductCategoryPropertyValuePageParam productCategoryPropertyValuePageParam);
+
+    /**
      * 商品分类属性值详情
      * @param categoryPropertyValueId
      * @return
      */
     ServiceResult<String,ProductCategoryPropertyValue> detailProductCategoryPropertyValue(Integer categoryPropertyValueId);
-
 
 }

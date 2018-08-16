@@ -4,10 +4,7 @@ import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
-import com.lxzl.erp.common.domain.product.ProductCategoryPageParam;
-import com.lxzl.erp.common.domain.product.ProductCategoryPropertyPageParam;
-import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
-import com.lxzl.erp.common.domain.product.ProductQueryParam;
+import com.lxzl.erp.common.domain.product.*;
 import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import org.junit.Test;
@@ -271,8 +268,9 @@ public class ProductTest extends ERPUnTransactionalTest {
     @Test
     public void pageProductCategoryProperty() throws Exception {
         ProductCategoryPropertyPageParam param = new ProductCategoryPropertyPageParam();
-        param.setPageNo(2);
+        param.setPageNo(1);
         param.setPageSize(15);
+        param.setCategoryId(800002);
 
         TestResult testResult = getJsonTestResult("/product/pageProductCategoryProperty", param);
     }
@@ -284,6 +282,18 @@ public class ProductTest extends ERPUnTransactionalTest {
 
         TestResult testResult = getJsonTestResult("/product/detailProductCategoryProperty", param);
     }
+
+    @Test
+    public void pageProductCategoryPropertyValue() throws Exception {
+        ProductCategoryPropertyValuePageParam param = new ProductCategoryPropertyValuePageParam();
+        param.setPageNo(1);
+        param.setPageSize(15);
+        param.setPropertyId(1);
+        param.setCategoryId(800004);
+
+        TestResult testResult = getJsonTestResult("/product/pageProductCategoryPropertyValue", param);
+    }
+
 
     @Test
     public void detailProductCategoryPropertyValue() throws Exception {

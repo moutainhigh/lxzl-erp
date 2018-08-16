@@ -177,6 +177,12 @@ public class ProductController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "pageProductCategoryPropertyValue", method = RequestMethod.POST)
+    public Result pageProductCategoryPropertyValue(@RequestBody ProductCategoryPropertyValuePageParam productCategoryPropertyValuePageParam) {
+        ServiceResult<String, Page<ProductCategoryPropertyValue>> serviceResult = productCategoryService.pageProductCategoryPropertyValue(productCategoryPropertyValuePageParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "detailProductCategoryPropertyValue", method = RequestMethod.POST)
     public Result detailProductCategoryPropertyValue(@RequestBody @Validated(IdGroup.class) ProductCategoryPropertyValue productCategoryPropertyValue, BindingResult validResult) {
         ServiceResult<String, ProductCategoryPropertyValue> serviceResult = productCategoryService.detailProductCategoryPropertyValue(productCategoryPropertyValue.getCategoryPropertyValueId());
