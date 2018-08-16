@@ -36,6 +36,7 @@ public class ProductCategoryPropertyValue extends BasePO {
     private String propertyName; //属性名称(大名称)
     private Integer materialType; //物料类型
     private String categoryName; //分类名称
+    private String modelName; //文件原名
 
     public Integer getCategoryPropertyValueId() {
         return categoryPropertyValueId;
@@ -171,5 +172,13 @@ public class ProductCategoryPropertyValue extends BasePO {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
     }
 }

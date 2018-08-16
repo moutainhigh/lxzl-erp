@@ -49,9 +49,8 @@
     </sql>
 
     <select id="findById" resultMap="ProductCategoryPropertyDO" parameterType="java.lang.Integer">
-        select <include refid="column_List"/>,<include refid="value_column_List"/>,epc.category_name,emt.material_type_name,emt.is_capacity_material AS is_capacity_material
+        select <include refid="column_List"/>,epc.category_name,emt.material_type_name,emt.is_capacity_material AS is_capacity_material
         FROM erp_product_category_property epcp
-        LEFT JOIN erp_product_category_property_value epcpv ON epcpv.property_id = epcp.id AND epcpv.data_status = 1
         INNER JOIN erp_product_category epc ON epc.id = epcp.category_id AND epc.data_status = 1
         LEFT JOIN erp_material_type emt ON emt.id = epcp.material_type AND emt.data_status = 1
         where epcp.id = #{id, jdbcType=INTEGER} AND epcp.data_status = 1
@@ -206,6 +205,9 @@
     <select id="findCategoryPropertyCountByParams" resultType="java.lang.Integer" parameterType="map">
         SELECT count(epcp.id) FROM erp_product_category_property epcp
         <where>
+            <if test="maps.productCategoryPropertyPageParam.categoryId != null  ">
+                and epcp.category_id = #{maps.productCategoryPropertyPageParam.categoryId, jdbcType=INTEGER}
+            </if>
             <if test="maps.isQueryAll == null">
               AND epcp.data_status = 1
             </if>
@@ -218,6 +220,9 @@
         LEFT JOIN erp_product_category epc ON epc.id = epcp.category_id AND epc.data_status = 1
         LEFT JOIN erp_material_type emt ON emt.id = epcp.material_type AND emt.data_status = 1
         <where>
+            <if test="maps.productCategoryPropertyPageParam.categoryId != null  ">
+                and epcp.category_id = #{maps.productCategoryPropertyPageParam.categoryId, jdbcType=INTEGER}
+            </if>
             <if test="maps.isQueryAll == null">
                 AND epcp.data_status = 1
             </if>

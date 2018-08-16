@@ -10,4 +10,13 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
  */
 public class ProductCategoryPropertyPageParam extends BasePageParam {
 
+    private Integer categoryId; //分类Id
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
 }
