@@ -2,6 +2,7 @@ package com.lxzl.erp.dataaccess.domain.product;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.annotation.Transient;
 
 import java.util.List;
 
@@ -21,6 +22,11 @@ public class ProductCategoryPropertyDO extends BaseDO {
     private String remark;
     private Integer isCapacityMaterial;
     private List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList;
+
+    @Transient
+    private String categoryName;// 分类名称
+    @Transient
+    private String materialTypeName;// 配件类型名称
 
     public Integer getId() {
         return id;
@@ -124,5 +130,21 @@ public class ProductCategoryPropertyDO extends BaseDO {
 
     public void setMaterialType(Integer materialType) {
         this.materialType = materialType;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getMaterialTypeName() {
+        return materialTypeName;
+    }
+
+    public void setMaterialTypeName(String materialTypeName) {
+        this.materialTypeName = materialTypeName;
     }
 }
