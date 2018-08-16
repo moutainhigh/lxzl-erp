@@ -57,8 +57,9 @@ public class ExceptionHandlerAdvice {
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> exception(Exception exception , WebRequest request) {
-        StringWriter exceptionFormat=new StringWriter();
-        exception.printStackTrace(new PrintWriter(exceptionFormat,true));
+//        StringWriter exceptionFormat=new StringWriter();
+//        exception.printStackTrace(new PrintWriter(exceptionFormat,true));
+        exception.printStackTrace();
         log.error("ExceptionHandlerAdvice catch the SystemException, ", exception);
         if(StringUtil.isEmpty(ErrorCode.getMessage(exception.getMessage()))){
             return new ResponseEntity<Object>(resultGenerator.generate(ErrorCode.SYSTEM_ERROR,ErrorCode.getMessage(ErrorCode.SYSTEM_ERROR) ),HttpStatus.OK);

@@ -319,7 +319,7 @@ public class PaymentServiceImpl implements PaymentService {
         User loginUser = userSupport.getCurrentUser();
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
         Date now = new Date();
-        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        CustomerDO customerDO = customerMapper.findByNoForCharge(customerNo);
         if (customerDO == null) {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
@@ -328,6 +328,7 @@ public class PaymentServiceImpl implements PaymentService {
             result.setErrorCode(ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO);
             return result;
         }
+
         WeixinPayParam weixinPayParam = new WeixinPayParam();
         weixinPayParam.setBusinessCustomerNo(customerDO.getCustomerNo());
         weixinPayParam.setPayName("凌雄租赁");
@@ -341,6 +342,10 @@ public class PaymentServiceImpl implements PaymentService {
         weixinPayParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         weixinPayParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
         weixinPayParam.setBusinessOperateUser(loginUserId.toString());
+        //添加客户名称、分公司名称、分公司ID
+        weixinPayParam.setBusinessCustomerName(customerDO.getCustomerName());
+        weixinPayParam.setChargeBodyName(customerDO.getOwnerSubCompanyName());
+        weixinPayParam.setChargeBodyId(customerDO.getOwnerSubCompanyId());
 
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
@@ -409,16 +414,6 @@ public class PaymentServiceImpl implements PaymentService {
 
         ServiceResult<String, Page<ChargeRecord>> result = new ServiceResult<>();
 
-        CustomerDO customerName = null == chargeRecordPageParam.getCustomerName() || "".equals(chargeRecordPageParam.getCustomerName()) ? null : customerMapper.findByName(chargeRecordPageParam.getCustomerName());
-        CustomerDO customerNo = null == chargeRecordPageParam.getBusinessCustomerNo() || "".equals(chargeRecordPageParam.getBusinessCustomerNo()) ? null : customerMapper.findByNo(chargeRecordPageParam.getBusinessCustomerNo());
-
-        if (customerName != null) {
-            chargeRecordPageParam.setBusinessCustomerNo(customerName.getCustomerNo());
-        } else if (customerNo != null) {
-            chargeRecordPageParam.setBusinessCustomerNo(customerNo.getCustomerNo());
-            chargeRecordPageParam.setCustomerName(customerNo.getCustomerName());
-        }
-
         chargeRecordPageParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         chargeRecordPageParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
 
@@ -431,7 +426,10 @@ public class PaymentServiceImpl implements PaymentService {
             if (chargeRecordPageParam.getSubCompanyId() != null) {
                 paymentChargeRecordPageParam.setChargeBodyId(chargeRecordPageParam.getSubCompanyId().toString());
             }
-            if (StringUtil.isEmpty(chargeRecordPageParam.getBusinessCustomerNo())) {
+            if (chargeRecordPageParam.getCustomerName() != null&&!"".equals(chargeRecordPageParam.getCustomerName())) {
+                paymentChargeRecordPageParam.setBusinessCustomerName(chargeRecordPageParam.getCustomerName());
+            }
+            if (StringUtil.isEmpty(chargeRecordPageParam.getBusinessCustomerNo())||"".equals(chargeRecordPageParam.getBusinessCustomerNo())) {
                 paymentChargeRecordPageParam.setBusinessCustomerNo(null);
             }
 
@@ -496,9 +494,6 @@ public class PaymentServiceImpl implements PaymentService {
                     for (ChargeRecord chargeRecord : chargeRecordList) {
                         if (customerNoMap.get(chargeRecord.getBusinessCustomerNo()) != null) {
                             CustomerDO customerDO = customerNoMap.get(chargeRecord.getBusinessCustomerNo());
-                            chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
-                            chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
-                            chargeRecord.setCustomerName(customerDO.getCustomerName());
                             chargeRecord.setErpCustomerNo(customerDO.getCustomerNo());
                         } else if (customerNameMap.get(chargeRecord.getCustomerName()) != null) {
                             CustomerDO customerDO = customerNameMap.get(chargeRecord.getCustomerName());

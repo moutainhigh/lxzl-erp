@@ -14,7 +14,7 @@
                         </label>
                     </div>
                     <div class="col-md-6 mb15 hide" id="materialModelCol">
-                        <label for="materialModelId" class="field-label">属性值</label>
+                        <label for="materialModelId" class="field-label">属性容量值</label>
                         <div class="smart-widget sm-right smr-50">
                             <label class="field">
                                 <input type="text" name="materialModelName" id="materialModelName" class="gui-input" readonly placeholder="请选属性值" />
@@ -24,13 +24,13 @@
                         </div>
                     </div>
                     <div class="col-md-6 mb15 hide" id="capacityCol">
-                        <label for="propertyCapacityValue" class="field-label">属性值</label>
+                        <label for="propertyCapacityValue" class="field-label">属性容量值</label>
                         <label for="propertyCapacityValue" class="field prepend-icon">
                             <input type="text" name="propertyCapacityValue" id="propertyCapacityValue" class="gui-input required checkInteger"/>
                             <label for="propertyCapacityValue" class="field-icon"><i class="fa fa-tag"></i></label>
                         </label>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 hide" id="dataOrderRow">
                         <label for="dataOrder" class="field-label">排序</label>
                         <label for="dataOrder" class="field prepend-icon">
                             <input type="text" name="dataOrder" id="dataOrder" class="gui-input" placeholder="0"/>

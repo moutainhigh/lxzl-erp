@@ -23,4 +23,12 @@ public interface ProductCategoryPropertyValueMapper extends BaseMysqlDAO<Product
                                                                         @Param("categoryId")Integer categoryId);
 
     List<ProductCategoryPropertyValueDO> findListByPropertyIdAndCategoryId(@Param("propertyId")Integer propertyId, @Param("categoryId")Integer categoryId);
+
+    Integer findCategoryPropertyValueCountByParams(@Param("maps")Map<String, Object> maps);
+
+    List<ProductCategoryPropertyValueDO> findCategoryPropertyValueByParams(@Param("maps")Map<String, Object> maps);
+
+    ProductCategoryPropertyValueDO findByPropertyValueNameAndCategoryIdAndPropertyId(@Param("propertyValueName")String propertyValueName,
+                                                                                     @Param("categoryId")Integer categoryId,
+                                                                                     @Param("propertyId")Integer propertyId);
 }

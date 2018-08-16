@@ -5,6 +5,8 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
 import com.lxzl.erp.common.domain.k3.K3SendRecordBatchParam;
 import com.lxzl.erp.common.domain.k3.K3SendRecordParam;
+import com.lxzl.erp.common.domain.k3.QueryK3StockParam;
+import com.lxzl.erp.common.domain.k3.pojo.K3ProductStock;
 import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
@@ -12,6 +14,7 @@ import com.lxzl.erp.common.domain.order.OrderConfirmChangeToK3Param;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -80,4 +83,11 @@ public interface K3Service {
      * @return
      */
     public ServiceResult<String, String> sendReletOrderInfoToK3(ReletOrderDO reletOrderDO, OrderDO orderDO);
+
+    /**
+     * 查询K3库存
+     * @param queryK3StockParam
+     * @return
+     */
+    ServiceResult<String, List<K3ProductStock>> queryK3Stock(QueryK3StockParam queryK3StockParam);
 }
