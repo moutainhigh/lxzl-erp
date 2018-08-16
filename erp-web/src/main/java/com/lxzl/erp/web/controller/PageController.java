@@ -158,6 +158,16 @@ public class PageController extends BaseController {
         return "/productManage/skuList";
     }
 
+    @RequestMapping("/product-manage/property-list")
+    public String productManagePropertyList() {
+        return "/productManage/productPropertyList";
+    }
+
+    @RequestMapping("/product-manage/property-detail")
+    public String productManagePropertyDetail() {
+        return "/productManage/productPropertyDetail";
+    }
+
     //添加商品属性值
     @RequestMapping("/product-manage/add-property")
     public String productManageAddProperty() {
