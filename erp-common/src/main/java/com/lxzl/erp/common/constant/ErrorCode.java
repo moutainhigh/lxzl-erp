@@ -167,6 +167,7 @@ public class ErrorCode {
     public static final String FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE = "J800095";
     public static final String LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE = "J800096";
     public static final String CUSTOMER_COMPANY_NEED_IS_NEW_NOT_NULL = "J800097";
+    public static final String PRODUCT_CATEGORY_PROPERTY_VALUE_HAD_USED_NOT_UPDATE = "J800098";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -1281,6 +1282,7 @@ public class ErrorCode {
         MAP.put(CATEGORY_PROPERTY_VALUE_ID_NOT_NULL, "商品分类的属性值ID不能为空");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_ID_IS_ERROR, "更改的商品分类的属性值ID与原商品分类的属性值ID不同");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_NAME_NOT_SAME, "商品分类的属性值名称不能相同");
+        MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_HAD_USED_NOT_UPDATE, "商品分类的属性值已经被使用，不能进行更改");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_CATEGORY_ID_IS_ERROR, "商品分类的ID必须一致，即必须属于同一个产品");
         MAP.put(CUSTOMER_COMPANY_NEED_TOTAL_PRICE_IS_ERROR, "所需设备的总金额计算出错");
         MAP.put(FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的首期申请额度与所有首次所需设备的总金额不相等");
