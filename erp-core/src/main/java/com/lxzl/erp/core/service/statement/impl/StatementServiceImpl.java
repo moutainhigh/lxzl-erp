@@ -7312,6 +7312,10 @@ public class StatementServiceImpl implements StatementService {
         if(CollectionUtil.isNotEmpty(needUpdateOrderMaterialList)){
             orderMaterialMapper.batchUpdateRentingCount(needUpdateOrderMaterialList);
         }
+        //update return order item  zero
+        clearRealReturnCount(k3ReturnOrderDetailDOList, currentTime, userId);
+        //update order status if not return
+        updateRefOrderStatus(k3ReturnOrderDetailDOList, currentTime, userId);
         //update return order
         k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
         k3ReturnOrderDO.setSuccessStatus(CommonConstant.NO);
@@ -7322,6 +7326,45 @@ public class StatementServiceImpl implements StatementService {
         String returnCode= paymentService.returnOtherFeeAndPayDeposit(k3ReturnOrderDO.getK3CustomerNo(),needReturnOtherAmount,needRepayDeposit,needRepayRentDeposit,"退货单取消结算");
 
         return returnCode;
+    }
+
+    private void clearRealReturnCount(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList, Date currentTime, String userId) {
+        if(CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOList)){
+            for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDetailDOList){
+                k3ReturnOrderDetailDO.setRealProductCount(CommonConstant.COMMON_ZERO);
+                k3ReturnOrderDetailDO.setUpdateTime(currentTime);
+                k3ReturnOrderDetailDO.setUpdateUser(userId);
+            }
+            k3ReturnOrderDetailMapper.batchUpdateRealProductCount(k3ReturnOrderDetailDOList);
+        }
+    }
+    private void updateRefOrderStatus(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList, Date currentTime, String userId) {
+        if(CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOList)){
+            List<OrderDO> orderList=new ArrayList<>();
+            List<Integer> needDealStatus=Arrays.asList(OrderStatus.ORDER_STATUS_PART_RETURN,OrderStatus.ORDER_STATUS_RETURN_BACK);
+            for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDetailDOList){
+                OrderDO orderDO=orderMapper.findByNo(k3ReturnOrderDetailDO.getOrderNo());
+                if(!needDealStatus.contains(orderDO.getOrderStatus()))continue;
+
+                if(CollectionUtil.isNotEmpty(k3ReturnOrderDetailMapper.findListByOrderNo(k3ReturnOrderDetailDO.getOrderNo()))){
+                    orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
+                    orderDO.setUpdateTime(currentTime);
+                    orderDO.setUpdateUser(userId);
+                    orderList.add(orderDO);
+                }else{
+                    if(OrderStatus.ORDER_STATUS_RETURN_BACK.equals(orderDO.getOrderStatus())){
+                        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_PART_RETURN);
+                        orderDO.setUpdateTime(currentTime);
+                        orderDO.setUpdateUser(userId);
+                        orderList.add(orderDO);
+                    }
+                }
+            }
+            if(CollectionUtil.isNotEmpty(orderList)){
+                orderMapper.batchUpdateOrderStatus(orderList);
+            }
+
+        }
     }
 
     private Map<Integer, List<StatementOrderReturnDetailDO>> getDepositReturnRecordCatch(List<StatementOrderReturnDetailDO> depositReturnRecordList) {
