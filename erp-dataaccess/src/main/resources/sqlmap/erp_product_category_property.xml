@@ -212,7 +212,7 @@
               AND epcp.data_status = 1
             </if>
             <if test="maps.productCategoryPropertyPageParam.categoryId == null  ">
-                and epcp.data_status = 3
+                and epcp.id is NULL
             </if>
         </where>
     </select>
@@ -230,7 +230,7 @@
                 AND epcp.data_status = 1
             </if>
             <if test="maps.productCategoryPropertyPageParam.categoryId == null  ">
-                and epcp.data_status = 3
+                and epcp.id is NULL
             </if>
         </where>
         ORDER BY epcp.create_time DESC

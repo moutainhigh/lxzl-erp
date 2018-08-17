@@ -26,7 +26,7 @@ public class ProductTest extends ERPUnTransactionalTest {
         ProductQueryParam productQueryParam = new ProductQueryParam();
         productQueryParam.setPageNo(1);
         productQueryParam.setPageSize(15);
-  //      productQueryParam.setProductId(2000065);
+        //      productQueryParam.setProductId(2000065);
         productQueryParam.setK3ProductNo("10");
 //        productQueryParam.setIsRent(0);
 //        productQueryParam.setBrandId(15);
@@ -239,10 +239,10 @@ public class ProductTest extends ERPUnTransactionalTest {
     public void updateCategoryPropertyValue() throws Exception {
         ProductCategoryPropertyValue productCategoryPropertyValue = new ProductCategoryPropertyValue();
 
-        productCategoryPropertyValue.setCategoryPropertyValueId(278);
-        productCategoryPropertyValue.setPropertyValueName("GTX650 2G");
+        productCategoryPropertyValue.setCategoryPropertyValueId(573);
+        productCategoryPropertyValue.setPropertyValueName("GTX10");
 //        productCategoryPropertyValue1.setPropertyCapacityValue(2048.00);
-        productCategoryPropertyValue.setMaterialModelId(24);
+        productCategoryPropertyValue.setMaterialModelId(1);
 
         TestResult testResult = getJsonTestResult("/product/updateCategoryPropertyValue", productCategoryPropertyValue);
     }
@@ -303,3 +303,4 @@ public class ProductTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/product/detailProductCategoryPropertyValue", param);
     }
 }
+

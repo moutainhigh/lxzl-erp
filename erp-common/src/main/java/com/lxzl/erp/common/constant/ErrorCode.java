@@ -169,7 +169,6 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_NEED_IS_NEW_NOT_NULL = "J800097";
     public static final String PRODUCT_CATEGORY_PROPERTY_VALUE_HAD_USED_NOT_UPDATE = "J800098";
 
-
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
     public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
     public static final String WORKFLOW_LINK_EXISTS = "J800003";
@@ -853,7 +852,7 @@ public class ErrorCode {
     public static final String K3_RETURN_ORDER_PRODUCT_COUNT_ERROR = "J17000035";
     public static final String K3_RETURN_ORDER_MATERIAL_COUNT_ERROR = "J17000036";
     public static final String ONLY_SUCCESS_RETURN_ORDER_ALLOW_RE_STATEMENT = "J17000037";
- /** k3库存查询 */
+    /** k3库存查询 */
     public static final String K3_QUERY_STOCK_SUB_COMPANY_CODE_NOT_NULL = "J17000038";
     public static final String K3_SEL_STOCK_K3_CODE_NOT_NULL = "J17000039";
     public static final String K3_SEL_STOCK_QUERY_FAILED = "J17000040";
@@ -1283,12 +1282,12 @@ public class ErrorCode {
         MAP.put(CATEGORY_PROPERTY_VALUE_ID_NOT_NULL, "商品分类的属性值ID不能为空");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_ID_IS_ERROR, "更改的商品分类的属性值ID与原商品分类的属性值ID不同");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_NAME_NOT_SAME, "商品分类的属性值名称不能相同");
-        MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_HAD_USED_NOT_UPDATE, "商品分类的属性值已经被使用，不能进行更改");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_CATEGORY_ID_IS_ERROR, "商品分类的ID必须一致，即必须属于同一个产品");
         MAP.put(CUSTOMER_COMPANY_NEED_TOTAL_PRICE_IS_ERROR, "所需设备的总金额计算出错");
         MAP.put(FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的首期申请额度与所有首次所需设备的总金额不相等");
         MAP.put(LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的后续申请额度与所有首次所需设备的总金额不相等");
         MAP.put(CUSTOMER_COMPANY_NEED_IS_NEW_NOT_NULL, "客户所需的设备的新或旧的值不能为空");
+        MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_HAD_USED_NOT_UPDATE, "商品分类的属性值已经被使用，不能进行更改");
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
         MAP.put(MONEY_MORE_THAN_ZERO, "金额不能小于0");
@@ -1889,6 +1888,7 @@ public class ErrorCode {
         MAP.put(K3_SEL_STOCK_QUERY_FAILED, "该商品无库存");
         MAP.put(K3_SEL_STOCK_CUSTOMER_QUERY_COUNT_NOT_NULL_IN_CONFIRM_STOCK, "确认库存时K3库存查询的客户需求数量不能为空");
         MAP.put(K3_SEL_STOCK_CAN_NOT_QUERY_IN_CONFIRM_STOCK, "确认库存时K3库存查询的仓位类型不能选择借出仓和全部仓位");
+
         MAP.put(SUCCESS_RELET_ORDER_EXIST, "退货后已成功续租，退货单无法回滚");
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");

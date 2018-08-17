@@ -90,6 +90,7 @@
                             <thead>
                             <tr class="bg-light">
                                 <th>属性值名称</th>
+                                <th>属性容量值</th>
                                 <th>属性排序</th>
                                 <th>备注</th>
                                 <th>创建人</th>
@@ -104,6 +105,7 @@
                             {{#listData}}
                             <tr data-info="{{propertyValInfo}}">
                                 <td>{{propertyValueName}}</td>
+                                <td>{{capacityValue}}</td>
                                 <td>{{dataOrder}}</td>
                                 <td>{{remark}}</td>
                                 <td>

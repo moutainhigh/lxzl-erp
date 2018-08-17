@@ -21,4 +21,6 @@ public interface ProductSkuPropertyMapper extends BaseMysqlDAO<ProductSkuPropert
     ProductSkuPropertyDO findByProductSkuIdAndPropertyValue(@Param("skuId") Integer skuId, @Param("propertyValueId") Integer propertyValueId);
 
     List<ProductSkuPropertyDO> findByPropertyValueId(@Param("propertyValueId") Integer propertyValueId);
+
+    List<ProductSkuPropertyDO> findByPropertyValueIdForUpdateValue(@Param("propertyValueId") Integer propertyValueId);
 }

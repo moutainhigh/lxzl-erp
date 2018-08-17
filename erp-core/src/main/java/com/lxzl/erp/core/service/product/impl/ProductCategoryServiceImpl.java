@@ -127,7 +127,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         }
 
         //对分类属性值名称重复做判断
-        ProductCategoryPropertyValueDO ProductCategoryPropertyValueNameDO = productCategoryPropertyValueMapper.findByPropertyValueNameAndCategoryIdAndPropertyId(productCategoryPropertyValue.getPropertyValueName(),productCategoryPropertyValueDO.getCategoryId(),productCategoryPropertyValueDO.getPropertyId());
+        ProductCategoryPropertyValueDO ProductCategoryPropertyValueNameDO = productCategoryPropertyValueMapper.findByPropertyValueNameAndCategoryIdAndPropertyId(productCategoryPropertyValue.getPropertyValueName(),productCategoryPropertyDO.getCategoryId(),productCategoryPropertyValueDO.getPropertyId(),productCategoryPropertyValueDO.getId());
         if (ProductCategoryPropertyValueNameDO != null) {
             result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_VALUE_NAME_NOT_SAME);
             return result;
@@ -332,10 +332,10 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
                         productCategoryPropertyValueDO.setPropertyCapacityValue(null);
                     }
                 }else{
-                        //该商品分类没有物料类型的属性
-                        productCategoryPropertyValueDO.setPropertyCapacityValue(null);
-                        productCategoryPropertyValueDO.setMaterialModelId(null);
-                    }
+                    //该商品分类没有物料类型的属性
+                    productCategoryPropertyValueDO.setPropertyCapacityValue(null);
+                    productCategoryPropertyValueDO.setMaterialModelId(null);
+                }
                 if (productCategoryPropertyValueDO.getMaterialModelId() != null) {
                     MaterialModelDO materialModelDO = materialModelMapper.findById(productCategoryPropertyValueDO.getMaterialModelId());
                     if (materialModelDO == null
@@ -414,7 +414,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         }
 
         //判断修改的商品属性值是否已经被使用
-        List<ProductSkuPropertyDO> productSkuPropertyDOList = productSkuPropertyMapper.findByPropertyValueId(productCategoryPropertyValueDO.getId());
+        List<ProductSkuPropertyDO> productSkuPropertyDOList = productSkuPropertyMapper.findByPropertyValueIdForUpdateValue(productCategoryPropertyValueDO.getId());
         if (CollectionUtil.isNotEmpty(productSkuPropertyDOList)){
             result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_VALUE_HAD_USED_NOT_UPDATE);
             return result;
@@ -433,9 +433,12 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         if (productCategoryPropertyValue.getMaterialModelId() != null){
             productCategoryPropertyValueDO.setMaterialModelId(productCategoryPropertyValue.getMaterialModelId());
         }
+        if (productCategoryPropertyValue.getDataOrder() != null){
+            productCategoryPropertyValueDO.setDataOrder(productCategoryPropertyValue.getDataOrder());
+        }
 
         //判断更改的属性名称是否有相同的
-        ProductCategoryPropertyValueDO productCategoryPropertyValueDOByName = productCategoryPropertyValueMapper.findByPropertyValueNameAndCategoryIdAndPropertyId(productCategoryPropertyValue.getPropertyValueName(), productCategoryPropertyValueDO.getCategoryId(),productCategoryPropertyDO.getId());
+        ProductCategoryPropertyValueDO productCategoryPropertyValueDOByName = productCategoryPropertyValueMapper.findByPropertyValueNameAndCategoryIdAndPropertyId(productCategoryPropertyValue.getPropertyValueName(), productCategoryPropertyValueDO.getCategoryId(),productCategoryPropertyDO.getId(),productCategoryPropertyValueDO.getId());
         if (productCategoryPropertyValueDOByName != null){
             result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_VALUE_NAME_NOT_SAME);
             return result;
@@ -473,9 +476,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         }
 
         productCategoryPropertyValueDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        productCategoryPropertyValueDO.setCreateUser(currentUser);
         productCategoryPropertyValueDO.setUpdateUser(currentUser);
-        productCategoryPropertyValueDO.setCreateTime(now);
         productCategoryPropertyValueDO.setUpdateTime(now);
 
         //组装remark的描述
