@@ -184,8 +184,8 @@
                             {{/listData}}
                             <tr>
                                 <td>合计</td>
-                                <td id="recordCount"></td>
-                                <td id="totalMoney"></td>
+                                <td id="recordCount" colspan="1"></td>
+                                <td id="totalMoney" colspan="14"></td>
                             </tr>
                             {{/dataSource}}
                             </tbody>
