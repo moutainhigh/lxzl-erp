@@ -7,6 +7,7 @@
 
     <style>
         body {
+            /*font-size: 6pt;*/
             font-size: 12px;
         }
         p {
@@ -16,8 +17,9 @@
         .page {
             width:100%;
             width: 21cm;
+            /*min-height: 29.7cm;*/
             min-height: 25.9cm;
-            padding:0.5cm 0.5cm 1cm;
+            padding: 1cm 0.5cm;
             margin: 1cm auto;
             border: 1px #D3D3D3 solid;
             border-radius: 5px;
@@ -26,10 +28,10 @@
             position: relative;
         }
         .printHead {
-            height:1.2cm;
+            height:1cm;
         }
         .printHead .print-col {
-            height: 1.2cm;
+            height: 1cm;
             width:33.33%;
             float: left;
         }
@@ -39,6 +41,7 @@
         .subpage {
             padding: 0cm;
             border: 2px #666 solid;
+            /*height: 280mm;*/
             height: 240mm;
             position: relative;
         }
@@ -48,6 +51,7 @@
         }
 
         @page {
+            /*size: A4;*/
             size: 21cm 27.9cm;
             margin: 0;
         }
@@ -96,20 +100,19 @@
 
         .qrcodeCanvas {
             height:0.8cm;
-            width:128px;
+            width:0.8cm;
             float: right;
             position: absolute;
-            right: 0;
-            top:0;
+            right: 0.5cm;
+            top:0.5cm;
         }
 
         .orderNo {
             position: absolute;
-            bottom: 2px;
+            top: 1.4cm;
             margin: 0;
             padding: 0;
-            right: 0;
-            font-size: 12px;
+            right: 0.5cm;
         }
 
         .table .bg-light {
@@ -249,14 +252,15 @@
         {{#data}}
         <div class="page">
             <div class="printHead">
-                <div class="print-col" style="height:1cm; margin-top:0.1cm;">
+                <div class="print-col">
                     <img src="${staticCommon}rental/img/logos/beerLogo.png" class="img-responsive pull-left" alt="凌雄租赁">
                 </div>
-                <div class="print-col" style="line-height: 1.2cm;">
-                    <p  class="pn mn text-center printH1"><b>商品备货单</b></p>
+                <div class="print-col">
+                    <p  class="pn mn text-center printH1"><b>商品配货单</b></p>
                 </div>
-                <div class="print-col text-right" style="position:relative;">
-                    <canvas id="qrcodeCanvas{{pagerIndex}}" class="qrcodeCanvas"></canvas>
+                <div class="print-col text-right">
+##                    <img src="" class="img-responsive pull-right" id="barcode" alt="凌雄租赁" />
+                    <div class="qrcodeCanvas" id="qrcodeCanvas{{pagerIndex}}"></div>
                     <p class="orderNo" id="orderNo{{pagerIndex}}"></p>
                 </div>
             </div>
@@ -420,6 +424,7 @@
 
     #parse("layout/footer.vm")
     <script type="text/javascript" src="${staticCommon}vendor/plugins/jsBarcode/JsBarcode.all.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/qrcode/qrcode.min.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'api.data.js',
