@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-统计管理-流水认领明细列表</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+
+            #parse("component/loading.vm")
+
+            <div class="panel panel-primary panel-border top">
+                <div class="panel-menu p12">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <form id="searchForm" class="form-horizontal">
+                                <div class="section row">
+                                    <div class="col-md-2">
+                                        <input type="hidden" name="startTradeTime" id="startTradeTime" />
+                                        <input type="hidden" name="endTradeTime" id="endTradeTime" />
+                                        <div class="input-group date" id="tradeTimePicker">
+                                            <input type="text" name="tradeTimePickerInput" id="tradeTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="请选择交易时间">
+                                            <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="hidden" name="startClaimUpdateTime" id="startClaimUpdateTime" />
+                                        <input type="hidden" name="endClaimUpdateTime" id="endClaimUpdateTime" />
+                                        <div class="input-group date" id="claimTimePicker">
+                                            <input type="text" name="claimTimePickerInput" id="claimTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="请选择认领时间">
+                                            <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="hidden" name="startSlipDetailUpdateTime" id="startSlipDetailUpdateTime" />
+                                        <input type="hidden" name="endSlipDetailUpdateTime" id="endSlipDetailUpdateTime" />
+                                        <div class="input-group date" id="sureTimePicker">
+                                            <input type="text" name="sureTimePickerInput" id="sureTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="请选择确认时间">
+                                            <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="field form-group mn" >
+                                            <select class="form-control input-sm bradius" name="bankType" id="bankType"></select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="field form-group mn" style="display: flex;justify-content: space-between;" >
+                                            <input type="text" name="startTradeAmount" id="startTradeAmount" class="form-control input-sm bradius" autocomplete="off" placeholder="交易金额">
+                                            <span style="line-height: 30px;width: 30px;text-align: center">-</span>
+                                            <input type="text" name="endTradeAmount" id="endTradeAmount" class="form-control input-sm bradius" autocomplete="off" placeholder="交易金额">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="field form-group mn" style="display: flex;justify-content: space-between;" >
+                                            <input type="text" name="startClaimAmount" id="startClaimAmount" class="form-control input-sm bradius" autocomplete="off" placeholder="认领金额">
+                                            <span style="line-height: 30px;width: 30px;text-align: center">-</span>
+                                            <input type="text" name="endClaimAmount" id="endClaimAmount" class="form-control input-sm bradius" autocomplete="off" placeholder="认领金额">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="section row mt15">
+                                    <div class="col-md-2">
+                                        <div class="field form-group mn" >
+                                            <select class="form-control input-sm bradius" name="detailStatus" id="detailStatus"></select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="field form-group mn" >
+                                            <input type="text" name="customerName" id="customerName" class="form-control input-sm bradius" autocomplete="off" placeholder="客户名称">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="field form-group mn" >
+                                            <input type="text" name="customerNo" id="customerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="客户编码">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="field form-group mn" >
+                                            <input type="text" name="payerName" id="payerName" class="form-control input-sm bradius" autocomplete="off" placeholder="交易人">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="field form-group mn" >
+                                            <input type="text" name="bankSlipId" id="bankSlipId" class="form-control input-sm bradius" autocomplete="off" placeholder="资金流水ID">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="field form-group mn" >
+                                            <input type="text" name="bankSlipDetailId" id="bankSlipDetailId" class="form-control input-sm bradius" autocomplete="off" placeholder="资金流水明细ID">
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="short alt">
+                                <div class="section row">
+                                    <div class="col-md-12">
+                                        <div class="pull-left">
+                                            <script type="text/html" id="actionCommonButtonsTpl">
+                                                <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                                {{#acitonCommonButtons}}
+                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
+                                                    <i class="{{iClass}}"></i> {{text}}
+                                                </a>
+                                                {{/acitonCommonButtons}}
+                                            </script>
+                                            <div class="btn-group" id="actionCommonButtons"></div>
+                                        </div>
+
+                                        <script type="text/html" id="isDisabledTpl">
+                                            {{#isDisabled}}
+                                            <button type="button" class="btn btn-default btn-sm" id="isDisabledBtn">是否禁用</button>
+                                            {{/isDisabled}}
+                                        </script>
+                                        <div class="pull-right" id="isDisabledWrapper"></div>
+
+                                        <div class="pull-right mn mr5">
+                                            <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                            <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body pn">
+                    <div class="table-responsive">
+                        <script type="text/html" id="dataListTpl">
+                            <thead>
+                            <tr class="bg-light">
+                                <th>资金流水ID</th>
+                                <th>资金流水明细ID</th>
+                                <th>客户名称</th>
+                                <th>客户编码</th>
+                                <th>银行类型</th>
+                                <th>流水交易金额</th>
+                                <th>认领金额</th>
+                                <th>交易日期</th>
+                                <th>交易人</th>
+                                <th>明细状态</th>
+                                <th>认领人</th>
+                                <th>认领时间</th>
+                                <th>确认人</th>
+                                <th>确认时间</th>
+                                <th>流水备注</th>
+                                <th>领取明细备注</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#dataSource}}
+                            {{#listData}}
+                            <tr>
+                                <td>{{bankSlipId}}</td>
+                                <td>{{bankSlipDetailId}}</td>
+                                <td>{{customerName}}</td>
+                                <td>{{customerNo}}</td>
+                                <td>{{bankTypeValue}}</td>
+                                <td>￥{{#price}}{{tradeAmount}}{{/price}}</td>
+                                <td>￥{{#price}}{{claimAmount}}{{/price}}</td>
+                                <td>{{#clockShorTime}}{{tradeTime}}{{/clockShorTime}}</td>
+                                <td>{{payerName}}</td>
+                                <td>{{detailTypeValue}}</td>
+                                <td>{{claimUpdateUserName}}</td>
+                                <td>{{#clockShorTime}}{{claimUpdateTime}}{{/clockShorTime}}</td>
+                                <td>{{slipDetailUpdateUserName}}</td>
+                                <td>{{#clockShorTime}}{{slipDetailUpdateTime}}{{/clockShorTime}}</td>
+                                <td>{{slipDetailRemark}}</td>
+                                <td>{{claimRemark}}</td>
+                            </tr>
+                            {{/listData}}
+                            {{^listData}}
+                            <tr>
+                                <td valign="top" colspan="16" class="text-center">无数据</td>
+                            </tr>
+                            {{/listData}}
+                            <tr>
+                                <td>合计</td>
+                                <td id="recordCount"></td>
+                                <td id="totalMoney"></td>
+                            </tr>
+                            {{/dataSource}}
+                            </tbody>
+                        </script>
+                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                            #parse("component/pager.vm")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js', 'manage.amount.claim.detail.list.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        AmountClaimDetailList.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+    </script>
+
+</body>
+</html>
