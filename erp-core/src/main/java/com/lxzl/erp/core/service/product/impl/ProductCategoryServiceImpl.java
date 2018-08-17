@@ -332,10 +332,10 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
                         productCategoryPropertyValueDO.setPropertyCapacityValue(null);
                     }
                 }else{
-                        //该商品分类没有物料类型的属性
-                        productCategoryPropertyValueDO.setPropertyCapacityValue(null);
-                        productCategoryPropertyValueDO.setMaterialModelId(null);
-                    }
+                    //该商品分类没有物料类型的属性
+                    productCategoryPropertyValueDO.setPropertyCapacityValue(null);
+                    productCategoryPropertyValueDO.setMaterialModelId(null);
+                }
                 if (productCategoryPropertyValueDO.getMaterialModelId() != null) {
                     MaterialModelDO materialModelDO = materialModelMapper.findById(productCategoryPropertyValueDO.getMaterialModelId());
                     if (materialModelDO == null

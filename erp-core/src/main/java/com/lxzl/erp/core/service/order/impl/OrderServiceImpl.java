@@ -1899,7 +1899,10 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         OrderStatementDateSplitDO orderStatementDateSplitDO=orderStatementDateSplitMapper.findByOrderNo(orderNo);
-        if(orderStatementDateSplitDO!=null)order.setOrderStatementDateSplit(ConverterUtil.convert(orderStatementDateSplitDO, OrderStatementDateSplit.class));
+        if(orderStatementDateSplitDO!=null){
+            order.setOrderStatementDateSplit(ConverterUtil.convert(orderStatementDateSplitDO, OrderStatementDateSplit.class));
+            order.setStatementDate(orderStatementDateSplitDO.getAfterStatementDate());
+        }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
