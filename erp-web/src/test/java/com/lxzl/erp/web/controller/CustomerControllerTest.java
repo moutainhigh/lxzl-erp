@@ -938,4 +938,15 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setCustomerNo("LXCC-027-20180305-00153");
         TestResult result = getJsonTestResult("/customer/queryRentCountByCustomerNo", customer);
     }
+
+    @Test
+    public void addParentCompany() throws Exception {
+        CustomerCompanyAddParent customerCompanyAddParent = new CustomerCompanyAddParent();
+        customerCompanyAddParent.setParentCustomerId(700432);
+        List<Integer> customerIdList = new ArrayList<>();
+        customerIdList.add(700435);
+        customerIdList.add(700436);
+        customerCompanyAddParent.setCustomerIdList(customerIdList);
+        TestResult result = getJsonTestResult("/customer/addParentCompany", customerCompanyAddParent);
+    }
 }
