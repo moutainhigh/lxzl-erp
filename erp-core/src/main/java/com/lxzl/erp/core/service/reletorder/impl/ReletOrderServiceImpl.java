@@ -30,6 +30,7 @@ import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.reletorder.ReletOrderService;
+import com.lxzl.erp.core.service.reletorder.impl.support.ReletOrderSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
 import com.lxzl.erp.core.service.user.UserService;
@@ -152,7 +153,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         ReletOrderDO reletOrderDO = ConverterUtil.convert(reletOrder, ReletOrderDO.class);
 
         //支付方式为首付百分比的订单 修改续租单支付方式为先用后付
-        String updateReletOrderPayModeCode = updateReletOrderPayModeOfBeforePercent(reletOrderDO);
+        String updateReletOrderPayModeCode = reletOrderSupport.updateReletOrderPayModeOfBeforePercent(reletOrderDO);
         if (!ErrorCode.SUCCESS.equals(updateReletOrderPayModeCode)) {
             result.setErrorCode(updateReletOrderPayModeCode);
             return result;
@@ -1660,37 +1661,6 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         return ErrorCode.SUCCESS;
     }
 
-    /**
-     * 续租时：若订单支付方式是首付百分比则修改续租单支付方式为先用后付
-     *
-     * @param
-     * @return
-     * @author ZhaoZiXuan
-     * @date 2018/6/6 15:49
-     */
-    private String updateReletOrderPayModeOfBeforePercent(ReletOrderDO reletOrderDO) {
-        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
-
-            for (ReletOrderProductDO reletOrderProductDO : reletOrderDO.getReletOrderProductDOList()) {
-
-                if (OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(reletOrderProductDO.getPayMode())) {
-                    reletOrderProductDO.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
-                }
-            }
-        }
-
-        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
-
-            for (ReletOrderMaterialDO reletOrderMaterialDO : reletOrderDO.getReletOrderMaterialDOList()) {
-
-                if (OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(reletOrderMaterialDO.getPayMode())) {
-                    reletOrderMaterialDO.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
-                }
-            }
-        }
-
-        return ErrorCode.SUCCESS;
-    }
 
     @Autowired
     private OrderMapper orderMapper;
@@ -1757,4 +1727,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
     @Autowired
     private K3Service k3Service;
+
+    @Autowired
+    private ReletOrderSupport reletOrderSupport;
 }

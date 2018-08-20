@@ -2,13 +2,11 @@ package com.lxzl.erp.core.service.bank;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.bank.BankSlipClaimDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailOperationLogQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
-import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
-import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
-import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
-import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetailOperationLog;
+import com.lxzl.erp.common.domain.bank.pojo.*;
 import com.lxzl.erp.common.domain.payment.AddOnlineBankSlipQueryParam;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
 
@@ -181,5 +179,11 @@ public interface BankSlipService {
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     ServiceResult<String, String> addOnlineHistoryBankSlip(AddOnlineBankSlipQueryParam addOnlineBankSlipQueryParam) throws ParseException;
+
+    /**
+     * 流水认领明细列表
+     * @Author : sunzhipeng
+     */
+    ServiceResult<String,BankSlipClaimPage> pageBankSlipClaimDetail(BankSlipClaimDetailQueryParam bankSlipClaimDetailQueryParam);
 }
 

@@ -288,7 +288,7 @@ public class PageController extends BaseController {
     public String orderManageConfirmStock() {
         return "/component/order/confirmStockModal";
     }
-    
+
     @RequestMapping("/order-manage/pick-list-print")
     public String orderPickListPrint() {
         return "/orderManage/orderPickListPrint";
@@ -1134,6 +1134,15 @@ public class PageController extends BaseController {
     @RequestMapping("/finance-manage/statistics")
     public String financialStatistics() {
         return "/financialManage/financialStatistics";
+    }
+
+    /**
+     * 流水认领明细列表
+     * @return
+     */
+    @RequestMapping("/amount-claim-detail/list")
+    public String amountClaimDetailList() {
+        return "/financialManage/amountClaimDetailList";
     }
 
     /**

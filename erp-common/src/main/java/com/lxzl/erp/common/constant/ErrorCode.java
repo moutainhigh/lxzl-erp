@@ -859,6 +859,7 @@ public class ErrorCode {
     public static final String K3_SEL_STOCK_CUSTOMER_QUERY_COUNT_NOT_NULL_IN_CONFIRM_STOCK = "J17000041";
     public static final String K3_SEL_STOCK_CAN_NOT_QUERY_IN_CONFIRM_STOCK = "J17000042";
 
+    public static final String SUCCESS_RELET_ORDER_EXIST = "J17000043";
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
     public static final String EXCEL_SHEET_IS_NULL = "J18000003";
@@ -1888,6 +1889,7 @@ public class ErrorCode {
         MAP.put(K3_SEL_STOCK_CUSTOMER_QUERY_COUNT_NOT_NULL_IN_CONFIRM_STOCK, "确认库存时K3库存查询的客户需求数量不能为空");
         MAP.put(K3_SEL_STOCK_CAN_NOT_QUERY_IN_CONFIRM_STOCK, "确认库存时K3库存查询的仓位类型不能选择借出仓和全部仓位");
 
+        MAP.put(SUCCESS_RELET_ORDER_EXIST, "退货后已成功续租，退货单无法回滚");
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
         MAP.put(EXCEL_SHEET_IS_NULL, "Excel工作薄导入数据为空");
