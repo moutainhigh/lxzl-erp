@@ -177,7 +177,19 @@
         FROM erp_statement_order_detail esod
         LEFT JOIN erp_statement_order eso ON esod.statement_order_id = eso.id AND eso.data_status = 1
         WHERE esod.order_id = #{orderId, jdbcType=INTEGER} AND order_type = 1 AND esod.data_status = 1
-        ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC
+        ORDER BY esod.statement_expect_pay_time ASC,esod.statement_start_time ASC,esod.statement_detail_phase ASC
+    </select>
+
+    <select id="findByOrderIdForOrderLastDetail" resultMap="StatementOrderDetailDO">
+        SELECT
+        <include refid="column_List"/>,eso.statement_order_no
+        FROM erp_statement_order_detail esod
+        LEFT JOIN erp_statement_order eso ON esod.statement_order_id = eso.id AND eso.data_status = 1
+        WHERE esod.order_id = #{orderId, jdbcType=INTEGER}
+        <![CDATA[ AND esod.statement_expect_pay_time <= #{statementExpectPayTime} ]]>
+        AND esod.data_status = 1
+        ORDER BY esod.statement_expect_pay_time DESC ,esod.statement_detail_phase DESC
+        limit 1
     </select>
 
     <select id="findByReturnOrderId" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
