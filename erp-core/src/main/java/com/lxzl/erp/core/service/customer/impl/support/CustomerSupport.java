@@ -98,23 +98,27 @@ public class CustomerSupport {
 
     /**
      * 内部调用增加已用授信额度
-     *
-     * @param customerId
-     * @param amount
+     * @param customerId       客户ID （必填）
+     * @param amount           更改金额（必填）
+     * @param businessType     操作业务编码 （必填）
+     * @param orderNo          订单编号 （可空）
+     * @param remark           备注 （可空）
      * @return
      */
-    public String addCreditAmountUsed(Integer customerId, BigDecimal amount) {
+    public String addCreditAmountUsed(Integer customerId, BigDecimal amount, Integer businessType, String orderNo, String remark) {
         //切换到母公司关联客户（如果是公司客户，并且有母公司）
-        customerId = getParentCompanyCustomerId(customerId);
-        if (amount == null || customerId == null) {
+        Integer parentCustomerId = getParentCompanyCustomerId(customerId);
+        if (amount == null || parentCustomerId == null) {
             throw new BusinessException();
         }
+        //日志
+        saveCustomerRiskLog(parentCustomerId,parentCustomerId.equals(customerId)?null:customerId,amount,businessType,orderNo,remark);
         if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) < 0) {
             throw new BusinessException();
         } else if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) == 0) {
             return ErrorCode.SUCCESS;
         } else {
-            CustomerDO customerDO = customerMapper.findById(customerId);
+            CustomerDO customerDO = customerMapper.findById(parentCustomerId);
             if (customerDO == null) {
                 throw new BusinessException();
             }
@@ -132,23 +136,27 @@ public class CustomerSupport {
 
     /**
      * 内部调用减少已用授信额度
-     *
-     * @param customerId
-     * @param amount
+     * @param customerId       客户ID （必填）
+     * @param amount           更改金额（必填）
+     * @param businessType     操作业务编码 （必填）
+     * @param orderNo          订单编号 （可空）
+     * @param remark           备注 （可空）
      * @return
      */
-    public String subCreditAmountUsed(Integer customerId, BigDecimal amount) {
+    public String subCreditAmountUsed(Integer customerId, BigDecimal amount, Integer businessType, String orderNo, String remark) {
         //切换到母公司关联客户（如果是公司客户，并且有母公司）
-        customerId = getParentCompanyCustomerId(customerId);
-        if (amount == null || customerId == null) {
+        Integer parentCustomerId = getParentCompanyCustomerId(customerId);
+        if (amount == null || parentCustomerId == null) {
             throw new BusinessException();
         }
+        //日志
+        saveCustomerRiskLog(parentCustomerId,parentCustomerId.equals(customerId)?null:customerId,amount,businessType,orderNo,remark);
         if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) < 0) {
             throw new BusinessException();
         } else if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) == 0) {
             return ErrorCode.SUCCESS;
         } else {
-            CustomerDO customerDO = customerMapper.findById(customerId);
+            CustomerDO customerDO = customerMapper.findById(parentCustomerId);
             if (customerDO == null) {
                 throw new BusinessException();
             }
@@ -260,7 +268,7 @@ public class CustomerSupport {
      * @return
      * @desc 如果当前客户存在母公司，则返回母公司客户id,否则直接返回当前客户id
      */
-    public Integer getParentCompanyCustomerId(Integer custmerId) {
+    private Integer getParentCompanyCustomerId(final Integer custmerId) {
         if (custmerId != null) {
             CustomerDO customerDO=customerMapper.findById(custmerId);
             if(customerDO!=null&&CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
