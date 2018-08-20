@@ -283,4 +283,33 @@ public class CustomerSupport {
         }
         return custmerId;
     }
+
+    /**
+     * 根据客户ID，获取风控信息
+     * @param customerId
+     * @return
+     */
+    public CustomerRiskManagementDO getCustomerRiskManagementDO(Integer customerId){
+        CustomerDO customerDO = customerMapper.findById(customerId);
+        if (customerDO != null && CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+            CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerId);
+            if (customerCompanyDO != null)
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyDO.getSubsidiary())){
+                    //有母公司，获取母公司id
+                    CustomerCompanyDO customerCompanyParentDO = customerCompanyMapper.findByCustomerId(customerCompanyDO.getParentCompanyId());
+                    CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerCompanyParentDO.getCustomerId());
+                    return customerRiskManagementDO;
+                }else if(CommonConstant.COMMON_CONSTANT_NO.equals(customerCompanyDO.getSubsidiary())){
+                    //没有母公司
+                    CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerCompanyDO.getCustomerId());
+                    return customerRiskManagementDO;
+                }
+        }else if (customerDO != null && CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())){
+            //个人用户
+            CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerDO.getId());
+            return customerRiskManagementDO;
+        }
+        //没有结果，返回null
+        return null;
+    }
 }
