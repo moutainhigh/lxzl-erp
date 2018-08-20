@@ -288,4 +288,14 @@ public class CustomerController {
         return resultGenerator.generate(serviceResult);
     }
 
+    /**
+     * 添加母公司接口
+     * @param customerCompanyAddParent
+     * @return
+     */
+    @RequestMapping(value = "addParentCompany", method = RequestMethod.POST)
+    public Result addParentCompany(@RequestBody CustomerCompanyAddParent customerCompanyAddParent, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.addParentCompany(customerCompanyAddParent);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }

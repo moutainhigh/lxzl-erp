@@ -3551,6 +3551,54 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
+    /**
+     * 添加母公司接口
+     * @param customerCompanyAddParent
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> addParentCompany(CustomerCompanyAddParent customerCompanyAddParent) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date date = new Date();
+        if (customerCompanyAddParent.getParentCustomerId() == null) {
+            serviceResult.setErrorCode(ErrorCode.PARENT_CUSTOMER_ID_IS_NOT_NULL);
+            return serviceResult;
+        }
+        if (CollectionUtil.isEmpty(customerCompanyAddParent.getCustomerIdList())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_ID_IS_NOT_NULL);
+            return serviceResult;
+        }
+        CustomerCompanyDO parentCustomerCompanyDO = customerCompanyMapper.findByCustomerId(customerCompanyAddParent.getParentCustomerId());
+        if (parentCustomerCompanyDO == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_COPANY_NOT_EXISTS);
+            return serviceResult;
+        }
+        if (parentCustomerCompanyDO.getSubsidiary()) {
+            serviceResult.setErrorCode(ErrorCode.PARENT_CUSTOMER_COPANY_IS_SUBSIDIARY);
+            return serviceResult;
+        }
+        List<CustomerCompanyDO> customerCompanyDOList = customerCompanyMapper.findByCustomerIdList(customerCompanyAddParent.getCustomerIdList());
+        if (CollectionUtil.isEmpty(customerCompanyDOList)) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_COPANY_NOT_EXISTS);
+            return serviceResult;
+        }
+        for (CustomerCompanyDO customerCompanyDO:customerCompanyDOList){
+            if (customerCompanyDO.getSubsidiary()) {
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_COPANY_IS_SUBSIDIARY);
+                return serviceResult;
+            }else {
+                customerCompanyDO.setSubsidiary(true);
+                customerCompanyDO.setParentCompanyId(customerCompanyAddParent.getParentCustomerId());
+                customerCompanyDO.setUpdateTime(date);
+                customerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            }
+        }
+        customerCompanyMapper.updateList(customerCompanyDOList);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
     /*
     将customer中的确认结算单用户id和确认坏账用户id转换为名字
      */

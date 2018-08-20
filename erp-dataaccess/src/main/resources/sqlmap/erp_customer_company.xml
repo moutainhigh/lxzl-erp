@@ -324,4 +324,33 @@
 
 	</select>
 
+	<select id="findByCustomerIdList" resultMap="CustomerCompanyDO" >
+		SELECT * FROM `erp_customer_company` ecc WHERE ecc.data_status = 1 AND ecc.customer_id IN
+		<foreach collection="list" index="index" item="customerId" open="(" separator="," close=")">
+			#{customerId,jdbcType=INTEGER}
+		</foreach>
+	</select>
+
+	<update id="updateList" parameterType="java.util.ArrayList">
+		update erp_customer_company
+		SET
+		<trim>
+			is_subsidiary =
+			<foreach item="customerCompanyDO" collection="customerCompanyDOList"  index="index" separator=" " open="case id" close="end">
+				when #{customerCompanyDO.id} then #{customerCompanyDO.isSubsidiary}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			parent_company_id =
+			<foreach item="customerCompanyDO" collection="customerCompanyDOList"  index="index" separator=" " open="case id" close="end">
+				when #{customerCompanyDO.id} then #{customerCompanyDO.parentCompanyId}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="customerCompanyDOList" index="index" item="customerCompanyDO"
+				 separator="," open="(" close=")">
+			#{customerCompanyDO.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+
 </mapper>
