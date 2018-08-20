@@ -27,6 +27,7 @@ public class FinanceStatisticsReturnProductDetail {
     private String customerName;           // 客户名称
     private Integer rentType;              // 租赁类型
     private Integer rentTimeLength;        // 租赁时长
+    private Integer rentLengthType;       // 租赁长短类型
     private Date returnTime;               // 退货时间
     private Date rentStartTime;            // 订单起租时间
     private Date expectReturnTime;         // 订单截止时间
@@ -135,6 +136,14 @@ public class FinanceStatisticsReturnProductDetail {
         this.rentTimeLength = rentTimeLength;
     }
 
+    public Integer getRentLengthType() {
+        return rentLengthType;
+    }
+
+    public void setRentLengthType(Integer rentLengthType) {
+        this.rentLengthType = rentLengthType;
+    }
+    
     public Date getReturnTime() {
         return returnTime;
     }

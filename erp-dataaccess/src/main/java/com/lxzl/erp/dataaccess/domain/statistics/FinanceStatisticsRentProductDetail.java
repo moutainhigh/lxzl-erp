@@ -19,6 +19,7 @@ public class FinanceStatisticsRentProductDetail {
     private String customerName;          // 客户名称
     private Integer rentType;             // 租赁类型
     private Integer rentTimeLength;       //租赁时长
+    private Integer rentLengthType;       // 租赁长短类型
     private String productName;           // 商品名称
     private String k3ProductNo;           // 商品编码
     private Integer productCount;         // 商品数量
@@ -74,6 +75,14 @@ public class FinanceStatisticsRentProductDetail {
 
     public void setRentTimeLength(Integer rentTimeLength) {
         this.rentTimeLength = rentTimeLength;
+    }
+
+    public Integer getRentLengthType() {
+        return rentLengthType;
+    }
+
+    public void setRentLengthType(Integer rentLengthType) {
+        this.rentLengthType = rentLengthType;
     }
 
     public String getProductName() {

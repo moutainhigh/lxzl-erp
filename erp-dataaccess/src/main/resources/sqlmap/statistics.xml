@@ -1639,6 +1639,7 @@ ORDER BY esc.data_order DESC
         <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
         <result column="rent_type" jdbcType="INTEGER" property="rentType"/>
         <result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength"/>
+        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType"/>
         <result column="product_name" jdbcType="VARCHAR" property="productName"/>
         <result column="k3_product_no" jdbcType="VARCHAR" property="k3ProductNo"/>
         <result column="product_count" jdbcType="INTEGER" property="productCount"/>
@@ -1651,7 +1652,12 @@ ORDER BY esc.data_order DESC
 
     <select id="statisticsRentProductDetail" resultMap="FinanceStatisticsRentProductDetail" parameterType="java.util.Map">
         SELECT
-            eo.order_no, eo.order_sub_company_id, eo.delivery_sub_company_id,ec.customer_name,eo.rent_type, eo.rent_time_length, eop.product_name, ep.k3_product_no,
+            eo.order_no, eo.order_sub_company_id, eo.delivery_sub_company_id,ec.customer_name,eo.rent_type, eo.rent_time_length,
+            (CASE WHEN ((eo.rent_type=2 AND 6 > eo.rent_time_length) OR (eo.rent_type=1 AND eo.rent_time_length >= 30)) THEN 1
+                  WHEN (eo.rent_type=2 AND eo.rent_time_length >= 6) THEN 2
+                  WHEN (eo.rent_type=1 AND 30 > eo.rent_time_length) THEN 3
+                  ELSE 0 END) AS rent_length_type,
+            eop.product_name, ep.k3_product_no,
             eop.product_count, eop.product_unit_amount, eo.rent_start_time, eo.expect_return_time, eop.is_new_product, eo.delivery_time
         FROM erp_order_product eop
         LEFT JOIN erp_order eo ON eop.order_id=eo.id AND eo.data_status=1 AND eop.data_status=1
@@ -1678,6 +1684,7 @@ ORDER BY esc.data_order DESC
         <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
         <result column="rent_type" jdbcType="INTEGER" property="rentType"/>
         <result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength"/>
+        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType"/>
         <result column="return_time" jdbcType="TIMESTAMP" property="returnTime"/>
         <result column="rent_start_time" jdbcType="TIMESTAMP" property="rentStartTime"/>
         <result column="expect_return_time" jdbcType="TIMESTAMP" property="expectReturnTime"/>
@@ -1686,7 +1693,12 @@ ORDER BY esc.data_order DESC
     <select id="statisticsReturnProductDetail" resultMap="FinanceStatisticsReturnProductDetail" parameterType="java.util.Map">
         SELECT
             ekro.return_order_no, ekrod.product_no, ekrod.product_name, eop.product_unit_amount, ekrod.product_count, ekrod.real_product_count, eo.order_no, eo.order_sub_company_id,eo.delivery_sub_company_id,
-            ec.customer_no, ec.customer_name, eo.rent_type, eo.rent_time_length, ekro.return_time, eo.rent_start_time, eo.expect_return_time
+            ec.customer_no, ec.customer_name, eo.rent_type, eo.rent_time_length,
+            (CASE WHEN ((eo.rent_type=2 AND 6 > eo.rent_time_length) OR (eo.rent_type=1 AND eo.rent_time_length >= 30)) THEN 1
+                  WHEN (eo.rent_type=2 AND eo.rent_time_length >= 6) THEN 2
+                  WHEN (eo.rent_type=1 AND 30 > eo.rent_time_length) THEN 3
+                  ELSE 0 END) AS rent_length_type,
+            ekro.return_time, eo.rent_start_time, eo.expect_return_time
         FROM erp_k3_return_order ekro
         INNER JOIN erp_k3_return_order_detail ekrod ON ekrod.return_order_id = ekro.id AND ekrod.data_status=1
         INNER JOIN erp_order eo ON eo.order_no=ekrod.order_no AND eo.data_status=1

@@ -40,11 +40,31 @@ public class ExcelExportConfigGroup {
             @Override
             public Object view(Object o) {
                 if (o != null) {
+                    Integer rentType = (Integer) o;
+                    if (OrderRentType.RENT_TYPE_DAY == rentType) {
+                        return "按天租";
+                    } else if (OrderRentType.RENT_TYPE_MONTH == rentType) {
+                        return "按月租";
+                    }
+                }
+                return null;
+            }
+        };
+        return rentTypeExcelExportView;
+    }
+
+    private static ExcelExportView createRentLengthTypeExcelExportView() {
+        ExcelExportView rentTypeExcelExportView = new ExcelExportView() {
+            @Override
+            public Object view(Object o) {
+                if (o != null) {
                     Integer rentLengthType = (Integer) o;
-                    if (RentLengthType.RENT_LENGTH_TYPE_SHORT == rentLengthType) {
+                    if (StatisticsRentLengthType.RENT_LENGTH_TYPE_SHORT == rentLengthType) {
                         return "短租";
-                    } else if (RentLengthType.RENT_LENGTH_TYPE_LONG == rentLengthType) {
+                    } else if (StatisticsRentLengthType.RENT_LENGTH_TYPE_LONG == rentLengthType) {
                         return "长租";
+                    } else if (StatisticsRentLengthType.RENT_LENGTH_TYPE_SHORTEST == rentLengthType) {
+                        return "短短租";
                     }
                 }
                 return null;
@@ -96,6 +116,7 @@ public class ExcelExportConfigGroup {
                 .addConfig(new ColConfig("customerName","客户名称"))
                 .addConfig(new ColConfig("rentType","租赁类型", createRentTypeExcelExportView()))
                 .addConfig(new ColConfig("rentTimeLength","租赁时长"))
+                .addConfig(new ColConfig("rentLengthType","租赁长短类型", createRentLengthTypeExcelExportView()))
                 .addConfig(new ColConfig("productName","商品名称"))
                 .addConfig(new ColConfig("k3ProductNo","商品编号"))
                 .addConfig(new ColConfig("productCount","商品数量"))
@@ -133,6 +154,7 @@ public class ExcelExportConfigGroup {
                 .addConfig(new ColConfig("customerName", "客户名称"))
                 .addConfig(new ColConfig("rentType","租赁类型", createRentTypeExcelExportView()))
                 .addConfig(new ColConfig("rentTimeLength","租赁时长"))
+                .addConfig(new ColConfig("rentLengthType","租赁长短类型", createRentLengthTypeExcelExportView()))
                 .addConfig(new ColConfig("returnTime","退货时间", DateExcelExportView.getInstance()))
                 .addConfig(new ColConfig("rentStartTime","订单起租时间",DateExcelExportView.getInstance()))
                 .addConfig(new ColConfig("expectReturnTime","订单截止时间", DateExcelExportView.getInstance()));
@@ -157,22 +179,7 @@ public class ExcelExportConfigGroup {
                 return null;
             }
         }))
-        .addConfig(new ColConfig("rentLengthType", "租赁类型", new ExcelExportView() {
-            @Override
-            public Object view(Object o) {
-                if (o != null) {
-                    Integer rentLengthType = (Integer) o;
-                    if (StatisticsRentLengthType.RENT_LENGTH_TYPE_SHORT == rentLengthType) {
-                        return "短租";
-                    } else if (StatisticsRentLengthType.RENT_LENGTH_TYPE_LONG == rentLengthType) {
-                        return "长租";
-                    } else if (StatisticsRentLengthType.RENT_LENGTH_TYPE_SHORTEST == rentLengthType){
-                        return "短短租";
-                    }
-                }
-                return null;
-            }
-        }))
+         .addConfig(new ColConfig("rentLengthType", "租赁类型", createRentLengthTypeExcelExportView()))
          .addConfig(new ColConfig("dealsCountType", "统计科目类型", new ExcelExportView() {
              @Override
              public Object view(Object o) {
