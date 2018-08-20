@@ -1657,7 +1657,7 @@ ORDER BY esc.data_order DESC
         LEFT JOIN erp_order eo ON eop.order_id=eo.id AND eo.data_status=1 AND eop.data_status=1
         LEFT JOIN erp_product ep ON ep.id=eop.product_id
         LEFT JOIN erp_customer ec ON eo.buyer_customer_id=ec.id
-        WHERE ep.data_status=1 AND eo.order_status IN (16, 20, 22, 24) AND eop.product_count > 0
+        WHERE ep.data_status=1 AND eo.order_sub_company_id != 1 AND eo.order_status IN (16, 20, 22, 24) AND eop.product_count > 0
         AND (CASE WHEN ep.k3_product_no LIKE '%.DIS.%' THEN  eop.product_unit_amount>0 ELSE 1=1 END)
         <if test="maps.statisticsStartTime != null and maps.statisticsEndTime != null">
             AND eo.delivery_time BETWEEN  #{maps.statisticsStartTime,jdbcType=TIMESTAMP} AND #{maps.statisticsEndTime,jdbcType=TIMESTAMP}
@@ -1693,7 +1693,7 @@ ORDER BY esc.data_order DESC
         INNER JOIN erp_order_product eop ON ekrod.order_item_type=1 AND (CASE WHEN ekrod.product_no LIKE '%.DIS.%' THEN eop.product_unit_amount>0  ELSE 1=1 END)
         INNER JOIN erp_customer ec ON eo.buyer_customer_id=ec.id
         AND eo.id=eop.order_id AND (ekrod.order_item_id=eop.id OR ekrod.order_entry=eop.FEntry_id) AND eop.data_status=1
-        WHERE ekrod.order_item_type=1 AND ekrod.real_product_count > 0
+        WHERE ekrod.order_item_type=1 AND eo.order_sub_company_id != 1 AND ekrod.real_product_count > 0
         <if test="maps.statisticsStartTime != null and maps.statisticsEndTime != null">
             AND ekro.return_time BETWEEN  #{maps.statisticsStartTime,jdbcType=TIMESTAMP} AND #{maps.statisticsEndTime,jdbcType=TIMESTAMP}
         </if>
