@@ -2284,7 +2284,7 @@ public class OrderServiceImpl implements OrderService {
             //恢复信用额度
             BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
             if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
-                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
+                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount,CustomerRiskBusinessType.FORCE_CANCEL_ORDER_TYPE,orderDO.getOrderNo(),"");
             }
             statementOrderSupport.reStatement(currentTime,statementOrderDOMap,statementOrderDetailDOList);
         }
