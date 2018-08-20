@@ -98,11 +98,12 @@ public class CustomerSupport {
 
     /**
      * 内部调用增加已用授信额度
-     * @param customerId       客户ID （必填）
-     * @param amount           更改金额（必填）
-     * @param businessType     操作业务编码 （必填）
-     * @param orderNo          订单编号 （可空）
-     * @param remark           备注 （可空）
+     *
+     * @param customerId   客户ID （必填）
+     * @param amount       更改金额（必填）
+     * @param businessType 操作业务编码 （必填）
+     * @param orderNo      订单编号 （可空）
+     * @param remark       备注 （可空）
      * @return
      */
     public String addCreditAmountUsed(Integer customerId, BigDecimal amount, Integer businessType, String orderNo, String remark) {
@@ -112,7 +113,7 @@ public class CustomerSupport {
             throw new BusinessException();
         }
         //日志
-        saveCustomerRiskLog(parentCustomerId,parentCustomerId.equals(customerId)?null:customerId,amount,businessType,orderNo,remark);
+        saveCustomerRiskLog(parentCustomerId, parentCustomerId.equals(customerId) ? null : customerId, amount, businessType, orderNo, remark);
         if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) < 0) {
             throw new BusinessException();
         } else if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) == 0) {
@@ -136,11 +137,12 @@ public class CustomerSupport {
 
     /**
      * 内部调用减少已用授信额度
-     * @param customerId       客户ID （必填）
-     * @param amount           更改金额（必填）
-     * @param businessType     操作业务编码 （必填）
-     * @param orderNo          订单编号 （可空）
-     * @param remark           备注 （可空）
+     *
+     * @param customerId   客户ID （必填）
+     * @param amount       更改金额（必填）
+     * @param businessType 操作业务编码 （必填）
+     * @param orderNo      订单编号 （可空）
+     * @param remark       备注 （可空）
      * @return
      */
     public String subCreditAmountUsed(Integer customerId, BigDecimal amount, Integer businessType, String orderNo, String remark) {
@@ -150,7 +152,7 @@ public class CustomerSupport {
             throw new BusinessException();
         }
         //日志
-        saveCustomerRiskLog(parentCustomerId,parentCustomerId.equals(customerId)?null:customerId,amount,businessType,orderNo,remark);
+        saveCustomerRiskLog(parentCustomerId, parentCustomerId.equals(customerId) ? null : customerId, amount, businessType, orderNo, remark);
         if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) < 0) {
             throw new BusinessException();
         } else if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) == 0) {
@@ -270,8 +272,8 @@ public class CustomerSupport {
      */
     private Integer getParentCompanyCustomerId(final Integer custmerId) {
         if (custmerId != null) {
-            CustomerDO customerDO=customerMapper.findById(custmerId);
-            if(customerDO!=null&&CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+            CustomerDO customerDO = customerMapper.findById(custmerId);
+            if (customerDO != null && CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
                 CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(custmerId);
                 if (customerCompanyDO != null && !CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyDO.getSubsidiary())) {
                     CustomerCompanyDO parentCustomerCompanyDO = customerCompanyMapper.findById(customerCompanyDO.getParentCompanyId());
@@ -286,30 +288,13 @@ public class CustomerSupport {
 
     /**
      * 根据客户ID，获取风控信息
+     *
      * @param customerId
      * @return
      */
-    public CustomerRiskManagementDO getCustomerRiskManagementDO(Integer customerId){
-        CustomerDO customerDO = customerMapper.findById(customerId);
-        if (customerDO != null && CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
-            CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerId);
-            if (customerCompanyDO != null)
-                if (CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyDO.getSubsidiary())){
-                    //有母公司，获取母公司id
-                    CustomerCompanyDO customerCompanyParentDO = customerCompanyMapper.findByCustomerId(customerCompanyDO.getParentCompanyId());
-                    CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerCompanyParentDO.getCustomerId());
-                    return customerRiskManagementDO;
-                }else if(CommonConstant.COMMON_CONSTANT_NO.equals(customerCompanyDO.getSubsidiary())){
-                    //没有母公司
-                    CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerCompanyDO.getCustomerId());
-                    return customerRiskManagementDO;
-                }
-        }else if (customerDO != null && CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())){
-            //个人用户
-            CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerDO.getId());
-            return customerRiskManagementDO;
-        }
-        //没有结果，返回null
-        return null;
+    public CustomerRiskManagementDO getCustomerRiskManagementDO(Integer customerId) {
+        customerId = this.getParentCompanyCustomerId(customerId);
+        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerId);
+        return customerRiskManagementDO;
     }
 }
