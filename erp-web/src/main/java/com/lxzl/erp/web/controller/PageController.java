@@ -294,6 +294,11 @@ public class PageController extends BaseController {
         return "/orderManage/orderPickListPrint";
     }
 
+    @RequestMapping("/order-manage/choose-relet-type")
+    public String orderChooseReletType() {
+        return "/component/order/reletChooseType";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
