@@ -168,7 +168,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
 
         String excelUrl = bankSlip.getExcelUrl();
-        excelUrl = "http://img.52rental.com/" + excelUrl;
+        excelUrl = ConstantConfig.imageDomain + excelUrl;
         InputStream inputStream = FileUtil.getFileInputStream(excelUrl);
 
         if (inputStream == null) {
