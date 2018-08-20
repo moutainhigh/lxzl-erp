@@ -30,7 +30,7 @@
                             <label for="propertyCapacityValue" class="field-icon"><i class="fa fa-tag"></i></label>
                         </label>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 hide" id="dataOrderRow">
                         <label for="dataOrder" class="field-label">排序</label>
                         <label for="dataOrder" class="field prepend-icon">
                             <input type="text" name="dataOrder" id="dataOrder" class="gui-input" placeholder="0"/>

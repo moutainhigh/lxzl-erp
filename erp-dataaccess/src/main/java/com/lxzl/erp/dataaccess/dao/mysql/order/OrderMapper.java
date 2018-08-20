@@ -87,4 +87,5 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     void updateOrderRentPlan(@Param("orderDOList") List<OrderDO> orderDOList, @Param("payMode") Integer payMode, @Param("depositCycle") Integer depositCycle, @Param("paymentCycle") Integer paymentCycle);
 
     List<OrderDO> canReletOrderTest(@Param("maps")Map<String, Object> maps);
+    void batchUpdateOrderStatus(@Param("list")List<OrderDO> list);
 }

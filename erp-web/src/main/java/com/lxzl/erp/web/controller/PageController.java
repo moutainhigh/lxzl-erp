@@ -288,7 +288,7 @@ public class PageController extends BaseController {
     public String orderManageConfirmStock() {
         return "/component/order/confirmStockModal";
     }
-    
+
     @RequestMapping("/order-manage/pick-list-print")
     public String orderPickListPrint() {
         return "/orderManage/orderPickListPrint";
@@ -1137,6 +1137,15 @@ public class PageController extends BaseController {
     }
 
     /**
+     * 流水认领明细列表
+     * @return
+     */
+    @RequestMapping("/amount-claim-detail/list")
+    public String amountClaimDetailList() {
+        return "/financialManage/amountClaimDetailList";
+    }
+
+    /**
      * 系统功能开关设置
      *
      * @return
@@ -1421,4 +1430,9 @@ public class PageController extends BaseController {
         return "/delayedTask/deyayedTaskList";
     }
 
+    //在线人数列表
+    @RequestMapping("/system-manage/online-user")
+    public String systemManageOnlineUser() {
+        return "/systemManage/onlineUser";
+    }
 }

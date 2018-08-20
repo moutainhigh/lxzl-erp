@@ -20,4 +20,6 @@ public interface K3ReturnOrderDetailMapper extends BaseMysqlDAO<K3ReturnOrderDet
     List<K3ReturnOrderDetailDO> findListByOrderNo(@Param("orderNo")String orderNo);
 
     void saveList(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList);
+
+    void batchUpdateRealProductCount(@Param("list") List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList);
 }
