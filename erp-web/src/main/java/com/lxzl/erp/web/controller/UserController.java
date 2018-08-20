@@ -5,10 +5,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.company.pojo.Department;
-import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
-import com.lxzl.erp.common.domain.user.LoginParam;
-import com.lxzl.erp.common.domain.user.UpdatePasswordParam;
-import com.lxzl.erp.common.domain.user.UserQueryParam;
+import com.lxzl.erp.common.domain.user.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
@@ -19,6 +16,7 @@ import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.web.util.NetworkUtil;
 import com.lxzl.se.common.domain.Result;
+import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -159,10 +157,10 @@ public class UserController extends BaseController {
      * @param
      * @return
      */
-    @RequestMapping(value = "onLineUserInfo", method = RequestMethod.GET)
-    public Result onLineUserInfo(HttpServletRequest request) {
-        ServiceResult<String, List<Map<String, Object>>> serviceResult = new ServiceResult<>();
-        List<Map<String, Object>> list = new ArrayList<>();//采用list装数据
+    @RequestMapping(value = "onLineUserInfo", method = RequestMethod.POST)
+    public Result onLineUserInfo(HttpServletRequest request,@RequestBody UserOnLineQueryParam userOnLineQueryParam) {
+        ServiceResult<String, Page<Map<String, Object>>> result = new ServiceResult<>();
+        List<Map<String, Object>> userlist = new ArrayList<>();//采用list装数据
         HttpSession httpSession = request.getSession();
         if (null != httpSession) {
             Map<String, HttpSession> onLineList = (Map<String, HttpSession>) httpSession.getServletContext().getAttribute("onLineMap");
@@ -179,14 +177,15 @@ public class UserController extends BaseController {
                         userInfoMap.put("lastAccessedTime", session.getLastAccessedTime());//上次访问的时间
                         userInfoMap.put("userName", userInfo.getUserName());
                         userInfoMap.put("RealName", userInfo.getRealName());
-                        list.add(userInfoMap);
+                        userlist.add(userInfoMap);
                     }
                 } else {
                     it.remove();
                 }
             }
         }
-        if (list.size() > 0) {
+        int count = userlist.size();
+        if (count > 0) {
             //自定义Comparator对象，自定义排序
             Comparator c = new Comparator<Map<String, Object>>() {
                 @Override
@@ -198,11 +197,14 @@ public class UserController extends BaseController {
                     }
                 }
             };
-            Collections.sort(list, c);
+            Collections.sort(userlist, c);
+            int pageStar=(userOnLineQueryParam.getPageNo() - 1) * userOnLineQueryParam.getPageSize();
+            List<Map<String, Object>> pageList=userlist.subList(pageStar,count-pageStar>userOnLineQueryParam.getPageSize()?pageStar+userOnLineQueryParam.getPageSize():count);
+            Page<Map<String, Object>> page = new Page<>(pageList, count, userOnLineQueryParam.getPageNo(), userOnLineQueryParam.getPageSize());
+            result.setResult(page);
+            result.setErrorCode(ErrorCode.SUCCESS);
         }
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(list);
-        return resultGenerator.generate(serviceResult);
+        return resultGenerator.generate(result);
     }
 
     /**
