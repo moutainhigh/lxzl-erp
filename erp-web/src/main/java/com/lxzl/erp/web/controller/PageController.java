@@ -299,6 +299,11 @@ public class PageController extends BaseController {
         return "/component/order/reletChooseType";
     }
 
+    @RequestMapping("/order-manage/test-relet-add")
+    public String orderTestReletAdd() {
+        return "/orderManage/orderTestReletAdd";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
