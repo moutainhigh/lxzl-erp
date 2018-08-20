@@ -6,6 +6,7 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.BankSlipDetailStatus;
 import com.lxzl.erp.common.constant.BankType;
+import com.lxzl.erp.common.domain.bank.BankSlipClaimDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
 import com.lxzl.erp.common.domain.bank.ClaimParam;
@@ -529,6 +530,37 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
 //        bankSlip.setExcelUrl("/group1/M00/00/2C/wKgKyFrNffCAS7kjAAHeAIl1Mfk020.xls");
 //        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
+    }
+    @Test
+    public void pageBankSlipClaimDetailTest() throws Exception {
+        BankSlipClaimDetailQueryParam bankSlipClaimDetailQueryParam = new BankSlipClaimDetailQueryParam();
+        bankSlipClaimDetailQueryParam.setPageNo(1);
+        bankSlipClaimDetailQueryParam.setPageSize(10);
+        bankSlipClaimDetailQueryParam.setOwnerSubCompanyId(5);
+//        bankSlipQueryParam.setBankType();
+//        bankSlipQueryParam.setSlipMonth();
+//        bankSlipQueryParam.setSlipStatus();
+//        bankSlipQueryParam.setSubCompanyName("南京分公司");
+//        bankSlipQueryParam.setSubCompanyId(5);
+//        bankSlipQueryParam.setBankSlipId(2);
+
+        TestResult result = getJsonTestResult("/bankSlip/pageBankSlipClaimDetail", bankSlipClaimDetailQueryParam);
+
+        System.out.println(JSON.toJSONString(result));
+    }
+    @Test
+    public void pageBankSlipClaimDetailTestJson() throws Exception {
+        String json = "{\"pageNo\":1,\"pageSize\":15,\"startTradeTime\":\"\",\"endTradeTime\":\"\",\"tradeTimePickerInput\":\"\",\"startClaimUpdateTime\":\"\",\"endClaimUpdateTime\":\"\",\"claimTimePickerInput\":\"\",\"startSlipDetailUpdateTime\":\"\",\"endSlipDetailUpdateTime\":\"\",\"sureTimePickerInput\":\"\",\"bankType\":\"\",\"startTradeAmount\":1,\"endTradeAmount\":1111,\"startClaimAmount\":\"\",\"endClaimAmount\":\"\",\"detailType\":\"\",\"customerName\":\"\",\"customerNo\":\"\",\"payerName\":\"\",\"bankSlipId\":\"\",\"bankSlipDetailId\":\"\"}";
+//        bankSlipQueryParam.setBankType();
+//        bankSlipQueryParam.setSlipMonth();
+//        bankSlipQueryParam.setSlipStatus();
+//        bankSlipQueryParam.setSubCompanyName("南京分公司");
+//        bankSlipQueryParam.setSubCompanyId(5);
+//        bankSlipQueryParam.setBankSlipId(2);
+        BankSlipClaimDetailQueryParam bankSlipClaimDetailQueryParam = JSON.parseObject(json, BankSlipClaimDetailQueryParam.class);
+        TestResult result = getJsonTestResult("/bankSlip/pageBankSlipClaimDetail", bankSlipClaimDetailQueryParam);
+
+        System.out.println(JSON.toJSONString(result));
     }
 
 }
