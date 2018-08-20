@@ -1421,9 +1421,13 @@ public class BankSlipServiceImpl implements BankSlipService {
         List<BankSlipClaimDetail> bankSlipClaimDetailList = bankSlipClaimMapper.findBankSlipClaimDetailByParams(maps);
         for (BankSlipClaimDetail bankSlipClaimDetail : bankSlipClaimDetailList) {
             if (!BankSlipDetailStatus.CONFIRMED.equals(bankSlipClaimDetail.getDetailStatus())) {
-                bankSlipClaimDetail.setSlipDetailUpdateUserName("");
-                bankSlipClaimDetail.setSlipDetailUpdateUser("");
-                bankSlipClaimDetail.setSlipDetailUpdateTime(null);
+//                bankSlipClaimDetail.setSlipDetailUpdateUserName("");
+//                bankSlipClaimDetail.setSlipDetailUpdateUser("");
+//                bankSlipClaimDetail.setSlipDetailUpdateTime(null);
+                bankSlipClaimDetail.setClaimUpdateUserName("");
+                bankSlipClaimDetail.setClaimUpdateUser("");
+                bankSlipClaimDetail.setClaimUpdateTime(null);
+
             }
         }
 

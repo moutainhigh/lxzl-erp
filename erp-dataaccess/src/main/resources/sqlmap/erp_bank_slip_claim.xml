@@ -277,8 +277,11 @@
 		LEFT JOIN erp_bank_slip_detail ebsd ON ebsd.id = ebsc.bank_slip_detail_id and ebsd.data_status =1
 		LEFT JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status=1
 		LEFT JOIN erp_customer ec ON ebsc.customer_no = ec.customer_no AND ec.data_status = 1
+		LEFT JOIN  erp_sub_company esc ON esc.id = ebs.sub_company_id AND esc.data_status = 1
+		LEFT JOIN  erp_sub_company esc1 ON esc1.id = ebsd.sub_company_id AND esc1.data_status = 1
 		LEFT JOIN erp_user eu ON eu.id = ebsc.update_user
-		LEFT JOIN erp_user eu1 ON eu.id = ebsd.update_user
+		LEFT JOIN erp_user eu1 ON eu1.id = ebsd.update_user
+		LEFT JOIN erp_user eu2 ON eu2.id = ebsd.create_user
 		WHERE ebsc.data_status=1
 		<if test="maps.bankSlipClaimDetailQueryParam != null &amp;&amp; maps.bankSlipClaimDetailQueryParam.bankSlipId!=null">
 			AND  ebs.id = #{maps.bankSlipClaimDetailQueryParam.bankSlipId,jdbcType=INTEGER}
