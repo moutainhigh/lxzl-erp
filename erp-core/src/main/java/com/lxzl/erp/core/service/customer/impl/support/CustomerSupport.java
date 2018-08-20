@@ -1,17 +1,22 @@
 package com.lxzl.erp.core.service.customer.impl.support;
 
 import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.CustomerRiskBusinessType;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.util.BigDecimalUtil;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskLogMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskLogDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.se.common.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Component
 public class CustomerSupport {
@@ -19,6 +24,10 @@ public class CustomerSupport {
     private CustomerRiskManagementMapper customerRiskManagementMapper;
     @Autowired
     private CustomerMapper customerMapper;
+    @Autowired
+    private CustomerRiskLogMapper customerRiskLogMapper;
+    @Autowired
+    private UserSupport userSupport;
 
     /**
      * 内部调用增加已用授信额度
@@ -171,5 +180,66 @@ public class CustomerSupport {
         }
 
         return true;
+    }
+    /**
+     * 添加客户授信变更日志
+     * @param customerId 客户ID （必填）
+     * @param manageCustomerId 关联客户ID （可空）
+     * @param amount 更改金额（必填）
+     * @param businessType 操作业务编码 （必填）
+     * @param orderNo 订单编号 （可空）
+     * @param remark 备注 （可空）
+     */
+    public String saveCustomerRiskLog (Integer customerId,Integer manageCustomerId,BigDecimal amount,Integer businessType,String orderNo,String remark){
+        Date date = new Date();
+        if (amount == null || customerId == null || businessType == null) {
+            throw new BusinessException();
+        }
+        if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) == 0) {
+            return ErrorCode.SUCCESS;
+        } else {
+            CustomerDO customerDO = customerMapper.findById(customerId);
+            if (customerDO == null) {
+                throw new BusinessException();
+            }
+            CustomerRiskManagementDO customerRiskManagementDO = customerDO.getCustomerRiskManagementDO();
+            if (customerRiskManagementDO == null) {
+                customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerDO.getId());
+                if (customerRiskManagementDO == null) {
+                    return ErrorCode.CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS;
+                }
+            }
+            CustomerRiskLogDO customerRiskLogDO = new CustomerRiskLogDO();
+            //变更授信额度
+            if (CustomerRiskBusinessType.CUSTOMER_RISK_TYPE.equals(businessType)) {
+                customerRiskLogDO.setCustomerId(customerId);
+                customerRiskLogDO.setManageCustomerId(manageCustomerId);
+                customerRiskLogDO.setOrderNo(orderNo);
+                customerRiskLogDO.setRemark(remark);
+                customerRiskLogDO.setBusinessType(businessType);
+                customerRiskLogDO.setCreateTime(date);
+                customerRiskLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                customerRiskLogDO.setOldCreditAmount(customerRiskManagementDO.getCreditAmount());
+                customerRiskLogDO.setOldCreditAmountUsed(customerRiskManagementDO.getCreditAmountUsed());
+                customerRiskLogDO.setNewCreditAmountUsed(customerRiskManagementDO.getCreditAmountUsed());
+                BigDecimal newValue = BigDecimalUtil.add(customerRiskManagementDO.getCreditAmount(), amount);
+                customerRiskLogDO.setNewCreditAmount(newValue);
+            }else {//变更已使用授信额度
+                customerRiskLogDO.setCustomerId(customerId);
+                customerRiskLogDO.setManageCustomerId(manageCustomerId);
+                customerRiskLogDO.setOrderNo(orderNo);
+                customerRiskLogDO.setRemark(remark);
+                customerRiskLogDO.setBusinessType(businessType);
+                customerRiskLogDO.setCreateTime(date);
+                customerRiskLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                customerRiskLogDO.setOldCreditAmount(customerRiskManagementDO.getCreditAmount());
+                customerRiskLogDO.setOldCreditAmountUsed(customerRiskManagementDO.getCreditAmountUsed());
+                customerRiskLogDO.setNewCreditAmount(customerRiskManagementDO.getCreditAmount());
+                BigDecimal newValue = BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(), amount);
+                customerRiskLogDO.setNewCreditAmountUsed(newValue);
+            }
+            customerRiskLogMapper.save(customerRiskLogDO);
+            return ErrorCode.SUCCESS;
+        }
     }
 }

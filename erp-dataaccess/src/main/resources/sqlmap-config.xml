@@ -197,6 +197,8 @@
 
         <mapper resource="sqlmap/workbench_sql.xml" />
         <mapper resource="sqlmap/erp_return_order_rollback_log.xml" />
+
+        <mapper resource="sqlmap/erp_customer_risk_log.xml" />
     </mappers>
 
 </configuration>
