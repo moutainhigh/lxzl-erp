@@ -3,11 +3,11 @@ package com.lxzl.erp.core.service.product.impl;
 import com.lxzl.erp.common.constant.CategoryType;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.PermissionType;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.product.ProductCategoryPageParam;
+import com.lxzl.erp.common.domain.product.ProductCategoryPropertyPageParam;
+import com.lxzl.erp.common.domain.product.ProductCategoryPropertyValuePageParam;
 import com.lxzl.erp.common.domain.product.ProductCategoryQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategory;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategoryProperty;
@@ -26,18 +26,18 @@ import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyValueMapper;
-import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuPropertyMapper;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialModelDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
-import org.apache.hadoop.mapred.IFile;
-import org.hibernate.validator.internal.xml.PropertyType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -46,7 +46,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.servlet.http.HttpSession;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -115,10 +118,18 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
+
         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = ProductCategoryPropertyConverter.convertProductCategoryPropertyValue(productCategoryPropertyValue);
         ProductCategoryPropertyDO productCategoryPropertyDO = productCategoryPropertyMapper.findById(productCategoryPropertyValueDO.getPropertyId());
         if (productCategoryPropertyDO == null) {
             result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS);
+            return result;
+        }
+
+        //对分类属性值名称重复做判断
+        ProductCategoryPropertyValueDO ProductCategoryPropertyValueNameDO = productCategoryPropertyValueMapper.findByPropertyValueNameAndCategoryIdAndPropertyId(productCategoryPropertyValue.getPropertyValueName(),productCategoryPropertyDO.getCategoryId(),productCategoryPropertyValueDO.getPropertyId(),productCategoryPropertyValueDO.getId());
+        if (ProductCategoryPropertyValueNameDO != null) {
+            result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_VALUE_NAME_NOT_SAME);
             return result;
         }
 
@@ -150,6 +161,11 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         productCategoryPropertyValueDO.setUpdateUser(loginUser.getUserId().toString());
         productCategoryPropertyValueDO.setCreateTime(currentTime);
         productCategoryPropertyValueDO.setUpdateTime(currentTime);
+
+        //组合remark的内容
+        ProductCategoryDO productCategoryDO = productCategoryMapper.findById(productCategoryPropertyDO.getCategoryId());
+        String remark = productCategoryDO.getCategoryName() + productCategoryPropertyDO.getPropertyName() + productCategoryPropertyValueDO.getPropertyValueName();
+        productCategoryPropertyValueDO.setRemark(remark);
         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
         // 自动添加物料，处于下架状态
         // saveMaterial(productCategoryPropertyDO, productCategoryPropertyValueDO, loginUser, currentTime);
@@ -316,10 +332,10 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
                         productCategoryPropertyValueDO.setPropertyCapacityValue(null);
                     }
                 }else{
-                        //该商品分类没有物料类型的属性
-                        productCategoryPropertyValueDO.setPropertyCapacityValue(null);
-                        productCategoryPropertyValueDO.setMaterialModelId(null);
-                    }
+                    //该商品分类没有物料类型的属性
+                    productCategoryPropertyValueDO.setPropertyCapacityValue(null);
+                    productCategoryPropertyValueDO.setMaterialModelId(null);
+                }
                 if (productCategoryPropertyValueDO.getMaterialModelId() != null) {
                     MaterialModelDO materialModelDO = materialModelMapper.findById(productCategoryPropertyValueDO.getMaterialModelId());
                     if (materialModelDO == null
@@ -386,54 +402,62 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, Integer> updateCategoryPropertyValue(ProductCategoryProperty productCategoryProperty) {
+    public ServiceResult<String, Integer> updateCategoryPropertyValue(ProductCategoryPropertyValue productCategoryPropertyValue) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        String currentUser = userSupport.getCurrentUser().getUserId().toString();
+        String currentUser = userSupport.getCurrentUserId().toString();
         Date now = new Date();
 
-        ProductCategoryPropertyDO productCategoryPropertyDO = productCategoryPropertyMapper.findById(productCategoryProperty.getCategoryPropertyId());
-        if (productCategoryPropertyDO == null){
+        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productCategoryPropertyValue.getCategoryPropertyValueId());
+        if (productCategoryPropertyValueDO == null){
+            result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_VALUE_NOT_EXISTS);
+            return result;
+        }
+
+        //判断修改的商品属性值是否已经被使用
+        List<ProductSkuPropertyDO> productSkuPropertyDOList = productSkuPropertyMapper.findByPropertyValueIdForUpdateValue(productCategoryPropertyValueDO.getId());
+        if (CollectionUtil.isNotEmpty(productSkuPropertyDOList)){
+            result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_VALUE_HAD_USED_NOT_UPDATE);
+            return result;
+        }
+
+        ProductCategoryPropertyDO productCategoryPropertyDO = productCategoryPropertyMapper.findById(productCategoryPropertyValueDO.getPropertyId());
+        if (productCategoryPropertyDO == null) {
             result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS);
             return result;
         }
 
-        List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findListByPropertyIdAndCategoryId(productCategoryPropertyDO.getId(),productCategoryPropertyDO.getCategoryId());
-        Set<Integer> productCategoryPropertyValueIdSet = new HashSet<>();
-        Set<String> productCategoryPropertyValueNameSet = new HashSet<>();
-
-        for (ProductCategoryPropertyValueDO productCategoryPropertyValueDO : productCategoryPropertyValueDOList){
-            productCategoryPropertyValueIdSet.add(productCategoryPropertyValueDO.getId());
-            productCategoryPropertyValueNameSet.add(productCategoryPropertyValueDO.getPropertyValueName());
+        productCategoryPropertyValueDO.setPropertyValueName(productCategoryPropertyValue.getPropertyValueName());
+        if (productCategoryPropertyValue.getPropertyCapacityValue() != null){
+            productCategoryPropertyValueDO.setPropertyCapacityValue(productCategoryPropertyValue.getPropertyCapacityValue());
+        }
+        if (productCategoryPropertyValue.getMaterialModelId() != null){
+            productCategoryPropertyValueDO.setMaterialModelId(productCategoryPropertyValue.getMaterialModelId());
+        }
+        if (productCategoryPropertyValue.getDataOrder() != null){
+            productCategoryPropertyValueDO.setDataOrder(productCategoryPropertyValue.getDataOrder());
         }
 
-        List<ProductCategoryPropertyValue> productCategoryPropertyValueList = productCategoryProperty.getProductCategoryPropertyValueList();
-        for (ProductCategoryPropertyValue productCategoryPropertyValue : productCategoryPropertyValueList){
-            productCategoryPropertyValueIdSet.add(productCategoryPropertyValue.getCategoryPropertyValueId());
-            productCategoryPropertyValueNameSet.add(productCategoryPropertyValue.getPropertyValueName());
-        }
-
-        //如果set中id的数量大于数据库中查询出的List的数量，就说明更改的属性值，有不属于该商品分类属性的
-        if (productCategoryPropertyValueIdSet.size() > productCategoryPropertyValueDOList.size()){
-            result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_ID_IS_ERROR);
+        //判断更改的属性名称是否有相同的
+        ProductCategoryPropertyValueDO productCategoryPropertyValueDOByName = productCategoryPropertyValueMapper.findByPropertyValueNameAndCategoryIdAndPropertyId(productCategoryPropertyValue.getPropertyValueName(), productCategoryPropertyValueDO.getCategoryId(),productCategoryPropertyDO.getId(),productCategoryPropertyValueDO.getId());
+        if (productCategoryPropertyValueDOByName != null){
+            result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_VALUE_NAME_NOT_SAME);
             return result;
         }
 
-        //判断更改的商品分类属性值名称是否有相同的
-        if (productCategoryPropertyValueNameSet.size() != (productCategoryPropertyValueDOList.size() + productCategoryPropertyValueList.size())){
-            result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_NAME_NOT_SAME);
-            return result;
-        }
-
-        for (ProductCategoryPropertyValue productCategoryPropertyValue : productCategoryPropertyValueList) {
-            ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productCategoryPropertyValue.getCategoryPropertyValueId());
-            if (productCategoryPropertyValueDO == null) {
-                result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_VALUE_NOT_EXISTS);
+        if (productCategoryPropertyDO.getMaterialType() != null) {
+            MaterialTypeDO materialTypeDO = materialTypeMapper.findById(productCategoryPropertyDO.getMaterialType());
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())
+                    && productCategoryPropertyValueDO.getPropertyCapacityValue() == null) {
+                result.setErrorCode(ErrorCode.MATERIAL_CAPACITY_VALUE_NOT_NULL);
+                return result;
+            } else if (!CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())
+                    && productCategoryPropertyValueDO.getMaterialModelId() == null) {
+                result.setErrorCode(ErrorCode.MATERIAL_MODEL_NOT_NULL);
                 return result;
             }
 
-            //判断更改过后的物料型号是否与数据中物料型号对应
-            if (productCategoryPropertyValue.getMaterialModelId() != null) {
-                MaterialModelDO materialModelDO = materialModelMapper.findById(productCategoryPropertyValue.getMaterialModelId());
+            if (productCategoryPropertyValueDO.getMaterialModelId() != null) {
+                MaterialModelDO materialModelDO = materialModelMapper.findById(productCategoryPropertyValueDO.getMaterialModelId());
                 if (materialModelDO == null
                         || !materialModelDO.getMaterialType().equals(productCategoryPropertyDO.getMaterialType())) {
                     result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
@@ -441,34 +465,98 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
                 }
             }
 
-            productCategoryPropertyValueDO.setPropertyValueName(productCategoryPropertyValue.getPropertyValueName());
-            //先判断更改后属性容量值是否需要值
-            if (productCategoryPropertyDO.getMaterialType() != null) {
-                MaterialTypeDO materialTypeDO = materialTypeMapper.findById(productCategoryPropertyDO.getMaterialType());
-                if (CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())
-                        && productCategoryPropertyValue.getPropertyCapacityValue() == null) {
-                    result.setErrorCode(ErrorCode.MATERIAL_CAPACITY_VALUE_NOT_NULL);
-                    return result;
-                } else if (!CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())
-                        && productCategoryPropertyValue.getMaterialModelId() == null) {
-                    result.setErrorCode(ErrorCode.MATERIAL_MODEL_NOT_NULL);
-                    return result;
-                }
-
-                //是否为带字面量配件来区分硬盘、内存之类
-                if (CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())) {
-                    productCategoryPropertyValueDO.setPropertyCapacityValue(productCategoryPropertyValue.getPropertyCapacityValue());
-                    productCategoryPropertyValueDO.setMaterialModelId(null);
-                } else if (!CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())) {
-                    productCategoryPropertyValueDO.setPropertyCapacityValue(null);
-                    productCategoryPropertyValueDO.setMaterialModelId(productCategoryPropertyValue.getMaterialModelId());
-                }
+            //是否为带字面量配件来区分硬盘、内存之类
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())) {
+                productCategoryPropertyValueDO.setPropertyCapacityValue(productCategoryPropertyValue.getPropertyCapacityValue());
+                productCategoryPropertyValueDO.setMaterialModelId(null);
+            } else if (!CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())) {
+                productCategoryPropertyValueDO.setPropertyCapacityValue(null);
+                productCategoryPropertyValueDO.setMaterialModelId(productCategoryPropertyValue.getMaterialModelId());
             }
-
-            productCategoryPropertyValueDO.setUpdateTime(now);
-            productCategoryPropertyValueDO.setUpdateUser(currentUser);
-            productCategoryPropertyValueMapper.update(productCategoryPropertyValueDO);
         }
+
+        productCategoryPropertyValueDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        productCategoryPropertyValueDO.setUpdateUser(currentUser);
+        productCategoryPropertyValueDO.setUpdateTime(now);
+
+        //组装remark的描述
+        ProductCategoryDO productCategoryDO = productCategoryMapper.findById(productCategoryPropertyDO.getCategoryId());
+        String remark = productCategoryDO.getCategoryName() + productCategoryPropertyDO.getPropertyName() + productCategoryPropertyValueDO.getPropertyValueName();
+        productCategoryPropertyValueDO.setRemark(remark);
+        productCategoryPropertyValueMapper.update(productCategoryPropertyValueDO);
+
+//        List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findListByPropertyIdAndCategoryId(productCategoryPropertyDO.getId(),productCategoryPropertyDO.getCategoryId());
+//        Set<Integer> productCategoryPropertyValueIdSet = new HashSet<>();
+//        Set<String> productCategoryPropertyValueNameSet = new HashSet<>();
+//
+//        for (ProductCategoryPropertyValueDO productCategoryPropertyValueDO : productCategoryPropertyValueDOList){
+//            productCategoryPropertyValueIdSet.add(productCategoryPropertyValueDO.getId());
+//            productCategoryPropertyValueNameSet.add(productCategoryPropertyValueDO.getPropertyValueName());
+//        }
+//
+//        List<ProductCategoryPropertyValue> productCategoryPropertyValueList = productCategoryProperty.getProductCategoryPropertyValueList();
+//        for (ProductCategoryPropertyValue productCategoryPropertyValue : productCategoryPropertyValueList){
+//            productCategoryPropertyValueIdSet.add(productCategoryPropertyValue.getCategoryPropertyValueId());
+//            productCategoryPropertyValueNameSet.add(productCategoryPropertyValue.getPropertyValueName());
+//        }
+//
+//        //如果set中id的数量大于数据库中查询出的List的数量，就说明更改的属性值，有不属于该商品分类属性的
+//        if (productCategoryPropertyValueIdSet.size() > productCategoryPropertyValueDOList.size()){
+//            result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_ID_IS_ERROR);
+//            return result;
+//        }
+//
+//        //判断更改的商品分类属性值名称是否有相同的
+//        if (productCategoryPropertyValueNameSet.size() != (productCategoryPropertyValueDOList.size() + productCategoryPropertyValueList.size())){
+//            result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_VALUE_NAME_NOT_SAME);
+//            return result;
+//        }
+//
+//        for (ProductCategoryPropertyValue productCategoryPropertyValue : productCategoryPropertyValueList) {
+//            ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productCategoryPropertyValue.getCategoryPropertyValueId());
+//            if (productCategoryPropertyValueDO == null) {
+//                result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_VALUE_NOT_EXISTS);
+//                return result;
+//            }
+//
+//            //判断更改过后的物料型号是否与数据中物料型号对应
+//            if (productCategoryPropertyValue.getMaterialModelId() != null) {
+//                MaterialModelDO materialModelDO = materialModelMapper.findById(productCategoryPropertyValue.getMaterialModelId());
+//                if (materialModelDO == null
+//                        || !materialModelDO.getMaterialType().equals(productCategoryPropertyDO.getMaterialType())) {
+//                    result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+//                    return result;
+//                }
+//            }
+//
+//            productCategoryPropertyValueDO.setPropertyValueName(productCategoryPropertyValue.getPropertyValueName());
+//            //先判断更改后属性容量值是否需要值
+//            if (productCategoryPropertyDO.getMaterialType() != null) {
+//                MaterialTypeDO materialTypeDO = materialTypeMapper.findById(productCategoryPropertyDO.getMaterialType());
+//                if (CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())
+//                        && productCategoryPropertyValue.getPropertyCapacityValue() == null) {
+//                    result.setErrorCode(ErrorCode.MATERIAL_CAPACITY_VALUE_NOT_NULL);
+//                    return result;
+//                } else if (!CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())
+//                        && productCategoryPropertyValue.getMaterialModelId() == null) {
+//                    result.setErrorCode(ErrorCode.MATERIAL_MODEL_NOT_NULL);
+//                    return result;
+//                }
+//
+//                //是否为带字面量配件来区分硬盘、内存之类
+//                if (CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())) {
+//                    productCategoryPropertyValueDO.setPropertyCapacityValue(productCategoryPropertyValue.getPropertyCapacityValue());
+//                    productCategoryPropertyValueDO.setMaterialModelId(null);
+//                } else if (!CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())) {
+//                    productCategoryPropertyValueDO.setPropertyCapacityValue(null);
+//                    productCategoryPropertyValueDO.setMaterialModelId(productCategoryPropertyValue.getMaterialModelId());
+//                }
+//            }
+//
+//            productCategoryPropertyValueDO.setUpdateTime(now);
+//            productCategoryPropertyValueDO.setUpdateUser(currentUser);
+//            productCategoryPropertyValueMapper.update(productCategoryPropertyValueDO);
+//        }
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(productCategoryPropertyDO.getId());
@@ -575,6 +663,84 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         return result;
     }
 
+    @Override
+    public ServiceResult<String, Page<ProductCategoryProperty>> pageProductCategoryProperty(ProductCategoryPropertyPageParam productCategoryPropertyPageParam) {
+        ServiceResult<String, Page<ProductCategoryProperty>> serviceResult = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(productCategoryPropertyPageParam.getPageNo(),productCategoryPropertyPageParam.getPageSize());
+
+        Map<String,Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("productCategoryPropertyPageParam", productCategoryPropertyPageParam);
+
+        Integer totalCount = productCategoryPropertyMapper.findCategoryPropertyCountByParams(maps);
+        List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findCategoryPropertyByParams(maps);
+
+        List<ProductCategoryProperty> productCategoryPropertyList = ConverterUtil.convertList(productCategoryPropertyDOList, ProductCategoryProperty.class);
+        Page<ProductCategoryProperty> page = new Page<>(productCategoryPropertyList, totalCount, productCategoryPropertyPageParam.getPageNo(), productCategoryPropertyPageParam.getPageSize());
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(page);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, ProductCategoryProperty> detailProductCategoryProperty(Integer categoryPropertyId) {
+        ServiceResult<String, ProductCategoryProperty> serviceResult = new ServiceResult<>();
+
+        ProductCategoryPropertyDO productCategoryPropertyDO = productCategoryPropertyMapper.findById(categoryPropertyId);
+        if (productCategoryPropertyDO == null){
+            serviceResult.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        ProductCategoryProperty productCategoryProperty = ConverterUtil.convert(productCategoryPropertyDO,ProductCategoryProperty.class);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(productCategoryProperty);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, Page<ProductCategoryPropertyValue>> pageProductCategoryPropertyValue(ProductCategoryPropertyValuePageParam productCategoryPropertyValuePageParam) {
+        ServiceResult<String, Page<ProductCategoryPropertyValue>> serviceResult = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(productCategoryPropertyValuePageParam.getPageNo(),productCategoryPropertyValuePageParam.getPageSize());
+
+        Map<String,Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("productCategoryPropertyValuePageParam", productCategoryPropertyValuePageParam);
+
+        Integer totalCount = productCategoryPropertyValueMapper.findCategoryPropertyValueCountByParams(maps);
+        List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findCategoryPropertyValueByParams(maps);
+
+        List<ProductCategoryPropertyValue> productCategoryPropertyValueList = ConverterUtil.convertList(productCategoryPropertyValueDOList, ProductCategoryPropertyValue.class);
+        Page<ProductCategoryPropertyValue> page = new Page<>(productCategoryPropertyValueList, totalCount, productCategoryPropertyValuePageParam.getPageNo(), productCategoryPropertyValuePageParam.getPageSize());
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(page);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, ProductCategoryPropertyValue> detailProductCategoryPropertyValue(Integer productCategoryPropertyValueId) {
+        ServiceResult<String, ProductCategoryPropertyValue> serviceResult = new ServiceResult<>();
+
+        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productCategoryPropertyValueId);
+        if (productCategoryPropertyValueDO == null){
+            serviceResult.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_VALUE_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        ProductCategoryPropertyValue productCategoryPropertyValue = new ProductCategoryPropertyValue();
+        BeanUtils.copyProperties(productCategoryPropertyValueDO,productCategoryPropertyValue);
+        productCategoryPropertyValue.setCategoryPropertyValueId(productCategoryPropertyValueDO.getId());
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(productCategoryPropertyValue);
+        return serviceResult;
+    }
+
 //    private void queryProductCategoryDO(List<ProductCategoryDO> productCategoryDOList){
 //        for (ProductCategoryDO productCategoryDO : productCategoryDOList){
 //            List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findListByCategoryId(productCategoryDO.getId());
@@ -608,4 +774,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Autowired
     private UserSupport userSupport;
+
+    @Autowired
+    private ProductSkuPropertyMapper productSkuPropertyMapper;
 }

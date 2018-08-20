@@ -2,13 +2,11 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.bank.BankSlipClaimDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailOperationLogQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
-import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
-import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
-import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
-import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetailOperationLog;
+import com.lxzl.erp.common.domain.bank.pojo.*;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.QueryGroup;
@@ -154,6 +152,11 @@ public class BankSlipController {
     @RequestMapping(value = "confirmBankSlipDetail", method = RequestMethod.POST)
     public Result confirmSingleBankSlip(@RequestBody @Validated(IdGroup.class) BankSlipDetail bankSlipDetail, BindingResult validated) throws Exception {
         ServiceResult<String, Integer> serviceResult = bankSlipService.confirmBankSlipDetail(bankSlipDetail);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+    @RequestMapping(value = "pageBankSlipClaimDetail", method = RequestMethod.POST)
+    public Result pageBankSlipClaimDetail(@RequestBody BankSlipClaimDetailQueryParam bankSlipClaimDetailQueryParam, BindingResult validated) throws Exception {
+        ServiceResult<String, BankSlipClaimPage> serviceResult = bankSlipService.pageBankSlipClaimDetail(bankSlipClaimDetailQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 }

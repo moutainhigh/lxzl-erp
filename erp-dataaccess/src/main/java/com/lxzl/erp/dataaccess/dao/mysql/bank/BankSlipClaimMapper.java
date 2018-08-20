@@ -1,6 +1,10 @@
 package com.lxzl.erp.dataaccess.dao.mysql.bank;
 
+import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaimDetail;
+import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaimPage;
+import com.lxzl.erp.common.domain.bank.pojo.dto.BankSipAutomaticClaimDTO;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipClaimDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerCompanyDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -31,4 +35,10 @@ public interface BankSlipClaimMapper extends BaseMysqlDAO<BankSlipClaimDO> {
     Integer findAmountByBankSlipDetailId(@Param("bankSlipDetailId")Integer id);
 
     List<BankSlipClaimDO> findAmountByBankSlipDetailIdAndCreateUser(@Param("bankSlipDetailId")Integer id,@Param("userId") String userId);
+
+    List<BankSipAutomaticClaimDTO> findBankSlipClaimPaySuccessByName(@Param("list") List<CustomerCompanyDO> customerCompanyDOList);
+
+    BankSlipClaimPage findBankSlipClaimPageCountAndAmountByParams(@Param("maps") Map<String, Object> maps);
+
+    List<BankSlipClaimDetail> findBankSlipClaimDetailByParams(@Param("maps") Map<String, Object> maps);
 }

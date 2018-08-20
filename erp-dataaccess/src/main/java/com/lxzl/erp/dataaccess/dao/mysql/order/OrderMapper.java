@@ -62,6 +62,8 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
 
     List<OrderDO> findByNos(@Param("orderNos") Set<String> orderNos);
 
+    Integer findCanReletOrderCountForWorkbench(@Param("maps")Map<String, Object> maps);
+
     List<OrderDO> findCanReletOrderForWorkbench(@Param("maps")Map<String, Object> maps);
 
     //修改订单单价
@@ -84,4 +86,6 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     //修改订单租赁方案
     void updateOrderRentPlan(@Param("orderDOList") List<OrderDO> orderDOList, @Param("payMode") Integer payMode, @Param("depositCycle") Integer depositCycle, @Param("paymentCycle") Integer paymentCycle);
 
+    List<OrderDO> canReletOrderTest(@Param("maps")Map<String, Object> maps);
+    void batchUpdateOrderStatus(@Param("list")List<OrderDO> list);
 }

@@ -14,6 +14,7 @@ public enum DynamicSqlTpye {
 
     DynamicSqlTpye(String sqlTpyeName, int level) {
         this.sqlTpyeName = sqlTpyeName;
+        this.level = level;
     }
 
     public String getSqlTpyeName() {

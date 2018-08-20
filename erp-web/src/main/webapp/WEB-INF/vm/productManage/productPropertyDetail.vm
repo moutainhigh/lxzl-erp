@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-商品管理-商品属性-属性详情</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+
+            #parse("component/loading.vm")
+
+            <div class="panel panel-primary panel-border top mb15">
+                <div class="panel-body">
+                    <div id="propertyDetail"></div>
+                    <script type="text/html" id="propertyDetailTpl">
+                        {{#property}}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <dl class="dl-horizontal dl-horizontal-rental">
+                                    <dt><label>属性名称</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{propertyName}}</dd>
+                    
+                                    <dt><label>属性类型</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5" >{{propertyTypeVal}}</dd>
+                    
+                                    <dt><label>分类名称</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{categoryName}}&nbsp;</dd>
+                    
+                                    <dt><label>配件类型</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{materialTypeName}}</dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-6">
+                                <dl class="dl-horizontal dl-horizontal-rental">
+                                    <dt><label>是否为输入属性</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{isInputVal}}&nbsp;</dd>
+                    
+                                    <dt><label>备注</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{remark}}&nbsp;</dd>
+                    
+                                    <dt><label>创建</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">
+                                        <span class="mr10">{{createUserRealName}}</span>
+                                        <span>{{#clockTime}}{{createTime}}{{/clockTime}}</span>&nbsp;
+                                    </dd>
+                    
+                                    <dt><label>修改</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">
+                                        <span class="mr10">{{updateUserRealName}}</span>
+                                        <span>{{#clockTime}}{{updateTime}}{{/clockTime}}</span>&nbsp;
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                        {{/property}}
+                    </script>
+                </div>
+            </div>
+                
+            <div class="panel panel-default panel-border">
+                <div class="panel-heading">
+                    <span class="panel-title"><i class="fa fa-pencil"></i>商品属性值</span>
+                </div>
+                <div class="panel-body">
+                    <div class="panel-menu br-l br-r">
+                        <div class="row">
+                            <div class="pull-left ml10">
+                                <script type="text/html" id="actionButtonsTpl">
+                                    {{#acitonButtons}}
+                                    <button type="button" id="{{class}}" class="btn btn-primary btn-sm" title="{{menuName}}">
+                                        <i class="{{iClass}}"></i> {{text}}
+                                    </button>
+                                    {{/acitonButtons}}
+                                </script>
+                                <div class="btn-group" id="actionButtons"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive br-r br-l br-b">
+                        <script type="text/html" id="dataListTpl">
+                            <thead>
+                            <tr class="bg-light">
+                                <th>属性值名称</th>
+                                <th>属性容量值</th>
+                                <th>属性排序</th>
+                                <th>备注</th>
+                                <th>创建人</th>
+                                <th>修改人</th>
+                                {{#hasRowActionButtons}}
+                                <th class="text-right">操作</th>
+                                {{/hasRowActionButtons}}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#dataSource}}
+                            {{#listData}}
+                            <tr data-info="{{propertyValInfo}}">
+                                <td>{{propertyValueName}}</td>
+                                <td>{{capacityValue}}</td>
+                                <td>{{dataOrder}}</td>
+                                <td>{{remark}}</td>
+                                <td>
+                                    <p class="mn">{{createUserRealName}}</p>
+                                    <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
+                                </td>
+                                <td>
+                                    <p class="mn">{{updateUserRealName}}</p>
+                                    <p class="mn mt5">{{#clockTime}}{{updateTime}}{{/clockTime}}</p>
+                                </td>
+                                {{#hasRowActionButtons}}
+                                <td class="text-right">
+                                    <div class="btn-group text-right">
+                                        {{#rowActionButtons}}
+                                        <a href="${ctx}{{menuUrl}}?id={{productId}}" type="button" class="btn btn-default btn-xs {{class}}" 
+                                        data-productId="{{productId}}" data-name="{{productName}}" data-no="{{k3ProductNo}}">{{text}}</a>
+                                        {{/rowActionButtons}}
+                                    </div>
+                                </td>
+                                {{/hasRowActionButtons}}
+                            </tr>
+                            {{/listData}}
+                            {{^listData}}
+                            <tr>
+                                <td valign="top" colspan="11" class="text-center">无商品属性值</td>
+                            </tr>
+                            {{/listData}}
+                            {{/dataSource}}
+                            </tbody>
+                        </script>
+                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                            #parse("component/pager.vm")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js',
+    'modal.choose.material.modal.js',
+    'manage.product.property.detail.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    ProductPropertyDetail.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+
+</script>
+
+</body>
+</html>
+

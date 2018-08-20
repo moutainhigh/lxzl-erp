@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.dynamicSql;
 
+import com.lxzl.erp.common.constant.DynamicSqlTpye;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dynamicSql.DMLResult;
@@ -11,6 +12,7 @@ import com.lxzl.erp.dataaccess.domain.dynamicSql.DynamicSqlHolderDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>Description: </p>
@@ -21,7 +23,7 @@ import java.util.List;
 public interface DynamicSqlService {
 
 
-    ServiceResult<String, List<List<Object>>> executeBySql(DynamicSqlParam dynamicSqlParam);
+    ServiceResult<String, List<List<Object>>> executeBySql(DynamicSqlParam dynamicSqlParam,  Set<DynamicSqlTpye> allowMethod);
 
     ServiceResult<String, List<List<Object>>> selectBySql(String sql);
 
@@ -36,6 +38,8 @@ public interface DynamicSqlService {
     ServiceResult<String, DynamicSqlHolderDO> rejectDynamicSqlHolder(Integer dynamicSqlHolderId, String rejectResult);
 
     ServiceResult<String, String> saveDynamicSql(DynamicSql dynamicSql);
+
+    ServiceResult<String, String> updateDynamicSql(DynamicSql dynamicSql);
 
     ServiceResult<String, String> deleteDynamicSql(DynamicSql dynamicSql);
 

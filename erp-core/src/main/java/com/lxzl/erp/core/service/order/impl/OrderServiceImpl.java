@@ -1899,7 +1899,10 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         OrderStatementDateSplitDO orderStatementDateSplitDO=orderStatementDateSplitMapper.findByOrderNo(orderNo);
-        if(orderStatementDateSplitDO!=null)order.setOrderStatementDateSplit(ConverterUtil.convert(orderStatementDateSplitDO, OrderStatementDateSplit.class));
+        if(orderStatementDateSplitDO!=null){
+            order.setOrderStatementDateSplit(ConverterUtil.convert(orderStatementDateSplitDO, OrderStatementDateSplit.class));
+            order.setStatementDate(orderStatementDateSplitDO.getAfterStatementDate());
+        }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
@@ -2620,11 +2623,14 @@ public class OrderServiceImpl implements OrderService {
         //仅仅是为工作台查询可续租的订单服务
         if (CommonConstant.COMMON_CONSTANT_YES.equals(orderQueryParam.getIsCanReletOrder())){
             Map<String,Object> maps = new HashMap<>();
+            maps.put("start", pageQuery.getStart());
+            maps.put("pageSize", pageQuery.getPageSize());
             maps.put("reletTimeOfDay",CommonConstant.RELET_TIME_OF_RENT_TYPE_DAY );
             maps.put("reletTimeOfMonth",CommonConstant.RELET_TIME_OF_RENT_TYPE_MONTH);
             maps.put("orderQueryParam",orderQueryParam);
             maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
 
+            Integer count = orderMapper.findCanReletOrderCountForWorkbench(maps);
             List<OrderDO> orderDOList = orderMapper.findCanReletOrderForWorkbench(maps);
 
             List<String> orderNoList = new ArrayList<>();
@@ -2632,30 +2638,16 @@ public class OrderServiceImpl implements OrderService {
             List<Order> canReletOrderList = new ArrayList<>();
             if (CollectionUtil.isNotEmpty(orderDOList)){
                 for (OrderDO orderDO :orderDOList){
+                    orderNoList.add(orderDO.getOrderNo());
                     Order order = ConverterUtil.convert(orderDO, Order.class);
-                    Integer canReletOrder = orderSupport.isOrderCanRelet(order);
-                    order.setCanReletOrder(canReletOrder);
+                    orderDOMap.put(orderDO.getOrderNo(), order);
+                    order.setCanReletOrder(CanReletOrderStatus.CAN_RELET_ORDER_STATUS_YES);
                     Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
                     order.setIsReletOrder(isReletOrder);
-                    if (CommonConstant.COMMON_CONSTANT_YES.equals(order.getCanReletOrder())){
-                        canReletOrderList.add(order);
-                    }
+                    canReletOrderList.add(order);
                 }
             }
 
-            List<Order> pageOrderList = new ArrayList<>();
-            Integer startPage = orderQueryParam.getPageSize() * orderQueryParam.getPageNo() - orderQueryParam.getPageSize() <= 0 ? 0:orderQueryParam.getPageSize() * orderQueryParam.getPageNo() - orderQueryParam.getPageSize();
-            if (CollectionUtil.isNotEmpty(canReletOrderList)){
-                for (int i = startPage; i <= orderQueryParam.getPageSize() * orderQueryParam.getPageNo() - 1; i++){
-                    if (i <= canReletOrderList.size() - 1){
-                        if(canReletOrderList.get(i) != null){
-                            pageOrderList.add(canReletOrderList.get(i));
-                            orderNoList.add(canReletOrderList.get(i).getOrderNo());
-                            orderDOMap.put(canReletOrderList.get(i).getOrderNo(), canReletOrderList.get(i));
-                        }
-                    }
-                }
-            }
 
             List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
             if (CollectionUtil.isNotEmpty(workflowLinkDOList)){
@@ -2668,7 +2660,7 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
 
-            Page<Order> page = new Page<>(pageOrderList, canReletOrderList.size(), orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+            Page<Order> page = new Page<>(canReletOrderList, count, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
             result.setErrorCode(ErrorCode.SUCCESS);
             result.setResult(page);
             return result;

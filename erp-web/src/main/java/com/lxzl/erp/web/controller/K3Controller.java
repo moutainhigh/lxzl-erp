@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.k3.*;
 import com.lxzl.erp.common.domain.k3.group.AddK3ReturnOrderGroup;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
+import com.lxzl.erp.common.domain.k3.pojo.K3ProductStock;
 import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
 import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -288,6 +290,18 @@ public class K3Controller extends BaseController {
         ServiceResult<String, String> serviceResult = k3Service.confirmOrder(orderConfirmChangeToK3Param);
         return resultGenerator.generate(serviceResult);
     }
+
+    /**
+     * 查询K3的库存
+     * @param queryK3StockParam
+     * @return
+     */
+    @RequestMapping(value = "queryK3Stock", method = RequestMethod.POST)
+    public Result queryK3Stock(@RequestBody QueryK3StockParam queryK3StockParam ) {
+        ServiceResult<String, List<K3ProductStock>> serviceResult = k3Service.queryK3Stock(queryK3StockParam);
+        return resultGenerator.generate(serviceResult);
+    }
+
 
     @Autowired
     private ResultGenerator resultGenerator;

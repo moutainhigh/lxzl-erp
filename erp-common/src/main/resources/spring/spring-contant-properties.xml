@@ -32,6 +32,7 @@
         <property name="paymentSystemReturnDepositExpandURL" value="${PAYMENT_SYSTEM_RETURN_DEPOSIT_EXPAND_URL}"/>
         <property name="paymentSystemPublicTransferPlusChargeURL" value="${PAYMENT_SYSTEM_PUBLIC_TRANSFER_PLUS_CHARGE_URL}"/>
         <property name="paymentSystemAlipayChargeUrl" value="${PAYMENT_SYSTEM_ALIPAY_CHARGE_URL}"/>
+        <property name="paymentSystemReturnOtherAndPayDepositURL" value="${PAYMENT_SYSTEM_RETURN_OTHER_AND_PAY_DEPOSIT_URL}"/>
     </bean>
 
     <bean id="dingDingConfig" class="com.lxzl.erp.common.domain.DingDingConfig">
@@ -44,6 +45,11 @@
         <property name="getActivityOrderUrl" value="${mall.interface.getActivityOrderUrl}"/>
         <property name="mallSystemAppId" value="${mall.system.app.id}"/>
         <property name="mallSystemAppSecret" value="${mall.system.app.secret}"/>
+    </bean>
+
+    <bean id="taskSchedulerSystemConfig" class="com.lxzl.erp.common.domain.TaskSchedulerSystemConfig">
+        <property name="taskSchedulerSystemAppId" value="${TASK_SCHEDULER_APP_ID}"/>
+        <property name="taskSchedulerAppSecret" value="${TASK_SCHEDULER_APP_SECRET}"/>
     </bean>
 
 </beans>

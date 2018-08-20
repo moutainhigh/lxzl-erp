@@ -527,23 +527,23 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        param.setIsPendingDelivery(1);
 //        param.setOrderNo("LXO-20180307-1000-00014");
 //        param.setDeliverySubCompanyId(2);
-//        param.setOrderStatus(20);
+//        param.setOrderStatus(4);
 //        param.setPayStatus(0);
 //        param.setOrderNo("LXO-20180608-027-00059");
 //        param.setOrderSellerId(500355);
 //        param.setOrderSellerName("诚");
 //          param.setIsReturnOverDue(1);
-          param.setIsCanReletOrder(1);
-          param.setPageNo(1);
-          param.setPageSize(15);
-
+        param.setIsCanReletOrder(1);
+        param.setIsRecycleBin(0);
+        param.setPageNo(4);
+        param.setPageSize(15);
 
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
 
     @Test
     public void queryAllOrderJSON() throws Exception {
-        String str = "{\"pageNo\":1,\"pageSize\":15,\"orderNo\":\"LXO-20180307-1000-00014\",\"buyerRealName\":\"\",\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\"}";
+        String str = "{\"pageNo\":1,\"pageSize\":15,\"orderSellerName\":\"\",\"buyerRealName\":\"\",\"deliverySubCompanyId\":\"\",\"subCompanyId\":\"\",\"rentType\":\"\",\"orderNo\":\"\",\"isCanReletOrder\":\"\",\"startExpectDeliveryTime\":\"1533916800000\",\"endExpectDeliveryTime\":\"1534348799999\",\"rentTimePicker\":\"2018-08-11 - 2018-08-15\",\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\",\"payStatus\":\"\",\"isReturnOverDue\":\"\",\"isReletOrder\":\"\",\"isRecycleBin\":\"0\"}";
         OrderQueryParam param = FastJsonUtil.toBean(str,OrderQueryParam.class);
 //        param.setBuyerRealName("荣焱");
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);

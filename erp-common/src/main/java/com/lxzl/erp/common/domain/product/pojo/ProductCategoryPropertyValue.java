@@ -5,6 +5,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.CancelGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -14,7 +15,7 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductCategoryPropertyValue extends BasePO {
 
-    @NotNull(message = ErrorCode.CATEGORY_PROPERTY_VALUE_ID_NOT_NULL,groups={CancelGroup.class,UpdateGroup.class})
+    @NotNull(message = ErrorCode.CATEGORY_PROPERTY_VALUE_ID_NOT_NULL,groups={CancelGroup.class,UpdateGroup.class,IdGroup.class})
     private Integer categoryPropertyValueId;
     @NotBlank(message = ErrorCode.PROPERTY_VALUE_NAME_NOT_NULL,groups={AddGroup.class,UpdateGroup.class})
     private String propertyValueName;
@@ -32,8 +33,10 @@ public class ProductCategoryPropertyValue extends BasePO {
     private String updateUser;
     private Date updateTime;
 
-    private String propertyName; //分类名称
+    private String propertyName; //属性名称(大名称)
     private Integer materialType; //物料类型
+    private String categoryName; //分类名称
+    private String modelName; //文件原名
 
     public Integer getCategoryPropertyValueId() {
         return categoryPropertyValueId;
@@ -161,5 +164,21 @@ public class ProductCategoryPropertyValue extends BasePO {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
     }
 }

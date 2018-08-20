@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.util.List;
 
 @RequestMapping("/product")
@@ -129,29 +128,6 @@ public class ProductController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "addProductCategoryPropertyValue", method = RequestMethod.POST)
-    public Result addProductCategoryPropertyValue(@RequestBody ProductCategoryPropertyValue productCategoryPropertyValue, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = productCategoryService.addProductCategoryPropertyValue(productCategoryPropertyValue);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
-
-    @RequestMapping(value = "addProductCategoryProperty", method = RequestMethod.POST)
-    public Result addProductCategoryProperty(@RequestBody @Validated(AddGroup.class) ProductCategoryProperty productCategoryProperty, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = productCategoryService.addProductCategoryProperty(productCategoryProperty);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
-
-    @RequestMapping(value = "deleteProductCategoryPropertyValue", method = RequestMethod.POST)
-    public Result deleteProductCategoryPropertyValue(@RequestBody @Validated(CancelGroup.class) ProductCategoryProperty productCategoryProperty, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = productCategoryService.deleteProductCategoryPropertyValue(productCategoryProperty);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
-
-    @RequestMapping(value = "updateCategoryPropertyValue", method = RequestMethod.POST)
-    public Result updateCategoryPropertyValue(@RequestBody @Validated(UpdateGroup.class) ProductCategoryProperty productCategoryProperty, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = productCategoryService.updateCategoryPropertyValue(productCategoryProperty);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
 
     @RequestMapping(value = "pageProductCategory", method = RequestMethod.POST)
     public Result pageProductCategory(@RequestBody ProductCategoryPageParam productCategoryPageParam, BindingResult validResult) {
@@ -164,6 +140,55 @@ public class ProductController extends BaseController {
         ServiceResult<String, ProductCategory> serviceResult = productCategoryService.detailProductCategory(productCategory);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    @RequestMapping(value = "addProductCategoryPropertyValue", method = RequestMethod.POST)
+    public Result addProductCategoryPropertyValue(@RequestBody ProductCategoryPropertyValue productCategoryPropertyValue, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = productCategoryService.addProductCategoryPropertyValue(productCategoryPropertyValue);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+//    @RequestMapping(value = "addProductCategoryProperty", method = RequestMethod.POST)
+//    public Result addProductCategoryProperty(@RequestBody @Validated(AddGroup.class) ProductCategoryProperty productCategoryProperty, BindingResult validResult) {
+//        ServiceResult<String, Integer> serviceResult = productCategoryService.addProductCategoryProperty(productCategoryProperty);
+//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+//    }
+
+//    @RequestMapping(value = "deleteProductCategoryPropertyValue", method = RequestMethod.POST)
+//    public Result deleteProductCategoryPropertyValue(@RequestBody @Validated(CancelGroup.class) ProductCategoryProperty productCategoryProperty, BindingResult validResult) {
+//        ServiceResult<String, Integer> serviceResult = productCategoryService.deleteProductCategoryPropertyValue(productCategoryProperty);
+//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+//    }
+
+    @RequestMapping(value = "updateCategoryPropertyValue", method = RequestMethod.POST)
+    public Result updateCategoryPropertyValue(@RequestBody @Validated(UpdateGroup.class) ProductCategoryPropertyValue productCategoryPropertyValue, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = productCategoryService.updateCategoryPropertyValue(productCategoryPropertyValue);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "pageProductCategoryProperty", method = RequestMethod.POST)
+    public Result pageProductCategoryProperty(@RequestBody ProductCategoryPropertyPageParam productCategoryPropertyPageParam) {
+        ServiceResult<String, Page<ProductCategoryProperty>> serviceResult = productCategoryService.pageProductCategoryProperty(productCategoryPropertyPageParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "detailProductCategoryProperty", method = RequestMethod.POST)
+    public Result detailProductCategoryProperty(@RequestBody @Validated(IdGroup.class)ProductCategoryProperty productCategoryProperty) {
+        ServiceResult<String, ProductCategoryProperty> serviceResult = productCategoryService.detailProductCategoryProperty(productCategoryProperty.getCategoryPropertyId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "pageProductCategoryPropertyValue", method = RequestMethod.POST)
+    public Result pageProductCategoryPropertyValue(@RequestBody ProductCategoryPropertyValuePageParam productCategoryPropertyValuePageParam) {
+        ServiceResult<String, Page<ProductCategoryPropertyValue>> serviceResult = productCategoryService.pageProductCategoryPropertyValue(productCategoryPropertyValuePageParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "detailProductCategoryPropertyValue", method = RequestMethod.POST)
+    public Result detailProductCategoryPropertyValue(@RequestBody @Validated(IdGroup.class) ProductCategoryPropertyValue productCategoryPropertyValue, BindingResult validResult) {
+        ServiceResult<String, ProductCategoryPropertyValue> serviceResult = productCategoryService.detailProductCategoryPropertyValue(productCategoryPropertyValue.getCategoryPropertyValueId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 
 
     @Autowired
