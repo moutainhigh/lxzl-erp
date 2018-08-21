@@ -2,6 +2,8 @@ package com.lxzl.erp.dataaccess.dao.mysql.statistics;
 
 import com.lxzl.erp.common.domain.statistics.pojo.*;
 import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDealsCountBySubCompany;
+import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsRentProductDetail;
+import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsReturnProductDetail;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -67,4 +69,6 @@ public interface StatisticsMapper extends BaseMysqlDAO {
     List<FinanceStatisticsDealsCountBySubCompany> statisticsCustomerCountWeekly(@Param("maps") Map<String, Object> maps);
     List<FinanceStatisticsDealsCountBySubCompany> statisticsRentProductCountWeekly(@Param("maps") Map<String, Object> maps);
     List<FinanceStatisticsDealsCountBySubCompany> statisticsReturnProductCountWeekly(@Param("maps") Map<String, Object> maps);
+    List<FinanceStatisticsRentProductDetail> statisticsRentProductDetail(@Param("maps") Map<String, Object> maps);
+    List<FinanceStatisticsReturnProductDetail> statisticsReturnProductDetail(@Param("maps") Map<String, Object> maps);
 }

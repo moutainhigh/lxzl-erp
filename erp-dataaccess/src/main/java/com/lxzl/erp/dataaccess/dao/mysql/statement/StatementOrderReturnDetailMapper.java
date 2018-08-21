@@ -12,4 +12,8 @@ public interface StatementOrderReturnDetailMapper extends BaseMysqlDAO<Statement
 	List<StatementOrderReturnDetailDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+	List<StatementOrderReturnDetailDO> findByReturnOrderId(@Param("returnOrderId") Integer returnOrderId);
+
+	void batchDelete(@Param("list") List<StatementOrderReturnDetailDO> list);
 }

@@ -33,3 +33,4 @@ public interface ProductCategoryPropertyValueMapper extends BaseMysqlDAO<Product
                                                                                      @Param("propertyId") Integer propertyId,
                                                                                      @Param("id") Integer id);
 }
+

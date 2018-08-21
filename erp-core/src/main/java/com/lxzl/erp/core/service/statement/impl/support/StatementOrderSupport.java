@@ -184,6 +184,10 @@ public class StatementOrderSupport {
                 statementOrderDO.setStatementOtherAmount(BigDecimalUtil.sub(statementOrderDO.getStatementOtherAmount(), statementOrderDetailDO.getStatementDetailOtherAmount()));
                 //处理冲正金额
                 statementOrderDO.setStatementCorrectAmount(BigDecimalUtil.sub(statementOrderDO.getStatementCorrectAmount(), statementOrderDetailDO.getStatementDetailCorrectAmount()));
+                //处理已退设备
+                statementOrderDO.setStatementDepositReturnAmount(BigDecimalUtil.sub(statementOrderDO.getStatementDepositReturnAmount(),statementOrderDetailDO.getStatementDetailDepositReturnAmount()));
+                //处理已退租金押金
+                statementOrderDO.setStatementRentDepositReturnAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositReturnAmount(),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount()));
                 statementOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 statementOrderDetailDO.setUpdateTime(currentTime);
                 // K3退货回调时没有登录用户，设为superUser

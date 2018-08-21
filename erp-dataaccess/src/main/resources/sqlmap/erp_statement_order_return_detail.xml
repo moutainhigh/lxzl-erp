@@ -17,10 +17,12 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="return_order_id" jdbcType="INTEGER" property="returnOrderId" />
+		<result column="return_order_detail_id" jdbcType="INTEGER" property="returnOrderDetailId" />
 	</resultMap>
 
 	<sql id="column_List">
-		esord.id,esord.statement_order_id,esord.customer_id,esord.order_id,esord.order_item_refer_id,esord.return_type,esord.return_amount,esord.return_time,esord.data_status,esord.remark,esord.create_time,esord.create_user,esord.update_time,esord.update_user
+		esord.id,esord.statement_order_id,esord.customer_id,esord.order_id,esord.order_item_refer_id,esord.return_type,esord.return_amount,esord.return_time,esord.data_status,esord.remark,esord.create_time,esord.create_user,esord.update_time,esord.update_user,esord.return_order_id,esord.return_order_detail_id
 	</sql>
 
 	<select id="findById" resultMap="StatementOrderReturnDetailDO" parameterType="java.lang.Integer">
@@ -88,6 +90,12 @@
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
 			</if>
+			<if test="returnOrderId != null">
+				return_order_id = #{returnOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="returnOrderDetailId != null">
+				return_order_detail_id = #{returnOrderDetailId,jdbcType=INTEGER},
+			</if>
 		</set>
 	</sql>
 
@@ -97,5 +105,19 @@
 
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.statement.StatementOrderReturnDetailDO">
 		UPDATE erp_statement_order_return_detail <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<select id="findByReturnOrderId" resultMap="StatementOrderReturnDetailDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statement_order_return_detail esord
+		WHERE esord.return_order_id = #{returnOrderId, jdbcType=INTEGER} AND esord.data_status = 1
+	</select>
+
+	<update id="batchDelete" parameterType="java.util.List">
+		UPDATE erp_statement_order_return_detail
+		SET data_status = 2
+		WHERE id IN
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+		#{item.id,jdbcType=INTEGER}
+	    </foreach>
 	</update>
 </mapper>
