@@ -1266,7 +1266,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
             if(customerDO.getCustomerCompanyDO().getSubsidiary()){//如果是子公司就获取母公司的授信信息
-                CustomerRiskManagementDO customerRiskManagementDO=customerRiskManagementMapper.findByCustomerId(customerDO.getCustomerCompanyDO().getParentCompanyId());
+                CustomerRiskManagementDO customerRiskManagementDO=customerRiskManagementMapper.findByCustomerId(customerDO.getCustomerCompanyDO().getParentCustomerId());
                 customerDO.setCustomerRiskManagementDO(customerRiskManagementDO);
             }
             List<CustomerConsignInfoDO> customerConsignInfoDO = customerConsignInfoMapper.findByCustomerId(customerDO.getId());

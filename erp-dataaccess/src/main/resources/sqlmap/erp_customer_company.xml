@@ -71,7 +71,7 @@
 		 pcc.customer_no as parentCustomerNo,
 		 pcc.company_name as parentCustomerName
 		FROM erp_customer_company AS ecc
-		LEFT JOIN erp_customer_company AS pcc ON pcc.customer_id=ecc.parent_company_id
+		LEFT JOIN erp_customer_company AS pcc ON pcc.customer_id=ecc.parent_customer_id
 		WHERE ecc.customer_id= #{customerId, jdbcType=INTEGER}
 	</select>
 
