@@ -3605,6 +3605,49 @@ public class CustomerServiceImpl implements CustomerService {
         return serviceResult;
     }
 
+    /**
+     * 查询子公司分页信息
+     * @param customerCompanyQueryParam
+     * @return
+     */
+    @Override
+    public ServiceResult<String, Page<Customer>> queryParentCompanyPage(CustomerCompanyQueryParam customerCompanyQueryParam) {
+        ServiceResult<String, Page<Customer>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
+
+        if (StringUtil.isEmpty(customerCompanyQueryParam.getCustomerNo())) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NO_NOT_NULL);
+            return result;
+        }
+        CustomerDO parentCustomerDO = customerMapper.findByNo(customerCompanyQueryParam.getCustomerNo());
+        if (parentCustomerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        customerCompanyQueryParam.setCustomerId(parentCustomerDO.getId());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("customerCompanyQueryParam", customerCompanyQueryParam);
+//        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
+        Integer totalCount = customerMapper.findSubsidiaryCustomerCompanyCountByParams(maps);
+        List<CustomerDO> customerDOList = customerMapper.findSubsidiaryCustomerCompanyByParams(maps);
+        if (CollectionUtil.isNotEmpty(customerDOList)) {
+            for (CustomerDO customerDO : customerDOList) {
+                //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
+                processCustomerPhone(customerDO);
+            }
+        }
+
+        List<Customer> customerList = ConverterUtil.convertList(customerDOList, Customer.class);
+        convertConfirmUserId2UserName(customerList); // 将确认人id转换为确认人姓名
+        Page<Customer> page = new Page<>(customerList, totalCount, customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
     /*
     将customer中的确认结算单用户id和确认坏账用户id转换为名字
      */
