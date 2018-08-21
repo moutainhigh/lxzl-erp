@@ -65,6 +65,16 @@
 		WHERE ecc.customer_id = #{customerId, jdbcType=INTEGER} AND ecc.data_status = 1
 	</select>
 
+	<select id="findParentCustomerByCustomerId" resultType="com.lxzl.erp.common.domain.customer.pojo.dto.CustomerCompanyDTO" parameterType="java.lang.Integer">
+		SELECT
+		 ecc.is_subsidiary as isSubsidiary ,
+		 pcc.customer_no as parentCustomerNo,
+		 pcc.company_name as parentCustomerName
+		FROM erp_customer_company AS ecc
+		LEFT JOIN erp_customer_company AS pcc ON pcc.customer_id=ecc.parent_company_id
+		WHERE ecc.customer_id= #{customerId, jdbcType=INTEGER}
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ecc.id) FROM erp_customer_company ecc
 		<where>
