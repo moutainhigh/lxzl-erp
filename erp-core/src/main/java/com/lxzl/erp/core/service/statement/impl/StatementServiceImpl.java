@@ -3970,6 +3970,7 @@ public class StatementServiceImpl implements StatementService {
                 return null;
             }
             if (paymentCycle == null || paymentCycle >= rentTimeLength || paymentCycle == 0) {
+                statementMonthCount++;
                 return statementMonthCount;
             }
             statementMonthCount = rentTimeLength / paymentCycle;
@@ -4086,6 +4087,12 @@ public class StatementServiceImpl implements StatementService {
                 thisPhaseEndTimeCalendar.set(Calendar.DAY_OF_MONTH, lastMonthSurplusDays);
                 statementEndTime = thisPhaseEndTimeCalendar.getTime();
             }
+        }
+        //若第一期结束时间大于 续租结束时间则取续租结束时间
+        Date reletOrderEndTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, rentLength);
+        reletOrderEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(reletOrderEndTime, -1);
+        if (DateUtil.daysBetween(statementEndTime, reletOrderEndTime) < 0) {
+            statementEndTime = reletOrderEndTime;
         }
 
         rentStartTimeCalendar.setTime(rentStartTime);
