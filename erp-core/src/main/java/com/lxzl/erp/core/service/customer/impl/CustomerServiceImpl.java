@@ -998,6 +998,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (customerCompany.getSubsidiary()&& customerCompany.getParentCustomerId() != null) {
             CustomerDO parentCustomerDO = customerMapper.findById(customerCompany.getParentCustomerId());
             customerCompany.setParentCustomerName(parentCustomerDO.getCustomerName());
+            customerCompany.setParentCustomerNo(parentCustomerDO.getCustomerNo());
         }
         //显示联合开发员的省，市，区
         if (customerDO.getUnionUser() != null) {
