@@ -159,6 +159,7 @@ public class ErrorCode {
     public static final String CUSTOMER_COPANY_NOT_EXISTS = "J200095";
     public static final String PARENT_CUSTOMER_COPANY_IS_SUBSIDIARY = "J200096";
     public static final String CUSTOMER_COPANY_IS_SUBSIDIARY = "J200097";
+    public static final String ADD_PARENT_COMPANY_COUNT_ADD_SELF = "J200097";
 
     public static final String PROPERTY_CAPACITY_VALUE_NOT_NULL = "J800086";
     public static final String PROPERTY_NAME_NOT_MATCH_MATERIAL_TYPE_NAME = "J800087";
@@ -1683,6 +1684,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COPANY_NOT_EXISTS , "企业客户不存在");
         MAP.put(PARENT_CUSTOMER_COPANY_IS_SUBSIDIARY , "所选取的母公司是其他公司的子公司，不能再添加子公司");
         MAP.put(CUSTOMER_COPANY_IS_SUBSIDIARY , "选取的子公司已经存在母公司，不能重复添加");
+        MAP.put(ADD_PARENT_COMPANY_COUNT_ADD_SELF , "所添加子公司与母公司一致，请重新选择");
 
         MAP.put(EQUIPMENT_AND_BULK_MATERIAL_IS_NOT_NULL, "设备维修单明细表不能为空");
         MAP.put(REPAIR_REASON_IS_NOT_NULL, "设备维修单的维修原因不能为空");

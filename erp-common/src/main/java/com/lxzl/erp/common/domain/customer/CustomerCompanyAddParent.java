@@ -8,7 +8,7 @@ import java.util.List;
  * @Date: Created in 2018\8\20 0020 17:16
  */
 public class CustomerCompanyAddParent {
-    private Integer parentCustomerId;
+    private Integer parentCustomerId; //母公司ID
     private List<Integer> customerIdList;
 
     public Integer getParentCustomerId() {
