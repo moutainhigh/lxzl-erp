@@ -1631,4 +1631,85 @@ ORDER BY esc.data_order DESC
             GROUP BY eo.delivery_sub_company_id
         </if>
     </select>
+
+    <resultMap id="FinanceStatisticsRentProductDetail" type="com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsRentProductDetail">
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
+        <result column="order_sub_company_id" jdbcType="INTEGER" property="orderSubCompanyId"/>
+        <result column="delivery_sub_company_id" jdbcType="INTEGER" property="deliverySubCompanyId"/>
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
+        <result column="rent_type" jdbcType="INTEGER" property="rentType"/>
+        <result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength"/>
+        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="k3_product_no" jdbcType="VARCHAR" property="k3ProductNo"/>
+        <result column="product_count" jdbcType="INTEGER" property="productCount"/>
+        <result column="product_unit_amount" jdbcType="DECIMAL" property="productUnitAmount"/>
+        <result column="rent_start_time" jdbcType="TIMESTAMP" property="rentStartTime"/>
+        <result column="expect_return_time" jdbcType="TIMESTAMP" property="expectReturnTime"/>
+        <result column="is_new_product" jdbcType="INTEGER" property="isNewProduct"/>
+        <result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime"/>
+    </resultMap>
+
+    <select id="statisticsRentProductDetail" resultMap="FinanceStatisticsRentProductDetail" parameterType="java.util.Map">
+        SELECT
+            eo.order_no, eo.order_sub_company_id, eo.delivery_sub_company_id,ec.customer_name,eo.rent_type, eo.rent_time_length,
+            (CASE WHEN ((eo.rent_type=2 AND 6 > eo.rent_time_length) OR (eo.rent_type=1 AND eo.rent_time_length >= 30)) THEN 1
+                  WHEN (eo.rent_type=2 AND eo.rent_time_length >= 6) THEN 2
+                  WHEN (eo.rent_type=1 AND 30 > eo.rent_time_length) THEN 3
+                  ELSE 0 END) AS rent_length_type,
+            eop.product_name, ep.k3_product_no,
+            eop.product_count, eop.product_unit_amount, eo.rent_start_time, eo.expect_return_time, eop.is_new_product, eo.delivery_time
+        FROM erp_order_product eop
+        LEFT JOIN erp_order eo ON eop.order_id=eo.id AND eo.data_status=1 AND eop.data_status=1
+        LEFT JOIN erp_product ep ON ep.id=eop.product_id
+        LEFT JOIN erp_customer ec ON eo.buyer_customer_id=ec.id
+        WHERE ep.data_status=1 AND eo.order_sub_company_id != 1 AND eo.order_status IN (16, 20, 22, 24) AND eop.product_count > 0
+        AND (CASE WHEN ep.k3_product_no LIKE '%.DIS.%' THEN  eop.product_unit_amount>0 ELSE 1=1 END)
+        <if test="maps.statisticsStartTime != null and maps.statisticsEndTime != null">
+            AND eo.delivery_time BETWEEN  #{maps.statisticsStartTime,jdbcType=TIMESTAMP} AND #{maps.statisticsEndTime,jdbcType=TIMESTAMP}
+        </if>
+    </select>
+
+    <resultMap id="FinanceStatisticsReturnProductDetail" type="com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsReturnProductDetail">
+        <result column="return_order_no" jdbcType="VARCHAR" property="returnOrderNo"/>
+        <result column="product_no" jdbcType="VARCHAR" property="productNo"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="product_unit_amount" jdbcType="DECIMAL" property="productUnitAmount"/>
+        <result column="product_count" jdbcType="INTEGER" property="productCount"/>
+        <result column="real_product_count" jdbcType="INTEGER" property="realProductCount"/>
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
+        <result column="order_sub_company_id" jdbcType="INTEGER" property="orderSubCompanyId"/>
+        <result column="delivery_sub_company_id" jdbcType="INTEGER" property="deliverySubCompanyId"/>
+        <result column="customer_no" jdbcType="VARCHAR" property="customerNo"/>
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
+        <result column="rent_type" jdbcType="INTEGER" property="rentType"/>
+        <result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength"/>
+        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType"/>
+        <result column="return_time" jdbcType="TIMESTAMP" property="returnTime"/>
+        <result column="rent_start_time" jdbcType="TIMESTAMP" property="rentStartTime"/>
+        <result column="expect_return_time" jdbcType="TIMESTAMP" property="expectReturnTime"/>
+    </resultMap>
+
+    <select id="statisticsReturnProductDetail" resultMap="FinanceStatisticsReturnProductDetail" parameterType="java.util.Map">
+        SELECT
+            ekro.return_order_no, ekrod.product_no, ekrod.product_name, eop.product_unit_amount, ekrod.product_count, ekrod.real_product_count, eo.order_no, eo.order_sub_company_id,eo.delivery_sub_company_id,
+            ec.customer_no, ec.customer_name, eo.rent_type, eo.rent_time_length,
+            (CASE WHEN ((eo.rent_type=2 AND 6 > eo.rent_time_length) OR (eo.rent_type=1 AND eo.rent_time_length >= 30)) THEN 1
+                  WHEN (eo.rent_type=2 AND eo.rent_time_length >= 6) THEN 2
+                  WHEN (eo.rent_type=1 AND 30 > eo.rent_time_length) THEN 3
+                  ELSE 0 END) AS rent_length_type,
+            ekro.return_time, eo.rent_start_time, eo.expect_return_time
+        FROM erp_k3_return_order ekro
+        INNER JOIN erp_k3_return_order_detail ekrod ON ekrod.return_order_id = ekro.id AND ekrod.data_status=1
+        INNER JOIN erp_order eo ON eo.order_no=ekrod.order_no AND eo.data_status=1
+        INNER JOIN erp_order_product eop ON ekrod.order_item_type=1 AND (CASE WHEN ekrod.product_no LIKE '%.DIS.%' THEN eop.product_unit_amount>0  ELSE 1=1 END)
+        INNER JOIN erp_customer ec ON eo.buyer_customer_id=ec.id
+        AND eo.id=eop.order_id AND (ekrod.order_item_id=eop.id OR ekrod.order_entry=eop.FEntry_id) AND eop.data_status=1
+        WHERE ekrod.order_item_type=1 AND eo.order_sub_company_id != 1 AND ekrod.real_product_count > 0
+        <if test="maps.statisticsStartTime != null and maps.statisticsEndTime != null">
+            AND ekro.return_time BETWEEN  #{maps.statisticsStartTime,jdbcType=TIMESTAMP} AND #{maps.statisticsEndTime,jdbcType=TIMESTAMP}
+        </if>
+
+    </select>
+
 </mapper>

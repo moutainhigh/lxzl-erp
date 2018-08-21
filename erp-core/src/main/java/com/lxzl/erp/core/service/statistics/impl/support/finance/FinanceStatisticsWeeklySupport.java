@@ -1,9 +1,6 @@
 package com.lxzl.erp.core.service.statistics.impl.support.finance;
 
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.StatisticsDealsCountType;
-import com.lxzl.erp.common.constant.StatisticsOrderOriginType;
-import com.lxzl.erp.common.constant.StatisticsRentLengthType;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.statistics.FinanceStatisticsParam;
 import com.lxzl.erp.common.domain.statistics.pojo.FinanceStatisticsDataWeeklyExcel;
 import com.lxzl.erp.common.util.CollectionUtil;
@@ -14,9 +11,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.FinanceStatisticsDataWeeklyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
-import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataMeta;
-import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataWeeklyDO;
-import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDealsCountBySubCompany;
+import com.lxzl.erp.dataaccess.domain.statistics.*;
 import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +44,21 @@ public class FinanceStatisticsWeeklySupport {
         return financeStatisticsDataWeeklyMapper.listFinanceStatisticsDataMetaPage(maps);
     }
 
+    public List<FinanceStatisticsRentProductDetail> statisticsRentProductDetail(FinanceStatisticsParam paramVo) {
+        if (paramVo == null) {
+            return null;
+        }
+        Map<String, Object> maps = financeStatisticsWeeklyParamToMap(paramVo);
+        return statisticsMapper.statisticsRentProductDetail(maps);
+    }
 
+    public List<FinanceStatisticsReturnProductDetail> statisticsReturnProductDetail(FinanceStatisticsParam paramVo) {
+        if (paramVo == null) {
+            return null;
+        }
+        Map<String, Object> maps = financeStatisticsWeeklyParamToMap(paramVo);
+        return statisticsMapper.statisticsReturnProductDetail(maps);
+    }
 
     /**
      * 统计成交客户数量 { 订单所属公司为八个分公司（KA）的订单按订单所属分公司分组统计，订单所属公司为电销或者大客户渠道的订单则按执行分公司分组统计}
@@ -224,6 +233,11 @@ public class FinanceStatisticsWeeklySupport {
         financeStatisticsDataWeeklyMapper.saveList(financeAllStatisticsDataWeekly);
     }
 
+    /**
+     * 被统计的差异数据
+     * @param paramVo
+     * @return
+     */
     public List<FinanceStatisticsDataWeeklyDO> statisticsDiffFinanceDataWeekly(FinanceStatisticsParam paramVo){
         int year = paramVo.getYear();
         int month = paramVo.getMonth();
@@ -267,6 +281,43 @@ public class FinanceStatisticsWeeklySupport {
         //return financeAllStatisticsDataWeekly;
         System.out.println("-------------------------------------------------------------------------------------");*/
         return diffFinanceAllStatisticsDataWeekly;
+    }
+
+    /**
+     * 被统计的累计数据
+     * @param paramVo
+     * @return
+     */
+    public List<FinanceStatisticsDataWeeklyDO> statisticsTotalFinanceDataWeekly(FinanceStatisticsParam paramVo){
+        int year = paramVo.getYear();
+        int month = paramVo.getMonth();
+        int weekOfMonth = paramVo.getWeekOfMonth();
+        boolean isHistoryData = !isCurrentWeek(year, month, weekOfMonth);  //如果不是当前周,则都认为是历史统计数据,后面则从数据库里面取数据
+        List<FinanceStatisticsDataWeeklyDO> financeAllStatisticsDataWeekly = new ArrayList<>();
+        //统计KA
+        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_KA);
+        List<FinanceStatisticsDataWeeklyDO> financeKAStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
+        if (CollectionUtil.isNotEmpty(financeKAStatisticsDataWeekly)) {
+            financeAllStatisticsDataWeekly.addAll(financeKAStatisticsDataWeekly);
+        }
+        //统计电销
+        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_TMK);
+        List<FinanceStatisticsDataWeeklyDO> financeTMKStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
+        if (CollectionUtil.isNotEmpty(financeTMKStatisticsDataWeekly)) {
+            financeAllStatisticsDataWeekly.addAll(financeTMKStatisticsDataWeekly);
+        }
+        // 统计大客户渠道
+        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_BCC);
+        List<FinanceStatisticsDataWeeklyDO> financeBCCStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
+        if (CollectionUtil.isNotEmpty(financeBCCStatisticsDataWeekly)) {
+            financeAllStatisticsDataWeekly.addAll(financeBCCStatisticsDataWeekly);
+        }
+
+        //如果是当前周,则将此次统计数据保存到数据库
+        if (!isHistoryData && CollectionUtil.isNotEmpty(financeAllStatisticsDataWeekly)) {
+            freshStatisticsDataToDB(year, month, weekOfMonth, financeAllStatisticsDataWeekly);
+        }
+        return financeAllStatisticsDataWeekly;
     }
 
     /**
@@ -665,6 +716,16 @@ public class FinanceStatisticsWeeklySupport {
         statisticsInterval.setStatisticsStartTime(statisticsStartTime);
         statisticsInterval.setStatisticsEndTime(statisticsEndTime);
         return statisticsInterval;
+    }
+
+    public StatisticsInterval createStatisticsInterval(int statisticsInterval, int year, int month, int weekOfMonth) {
+        if (StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY == statisticsInterval) {
+            return createStatisticsInterval(year, month, weekOfMonth);
+        } else if (StatisticsIntervalType.STATISTICS_INTERVAL_MONTHLY == statisticsInterval) {
+            int maxWeekOfMonth = getMaxWeekCountOfYearAndMonth(year, month);
+            return createStatisticsInterval(year, month, maxWeekOfMonth);
+        }
+        return createStatisticsInterval(year, month, weekOfMonth);
     }
 
     @Autowired
