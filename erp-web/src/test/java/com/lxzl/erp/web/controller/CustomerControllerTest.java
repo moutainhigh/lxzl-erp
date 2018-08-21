@@ -949,4 +949,21 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompanyAddParent.setCustomerIdList(customerIdList);
         TestResult result = getJsonTestResult("/customer/addParentCompany", customerCompanyAddParent);
     }
+
+    @Test
+    public void queryParentCompanyPage() throws Exception {
+        CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
+//        customerCompanyQueryParam.setCustomerStatus(4);
+        customerCompanyQueryParam.setCustomerNo("LXCC-0755-20180112-00001");
+//        customerCompanyQueryParam.setCompanyName("12312");
+//          customerCompanyQueryParam.setIsRisk(1);
+//        customerCompanyQueryParam.setProductPurpose("测试");
+//        customerCompanyQueryParam.setIsDisabled(0);
+//        customerCompanyQueryParam.setCustomerStatus(CustomerStatus.STATUS_PASS);
+//        customerCompanyQueryParam.setConnectPhone("13726273851");
+
+//        customerCompanyQueryParam.setOwnerSubCompanyId(3);
+//        customerCompanyQueryParam.setConfirmStatementStatus(ConfirmStatementStatus.CONFIRM_STATUS_YES);
+        TestResult result = getJsonTestResult("/customer/queryParentCompanyPage", customerCompanyQueryParam);
+    }
 }

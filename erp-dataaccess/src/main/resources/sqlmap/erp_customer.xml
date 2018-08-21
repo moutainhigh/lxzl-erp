@@ -772,4 +772,49 @@
 		</foreach>
 	</update>
 
+	<select id="findSubsidiaryCustomerCompanyCountByParams" resultType="Integer" parameterType="map">
+		SELECT count(ecc.id)
+		FROM erp_customer_company ecc
+		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1
+		LEFT JOIN erp_user owner_user on ec.owner = owner_user.id
+		<where>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerId != null">
+				AND ecc.parent_company_id = #{maps.customerCompanyQueryParam.customerId, jdbcType=INTEGER}
+			</if>
+			and ecc.data_status = 1
+			and ecc.is_subsidiary = 1
+		</where>
+	</select>
+	<select id="findSubsidiaryCustomerCompanyByParams" resultMap="CustomerDO" parameterType="map">
+		SELECT <include refid="column_List"/>,<include refid="ecc_column_List"/>
+		,eap.province_name AS provinceName
+		,eac.city_name AS cityName
+		,ead.district_name AS districtName
+		,union_user.real_name AS unionUserName
+		,owner_user.real_name AS ownerName
+		,esc.sub_company_name AS ownerSubCompanyName
+		FROM (
+		SELECT <include refid="company_column_List"/>
+		FROM erp_customer_company ecc
+		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1
+		LEFT JOIN erp_user owner_user on ec.owner = owner_user.id
+		<where>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerId != null">
+				AND ecc.parent_company_id = #{maps.customerCompanyQueryParam.customerId, jdbcType=INTEGER}
+			</if>
+			and ecc.data_status = 1
+			and ecc.is_subsidiary = 1
+		</where>
+		ORDER BY ecc.create_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+		) ecc
+		LEFT JOIN erp_customer ec ON ecc.ecc_customer_id=ec.id AND ec.data_status=1
+		LEFT JOIN erp_area_province eap ON ecc.ecc_province=eap.id AND eap.data_status=1
+		LEFT JOIN erp_area_city eac ON ecc.ecc_city=eac.id AND eac.data_status=1
+		LEFT JOIN erp_area_district ead ON ecc.ecc_district=ead.id AND ead.data_status=1
+		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
+		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
+		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id AND esc.data_status = 1
+		ORDER BY ecc.ecc_create_time DESC
+	</select>
 </mapper>
