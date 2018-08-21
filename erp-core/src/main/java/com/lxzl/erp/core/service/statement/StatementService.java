@@ -257,4 +257,11 @@ public interface StatementService extends BaseService {
      * @return
      */
     String returnDeposit(String orderNo);
+
+    /**
+     * 取消已结算的退货单
+     * @param returnOrderNo
+     * @return
+     */
+    ServiceResult<String,String> rollbackSuccessReturnOrder(String returnOrderNo);
 }

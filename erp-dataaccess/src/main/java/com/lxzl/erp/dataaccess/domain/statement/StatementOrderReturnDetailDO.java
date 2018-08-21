@@ -16,6 +16,8 @@ public class StatementOrderReturnDetailDO  extends BaseDO {
 	private Date returnTime;
 	private Integer dataStatus;
 	private String remark;
+	private Integer returnOrderId;
+	private Integer returnOrderDetailId;
 
 	public Integer getId(){
 		return id;
@@ -97,4 +99,19 @@ public class StatementOrderReturnDetailDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public Integer getReturnOrderId() {
+		return returnOrderId;
+	}
+
+	public void setReturnOrderId(Integer returnOrderId) {
+		this.returnOrderId = returnOrderId;
+	}
+
+	public Integer getReturnOrderDetailId() {
+		return returnOrderDetailId;
+	}
+
+	public void setReturnOrderDetailId(Integer returnOrderDetailId) {
+		this.returnOrderDetailId = returnOrderDetailId;
+	}
 }

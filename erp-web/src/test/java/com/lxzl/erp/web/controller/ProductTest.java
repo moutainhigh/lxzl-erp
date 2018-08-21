@@ -303,3 +303,4 @@ public class ProductTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/product/detailProductCategoryPropertyValue", param);
     }
 }
+

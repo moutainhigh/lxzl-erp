@@ -4363,7 +4363,7 @@ INSERT INTO `erp_sys_menu` (`id`,`menu_name`,`parent_menu_id`,`menu_order`,`is_f
 INSERT INTO `erp_sys_menu` (`id`,`menu_name`,`parent_menu_id`,`menu_order`,`is_folder`,`menu_url`,`level`,`data_status`,`remark`) VALUES(200307,'400客服个人客户详情 ',200305,0,3,'customer-manage/service-detail',3,1,'客户管理-400客服个人客户详情 ') ;
 INSERT INTO `erp_sys_menu` (`id`,`menu_name`,`parent_menu_id`,`menu_order`,`is_folder`,`menu_url`,`level`,`data_status`,`remark`) VALUES(200308,'400客服企业客户详情',200306,0,3,'customer-business-manage/service-detail',3,1,'客户管理-400客服企业客户详情') ;
 
-
+INSERT INTO `erp_bank_slip_detail_manual_claim_and_localization_config`  VALUES ('1', '支付宝（中国）网络技术有限公司客户备付金', NULL, '1', NULL, NULL, '', NULL, '');
 
 
 
