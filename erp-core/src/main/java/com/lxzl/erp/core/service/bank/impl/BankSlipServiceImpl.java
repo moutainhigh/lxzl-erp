@@ -1394,9 +1394,9 @@ public class BankSlipServiceImpl implements BankSlipService {
         maps.put("pageSize", pageQuery.getPageSize());
         //查询已认领，但是确认时间和确认人条件不为空时给回空集合；查询不是已认领，确认时间和确认人条件不为空时将查询条件设置为查询已确认
         if (BankSlipDetailStatus.CLAIMED.equals(bankSlipClaimDetailQueryParam.getDetailStatus())
-                && (bankSlipClaimDetailQueryParam.getStartSlipDetailUpdateTime() != null
-                || bankSlipClaimDetailQueryParam.getEndSlipDetailUpdateTime() != null
-                || StringUtil.isNotEmpty(bankSlipClaimDetailQueryParam.getSlipDetailUpdateUserName()))) {
+                && (bankSlipClaimDetailQueryParam.getStartClaimUpdateTime() != null
+                || bankSlipClaimDetailQueryParam.getEndClaimUpdateTime() != null
+                || StringUtil.isNotEmpty(bankSlipClaimDetailQueryParam.getClaimUpdateUserName()))) {
             BankSlipClaimPage bankSlipClaimPage = new BankSlipClaimPage();
             List<BankSlipClaimDetail> bankSlipClaimDetailList = new ArrayList<>();
             Page<BankSlipClaimDetail> page = new Page<>(bankSlipClaimDetailList, 0, bankSlipClaimDetailQueryParam.getPageNo(), bankSlipClaimDetailQueryParam.getPageSize());
@@ -1404,9 +1404,9 @@ public class BankSlipServiceImpl implements BankSlipService {
             result.setErrorCode(ErrorCode.SUCCESS);
             result.setResult(bankSlipClaimPage);
             return result;
-        } else if (bankSlipClaimDetailQueryParam.getStartSlipDetailUpdateTime() != null
-                || bankSlipClaimDetailQueryParam.getEndSlipDetailUpdateTime() != null
-                || StringUtil.isNotEmpty(bankSlipClaimDetailQueryParam.getSlipDetailUpdateUserName())) {
+        } else if (bankSlipClaimDetailQueryParam.getStartClaimUpdateTime() != null
+                || bankSlipClaimDetailQueryParam.getEndClaimUpdateTime() != null
+                || StringUtil.isNotEmpty(bankSlipClaimDetailQueryParam.getClaimUpdateUserName())) {
             bankSlipClaimDetailQueryParam.setDetailStatus(BankSlipDetailStatus.CONFIRMED);
         }
 
@@ -1421,9 +1421,13 @@ public class BankSlipServiceImpl implements BankSlipService {
         List<BankSlipClaimDetail> bankSlipClaimDetailList = bankSlipClaimMapper.findBankSlipClaimDetailByParams(maps);
         for (BankSlipClaimDetail bankSlipClaimDetail : bankSlipClaimDetailList) {
             if (!BankSlipDetailStatus.CONFIRMED.equals(bankSlipClaimDetail.getDetailStatus())) {
-                bankSlipClaimDetail.setSlipDetailUpdateUserName("");
-                bankSlipClaimDetail.setSlipDetailUpdateUser("");
-                bankSlipClaimDetail.setSlipDetailUpdateTime(null);
+//                bankSlipClaimDetail.setSlipDetailUpdateUserName("");
+//                bankSlipClaimDetail.setSlipDetailUpdateUser("");
+//                bankSlipClaimDetail.setSlipDetailUpdateTime(null);
+                bankSlipClaimDetail.setClaimUpdateUserName("");
+                bankSlipClaimDetail.setClaimUpdateUser("");
+                bankSlipClaimDetail.setClaimUpdateTime(null);
+
             }
         }
 
