@@ -276,9 +276,9 @@ public class CustomerSupport {
             if (customerDO != null && CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
                 CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(custmerId);
                 if (customerCompanyDO != null &&customerCompanyDO.getSubsidiary()!=null&& customerCompanyDO.getSubsidiary()) {
-                    CustomerCompanyDO parentCustomerCompanyDO = customerCompanyMapper.findById(customerCompanyDO.getParentCompanyId());
-                    if (parentCustomerCompanyDO != null) {
-                        return parentCustomerCompanyDO.getCustomerId();
+                    CustomerDO parentCustomerDO = customerMapper.findById(customerCompanyDO.getParentCompanyId());
+                    if (parentCustomerDO != null) {
+                        return parentCustomerDO.getId();
                     }
                 }
             }
