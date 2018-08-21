@@ -122,6 +122,17 @@
 
                                         <dt class="mb10">是否禁用：</dt>
                                         <dd>{{isDisabledValue}}</dd>
+
+                                        <dt class="mb10">是否为子公司：</dt>
+                                        <dd>{{subsidiary}}</dd>
+
+                                        {{#customerCompany.subsidiary}}
+                                        <dt class="mb10">母公司名称：</dt>
+                                        <dd><a href="{{parentCompanyUrl}}" target="_blank">{{customerCompany.parentCustomerName}}</a></dd>
+
+                                        <dt class="mb10">母公司编号：</dt>
+                                        <dd><a href="{{parentCompanyUrl}}" target="_blank">{{customerCompany.parentCustomerNo}}</a></dd>
+                                        {{/customerCompany.subsidiary}}
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
