@@ -237,7 +237,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                 customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
             }
             if (customerDO != null) {
-                customerSupport.subCreditAmountUsed(customerDO.getId(), b);
+                customerSupport.subCreditAmountUsed(customerDO.getId(), b,CustomerRiskBusinessType.RETURN_ORDER_TYPE,k3ReturnOrder.getReturnOrderNo(),"");
             }
         }
 

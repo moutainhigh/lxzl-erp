@@ -29,4 +29,7 @@ public interface CustomerCompanyMapper extends BaseMysqlDAO<CustomerCompanyDO> {
 
 	List<CustomerCompanyDO> findCustomerCompanyByName(@Param("list") List<CustomerCompanyDO> customerCompanyDOList);
 
+    List<CustomerCompanyDO> findByCustomerIdList(@Param("list") List<Integer> customerIdList);
+
+	void updateList(@Param("customerCompanyDOList") List<CustomerCompanyDO> customerCompanyDOList);
 }

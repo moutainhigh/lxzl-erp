@@ -1265,6 +1265,10 @@ public class CustomerServiceImpl implements CustomerService {
         }
         if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
+            if(customerDO.getCustomerCompanyDO().getSubsidiary()){//如果是子公司就获取母公司的授信信息
+                CustomerRiskManagementDO customerRiskManagementDO=customerRiskManagementMapper.findByCustomerId(customerDO.getCustomerCompanyDO().getParentCompanyId());
+                customerDO.setCustomerRiskManagementDO(customerRiskManagementDO);
+            }
             List<CustomerConsignInfoDO> customerConsignInfoDO = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
             customerDO.getCustomerCompanyDO().setCustomerConsignInfoList(customerConsignInfoDO);
         } else if (CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
@@ -3549,6 +3553,54 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NO_NOT_NULL);
             return serviceResult;
         }
+    }
+
+    /**
+     * 添加母公司接口
+     * @param customerCompanyAddParent
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> addParentCompany(CustomerCompanyAddParent customerCompanyAddParent) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date date = new Date();
+        if (customerCompanyAddParent.getParentCustomerId() == null) {
+            serviceResult.setErrorCode(ErrorCode.PARENT_CUSTOMER_ID_IS_NOT_NULL);
+            return serviceResult;
+        }
+        if (CollectionUtil.isEmpty(customerCompanyAddParent.getCustomerIdList())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_ID_IS_NOT_NULL);
+            return serviceResult;
+        }
+        CustomerCompanyDO parentCustomerCompanyDO = customerCompanyMapper.findByCustomerId(customerCompanyAddParent.getParentCustomerId());
+        if (parentCustomerCompanyDO == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_COPANY_NOT_EXISTS);
+            return serviceResult;
+        }
+        if (parentCustomerCompanyDO.getSubsidiary()) {
+            serviceResult.setErrorCode(ErrorCode.PARENT_CUSTOMER_COPANY_IS_SUBSIDIARY);
+            return serviceResult;
+        }
+        List<CustomerCompanyDO> customerCompanyDOList = customerCompanyMapper.findByCustomerIdList(customerCompanyAddParent.getCustomerIdList());
+        if (CollectionUtil.isEmpty(customerCompanyDOList)) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_COPANY_NOT_EXISTS);
+            return serviceResult;
+        }
+        for (CustomerCompanyDO customerCompanyDO:customerCompanyDOList){
+            if (customerCompanyDO.getSubsidiary()) {
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_COPANY_IS_SUBSIDIARY);
+                return serviceResult;
+            }else {
+                customerCompanyDO.setSubsidiary(true);
+                customerCompanyDO.setParentCompanyId(customerCompanyAddParent.getParentCustomerId());
+                customerCompanyDO.setUpdateTime(date);
+                customerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            }
+        }
+        customerCompanyMapper.updateList(customerCompanyDOList);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
     }
 
     /*
