@@ -504,6 +504,10 @@ public class PageController extends BaseController {
         return "/customerManage/serviceCustomerDetail";
     }
 
+    @RequestMapping("/customer-manage/add-subCompany")
+    public String customerManageAddSubCompany() {
+        return "/component/customerBusiness/addSubCompany";
+    }
     //采购管理
     @RequestMapping("/purchase-manage/list")
     public String purchaseManageList() {
@@ -1430,4 +1434,9 @@ public class PageController extends BaseController {
         return "/delayedTask/deyayedTaskList";
     }
 
+    //在线人数列表
+    @RequestMapping("/system-manage/online-user")
+    public String systemManageOnlineUser() {
+        return "/systemManage/onlineUser";
+    }
 }

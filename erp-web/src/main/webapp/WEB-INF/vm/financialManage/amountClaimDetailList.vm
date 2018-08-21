@@ -33,18 +33,18 @@
                                         </div>
                                     </div>
                                     <div class="col-md-2">
-                                        <input type="hidden" name="startClaimUpdateTime" id="startClaimUpdateTime" />
-                                        <input type="hidden" name="endClaimUpdateTime" id="endClaimUpdateTime" />
-                                        <div class="input-group date" id="claimTimePicker">
-                                            <input type="text" name="claimTimePickerInput" id="claimTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="请选择认领时间">
+                                        <input type="hidden" name="startSlipDetailUpdateTime" id="startSlipDetailUpdateTime" />
+                                        <input type="hidden" name="endSlipDetailUpdateTime" id="endSlipDetailUpdateTime" />
+                                        <div class="input-group date" id="sureTimePicker">
+                                            <input type="text" name="sureTimePickerInput" id="sureTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="请选择认领时间">
                                             <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
-                                        <input type="hidden" name="startSlipDetailUpdateTime" id="startSlipDetailUpdateTime" />
-                                        <input type="hidden" name="endSlipDetailUpdateTime" id="endSlipDetailUpdateTime" />
-                                        <div class="input-group date" id="sureTimePicker">
-                                            <input type="text" name="sureTimePickerInput" id="sureTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="请选择确认时间">
+                                        <input type="hidden" name="startClaimUpdateTime" id="startClaimUpdateTime" />
+                                        <input type="hidden" name="endClaimUpdateTime" id="endClaimUpdateTime" />
+                                        <div class="input-group date" id="claimTimePicker">
+                                            <input type="text" name="claimTimePickerInput" id="claimTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="请选择确认时间">
                                             <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                                         </div>
                                     </div>
@@ -169,10 +169,10 @@
                                 <td>{{#clockShorTime}}{{tradeTime}}{{/clockShorTime}}</td>
                                 <td>{{payerName}}</td>
                                 <td>{{detailTypeValue}}</td>
-                                <td>{{claimUpdateUserName}}</td>
-                                <td>{{#clockShorTime}}{{claimUpdateTime}}{{/clockShorTime}}</td>
                                 <td>{{slipDetailUpdateUserName}}</td>
                                 <td>{{#clockShorTime}}{{slipDetailUpdateTime}}{{/clockShorTime}}</td>
+                                <td>{{claimUpdateUserName}}</td>
+                                <td>{{#clockShorTime}}{{claimUpdateTime}}{{/clockShorTime}}</td>
                                 <td>{{slipDetailRemark}}</td>
                                 <td>{{claimRemark}}</td>
                             </tr>

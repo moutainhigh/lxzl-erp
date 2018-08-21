@@ -11,4 +11,5 @@ public class CustomerRiskBusinessType {
     public static final Integer FORCE_CANCEL_ORDER_TYPE = 3;//3强制取消订单
     public static final Integer CONFIRM_CHANGE_ORDER_TYPE = 4;//4确认收货
     public static final Integer RETURN_ORDER_TYPE = 5;//5退货
+    public static final Integer REVIEW_REJECTION_TYPE= 6;//6审核驳回
 }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.customer.pojo.dto.CustomerCompanyDTO;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
@@ -98,8 +99,7 @@ import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
-import org.apache.hadoop.mapred.IFile;
-import org.apache.velocity.runtime.directive.Foreach;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerCompanyMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -264,7 +264,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.CREATE_ORDER);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.CREATE_ORDER);
         // TODO: 2018\4\26 0026 使用优惠券
         if (CollectionUtil.isEmpty(order.getCouponList())) {
             result.setErrorCode(ErrorCode.SUCCESS);
@@ -493,7 +493,7 @@ public class OrderServiceImpl implements OrderService {
         setOrderProductSummary(orderDO);
         orderMapper.update(orderDO);
 
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.UPDATE_ORDER);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.UPDATE_ORDER);
 
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
         // TODO: 2018\4\26 0026  清除之前订单锁定的优惠券
@@ -597,7 +597,7 @@ public class OrderServiceImpl implements OrderService {
         //为了不影响之前的订单逻辑，这里暂时使用修改的方式
         setOrderProductSummary(orderDO);
         orderMapper.update(orderDO);
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.UPDATE_ORDER);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.UPDATE_ORDER);
 
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
         // TODO: 2018\4\26 0026  清除之前订单锁定的优惠券
@@ -765,11 +765,11 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderDO.setUpdateTime(currentTime);
         orderMapper.update(orderDO);
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.COMMIT_ORDER);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.COMMIT_ORDER);
 
         // 扣除信用额度
         if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
-            customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
+            customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.COMMIT_ORDER_TYPE, orderDO.getOrderNo(), null);
         }
 //        if (!isNeedSecondVerify) {
 //            String code = receiveVerifyResult(true, orderDO.getOrderNo());
@@ -814,7 +814,7 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus())&&
+        if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus()) &&
                 !OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())) {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
@@ -900,9 +900,10 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 确认收货时发生退货修改订单并推送K3保存更改记录
-     * @Author : sunzhipeng
+     *
      * @param orderConfirmChangeParam
      * @return
+     * @Author : sunzhipeng
      */
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -930,7 +931,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String,Integer> updateOrderPrice(Order order){
+    public ServiceResult<String, Integer> updateOrderPrice(Order order) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
@@ -939,7 +940,7 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(order.getOrderNo());
-        if (orderDO == null){
+        if (orderDO == null) {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
@@ -949,18 +950,18 @@ public class OrderServiceImpl implements OrderService {
         List<OrderOperationLogDO> orderOperationLogDOList = new ArrayList<>();
         List<OrderProductDO> orderProductDOList = new ArrayList<>();
         List<OrderMaterialDO> orderMaterialDOList = new ArrayList<>();
-        if (CollectionUtil.isNotEmpty(order.getOrderProductList())){
-            for (OrderProduct orderProduct: order.getOrderProductList()){
-                if (orderProduct.getOrderProductId() == null || orderProduct.getProductUnitAmount() == null){
+        if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
+            for (OrderProduct orderProduct : order.getOrderProductList()) {
+                if (orderProduct.getOrderProductId() == null || orderProduct.getProductUnitAmount() == null) {
                     continue;
                 }
                 OrderProductDO orderProductDO = getOrderProductDOById(orderDO, orderProduct.getOrderProductId());
                 totalUnitAmount = BigDecimalUtil.add(orderProduct.getProductUnitAmount(), totalUnitAmount);//记录商品单价
-                if (BigDecimalUtil.compare(orderProductDO.getProductUnitAmount(), orderProduct.getProductUnitAmount()) == 0){
+                if (BigDecimalUtil.compare(orderProductDO.getProductUnitAmount(), orderProduct.getProductUnitAmount()) == 0) {
                     continue;
                 }
-                strOperationBefore = "商品项id:" + orderProduct.getOrderProductId() + "，商品单价：" + orderProductDO.getProductUnitAmount()+ "。";
-                strOperationAfter = "商品项id:" + orderProduct.getOrderProductId() + "，商品单价：" + orderProduct.getProductUnitAmount()+ "。";
+                strOperationBefore = "商品项id:" + orderProduct.getOrderProductId() + "，商品单价：" + orderProductDO.getProductUnitAmount() + "。";
+                strOperationAfter = "商品项id:" + orderProduct.getOrderProductId() + "，商品单价：" + orderProduct.getProductUnitAmount() + "。";
                 OrderOperationLogDO orderOperationLogDO = new OrderOperationLogDO();
                 orderOperationLogDO.setOrderNo(orderDO.getOrderNo());
                 orderOperationLogDO.setOrderStatusBefore(orderDO.getOrderStatus());
@@ -979,24 +980,24 @@ public class OrderServiceImpl implements OrderService {
                 orderProductDO.setRentDepositAmount(rentDepositAmount);
                 orderProductDOList.add(orderProductDO);
             }
-            if (orderProductDOList.size() > 0){
+            if (orderProductDOList.size() > 0) {
                 //批量更新商品项单价和商品总价
                 orderMapper.updateOrderProductPriceList(orderProductDOList);
                 orderMapper.updateOrderTotalProductAmount(orderDO.getOrderNo());
             }
         }
-        if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())){
-            for (OrderMaterial orderMaterial: order.getOrderMaterialList()){
-                if (orderMaterial.getOrderMaterialId() == null || orderMaterial.getMaterialUnitAmount() == null){
+        if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
+            for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
+                if (orderMaterial.getOrderMaterialId() == null || orderMaterial.getMaterialUnitAmount() == null) {
                     continue;
                 }
                 OrderMaterialDO orderMaterialDO = getOrderMaterialDOById(orderDO, orderMaterial.getOrderMaterialId());
                 totalUnitAmount = BigDecimalUtil.add(orderMaterial.getMaterialUnitAmount(), totalUnitAmount);//记录配件单价
-                if (BigDecimalUtil.compare(orderMaterialDO.getMaterialUnitAmount(), orderMaterial.getMaterialUnitAmount()) == 0){
+                if (BigDecimalUtil.compare(orderMaterialDO.getMaterialUnitAmount(), orderMaterial.getMaterialUnitAmount()) == 0) {
                     continue;
                 }
-                strOperationBefore = "配件项id:" + orderMaterial.getOrderMaterialId() + "，配件单价：" + orderMaterialDO.getMaterialUnitAmount()+ "。";
-                strOperationAfter = "配件项id:" + orderMaterial.getOrderMaterialId() + "，配件单价：" + orderMaterial.getMaterialUnitAmount()+ "。";
+                strOperationBefore = "配件项id:" + orderMaterial.getOrderMaterialId() + "，配件单价：" + orderMaterialDO.getMaterialUnitAmount() + "。";
+                strOperationAfter = "配件项id:" + orderMaterial.getOrderMaterialId() + "，配件单价：" + orderMaterial.getMaterialUnitAmount() + "。";
                 OrderOperationLogDO orderOperationLogDO = new OrderOperationLogDO();
                 orderOperationLogDO.setOrderNo(orderDO.getOrderNo());
                 orderOperationLogDO.setOrderStatusBefore(orderDO.getOrderStatus());
@@ -1015,17 +1016,17 @@ public class OrderServiceImpl implements OrderService {
                 orderMaterialDO.setRentDepositAmount(rentDepositAmount);
                 orderMaterialDOList.add(orderMaterialDO);
             }
-            if (orderMaterialDOList.size() > 0){
+            if (orderMaterialDOList.size() > 0) {
                 //批量更新配件项单价和配件总价
                 orderMapper.updateOrderMaterialPriceList(orderMaterialDOList);
                 orderMapper.updateOrderTotalMaterialAmount(orderDO.getOrderNo());
             }
         }
-        if (orderOperationLogDOList.size() > 0){
+        if (orderOperationLogDOList.size() > 0) {
             //更新订单总价
             orderMapper.updateOrderTotalOrderAmount(orderDO.getOrderNo());
             //若订单配件和商品单价之和为零，更新订单首付总额为零
-            if (BigDecimalUtil.compare(totalUnitAmount, BigDecimal.ZERO) == 0){
+            if (BigDecimalUtil.compare(totalUnitAmount, BigDecimal.ZERO) == 0) {
                 orderMapper.updateOrderFirstNeedPayAmount(orderDO.getOrderNo());
             }
             //重算订单
@@ -1085,9 +1086,10 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 超级管理员修改订单
-     * @Author : sunzhipeng
+     *
      * @param orderConfirmChangeParam
      * @return
+     * @Author : sunzhipeng
      */
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -1116,12 +1118,13 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 确认收货修改订单的公共方法
-     * @Author : sunzhipeng
+     *
      * @param orderConfirmChangeParam
      * @return
+     * @Author : sunzhipeng
      */
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> changeOrderMethod(OrderConfirmChangeParam orderConfirmChangeParam,ServiceResult<String, String> result,OrderDO orderDO){
+    public ServiceResult<String, String> changeOrderMethod(OrderConfirmChangeParam orderConfirmChangeParam, ServiceResult<String, String> result, OrderDO orderDO) {
         Date date = new Date();
         List<OrderItemParam> orderItemParamList = orderConfirmChangeParam.getOrderItemParamList();
 
@@ -1141,14 +1144,14 @@ public class OrderServiceImpl implements OrderService {
         StringBuffer confirmsb = new StringBuffer();
         StringBuffer returnsb = new StringBuffer();
         Integer count = 0;
-        for (OrderItemParam orderItemParam:orderItemParamList) {
-            count+=orderItemParam.getItemCount();
+        for (OrderItemParam orderItemParam : orderItemParamList) {
+            count += orderItemParam.getItemCount();
             //商品变化保存订单确认收货变更记录详情信息
-            if (orderItemParam.getItemType()==1) {
+            if (orderItemParam.getItemType() == 1) {
                 OrderConfirmChangeLogDetailDO orderConfirmChangeLogDetailDO = new OrderConfirmChangeLogDetailDO();
-                for (OrderProductDO orderProductDO:orderDO.getOrderProductDOList()) {
+                for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
                     if (orderProductDO.getId().equals(orderItemParam.getItemId())) {
-                        if (orderItemParam.getItemCount()>orderProductDO.getStableProductCount()) {
+                        if (orderItemParam.getItemCount() > orderProductDO.getStableProductCount()) {
                             result.setErrorCode(ErrorCode.ITEM_COUNT_MORE_THAN_STABLE_PRODUCT_COUNT);
                             return result;
                         }
@@ -1162,7 +1165,7 @@ public class OrderServiceImpl implements OrderService {
                             ChangeOrderItemParam changeOrderItemParam = new ChangeOrderItemParam();
                             changeOrderItemParam.setItemId(orderItemParam.getItemId());
                             changeOrderItemParam.setItemType(orderItemParam.getItemType());
-                            changeOrderItemParam.setReturnCount(orderProductDO.getStableProductCount()-orderItemParam.getItemCount());
+                            changeOrderItemParam.setReturnCount(orderProductDO.getStableProductCount() - orderItemParam.getItemCount());
                             changeOrderItemParamList.add(changeOrderItemParam);
 
                             orderConfirmChangeLogDetailDO.setOrderId(orderDO.getId());
@@ -1179,24 +1182,24 @@ public class OrderServiceImpl implements OrderService {
                             orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
                             if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
                                 confirmsb.append(orderProductDO.getProductName()).append("(").append(orderItemParam.getItemCount()).append("台)(全新)\n");
-                                returnsb.append(orderProductDO.getProductName()).append("(").append(orderProductDO.getProductCount()-orderItemParam.getItemCount()).append("台)(全新)\n");
-                            }else {
+                                returnsb.append(orderProductDO.getProductName()).append("(").append(orderProductDO.getProductCount() - orderItemParam.getItemCount()).append("台)(全新)\n");
+                            } else {
                                 confirmsb.append(orderProductDO.getProductName()).append("(").append(orderItemParam.getItemCount()).append("台)(次新)\n");
-                                returnsb.append(orderProductDO.getProductName()).append("(").append(orderProductDO.getProductCount()-orderItemParam.getItemCount()).append("台)(次新)\n");
+                                returnsb.append(orderProductDO.getProductName()).append("(").append(orderProductDO.getProductCount() - orderItemParam.getItemCount()).append("台)(次新)\n");
 
                             }
                             //按天租的设置押金
                             if (orderDO.getRentType() == 1) {
-                                BigDecimal one = BigDecimalUtil.div(orderProductDO.getDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),3);
-                                orderProductDO.setDepositAmount(BigDecimalUtil.mul(one,new BigDecimal(orderItemParam.getItemCount())));
+                                BigDecimal one = BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), 3);
+                                orderProductDO.setDepositAmount(BigDecimalUtil.mul(one, new BigDecimal(orderItemParam.getItemCount())));
                             }
                             //将订单商品项中的商品总数、商品在租数进行更新
                             orderProductDO.setProductCount(orderItemParam.getItemCount());
                             orderProductDO.setRentingProductCount(orderItemParam.getItemCount());
-                        }else {
+                        } else {
                             if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
                                 confirmsb.append(orderProductDO.getProductName()).append("(").append(orderProductDO.getProductCount()).append("台)(全新)\n");
-                            }else {
+                            } else {
                                 confirmsb.append(orderProductDO.getProductName()).append("(").append(orderProductDO.getProductCount()).append("台)(次新)\n");
                             }
                         }
@@ -1205,11 +1208,11 @@ public class OrderServiceImpl implements OrderService {
 
             }
             //配件变化保存订单确认收货变更记录详情信息
-            if (orderItemParam.getItemType()==2) {
+            if (orderItemParam.getItemType() == 2) {
                 OrderConfirmChangeLogDetailDO orderConfirmChangeLogDetailDO = new OrderConfirmChangeLogDetailDO();
-                for (OrderMaterialDO orderMaterialDO:orderDO.getOrderMaterialDOList()) {
-                    if (orderMaterialDO.getId().equals( orderItemParam.getItemId())) {
-                        if (orderItemParam.getItemCount()>orderMaterialDO.getStableMaterialCount()) {
+                for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
+                    if (orderMaterialDO.getId().equals(orderItemParam.getItemId())) {
+                        if (orderItemParam.getItemCount() > orderMaterialDO.getStableMaterialCount()) {
                             result.setErrorCode(ErrorCode.ITEM_COUNT_MORE_THAN_STABLE_MATERIAL_COUNT);
                             return result;
                         }
@@ -1222,7 +1225,7 @@ public class OrderServiceImpl implements OrderService {
                             ChangeOrderItemParam changeOrderItemParam = new ChangeOrderItemParam();
                             changeOrderItemParam.setItemId(orderItemParam.getItemId());
                             changeOrderItemParam.setItemType(orderItemParam.getItemType());
-                            changeOrderItemParam.setReturnCount(orderMaterialDO.getStableMaterialCount()-orderItemParam.getItemCount());
+                            changeOrderItemParam.setReturnCount(orderMaterialDO.getStableMaterialCount() - orderItemParam.getItemCount());
                             changeOrderItemParamList.add(changeOrderItemParam);
 
                             orderConfirmChangeLogDetailDO.setOrderId(orderDO.getId());
@@ -1239,23 +1242,23 @@ public class OrderServiceImpl implements OrderService {
                             orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
                             if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
                                 confirmsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderItemParam.getItemCount()).append("台)(全新)\n");
-                                returnsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderMaterialDO.getMaterialCount()-orderItemParam.getItemCount()).append("台)(全新)\n");
-                            }else {
+                                returnsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderMaterialDO.getMaterialCount() - orderItemParam.getItemCount()).append("台)(全新)\n");
+                            } else {
                                 confirmsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderItemParam.getItemCount()).append("台)(次新)\n");
-                                returnsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderMaterialDO.getMaterialCount()-orderItemParam.getItemCount()).append("台)(次新)\n");
+                                returnsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderMaterialDO.getMaterialCount() - orderItemParam.getItemCount()).append("台)(次新)\n");
                             }
                             //按天租的设置押金
                             if (orderDO.getRentType() == 1) {
-                                BigDecimal one = BigDecimalUtil.div(orderMaterialDO.getDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),3);
-                                orderMaterialDO.setDepositAmount(BigDecimalUtil.mul(one,new BigDecimal(orderItemParam.getItemCount())));
+                                BigDecimal one = BigDecimalUtil.div(orderMaterialDO.getDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), 3);
+                                orderMaterialDO.setDepositAmount(BigDecimalUtil.mul(one, new BigDecimal(orderItemParam.getItemCount())));
                             }
                             //将订单商品项中的商品总数、商品在租数进行更新
                             orderMaterialDO.setMaterialCount(orderItemParam.getItemCount());
                             orderMaterialDO.setRentingMaterialCount(orderItemParam.getItemCount());
-                        }else {
+                        } else {
                             if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
                                 confirmsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderMaterialDO.getMaterialCount()).append("台)(全新)\n");
-                            }else {
+                            } else {
                                 confirmsb.append(orderMaterialDO.getMaterialName()).append("(").append(orderMaterialDO.getMaterialCount()).append("台)(次新)\n");
                             }
                         }
@@ -1268,7 +1271,7 @@ public class OrderServiceImpl implements OrderService {
         orderConfirmChangeToK3Param.setChangeOrderItemParamList(changeOrderItemParamList);
 
         //保存图片
-        if (orderConfirmChangeParam.getDeliveryNoteCustomerSignImg()!= null) {
+        if (orderConfirmChangeParam.getDeliveryNoteCustomerSignImg() != null) {
             ImageDO deliveryNoteCustomerSignImgDO = imgMysqlMapper.findById(orderConfirmChangeParam.getDeliveryNoteCustomerSignImg().getImgId());
             if (deliveryNoteCustomerSignImgDO == null) {
                 result.setErrorCode(ErrorCode.DELIVERY_NOTE_CUSTOMER_SIGN_IMAGE_NOT_EXISTS);
@@ -1281,7 +1284,7 @@ public class OrderServiceImpl implements OrderService {
             imgMysqlMapper.update(deliveryNoteCustomerSignImgDO);
         }
         //没有变化走原来确认收货逻辑
-        if (count==(oldTotalProductCount+oldTotalMaterialCount)) {
+        if (count == (oldTotalProductCount + oldTotalMaterialCount)) {
             orderDO.setConfirmDeliveryTime(date);
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
             orderDO.setUpdateTime(date);
@@ -1289,12 +1292,12 @@ public class OrderServiceImpl implements OrderService {
             orderMapper.update(orderDO);
 
             // 记录订单时间轴
-            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId(),OperationType.COMFIRM_ORDER);
+            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId(), OperationType.COMFIRM_ORDER);
             sb = new StringBuffer();
             sb.append("您的客户[").append(orderDO.getBuyerCustomerName()).append("]所下租赁订单（订单号：").append(orderDO.getOrderNo()).append("）已经正常确认收货。收货内容如下：\n");
             sb.append(confirmsb.toString());
             //给「业务员」发送消息
-            if (orderDO.getOrderSellerId()!= null) {
+            if (orderDO.getOrderSellerId() != null) {
                 MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
                 messageThirdChannel.setMessageContent(sb.toString());
                 messageThirdChannel.setReceiverUserId(orderDO.getOrderSellerId());
@@ -1326,17 +1329,17 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateTime(date);
         orderDO.setConfirmDeliveryTime(date);
         //恢复信用额度（现成方法，有日志的记录）
-        if (BigDecimalUtil.compare(oldTotalCreditDepositAmount,orderDO.getTotalCreditDepositAmount())>0) {
-            BigDecimal value = BigDecimalUtil.sub(oldTotalCreditDepositAmount,orderDO.getTotalCreditDepositAmount());
+        if (BigDecimalUtil.compare(oldTotalCreditDepositAmount, orderDO.getTotalCreditDepositAmount()) > 0) {
+            BigDecimal value = BigDecimalUtil.sub(oldTotalCreditDepositAmount, orderDO.getTotalCreditDepositAmount());
             if (BigDecimalUtil.compare(value, BigDecimal.ZERO) != 0) {
-                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), value);
+                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), value, CustomerRiskBusinessType.CONFIRM_CHANGE_ORDER_TYPE, orderDO.getOrderNo(), null);
                 logger.info("恢复信用额度{}", value);
             }
         }
-        if (BigDecimalUtil.compare(oldTotalCreditDepositAmount,orderDO.getTotalCreditDepositAmount())<0) {
-            BigDecimal value = BigDecimalUtil.sub(orderDO.getTotalCreditDepositAmount(),oldTotalCreditDepositAmount);
+        if (BigDecimalUtil.compare(oldTotalCreditDepositAmount, orderDO.getTotalCreditDepositAmount()) < 0) {
+            BigDecimal value = BigDecimalUtil.sub(orderDO.getTotalCreditDepositAmount(), oldTotalCreditDepositAmount);
             if (BigDecimalUtil.compare(value, BigDecimal.ZERO) != 0) {
-                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), value);
+                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), value, CustomerRiskBusinessType.CONFIRM_CHANGE_ORDER_TYPE, orderDO.getOrderNo(), null);
                 logger.info("恢复信用额度{}", value);
             }
         }
@@ -1367,7 +1370,7 @@ public class OrderServiceImpl implements OrderService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             return result;
         }
-        if (count==0) {
+        if (count == 0) {
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_COLSE);
         } else {
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
@@ -1375,7 +1378,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
 
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId(),OperationType.COMFIRM_ORDER);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId(), OperationType.COMFIRM_ORDER);
 
 
         Integer newTotalProductCount = orderDO.getTotalProductCount();
@@ -1387,14 +1390,14 @@ public class OrderServiceImpl implements OrderService {
             OrderConfirmChangeLogDO orderConfirmChangeLogDO = new OrderConfirmChangeLogDO();
             orderConfirmChangeLogDO.setOrderId(orderDO.getId());
             orderConfirmChangeLogDO.setOrderNo(orderDO.getOrderNo());
-            if (orderConfirmChangeParam.getChangeReasonType()==null) {
+            if (orderConfirmChangeParam.getChangeReasonType() == null) {
                 result.setErrorCode(ErrorCode.CONFIRM_CHANGE_REASON_TYPE_NOT_NULL);
                 return result;
             }
-            if (orderConfirmChangeParam.getChangeReasonType()==1) {
+            if (orderConfirmChangeParam.getChangeReasonType() == 1) {
                 orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE__EQUIPMENT_FAILURE);
                 orderConfirmChangeLogDO.setChangeReason("设备故障");
-            }else if (orderConfirmChangeParam.getChangeReasonType()==2) {
+            } else if (orderConfirmChangeParam.getChangeReasonType() == 2) {
                 orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE_MORE);
                 orderConfirmChangeLogDO.setChangeReason("商品数量超过实际需求");
             } else if (orderConfirmChangeParam.getChangeReasonType() == 3) {
@@ -1414,21 +1417,21 @@ public class OrderServiceImpl implements OrderService {
         ServiceResult<String, String> k3ServiceResult = k3Service.confirmOrder(orderConfirmChangeToK3Param);
         if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            result.setErrorCode(k3ServiceResult.getErrorCode(),k3ServiceResult.getFormatArgs());
+            result.setErrorCode(k3ServiceResult.getErrorCode(), k3ServiceResult.getFormatArgs());
             return result;
         }
         // 推送钉钉
         if (flag) {//有退货
-            if (orderDO.getOrderStatus()==OrderStatus.ORDER_STATUS_COLSE) {//订单状态为关闭，全部退货
+            if (orderDO.getOrderStatus() == OrderStatus.ORDER_STATUS_COLSE) {//订单状态为关闭，全部退货
                 sb = new StringBuffer();
                 sb.append("您的客户[").append(orderDO.getBuyerCustomerName()).append("]所下租赁订单（订单号：").append(orderDO.getOrderNo()).append("）已全部退货,退回内容如下：\n");
                 sb.append(returnsb.toString());
-            }else {
+            } else {
                 sb.append(confirmsb.toString()).append("\n").append("下列商品、配件退回：\n").append(returnsb.toString());
             }
         }
         //给「业务员」发送消息
-        if (orderDO.getOrderSellerId()!= null) {
+        if (orderDO.getOrderSellerId() != null) {
             MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
             messageThirdChannel.setMessageContent(sb.toString());
             messageThirdChannel.setReceiverUserId(orderDO.getOrderSellerId());
@@ -1738,7 +1741,7 @@ public class OrderServiceImpl implements OrderService {
                     return createStatementOrderResult.getErrorCode();
                 }
                 orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
-                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.VERIFY_ORDER_SUCCESS);
+                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_SUCCESS);
                 orderDO.setUpdateTime(currentTime);
                 orderDO.setUpdateUser(loginUser.getUserId().toString());
                 orderMapper.update(orderDO);
@@ -1749,9 +1752,9 @@ public class OrderServiceImpl implements OrderService {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
                 // 如果拒绝，则退还授信额度
                 if (BigDecimalUtil.compare(orderDO.getTotalCreditDepositAmount(), BigDecimal.ZERO) != 0) {
-                    customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), orderDO.getTotalCreditDepositAmount());
+                    customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), orderDO.getTotalCreditDepositAmount(), CustomerRiskBusinessType.REVIEW_REJECTION_TYPE, orderDO.getOrderNo(), null);
                 }
-                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_REJECT, null, currentTime, loginUser.getUserId(),OperationType.VERIFY_ORDER_FAILED);
+                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_REJECT, null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_FAILED);
                 orderDO.setUpdateTime(currentTime);
                 orderDO.setUpdateUser(loginUser.getUserId().toString());
                 orderMapper.update(orderDO);
@@ -1779,7 +1782,7 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
-        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
+        CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(orderDO.getBuyerCustomerId());
         orderDO.setCustomerRiskManagementDO(customerRiskManagementDO);
 
         List<OrderTimeAxisDO> orderTimeAxisDOList = orderTimeAxisSupport.getOrderTimeAxis(orderDO.getId());
@@ -1790,9 +1793,9 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = ConverterUtil.convert(orderDO, Order.class);
 
-        if (orderDO.getOrderUnionSellerId() != null){
+        if (orderDO.getOrderUnionSellerId() != null) {
             UserDO unionUser = userMapper.findByUserId(orderDO.getOrderUnionSellerId());
-            if(unionUser != null){
+            if (unionUser != null) {
                 order.setOrderUnionSellerName(unionUser.getRealName());
                 order.setOrderUnionSellerPhone(unionUser.getPhone());
             }
@@ -1887,22 +1890,25 @@ public class OrderServiceImpl implements OrderService {
         order.setIsReletOrder(isReletOrder);
 
         //获取确认收货变更原因及交货单客户签字图片逻辑
-        if (order.getOrderStatus()>OrderStatus.ORDER_STATUS_DELIVERED) {
-            ImageDO byRefId = imgMysqlMapper.findLastByRefIdAndType(order.getOrderId().toString(),ImgType.DELIVERY_NOTE_CUSTOMER_SIGN);
-            if (byRefId!= null) {
-                Image image = ConverterUtil.convert(byRefId,Image.class);
+        if (order.getOrderStatus() > OrderStatus.ORDER_STATUS_DELIVERED) {
+            ImageDO byRefId = imgMysqlMapper.findLastByRefIdAndType(order.getOrderId().toString(), ImgType.DELIVERY_NOTE_CUSTOMER_SIGN);
+            if (byRefId != null) {
+                Image image = ConverterUtil.convert(byRefId, Image.class);
                 order.setDeliveryNoteCustomerSignImg(image);
             }
             OrderConfirmChangeLogDO orderConfirmChangeLogDO = orderConfirmChangeLogMapper.findLastByOrderId(order.getOrderId());
-            if (orderConfirmChangeLogDO!=null) {
+            if (orderConfirmChangeLogDO != null) {
                 order.setChangeReason(orderConfirmChangeLogDO.getChangeReason());
             }
         }
-        OrderStatementDateSplitDO orderStatementDateSplitDO=orderStatementDateSplitMapper.findByOrderNo(orderNo);
-        if(orderStatementDateSplitDO!=null){
+        OrderStatementDateSplitDO orderStatementDateSplitDO = orderStatementDateSplitMapper.findByOrderNo(orderNo);
+        if (orderStatementDateSplitDO != null) {
             order.setOrderStatementDateSplit(ConverterUtil.convert(orderStatementDateSplitDO, OrderStatementDateSplit.class));
             order.setStatementDate(orderStatementDateSplitDO.getAfterStatementDate());
         }
+        //获取母公司信息
+        CustomerCompanyDTO customerCompanyDTO=customerCompanyMapper.findParentCustomerByCustomerId(orderDO.getBuyerCustomerId());
+        order.setCustomerCompanyDTO(customerCompanyDTO);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
@@ -2024,14 +2030,14 @@ public class OrderServiceImpl implements OrderService {
         buildOrderJointProductAfterQuery(order);
         /*******组合商品逻辑 end********/
         //获取确认收货变更原因及交货单客户签字图片逻辑
-        if (order.getOrderStatus()>OrderStatus.ORDER_STATUS_DELIVERED) {
-            ImageDO byRefId = imgMysqlMapper.findLastByRefIdAndType(order.getOrderId().toString(),ImgType.DELIVERY_NOTE_CUSTOMER_SIGN);
-            if (byRefId!= null) {
-                Image image = ConverterUtil.convert(byRefId,Image.class);
+        if (order.getOrderStatus() > OrderStatus.ORDER_STATUS_DELIVERED) {
+            ImageDO byRefId = imgMysqlMapper.findLastByRefIdAndType(order.getOrderId().toString(), ImgType.DELIVERY_NOTE_CUSTOMER_SIGN);
+            if (byRefId != null) {
+                Image image = ConverterUtil.convert(byRefId, Image.class);
                 order.setDeliveryNoteCustomerSignImg(image);
             }
             OrderConfirmChangeLogDO orderConfirmChangeLogDO = orderConfirmChangeLogMapper.findLastByOrderId(order.getOrderId());
-            if (orderConfirmChangeLogDO!=null) {
+            if (orderConfirmChangeLogDO != null) {
                 order.setChangeReason(orderConfirmChangeLogDO.getChangeReason());
             }
         }
@@ -2050,8 +2056,8 @@ public class OrderServiceImpl implements OrderService {
                 // 填入JointProductProduct实体
                 Set<Integer> jointProductProductIds = new HashSet<>();
                 for (OrderProduct orderProduct : orderProductList) {
-                    if (orderProduct .getJointProductProductId() != null) {
-                        jointProductProductIds.add(orderProduct .getJointProductProductId());
+                    if (orderProduct.getJointProductProductId() != null) {
+                        jointProductProductIds.add(orderProduct.getJointProductProductId());
                     }
                 }
                 if (jointProductProductIds.size() > 0) {
@@ -2167,7 +2173,7 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderMapper.update(orderDO);
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.CANCEL_ORDER);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.CANCEL_ORDER);
         // TODO: 2018\4\26 0026  清除之前订单锁定的优惠券
         String revertresult = couponSupport.revertCoupon(orderDO.getOrderNo());
         if (!ErrorCode.SUCCESS.equals(revertresult)) {
@@ -2197,10 +2203,10 @@ public class OrderServiceImpl implements OrderService {
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         //非超级管理员，不能处理已支付的订单
         boolean paid = false;
-        if(PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())){
+        if (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
             paid = true;
         }
-        if (!userSupport.isSuperUser()&&paid) {
+        if (!userSupport.isSuperUser() && paid) {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;
         }
@@ -2275,7 +2281,7 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
         }
-        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, orderDO.getId());
         Map<Integer, StatementOrderDO> statementOrderDOMap = statementOrderSupport.getStatementOrderByDetails(statementOrderDetailDOList);
         //审核中或者待发货订单，处理风控额度及结算单
         if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
@@ -2284,9 +2290,9 @@ public class OrderServiceImpl implements OrderService {
             //恢复信用额度
             BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
             if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
-                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
+                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.FORCE_CANCEL_ORDER_TYPE, orderDO.getOrderNo(), "");
             }
-            statementOrderSupport.reStatement(currentTime,statementOrderDOMap,statementOrderDetailDOList);
+            statementOrderSupport.reStatement(currentTime, statementOrderDOMap, statementOrderDetailDOList);
         }
         orderDO.setCancelOrderReasonType(cancelOrderReasonType);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
@@ -2294,7 +2300,7 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderMapper.update(orderDO);
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.FORCE_CANCEL_ORDER);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.FORCE_CANCEL_ORDER);
 
 
         // TODO: 2018\4\26 0026 清除锁定优惠券
@@ -2321,20 +2327,20 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
 
         if (paid) {
-            for(StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList){
+            for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
                 //计算所有已支付金额,由于付款是在冲正后做的，所以此时无需考虑冲正金额
-                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount,statementOrderDetailDO.getStatementDetailDepositPaidAmount());
-                otherPaidAmount = BigDecimalUtil.add(otherPaidAmount,statementOrderDetailDO.getStatementDetailOtherPaidAmount());
-                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount,statementOrderDetailDO.getStatementDetailRentPaidAmount());
-                overduePaidAmount = BigDecimalUtil.add(overduePaidAmount,statementOrderDetailDO.getStatementDetailOverduePaidAmount());
-                penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount,statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
-                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
+                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount, statementOrderDetailDO.getStatementDetailDepositPaidAmount());
+                otherPaidAmount = BigDecimalUtil.add(otherPaidAmount, statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount, statementOrderDetailDO.getStatementDetailRentPaidAmount());
+                overduePaidAmount = BigDecimalUtil.add(overduePaidAmount, statementOrderDetailDO.getStatementDetailOverduePaidAmount());
+                penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount, statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
+                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount, statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
             }
             //处理结算单总状态及已支付金额
-            statementOrderSupport.reStatementPaid(statementOrderDOMap,statementOrderDetailDOList);
-            String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(),rentPaidAmount,BigDecimalUtil.addAll(otherPaidAmount,overduePaidAmount,penaltyPaidAmount)
-                    ,rentDepositPaidAmount,depositPaidAmount,"超级管理员强制取消已支付订单，已支付金额退还到客户余额");
-            if(!ErrorCode.SUCCESS.equals(returnCode)){
+            statementOrderSupport.reStatementPaid(statementOrderDOMap, statementOrderDetailDOList);
+            String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(), rentPaidAmount, BigDecimalUtil.addAll(otherPaidAmount, overduePaidAmount, penaltyPaidAmount)
+                    , rentDepositPaidAmount, depositPaidAmount, "超级管理员强制取消已支付订单，已支付金额退还到客户余额");
+            if (!ErrorCode.SUCCESS.equals(returnCode)) {
                 result.setErrorCode(returnCode);
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 return result;
@@ -2577,7 +2583,7 @@ public class OrderServiceImpl implements OrderService {
             List<OrderProduct> removeOrderProductList = new ArrayList<>();
             List<OrderMaterial> removeOrderMaterialList = new ArrayList<>();
 
-            for (OrderJointProduct orderJointProduct :orderJointProductList) {
+            for (OrderJointProduct orderJointProduct : orderJointProductList) {
                 List<OrderProduct> processedOrderProductList = new ArrayList<>(); // 处理后的
                 List<OrderProduct> orderProductListForJoint = orderJointProduct.getOrderProductList();
                 if (CollectionUtil.isNotEmpty(orderProductListForJoint)) {
@@ -2621,13 +2627,13 @@ public class OrderServiceImpl implements OrderService {
         PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
 
         //仅仅是为工作台查询可续租的订单服务
-        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderQueryParam.getIsCanReletOrder())){
-            Map<String,Object> maps = new HashMap<>();
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderQueryParam.getIsCanReletOrder())) {
+            Map<String, Object> maps = new HashMap<>();
             maps.put("start", pageQuery.getStart());
             maps.put("pageSize", pageQuery.getPageSize());
-            maps.put("reletTimeOfDay",CommonConstant.RELET_TIME_OF_RENT_TYPE_DAY );
-            maps.put("reletTimeOfMonth",CommonConstant.RELET_TIME_OF_RENT_TYPE_MONTH);
-            maps.put("orderQueryParam",orderQueryParam);
+            maps.put("reletTimeOfDay", CommonConstant.RELET_TIME_OF_RENT_TYPE_DAY);
+            maps.put("reletTimeOfMonth", CommonConstant.RELET_TIME_OF_RENT_TYPE_MONTH);
+            maps.put("orderQueryParam", orderQueryParam);
             maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
 
             Integer count = orderMapper.findCanReletOrderCountForWorkbench(maps);
@@ -2636,8 +2642,8 @@ public class OrderServiceImpl implements OrderService {
             List<String> orderNoList = new ArrayList<>();
             Map<String, Order> orderDOMap = new HashMap<>();
             List<Order> canReletOrderList = new ArrayList<>();
-            if (CollectionUtil.isNotEmpty(orderDOList)){
-                for (OrderDO orderDO :orderDOList){
+            if (CollectionUtil.isNotEmpty(orderDOList)) {
+                for (OrderDO orderDO : orderDOList) {
                     orderNoList.add(orderDO.getOrderNo());
                     Order order = ConverterUtil.convert(orderDO, Order.class);
                     orderDOMap.put(orderDO.getOrderNo(), order);
@@ -2650,7 +2656,7 @@ public class OrderServiceImpl implements OrderService {
 
 
             List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
-            if (CollectionUtil.isNotEmpty(workflowLinkDOList)){
+            if (CollectionUtil.isNotEmpty(workflowLinkDOList)) {
                 for (WorkflowLinkDO workflowLinkDO : workflowLinkDOList) {
                     Order order = orderDOMap.get(workflowLinkDO.getWorkflowReferNo());
                     if (order != null) {
@@ -2811,7 +2817,7 @@ public class OrderServiceImpl implements OrderService {
 
 
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.K3_DELIVER_CALLBACK);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.K3_DELIVER_CALLBACK);
 
         result.setResult(param.getOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -3160,13 +3166,12 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(dbRecordOrder);
 
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(dbRecordOrder.getId(), dbRecordOrder.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.K3_DELIVER_CALLBACK);
+        orderTimeAxisSupport.addOrderTimeAxis(dbRecordOrder.getId(), dbRecordOrder.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.K3_DELIVER_CALLBACK);
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order.getOrderNo());
         return result;
     }
-
 
 
     private BigDecimal calculationOrderExpectRentAmount(BigDecimal unitAmount, Integer rentType, Integer rentTimeLength) {
@@ -3180,7 +3185,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void verifyCustomerRiskInfo(OrderDO orderDO) {
-        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
+        CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(orderDO.getBuyerCustomerId());
         boolean isCheckRiskManagement = isCheckRiskManagement(orderDO);
         if (isCheckRiskManagement) {
             if (customerRiskManagementDO == null) {
@@ -3433,7 +3438,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
 
         // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(),OperationType.COMFIRM_ORDER);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.COMFIRM_ORDER);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
         return result;
@@ -3544,7 +3549,7 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        if (dbOrderJointProductDOMap.size() > 0 ) {
+        if (dbOrderJointProductDOMap.size() > 0) {
             for (Map.Entry<Integer, OrderJointProductDO> entry : dbOrderJointProductDOMap.entrySet()) {
                 OrderJointProductDO orderJointProductDO = entry.getValue();
                 orderJointProductDO.setOrderId(orderDO.getId());
@@ -3673,7 +3678,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-
     private void updateOrderConsignInfo(Integer userConsignId, Integer orderId, User loginUser, Date currentTime) {
         CustomerConsignInfoDO userConsignInfoDO = customerConsignInfoMapper.findById(userConsignId);
         OrderConsignInfoDO dbOrderConsignInfoDO = orderConsignInfoMapper.findByOrderId(orderId);
@@ -3713,7 +3717,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void calculateOrderProductInfo(List<OrderProductDO> orderProductDOList, OrderDO orderDO) {
-        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
+        CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(orderDO.getBuyerCustomerId());
         if (orderProductDOList != null && !orderProductDOList.isEmpty()) {
             int productCount = 0;
             // 商品租赁总额
@@ -3755,7 +3759,7 @@ public class OrderServiceImpl implements OrderService {
 
                 // 小于等于90天的,不走风控，大于90天的，走风控授信
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
-                    if (orderProductDO.getProductCount()>0) {
+                    if (orderProductDO.getProductCount() > 0) {
                         BigDecimal remainder = orderProductDO.getDepositAmount().divideAndRemainder(new BigDecimal(orderProductDO.getProductCount()))[1];
                         if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
                             throw new BusinessException(ErrorCode.ORDER_PRODUCT_DEPOSIT_ERROR);
@@ -3802,7 +3806,7 @@ public class OrderServiceImpl implements OrderService {
             orderDO.setTotalProductRentDepositAmount(totalRentDepositAmount);
             orderDO.setTotalProductCount(productCount);
             orderDO.setTotalProductAmount(productAmountTotal);
-        }else {
+        } else {
             orderDO.setTotalProductDepositAmount(BigDecimal.ZERO);
             orderDO.setTotalProductCreditDepositAmount(BigDecimal.ZERO);
             orderDO.setTotalProductRentDepositAmount(BigDecimal.ZERO);
@@ -3813,7 +3817,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void calculateOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, OrderDO orderDO) {
-        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
+        CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(orderDO.getBuyerCustomerId());
         if (orderMaterialDOList != null && !orderMaterialDOList.isEmpty()) {
             int materialCount = 0;
             // 商品租赁总额
@@ -3850,7 +3854,7 @@ public class OrderServiceImpl implements OrderService {
 
                 // 小于等于90天的,不走风控，大于90天的，走风控授信
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
-                    if (orderMaterialDO.getMaterialCount()>0) {
+                    if (orderMaterialDO.getMaterialCount() > 0) {
                         BigDecimal remainder = orderMaterialDO.getDepositAmount().divideAndRemainder(new BigDecimal(orderMaterialDO.getMaterialCount()))[1];
                         if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
                             throw new BusinessException(ErrorCode.ORDER_MATERIAL_DEPOSIT_ERROR);
@@ -3899,7 +3903,7 @@ public class OrderServiceImpl implements OrderService {
             orderDO.setTotalMaterialRentDepositAmount(totalRentDepositAmount);
             orderDO.setTotalMaterialCount(materialCount);
             orderDO.setTotalMaterialAmount(materialAmountTotal);
-        }else {
+        } else {
             orderDO.setTotalMaterialDepositAmount(BigDecimal.ZERO);
             orderDO.setTotalMaterialCreditDepositAmount(BigDecimal.ZERO);
             orderDO.setTotalMaterialRentDepositAmount(BigDecimal.ZERO);
@@ -3955,7 +3959,7 @@ public class OrderServiceImpl implements OrderService {
             Date currentTime = new Date();
             Integer userId = userSupport.getCurrentUserId();
             for (OrderDO orderDO : orderDOList) {
-                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, userId,OperationType.K3_RETURN_CALLBACK);
+                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, userId, OperationType.K3_RETURN_CALLBACK);
             }
         }
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -4360,7 +4364,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-
     @Autowired
     private UserSupport userSupport;
 
@@ -4517,5 +4520,9 @@ public class OrderServiceImpl implements OrderService {
     private OrderSupport orderSupport;
 
     @Autowired
-    private OrderStatementDateSplitMapper  orderStatementDateSplitMapper;
+    private OrderStatementDateSplitMapper orderStatementDateSplitMapper;
+
+    @Autowired
+    private CustomerCompanyMapper customerCompanyMapper;
+
 }

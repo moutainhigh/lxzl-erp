@@ -3827,3 +3827,17 @@ CREATE TABLE `erp_order_operation_log` (
   KEY `order_no` (`order_no`),
   KEY `business_type` (`business_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单操作日志';
+
+DROP TABLE if exists `erp_bank_slip_detail_manual_claim_and_localization_config`;
+CREATE TABLE `erp_bank_slip_detail_manual_claim_and_localization_config` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `payer_name` varchar(100) COLLATE utf8_bin DEFAULT NULL COMMENT '付款人名称',
+  `other_side_account_no` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '对方账号',
+	`data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+	`remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='银行对公流水明细手动认领和属地化表';
