@@ -82,6 +82,7 @@ public class CustomerCompany extends BasePO {
 
     private Boolean isSubsidiary; //是否为子公司，1是子公司，0不是子公司
     private Integer parentCustomerId; //母公司customerId
+    private String parentCustomerName; //母公司名称
 
     @Valid
     private List<CustomerConsignInfo> customerConsignInfoList;
@@ -633,5 +634,13 @@ public class CustomerCompany extends BasePO {
 
     public void setParentCustomerId(Integer parentCustomerId) {
         this.parentCustomerId = parentCustomerId;
+    }
+
+    public String getParentCustomerName() {
+        return parentCustomerName;
+    }
+
+    public void setParentCustomerName(String parentCustomerName) {
+        this.parentCustomerName = parentCustomerName;
     }
 }
