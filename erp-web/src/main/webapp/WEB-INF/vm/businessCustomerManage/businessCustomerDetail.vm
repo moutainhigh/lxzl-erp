@@ -25,6 +25,7 @@
                             <a href="${ctx}{{menuUrl}}?no={{customerNo}}"
                                 class="btn btn-primary btn-sm ml5 bradius {{class}}" 
                                 data-customerno="{{customerNo}}"
+                                data-id="{{customerId}}"
                                 data-customername="{{customerName}}"
                                 data-statementdate="{{statementDate}}"
                                 data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
@@ -356,6 +357,8 @@
             'manage.customer.return.visit.js',
             'manage.customer.return.visit.add.js',
             'manage.customer.return.visit.edit.js',
+            'manage.customer.subsidiary.add.js',
+            'modal.choose.customer.business.js',
             'modal.input.js',
             'modal.submit.audit.js');
 </script>
