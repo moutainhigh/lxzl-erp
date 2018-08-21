@@ -3573,6 +3573,12 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_ID_IS_NOT_NULL);
             return serviceResult;
         }
+        for (Integer customerId:customerCompanyAddParent.getCustomerIdList()) {
+            if (customerCompanyAddParent.getParentCustomerId().equals(customerId)) {
+                serviceResult.setErrorCode(ErrorCode.ADD_PARENT_COMPANY_COUNT_ADD_SELF);
+                return serviceResult;
+            }
+        }
         CustomerCompanyDO parentCustomerCompanyDO = customerCompanyMapper.findByCustomerId(customerCompanyAddParent.getParentCustomerId());
         if (parentCustomerCompanyDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_COPANY_NOT_EXISTS);
