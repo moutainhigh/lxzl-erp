@@ -185,7 +185,8 @@ public class CustomerSupport {
      * 风控信息存在，校验风控信息是否完整
      */
     public boolean isFullRiskManagement(Integer customerId) {
-        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerId);
+//        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerId);
+        CustomerRiskManagementDO customerRiskManagementDO = getCustomerRiskManagementDO(customerId);
         if (customerRiskManagementDO == null) {
             return false;
         }
