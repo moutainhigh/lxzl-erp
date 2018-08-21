@@ -974,6 +974,7 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, Customer> detailCustomerCompany(Customer customer) {
         ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
         CustomerDO customerDO = customerMapper.findCustomerCompanyByNo(customer.getCustomerNo());
+
         if (customerDO == null || !CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
@@ -993,6 +994,11 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         customerResult.setCustomerAccount(customerAccount);
 
+        CustomerCompany customerCompany = customerResult.getCustomerCompany();
+        if (customerCompany.getSubsidiary()&& customerCompany.getParentCustomerId() != null) {
+            CustomerDO parentCustomerDO = customerMapper.findById(customerCompany.getParentCustomerId());
+            customerCompany.setParentCustomerName(parentCustomerDO.getCustomerName());
+        }
         //显示联合开发员的省，市，区
         if (customerDO.getUnionUser() != null) {
             Integer companyId = userSupport.getCompanyIdByUser(customerDO.getUnionUser());
