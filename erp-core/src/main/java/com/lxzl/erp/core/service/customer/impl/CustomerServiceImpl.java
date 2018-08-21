@@ -3595,7 +3595,7 @@ public class CustomerServiceImpl implements CustomerService {
                 return serviceResult;
             }else {
                 customerCompanyDO.setSubsidiary(true);
-                customerCompanyDO.setParentCompanyId(customerCompanyAddParent.getParentCustomerId());
+                customerCompanyDO.setParentCustomerId(customerCompanyAddParent.getParentCustomerId());
                 customerCompanyDO.setUpdateTime(date);
                 customerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             }

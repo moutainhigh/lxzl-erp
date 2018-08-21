@@ -777,7 +777,7 @@
 		LEFT JOIN erp_user owner_user on ec.owner = owner_user.id
 		<where>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerId != null">
-				AND ecc.parent_company_id = #{maps.customerCompanyQueryParam.customerId, jdbcType=INTEGER}
+				AND ecc.parent_customer_id = #{maps.customerCompanyQueryParam.customerId, jdbcType=INTEGER}
 			</if>
 			and ecc.data_status = 1
 			and ecc.is_subsidiary = 1
@@ -798,7 +798,7 @@
 		LEFT JOIN erp_user owner_user on ec.owner = owner_user.id
 		<where>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerId != null">
-				AND ecc.parent_company_id = #{maps.customerCompanyQueryParam.customerId, jdbcType=INTEGER}
+				AND ecc.parent_customer_id = #{maps.customerCompanyQueryParam.customerId, jdbcType=INTEGER}
 			</if>
 			and ecc.data_status = 1
 			and ecc.is_subsidiary = 1
