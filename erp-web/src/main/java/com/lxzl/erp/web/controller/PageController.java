@@ -1430,4 +1430,9 @@ public class PageController extends BaseController {
         return "/delayedTask/deyayedTaskList";
     }
 
+    //在线人数列表
+    @RequestMapping("/system-manage/online-user")
+    public String systemManageOnlineUser() {
+        return "/systemManage/onlineUser";
+    }
 }
