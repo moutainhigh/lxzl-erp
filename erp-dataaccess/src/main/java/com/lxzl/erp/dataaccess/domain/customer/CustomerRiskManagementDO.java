@@ -27,6 +27,16 @@ public class CustomerRiskManagementDO extends BaseDO {
     private String remark;
     private Integer isFullDeposit;   //是否是全额押金客户
 
+    private BigDecimal creditParentAmountUsed; //子公司使用母公司的授信额度
+
+    public BigDecimal getCreditParentAmountUsed() {
+        return creditParentAmountUsed;
+    }
+
+    public void setCreditParentAmountUsed(BigDecimal creditParentAmountUsed) {
+        this.creditParentAmountUsed = creditParentAmountUsed;
+    }
+
     public Integer getId() {
         return id;
     }
