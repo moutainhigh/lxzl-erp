@@ -652,6 +652,9 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
+        // 校验客户风控信息
+        verifyCustomerRiskInfo(orderDO);
+
         String verifyOrderShortRentReceivableResult = verifyOrderShortRentReceivable(customerDO, orderDO);
         if (!ErrorCode.SUCCESS.equals(verifyOrderShortRentReceivableResult)) {
             result.setErrorCode(verifyOrderShortRentReceivableResult);
@@ -716,7 +719,8 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
+//            CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getCustomerId());
+        CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(orderDO.getBuyerCustomerId());
         BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
         if (customerRiskManagementDO == null && BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0) {
             result.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_NEED_RISK_INFO);

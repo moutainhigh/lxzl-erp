@@ -20,7 +20,7 @@
                 {{/listData}}
                 {{^listData}}
                 <tr>
-                    <td valign="top" colspan="2" class="text-center">没有查询到打印记录</td>
+                    <td valign="top" colspan="3" class="text-center">没有查询到打印记录</td>
                 </tr>
                 {{/listData}}
                 {{/dataSource}}

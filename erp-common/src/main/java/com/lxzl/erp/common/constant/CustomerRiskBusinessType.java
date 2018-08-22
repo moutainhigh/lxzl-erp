@@ -12,4 +12,6 @@ public class CustomerRiskBusinessType {
     public static final Integer CONFIRM_CHANGE_ORDER_TYPE = 4;//4确认收货
     public static final Integer RETURN_ORDER_TYPE = 5;//5退货
     public static final Integer REVIEW_REJECTION_TYPE= 6;//6审核驳回
+    public static final Integer RETURN_ROLL_TYPE= 7;//7退货回滚
+    public static final Integer UPDATE_USED_RISK = 8;//8更新已授信额度
 }
