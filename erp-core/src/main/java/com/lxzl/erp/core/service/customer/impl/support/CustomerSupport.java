@@ -152,7 +152,7 @@ public class CustomerSupport {
             throw new BusinessException();
         }
         //日志
-        saveCustomerRiskLog(parentCustomerId, parentCustomerId.equals(customerId) ? null : customerId, amount, businessType, orderNo, remark);
+        saveCustomerRiskLog(parentCustomerId, parentCustomerId.equals(customerId) ? null : customerId, BigDecimalUtil.mul(amount,new BigDecimal(-1)), businessType, orderNo, remark);
         if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) < 0) {
             throw new BusinessException();
         } else if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) == 0) {
@@ -207,7 +207,7 @@ public class CustomerSupport {
      *
      * @param customerId       客户ID （必填）
      * @param manageCustomerId 关联客户ID （可空）
-     * @param amount           更改金额（必填）
+     * @param amount           更改金额（必填）（变更授信额度时接收的是变更后的金额）
      * @param businessType     操作业务编码 （必填）
      * @param orderNo          订单编号 （可空）
      * @param remark           备注 （可空）
@@ -244,8 +244,7 @@ public class CustomerSupport {
                 customerRiskLogDO.setOldCreditAmount(customerRiskManagementDO.getCreditAmount());
                 customerRiskLogDO.setOldCreditAmountUsed(customerRiskManagementDO.getCreditAmountUsed());
                 customerRiskLogDO.setNewCreditAmountUsed(customerRiskManagementDO.getCreditAmountUsed());
-                BigDecimal newValue = BigDecimalUtil.add(customerRiskManagementDO.getCreditAmount(), amount);
-                customerRiskLogDO.setNewCreditAmount(newValue);
+                customerRiskLogDO.setNewCreditAmount(amount);
             } else {//变更已使用授信额度
                 customerRiskLogDO.setCustomerId(customerId);
                 customerRiskLogDO.setManageCustomerId(manageCustomerId);
