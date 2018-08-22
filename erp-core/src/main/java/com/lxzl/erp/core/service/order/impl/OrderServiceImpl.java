@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.customer.pojo.dto.CustomerCompanyDTO;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
@@ -98,8 +99,7 @@ import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
-import org.apache.hadoop.mapred.IFile;
-import org.apache.velocity.runtime.directive.Foreach;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerCompanyMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -716,7 +716,8 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
+//            CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getCustomerId());
+        CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(orderDO.getBuyerCustomerId());
         BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
         if (customerRiskManagementDO == null && BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0) {
             result.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_NEED_RISK_INFO);
@@ -1906,6 +1907,9 @@ public class OrderServiceImpl implements OrderService {
             order.setOrderStatementDateSplit(ConverterUtil.convert(orderStatementDateSplitDO, OrderStatementDateSplit.class));
             order.setStatementDate(orderStatementDateSplitDO.getAfterStatementDate());
         }
+        //获取母公司信息
+        CustomerCompanyDTO customerCompanyDTO=customerCompanyMapper.findParentCustomerByCustomerId(orderDO.getBuyerCustomerId());
+        order.setCustomerCompanyDTO(customerCompanyDTO);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
@@ -4518,4 +4522,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderStatementDateSplitMapper orderStatementDateSplitMapper;
+
+    @Autowired
+    private CustomerCompanyMapper customerCompanyMapper;
+
 }

@@ -22,6 +22,7 @@ import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.material.MaterialService;
@@ -1260,7 +1261,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
 
     private void verifyCustomerRiskInfo(ReletOrderDO reletOrderDO) {
-        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(reletOrderDO.getBuyerCustomerId());
+//        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(reletOrderDO.getBuyerCustomerId());
+        CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(reletOrderDO.getBuyerCustomerId());
         boolean isCheckRiskManagement = isCheckRiskManagement(reletOrderDO);
         if (isCheckRiskManagement) {
             if (customerRiskManagementDO == null) {
@@ -1730,4 +1732,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
     @Autowired
     private ReletOrderSupport reletOrderSupport;
+
+    @Autowired
+    private CustomerSupport customerSupport;
 }

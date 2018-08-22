@@ -245,4 +245,11 @@ public interface CustomerService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String,String> addParentCompany(CustomerCompanyAddParent customerCompanyAddParent);
+
+    /**
+     * 查询子公司分页信息
+     * @param customerCompanyQueryParam
+     * @return
+     */
+    ServiceResult<String,Page<Customer>> queryParentCompanyPage(CustomerCompanyQueryParam customerCompanyQueryParam);
 }

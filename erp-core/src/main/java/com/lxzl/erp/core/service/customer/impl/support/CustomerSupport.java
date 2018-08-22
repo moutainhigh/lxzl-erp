@@ -189,7 +189,8 @@ public class CustomerSupport {
      * 风控信息存在，校验风控信息是否完整
      */
     public boolean isFullRiskManagement(Integer customerId) {
-        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerId);
+//        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerId);
+        CustomerRiskManagementDO customerRiskManagementDO = getCustomerRiskManagementDO(customerId);
         if (customerRiskManagementDO == null) {
             return false;
         }
@@ -211,7 +212,7 @@ public class CustomerSupport {
      *
      * @param customerId       客户ID （必填）
      * @param manageCustomerId 关联客户ID （可空）
-     * @param amount           更改金额（必填）
+     * @param amount           更改金额（必填）（变更授信额度时接收的是变更后的金额）
      * @param businessType     操作业务编码 （必填）
      * @param orderNo          订单编号 （可空）
      * @param remark           备注 （可空）
@@ -248,8 +249,7 @@ public class CustomerSupport {
                 customerRiskLogDO.setOldCreditAmount(customerRiskManagementDO.getCreditAmount());
                 customerRiskLogDO.setOldCreditAmountUsed(customerRiskManagementDO.getCreditAmountUsed());
                 customerRiskLogDO.setNewCreditAmountUsed(customerRiskManagementDO.getCreditAmountUsed());
-                BigDecimal newValue = BigDecimalUtil.add(customerRiskManagementDO.getCreditAmount(), amount);
-                customerRiskLogDO.setNewCreditAmount(newValue);
+                customerRiskLogDO.setNewCreditAmount(amount);
             } else {//变更已使用授信额度
                 customerRiskLogDO.setCustomerId(customerId);
                 customerRiskLogDO.setManageCustomerId(manageCustomerId);
@@ -280,9 +280,9 @@ public class CustomerSupport {
             if (customerDO != null && CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
                 CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(custmerId);
                 if (customerCompanyDO != null &&customerCompanyDO.getSubsidiary()!=null&& customerCompanyDO.getSubsidiary()) {
-                    CustomerCompanyDO parentCustomerCompanyDO = customerCompanyMapper.findById(customerCompanyDO.getParentCompanyId());
-                    if (parentCustomerCompanyDO != null) {
-                        return parentCustomerCompanyDO.getCustomerId();
+                    CustomerDO parentCustomerDO = customerMapper.findById(customerCompanyDO.getParentCustomerId());
+                    if (parentCustomerDO != null) {
+                        return parentCustomerDO.getId();
                     }
                 }
             }

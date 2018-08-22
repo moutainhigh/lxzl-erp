@@ -81,7 +81,9 @@ public class CustomerCompany extends BasePO {
     private BigDecimal laterListTotalRentPrice; //后续所需设备租金总金额
 
     private Boolean isSubsidiary; //是否为子公司，1是子公司，0不是子公司
-    private Integer parentCompanyId; //母公司customerId
+    private Integer parentCustomerId; //母公司customerId
+    private String parentCustomerName; //母公司名称
+    private String parentCustomerNo; //母公司编号
 
     @Valid
     private List<CustomerConsignInfo> customerConsignInfoList;
@@ -627,11 +629,27 @@ public class CustomerCompany extends BasePO {
         isSubsidiary = subsidiary;
     }
 
-    public Integer getParentCompanyId() {
-        return parentCompanyId;
+    public Integer getParentCustomerId() {
+        return parentCustomerId;
     }
 
-    public void setParentCompanyId(Integer parentCompanyId) {
-        this.parentCompanyId = parentCompanyId;
+    public void setParentCustomerId(Integer parentCustomerId) {
+        this.parentCustomerId = parentCustomerId;
+    }
+
+    public String getParentCustomerName() {
+        return parentCustomerName;
+    }
+
+    public void setParentCustomerName(String parentCustomerName) {
+        this.parentCustomerName = parentCustomerName;
+    }
+
+    public String getParentCustomerNo() {
+        return parentCustomerNo;
+    }
+
+    public void setParentCustomerNo(String parentCustomerNo) {
+        this.parentCustomerNo = parentCustomerNo;
     }
 }

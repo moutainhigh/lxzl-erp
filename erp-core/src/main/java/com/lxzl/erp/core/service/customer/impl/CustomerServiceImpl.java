@@ -974,6 +974,7 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, Customer> detailCustomerCompany(Customer customer) {
         ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
         CustomerDO customerDO = customerMapper.findCustomerCompanyByNo(customer.getCustomerNo());
+
         if (customerDO == null || !CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
@@ -993,6 +994,12 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         customerResult.setCustomerAccount(customerAccount);
 
+        CustomerCompany customerCompany = customerResult.getCustomerCompany();
+        if (customerCompany.getSubsidiary()&& customerCompany.getParentCustomerId() != null) {
+            CustomerDO parentCustomerDO = customerMapper.findById(customerCompany.getParentCustomerId());
+            customerCompany.setParentCustomerName(parentCustomerDO.getCustomerName());
+            customerCompany.setParentCustomerNo(parentCustomerDO.getCustomerNo());
+        }
         //显示联合开发员的省，市，区
         if (customerDO.getUnionUser() != null) {
             Integer companyId = userSupport.getCompanyIdByUser(customerDO.getUnionUser());
@@ -1266,7 +1273,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
             if(customerDO.getCustomerCompanyDO().getSubsidiary()){//如果是子公司就获取母公司的授信信息
-                CustomerRiskManagementDO customerRiskManagementDO=customerRiskManagementMapper.findByCustomerId(customerDO.getCustomerCompanyDO().getParentCompanyId());
+                CustomerRiskManagementDO customerRiskManagementDO=customerRiskManagementMapper.findByCustomerId(customerDO.getCustomerCompanyDO().getParentCustomerId());
                 customerDO.setCustomerRiskManagementDO(customerRiskManagementDO);
             }
             List<CustomerConsignInfoDO> customerConsignInfoDO = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
@@ -3573,6 +3580,12 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_ID_IS_NOT_NULL);
             return serviceResult;
         }
+        for (Integer customerId:customerCompanyAddParent.getCustomerIdList()) {
+            if (customerCompanyAddParent.getParentCustomerId().equals(customerId)) {
+                serviceResult.setErrorCode(ErrorCode.ADD_PARENT_COMPANY_COUNT_ADD_SELF);
+                return serviceResult;
+            }
+        }
         CustomerCompanyDO parentCustomerCompanyDO = customerCompanyMapper.findByCustomerId(customerCompanyAddParent.getParentCustomerId());
         if (parentCustomerCompanyDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_COPANY_NOT_EXISTS);
@@ -3593,7 +3606,7 @@ public class CustomerServiceImpl implements CustomerService {
                 return serviceResult;
             }else {
                 customerCompanyDO.setSubsidiary(true);
-                customerCompanyDO.setParentCompanyId(customerCompanyAddParent.getParentCustomerId());
+                customerCompanyDO.setParentCustomerId(customerCompanyAddParent.getParentCustomerId());
                 customerCompanyDO.setUpdateTime(date);
                 customerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             }
@@ -3601,6 +3614,49 @@ public class CustomerServiceImpl implements CustomerService {
         customerCompanyMapper.updateList(customerCompanyDOList);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
+    }
+
+    /**
+     * 查询子公司分页信息
+     * @param customerCompanyQueryParam
+     * @return
+     */
+    @Override
+    public ServiceResult<String, Page<Customer>> queryParentCompanyPage(CustomerCompanyQueryParam customerCompanyQueryParam) {
+        ServiceResult<String, Page<Customer>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
+
+        if (StringUtil.isEmpty(customerCompanyQueryParam.getCustomerNo())) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NO_NOT_NULL);
+            return result;
+        }
+        CustomerDO parentCustomerDO = customerMapper.findByNo(customerCompanyQueryParam.getCustomerNo());
+        if (parentCustomerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        customerCompanyQueryParam.setCustomerId(parentCustomerDO.getId());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("customerCompanyQueryParam", customerCompanyQueryParam);
+//        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
+        Integer totalCount = customerMapper.findSubsidiaryCustomerCompanyCountByParams(maps);
+        List<CustomerDO> customerDOList = customerMapper.findSubsidiaryCustomerCompanyByParams(maps);
+        if (CollectionUtil.isNotEmpty(customerDOList)) {
+            for (CustomerDO customerDO : customerDOList) {
+                //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
+                processCustomerPhone(customerDO);
+            }
+        }
+
+        List<Customer> customerList = ConverterUtil.convertList(customerDOList, Customer.class);
+        convertConfirmUserId2UserName(customerList); // 将确认人id转换为确认人姓名
+        Page<Customer> page = new Page<>(customerList, totalCount, customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
     }
 
     /*

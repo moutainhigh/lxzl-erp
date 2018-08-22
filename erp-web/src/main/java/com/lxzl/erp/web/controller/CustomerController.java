@@ -298,4 +298,15 @@ public class CustomerController {
         ServiceResult<String, String> serviceResult = customerService.addParentCompany(customerCompanyAddParent);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    /**
+     * 查询子公司分页信息
+     * @param customerCompanyQueryParam
+     * @return
+     */
+    @RequestMapping(value = "queryParentCompanyPage", method = RequestMethod.POST)
+    public Result queryParentCompanyPage(@RequestBody CustomerCompanyQueryParam customerCompanyQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<Customer>> serviceResult = customerService.queryParentCompanyPage(customerCompanyQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }
