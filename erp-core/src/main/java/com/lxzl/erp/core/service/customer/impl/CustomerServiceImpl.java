@@ -3601,7 +3601,7 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
         for (CustomerCompanyDO customerCompanyDO:customerCompanyDOList){
-            if (customerCompanyDO.getSubsidiary()) {
+            if (customerCompanyDO.getSubsidiary()||customerCompanyDO.getParent()) {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_COPANY_IS_SUBSIDIARY);
                 return serviceResult;
             }else {
@@ -3611,6 +3611,8 @@ public class CustomerServiceImpl implements CustomerService {
                 customerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             }
         }
+        parentCustomerCompanyDO.setParent(true);
+        customerCompanyDOList.add(parentCustomerCompanyDO);
         customerCompanyMapper.updateList(customerCompanyDOList);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
