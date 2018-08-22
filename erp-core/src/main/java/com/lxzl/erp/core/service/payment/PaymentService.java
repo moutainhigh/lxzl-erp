@@ -172,4 +172,14 @@ public interface PaymentService extends BaseService {
                                BigDecimal businessReturnDepositAmount,String remark) ;
 
 
+    /**
+     * 退其他费用到账户余额，并从账户余额支付押金和租金押金
+     * @param customerNo
+     * @param returnOtherAmount
+     * @param payDepositAmount
+     * @param payRentDepositAmount
+     * @param remark
+     * @return
+     */
+    String returnOtherFeeAndPayDeposit(String customerNo, BigDecimal returnOtherAmount, BigDecimal payDepositAmount, BigDecimal payRentDepositAmount, String remark);
 }

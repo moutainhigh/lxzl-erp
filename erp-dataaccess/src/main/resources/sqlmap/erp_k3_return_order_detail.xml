@@ -143,4 +143,30 @@
         ekrod.order_entry = #{orderEntry,jdbcType=VARCHAR} AND ekrod.order_no = #{orderNo,jdbcType=VARCHAR} AND ekrod.data_status = 1
     </select>
 
+    <update id="batchUpdateRealProductCount" parameterType="java.util.List">
+        update erp_k3_return_order_detail
+        SET
+        <trim>
+            real_product_count =
+            <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.realProductCount}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            update_time =
+            <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.updateTime,jdbcType=TIMESTAMP}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            update_user =
+            <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.updateUser,jdbcType=DECIMAL}
+            </foreach>
+        </trim>
+        WHERE id in
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
 </mapper>

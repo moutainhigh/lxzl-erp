@@ -4,6 +4,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
+import com.lxzl.erp.common.domain.customer.pojo.dto.CustomerCompanyDTO;
 import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
@@ -121,6 +122,16 @@ public class Order extends BasePO {
     private String changeReason;//确认收货变更原因
     private Image deliveryNoteCustomerSignImg;//交货单客户签字
     private OrderStatementDateSplit orderStatementDateSplit;//订单分割
+
+    private CustomerCompanyDTO customerCompanyDTO;//公司信息
+
+    public CustomerCompanyDTO getCustomerCompanyDTO() {
+        return customerCompanyDTO;
+    }
+
+    public void setCustomerCompanyDTO(CustomerCompanyDTO customerCompanyDTO) {
+        this.customerCompanyDTO = customerCompanyDTO;
+    }
 
     public String getChangeReason() {
         return changeReason;

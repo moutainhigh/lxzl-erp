@@ -154,6 +154,13 @@ public class ErrorCode {
     public static final String MATERIAL_K3_MATERIAL_NO_IS_ERROR = "J200090";
     public static final String MATERIAL_K3_MATERIAL_NO_NOT_NULL = "J200091";
     public static final String ORDERN_AND_CUSTOMER_ERROR = "J200092";
+    public static final String CUSTOMER_ID_IS_NOT_NULL = "J200093";
+    public static final String PARENT_CUSTOMER_ID_IS_NOT_NULL = "J200094";
+    public static final String CUSTOMER_COPANY_NOT_EXISTS = "J200095";
+    public static final String PARENT_CUSTOMER_COPANY_IS_SUBSIDIARY = "J200096";
+    public static final String CUSTOMER_COPANY_IS_SUBSIDIARY = "J200097";
+    public static final String ADD_PARENT_COMPANY_COUNT_ADD_SELF = "J200098";
+    public static final String QUERY_CUSTOMER_ID_IS_NOT_NULL = "J200099";
 
     public static final String PROPERTY_CAPACITY_VALUE_NOT_NULL = "J800086";
     public static final String PROPERTY_NAME_NOT_MATCH_MATERIAL_TYPE_NAME = "J800087";
@@ -859,6 +866,7 @@ public class ErrorCode {
     public static final String K3_SEL_STOCK_CUSTOMER_QUERY_COUNT_NOT_NULL_IN_CONFIRM_STOCK = "J17000041";
     public static final String K3_SEL_STOCK_CAN_NOT_QUERY_IN_CONFIRM_STOCK = "J17000042";
 
+    public static final String SUCCESS_RELET_ORDER_EXIST = "J17000043";
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
     public static final String EXCEL_SHEET_IS_NULL = "J18000003";
@@ -1672,6 +1680,13 @@ public class ErrorCode {
         MAP.put(MATERIAL_K3_MATERIAL_NO_IS_ERROR , "物料的K3编号填写有误，请重新填写");
         MAP.put(MATERIAL_K3_MATERIAL_NO_NOT_NULL , "物料的K3编号不能为空");
         MAP.put(ORDERN_AND_CUSTOMER_ERROR , "订单客户与当前所选客户不一致，不能创建退货单");
+        MAP.put(CUSTOMER_ID_IS_NOT_NULL , "要添加的子公司不能为空");
+        MAP.put(PARENT_CUSTOMER_ID_IS_NOT_NULL , "选取的母公司ID不能为空");
+        MAP.put(CUSTOMER_COPANY_NOT_EXISTS , "企业客户不存在");
+        MAP.put(PARENT_CUSTOMER_COPANY_IS_SUBSIDIARY , "所选取的母公司是其他公司的子公司，不能再添加子公司");
+        MAP.put(CUSTOMER_COPANY_IS_SUBSIDIARY , "选取的子公司已经存在母公司或选择的公司为其他公司母公司，不能重复添加");
+        MAP.put(ADD_PARENT_COMPANY_COUNT_ADD_SELF , "所添加子公司与母公司一致，请重新选择");
+        MAP.put(QUERY_CUSTOMER_ID_IS_NOT_NULL , "查询子公司的母公司ID不能为空");
 
         MAP.put(EQUIPMENT_AND_BULK_MATERIAL_IS_NOT_NULL, "设备维修单明细表不能为空");
         MAP.put(REPAIR_REASON_IS_NOT_NULL, "设备维修单的维修原因不能为空");
@@ -1888,6 +1903,7 @@ public class ErrorCode {
         MAP.put(K3_SEL_STOCK_CUSTOMER_QUERY_COUNT_NOT_NULL_IN_CONFIRM_STOCK, "确认库存时K3库存查询的客户需求数量不能为空");
         MAP.put(K3_SEL_STOCK_CAN_NOT_QUERY_IN_CONFIRM_STOCK, "确认库存时K3库存查询的仓位类型不能选择借出仓和全部仓位");
 
+        MAP.put(SUCCESS_RELET_ORDER_EXIST, "退货后已成功续租，退货单无法回滚");
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
         MAP.put(EXCEL_SHEET_IS_NULL, "Excel工作薄导入数据为空");

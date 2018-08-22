@@ -4,7 +4,10 @@
     <div class="dark">
         <div class="row">
             <div class="col-md-4">
-                <h4>免押额度</h4>
+                <h4>
+                    <span class="mr5">免押额度</span>
+                    {{#customerCompanyDTO.subsidiary}}<span class="fs13" style="font-weight:normal;">（来自母公司:<a href="{{parentCompanyUrl}}" target="_blank" class="ml5">{{parentCompany}}</a>）</span>{{/customerCompanyDTO.subsidiary}}
+                </h4>
                 <dl class="dl-horizontal dl-horizontal-rental">
                     <dt><label style="letter-spacing: 0.4em;">授信总额度</label><span class="mr5">：</span></dt>
                     <dd class="mb5">￥{{#price}}{{customerRiskManagement.creditAmount}}{{/price}}</dd>
