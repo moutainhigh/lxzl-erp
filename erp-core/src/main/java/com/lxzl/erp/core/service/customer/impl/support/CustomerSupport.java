@@ -44,61 +44,57 @@ public class CustomerSupport {
      *
      * @param customerNo
      * @param amount
-     * @return
-
-    public String addCreditAmountUsed(String customerNo, BigDecimal amount) {
-        if (amount == null || customerNo == null) {
-            throw new BusinessException();
-        }
-        if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) < 0) {
-            throw new BusinessException();
-        } else if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) == 0) {
-            return ErrorCode.SUCCESS;
-        } else {
-            CustomerDO customerDO = customerMapper.findByNo(customerNo);
-            if (customerDO == null) {
-                throw new BusinessException();
-            }
-            CustomerRiskManagementDO customerRiskManagementDO = customerDO.getCustomerRiskManagementDO();
-            BigDecimal newValue = BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(), amount);
-            //如果超过了可用授信额度
-            if (BigDecimalUtil.compare(newValue, customerRiskManagementDO.getCreditAmount()) > 0) {
-                return ErrorCode.CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW;
-            }
-            customerRiskManagementDO.setCreditAmountUsed(newValue);
-            customerRiskManagementMapper.update(customerRiskManagementDO);
-            return ErrorCode.SUCCESS;
-        }
+     * @return public String addCreditAmountUsed(String customerNo, BigDecimal amount) {
+    if (amount == null || customerNo == null) {
+    throw new BusinessException();
     }
-    */
+    if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) < 0) {
+    throw new BusinessException();
+    } else if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) == 0) {
+    return ErrorCode.SUCCESS;
+    } else {
+    CustomerDO customerDO = customerMapper.findByNo(customerNo);
+    if (customerDO == null) {
+    throw new BusinessException();
+    }
+    CustomerRiskManagementDO customerRiskManagementDO = customerDO.getCustomerRiskManagementDO();
+    BigDecimal newValue = BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(), amount);
+    //如果超过了可用授信额度
+    if (BigDecimalUtil.compare(newValue, customerRiskManagementDO.getCreditAmount()) > 0) {
+    return ErrorCode.CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW;
+    }
+    customerRiskManagementDO.setCreditAmountUsed(newValue);
+    customerRiskManagementMapper.update(customerRiskManagementDO);
+    return ErrorCode.SUCCESS;
+    }
+    }
+     */
 
     /**
      * 内部调用减少已用授信额度
      *
      * @param customerNo
      * @param amount
-     * @return
-
-    public String subCreditAmountUsed(String customerNo, BigDecimal amount) {
-        if (amount == null || customerNo == null) {
-            throw new BusinessException();
-        }
-        if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) < 0) {
-            throw new BusinessException();
-        } else if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) == 0) {
-            return ErrorCode.SUCCESS;
-        } else {
-            CustomerDO customerDO = customerMapper.findByNo(customerNo);
-            if (customerDO == null) {
-                throw new BusinessException();
-            }
-            CustomerRiskManagementDO customerRiskManagementDO = customerDO.getCustomerRiskManagementDO();
-            BigDecimal newValue = BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmountUsed(), amount);
-            //减成负值不处理，直接保存
-            customerRiskManagementDO.setCreditAmountUsed(newValue);
-            customerRiskManagementMapper.update(customerRiskManagementDO);
-            return ErrorCode.SUCCESS;
-        }
+     * @return public String subCreditAmountUsed(String customerNo, BigDecimal amount) {
+    if (amount == null || customerNo == null) {
+    throw new BusinessException();
+    }
+    if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) < 0) {
+    throw new BusinessException();
+    } else if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) == 0) {
+    return ErrorCode.SUCCESS;
+    } else {
+    CustomerDO customerDO = customerMapper.findByNo(customerNo);
+    if (customerDO == null) {
+    throw new BusinessException();
+    }
+    CustomerRiskManagementDO customerRiskManagementDO = customerDO.getCustomerRiskManagementDO();
+    BigDecimal newValue = BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmountUsed(), amount);
+    //减成负值不处理，直接保存
+    customerRiskManagementDO.setCreditAmountUsed(newValue);
+    customerRiskManagementMapper.update(customerRiskManagementDO);
+    return ErrorCode.SUCCESS;
+    }
     }
      */
 
@@ -137,9 +133,29 @@ public class CustomerSupport {
             }
             customerRiskManagementDO.setCreditAmountUsed(newValue);
             customerRiskManagementMapper.update(customerRiskManagementDO);
+            //记录子公司使用母公司的授信额度
+            if (!parentCustomerId.equals(customerId)) {//如果是子公司，需要记录
+                CustomerRiskManagementDO customerRiskManagement = customerRiskManagementMapper.findByCustomerId(customerId);
+                if (null == customerRiskManagement) {
+                    customerRiskManagement = new CustomerRiskManagementDO();
+                    Date now = new Date();
+                    customerRiskManagement.setCreditAmountUsed(BigDecimal.ZERO);
+                    customerRiskManagement.setCreditAmount(BigDecimal.ZERO);
+                    customerRiskManagement.setCustomerId(customerId);
+                    customerRiskManagement.setCreditParentAmountUsed(amount);
+                    customerRiskManagement.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    customerRiskManagement.setCreateTime(now);
+                    customerRiskManagement.setUpdateTime(now);
+                    customerRiskManagement.setCreateUser(userSupport.getCurrentUserId().toString());
+                    customerRiskManagement.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    customerRiskManagementMapper.save(customerRiskManagement);
+                } else {
+                    customerRiskManagement.setCreditParentAmountUsed(BigDecimalUtil.add(customerRiskManagement.getCreditParentAmountUsed(), amount));
+                    customerRiskManagementMapper.update(customerRiskManagement);
+                }
+            }
             return ErrorCode.SUCCESS;
         }
-        //TODO 记录子公司使用母公司的授信额度
     }
 
     /**
@@ -184,33 +200,41 @@ public class CustomerSupport {
             //减成负值不处理，直接保存
             customerRiskManagementDO.setCreditAmountUsed(newValue);
             customerRiskManagementMapper.update(customerRiskManagementDO);
+
+            //记录子公司使用母公司的授信额度
+            if (!parentCustomerId.equals(customerId)) {//如果是子公司，需要记录
+                CustomerRiskManagementDO customerRiskManagement = customerRiskManagementMapper.findByCustomerId(customerId);
+                if (null != customerRiskManagement) {
+                    customerRiskManagement.setCreditParentAmountUsed(BigDecimalUtil.sub(customerRiskManagement.getCreditParentAmountUsed(), amount));
+                    customerRiskManagementMapper.update(customerRiskManagement);
+                }
+            }
             return ErrorCode.SUCCESS;
         }
-        //TODO 记录子公司使用母公司的授信额度
     }
 
     /**
      * 风控信息存在，校验风控信息是否完整
      *
-    public boolean isFullRiskManagement(Integer customerId) {
-//        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerId);
-        CustomerRiskManagementDO customerRiskManagementDO = getCustomerRiskManagementDO(customerId);
-        if (customerRiskManagementDO == null) {
-            return false;
-        }
-        if (customerRiskManagementDO.getCreditAmount() == null || customerRiskManagementDO.getDepositCycle() == null || customerRiskManagementDO.getPaymentCycle() == null || customerRiskManagementDO.getPayMode() == null) {
-            return false;
-        }
-        if (!CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsLimitNew()) && (customerRiskManagementDO.getNewDepositCycle() == null || customerRiskManagementDO.getNewPaymentCycle() == null || customerRiskManagementDO.getNewPayMode() == null)) {
-            return false;
-        }
-        if (!CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsLimitApple()) && (customerRiskManagementDO.getAppleDepositCycle() == null || customerRiskManagementDO.getApplePaymentCycle() == null || customerRiskManagementDO.getApplePayMode() == null)) {
-            return false;
-        }
+     public boolean isFullRiskManagement(Integer customerId) {
+     //        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerId);
+     CustomerRiskManagementDO customerRiskManagementDO = getCustomerRiskManagementDO(customerId);
+     if (customerRiskManagementDO == null) {
+     return false;
+     }
+     if (customerRiskManagementDO.getCreditAmount() == null || customerRiskManagementDO.getDepositCycle() == null || customerRiskManagementDO.getPaymentCycle() == null || customerRiskManagementDO.getPayMode() == null) {
+     return false;
+     }
+     if (!CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsLimitNew()) && (customerRiskManagementDO.getNewDepositCycle() == null || customerRiskManagementDO.getNewPaymentCycle() == null || customerRiskManagementDO.getNewPayMode() == null)) {
+     return false;
+     }
+     if (!CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsLimitApple()) && (customerRiskManagementDO.getAppleDepositCycle() == null || customerRiskManagementDO.getApplePaymentCycle() == null || customerRiskManagementDO.getApplePayMode() == null)) {
+     return false;
+     }
 
-        return true;
-    }
-    */
+     return true;
+     }
+     */
 
     /**
      * 添加客户授信变更日志
