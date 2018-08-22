@@ -49,6 +49,10 @@ public class CustomerCompanyDO  extends BaseDO {
 	private String simpleCompanyName;//公司简单名称字段（新增）
 	private Integer addressVerifyStatus; //公司经营地址审核状态：0未提交；1.已提交 2.初审通过；3.终审通过 4.审批驳回
 
+	private Boolean isSubsidiary; //是否为子公司，1是子公司，0不是子公司
+	private Integer parentCustomerId; //母公司customerId
+	private Boolean isParent;//是否为母公司，true是母公司，false不是母公司
+
 	@Transient
 	private String cityName;
 	@Transient
@@ -377,4 +381,28 @@ public class CustomerCompanyDO  extends BaseDO {
 	public Integer getAddressVerifyStatus() { return addressVerifyStatus; }
 
 	public void setAddressVerifyStatus(Integer addressVerifyStatus) { this.addressVerifyStatus = addressVerifyStatus; }
+
+	public Boolean getSubsidiary() {
+		return isSubsidiary;
+	}
+
+	public void setSubsidiary(Boolean subsidiary) {
+		isSubsidiary = subsidiary;
+	}
+
+	public Integer getParentCustomerId() {
+		return parentCustomerId;
+	}
+
+	public void setParentCustomerId(Integer parentCustomerId) {
+		this.parentCustomerId = parentCustomerId;
+	}
+
+	public Boolean getParent() {
+		return isParent;
+	}
+
+	public void setParent(Boolean parent) {
+		isParent = parent;
+	}
 }

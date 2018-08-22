@@ -655,7 +655,7 @@
 	<select id="findUnknownBankSlipDetailById" resultMap="BankSlipDetailDO" parameterType="map">
 		SELECT  <include refid="column_List"/>,escLocalization.sub_company_name AS subCompanyName,ebs.sub_company_id AS ownerSubCompanyId,escOwner.sub_company_name AS ownerSubCompanyName,ebs.bank_type AS bankSlipBankType,<include refid="claim_column_List"/>,ek3mc.k3_customer_code AS k3CustomerNo,ec.customer_name AS customerName FROM erp_bank_slip_detail ebsd
 		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
-		LEFT JOIN  erp_sub_company escOwner ON escOwner.id = escOwner.sub_company_id AND escOwner.data_status = 1
+		LEFT JOIN  erp_sub_company escOwner ON escOwner.id = ebs.sub_company_id AND escOwner.data_status = 1
 		LEFT JOIN  erp_sub_company escLocalization ON escLocalization.id = ebsd.sub_company_id AND escLocalization.data_status = 1
 		LEFT JOIN  erp_bank_slip_claim ebsc ON ebsd.id = ebsc.bank_slip_detail_id AND ebsc.data_status = 1
 		LEFT JOIN  erp_k3_mapping_customer ek3mc ON ek3mc.erp_customer_code = ebsc.customer_no

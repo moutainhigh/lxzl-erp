@@ -15,6 +15,7 @@ import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.order.OrderService;
@@ -297,7 +298,8 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         //由于按天租赁无需授信额度，需交押金，当订单按月赁时，修改客户已用授信额度
         OrderProductDO orderProductDO =  orderProductDOMap.get(orderProductEquipmentDO.getOrderProductId());
 //        if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
-            CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(returnOrderDO.getCustomerId());
+//            CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(returnOrderDO.getCustomerId());
+        CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(orderDO.getBuyerCustomerId());
             BigDecimal unitAmount = BigDecimalUtil.div(orderProductDO.getCreditDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),2);
             BigDecimal amount = BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmountUsed(), unitAmount);
             if(BigDecimalUtil.compare(amount,BigDecimal.ZERO)<0){
@@ -425,7 +427,8 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         //待更新的散料列表
         List<BulkMaterialDO> bulkMaterialDOListForUpdate = new ArrayList<>();
         //待更新的客户风控信息
-        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(returnOrderDO.getCustomerId());
+//        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(returnOrderDO.getCustomerId());
+        CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(returnOrderDO.getCustomerId());
         //待更新的退还物料项列表
         Map<Integer, ReturnOrderMaterialDO> returnOrderMaterialDOMapForUpdate = new HashMap<>();
         //待保存的退还物料项列表
@@ -1115,6 +1118,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     private PermissionSupport permissionSupport;
     @Autowired
     private UserMapper userMapper;
-
+    @Autowired
+    private CustomerSupport customerSupport;
 
 }
