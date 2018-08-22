@@ -156,7 +156,7 @@ public class CustomerSupport {
             throw new BusinessException();
         }
         //日志
-        saveCustomerRiskLog(parentCustomerId, parentCustomerId.equals(customerId) ? null : customerId, BigDecimalUtil.mul(amount,new BigDecimal(-1)), businessType, orderNo, remark);
+        saveCustomerRiskLog(parentCustomerId, parentCustomerId.equals(customerId) ? null : customerId, BigDecimalUtil.mul(amount, new BigDecimal(-1)), businessType, orderNo, remark);
         if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) < 0) {
             throw new BusinessException();
         } else if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) == 0) {
@@ -225,17 +225,7 @@ public class CustomerSupport {
         if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) == 0) {
             return ErrorCode.SUCCESS;
         } else {
-            CustomerDO customerDO = customerMapper.findById(customerId);
-            if (customerDO == null) {
-                throw new BusinessException();
-            }
-            CustomerRiskManagementDO customerRiskManagementDO = customerDO.getCustomerRiskManagementDO();
-            if (customerRiskManagementDO == null) {
-                customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerDO.getId());
-                if (customerRiskManagementDO == null) {
-                    return ErrorCode.CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS;
-                }
-            }
+            CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerId);
             CustomerRiskLogDO customerRiskLogDO = new CustomerRiskLogDO();
             //变更授信额度
             if (CustomerRiskBusinessType.CUSTOMER_RISK_TYPE.equals(businessType)) {
@@ -246,9 +236,15 @@ public class CustomerSupport {
                 customerRiskLogDO.setBusinessType(businessType);
                 customerRiskLogDO.setCreateTime(date);
                 customerRiskLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                customerRiskLogDO.setOldCreditAmount(customerRiskManagementDO.getCreditAmount());
-                customerRiskLogDO.setOldCreditAmountUsed(customerRiskManagementDO.getCreditAmountUsed());
-                customerRiskLogDO.setNewCreditAmountUsed(customerRiskManagementDO.getCreditAmountUsed());
+                if (null == customerRiskManagementDO) {
+                    customerRiskLogDO.setOldCreditAmount(BigDecimal.ZERO);
+                    customerRiskLogDO.setOldCreditAmountUsed(BigDecimal.ZERO);
+                    customerRiskLogDO.setNewCreditAmountUsed(BigDecimal.ZERO);
+                } else {
+                    customerRiskLogDO.setOldCreditAmount(customerRiskManagementDO.getCreditAmount());
+                    customerRiskLogDO.setOldCreditAmountUsed(customerRiskManagementDO.getCreditAmountUsed());
+                    customerRiskLogDO.setNewCreditAmountUsed(customerRiskManagementDO.getCreditAmountUsed());
+                }
                 customerRiskLogDO.setNewCreditAmount(amount);
             } else {//变更已使用授信额度
                 customerRiskLogDO.setCustomerId(customerId);
@@ -279,7 +275,7 @@ public class CustomerSupport {
             CustomerDO customerDO = customerMapper.findById(custmerId);
             if (customerDO != null && CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
                 CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(custmerId);
-                if (customerCompanyDO != null &&customerCompanyDO.getSubsidiary()!=null&& customerCompanyDO.getSubsidiary()) {
+                if (customerCompanyDO != null && customerCompanyDO.getSubsidiary() != null && customerCompanyDO.getSubsidiary()) {
                     CustomerDO parentCustomerDO = customerMapper.findById(customerCompanyDO.getParentCustomerId());
                     if (parentCustomerDO != null) {
                         return parentCustomerDO.getId();
@@ -304,10 +300,11 @@ public class CustomerSupport {
 
     /**
      * 如果
+     *
      * @param k3CustomerNo
      * @return
      */
-    public CustomerDO getCustomerByK3CustomerNo(String k3CustomerNo){
+    public CustomerDO getCustomerByK3CustomerNo(String k3CustomerNo) {
         K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3CustomerNo);
         CustomerDO customerDO = null;
         if (k3MappingCustomerDO == null) {
@@ -315,6 +312,6 @@ public class CustomerSupport {
         } else {
             customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
         }
-       return customerDO;
+        return customerDO;
     }
 }
