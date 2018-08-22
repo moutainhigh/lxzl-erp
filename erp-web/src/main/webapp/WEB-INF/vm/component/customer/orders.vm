@@ -31,6 +31,9 @@
             <li>
                 <a href="#couponList" data-toggle="tab" aria-expanded="true">优惠券（共<span id="couponCount">0</span>张）</a>
             </li>
+            <li>
+                <a href="#subsidiaryList" data-toggle="tab" aria-expanded="true">子公司（共<span id="subsidiaryCount">0</span>个）</a>
+            </li>
         </ul>
     </div>
     <div class="panel-body pn">
@@ -391,6 +394,9 @@
             </div>
             <div id="couponList" class="tab-pane">
                 #parse("component/customer/coupon.vm")
+            </div>
+            <div id="subsidiaryList" class="tab-pane">
+                #parse("component/customer/subsidiaryList.vm")
             </div>
         </div>
     </div>

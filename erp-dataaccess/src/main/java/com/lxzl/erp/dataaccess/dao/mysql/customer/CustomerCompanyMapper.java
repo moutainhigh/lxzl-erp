@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.customer;
 
+import com.lxzl.erp.common.domain.customer.pojo.dto.CustomerCompanyDTO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerCompanyDO;import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -29,4 +30,15 @@ public interface CustomerCompanyMapper extends BaseMysqlDAO<CustomerCompanyDO> {
 
 	List<CustomerCompanyDO> findCustomerCompanyByName(@Param("list") List<CustomerCompanyDO> customerCompanyDOList);
 
+    List<CustomerCompanyDO> findByCustomerIdList(@Param("list") List<Integer> customerIdList);
+
+	void updateList(@Param("customerCompanyDOList") List<CustomerCompanyDO> customerCompanyDOList);
+
+	/**
+	 * 根据customerId获取母公司信息
+	 *
+	 * @param customerId
+	 * @return
+	 */
+	CustomerCompanyDTO findParentCustomerByCustomerId(@Param("customerId") Integer customerId);
 }

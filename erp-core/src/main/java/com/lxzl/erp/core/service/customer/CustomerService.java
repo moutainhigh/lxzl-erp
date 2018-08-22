@@ -239,4 +239,17 @@ public interface CustomerService extends VerifyReceiver {
      */
     ServiceResult<String,CustomerRentCount> queryRentCountByCustomerNo(String customerNo);
 
+    /**
+     * 添加母公司接口
+     * @param customerCompanyAddParent
+     * @return
+     */
+    ServiceResult<String,String> addParentCompany(CustomerCompanyAddParent customerCompanyAddParent);
+
+    /**
+     * 查询子公司分页信息
+     * @param customerCompanyQueryParam
+     * @return
+     */
+    ServiceResult<String,Page<Customer>> queryParentCompanyPage(CustomerCompanyQueryParam customerCompanyQueryParam);
 }

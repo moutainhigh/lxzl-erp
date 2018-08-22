@@ -24,6 +24,7 @@ import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.coupon.impl.support.CouponSupport;
+import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.order.impl.support.OrderSupport;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
@@ -7186,6 +7187,7 @@ public class StatementServiceImpl implements StatementService {
         return result;
     }
 
+
     private void updateRefOrderItemStatementDetailStatus(List<StatementOrderDetailDO> hasDeleteReturnStatementList) {
         if(CollectionUtil.isNotEmpty(hasDeleteReturnStatementList)){
             Map<Integer,StatementOrderDetailDO> statementDetailCatch=new HashMap<>();
@@ -7250,7 +7252,7 @@ public class StatementServiceImpl implements StatementService {
         if(k3ReturnOrderDO==null)return ErrorCode.SUCCESS;
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList=k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
         if(CollectionUtil.isEmpty(k3ReturnOrderDetailDOList))return ErrorCode.SUCCESS;
-        CustomerDO customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
+        CustomerDO customerDO=customerSupport.getCustomerByK3CustomerNo(k3ReturnOrderDO.getK3CustomerNo());
         if(customerDO==null){
             return ErrorCode.CUSTOMER_NOT_EXISTS;
         }
@@ -7265,6 +7267,7 @@ public class StatementServiceImpl implements StatementService {
         String userId=userSupport.getCurrentUserId().toString();
         List<StatementOrderReturnDetailDO> depositReturnRecordList=statementOrderReturnDetailMapper.findByReturnOrderId(k3ReturnOrderDO.getId());
         Map<Integer, List<StatementOrderReturnDetailDO>> depositReturnRecordCatch = getDepositReturnRecordCatch(depositReturnRecordList);
+        BigDecimal creditDepositAmount=BigDecimal.ZERO;
         for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDetailDOList){
             if(k3ReturnOrderDetailDO==null)continue;
             BigDecimal returnCount = new BigDecimal(k3ReturnOrderDetailDO.getRealProductCount());
@@ -7278,6 +7281,8 @@ public class StatementServiceImpl implements StatementService {
                 orderProductDO.setUpdateUser(userId);
                 needUpdateOrderProductList.add(orderProductDO);
                 depositList = statementOrderDetailMapper.findOrderItemStatementByType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
+
+                creditDepositAmount=BigDecimalUtil.add(creditDepositAmount,BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getCreditDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),BigDecimalUtil.STANDARD_SCALE),returnCount));
             }
             if(productSupport.isMaterial(k3ReturnOrderDetailDO.getProductNo())){
                 OrderMaterialDO orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
@@ -7287,6 +7292,8 @@ public class StatementServiceImpl implements StatementService {
                 orderMaterialDO.setUpdateUser(userId);
                 needUpdateOrderMaterialList.add(orderMaterialDO);
                 depositList = statementOrderDetailMapper.findOrderItemStatementByType(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
+
+                creditDepositAmount=BigDecimalUtil.add(creditDepositAmount,BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getCreditDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),BigDecimalUtil.STANDARD_SCALE),returnCount));
             }
             if(CollectionUtil.isEmpty(depositList))continue;
             List<StatementOrderReturnDetailDO> returnRecords=depositReturnRecordCatch.get(k3ReturnOrderDetailDO.getId());
@@ -7385,6 +7392,10 @@ public class StatementServiceImpl implements StatementService {
         k3ReturnOrderDO.setUpdateTime(new Date());
         k3ReturnOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         k3ReturnOrderMapper.update(k3ReturnOrderDO);
+        //return cridit amount
+        if(customerDO!=null){
+            customerSupport.addCreditAmountUsed(customerDO.getId(),creditDepositAmount,CustomerRiskBusinessType.RETURN_ROLL_TYPE,k3ReturnOrderDO.getReturnOrderNo(),"");
+        }
         fixCustomerStatementOrderStatementTime(customerDO.getId());
         String returnCode= paymentService.returnOtherFeeAndPayDeposit(k3ReturnOrderDO.getK3CustomerNo(),needReturnOtherAmount,needRepayDeposit,needRepayRentDeposit,"退货单取消结算");
 
@@ -7568,5 +7579,7 @@ public class StatementServiceImpl implements StatementService {
     private StatementOrderReturnDetailMapper statementOrderReturnDetailMapper;
     @Autowired
     private ReletOrderSupport reletOrderSupport;
+    @Autowired
+    private CustomerSupport customerSupport;
 
 }

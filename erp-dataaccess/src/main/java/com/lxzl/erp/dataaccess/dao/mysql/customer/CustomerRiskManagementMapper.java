@@ -15,4 +15,6 @@ public interface CustomerRiskManagementMapper extends BaseMysqlDAO<CustomerRiskM
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	CustomerRiskManagementDO findByCustomerId(@Param("customerId") Integer customerId);
+
+	CustomerRiskManagementDO findCreditAmountByCustomerId(@Param("customerId") Integer customerId);
 }

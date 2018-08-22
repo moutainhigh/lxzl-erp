@@ -25,6 +25,7 @@
                             <a href="${ctx}{{menuUrl}}?no={{customerNo}}"
                                 class="btn btn-primary btn-sm ml5 bradius {{class}}" 
                                 data-customerno="{{customerNo}}"
+                                data-id="{{customerId}}"
                                 data-customername="{{customerName}}"
                                 data-statementdate="{{statementDate}}"
                                 data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
@@ -121,6 +122,17 @@
 
                                         <dt class="mb10">是否禁用：</dt>
                                         <dd>{{isDisabledValue}}</dd>
+
+                                        <dt class="mb10">是否为子公司：</dt>
+                                        <dd>{{subsidiary}}</dd>
+
+                                        {{#customerCompany.subsidiary}}
+                                        <dt class="mb10">母公司名称：</dt>
+                                        <dd><a href="{{parentCompanyUrl}}" target="_blank">{{customerCompany.parentCustomerName}}</a></dd>
+
+                                        <dt class="mb10">母公司编号：</dt>
+                                        <dd><a href="{{parentCompanyUrl}}" target="_blank">{{customerCompany.parentCustomerNo}}</a></dd>
+                                        {{/customerCompany.subsidiary}}
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
@@ -356,6 +368,8 @@
             'manage.customer.return.visit.js',
             'manage.customer.return.visit.add.js',
             'manage.customer.return.visit.edit.js',
+            'manage.customer.subsidiary.add.js',
+            'modal.choose.customer.business.js',
             'modal.input.js',
             'modal.submit.audit.js');
 </script>
