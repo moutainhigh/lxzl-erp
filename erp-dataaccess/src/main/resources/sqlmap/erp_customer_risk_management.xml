@@ -43,6 +43,13 @@
 		WHERE ecrm.customer_id = #{customerId, jdbcType=INTEGER} AND ecrm.data_status = 1
 	</select>
 
+	<select id="findCreditAmountByCustomerId" resultMap="CustomerRiskManagementDO" parameterType="java.lang.Integer">
+		SELECT
+		credit_amount,credit_amount_used
+		FROM erp_customer_risk_management ecrm
+		WHERE ecrm.customer_id = #{customerId, jdbcType=INTEGER} AND ecrm.data_status = 1
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ecrm.id) FROM erp_customer_risk_management ecrm 
 		<where>

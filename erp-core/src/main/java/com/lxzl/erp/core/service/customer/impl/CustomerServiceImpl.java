@@ -1800,7 +1800,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerDO.getId());
-        BigDecimal customerRiskAmount = customerRiskManagementDO.getCreditAmountUsed().subtract(customerRiskManagement.getCreditAmountUsed());
+        BigDecimal customerRiskAmount = customerRiskManagement.getCreditAmountUsed().subtract(customerRiskManagementDO.getCreditAmountUsed());
         customerRiskManagementDO.setCreditAmountUsed(customerRiskManagement.getCreditAmountUsed());
         customerRiskManagementDO.setUpdateTime(now);
         customerRiskManagementDO.setUpdateUser(userSupport.getCurrentUserId().toString());

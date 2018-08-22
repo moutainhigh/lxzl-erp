@@ -45,7 +45,7 @@ public class CustomerSupport {
      * @param customerNo
      * @param amount
      * @return
-     */
+
     public String addCreditAmountUsed(String customerNo, BigDecimal amount) {
         if (amount == null || customerNo == null) {
             throw new BusinessException();
@@ -70,6 +70,7 @@ public class CustomerSupport {
             return ErrorCode.SUCCESS;
         }
     }
+    */
 
     /**
      * 内部调用减少已用授信额度
@@ -77,7 +78,7 @@ public class CustomerSupport {
      * @param customerNo
      * @param amount
      * @return
-     */
+
     public String subCreditAmountUsed(String customerNo, BigDecimal amount) {
         if (amount == null || customerNo == null) {
             throw new BusinessException();
@@ -99,6 +100,7 @@ public class CustomerSupport {
             return ErrorCode.SUCCESS;
         }
     }
+     */
 
     /**
      * 内部调用增加已用授信额度
@@ -137,6 +139,7 @@ public class CustomerSupport {
             customerRiskManagementMapper.update(customerRiskManagementDO);
             return ErrorCode.SUCCESS;
         }
+        //TODO 记录子公司使用母公司的授信额度
     }
 
     /**
@@ -183,11 +186,12 @@ public class CustomerSupport {
             customerRiskManagementMapper.update(customerRiskManagementDO);
             return ErrorCode.SUCCESS;
         }
+        //TODO 记录子公司使用母公司的授信额度
     }
 
     /**
      * 风控信息存在，校验风控信息是否完整
-     */
+     *
     public boolean isFullRiskManagement(Integer customerId) {
 //        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerId);
         CustomerRiskManagementDO customerRiskManagementDO = getCustomerRiskManagementDO(customerId);
@@ -206,6 +210,7 @@ public class CustomerSupport {
 
         return true;
     }
+    */
 
     /**
      * 添加客户授信变更日志
@@ -225,7 +230,7 @@ public class CustomerSupport {
         if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) == 0) {
             return ErrorCode.SUCCESS;
         } else {
-            CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerId);
+            CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findCreditAmountByCustomerId(customerId);
             CustomerRiskLogDO customerRiskLogDO = new CustomerRiskLogDO();
             //变更授信额度
             if (CustomerRiskBusinessType.CUSTOMER_RISK_TYPE.equals(businessType)) {
