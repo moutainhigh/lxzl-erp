@@ -11,10 +11,12 @@ import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskLogMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCustomerMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskLogDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
 import com.lxzl.se.common.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,6 +36,8 @@ public class CustomerSupport {
     private UserSupport userSupport;
     @Autowired
     private CustomerCompanyMapper customerCompanyMapper;
+    @Autowired
+    private K3MappingCustomerMapper k3MappingCustomerMapper;
 
     /**
      * 内部调用增加已用授信额度
@@ -296,5 +300,21 @@ public class CustomerSupport {
         customerId = this.getParentCompanyCustomerId(customerId);
         CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerId);
         return customerRiskManagementDO;
+    }
+
+    /**
+     * 如果
+     * @param k3CustomerNo
+     * @return
+     */
+    public CustomerDO getCustomerByK3CustomerNo(String k3CustomerNo){
+        K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3CustomerNo);
+        CustomerDO customerDO = null;
+        if (k3MappingCustomerDO == null) {
+            customerDO = customerMapper.findByNo(k3CustomerNo);
+        } else {
+            customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
+        }
+       return customerDO;
     }
 }
