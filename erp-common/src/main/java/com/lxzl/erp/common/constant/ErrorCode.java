@@ -1684,7 +1684,7 @@ public class ErrorCode {
         MAP.put(PARENT_CUSTOMER_ID_IS_NOT_NULL , "选取的母公司ID不能为空");
         MAP.put(CUSTOMER_COPANY_NOT_EXISTS , "企业客户不存在");
         MAP.put(PARENT_CUSTOMER_COPANY_IS_SUBSIDIARY , "所选取的母公司是其他公司的子公司，不能再添加子公司");
-        MAP.put(CUSTOMER_COPANY_IS_SUBSIDIARY , "选取的子公司已经存在母公司，不能重复添加");
+        MAP.put(CUSTOMER_COPANY_IS_SUBSIDIARY , "选取的子公司已经存在母公司或选择的公司为其他公司母公司，不能重复添加");
         MAP.put(ADD_PARENT_COMPANY_COUNT_ADD_SELF , "所添加子公司与母公司一致，请重新选择");
         MAP.put(QUERY_CUSTOMER_ID_IS_NOT_NULL , "查询子公司的母公司ID不能为空");
 

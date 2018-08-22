@@ -51,6 +51,7 @@ public class CustomerCompanyDO  extends BaseDO {
 
 	private Boolean isSubsidiary; //是否为子公司，1是子公司，0不是子公司
 	private Integer parentCustomerId; //母公司customerId
+	private Boolean isParent;//是否为母公司，true是母公司，false不是母公司
 
 	@Transient
 	private String cityName;
@@ -395,5 +396,13 @@ public class CustomerCompanyDO  extends BaseDO {
 
 	public void setParentCustomerId(Integer parentCustomerId) {
 		this.parentCustomerId = parentCustomerId;
+	}
+
+	public Boolean getParent() {
+		return isParent;
+	}
+
+	public void setParent(Boolean parent) {
+		isParent = parent;
 	}
 }
