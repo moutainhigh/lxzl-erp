@@ -652,6 +652,9 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
+        // 校验客户风控信息
+        verifyCustomerRiskInfo(orderDO);
+
         String verifyOrderShortRentReceivableResult = verifyOrderShortRentReceivable(customerDO, orderDO);
         if (!ErrorCode.SUCCESS.equals(verifyOrderShortRentReceivableResult)) {
             result.setErrorCode(verifyOrderShortRentReceivableResult);
