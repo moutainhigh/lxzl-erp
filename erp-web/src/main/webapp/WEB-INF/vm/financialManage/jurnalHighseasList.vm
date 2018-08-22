@@ -187,13 +187,13 @@
             'modal.choose.company.js',
             'manage.jurnal.amount.trade.modal.js',
             'manage.jurnal.amount.handle.mixin.js',
-            'manage.jurnal.unknown.js');
+            'manage.jurnal.highseas.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化
     Rental.init();
     Layout.init();
-    JurnalUnknownManage.init();
+    JurnalHighseasManage.init();
 
     //UI效果初始化
     Core.init();

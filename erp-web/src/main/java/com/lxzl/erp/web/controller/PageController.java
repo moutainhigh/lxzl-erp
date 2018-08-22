@@ -1147,12 +1147,12 @@ public class PageController extends BaseController {
 
     @RequestMapping("/finance-manage/unknown-list")
     public String financeUnknownList() {
-        return "/financialManage/jurnalUnknownList";
+        return "/financialManage/jurnalHighseasList";
     }
 
     @RequestMapping("/finance-manage/unknown-detail")
     public String financeUnknownDetail() {
-        return "/financialManage/jurnalUnknownDetail";
+        return "/financialManage/jurnalHighseasDetail";
     }
 
     /**
