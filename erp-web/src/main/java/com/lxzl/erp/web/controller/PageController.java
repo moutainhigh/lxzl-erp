@@ -1145,6 +1145,16 @@ public class PageController extends BaseController {
         return "/financialManage/amountClaimDetailList";
     }
 
+    @RequestMapping("/finance-manage/unknown-list")
+    public String financeUnknownList() {
+        return "/financialManage/jurnalUnknownList";
+    }
+
+    @RequestMapping("/finance-manage/unknown-detail")
+    public String financeUnknownDetail() {
+        return "/financialManage/jurnalUnknownDetail";
+    }
+
     /**
      * 系统功能开关设置
      *
