@@ -2196,7 +2196,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             //  调用下面方法去改变状态  和记录日志
             //这里是保存银行对公流水认领表 数据
             serviceResult = updateClaim(bankSlipDO, bankSlipDetailDO, bankSlipClaim, claimParamList, now);
-            if (!ErrorCode.SUCCESS.equals(serviceResult.getResult())) {
+            if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             }
             return serviceResult;
