@@ -671,24 +671,7 @@
 				and 1=2
 			</if>
 			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 1">
-				and (CASE  WHEN #{maps.currentUser,jdbcType=VARCHAR} != '500001' THEN ebsc.create_user IN
-				(select eu.id from
-				(
-				select ed.id from erp_department ed
-				<where>
-					<if test="maps.subCompanyId != null">
-						and ed.sub_company_id = #{maps.subCompanyId, jdbcType=INTEGER}
-					</if>
-					<if test="true">
-						and ed.data_status = 1
-					</if>
-				</where>
-				order by ed.parent_department_id,ed.data_order desc
-				) department left join erp_role er on er.department_id = department.id and er.data_status = 1
-				left join erp_user_role eur on eur.role_id = er.id and eur.data_status = 1
-				left join erp_user eu on eu.id = eur.user_id
-				order by er.data_order desc, er.create_time desc) ELSE 1=1 END
-				)
+				and 1=1
 			</if>
 			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 2">
 				and ebs.slip_status !=0 AND ebsd.detail_status != 5
@@ -718,7 +701,7 @@
 		SELECT newEbsd.* FROM(
 			SELECT <include refid="column_List"/>  FROM erp_bank_slip_detail ebsd
 			INNER JOIN erp_bank_slip ebs ON ebs.id = ebsd.bank_slip_id AND  ebs.data_status = 1
-			WHERE  ebsd.loan_sign = 1 and ebsd.data_status = 1  AND ebs.sub_company_id = 1
+			WHERE  ebsd.loan_sign = 1 and ebsd.data_status = 1  AND ebs.sub_company_id = 1 AND ebsd.is_localization != 2
 		)newEbsd
 		LEFT JOIN erp_bank_slip_detail_operation_log ebsdol ON newEbsd.id = ebsdol.bank_slip_detail_id AND ebsdol.data_status = 1
 		WHERE #{createTime,jdbcType=TIMESTAMP} >= ebsdol.create_time AND ebsdol.operation_type = 1

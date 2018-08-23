@@ -1086,7 +1086,6 @@ public class BankSlipServiceImpl implements BankSlipService {
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("bankSlipDetailOperationLogQueryParam", bankSlipDetailOperationLogQueryParam);
         maps.put("departmentType", departmentType);
-        maps.put("subCompanyId", userSupport.getCurrentUserCompanyId());
         maps.put("currentUser", userSupport.getCurrentUserId().toString());
         Integer totalCount = bankSlipDetailOperationLogMapper.findBankSlipDetailOperationLogCountByParams(maps);
         List<BankSlipDetailOperationLogDO> bankSlipDetailOperationLogDOList = bankSlipDetailOperationLogMapper.findBankSlipDetailOperationLogByParams(maps);
@@ -1110,7 +1109,6 @@ public class BankSlipServiceImpl implements BankSlipService {
         maps.put("bankSlipDetailId", bankSlipDetail.getBankSlipDetailId());
         maps.put("currentUser", userSupport.getCurrentUserId().toString());
         maps.put("subCompanyId", userSupport.getCurrentUserCompanyId());
-
         BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findUnknownBankSlipDetailById(maps);
 
         if (bankSlipDetailDO == null) {
@@ -2250,6 +2248,8 @@ public class BankSlipServiceImpl implements BankSlipService {
         if (CollectionUtil.isNotEmpty(bankSlipClaimDOList)) {
             //删除所有
             bankSlipClaimMapper.deleteBankSlipClaimDO(userSupport.getCurrentUserId().toString(), now, bankSlipClaimDOList);
+            //删除所有认领记录
+            bankSlipDetailOperationLogMapper.deleteByBankSlipDetailId(userSupport.getCurrentUserId().toString(), now, bankSlipDetailDO.getId());
             if (BankSlipDetailStatus.CLAIMED.equals(bankSlipDetailDO.getDetailStatus())) {
                 // 改变详情当前用户科操作的数据和总表状态
                 bankSlipDetailMapper.deleteBankSlipDetail(bankSlipDetailDO.getId(), userSupport.getCurrentUserId().toString(), now);
