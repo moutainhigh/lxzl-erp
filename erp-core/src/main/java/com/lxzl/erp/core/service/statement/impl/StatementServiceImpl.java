@@ -3950,7 +3950,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     /**
-     * 计算续租结算单的期数
+     * 计算续租结算单的期数 (按月租赁，对齐后的续租期数为付款期整数倍+1，不够整数倍默认取大即+1)
      *
      * @author ZhaoZiXuan
      * @date 2018/8/14 19:18
@@ -3977,6 +3977,9 @@ public class StatementServiceImpl implements StatementService {
 //            if ((rentTimeLength % paymentCycle > 0) || (startDay > (statementDay + 1)) || (StatementMode.STATEMENT_MONTH_END.equals(statementDay) && startDay <= 10)) {
 //                statementMonthCount++;
 //            }
+            if (rentTimeLength % paymentCycle > 0){
+                statementMonthCount++;
+            }
             statementMonthCount++;
             return statementMonthCount;
         }
