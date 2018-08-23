@@ -27,10 +27,11 @@
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="is_full_deposit" jdbcType="INTEGER" property="isFullDeposit" />
+		<result column="credit_parent_amount_used" jdbcType="DECIMAL" property="creditParentAmountUsed" />
 	</resultMap>
 
 	<sql id="column_List">
-		ecrm.id,ecrm.customer_id,ecrm.credit_amount,ecrm.credit_amount_used,ecrm.deposit_cycle,ecrm.payment_cycle,ecrm.apple_deposit_cycle,ecrm.apple_payment_cycle,ecrm.new_deposit_cycle,ecrm.new_payment_cycle,ecrm.pay_mode,ecrm.apple_pay_mode,ecrm.new_pay_mode,ecrm.is_limit_apple,ecrm.is_limit_new,ecrm.return_visit_frequency,ecrm.single_limit_price,ecrm.data_status,ecrm.remark,ecrm.create_time,ecrm.create_user,ecrm.update_time,ecrm.update_user,ecrm.is_full_deposit
+		ecrm.id,ecrm.customer_id,ecrm.credit_amount,ecrm.credit_amount_used,ecrm.deposit_cycle,ecrm.payment_cycle,ecrm.apple_deposit_cycle,ecrm.apple_payment_cycle,ecrm.new_deposit_cycle,ecrm.new_payment_cycle,ecrm.pay_mode,ecrm.apple_pay_mode,ecrm.new_pay_mode,ecrm.is_limit_apple,ecrm.is_limit_new,ecrm.return_visit_frequency,ecrm.single_limit_price,ecrm.data_status,ecrm.remark,ecrm.create_time,ecrm.create_user,ecrm.update_time,ecrm.update_user,ecrm.is_full_deposit,ecrm.credit_parent_amount_used
 	</sql>
 
 	<select id="findById" resultMap="CustomerRiskManagementDO" parameterType="java.lang.Integer">
@@ -40,6 +41,13 @@
 
 	<select id="findByCustomerId" resultMap="CustomerRiskManagementDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_customer_risk_management ecrm
+		WHERE ecrm.customer_id = #{customerId, jdbcType=INTEGER} AND ecrm.data_status = 1
+	</select>
+
+	<select id="findCreditAmountByCustomerId" resultMap="CustomerRiskManagementDO" parameterType="java.lang.Integer">
+		SELECT
+		credit_amount,credit_amount_used
+		FROM erp_customer_risk_management ecrm
 		WHERE ecrm.customer_id = #{customerId, jdbcType=INTEGER} AND ecrm.data_status = 1
 	</select>
 
@@ -106,6 +114,9 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="creditParentAmountUsed != null">
+				credit_parent_amount_used = #{creditParentAmountUsed,jdbcType=DECIMAL},
 			</if>
 		</set>
 	</sql>

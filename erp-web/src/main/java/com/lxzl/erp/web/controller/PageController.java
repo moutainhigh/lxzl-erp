@@ -504,6 +504,10 @@ public class PageController extends BaseController {
         return "/customerManage/serviceCustomerDetail";
     }
 
+    @RequestMapping("/customer-manage/add-subCompany")
+    public String customerManageAddSubCompany() {
+        return "/component/customerBusiness/addSubCompany";
+    }
     //采购管理
     @RequestMapping("/purchase-manage/list")
     public String purchaseManageList() {

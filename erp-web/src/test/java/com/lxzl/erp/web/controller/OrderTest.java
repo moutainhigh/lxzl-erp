@@ -1,6 +1,7 @@
 package com.lxzl.erp.web.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.*;
@@ -177,7 +178,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerNo("LXCC-027-20180322-00784");
+        order.setBuyerCustomerNo("LXCC-0755-20180112-00002");
         order.setCustomerConsignId(5445);
         order.setRentStartTime(new Date());
         order.setIsPeer(0);
@@ -452,7 +453,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         OrderCommitParam order = new OrderCommitParam();
-        order.setOrderNo("LXO-20180712-1000-00098");
+        order.setOrderNo("LXO-20180821-1000-00003");
         order.setVerifyUser(500013);//审核人
         List<Integer> imageList = new ArrayList<>();
         imageList.add(1818);
