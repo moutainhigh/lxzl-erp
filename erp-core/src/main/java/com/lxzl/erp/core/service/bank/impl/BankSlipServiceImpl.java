@@ -1478,7 +1478,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     public void automaticUnknownBankSlipDetail() {
         //查询总公司所有已当前时间起三天未认领数据
         Date now = new Date();
-        Date threeDaysAgo = DateUtil.getDayByCurrentOffset(-4);
+        Date threeDaysAgo = DateUtil.getDayByCurrentOffset(-3);
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm;ss");
         String format = simpleDateFormat.format(threeDaysAgo);

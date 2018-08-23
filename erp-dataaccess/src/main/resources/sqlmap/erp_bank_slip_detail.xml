@@ -541,7 +541,7 @@
 
 	</select>
 	<update id="deleteBankSlipDetail">
-		UPDATE erp_bank_slip ebs,erp_bank_slip_detail ebsd SET ebs.claim_count=claim_count-1,ebs.need_claim_count=need_claim_count+1,ebsd.update_time = #{updateTime,jdbcType=TIMESTAMP},ebsd.update_user = #{updateUser,jdbcType=VARCHAR}  WHERE ebsd.bank_slip_id = ebs.id AND ebsd.id = #{bankSlipDetailId, jdbcType=INTEGER} AND ebs.data_status = 1 AND ebsd.data_status = 1
+		UPDATE erp_bank_slip ebs,erp_bank_slip_detail ebsd SET ebsd.detail_status = 1,ebs.claim_count=claim_count-1,ebs.need_claim_count=need_claim_count+1,ebsd.update_time = #{updateTime,jdbcType=TIMESTAMP},ebsd.update_user = #{updateUser,jdbcType=VARCHAR}  WHERE ebsd.bank_slip_id = ebs.id AND ebsd.id = #{bankSlipDetailId, jdbcType=INTEGER} AND ebs.data_status = 1 AND ebsd.data_status = 1
 	</update>
 
 	<select id="findUnknownBankSlipDetailDOCountByParams" resultType="Integer" parameterType="map">
