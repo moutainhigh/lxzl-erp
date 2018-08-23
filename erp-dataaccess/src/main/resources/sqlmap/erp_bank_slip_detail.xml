@@ -714,4 +714,41 @@
 		SELECT  <include refid="column_List"/> FROM erp_bank_slip_detail ebsd WHERE  ebsd.trade_serial_no = #{thirdPartyPayOrderId,jdbcType=VARCHAR} AND ebsd.data_status = 1
 	</select>
 
+	<select id="findByThreeDaysAgo" resultMap="BankSlipDetailDO" parameterType="map">
+		SELECT newEbsd.* FROM(
+			SELECT <include refid="column_List"/>  FROM erp_bank_slip_detail ebsd
+			INNER JOIN erp_bank_slip ebs ON ebs.id = ebsd.bank_slip_id AND  ebs.data_status = 1
+			WHERE  ebsd.loan_sign = 1 and ebsd.data_status = 1  AND ebs.sub_company_id = 1
+		)newEbsd
+		LEFT JOIN erp_bank_slip_detail_operation_log ebsdol ON newEbsd.id = ebsdol.bank_slip_detail_id AND ebsdol.data_status = 1
+		WHERE #{createTime,jdbcType=TIMESTAMP} >= ebsdol.create_time AND ebsdol.operation_type = 1
+	</select>
+
+	<update id="updateUnknownBankSlipDetailById">
+		UPDATE erp_bank_slip_detail ebsd
+		SET
+		<trim>
+			is_localization =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.isLocalization,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			ebsd.update_time =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.updateTime,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_user =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.updateUser,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		  WHERE ebsd.id IN
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+
 </mapper>

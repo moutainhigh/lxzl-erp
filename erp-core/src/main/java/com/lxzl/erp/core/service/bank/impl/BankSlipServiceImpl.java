@@ -1146,18 +1146,32 @@ public class BankSlipServiceImpl implements BankSlipService {
         Date now = new Date();
         //指派未知数据
         //判断是否是总公司人员
-        if (!userSupport.isHeadUser()) {
-            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
-            return serviceResult;
+        if(!userSupport.isSuperUser()){
+            if (!userSupport.isHeadUser()) {
+                serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+                return serviceResult;
+            }
         }
-        //判断是否是总公司数据
+
+        //数据是否存在
         BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipDetail.getBankSlipDetailId());
         if (bankSlipDetailDO == null) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
             return serviceResult;
         }
+
+        BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
+        //需判断这个单子是否下推,未推只有财务管理员电销操作 ,下推了只有业务员和商务电销可以操作
+        if(!userSupport.isSuperUser()){
+            String localizationPermission = verifyLocalizationPermission(bankSlipDO);
+            if (!ErrorCode.SUCCESS.equals(localizationPermission)) {
+                serviceResult.setErrorCode(localizationPermission);
+                return serviceResult;
+            }
+        }
+
         if (!CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDetailDO.getOwnerSubCompanyId())) {
-            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_COMPANY_IS_SUB_COMPANY);
             return serviceResult;
         }
         //判断是否是未知
@@ -1165,11 +1179,29 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_IS_UNKNOWN);
             return serviceResult;
         }
+
+        //判断是否是否是认领和已认领状态
+        if (!BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus()) && !BankSlipDetailStatus.CLAIMED.equals(bankSlipDetailDO.getDetailStatus())) {
+            serviceResult.setErrorCode(ErrorCode.UNKNOWN_BANK_SLIP_DETAIL_NOT_UNCLAIM_OR_CLAIM);
+            return serviceResult;
+        }
+
         //跟新
         bankSlipDetailDO.setIsLocalization(LocalizationType.UNKNOWN);
         bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         bankSlipDetailDO.setUpdateTime(now);
         bankSlipDetailMapper.update(bankSlipDetailDO);
+
+        //保存操作记录
+        BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
+        bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
+        bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.UNKNOWN);
+        bankSlipDetailOperationLogDO.setOperationContent("属地化到流水公海--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",属地化人：" + userSupport.getCurrentUserCompany().getSubCompanyName() + "  " + userSupport.getCurrentUser().getRoleList().get(0).getDepartmentName() + "  " + userSupport.getCurrentUser().getRealName() + "，属地化时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now));
+        bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        bankSlipDetailOperationLogDO.setCreateTime(now);
+        bankSlipDetailOperationLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        bankSlipDetailOperationLogMapper.save(bankSlipDetailOperationLogDO);
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -1436,6 +1468,49 @@ public class BankSlipServiceImpl implements BankSlipService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(bankSlipClaimPage);
         return result;
+    }
+
+    /**
+     * @param
+     * @return com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+     * @描述
+     */
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public void automaticUnknownBankSlipDetail() {
+        //查询总公司所有已当前时间起三天未认领数据
+        Date now = new Date();
+        Date threeDaysAgo = DateUtil.getDayByCurrentOffset(-4);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm;ss");
+        String format = simpleDateFormat.format(threeDaysAgo);
+        System.out.println(format);
+
+        List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDetailMapper.findByThreeDaysAgo(threeDaysAgo);
+        String userId = CommonConstant.SUPER_USER_ID.toString();
+        if(CollectionUtil.isNotEmpty(bankSlipDetailDOList)){
+            List<BankSlipDetailOperationLogDO> bankSlipDetailOperationLogDOList = new ArrayList<>();
+            for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
+                bankSlipDetailDO.setIsLocalization(CommonConstant.COMMON_TWO);
+                bankSlipDetailDO.setUpdateUser(userId);
+                bankSlipDetailDO.setUpdateTime(now);
+
+                //保存操作记录
+                BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
+                bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
+                bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.UNKNOWN);
+                bankSlipDetailOperationLogDO.setOperationContent("属地化到流水公海--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",属地化人：系统  ，属地化时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now));
+                bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                bankSlipDetailOperationLogDO.setCreateTime(now);
+                bankSlipDetailOperationLogDO.setCreateUser(userId);
+                bankSlipDetailOperationLogDOList.add(bankSlipDetailOperationLogDO);
+
+            }
+            //保存操作日志
+            bankSlipDetailMapper.updateUnknownBankSlipDetailById(bankSlipDetailDOList);
+            //保存操作日志
+            bankSlipDetailOperationLogMapper.saveBankSlipDetailOperationLogDOList(bankSlipDetailOperationLogDOList);
+        }
     }
 
     @Override
