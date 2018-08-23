@@ -185,5 +185,10 @@ public interface BankSlipService {
      * @Author : sunzhipeng
      */
     ServiceResult<String,BankSlipClaimPage> pageBankSlipClaimDetail(BankSlipClaimDetailQueryParam bankSlipClaimDetailQueryParam);
+    /**
+     * 3天未认领数据自动流入公海
+     * @Author : xiao
+     */
+    void automaticUnknownBankSlipDetail();
 }
 

@@ -1,9 +1,11 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.TaskSchedulerSystemConfig;
 import com.lxzl.erp.core.annotation.ControllerLog;
-import com.lxzl.erp.core.service.bank.BankSlipService;
-import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.core.component.ResultGenerator;
+import com.lxzl.erp.core.service.Job.JobService;
+import com.lxzl.se.common.domain.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,5 +50,16 @@ public class JobController {
         System.out.println("♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥");
     }
 
+
+    @RequestMapping(value = "automaticUnknownBankSlipDetail",method = RequestMethod.POST)
+    public Result automaticUnknownBankSlipDetail(HttpServletRequest request){
+        ServiceResult<String,String> serviceResult =  jobService.automaticUnknownBankSlipDetail(request);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+
+    @Autowired
+    private JobService jobService;
+    @Autowired
+    ResultGenerator resultGenerator;
 
 }
