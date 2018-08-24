@@ -735,7 +735,7 @@
 		SELECT newEbsd.* FROM(
 			SELECT <include refid="column_List"/>  FROM erp_bank_slip_detail ebsd
 			INNER JOIN erp_bank_slip ebs ON ebs.id = ebsd.bank_slip_id AND  ebs.data_status = 1
-			WHERE  ebsd.loan_sign = 1 and ebsd.data_status = 1  AND ebs.sub_company_id = 1 AND ebsd.is_localization != 2
+			WHERE  ebsd.loan_sign = 1 and ebsd.data_status = 1 AND ebsd.is_localization != 2 AND ebsd.detail_status = 1
 		)newEbsd
 		LEFT JOIN erp_bank_slip_detail_operation_log ebsdol ON newEbsd.id = ebsdol.bank_slip_detail_id AND ebsdol.data_status = 1
 		WHERE #{createTime,jdbcType=TIMESTAMP} >= ebsdol.create_time AND ebsdol.operation_type = 1
