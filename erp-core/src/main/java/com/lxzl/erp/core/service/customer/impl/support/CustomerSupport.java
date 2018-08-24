@@ -114,8 +114,6 @@ public class CustomerSupport {
         if (amount == null || parentCustomerId == null) {
             throw new BusinessException();
         }
-        //日志
-        saveCustomerRiskLog(parentCustomerId, parentCustomerId.equals(customerId) ? null : customerId, amount, businessType, orderNo, remark);
         if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) < 0) {
             throw new BusinessException();
         } else if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) == 0) {
@@ -131,6 +129,8 @@ public class CustomerSupport {
             if (BigDecimalUtil.compare(newValue, customerRiskManagementDO.getCreditAmount()) > 0) {
                 return ErrorCode.CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW;
             }
+            //日志
+            saveCustomerRiskLog(parentCustomerId, parentCustomerId.equals(customerId) ? null : customerId, amount, businessType, orderNo, remark);
             customerRiskManagementDO.setCreditAmountUsed(newValue);
             customerRiskManagementMapper.update(customerRiskManagementDO);
             //记录子公司使用母公司的授信额度
@@ -174,8 +174,6 @@ public class CustomerSupport {
         if (amount == null || parentCustomerId == null) {
             throw new BusinessException();
         }
-        //日志
-        saveCustomerRiskLog(parentCustomerId, parentCustomerId.equals(customerId) ? null : customerId, BigDecimalUtil.mul(amount, new BigDecimal(-1)), businessType, orderNo, remark);
         if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) < 0) {
             throw new BusinessException();
         } else if (BigDecimalUtil.compare(amount, BigDecimal.ZERO) == 0) {
@@ -197,6 +195,8 @@ public class CustomerSupport {
             if (BigDecimalUtil.compare(newValue, BigDecimal.ZERO) < 0) {
                 return ErrorCode.SUCCESS;
             }
+            //日志
+            saveCustomerRiskLog(parentCustomerId, parentCustomerId.equals(customerId) ? null : customerId, BigDecimalUtil.mul(amount, new BigDecimal(-1)), businessType, orderNo, remark);
             //减成负值不处理，直接保存
             customerRiskManagementDO.setCreditAmountUsed(newValue);
             customerRiskManagementMapper.update(customerRiskManagementDO);
@@ -255,6 +255,9 @@ public class CustomerSupport {
             return ErrorCode.SUCCESS;
         } else {
             CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findCreditAmountByCustomerId(customerId);
+            if (customerRiskManagementDO == null) {
+                return ErrorCode.CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS;
+            }
             CustomerRiskLogDO customerRiskLogDO = new CustomerRiskLogDO();
             //变更授信额度
             if (CustomerRiskBusinessType.CUSTOMER_RISK_TYPE.equals(businessType)) {

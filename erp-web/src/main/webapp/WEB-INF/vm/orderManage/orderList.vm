@@ -157,6 +157,11 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group mn">
+                                                    <input type="text" name="createName" id="createName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入创建人">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <hr class="short alt">
@@ -193,7 +198,7 @@
                                 <thead>
                                     <tr class="bg-light">
                                         <th>编号</th>
-                                        <th>订单归属公司</th>
+                                        <th>订单归属</th>
                                         <th>客户名称</th>
                                         <th>收货人信息</th>
                                         <th>类型/期限</th>
