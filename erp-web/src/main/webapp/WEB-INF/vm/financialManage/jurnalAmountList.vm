@@ -136,6 +136,7 @@
                                     </label>
                                 </th>
                                {{/hasCommonActionButtons}}
+                                <th>资金流水ID</th>
                                 <th>付款人</th>
                                 <th>商户订单号</th>
                                 <th>对方账号</th>
@@ -166,6 +167,7 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
+                                <td>{{bankSlipId}}</td>
                                 <td>{{payerName}}</td>
                                 <td>{{merchantOrderNo}}</td>
                                 <td>{{otherSideAccountNo}}</td>
@@ -203,7 +205,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="15" class="text-center">没有查询到资金流水信息</td>
+                                <td valign="top" colspan="18" class="text-center">没有查询到资金流水信息</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
