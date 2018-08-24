@@ -3961,14 +3961,14 @@ public class StatementServiceImpl implements StatementService {
     }
 
     /**
-     * 计算续租结算单的期数 (按月租赁，对齐后的续租期数为付款期整数倍+1，不够整数倍默认取大即+1)
+     * 计算续租结算单的期数 (按月租赁，先计算第一期需要补齐的月数，剩下的时长在计算期数)
      *
      * @author ZhaoZiXuan
      * @date 2018/8/14 19:18
      * @param
      * @return
      */
-    Integer calculateReletStatementMonthCount(Integer rentType, Integer rentTimeLength, Integer paymentCycle, Integer payMode, int startDay, int statementDay) {
+    Integer calculateReletStatementMonthCount(Integer rentType, Integer rentLength, Integer paymentCycle, Integer payMode, Date rentStartTime, int statementDays, Integer orderId) {
         Integer statementMonthCount = 1;
         // 如果租赁类型为次和天的，那么需要一次性付清，如果为月的，分期付
         if (OrderRentType.RENT_TYPE_DAY.equals(rentType) && OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(payMode)) {
@@ -3977,23 +3977,81 @@ public class StatementServiceImpl implements StatementService {
             return statementMonthCount;
         } else {
             // 按月租的情况
-            if (paymentCycle == null || rentTimeLength == null) {
+            if (paymentCycle == null || rentLength == null) {
                 return null;
             }
-            if (paymentCycle == null || paymentCycle >= rentTimeLength || paymentCycle == 0) {
-                statementMonthCount++;
+
+            OrderDO orderDO = orderMapper.findByOrderId(orderId);
+            Date orderRentStartTime = orderDO.getRentStartTime();
+
+            Date statementStartTime = orderRentStartTime;
+            Integer orderFirstPaymentCycle = paymentCycle;
+
+            Calendar rentStartTimeCalendar = Calendar.getInstance();
+            rentStartTimeCalendar.setTime(orderRentStartTime);
+            // 如果结算日为31日，并且租期在10日前，交到前一个月的即可
+            if (StatementMode.STATEMENT_MONTH_END.equals(statementDays) && rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH) <= 10) {
+                orderFirstPaymentCycle--;
+            }
+            Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(orderRentStartTime, orderFirstPaymentCycle);
+            Calendar statementEndTimeCalendar = Calendar.getInstance();
+            statementEndTimeCalendar.setTime(statementEndTime);
+            int statementEndMonthDays = DateUtil.getActualMaximum(statementEndTime);
+            if (OrderRentType.RENT_TYPE_DAY.equals(rentType)) {
+                // 不做任何动作，只是当天
+                statementEndTime = orderRentStartTime;
+            } else if (statementDays > statementEndMonthDays) {
+                // 判断月份天数小于31的情况
+                statementEndTimeCalendar.set(Calendar.DAY_OF_MONTH, statementEndMonthDays);
+                statementEndTime = statementEndTimeCalendar.getTime();
+            } else {
+                statementEndTimeCalendar.set(Calendar.DAY_OF_MONTH, statementDays);
+                statementEndTime = statementEndTimeCalendar.getTime();
+            }
+
+            //计算续租开始时间所属的  结算单时间
+            while (DateUtil.daysBetween(statementEndTime, rentStartTime) > 0) { //若续租开始时间比结算单结束时间大，则继续遍历
+                // 中间期数
+                Date thisPhaseStartTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(statementEndTime, 1);
+                Date thisPhaseDate = com.lxzl.se.common.util.date.DateUtil.monthInterval(statementEndTime, paymentCycle);
+
+                statementStartTime = thisPhaseStartTime;//记录结算单开始时间
+                statementEndTime = thisPhaseDate;
+//            Date thisPhaseEndTime = thisPhaseDate;
+                int lastMonthSurplusDays = DateUtil.betweenAppointDays(statementEndTime, statementDays);
+                Calendar thisPhaseEndTimeCalendar = Calendar.getInstance();
+                thisPhaseEndTimeCalendar.setTime(statementEndTime);
+                if (thisPhaseEndTimeCalendar.get(Calendar.DAY_OF_MONTH) < lastMonthSurplusDays) {
+                    thisPhaseEndTimeCalendar.set(Calendar.DAY_OF_MONTH, lastMonthSurplusDays);
+                    statementEndTime = thisPhaseEndTimeCalendar.getTime();
+                }
+            }
+            //若第一期结束时间大于 续租结束时间则取续租结束时间
+            Date reletOrderEndTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, rentLength);
+            reletOrderEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(reletOrderEndTime, -1);
+            if (DateUtil.daysBetween(statementEndTime, reletOrderEndTime) < 0) {
+                statementEndTime = reletOrderEndTime;
                 return statementMonthCount;
             }
-            statementMonthCount = rentTimeLength / paymentCycle;
-//            if ((rentTimeLength % paymentCycle > 0) || (startDay > (statementDay + 1)) || (StatementMode.STATEMENT_MONTH_END.equals(statementDay) && startDay <= 10)) {
-//                statementMonthCount++;
-//            }
-            if (rentTimeLength % paymentCycle > 0){
+
+            Integer firstMonthLength = getMonthBetweenDate(rentStartTime, statementEndTime);
+            Integer remainRentLength = (rentLength - firstMonthLength);
+            statementMonthCount = (remainRentLength / paymentCycle) + 1;
+
+            if (remainRentLength % paymentCycle > 0){
                 statementMonthCount++;
             }
-            statementMonthCount++;
             return statementMonthCount;
         }
+    }
+
+    private Integer getMonthBetweenDate(Date startTime, Date endTime){
+        Integer monthCount = 1;
+        while (DateUtil.daysBetween(com.lxzl.se.common.util.date.DateUtil.monthInterval(startTime, monthCount), endTime) > 0){
+            monthCount++;
+        }
+        monthCount--;
+        return monthCount;
     }
 
     Integer calculateStatementMonthCount(Integer rentType, Integer rentTimeLength, Integer paymentCycle, Integer payMode, int startDay, int statementDay) {
@@ -4802,7 +4860,7 @@ public class StatementServiceImpl implements StatementService {
                 // 先确定订单需要结算几期
                 Integer statementMonthCount = 1;
                 if (isNeedAlign){
-                    statementMonthCount = calculateReletStatementMonthCount(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), reletOrderProductDO.getPaymentCycle(), reletOrderProductDO.getPayMode(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
+                    statementMonthCount = calculateReletStatementMonthCount(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), reletOrderProductDO.getPaymentCycle(), reletOrderProductDO.getPayMode(), rentStartTime, statementDays, orderId);
                 }
                 else{
                     statementMonthCount = calculateStatementMonthCount(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), reletOrderProductDO.getPaymentCycle(), reletOrderProductDO.getPayMode(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
@@ -4909,7 +4967,7 @@ public class StatementServiceImpl implements StatementService {
                 // 先确定订单需要结算几期
                 Integer statementMonthCount = 1;
                 if (isNeedAlign){
-                    statementMonthCount = calculateReletStatementMonthCount(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), reletOrderMaterialDO.getPaymentCycle(), reletOrderMaterialDO.getPayMode(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
+                    statementMonthCount = calculateReletStatementMonthCount(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), reletOrderMaterialDO.getPaymentCycle(), reletOrderMaterialDO.getPayMode(), rentStartTime, statementDays, orderId);
                 }
                 else{
                     statementMonthCount = calculateStatementMonthCount(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), reletOrderMaterialDO.getPaymentCycle(), reletOrderMaterialDO.getPayMode(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
