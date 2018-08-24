@@ -538,7 +538,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        param.setIsRecycleBin(0);
 //        param.setPageNo(4);
 //        param.setPageSize(15);
-        param.setCreateUser("500153");
+        param.setCreateName("李红强");
 
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
