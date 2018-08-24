@@ -624,8 +624,8 @@
             <if test="maps.orderQueryParam.rentLengthType != null">
                 and eo.rent_length_type = #{maps.orderQueryParam.rentLengthType, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.createUser != null &amp;&amp; maps.orderQueryParam.createUser != ''">
-                and eo.create_user = #{maps.orderQueryParam.createUser, jdbcType=VARCHAR}
+            <if test="maps.orderQueryParam.createName != null &amp;&amp; maps.orderQueryParam.createName != ''">
+                and eu.real_name like CONCAT('%','${maps.orderQueryParam.createName}','%' )
             </if>
             <if test="maps.orderQueryParam.startExpectDeliveryTime != null">
                 <![CDATA[ AND eo.expect_delivery_time >= #{maps.orderQueryParam.startExpectDeliveryTime} ]]>
@@ -781,8 +781,8 @@
             <if test="maps.orderQueryParam.rentLengthType != null">
                 and eo.rent_length_type = #{maps.orderQueryParam.rentLengthType, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.createUser != null &amp;&amp; maps.orderQueryParam.createUser != ''">
-                and eo.create_user = #{maps.orderQueryParam.createUser, jdbcType=VARCHAR}
+            <if test="maps.orderQueryParam.createName != null &amp;&amp; maps.orderQueryParam.createName != ''">
+                and eu.real_name like CONCAT('%','${maps.orderQueryParam.createName}','%' )
             </if>
             <if test="maps.orderQueryParam.startExpectDeliveryTime != null">
                 <![CDATA[ AND eo.expect_delivery_time >= #{maps.orderQueryParam.startExpectDeliveryTime} ]]>
@@ -1585,8 +1585,8 @@
             <if test="maps.orderQueryParam.rentLengthType != null">
                 and eo.rent_length_type = #{maps.orderQueryParam.rentLengthType, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.createUser != null &amp;&amp; maps.orderQueryParam.createUser != ''">
-                and eo.create_user = #{maps.orderQueryParam.createUser, jdbcType=VARCHAR}
+            <if test="maps.orderQueryParam.createName != null &amp;&amp; maps.orderQueryParam.createName != ''">
+                and eu.real_name like CONCAT('%','${maps.orderQueryParam.createName}','%' )
             </if>
             <if test="maps.orderQueryParam.isReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 1">
                 AND eo.relet_order_id IS NOT NULL
@@ -1750,8 +1750,8 @@
             <if test="maps.orderQueryParam.rentLengthType != null">
                 and eo.rent_length_type = #{maps.orderQueryParam.rentLengthType, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.createUser != null &amp;&amp; maps.orderQueryParam.createUser != ''">
-                and eo.create_user = #{maps.orderQueryParam.createUser, jdbcType=VARCHAR}
+            <if test="maps.orderQueryParam.createName != null &amp;&amp; maps.orderQueryParam.createName != ''">
+                and eu.real_name like CONCAT('%','${maps.orderQueryParam.createName}','%' )
             </if>
             <if test="maps.orderQueryParam.isReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 1">
                 AND eo.relet_order_id IS NOT NULL
@@ -1888,8 +1888,8 @@
             <if test="maps.orderQueryParam.rentLengthType != null">
                 and eo.rent_length_type = #{maps.orderQueryParam.rentLengthType, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.createUser != null &amp;&amp; maps.orderQueryParam.createUser != ''">
-                and eo.create_user = #{maps.orderQueryParam.createUser, jdbcType=VARCHAR}
+            <if test="maps.orderQueryParam.createName != null &amp;&amp; maps.orderQueryParam.createName != ''">
+                and eu.real_name like CONCAT('%','${maps.orderQueryParam.createName}','%' )
             </if>
             <if test="maps.orderQueryParam.isReletOrder != null &amp;&amp; maps.orderQueryParam.isReletOrder == 1">
                 AND eo.relet_order_id IS NOT NULL
