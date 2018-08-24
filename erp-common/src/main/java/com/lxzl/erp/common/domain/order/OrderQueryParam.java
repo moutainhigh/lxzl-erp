@@ -48,6 +48,8 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private Date startExpectDeliveryTime;  //送货开始时间
     private Date endExpectDeliveryTime;  //送货结束时间
 
+    private String createUser;
+
     public Integer getOrderId() {
         return orderId;
     }
@@ -297,5 +299,13 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setEndExpectDeliveryTime(Date endExpectDeliveryTime) {
         this.endExpectDeliveryTime = endExpectDeliveryTime;
+    }
+
+    public String getCreateUser() {
+        return createUser;
+    }
+
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
     }
 }

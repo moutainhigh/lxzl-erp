@@ -534,10 +534,11 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        param.setOrderSellerId(500355);
 //        param.setOrderSellerName("诚");
 //          param.setIsReturnOverDue(1);
-        param.setIsCanReletOrder(1);
-        param.setIsRecycleBin(0);
-        param.setPageNo(4);
-        param.setPageSize(15);
+//        param.setIsCanReletOrder(1);
+//        param.setIsRecycleBin(0);
+//        param.setPageNo(4);
+//        param.setPageSize(15);
+        param.setCreateUser("500153");
 
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
@@ -564,6 +565,11 @@ public class OrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void queryOrderByNo() throws Exception {
+        
+        Date now = new Date();
+        now.getTime();
+
+
         Order order = new Order();
         order.setOrderNo("LXO-20180709-0755-00047");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
