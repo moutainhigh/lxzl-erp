@@ -13,7 +13,7 @@ public class FinanceStatisticsDataWeeklyExcel extends BasePO {
 	//private Integer subCompanyId;   //分公司ID
 	private Integer dealsCountType;  //成交数量类型 ：1-客户成交数量 2-新客户成交数量 3-租赁商品成交数量 4-退货商品成交数量 5-净增长商品成交数量
 	private Integer shenZhenDealsCount = 0;  //深圳分公司成交数量
-	private Integer beiJingZhenDealsCount = 0;  //北京分公司成交数量
+	private Integer beiJingDealsCount = 0;  //北京分公司成交数量
 	private Integer shangHaiDealsCount = 0;  //上海分公司成交数量
 	private Integer guangZhouDealsCount = 0;  //广州分公司成交数量
 	private Integer wuHanDealsCount = 0;  //武汉分公司成交数量
@@ -83,12 +83,12 @@ public class FinanceStatisticsDataWeeklyExcel extends BasePO {
 		this.shenZhenDealsCount = shenZhenDealsCount;
 	}
 
-	public Integer getBeiJingZhenDealsCount() {
-		return beiJingZhenDealsCount;
+	public Integer getBeiJingDealsCount() {
+		return beiJingDealsCount;
 	}
 
-	public void setBeiJingZhenDealsCount(Integer beiJingZhenDealsCount) {
-		this.beiJingZhenDealsCount = beiJingZhenDealsCount;
+	public void setBeiJingDealsCount(Integer beiJingDealsCount) {
+		this.beiJingDealsCount = beiJingDealsCount;
 	}
 
 	public Integer getShangHaiDealsCount() {
@@ -140,7 +140,7 @@ public class FinanceStatisticsDataWeeklyExcel extends BasePO {
 	}
 
 	public Integer getSumDealsCount(){
-		sumDealsCount =  shenZhenDealsCount + beiJingZhenDealsCount + guangZhouDealsCount + shangHaiDealsCount + wuHanDealsCount + nanJingDealsCount + xiaMenDealsCount + chengDuDealsCount;
+		sumDealsCount =  shenZhenDealsCount + beiJingDealsCount + guangZhouDealsCount + shangHaiDealsCount + wuHanDealsCount + nanJingDealsCount + xiaMenDealsCount + chengDuDealsCount;
 		return sumDealsCount;
 	}
 
@@ -218,7 +218,7 @@ public class FinanceStatisticsDataWeeklyExcel extends BasePO {
 					setShangHaiDealsCount(dealsCount);
 					break;
 				case 4:
-					setBeiJingZhenDealsCount(dealsCount);
+					setBeiJingDealsCount(dealsCount);
 					break;
 				case 5:
 					setGuangZhouDealsCount(dealsCount);
@@ -251,7 +251,7 @@ public class FinanceStatisticsDataWeeklyExcel extends BasePO {
 					setShangHaiDealsCount(getShangHaiDealsCount() + dealsCount);
 					break;
 				case 4:
-					setBeiJingZhenDealsCount(getBeiJingZhenDealsCount() + dealsCount);
+					setBeiJingDealsCount(getBeiJingDealsCount() + dealsCount);
 					break;
 				case 5:
 					setGuangZhouDealsCount(getGuangZhouDealsCount() + dealsCount);
@@ -281,7 +281,7 @@ public class FinanceStatisticsDataWeeklyExcel extends BasePO {
 				", rentLengthType=" + rentLengthType +
 				", dealsCountType=" + dealsCountType +
 				", shenZhenDealsCount=" + shenZhenDealsCount +
-				", beiJingZhenDealsCount=" + beiJingZhenDealsCount +
+				", beiJingZhenDealsCount=" + beiJingDealsCount +
 				", shangHaiDealsCount=" + shangHaiDealsCount +
 				", guangZhouDealsCount=" + guangZhouDealsCount +
 				", wuHanDealsCount=" + wuHanDealsCount +

@@ -98,6 +98,31 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BusinessException(e.getMessage());
         }
     }
+    /**
+     * 查询客户账户(对账单调用该接口，传入用户id不用通过session来进行获取用户id)
+     */
+    @Override
+    public CustomerAccount queryCustomerAccountNoSession(String customerNo,Integer userId) {
+        CustomerAccountQueryParam param = new CustomerAccountQueryParam();
+        param.setBusinessCustomerNo(customerNo);
+        param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        param.setBusinessOperateUser(userId.toString());
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = FastJsonUtil.toJSONString(param);
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryCustomerAccountURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("query customer account response:{}", response);
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                return JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), CustomerAccount.class);
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
 
     @Override
     public String returnDepositExpand(String customerNo, BigDecimal businessReturnRentAmount, BigDecimal businessReturnOtherAmount, BigDecimal businessReturnRentDepositAmount,
@@ -294,7 +319,7 @@ public class PaymentServiceImpl implements PaymentService {
         User loginUser = userSupport.getCurrentUser();
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
         Date now = new Date();
-        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        CustomerDO customerDO = customerMapper.findByNoForCharge(customerNo);
         if (customerDO == null) {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
@@ -303,6 +328,7 @@ public class PaymentServiceImpl implements PaymentService {
             result.setErrorCode(ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO);
             return result;
         }
+
         WeixinPayParam weixinPayParam = new WeixinPayParam();
         weixinPayParam.setBusinessCustomerNo(customerDO.getCustomerNo());
         weixinPayParam.setPayName("凌雄租赁");
@@ -316,6 +342,10 @@ public class PaymentServiceImpl implements PaymentService {
         weixinPayParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         weixinPayParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
         weixinPayParam.setBusinessOperateUser(loginUserId.toString());
+        //添加客户名称、分公司名称、分公司ID
+        weixinPayParam.setBusinessCustomerName(customerDO.getCustomerName());
+        weixinPayParam.setChargeBodyName(customerDO.getOwnerSubCompanyName());
+        weixinPayParam.setChargeBodyId(customerDO.getOwnerSubCompanyId());
 
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
@@ -384,16 +414,6 @@ public class PaymentServiceImpl implements PaymentService {
 
         ServiceResult<String, Page<ChargeRecord>> result = new ServiceResult<>();
 
-        CustomerDO customerName = null == chargeRecordPageParam.getCustomerName() || "".equals(chargeRecordPageParam.getCustomerName()) ? null : customerMapper.findByName(chargeRecordPageParam.getCustomerName());
-        CustomerDO customerNo = null == chargeRecordPageParam.getBusinessCustomerNo() || "".equals(chargeRecordPageParam.getBusinessCustomerNo()) ? null : customerMapper.findByNo(chargeRecordPageParam.getBusinessCustomerNo());
-
-        if (customerName != null) {
-            chargeRecordPageParam.setBusinessCustomerNo(customerName.getCustomerNo());
-        } else if (customerNo != null) {
-            chargeRecordPageParam.setBusinessCustomerNo(customerNo.getCustomerNo());
-            chargeRecordPageParam.setCustomerName(customerNo.getCustomerName());
-        }
-
         chargeRecordPageParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         chargeRecordPageParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
 
@@ -406,7 +426,10 @@ public class PaymentServiceImpl implements PaymentService {
             if (chargeRecordPageParam.getSubCompanyId() != null) {
                 paymentChargeRecordPageParam.setChargeBodyId(chargeRecordPageParam.getSubCompanyId().toString());
             }
-            if (StringUtil.isEmpty(chargeRecordPageParam.getBusinessCustomerNo())) {
+            if (chargeRecordPageParam.getCustomerName() != null&&!"".equals(chargeRecordPageParam.getCustomerName())) {
+                paymentChargeRecordPageParam.setBusinessCustomerName(chargeRecordPageParam.getCustomerName());
+            }
+            if (StringUtil.isEmpty(chargeRecordPageParam.getBusinessCustomerNo())||"".equals(chargeRecordPageParam.getBusinessCustomerNo())) {
                 paymentChargeRecordPageParam.setBusinessCustomerNo(null);
             }
 
@@ -471,9 +494,6 @@ public class PaymentServiceImpl implements PaymentService {
                     for (ChargeRecord chargeRecord : chargeRecordList) {
                         if (customerNoMap.get(chargeRecord.getBusinessCustomerNo()) != null) {
                             CustomerDO customerDO = customerNoMap.get(chargeRecord.getBusinessCustomerNo());
-                            chargeRecord.setSubCompanyId(customerDO.getOwnerSubCompanyId());
-                            chargeRecord.setSubCompanyName(customerDO.getOwnerSubCompanyName());
-                            chargeRecord.setCustomerName(customerDO.getCustomerName());
                             chargeRecord.setErpCustomerNo(customerDO.getCustomerNo());
                         } else if (customerNameMap.get(chargeRecord.getCustomerName()) != null) {
                             CustomerDO customerDO = customerNameMap.get(chargeRecord.getCustomerName());
@@ -666,4 +686,35 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    @Override
+    public String returnOtherFeeAndPayDeposit(String customerNo, BigDecimal returnOtherAmount, BigDecimal payDepositAmount, BigDecimal payRentDepositAmount, String remark) {
+        ReturnOtherAndPayDepositParam param = new ReturnOtherAndPayDepositParam();
+        param.setBusinessCustomerNo(customerNo);
+        param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        Integer operateUser = userSupport.getCurrentUserId() == null ? CommonConstant.SUPER_USER_ID : userSupport.getCurrentUserId();
+        param.setBusinessOperateUser(operateUser.toString());
+        param.setReturnOtherAmount(returnOtherAmount);
+        param.setPayDepositAmount(payDepositAmount);
+        param.setPayRentDepositAmount(payRentDepositAmount);
+        param.setRemark(remark);
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = FastJsonUtil.toJSONString(param);
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemReturnOtherAndPayDepositURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("returnDepositExpand response:", response);
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (paymentResult == null) {
+                throw new BusinessException("支付网关没有响应，强制取消已支付订单失败");
+            }
+            if (!ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                throw new BusinessException(paymentResult.getDescription());
+            }
+            return ErrorCode.SUCCESS;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+        }
+    }
 }

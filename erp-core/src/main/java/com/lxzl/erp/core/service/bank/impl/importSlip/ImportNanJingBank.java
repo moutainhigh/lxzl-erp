@@ -169,6 +169,8 @@ public class ImportNanJingBank {
                         return serviceResult;
                     }
                     try {
+                        tradeTime = tradeTime.replaceAll("/", "");
+                        tradeTime = tradeTime.replaceAll("-", "");
                         bankSlipDetailDO.setTradeTime(new SimpleDateFormat("yyyyMMdd").parse(tradeTime));
                     } catch (Exception e) {
                         logger.error("-----------------交易日期转换出错------------------------", e);

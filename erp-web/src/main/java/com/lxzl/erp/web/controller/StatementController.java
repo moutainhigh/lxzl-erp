@@ -172,4 +172,9 @@ public class StatementController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "rollbackSuccessReturnOrder", method = RequestMethod.POST)
+    public Result rollbackSuccessReturnOrder(@RequestBody K3ReturnOrder param, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = statementService.rollbackSuccessReturnOrder(param.getReturnOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }

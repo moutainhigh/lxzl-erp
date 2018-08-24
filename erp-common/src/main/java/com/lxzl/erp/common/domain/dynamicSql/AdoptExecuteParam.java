@@ -2,12 +2,13 @@ package com.lxzl.erp.common.domain.dynamicSql;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
-import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AdoptExecuteParam {
 
-    @NotBlank(message = ErrorCode.PARAM_IS_NOT_NULL)
+    @NotNull(message = ErrorCode.PARAM_IS_NOT_NULL)
     private Integer dynamicSqlHolderId;
 
     private String result;

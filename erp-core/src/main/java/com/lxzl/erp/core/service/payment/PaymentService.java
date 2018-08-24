@@ -27,6 +27,13 @@ public interface PaymentService extends BaseService {
      * @return 客户帐户信息
      */
     CustomerAccount queryCustomerAccount(String customerNo);
+    /**
+     * 查询客户账户(对账单调用该接口，传入用户id不用通过session来进行获取用户id)
+     *
+     * @param customerNo 客户编码
+     * @return 客户帐户信息
+     */
+    CustomerAccount queryCustomerAccountNoSession(String customerNo,Integer userId);
 
     /**
      * 不登录状态查询客户账户
@@ -165,4 +172,14 @@ public interface PaymentService extends BaseService {
                                BigDecimal businessReturnDepositAmount,String remark) ;
 
 
+    /**
+     * 退其他费用到账户余额，并从账户余额支付押金和租金押金
+     * @param customerNo
+     * @param returnOtherAmount
+     * @param payDepositAmount
+     * @param payRentDepositAmount
+     * @param remark
+     * @return
+     */
+    String returnOtherFeeAndPayDeposit(String customerNo, BigDecimal returnOtherAmount, BigDecimal payDepositAmount, BigDecimal payRentDepositAmount, String remark);
 }

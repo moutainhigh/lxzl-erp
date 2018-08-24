@@ -123,13 +123,9 @@
                                             <td>￥{{#price}}{{monthRentPrice}}{{/price}}</td>
                                             <td>￥{{#price}}{{monthRent}}{{/price}}</td>
                                             <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
-<<<<<<< HEAD
                                             <td data-remark="{{remark}}">
                                                 <div class="textOverflow order-remark" style="max-width:100px; cursor: pointer;">{{remark}}</div>
                                             </td>
-=======
-                                            <td>{{remark}}</td>
->>>>>>> e6a870f2fc99c6d61f053358f3bfc0c824f6a6d2
                                             <td>
                                                 <p class="mn {{statusClass}}">{{statusValue}}</p>
                                             </td>

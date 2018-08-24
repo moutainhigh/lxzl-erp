@@ -1,0 +1,185 @@
+<div class="panel business-panel hide">
+    <div class="panel-heading">
+        <span class="panel-title fw700 fs16"><i class="fa fa-pencil hidden"></i>工作台</span>
+    </div>
+    <div class="panel-body" id="businessWorkbench">
+        <div class="workbench-row row pl20">
+            <div class="col-md-3 pn">
+                <script type="text/html" id="businessAuditTpl">
+                    {{#dataSource}}
+                    {{#listData}}
+                    <div class="col-md-12 pn pr20 mb20">
+                        <div class="rowTitle fw700 mb5">
+                            {{#title}}
+                            <span class="line"></span>
+                            <span>{{title}}</span>
+                            {{/title}}
+                        </div>
+                        <a href="{{#hasdata}}${ctx}audit-manage/list?{{params}}={{paramsValue}}&isWorkbench=1{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
+                            class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                            <p class="title pn mn text-default">{{auditColTitle}}</p>
+                            <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}c6{{/hasdata}} fs24 fw700 pn mn mt10">{{count}}</p>
+                        </a>
+                    </div>
+                    {{/listData}}
+                    {{/dataSource}}
+                </script>
+                <div class="row pn mn auditRow" id="businessAuditRow">
+                    <div class="col-md-12 pn pr20 mb20" id="workflowCol">
+                        <div class="rowTitle fw700 mb5">
+                            <span class="line"></span>
+                            <span>工作流</span>
+                        </div>
+                        <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                            <p class="title pn mn text-default">待审核的工作流</p>
+                            <p class="num text-muted fw700 pn mn mt10">--</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 pn">
+                <script type="text/html" id="businessFinanceTpl">
+                    {{#dataSource}}
+                    {{#listData}}
+                    <div class="col-md-12 pn pr20 mb20">
+                        <div class="rowTitle fw700 mb5">
+                            {{#title}}
+                            <span class="line"></span>
+                            <span>{{title}}</span>
+                            {{/title}}
+                        </div>
+                        <a href="{{#hasdata}}${ctx}jurnal-amount/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
+                            class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                            <p class="title pn mn text-default">待认领的流水</p>
+                            <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}c6{{/hasdata}} fs24 fw700 pn mn mt10">{{count}}</p>
+                        </a>
+                    </div>
+                    {{/listData}}
+                    {{/dataSource}}
+                </script>
+                <div class="row pn mn financeRow" id="businessFinanceRow">
+                    <div class="col-md-12 pn pr20 mb20" id="financeCol">
+                        <div class="rowTitle fw700 mb5">
+                            <span class="line"></span>
+                            <span>资金流水</span>
+                        </div>
+                        <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                            <p class="title pn mn text-default">待认领的流水</p>
+                            <p class="num text-muted fw700 pn mn mt10">--</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/html" id="statementTpl">
+            {{#dataSource}}
+            {{#listData}}
+            <div class="col-md-3 pn pr20 mb20">
+                <div class="rowTitle fw700 mb5">
+                    {{#title}}
+                    <span class="line"></span>
+                    <span>{{title}}</span>
+                    {{/title}}
+                </div>
+                <a href="{{#hasdata}}${ctx}statement-order/list?{{params}}={{paramsValue}}&isWorkbench=1{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
+                    class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                    <p class="title pn mn text-default">{{statementColTitle}}</p>
+                    <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}c6{{/hasdata}} fs24 fw700 pn mn mt10">{{count}}</p>
+                </a>
+            </div>
+            {{/listData}}
+            {{/dataSource}}
+        </script>
+        <div class="workbench-row row pl20 statementRow" id="statementRow">
+            <div class="col-md-3 pn pr20 mb20">
+                <div class="rowTitle fw700 mb5">
+                    <span class="line"></span>
+                    <span>结算单</span>
+                </div>
+                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                    <p class="title pn mn text-default">未支付的结算单</p>
+                    <p class="num text-muted fw700 pn mn mt10">--</p>
+                </a>
+            </div>
+            <div class="col-md-3 pn pr20 mb20">
+                <div class="rowTitle fs16 fw700 mb5"></div>
+                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                    <p class="title pn mn text-default">部分支付的结算单</p>
+                    <p class="num text-muted fw700 pn mn mt10">--</p>
+                </a>
+            </div>
+        </div>
+
+        <script type="text/html" id="businessOrdeTpl">
+            {{#dataSource}}
+            {{#listData}}
+            <div class="col-md-3 pn pr20 mb20">
+                <div class="rowTitle fw700 mb5">
+                    {{#title}}
+                    <span class="line"></span>
+                    <span>{{title}}</span>
+                    {{/title}}
+                </div>
+                <a href="{{#hasdata}}${ctx}order-manage/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
+                    class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                    <p class="title pn mn text-default">{{orderColTitle}}</p>
+                    <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}c6{{/hasdata}} fs24 fw700 pn mn mt10">{{count}}</p>
+                </a>
+            </div>
+            {{/listData}}
+            {{/dataSource}}
+        </script>
+        <div class="workbench-row row pl20 orderRow" id="businessOrderRow">
+            <div class="col-md-3 pn pr20 mb20">
+                <div class="rowTitle fw700 mb5">
+                    <span class="line"></span>
+                    <span>租赁订单</span>
+                </div>
+                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                    <p class="title pn mn text-default">审核中的订单</p>
+                    <p class="num text-muted fw700 pn mn mt10">--</p>
+                </a>
+            </div>
+            <div class="col-md-3 pn pr20 mb20">
+                <div class="rowTitle fs16 fw700 mb5"></div>
+                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                    <p class="title pn mn text-default">到期未处理的订单</p>
+                    <p class="num text-muted fw700 pn mn mt10">--</p>
+                </a>
+            </div>
+        </div>
+
+        <script type="text/html" id="businessReturnOrderTpl">
+            {{#dataSource}}
+            {{#listData}}
+            <div class="col-md-3 pn pr20 mb20">
+                <div class="rowTitle fw700 mb5">
+                    {{#title}}
+                    <span class="line"></span>
+                    <span>{{title}}</span>
+                    {{/title}}
+                </div>
+                <a href="{{#hasdata}}${ctx}return-order-k3/list?{{params}}={{paramsValue}}{{/hasdata}}{{^hasdata}}javascript:;{{/hasdata}}" 
+                    class="workbench-item pl30 pt20 {{#hasdata}}hasdata{{/hasdata}}{{^hasdata}}nodata{{/hasdata}}">
+                    <p class="title pn mn text-default">{{returnColTitle}}</p>
+                    <p class="num {{#hasdata}}text-danger{{/hasdata}}{{^hasdata}}c6{{/hasdata}} fs24 fw700 pn mn mt10">{{count}}</p>
+                </a>
+            </div>
+            {{/listData}}
+            {{/dataSource}}
+        </script>
+        <div class="workbench-row row pl20 returnOrderRow" id="returnOrderRow">
+            <div class="col-md-3 pn pr20 mb20">
+                <div class="rowTitle fw700 mb5">
+                    <span class="line"></span>
+                    <span>退货单</span>
+                </div>
+                <a href="javascript:;" class="workbench-item pl30 pt20 nodata">
+                    <p class="title pn mn text-default">审核中的退货单</p>
+                    <p class="num text-muted fw700 pn mn mt10">--</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

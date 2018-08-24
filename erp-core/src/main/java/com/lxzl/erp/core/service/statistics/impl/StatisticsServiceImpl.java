@@ -23,8 +23,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsSalesmanMonthMapper;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
-import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataWeeklyDO;
-import com.lxzl.erp.dataaccess.domain.statistics.StatisticsSalesmanMonthDO;
+import com.lxzl.erp.dataaccess.domain.statistics.*;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1116,6 +1115,45 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
+    public ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> findStatisticsFinanceDataDetail(FinanceStatisticsParam paramVo) {
+        ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> serviceResult = new ServiceResult<>();
+        if (paramVo == null && paramVo.getStatisticsInterval() == null) {
+            serviceResult.setErrorCode(ErrorCode.STATISTICS_FINANCE_PARAM_INTERVAL_INVALID);
+        }
+        if (StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY == paramVo.getStatisticsInterval()) {
+            return statisticsFinanceDataWeeklyToExcel(paramVo);
+        } else if(StatisticsIntervalType.STATISTICS_INTERVAL_MONTHLY == paramVo.getStatisticsInterval()) {
+            return statisticsFinanceDataMonthlyToExcel(paramVo);
+        } else if(StatisticsIntervalType.STATISTICS_INTERVAL_YEARLY == paramVo.getStatisticsInterval()){
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            serviceResult.setResult(new ArrayList<FinanceStatisticsDataWeeklyExcel>());
+            return serviceResult;
+        } else {
+            serviceResult.setErrorCode(ErrorCode.STATISTICS_FINANCE_PARAM_INTERVAL_INVALID);
+            serviceResult.setResult(new ArrayList<FinanceStatisticsDataWeeklyExcel>());
+            return serviceResult;
+        }
+    }
+
+    @Override
+    public ServiceResult<String, Page<FinanceStatisticsDataMeta>> findAllStatisticsFinanceDataMeta(FinanceStatisticsParam paramVo){
+        ServiceResult<String, Page<FinanceStatisticsDataMeta>> serviceResult = new ServiceResult<>();
+        int totalCount = financeStatisticsWeeklySupport.countFinanceStatisticsDataMetaPage(paramVo);
+        List<FinanceStatisticsDataMeta> financeStatisticsDataMetaList = financeStatisticsWeeklySupport.listFinanceStatisticsDataMetaPage(paramVo);
+        Page<FinanceStatisticsDataMeta> page = new Page<>(financeStatisticsDataMetaList, totalCount, paramVo.getPageNo(), paramVo.getPageSize());
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(page);
+        /*ServiceResult<String, Boolean> verifyResult = verify(paramVo);
+        if (!ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
+            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            serviceResult.setResult(new ArrayList<FinanceStatisticsDataWeeklyExcel>());
+        } else {
+
+        }*/
+        return serviceResult;
+    }
+
+    @Override
     public ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyToExcel(FinanceStatisticsParam paramVo){
         ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> serviceResult = new ServiceResult<>();
         ServiceResult<String, Boolean> verifyResult = verify(paramVo);
@@ -1144,6 +1182,66 @@ public class StatisticsServiceImpl implements StatisticsService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(excelList);
         return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, List<FinanceStatisticsRentProductDetail>> statisticsRentProductDetail(FinanceStatisticsParam paramVo){
+        ServiceResult<String, List<FinanceStatisticsRentProductDetail>> serviceResult = new ServiceResult<>();
+        ServiceResult<String, Boolean> verifyResult = verify(paramVo);
+        if (!ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
+            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            serviceResult.setResult(new ArrayList<FinanceStatisticsRentProductDetail>());
+        } else {
+            FinanceStatisticsWeeklySupport.StatisticsInterval statisticsInterval = financeStatisticsWeeklySupport.createStatisticsInterval(paramVo.getStatisticsInterval(), paramVo.getYear(), paramVo.getMonth(), paramVo.getWeekOfMonth());
+            paramVo.setStatisticsStartTime(statisticsInterval.getStatisticsStartTime());
+            paramVo.setStatisticsEndTime(statisticsInterval.getStatisticsEndTime());
+            List<FinanceStatisticsRentProductDetail> rentProductDetailList = financeStatisticsWeeklySupport.statisticsRentProductDetail(paramVo);
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            serviceResult.setResult(rentProductDetailList);
+        }
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, List<FinanceStatisticsReturnProductDetail>> statisticsReturnProductDetail(FinanceStatisticsParam paramVo){
+        ServiceResult<String, List<FinanceStatisticsReturnProductDetail>> serviceResult = new ServiceResult<>();
+        ServiceResult<String, Boolean> verifyResult = verify(paramVo);
+        if (!ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
+            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            serviceResult.setResult(new ArrayList<FinanceStatisticsReturnProductDetail>());
+        } else {
+            FinanceStatisticsWeeklySupport.StatisticsInterval statisticsInterval = financeStatisticsWeeklySupport.createStatisticsInterval(paramVo.getStatisticsInterval(), paramVo.getYear(), paramVo.getMonth(), paramVo.getWeekOfMonth());
+            paramVo.setStatisticsStartTime(statisticsInterval.getStatisticsStartTime());
+            paramVo.setStatisticsEndTime(statisticsInterval.getStatisticsEndTime());
+            List<FinanceStatisticsReturnProductDetail> returnProductDetailList = financeStatisticsWeeklySupport.statisticsReturnProductDetail(paramVo);
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            serviceResult.setResult(returnProductDetailList);
+        }
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyTotalToExcel(FinanceStatisticsParam paramVo){
+        ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> serviceResult = new ServiceResult<>();
+        ServiceResult<String, Boolean> verifyResult = verify(paramVo);
+        if (!ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
+            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            serviceResult.setResult(new ArrayList<FinanceStatisticsDataWeeklyExcel>());
+        } else {
+            List<FinanceStatisticsDataWeeklyDO> diffFinanceAllStatisticsDataWeekly = financeStatisticsWeeklySupport.statisticsTotalFinanceDataWeekly(paramVo);
+            List<FinanceStatisticsDataWeeklyExcel> excelList = financeStatisticsWeeklySupport.convertToExcelData(diffFinanceAllStatisticsDataWeekly);
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            serviceResult.setResult(excelList);
+        /*for (FinanceStatisticsDataWeeklyExcel excel: excelList) {
+            System.out.println(excel.toString());
+        }*/
+        }
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataMonthlyTotalToExcel(FinanceStatisticsParam paramVo){
+       return statisticsFinanceDataMonthlyToExcel(paramVo);
     }
 
     @Autowired

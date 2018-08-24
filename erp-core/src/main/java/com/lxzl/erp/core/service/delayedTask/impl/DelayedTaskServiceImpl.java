@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.delayedTask.DelayedTaskQueryParam;
 import com.lxzl.erp.common.domain.delayedTask.pojo.DelayedTask;
+import com.lxzl.erp.common.domain.delayedTask.pojo.ao.StatementPayAmountAO;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.ReturnReasonType;
 import com.lxzl.erp.common.domain.messagethirdchannel.pojo.MessageThirdChannel;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
@@ -150,6 +151,18 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         //导出客户对账单
         if (DelayedTaskType.DELAYED_TASK_EXPORT_CUSTOMER_STATEMENT.equals(delayedTask.getTaskType())) {
             StatementOrderMonthQueryParam param = FastJsonUtil.toBean(delayedTask.getRequestJson(), StatementOrderMonthQueryParam.class);
+            if (param.getStatementOrderCustomerNo() == null || "".equals(param.getStatementOrderCustomerNo())) {
+                result.setErrorCode(ErrorCode.CUSTOMER_NO_NOT_NULL);
+                return result;
+            }
+            if (param.getStatementOrderStartTime() == null ) {
+                result.setErrorCode(ErrorCode.START_TIME_NOT_NULL);
+                return result;
+            }
+            if (param.getStatementOrderEndTime() == null) {
+                result.setErrorCode(ErrorCode.END_TIME_NOT_NULL);
+                return result;
+            }
             Integer userId = userSupport.getCurrentUserId();
             result = getCustomerStatementDelayedTask(param,result,delayedTask,userId);
         }
@@ -175,6 +188,14 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         Integer totalCount = delayedTaskMapper.findDelayedTaskCountByParams(maps);
         List<DelayedTaskDO> delayedTaskDOList = delayedTaskMapper.findDelayedTaskByParams(maps);
         List<DelayedTask> delayedTaskList = ConverterUtil.convertList(delayedTaskDOList, DelayedTask.class);
+
+        if (CollectionUtil.isNotEmpty(delayedTaskList)) {
+            for (DelayedTask delayedTask:delayedTaskList) {
+                if (delayedTask.getTaskStatus() == 3) {
+                    delayedTask.setFileUrl(ConstantConfig.downloadStatementUrl+delayedTask.getFileUrl());
+                }
+            }
+        }
         Page<DelayedTask> page = new Page<>(delayedTaskList, totalCount, delayedTaskQueryParam.getPageNo(), delayedTaskQueryParam.getPageSize());
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(page);
@@ -274,6 +295,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     newdelayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     newdelayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     newdelayedTaskDO.setRemark(null);
+                    newdelayedTaskDO.setSync(false);
                     delayedTaskMapper.save(newdelayedTaskDO);
                 } else if (processingCount == 10 ) {//处理中的刚好为10个，这个存为排队中
                     newdelayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_QUEUE);//排队中
@@ -287,6 +309,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     newdelayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     newdelayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     newdelayedTaskDO.setRemark(null);
+                    newdelayedTaskDO.setSync(false);
                     delayedTaskMapper.save(newdelayedTaskDO);
                 } else {
                     newdelayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_PROCESSING);//处理中
@@ -300,6 +323,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     newdelayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     newdelayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     newdelayedTaskDO.setRemark(null);
+                    newdelayedTaskDO.setSync(false);
                     delayedTaskMapper.save(newdelayedTaskDO);
                 }
                 //调用线程导出对账单
@@ -325,6 +349,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 delayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 delayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
                 delayedTaskDO.setRemark(null);
+                delayedTaskDO.setSync(true);
                 delayedTaskMapper.save(delayedTaskDO);
 
                 XSSFWorkbook hssfWorkbook = null;
@@ -338,9 +363,10 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 BigDecimal beforePeriodUnpaid = new BigDecimal(0);
                 BigDecimal allPeriodUnpaid = new BigDecimal(0);
 
+
                 statementOrderMonthQueryParam = new StatementOrderMonthQueryParam();
                 statementOrderMonthQueryParam.setStatementOrderCustomerNo(customerNoParam);
-    //        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderStartTime);
+//            statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderStartTime);
                 statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderEndTime);
 
                 //查询账户余额
@@ -350,6 +376,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 try {
                     customerAccount = paymentService.queryCustomerAccount(customerNoParam);
                 }catch (Exception e){
+                    logger.error("导出对账单查询账户余额异常:" , e);
                     findCustomerAccount = false;
                 }
                 if (customerAccount == null) {
@@ -396,6 +423,9 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     allPeriodUnpaid = BigDecimalUtil.add(allPeriodUnpaid, BigDecimalUtil.sub(checkStatementOrder.getStatementAmount(), checkStatementOrder.getStatementPaidAmount()));
                 }
 
+                StatementPayAmountAO statementPayAmountAO = new StatementPayAmountAO();
+                statementPayAmountAO.setBeforePeriodUnpaid(beforePeriodUnpaid);
+                statementPayAmountAO.setAllPeriodUnpaid(allPeriodUnpaid);
                 String previousSheetName = "";
     //        String customerName = "";
                 //处理对账单业务逻辑
@@ -403,21 +433,21 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 if (processcCustomerStatement.is()) {
                     //导出失败更新任务列表状态
                     exoprtFailedUpdateDelayedTaskDO(result, date, delayedTaskDO,customerName);
-                    if (delayedTaskDO.getCreateUser() != null) {
-                        MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
-                        StringBuffer sb = new StringBuffer();
-                        sb.append("您要导出的[").append(customerName).append("]的对账单导出失败");
-                        messageThirdChannel.setMessageContent(sb.toString());
-                        messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
-                        messageThirdChannelService.sendMessage(messageThirdChannel);
-                    }
+//                    if (delayedTaskDO.getCreateUser() != null) {
+//                        MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
+//                        StringBuffer sb = new StringBuffer();
+//                        sb.append("您要导出的[").append(customerName).append("]的对账单导出失败");
+//                        messageThirdChannel.setMessageContent(sb.toString());
+//                        messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
+//                        messageThirdChannelService.sendMessage(messageThirdChannel);
+//                    }
                     return result;
                 }
                 SimpleDateFormat simpleDateFormat = processcCustomerStatement.getSimpleDateFormat();
                 Integer listCount = checkStatementOrderList.size();
                 for(int i = 1 ; i <= listCount ; i++){
                     CheckStatementOrder checkStatementOrder = checkStatementOrderList.get(i-1);
-                    SetCheckStatementOrder setCheckStatementOrder = new SetCheckStatementOrder(hssfWorkbook, customerName, statementOrderStartTime, beforePeriodUnpaid, allPeriodUnpaid, totalEverPeriodAmountMap, totalEverPeriodPaidAmountMap, previousSheetName, simpleDateFormat, checkStatementOrder,findCustomerAccount,accountBalance).invoke();
+                    SetCheckStatementOrder setCheckStatementOrder = new SetCheckStatementOrder(hssfWorkbook, customerName, statementOrderStartTime, statementPayAmountAO, totalEverPeriodAmountMap, totalEverPeriodPaidAmountMap, previousSheetName, simpleDateFormat, checkStatementOrder,findCustomerAccount,accountBalance).invoke();
                     customerName = setCheckStatementOrder.getCustomerName();
                     hssfWorkbook = setCheckStatementOrder.getHssfWorkbook();
                     //更新进度
@@ -429,9 +459,29 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 }
 
                 // TODO: 2018\7\27 0027 将XSSFWorkbook存储到指定位置
-                String fileName = ConstantConfig.exportFileUrl + (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
-                String saveFileName = ConstantConfig.downloadStatementUrl + (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
+                SimpleDateFormat fileDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+                String simpleDate = fileDateFormat.format(date);
+                String fileName = ConstantConfig.exportFileUrl + (customerName + "对账单") +simpleDate+ ".xlsx";
+                String saveFileName = (customerName + "对账单") +simpleDate+ ".xlsx";
 //                String fileName = "D:\\xxxxxxx\\"+ (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
+                if (null == hssfWorkbook) {
+                    dingDingSupport.dingDingSendMessage(customerNoParam + "无对账单");
+                    //导出失败更新任务列表状态
+                    delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_EXECUTION_FAILED);//排队中
+                    delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
+                    delayedTaskDO.setThreadName(null);
+                    delayedTaskDO.setProgressRate(0.0000);
+                    delayedTaskDO.setFileUrl(null);
+                    delayedTaskDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+                    delayedTaskDO.setCreateTime(date);
+                    delayedTaskDO.setUpdateTime(date);
+                    delayedTaskDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    delayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    delayedTaskDO.setRemark(customerName + "无对账单");
+
+                    delayedTaskMapper.update(delayedTaskDO);
+                    return result;
+                }
                 try {
                     FileUtil.outputExcel(fileName,hssfWorkbook);
                     // TODO: 2018\7\27 0027 存储地址，发送钉钉消息晒啥
@@ -447,21 +497,23 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     delayedTaskDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     delayedTaskDO.setRemark((customerName + "对账单") +".xlsx"+"导出成功");
                     delayedTaskMapper.update(delayedTaskDO);
-                    if (delayedTaskDO.getCreateUser() != null) {
-                        MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
-                        StringBuffer sb = new StringBuffer();
-                        sb.append("您要导出的[").append(customerName).append("]的对账单已导出，请去任务列表进行下载");
-                        messageThirdChannel.setMessageContent(sb.toString());
-                        messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
-                        messageThirdChannelService.sendMessage(messageThirdChannel);
-                        System.out.println(sb.toString());
-                    }
+//                    if (delayedTaskDO.getCreateUser() != null) {
+//                        MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
+//                        StringBuffer sb = new StringBuffer();
+//                        sb.append("您要导出的[").append(customerName).append("]的对账单已导出，请去任务列表进行下载");
+//                        messageThirdChannel.setMessageContent(sb.toString());
+//                        messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
+//                        messageThirdChannelService.sendMessage(messageThirdChannel);
+//                        System.out.println(sb.toString());
+//                    }
                     delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
+                    delayedTask.setFileUrl(ConstantConfig.downloadStatementUrl+delayedTask.getFileUrl());
                     result.setResult(delayedTask);
                     result.setErrorCode(ErrorCode.SUCCESS);
                     return result;
                 } catch (Exception e) {
                     e.printStackTrace();
+                    logger.error("导出对账单文件导出异常:" , e);
                     delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_EXECUTION_FAILED);//导出失败
                     delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
                     delayedTaskDO.setThreadName(null);
@@ -472,22 +524,21 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                     delayedTaskDO.setUpdateTime(date);
                     delayedTaskDO.setRemark((customerName + "对账单") +".xlsx"+"导出异常");//业务异常
                     delayedTaskMapper.update(delayedTaskDO);
-                    if (delayedTaskDO.getCreateUser() != null) {
-                        MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
-                        StringBuffer sb = new StringBuffer();
-                        sb.append("您要导出的[").append(statementOrderMonthQueryParam.getStatementOrderCustomerNo()).append("]的对账单导出失败，导出异常");
-                        messageThirdChannel.setMessageContent(sb.toString());
-                        messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
-                        messageThirdChannelService.sendMessage(messageThirdChannel);
-                    }
-                    // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-                    delayedTaskMapper.subQueueNumber();
+//                    if (delayedTaskDO.getCreateUser() != null) {
+//                        MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
+//                        StringBuffer sb = new StringBuffer();
+//                        sb.append("您要导出的[").append(statementOrderMonthQueryParam.getStatementOrderCustomerNo()).append("]的对账单导出失败，导出异常");
+//                        messageThirdChannel.setMessageContent(sb.toString());
+//                        messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
+//                        messageThirdChannelService.sendMessage(messageThirdChannel);
+//                    }
                     delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
                     result.setResult(delayedTask);
                     result.setErrorCode(ErrorCode.SUCCESS);
                     return result;
                 }
             }catch (Exception e){
+                logger.error("导出对账单异常:" , e);
                 delayedTaskDO.setTaskStatus(DelayedTaskStatus.DELAYED_TASK_EXECUTION_FAILED);//导出失败
                 delayedTaskDO.setQueueNumber(CommonConstant.COMMON_ZERO);
                 delayedTaskDO.setThreadName(null);
@@ -498,17 +549,15 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 delayedTaskDO.setUpdateTime(date);
                 delayedTaskDO.setRemark(ErrorCode.getMessage(ErrorCode.BUSINESS_EXCEPTION));//业务异常
                 delayedTaskMapper.update(delayedTaskDO);
-                if (delayedTaskDO.getCreateUser() != null) {
-                    MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
-                    StringBuffer sb = new StringBuffer();
-                    sb.append("您要导出的[").append(statementOrderMonthQueryParam.getStatementOrderCustomerNo()).append("]的对账单导出失败");
-                    messageThirdChannel.setMessageContent(sb.toString());
-                    messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
-                    messageThirdChannelService.sendMessage(messageThirdChannel);
-//            System.out.println(sb.toString());
-                }
-                // TODO: 2018\7\29 0029 更新所有排队的排队编号都减一
-                delayedTaskMapper.subQueueNumber();
+//                if (delayedTaskDO.getCreateUser() != null) {
+//                    MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
+//                    StringBuffer sb = new StringBuffer();
+//                    sb.append("您要导出的[").append(statementOrderMonthQueryParam.getStatementOrderCustomerNo()).append("]的对账单导出失败");
+//                    messageThirdChannel.setMessageContent(sb.toString());
+//                    messageThirdChannel.setReceiverUserId(Integer.parseInt(delayedTaskDO.getCreateUser()));
+//                    messageThirdChannelService.sendMessage(messageThirdChannel);
+////            System.out.println(sb.toString());
+//                }
                 delayedTask = ConverterUtil.convert(delayedTaskDO, DelayedTask.class);
                 result.setResult(delayedTask);
                 result.setErrorCode(ErrorCode.SUCCESS);
@@ -1169,8 +1218,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         private XSSFWorkbook hssfWorkbook;
         private String customerName;
         private Date statementOrderStartTime;
-        private BigDecimal beforePeriodUnpaid;
-        private BigDecimal allPeriodUnpaid;
+        private StatementPayAmountAO statementPayAmountAO;
         private Map<String, BigDecimal> totalEverPeriodAmountMap;
         private Map<String, BigDecimal> totalEverPeriodPaidAmountMap;
         private String previousSheetName;
@@ -1179,12 +1227,11 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         private Boolean findCustomerAccount;
         private BigDecimal accountBalance;
         //装配excel
-        public SetCheckStatementOrder(XSSFWorkbook hssfWorkbook, String customerName, Date statementOrderStartTime, BigDecimal beforePeriodUnpaid, BigDecimal allPeriodUnpaid, Map<String, BigDecimal> totalEverPeriodAmountMap, Map<String, BigDecimal> totalEverPeriodPaidAmountMap, String previousSheetName, SimpleDateFormat simpleDateFormat, CheckStatementOrder checkStatementOrder,Boolean findCustomerAccount,BigDecimal accountBalance) {
+        public SetCheckStatementOrder(XSSFWorkbook hssfWorkbook, String customerName, Date statementOrderStartTime, StatementPayAmountAO statementPayAmountAO, Map<String, BigDecimal> totalEverPeriodAmountMap, Map<String, BigDecimal> totalEverPeriodPaidAmountMap, String previousSheetName, SimpleDateFormat simpleDateFormat, CheckStatementOrder checkStatementOrder,Boolean findCustomerAccount,BigDecimal accountBalance) {
             this.hssfWorkbook = hssfWorkbook;
             this.customerName = customerName;
             this.statementOrderStartTime = statementOrderStartTime;
-            this.beforePeriodUnpaid = beforePeriodUnpaid;
-            this.allPeriodUnpaid = allPeriodUnpaid;
+            this.statementPayAmountAO = statementPayAmountAO;
             this.totalEverPeriodAmountMap = totalEverPeriodAmountMap;
             this.totalEverPeriodPaidAmountMap = totalEverPeriodPaidAmountMap;
             this.previousSheetName = previousSheetName;
@@ -1202,12 +1249,8 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
             return customerName;
         }
 
-        public BigDecimal getBeforePeriodUnpaid() {
-            return beforePeriodUnpaid;
-        }
-
-        public BigDecimal getAllPeriodUnpaid() {
-            return allPeriodUnpaid;
+        public StatementPayAmountAO getStatementPayAmountAO() {
+            return statementPayAmountAO;
         }
 
         public String getPreviousSheetName() {
@@ -1215,8 +1258,12 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
         }
 
         public SetCheckStatementOrder invoke() throws ParseException {
+            simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+            String statementOrderStartTimeString = simpleDateFormat.format(statementOrderStartTime);
+            Date statementOrderStartTimeDate = simpleDateFormat.parse(statementOrderStartTimeString);
             Date monthTime = simpleDateFormat.parse(checkStatementOrder.getMonthTime());
-            if (monthTime.getTime()<statementOrderStartTime.getTime()) {
+
+            if (monthTime.getTime()<statementOrderStartTimeDate.getTime()) {
                 return this;
             }
             if (StringUtil.isBlank(customerName)) {
@@ -1303,67 +1350,110 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 //退货单和冲正单取No和原因
                 if (OrderType.ORDER_TYPE_RETURN.equals(exportStatementOrderDetail.getOrderType()) ||
                         CommonConstant.ORDER_TYPE_RELET_RETURN.equals(exportStatementOrderDetail.getOrderType())) {
-
-                    K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(exportStatementOrderDetail.getOrderId());
-                    StringBuffer k3ReturnOrderDONo = new StringBuffer();
-                    StringBuffer returnReasonType = new StringBuffer();
-                    if (k3ReturnOrderDO != null) {
-                        k3ReturnOrderDONo.append(k3ReturnOrderDO.getReturnOrderNo());
-                        returnReasonType.append(formatReturnReasonType(k3ReturnOrderDO.getReturnReasonType()));
-                        //订单
-                        K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(exportStatementOrderDetail.getOrderItemReferId());
-                        if (k3ReturnOrderDetailDO != null) {
-                            OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
-                            exportStatementOrderDetailBase.setOrderNo(orderDO.getOrderNo());
-                            exportStatementOrderDetail.setOrderRentStartTime(orderDO.getRentStartTime());//租赁开始日期
-                            exportStatementOrderDetail.setOrderExpectReturnTime(orderDO.getExpectReturnTime());//租赁结束日期
-                            exportStatementOrderDetail.setOrderRentType(orderDO.getRentType());
-                            exportStatementOrderDetail.setOrderRentTimeLength(orderDO.getRentTimeLength());
-                            if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())) {
-                                OrderProductDO orderProductDO = null;
-                                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()) && k3ReturnOrderDetailDO.getOrderEntry() != null) {
-                                    orderProductDO = orderProductMapper.findK3OrderProduct(orderDO.getId(), Integer.parseInt(k3ReturnOrderDetailDO.getOrderEntry()));
-                                } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
-                                    String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
-                                    orderProductDO = orderProductMapper.findById(Integer.parseInt(orderItemId));
-                                }
+                    //处理续租之前退货造出来的数据
+                    if (null == exportStatementOrderDetail.getCustomerId() && null == exportStatementOrderDetail.getStatementOrderDetailId()) {
+                        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(exportStatementOrderDetail.getOrderId());
+                        StringBuffer k3ReturnOrderDONo = new StringBuffer();
+                        StringBuffer returnReasonType = new StringBuffer();
+                        if (k3ReturnOrderDO != null) {
+                            k3ReturnOrderDONo.append(k3ReturnOrderDO.getReturnOrderNo());
+                            returnReasonType.append(formatReturnReasonType(k3ReturnOrderDO.getReturnReasonType()));
+                            //订单
+                            if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType()) && null != exportStatementOrderDetail.getOrderItemReferId()) {
+                                OrderProductDO orderProductDO = orderProductMapper.findById(exportStatementOrderDetail.getOrderItemReferId());
                                 if (orderProductDO != null) {
                                     Integer isNewProduct = orderProductDO.getIsNewProduct();
                                     exportStatementOrderDetailBase.setIsNew(isNewProduct);
+                                    OrderDO orderDO = orderMapper.findByOrderId(orderProductDO.getOrderId());
+                                    if (orderDO != null) {
+                                        exportStatementOrderDetailBase.setOrderNo(orderDO.getOrderNo());
+                                        exportStatementOrderDetail.setOrderRentStartTime(orderDO.getRentStartTime());//租赁开始日期
+                                        exportStatementOrderDetail.setOrderExpectReturnTime(orderDO.getExpectReturnTime());//租赁结束日期
+                                        exportStatementOrderDetail.setOrderRentType(orderDO.getRentType());
+                                        exportStatementOrderDetail.setOrderRentTimeLength(orderDO.getRentTimeLength());
+                                    }
                                 }
                             } else if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType())) {
-                                OrderMaterialDO orderMaterialDO = null;
-                                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()) && k3ReturnOrderDetailDO.getOrderEntry() != null) {
-                                    orderMaterialDO = orderMaterialMapper.findK3OrderMaterial(orderDO.getId(), Integer.parseInt(k3ReturnOrderDetailDO.getOrderEntry()));
-                                } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
-                                    String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
-                                    orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(orderItemId));
-                                }
-
+                                OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(exportStatementOrderDetail.getOrderItemReferId());
                                 if (orderMaterialDO != null) {
                                     Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
                                     exportStatementOrderDetailBase.setIsNew(isNewMaterial);
+                                    OrderDO orderDO = orderMapper.findByOrderId(orderMaterialDO.getOrderId());
+                                    if (orderDO != null) {
+                                        exportStatementOrderDetailBase.setOrderNo(orderDO.getOrderNo());
+                                        exportStatementOrderDetail.setOrderRentStartTime(orderDO.getRentStartTime());//租赁开始日期
+                                        exportStatementOrderDetail.setOrderExpectReturnTime(orderDO.getExpectReturnTime());//租赁结束日期
+                                        exportStatementOrderDetail.setOrderRentType(orderDO.getRentType());
+                                        exportStatementOrderDetail.setOrderRentTimeLength(orderDO.getRentTimeLength());
+                                    }
                                 }
                             }
                         }
+                        exportStatementOrderDetailBase.setK3ReturnOrderDONo(String.valueOf(k3ReturnOrderDONo));
+                        exportStatementOrderDetailBase.setReturnReasonType(String.valueOf(returnReasonType));
+                    }else {//处理正常退货
+                        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(exportStatementOrderDetail.getOrderId());
+                        StringBuffer k3ReturnOrderDONo = new StringBuffer();
+                        StringBuffer returnReasonType = new StringBuffer();
+                        if (k3ReturnOrderDO != null) {
+                            k3ReturnOrderDONo.append(k3ReturnOrderDO.getReturnOrderNo());
+                            returnReasonType.append(formatReturnReasonType(k3ReturnOrderDO.getReturnReasonType()));
+                            //订单
+                            K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(exportStatementOrderDetail.getOrderItemReferId());
+                            if (k3ReturnOrderDetailDO != null) {
+                                OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
+                                exportStatementOrderDetailBase.setOrderNo(orderDO.getOrderNo());
+                                exportStatementOrderDetail.setOrderRentStartTime(orderDO.getRentStartTime());//租赁开始日期
+                                exportStatementOrderDetail.setOrderExpectReturnTime(orderDO.getExpectReturnTime());//租赁结束日期
+                                exportStatementOrderDetail.setOrderRentType(orderDO.getRentType());
+                                exportStatementOrderDetail.setOrderRentTimeLength(orderDO.getRentTimeLength());
+                                if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())) {
+                                    OrderProductDO orderProductDO = null;
+                                    if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()) && k3ReturnOrderDetailDO.getOrderEntry() != null) {
+                                        orderProductDO = orderProductMapper.findK3OrderProduct(orderDO.getId(), Integer.parseInt(k3ReturnOrderDetailDO.getOrderEntry()));
+                                    } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
+                                        String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
+                                        orderProductDO = orderProductMapper.findById(Integer.parseInt(orderItemId));
+                                    }
+                                    if (orderProductDO != null) {
+                                        Integer isNewProduct = orderProductDO.getIsNewProduct();
+                                        exportStatementOrderDetailBase.setIsNew(isNewProduct);
+                                    }
+                                } else if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType())) {
+                                    OrderMaterialDO orderMaterialDO = null;
+                                    if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()) && k3ReturnOrderDetailDO.getOrderEntry() != null) {
+                                        orderMaterialDO = orderMaterialMapper.findK3OrderMaterial(orderDO.getId(), Integer.parseInt(k3ReturnOrderDetailDO.getOrderEntry()));
+                                    } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
+                                        String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
+                                        orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(orderItemId));
+                                    }
 
-
-                        //冲正单单号和原因保存
-                        List<StatementOrderCorrectDO> returnStatementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderIdAndReferId(exportStatementOrderDetail.getStatementOrderId(), exportStatementOrderDetail.getOrderId());
-                        if (CollectionUtil.isNotEmpty(returnStatementOrderCorrectDOList)) {
-                            StringBuffer statementCorrectNo = new StringBuffer();
-                            StringBuffer statementCorrectReason = new StringBuffer();
-                            for (StatementOrderCorrectDO statementOrderCorrectDO : returnStatementOrderCorrectDOList) {
-                                statementCorrectNo.append(statementOrderCorrectDO.getStatementCorrectNo() + "/n");
-                                statementCorrectReason.append(statementOrderCorrectDO.getStatementCorrectReason() + "/n");
+                                    if (orderMaterialDO != null) {
+                                        Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
+                                        exportStatementOrderDetailBase.setIsNew(isNewMaterial);
+                                    }
+                                }
                             }
-                            exportStatementOrderDetailBase.setStatementCorrectNo(String.valueOf(statementCorrectNo));
-                            exportStatementOrderDetailBase.setStatementCorrectReason(String.valueOf(statementCorrectReason));
-                        }
 
+
+                            //冲正单单号和原因保存
+                            List<StatementOrderCorrectDO> returnStatementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderIdAndReferId(exportStatementOrderDetail.getStatementOrderId(), exportStatementOrderDetail.getOrderId());
+                            if (CollectionUtil.isNotEmpty(returnStatementOrderCorrectDOList)) {
+                                StringBuffer statementCorrectNo = new StringBuffer();
+                                StringBuffer statementCorrectReason = new StringBuffer();
+                                for (StatementOrderCorrectDO statementOrderCorrectDO : returnStatementOrderCorrectDOList) {
+                                    statementCorrectNo.append(statementOrderCorrectDO.getStatementCorrectNo() + "/n");
+                                    statementCorrectReason.append(statementOrderCorrectDO.getStatementCorrectReason() + "/n");
+                                }
+                                exportStatementOrderDetailBase.setStatementCorrectNo(String.valueOf(statementCorrectNo));
+                                exportStatementOrderDetailBase.setStatementCorrectReason(String.valueOf(statementCorrectReason));
+                            }
+
+                        }
+                        exportStatementOrderDetailBase.setK3ReturnOrderDONo(String.valueOf(k3ReturnOrderDONo));
+                        exportStatementOrderDetailBase.setReturnReasonType(String.valueOf(returnReasonType));
                     }
-                    exportStatementOrderDetailBase.setK3ReturnOrderDONo(String.valueOf(k3ReturnOrderDONo));
-                    exportStatementOrderDetailBase.setReturnReasonType(String.valueOf(returnReasonType));
+
                 }
 
                 //-------------------以下是全部结算单-----------------------------
@@ -1540,6 +1630,8 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
             XSSFCell cell206 = hssfRow6.createCell(25);
             XSSFCell cell207 = hssfRow7.createCell(25);
 
+            BigDecimal beforePeriodUnpaid = statementPayAmountAO.getBeforePeriodUnpaid();
+            BigDecimal allPeriodUnpaid = statementPayAmountAO.getAllPeriodUnpaid();
             // 本期应付
             cell201.setCellValue(Double.parseDouble(amountExcelExportView.view(totalEverPeriodAmountMap.get(checkStatementOrder.getMonthTime())).toString()));
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell201, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
@@ -1553,6 +1645,7 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
 
             if (StringUtil.isNotBlank(previousSheetName) || !sheetName.equals(previousSheetName)) {
                 beforePeriodUnpaid = BigDecimalUtil.sub(allPeriodUnpaid, currentPeriodUnpaid);
+                statementPayAmountAO.setBeforePeriodUnpaid(beforePeriodUnpaid);
             }
 
             // 截止上期未付
@@ -1563,9 +1656,6 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
             cell205.setCellValue(allPeriodUnpaid.doubleValue());
             ExcelExportSupport.setCellStyle(hssfWorkbook, cell205, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
 
-            if (StringUtil.isNotBlank(previousSheetName) || !sheetName.equals(previousSheetName)) {
-                allPeriodUnpaid = BigDecimalUtil.sub(allPeriodUnpaid, currentPeriodUnpaid);
-            }
             //账户余额、尚需支付
             if (findCustomerAccount) {
                 //账户余额
@@ -1585,6 +1675,10 @@ public class DelayedTaskServiceImpl implements DelayedTaskService{
                 // 尚需支付
                 cell207.setCellValue("未查询到该客户账户余额或查询出错");
                 ExcelExportSupport.setCellStyle(hssfWorkbook, cell207, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
+            }
+            if (StringUtil.isNotBlank(previousSheetName) || !sheetName.equals(previousSheetName)) {
+                allPeriodUnpaid = BigDecimalUtil.sub(allPeriodUnpaid, currentPeriodUnpaid);
+                statementPayAmountAO.setAllPeriodUnpaid(allPeriodUnpaid);
             }
             XSSFCell cell151 = hssfRow1.createCell(20);
             XSSFCell cell152 = hssfRow2.createCell(20);

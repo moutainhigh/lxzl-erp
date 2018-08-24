@@ -53,21 +53,13 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
 
 
     @Override
-    public ServiceResult<String, List<List<Object>>> executeBySql(DynamicSqlParam dynamicSqlParam) {
+    public ServiceResult<String, List<List<Object>>> executeBySql(DynamicSqlParam dynamicSqlParam, Set<DynamicSqlTpye> allowMethod) {
         ServiceResult<String, List<List<Object>>> serviceResult = new ServiceResult<>();
-        if (dynamicSqlParam.getLimit() == null || dynamicSqlParam.getLimit() <= 0) {
-            dynamicSqlParam.setLimit(totalReturnCount);
-        }
-
-        if (dynamicSqlParam.getSql() == null)
-            throw new BusinessException(ErrorCode.SQL_CONTENT_NOT_NULL);
         String sql = dynamicSqlParam.getSql().trim();
         List<DynamicSqlItem> dynamicSqlItems = analysisAndRebuildDynamicSql(sql);
-
-        if (!isSimilarDynamicSqlTpye(dynamicSqlItems))
+        DynamicSqlTpye dynamicSqlTpye = checkDynamicSqlParam(dynamicSqlParam, dynamicSqlItems);
+        if(!allowMethod.contains(dynamicSqlTpye))
             throw new BusinessException(ErrorCode.DYNAMIC_SQL_ILLEGAL_OPERATION);
-
-        DynamicSqlTpye dynamicSqlTpye = findHighestDynamicSqlTpye(dynamicSqlItems);
 
         switch (dynamicSqlTpye) {
             case DELETE:
@@ -203,6 +195,8 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         if (dynamicSqlHolderId == null)
             throw new BusinessException(ErrorCode.DYNAMICSQLHOLDERID_NOT_NULL);
         DynamicSqlHolderDO dynamicSqlHolderDO = dynamicSqlHolderMapper.findById(dynamicSqlHolderId);
+        if (dynamicSqlHolderDO == null)
+            throw new BusinessException(ErrorCode.DYNAMICSQLHOLDERID_NOT_NULL);
         DynamicSqlTpye dynamicSqlTpye = DynamicSqlTpye.valueOf(dynamicSqlHolderDO.getSqlTpye());
         final String sql = dynamicSqlHolderDO.getSqlContent();
         List<DynamicSqlItem> dynamicSqlItems = analysisAndRebuildDynamicSql(sql);
@@ -233,6 +227,8 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         updateDynamicSqlHolderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         updateDynamicSqlHolderDO.setUpdateTime(new Date());
         dynamicSqlHolderMapper.update(updateDynamicSqlHolderDO);
+        updateDynamicSqlHolderDO.setCreateTime(dynamicSqlHolderDO.getCreateTime());
+        updateDynamicSqlHolderDO.setCreateUser(dynamicSqlHolderDO.getCreateUser());
         serviceResult.setResult(updateDynamicSqlHolderDO);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
@@ -240,6 +236,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
 
 
     @Override
+    @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, DynamicSqlHolderDO> rejectDynamicSqlHolder(Integer dynamicSqlHolderId, String rejectResult) {
         ServiceResult<String, DynamicSqlHolderDO> serviceResult = new ServiceResult<>();
         if (!userSupport.isSuperUser()) {
@@ -252,14 +249,20 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
 
         if (rejectResult == null)
             rejectResult = "该动态sql的执行被拒绝";
+        DynamicSqlHolderDO dynamicSqlHolderDO = dynamicSqlHolderMapper.findById(dynamicSqlHolderId);
+
+        if (dynamicSqlHolderDO == null)
+            throw new BusinessException(ErrorCode.DYNAMICSQLHOLDERID_NOT_NULL);
 
         DynamicSqlHolderDO updateDynamicSqlHolderDO = new DynamicSqlHolderDO();
         updateDynamicSqlHolderDO.setId(dynamicSqlHolderId);
         updateDynamicSqlHolderDO.setStatus(DynamicSqlHolderDO.Status.REJECT.value);
         updateDynamicSqlHolderDO.setResults(rejectResult);
         updateDynamicSqlHolderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        dynamicSqlHolderMapper.update(updateDynamicSqlHolderDO);
         updateDynamicSqlHolderDO.setUpdateTime(new Date());
+        dynamicSqlHolderMapper.update(updateDynamicSqlHolderDO);
+        updateDynamicSqlHolderDO.setCreateTime(dynamicSqlHolderDO.getCreateTime());
+        updateDynamicSqlHolderDO.setCreateUser(dynamicSqlHolderDO.getCreateUser());
         serviceResult.setResult(updateDynamicSqlHolderDO);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
@@ -277,8 +280,32 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         dynamicSqlDO.setCreateUser(userSupport.getCurrentUserId().toString());
         dynamicSqlDO.setUpdateTime(now);
         dynamicSqlDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        DynamicSqlTpye dynamicSqlTpye = findHighestDynamicSqlTpye(analysisAndRebuildDynamicSql(dynamicSql.getSqlContent()));
+        dynamicSqlDO.setSqlType(dynamicSqlTpye.getLevel());
         dynamicSqlMapper.save(dynamicSqlDO);
 
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(dynamicSqlDO.getId().toString());
+        return result;
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> updateDynamicSql(DynamicSql dynamicSql) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date now = new Date();
+        DynamicSqlDO dynamicSqlDO = dynamicSqlMapper.findById(dynamicSql.getDynamicSqlId());
+        if (dynamicSqlDO == null) {
+            result.setErrorCode(ErrorCode.DYNAMIC_SQL_NOT_EXISTS);
+            return result;
+        }
+        dynamicSqlDO.setSqlTitle(dynamicSql.getSqlTitle());
+        dynamicSqlDO.setSqlContent(dynamicSql.getSqlContent());
+        dynamicSqlDO.setUpdateTime(now);
+        dynamicSqlDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        DynamicSqlTpye dynamicSqlTpye = findHighestDynamicSqlTpye(analysisAndRebuildDynamicSql(dynamicSql.getSqlContent()));
+        dynamicSqlDO.setSqlType(dynamicSqlTpye.getLevel());
+        dynamicSqlMapper.update(dynamicSqlDO);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(dynamicSqlDO.getId().toString());
         return result;
@@ -344,6 +371,21 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
         return result;
     }
 
+
+
+    private DynamicSqlTpye checkDynamicSqlParam(DynamicSqlParam dynamicSqlParam, List<DynamicSqlItem> dynamicSqlItems) {
+        if (dynamicSqlParam.getLimit() == null || dynamicSqlParam.getLimit() <= 0) {
+            dynamicSqlParam.setLimit(totalReturnCount);
+        }
+        if (dynamicSqlParam.getSql() == null)
+            throw new BusinessException(ErrorCode.SQL_CONTENT_NOT_NULL);
+
+        if (!isSimilarDynamicSqlTpye(dynamicSqlItems))
+            throw new BusinessException(ErrorCode.DYNAMIC_SQL_ILLEGAL_OPERATION);
+
+        return findHighestDynamicSqlTpye(dynamicSqlItems);
+    }
+
     private List<DynamicSqlItem> analysisAndRebuildDynamicSql(String sql) {
         StringBuilder word = new StringBuilder();
         List<DynamicSqlItem> dynamicSqlItems = new LinkedList<>();
@@ -376,7 +418,8 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
                             dynamicSqlItem.hasLimit = false;
                     break;
 
-                case ' ':case '\t':
+                case ' ':
+                case '\t':
                     if (stringParameterStateItem.isNotStringParameter())
                         checkKeyWork = true;
 

@@ -1,6 +1,5 @@
 package com.lxzl.erp.dataaccess.dao.mysql.order;
 
-import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
@@ -21,6 +20,7 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     OrderDO findByOrderNoSimple(@Param("orderNo") String orderNo);
     List<OrderDO> findByOrderParam(@Param("startTime")Date startTime,@Param("endTime")Date endTime);
     OrderDO findByOrderNo(@Param("orderNo") String orderNo);
+    List<OrderDO> findOrderByCustomerNo(@Param("maps") Map<String, Object> paramMap);
     List<OrderDO> findByCustomerId(@Param("customerId") Integer customerId);
     Integer listCount();
     Integer findOrderCountByParams(@Param("maps") Map<String, Object> paramMap);
@@ -62,6 +62,8 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
 
     List<OrderDO> findByNos(@Param("orderNos") Set<String> orderNos);
 
+    Integer findCanReletOrderCountForWorkbench(@Param("maps")Map<String, Object> maps);
+
     List<OrderDO> findCanReletOrderForWorkbench(@Param("maps")Map<String, Object> maps);
 
     //修改订单单价
@@ -80,4 +82,10 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
 //    List<OrderDO> findByOrderSellerId(@Param("orderSellerId")Integer orderSellerId);
 
 //    void updateListForUser(@Param("updateOrderDOList")List<OrderDO> updateOrderDOList);
+
+    //修改订单租赁方案
+    void updateOrderRentPlan(@Param("orderDOList") List<OrderDO> orderDOList, @Param("payMode") Integer payMode, @Param("depositCycle") Integer depositCycle, @Param("paymentCycle") Integer paymentCycle);
+
+    List<OrderDO> canReletOrderTest(@Param("maps")Map<String, Object> maps);
+    void batchUpdateOrderStatus(@Param("list")List<OrderDO> list);
 }

@@ -154,6 +154,13 @@ public class ErrorCode {
     public static final String MATERIAL_K3_MATERIAL_NO_IS_ERROR = "J200090";
     public static final String MATERIAL_K3_MATERIAL_NO_NOT_NULL = "J200091";
     public static final String ORDERN_AND_CUSTOMER_ERROR = "J200092";
+    public static final String CUSTOMER_ID_IS_NOT_NULL = "J200093";
+    public static final String PARENT_CUSTOMER_ID_IS_NOT_NULL = "J200094";
+    public static final String CUSTOMER_COPANY_NOT_EXISTS = "J200095";
+    public static final String PARENT_CUSTOMER_COPANY_IS_SUBSIDIARY = "J200096";
+    public static final String CUSTOMER_COPANY_IS_SUBSIDIARY = "J200097";
+    public static final String ADD_PARENT_COMPANY_COUNT_ADD_SELF = "J200098";
+    public static final String QUERY_CUSTOMER_ID_IS_NOT_NULL = "J200099";
 
     public static final String PROPERTY_CAPACITY_VALUE_NOT_NULL = "J800086";
     public static final String PROPERTY_NAME_NOT_MATCH_MATERIAL_TYPE_NAME = "J800087";
@@ -161,13 +168,13 @@ public class ErrorCode {
     public static final String CATEGORY_PROPERTY_ID_NOT_NULL = "J800089";
     public static final String CATEGORY_PROPERTY_VALUE_ID_NOT_NULL = "J800090";
     public static final String PRODUCT_CATEGORY_PROPERTY_ID_IS_ERROR = "J800091";
-    public static final String PRODUCT_CATEGORY_PROPERTY_NAME_NOT_SAME = "J800092";
+    public static final String PRODUCT_CATEGORY_PROPERTY_VALUE_NAME_NOT_SAME = "J800092";
     public static final String PRODUCT_CATEGORY_PROPERTY_VALUE_CATEGORY_ID_IS_ERROR = "J800093";
     public static final String CUSTOMER_COMPANY_NEED_TOTAL_PRICE_IS_ERROR = "J800094";
     public static final String FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE = "J800095";
     public static final String LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE = "J800096";
     public static final String CUSTOMER_COMPANY_NEED_IS_NEW_NOT_NULL = "J800097";
-
+    public static final String PRODUCT_CATEGORY_PROPERTY_VALUE_HAD_USED_NOT_UPDATE = "J800098";
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
     public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
@@ -852,7 +859,14 @@ public class ErrorCode {
     public static final String K3_RETURN_ORDER_PRODUCT_COUNT_ERROR = "J17000035";
     public static final String K3_RETURN_ORDER_MATERIAL_COUNT_ERROR = "J17000036";
     public static final String ONLY_SUCCESS_RETURN_ORDER_ALLOW_RE_STATEMENT = "J17000037";
+    /** k3库存查询 */
+    public static final String K3_QUERY_STOCK_SUB_COMPANY_CODE_NOT_NULL = "J17000038";
+    public static final String K3_SEL_STOCK_K3_CODE_NOT_NULL = "J17000039";
+    public static final String K3_SEL_STOCK_QUERY_FAILED = "J17000040";
+    public static final String K3_SEL_STOCK_CUSTOMER_QUERY_COUNT_NOT_NULL_IN_CONFIRM_STOCK = "J17000041";
+    public static final String K3_SEL_STOCK_CAN_NOT_QUERY_IN_CONFIRM_STOCK = "J17000042";
 
+    public static final String SUCCESS_RELET_ORDER_EXIST = "J17000043";
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
     public static final String EXCEL_SHEET_IS_NULL = "J18000003";
@@ -1028,6 +1042,9 @@ public class ErrorCode {
     public static final String QUARTZ_HOLIDAY_NAME_NOT_CN = "J250000027";
     public static final String QUARTZ_HOLIDAY_NAME_IS_LENGTH = "J250000028";
     public static final String QUARTZ_CRON_EXPRESSION_IS_LENGTH = "J250000029";
+    public static final String QUARTZ_TASK_EXECUTOR_SYSTEM_TYPE_NOT_NUMBER = "J250000030";
+    public static final String QUARTZ_TASK_EXECUTOR_JOB_TYPE_NOT_NUMBER = "J250000031";
+    public static final String QUARTZ_TASK_EXECUTOR_REQUEST_BODY_ERROR = "J250000032";
 
     // 动态SQL查询
     public static final String DYNAMIC_SQL_ERROR = "J260000001";
@@ -1271,12 +1288,13 @@ public class ErrorCode {
         MAP.put(CATEGORY_PROPERTY_ID_NOT_NULL, "商品分类的属性ID不能为空");
         MAP.put(CATEGORY_PROPERTY_VALUE_ID_NOT_NULL, "商品分类的属性值ID不能为空");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_ID_IS_ERROR, "更改的商品分类的属性值ID与原商品分类的属性值ID不同");
-        MAP.put(PRODUCT_CATEGORY_PROPERTY_NAME_NOT_SAME, "商品分类的属性值名称不能相同");
+        MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_NAME_NOT_SAME, "商品分类的属性值名称不能相同");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_CATEGORY_ID_IS_ERROR, "商品分类的ID必须一致，即必须属于同一个产品");
         MAP.put(CUSTOMER_COMPANY_NEED_TOTAL_PRICE_IS_ERROR, "所需设备的总金额计算出错");
         MAP.put(FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的首期申请额度与所有首次所需设备的总金额不相等");
         MAP.put(LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的后续申请额度与所有首次所需设备的总金额不相等");
         MAP.put(CUSTOMER_COMPANY_NEED_IS_NEW_NOT_NULL, "客户所需的设备的新或旧的值不能为空");
+        MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_HAD_USED_NOT_UPDATE, "商品分类的属性值已经被使用，不能进行更改");
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
         MAP.put(MONEY_MORE_THAN_ZERO, "金额不能小于0");
@@ -1662,6 +1680,13 @@ public class ErrorCode {
         MAP.put(MATERIAL_K3_MATERIAL_NO_IS_ERROR , "物料的K3编号填写有误，请重新填写");
         MAP.put(MATERIAL_K3_MATERIAL_NO_NOT_NULL , "物料的K3编号不能为空");
         MAP.put(ORDERN_AND_CUSTOMER_ERROR , "订单客户与当前所选客户不一致，不能创建退货单");
+        MAP.put(CUSTOMER_ID_IS_NOT_NULL , "要添加的子公司不能为空");
+        MAP.put(PARENT_CUSTOMER_ID_IS_NOT_NULL , "选取的母公司ID不能为空");
+        MAP.put(CUSTOMER_COPANY_NOT_EXISTS , "企业客户不存在");
+        MAP.put(PARENT_CUSTOMER_COPANY_IS_SUBSIDIARY , "所选取的母公司是其他公司的子公司，不能再添加子公司");
+        MAP.put(CUSTOMER_COPANY_IS_SUBSIDIARY , "选取的子公司已经存在母公司或选择的公司为其他公司母公司，不能重复添加");
+        MAP.put(ADD_PARENT_COMPANY_COUNT_ADD_SELF , "所添加子公司与母公司一致，请重新选择");
+        MAP.put(QUERY_CUSTOMER_ID_IS_NOT_NULL , "查询子公司的母公司ID不能为空");
 
         MAP.put(EQUIPMENT_AND_BULK_MATERIAL_IS_NOT_NULL, "设备维修单明细表不能为空");
         MAP.put(REPAIR_REASON_IS_NOT_NULL, "设备维修单的维修原因不能为空");
@@ -1872,7 +1897,13 @@ public class ErrorCode {
         MAP.put(K3_RETURN_ORDER_PRODUCT_COUNT_ERROR, "订单号：【%s 】，商品：【%s 】可退货数量为【%s 】台，超过可退数量");
         MAP.put(K3_RETURN_ORDER_MATERIAL_COUNT_ERROR, "订单号：【%s 】，配件：【%s 】可退货数量为【%s 】台，超过可退数量");
         MAP.put(ONLY_SUCCESS_RETURN_ORDER_ALLOW_RE_STATEMENT, "仅处理成功的退货单允许重算");
+        MAP.put(K3_QUERY_STOCK_SUB_COMPANY_CODE_NOT_NULL, "K3库存查询的分公司号不能为空");
+        MAP.put(K3_SEL_STOCK_K3_CODE_NOT_NULL, "K3库存查询的物料编号不能为空");
+        MAP.put(K3_SEL_STOCK_QUERY_FAILED, "该商品无库存");
+        MAP.put(K3_SEL_STOCK_CUSTOMER_QUERY_COUNT_NOT_NULL_IN_CONFIRM_STOCK, "确认库存时K3库存查询的客户需求数量不能为空");
+        MAP.put(K3_SEL_STOCK_CAN_NOT_QUERY_IN_CONFIRM_STOCK, "确认库存时K3库存查询的仓位类型不能选择借出仓和全部仓位");
 
+        MAP.put(SUCCESS_RELET_ORDER_EXIST, "退货后已成功续租，退货单无法回滚");
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
         MAP.put(EXCEL_SHEET_IS_NULL, "Excel工作薄导入数据为空");
@@ -2048,6 +2079,9 @@ public class ErrorCode {
         MAP.put(QUARTZ_HOLIDAY_NAME_NOT_CN, "定时任务假期名称只能是英文和数字组成");
         MAP.put(QUARTZ_HOLIDAY_NAME_IS_LENGTH, "定时任务假期名称长度不能超过31");
         MAP.put(QUARTZ_CRON_EXPRESSION_IS_LENGTH, "定时任务cron表达式长度不能超过31");
+        MAP.put(QUARTZ_TASK_EXECUTOR_SYSTEM_TYPE_NOT_NUMBER, "定时任务执行者系统类型不是数字");
+        MAP.put(QUARTZ_TASK_EXECUTOR_JOB_TYPE_NOT_NUMBER, "定时任务执行者任务类型不是数字");
+        MAP.put(QUARTZ_TASK_EXECUTOR_REQUEST_BODY_ERROR, "定时任务执行者json字符串格式不正确");
 
 
         MAP.put(DYNAMIC_SQL_ERROR, "动态SQL查询语句不正确");

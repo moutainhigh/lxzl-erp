@@ -4,9 +4,7 @@ import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
-import com.lxzl.erp.common.domain.product.ProductCategoryPageParam;
-import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
-import com.lxzl.erp.common.domain.product.ProductQueryParam;
+import com.lxzl.erp.common.domain.product.*;
 import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import org.junit.Test;
@@ -28,7 +26,7 @@ public class ProductTest extends ERPUnTransactionalTest {
         ProductQueryParam productQueryParam = new ProductQueryParam();
         productQueryParam.setPageNo(1);
         productQueryParam.setPageSize(15);
-  //      productQueryParam.setProductId(2000065);
+        //      productQueryParam.setProductId(2000065);
         productQueryParam.setK3ProductNo("10");
 //        productQueryParam.setIsRent(0);
 //        productQueryParam.setBrandId(15);
@@ -239,34 +237,15 @@ public class ProductTest extends ERPUnTransactionalTest {
 
     @Test
     public void updateCategoryPropertyValue() throws Exception {
-        ProductCategoryProperty productCategoryProperty = new ProductCategoryProperty();
-        productCategoryProperty.setCategoryPropertyId(5);
+        ProductCategoryPropertyValue productCategoryPropertyValue = new ProductCategoryPropertyValue();
 
-
-        List<ProductCategoryPropertyValue> productCategoryPropertyValueList = new ArrayList<>();
-        ProductCategoryPropertyValue productCategoryPropertyValue1 = new ProductCategoryPropertyValue();
-        ProductCategoryPropertyValue productCategoryPropertyValue2 = new ProductCategoryPropertyValue();
-
-        productCategoryPropertyValue1.setCategoryPropertyValueId(10);
-        productCategoryPropertyValue1.setPropertyValueName("I4_6400");
+        productCategoryPropertyValue.setCategoryPropertyValueId(573);
+        productCategoryPropertyValue.setPropertyValueName("GTX10");
 //        productCategoryPropertyValue1.setPropertyCapacityValue(2048.00);
-        productCategoryPropertyValue1.setMaterialModelId(19);
+        productCategoryPropertyValue.setMaterialModelId(1);
 
-        productCategoryPropertyValue2.setCategoryPropertyValueId(11);
-        productCategoryPropertyValue2.setPropertyValueName("i7-001");
-//        productCategoryPropertyValue2.setPropertyCapacityValue(32);
-        productCategoryPropertyValue2.setMaterialModelId(32);
-
-
-        productCategoryPropertyValueList.add(productCategoryPropertyValue1);
-        productCategoryPropertyValueList.add(productCategoryPropertyValue2);
-
-        productCategoryProperty.setProductCategoryPropertyValueList(productCategoryPropertyValueList);
-
-
-        TestResult testResult = getJsonTestResult("/product/updateCategoryPropertyValue", productCategoryProperty);
+        TestResult testResult = getJsonTestResult("/product/updateCategoryPropertyValue", productCategoryPropertyValue);
     }
-
 
     @Test
     public void pageProductCategory() throws Exception {
@@ -285,4 +264,43 @@ public class ProductTest extends ERPUnTransactionalTest {
 
         TestResult testResult = getJsonTestResult("/product/detailProductCategory", productCategory);
     }
+
+    @Test
+    public void pageProductCategoryProperty() throws Exception {
+        ProductCategoryPropertyPageParam param = new ProductCategoryPropertyPageParam();
+        param.setPageNo(1);
+        param.setPageSize(15);
+//        param.setCategoryId(800002);
+
+        TestResult testResult = getJsonTestResult("/product/pageProductCategoryProperty", param);
+    }
+
+    @Test
+    public void detailProductCategoryProperty() throws Exception {
+        ProductCategoryProperty param = new ProductCategoryProperty();
+        param.setCategoryPropertyId(26);
+
+        TestResult testResult = getJsonTestResult("/product/detailProductCategoryProperty", param);
+    }
+
+    @Test
+    public void pageProductCategoryPropertyValue() throws Exception {
+        ProductCategoryPropertyValuePageParam param = new ProductCategoryPropertyValuePageParam();
+        param.setPageNo(1);
+        param.setPageSize(15);
+        param.setPropertyId(1);
+        param.setCategoryId(800004);
+
+        TestResult testResult = getJsonTestResult("/product/pageProductCategoryPropertyValue", param);
+    }
+
+
+    @Test
+    public void detailProductCategoryPropertyValue() throws Exception {
+        ProductCategoryPropertyValue param = new ProductCategoryPropertyValue();
+        param.setCategoryPropertyValueId(161);
+
+        TestResult testResult = getJsonTestResult("/product/detailProductCategoryPropertyValue", param);
+    }
 }
+

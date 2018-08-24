@@ -25,10 +25,10 @@ public interface ProductSkuMapper extends BaseMysqlDAO<ProductSkuDO> {
     Integer findProductSkuCountByParams(@Param("maps") Map<String, Object> paramMap);
     List<ProductSkuDO> findProductSkuByParams(@Param("maps") Map<String, Object> paramMap);
 
-    List<ProductSkuDO> findSkuRent (@Param("maps") Map<String, Object> paramMap);
-    Integer findSkuRentCount (@Param("maps") Map<String, Object> paramMap);
+    List<ProductSkuDO> findSkuRent(@Param("maps") Map<String, Object> paramMap);
+    Integer findSkuRentCount(@Param("maps") Map<String, Object> paramMap);
 
-    List<ProductSkuDO> selectAll ();
+    List<ProductSkuDO> selectAll();
 
-    ProductSkuDO findByIdAndStatusDelete(@Param("id")Integer skuId);
+    ProductSkuDO findByIdAndStatusDelete(@Param("id") Integer skuId);
 }
