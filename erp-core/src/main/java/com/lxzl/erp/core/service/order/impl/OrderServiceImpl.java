@@ -2342,6 +2342,12 @@ public class OrderServiceImpl implements OrderService {
             }
             //处理结算单总状态及已支付金额
             statementOrderSupport.reStatementPaid(statementOrderDOMap, statementOrderDetailDOList);
+            //强制取消后，更新结算单状态
+            for (Integer key : statementOrderDOMap.keySet()) {
+                StatementOrderDO statementOrderDO = statementOrderDOMap.get(key);
+                statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                statementOrderMapper.update(statementOrderDO);
+            }
             String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(), rentPaidAmount, BigDecimalUtil.addAll(otherPaidAmount, overduePaidAmount, penaltyPaidAmount)
                     , rentDepositPaidAmount, depositPaidAmount, "超级管理员强制取消已支付订单，已支付金额退还到客户余额");
             if (!ErrorCode.SUCCESS.equals(returnCode)) {
