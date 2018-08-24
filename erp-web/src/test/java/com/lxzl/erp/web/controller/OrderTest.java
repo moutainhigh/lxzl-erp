@@ -532,20 +532,20 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        param.setPayStatus(0);
 //        param.setOrderNo("LXO-20180608-027-00059");
 //        param.setOrderSellerId(500355);
-//        param.setOrderSellerName("诚");
+        param.setOrderSellerName("刘君诚");
 //          param.setIsReturnOverDue(1);
-//        param.setIsCanReletOrder(1);
-//        param.setIsRecycleBin(0);
+        param.setIsCanReletOrder(1);
+        param.setIsRecycleBin(0);
 //        param.setPageNo(4);
 //        param.setPageSize(15);
-        param.setCreateName("李红强");
+//        param.setCreateName("刘君诚");
 
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
 
     @Test
     public void queryAllOrderJSON() throws Exception {
-        String str = "{\"pageNo\":1,\"pageSize\":15,\"orderSellerName\":\"\",\"buyerRealName\":\"\",\"deliverySubCompanyId\":\"\",\"subCompanyId\":\"\",\"rentType\":\"\",\"orderNo\":\"\",\"isCanReletOrder\":\"\",\"startRentStartTime\":\"\",\"endRentStartTime\":\"\",\"rentTimePicker\":\"\",\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\",\"payStatus\":\"\",\"isReturnOverDue\":\"\",\"isReletOrder\":\"\",\"startExpectDeliveryTime\":\"\",\"endExpectDeliveryTime\":\"\",\"deliveryTimePicker\":\"\",\"isRecycleBin\":\"0\",\"createUser\":\"\"}";
+        String str = "{\"pageNo\":1,\"pageSize\":15,\"orderSellerName\":\"\",\"buyerRealName\":\"\",\"deliverySubCompanyId\":\"\",\"subCompanyId\":\"\",\"rentType\":\"\",\"orderNo\":\"\",\"isCanReletOrder\":\"\",\"startRentStartTime\":\"\",\"endRentStartTime\":\"\",\"rentTimePicker\":\"\",\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\",\"payStatus\":\"\",\"isReturnOverDue\":\"\",\"isReletOrder\":\"\",\"startExpectDeliveryTime\":\"\",\"endExpectDeliveryTime\":\"\",\"deliveryTimePicker\":\"\",\"createName\":\"张婷\",\"isRecycleBin\":\"0\"}";
         OrderQueryParam param = FastJsonUtil.toBean(str,OrderQueryParam.class);
 //        param.setBuyerRealName("荣焱");
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
