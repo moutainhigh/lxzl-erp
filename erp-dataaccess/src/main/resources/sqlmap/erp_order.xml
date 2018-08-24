@@ -383,6 +383,52 @@
         LEFT JOIN erp_joint_product ejp on ejp.id = eojp.joint_product_id
     </select>
 
+    <select id="findOrderByCustomerNo" resultMap="OrderDO" parameterType="map">
+        SELECT m_order.*
+        <trim prefix=",">
+            <include refid="product_column_List"/>
+        </trim>
+        FROM (
+        SELECT
+        <include refid="column_List"/>
+        <trim prefix=",">
+            eoci.address AS consign_address,eoci.consignee_name AS consign_consignee_name, ec.customer_no AS buyer_customer_no
+        </trim>
+        FROM erp_order eo
+        LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+        LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id AND eoci.data_status = 1
+        <where>
+            ec.customer_no IN
+            <foreach item="item" index="index" collection="maps.orderQueryParam.buyerCustomerNoList"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+
+            <if test="maps.orderQueryParam.orderStatus != null">
+                and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.orderStatusList != null &amp;&amp; maps.orderQueryParam.orderStatusList.size() > 0">
+                and eo.order_status IN
+                <foreach item="item" index="index" collection="maps.orderQueryParam.orderStatusList"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="maps.orderQueryParam.rentLengthType != null">
+                and eo.rent_length_type = #{maps.orderQueryParam.rentLengthType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.startRentStartTime != null">
+                <![CDATA[ AND eo.rent_start_time >= #{maps.orderQueryParam.startRentStartTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.endRentStartTime != null ">
+                <![CDATA[ AND eo.rent_start_time <= #{maps.orderQueryParam.endRentStartTime} ]]>
+            </if>
+        </where>
+        ) m_order
+        LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id
+        AND eop.data_status = 1
+    </select>
+
     <select id="findByCustomerId" resultMap="OrderDO" parameterType="java.lang.Integer">
         SELECT m_order.*
         <trim prefix=",">
@@ -1014,19 +1060,22 @@
         UPDATE erp_order_material SET
         <trim>
             material_unit_amount =
-            <foreach item="item" collection="orderMaterialDOList" index="index" separator=" " open="case id" close="end">
+            <foreach item="item" collection="orderMaterialDOList" index="index" separator=" " open="case id"
+                     close="end">
                 when #{item.id} then #{item.materialUnitAmount}
             </foreach>
         </trim>
         <trim prefix=",">
             material_amount =
-            <foreach item="item" collection="orderMaterialDOList" index="index" separator=" " open="case id" close="end">
+            <foreach item="item" collection="orderMaterialDOList" index="index" separator=" " open="case id"
+                     close="end">
                 when #{item.id} then #{item.materialAmount}
             </foreach>
         </trim>
         <trim prefix=",">
             rent_deposit_amount =
-            <foreach item="item" collection="orderMaterialDOList" index="index" separator=" " open="case id" close="end">
+            <foreach item="item" collection="orderMaterialDOList" index="index" separator=" " open="case id"
+                     close="end">
                 when #{item.id} then #{item.rentDepositAmount}
             </foreach>
         </trim>
@@ -1354,12 +1403,16 @@
     </select>
 
     <select id="findByNo" resultMap="OrderDO" parameterType="java.lang.String">
-        SELECT <include refid="column_List"/> FROM erp_order eo
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_order eo
         WHERE eo.order_no = #{orderNo, jdbcType=VARCHAR} AND eo.data_status=1
     </select>
 
     <select id="findByOrderNoList" resultMap="OrderDO">
-        SELECT <include refid="column_List"/> FROM erp_order eo
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_order eo
         WHERE eo.order_no IN
         <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
             #{item}

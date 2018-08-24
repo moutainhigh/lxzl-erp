@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerAccountLogParam;
 import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerQueryParam;
+import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryByCustomerNoParam;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderPayParam;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
@@ -44,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -116,6 +118,16 @@ public class InterfaceController extends BaseController {
 
     }
 
+    @RequestMapping(value = "queryAllOrderByCustomerNo", method = RequestMethod.POST)
+    public Result queryAllOrderByCustomerNo(@RequestBody @Validated InterfaceOrderQueryByCustomerNoParam interfaceOrderQueryParam, BindingResult validResult) {
+        boolean erpIdentity = businessSystemConfigService.verifyErpIdentity(interfaceOrderQueryParam.getErpAppId(), interfaceOrderQueryParam.getErpAppSecret());
+        if (erpIdentity) {
+            ServiceResult<String, List<Order>> serviceResult = orderService.queryAllOrderByCustomerNo(interfaceOrderQueryParam);
+            return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        }
+        return resultGenerator.generate(ErrorCode.BUSINESS_SYSTEM_ERROR);
+    }
+
     @RequestMapping(value = "queryCustomerByName", method = RequestMethod.POST)
     public Result queryCustomerByName(@RequestBody @Validated(QueryCustomerNameGroup.class) InterfaceCustomerQueryParam interfaceCustomerQueryParam, BindingResult validResult) {
 
@@ -173,7 +185,7 @@ public class InterfaceController extends BaseController {
 
     @RequestMapping(value = "alipayCharge", method = RequestMethod.POST)
     public Result alipayCharge(@RequestBody InterfaceChargeParam parm, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = paymentService.alipayCharge(parm.getCustomerNo(),parm.getAmount(),parm.getOpenId(),NetworkUtil.getIpAddress(request));
+        ServiceResult<String, String> serviceResult = paymentService.alipayCharge(parm.getCustomerNo(), parm.getAmount(), parm.getOpenId(), NetworkUtil.getIpAddress(request));
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
