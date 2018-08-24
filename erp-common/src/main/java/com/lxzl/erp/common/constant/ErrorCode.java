@@ -927,9 +927,11 @@ public class ErrorCode {
     public static final String CHARGE_RECORD_IS_NULL = "J18000059";
     public static final String CHARGE_TYPE_IS_BALANCE_PAID = "J18000060";
     public static final String CHARGE_TYPE_IS_BANK_SLIP_CHARGE = "J18000061";
-    public static final String UNKNOWN_BANK_SLIP_DETAIL_NOT_UNCLAIM_OR_CLAIM = "J18000062";
+    public static final String UNKNOWN_BANK_SLIP_DETAIL_NOT_UNCLAIM = "J18000062";
     public static final String UNKNOWN_BANK_SLIP_DETAIL_SAVE_FAIL = "J18000063";
-    public static final String BANK_SLIP_DETAIL_COMPANY_IS_SUB_COMPANY = "J18000064";
+    public static final String UNKNOWN_BANK_SLIP_DETAIL_NOT_DISPLAY = "J18000064";
+    public static final String BANK_SLIP_DETAIL_IS_UNKNOWN_CANNOT_OPERATION = "J18000065";
+    public static final String UNKNOWN_BANK_SLIP_DETAIL_NOT_LOCALIZATION = "J18000066";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1970,9 +1972,11 @@ public class ErrorCode {
         MAP.put(CHARGE_RECORD_IS_NULL, "充值记录为空");
         MAP.put(CHARGE_TYPE_IS_BALANCE_PAID, "充值记录是余额支付");
         MAP.put(CHARGE_TYPE_IS_BANK_SLIP_CHARGE, "充值记录是对公加款");
-        MAP.put(UNKNOWN_BANK_SLIP_DETAIL_NOT_UNCLAIM_OR_CLAIM, "需要未知的银行流水不是未认领和认领状态");
+        MAP.put(UNKNOWN_BANK_SLIP_DETAIL_NOT_UNCLAIM, "需要未知的银行流水不是未认领状态");
         MAP.put(UNKNOWN_BANK_SLIP_DETAIL_SAVE_FAIL, "保存下推银行流水明细到公海失败");
-        MAP.put(BANK_SLIP_DETAIL_COMPANY_IS_SUB_COMPANY, "银行对公流水记录是分公司数据");
+        MAP.put(UNKNOWN_BANK_SLIP_DETAIL_NOT_DISPLAY, "需要未知的银行流水不是可见状态");
+        MAP.put(BANK_SLIP_DETAIL_IS_UNKNOWN_CANNOT_OPERATION, "不能操作已是未知状态的银行对公流水");
+        MAP.put(UNKNOWN_BANK_SLIP_DETAIL_NOT_LOCALIZATION, "需要未知的银行流水不是未属地化状态");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");
