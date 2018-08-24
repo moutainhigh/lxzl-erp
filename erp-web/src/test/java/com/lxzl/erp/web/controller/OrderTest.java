@@ -545,7 +545,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void queryAllOrderJSON() throws Exception {
-        String str = "{\"pageNo\":1,\"pageSize\":15,\"orderSellerName\":\"\",\"buyerRealName\":\"\",\"deliverySubCompanyId\":\"\",\"subCompanyId\":\"\",\"rentType\":\"\",\"orderNo\":\"\",\"isCanReletOrder\":\"\",\"startExpectDeliveryTime\":\"1533916800000\",\"endExpectDeliveryTime\":\"1534348799999\",\"rentTimePicker\":\"2018-08-11 - 2018-08-15\",\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\",\"payStatus\":\"\",\"isReturnOverDue\":\"\",\"isReletOrder\":\"\",\"isRecycleBin\":\"0\"}";
+        String str = "{\"pageNo\":1,\"pageSize\":15,\"orderSellerName\":\"\",\"buyerRealName\":\"\",\"deliverySubCompanyId\":\"\",\"subCompanyId\":\"\",\"rentType\":\"\",\"orderNo\":\"\",\"isCanReletOrder\":\"\",\"startRentStartTime\":\"\",\"endRentStartTime\":\"\",\"rentTimePicker\":\"\",\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\",\"payStatus\":\"\",\"isReturnOverDue\":\"\",\"isReletOrder\":\"\",\"startExpectDeliveryTime\":\"\",\"endExpectDeliveryTime\":\"\",\"deliveryTimePicker\":\"\",\"isRecycleBin\":\"0\",\"createUser\":\"\"}";
         OrderQueryParam param = FastJsonUtil.toBean(str,OrderQueryParam.class);
 //        param.setBuyerRealName("荣焱");
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
