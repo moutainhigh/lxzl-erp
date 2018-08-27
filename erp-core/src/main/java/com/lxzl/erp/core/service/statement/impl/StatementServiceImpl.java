@@ -4038,7 +4038,7 @@ public class StatementServiceImpl implements StatementService {
             Integer remainRentLength = (rentLength - firstMonthLength);
             statementMonthCount = (remainRentLength / paymentCycle) + 1;
 
-            if (remainRentLength % paymentCycle > 0){
+            if (remainRentLength % paymentCycle > 0 && remainRentLength > 0){
                 statementMonthCount++;
             }
             return statementMonthCount;
@@ -4047,7 +4047,8 @@ public class StatementServiceImpl implements StatementService {
 
     private Integer getMonthBetweenDate(Date startTime, Date endTime){
         Integer monthCount = 1;
-        while (DateUtil.daysBetween(com.lxzl.se.common.util.date.DateUtil.monthInterval(startTime, monthCount), endTime) > 0){
+        Date nextStartTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(endTime, 1);
+        while (DateUtil.daysBetween(com.lxzl.se.common.util.date.DateUtil.monthInterval(startTime, monthCount), nextStartTime) >= 0){
             monthCount++;
         }
         monthCount--;
@@ -4080,7 +4081,7 @@ public class StatementServiceImpl implements StatementService {
     /**
      * 一次性付款时计算续租结算单明细（续租对齐）
      */
-    StatementOrderDetailDO calculateOneReletStatementOrderDetail(Integer rentType, Integer rentTimeLength, Integer payMode, Date rentStartTime, BigDecimal statementDetailAmount, Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date currentTime, Integer loginUserId, Integer reletOrderItemReferId) {
+    StatementOrderDetailDO calculateOneReletStatementOrderDetail(Integer rentType, Integer rentTimeLength, Integer paymentCycle, Integer payMode, Date rentStartTime, BigDecimal statementDetailAmount, Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date currentTime, Integer loginUserId, Integer reletOrderItemReferId) {
         Calendar rentStartTimeCalendar = Calendar.getInstance();
         rentStartTimeCalendar.setTime(rentStartTime);
         Date statementEndTime = null, statementExpectPayTime = null;
@@ -4099,7 +4100,11 @@ public class StatementServiceImpl implements StatementService {
                 statementExpectPayTime = rentStartTime;
                 StatementOrderDetailDO statementOrderDetailDODB = statementOrderDetailMapper.findByOrderIdForOrderLastDetail(orderId, statementExpectPayTime);
                 if (statementOrderDetailDODB != null){
-                    statementExpectPayTime = statementOrderDetailDODB.getStatementExpectPayTime();
+                    Date nextStatementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(statementOrderDetailDODB.getStatementExpectPayTime(), paymentCycle);
+                    if (DateUtil.daysBetween(rentStartTime, nextStatementExpectPayTime) > 0){
+                        statementExpectPayTime = statementOrderDetailDODB.getStatementExpectPayTime();
+                    }
+
                 }
             } else if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
                 statementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, rentTimeLength);
@@ -4901,7 +4906,7 @@ public class StatementServiceImpl implements StatementService {
                 if (statementMonthCount == 1) {
                     StatementOrderDetailDO statementOrderDetailDO;
                     if (isNeedAlign){
-                        statementOrderDetailDO = calculateOneReletStatementOrderDetail(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), reletOrderProductDO.getPayMode(), rentStartTime, itemAllAmount, buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, reletOrderProductDO.getOrderProductId(), currentTime, loginUserId, reletOrderProductDO.getId());
+                        statementOrderDetailDO = calculateOneReletStatementOrderDetail(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), reletOrderProductDO.getPaymentCycle(), reletOrderProductDO.getPayMode(), rentStartTime, itemAllAmount, buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, reletOrderProductDO.getOrderProductId(), currentTime, loginUserId, reletOrderProductDO.getId());
                     }
                     else{
                         statementOrderDetailDO = calculateOneStatementOrderDetail(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), reletOrderProductDO.getPayMode(), rentStartTime, itemAllAmount, buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, reletOrderProductDO.getOrderProductId(), currentTime, loginUserId, reletOrderProductDO.getId());
@@ -5018,7 +5023,7 @@ public class StatementServiceImpl implements StatementService {
                 if (statementMonthCount == 1) {
                     StatementOrderDetailDO statementOrderDetailDO;
                     if (isNeedAlign){
-                        statementOrderDetailDO = calculateOneReletStatementOrderDetail(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), reletOrderMaterialDO.getPayMode(), rentStartTime, itemAllAmount, buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, reletOrderMaterialDO.getOrderMaterialId(), currentTime, loginUserId, reletOrderMaterialDO.getId());
+                        statementOrderDetailDO = calculateOneReletStatementOrderDetail(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), reletOrderMaterialDO.getPaymentCycle(), reletOrderMaterialDO.getPayMode(), rentStartTime, itemAllAmount, buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, reletOrderMaterialDO.getOrderMaterialId(), currentTime, loginUserId, reletOrderMaterialDO.getId());
 
                     }
                     else{
