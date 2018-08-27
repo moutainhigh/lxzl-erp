@@ -6,6 +6,7 @@ import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -54,4 +55,8 @@ public interface BankSlipDetailMapper extends BaseMysqlDAO<BankSlipDetailDO> {
     List<BankSlipDetailDO> findBankSlipDetailByTradeSerialNoList(@Param("list") List<String> list);
 
     BankSlipDetailDO findBankSlipDetailByTradeSerialNo(@Param("thirdPartyPayOrderId") String thirdPartyPayOrderId);
+
+    List<BankSlipDetailDO> findByThreeDaysAgo(Date threeDaysAgo);
+
+    void updateUnknownBankSlipDetailById(@Param("list") List<BankSlipDetailDO> bankSlipDetailDOList);
 }
