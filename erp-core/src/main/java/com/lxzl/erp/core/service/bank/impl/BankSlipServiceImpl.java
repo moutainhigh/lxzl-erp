@@ -1682,280 +1682,283 @@ public class BankSlipServiceImpl implements BankSlipService {
         bankSlipDetailDOList.add(bankSlipDetailDO);
         bankSlipDO.setBankSlipDetailDOList(bankSlipDetailDOList);
         //自动认领和自动属地化
-        automaticClaimAndLocalization(bankSlipDO);
+        ServiceResult<String, BankSlipDO> result = new ServiceResult<>();
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(bankSlipDO);
+        importBankSlip.automaticClaimAndLocalization(result);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
 
-    /**
-     * 自动认领和自动归属化
-     *
-     * @param : result
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/5/26 11:31
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
-     */
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
-    void automaticClaimAndLocalization(BankSlipDO bankSlipDO) {
-        Date now = new Date();
-        String userId = CommonConstant.SUPER_USER_ID.toString();
-
-        //跟新 需要认领数据
-        List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDO.getBankSlipDetailDOList();
-        //查一边是否是 流入金额
-        List<BankSlipDetailDO> newBankSlipDetailDOList = new ArrayList<>();
-
-        // 查询出导入时间的所有本公司的所有导入数据
-        for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
-            if (LoanSignType.INCOME.equals(bankSlipDetailDO.getLoanSign())) {
-                newBankSlipDetailDOList.add(bankSlipDetailDO);
-            }
-        }
-
-        //查询一边所有本银行认领 只有一条认领数据的认领数据
-        List<BankSlipClaimDO> dbBankSlipClaimDOList = bankSlipClaimMapper.findBankSlipClaimPaySuccess();
-
-        //数据库的当前银行所有的已确认的银行流水项
-        Map<String, BankSlipClaimDO> bankSlipClaimDOMap = ListUtil.listToMap(dbBankSlipClaimDOList, "otherSideAccountNo");
-
-        //上传的当前银行所有的已确认的银行流水项
-        Map<Integer, BankSlipDetailDO> newBankSlipDetailDOMap = ListUtil.listToMap(newBankSlipDetailDOList, "id");
-
-        //认领数据批量跟新
-        List<BankSlipClaimDO> bankSlipClaimDOList = new ArrayList<>();
-
-        //没有认领的数据
-        List<BankSlipDetailDO> lastBankSlipDetailDOList = new ArrayList<>();
-
-        //第二步没有认领的数据
-        List<BankSlipDetailDO> lastTwoBankSlipDetailDOList = new ArrayList<>();
-
-        //没有认领的数据
-        List<BankSlipDetailOperationLogDO> bankSlipDetailOperationLogDOList = new ArrayList<>();
-        //对公流水项批量跟新
-        int claimCount = 0;
-        for (Integer id : newBankSlipDetailDOMap.keySet()) {
-            //如果是就创建一条认领数据
-            BankSlipDetailDO bankSlipDetailDO = newBankSlipDetailDOMap.get(id);
-            String otherSideAccountNo = bankSlipDetailDO.getOtherSideAccountNo();
-            if (bankSlipClaimDOMap.containsKey(otherSideAccountNo)) {
-                BankSlipClaimDO bankSlipClaimDO = bankSlipClaimDOMap.get(otherSideAccountNo);
-                BankSlipClaimDO newBankSlipClaimDO = new BankSlipClaimDO();
-                newBankSlipClaimDO.setBankSlipDetailId(id);
-                newBankSlipClaimDO.setOtherSideAccountNo(otherSideAccountNo);
-                newBankSlipClaimDO.setCustomerNo(bankSlipClaimDO.getCustomerNo());
-                newBankSlipClaimDO.setCustomerName(bankSlipClaimDO.getCustomerName());
-                newBankSlipClaimDO.setClaimAmount(bankSlipDetailDO.getTradeAmount());
-                newBankSlipClaimDO.setClaimSerialNo(System.currentTimeMillis());
-                newBankSlipClaimDO.setRechargeStatus(RechargeStatus.INITIALIZE);
-                newBankSlipClaimDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                newBankSlipClaimDO.setCreateUser(userId);
-                newBankSlipClaimDO.setCreateTime(now);
-                newBankSlipClaimDO.setUpdateUser(userId);
-                newBankSlipClaimDO.setUpdateTime(now);
-                bankSlipClaimDOList.add(newBankSlipClaimDO);
-                //改变流水项状态
-                bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.CLAIMED);
-                //已认领数量
-                claimCount = claimCount + 1;
-                // 添加已有认领数据自动认领操作日志
-                BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
-                bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
-                bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.MOTION_CLAIM);
-                bankSlipDetailOperationLogDO.setOperationContent("自动认领(已有的认领数据过滤)(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + ",银行：" + BankSlipSupport.getBankTypeName(bankSlipDO.getBankType()) + "）--银行对公流水明细id：" + id + ",认领人：" + "系统" + "，认领时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",客户编号：" + bankSlipClaimDO.getCustomerNo() + ",认领：" + newBankSlipClaimDO.getClaimAmount() + "元");
-                bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                bankSlipDetailOperationLogDO.setCreateTime(now);
-                bankSlipDetailOperationLogDO.setCreateUser(userId);
-                bankSlipDetailOperationLogDOList.add(bankSlipDetailOperationLogDO);
-            } else {
-                lastBankSlipDetailDOList.add(bankSlipDetailDO);
-            }
-        }
-
-
-        //自动认领最新一次记录
-        if (CollectionUtil.isNotEmpty(lastBankSlipDetailDOList)) {
-            List<CustomerCompanyDO> customerCompanyDOList = new ArrayList<>();
-            for (BankSlipDetailDO bankSlipDetailDO : lastBankSlipDetailDOList) {
-                if (!StringUtil.isEmpty(bankSlipDetailDO.getPayerName())) {
-                    String simpleName = StrReplaceUtil.nameToSimple(bankSlipDetailDO.getPayerName());
-                    CustomerCompanyDO customerCompanyDO = new CustomerCompanyDO();
-                    customerCompanyDO.setSimpleCompanyName(simpleName);
-                    customerCompanyDOList.add(customerCompanyDO);
-                }
-            }
-            if (CollectionUtil.isNotEmpty(customerCompanyDOList)) {
-                //List<CustomerCompanyDO> dbCustomerCompanyDOList = customerCompanyMapper.findCustomerCompanyByName(customerCompanyDOList);
-                List<BankSipAutomaticClaimDTO> bankSipAutomaticClaimDTOList = bankSlipClaimMapper.findBankSlipClaimPaySuccessByName(customerCompanyDOList);
-                if (CollectionUtil.isNotEmpty(bankSipAutomaticClaimDTOList)) {
-                    Map<String, BankSipAutomaticClaimDTO> bankSipAutomaticClaimDTOMap = this.bankSipAutomaticClaimToMap(bankSipAutomaticClaimDTOList);
-                    Iterator<BankSlipDetailDO> iter = lastBankSlipDetailDOList.iterator();
-                    nameIsNull:
-                    while (iter.hasNext()) {
-                        BankSlipDetailDO bankSlipDetailDO = iter.next();
-                        String simple = StrReplaceUtil.nameToSimple(bankSlipDetailDO.getPayerName());
-                        if (StringUtil.isEmpty(simple)) {
-                            iter.remove();
-                            continue nameIsNull;
-                        }
-                        if (bankSipAutomaticClaimDTOMap.containsKey(simple)) {
-                            BankSipAutomaticClaimDTO bankSipAutomaticClaimDTO = bankSipAutomaticClaimDTOMap.get(simple);
-
-                            BankSlipClaimDO newBankSlipClaimDO = new BankSlipClaimDO();
-                            newBankSlipClaimDO.setBankSlipDetailId(bankSlipDetailDO.getId());
-                            newBankSlipClaimDO.setOtherSideAccountNo(bankSlipDetailDO.getOtherSideAccountNo());
-                            newBankSlipClaimDO.setCustomerNo(bankSipAutomaticClaimDTO.getCompanyNo());
-                            newBankSlipClaimDO.setCustomerName(bankSipAutomaticClaimDTO.getCompanyName());
-                            newBankSlipClaimDO.setClaimAmount(bankSlipDetailDO.getTradeAmount());
-                            newBankSlipClaimDO.setClaimSerialNo(System.currentTimeMillis());
-                            newBankSlipClaimDO.setRechargeStatus(RechargeStatus.INITIALIZE);
-                            newBankSlipClaimDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                            newBankSlipClaimDO.setCreateUser(userId);
-                            newBankSlipClaimDO.setCreateTime(now);
-                            newBankSlipClaimDO.setUpdateUser(userId);
-                            newBankSlipClaimDO.setUpdateTime(now);
-                            bankSlipClaimDOList.add(newBankSlipClaimDO);
-                            //改变流水项状态
-                            bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.CLAIMED);
-                            //已认领数量
-                            claimCount = claimCount + 1;
-                            // 添加操作日志
-                            BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
-                            bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
-                            bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.MOTION_CLAIM);
-                            bankSlipDetailOperationLogDO.setOperationContent("自动认领(付款人和已有的客户相同数据过滤)(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + ",银行：" + BankSlipSupport.getBankTypeName(bankSlipDO.getBankType()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",认领人：" + "系统" + "，认领时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",客户编号：" + bankSipAutomaticClaimDTO.getCompanyNo() + ",认领：" + newBankSlipClaimDO.getClaimAmount() + "元");
-                            bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                            bankSlipDetailOperationLogDO.setCreateTime(now);
-                            bankSlipDetailOperationLogDO.setCreateUser(userId);
-                            bankSlipDetailOperationLogDOList.add(bankSlipDetailOperationLogDO);
-                        } else {
-                            lastTwoBankSlipDetailDOList.add(bankSlipDetailDO);
-                            iter.remove();
-                        }
-                    }
-                } else {
-                    lastTwoBankSlipDetailDOList = lastBankSlipDetailDOList;
-                }
-            } else {
-                lastTwoBankSlipDetailDOList = lastBankSlipDetailDOList;
-            }
-        }
-
-        //自动认领付款人名称和已有的公司简单名称相同的数据
-        if (CollectionUtil.isNotEmpty(lastTwoBankSlipDetailDOList)) {
-            List<CustomerCompanyDO> customerCompanyDOList = new ArrayList<>();
-            for (BankSlipDetailDO bankSlipDetailDO : lastTwoBankSlipDetailDOList) {
-                String simpleName = StrReplaceUtil.nameToSimple(bankSlipDetailDO.getPayerName());
-                CustomerCompanyDO customerCompanyDO = new CustomerCompanyDO();
-                customerCompanyDO.setSimpleCompanyName(simpleName);
-                customerCompanyDOList.add(customerCompanyDO);
-            }
-            List<CustomerCompanyDO> dbCustomerCompanyDOList = customerCompanyMapper.findCustomerCompanyByName(customerCompanyDOList);
-            if (CollectionUtil.isNotEmpty(dbCustomerCompanyDOList)) {
-                Map<String, CustomerCompanyDO> dbCustomerCompanyDOMap = ListUtil.listToMap(dbCustomerCompanyDOList, "simpleCompanyName");
-                Iterator<BankSlipDetailDO> iter = lastTwoBankSlipDetailDOList.iterator();
-                isNameNull:
-                while (iter.hasNext()) {
-                    BankSlipDetailDO bankSlipDetailDO = iter.next();
-                    String simple = StrReplaceUtil.nameToSimple(bankSlipDetailDO.getPayerName());
-                    if (StringUtil.isEmpty(simple)) {
-                        iter.remove();
-                        continue isNameNull;
-                    }
-                    if (dbCustomerCompanyDOMap.containsKey(simple)) {
-                        CustomerCompanyDO customerCompanyDO = dbCustomerCompanyDOMap.get(simple);
-                        BankSlipClaimDO newBankSlipClaimDO = new BankSlipClaimDO();
-                        newBankSlipClaimDO.setBankSlipDetailId(bankSlipDetailDO.getId());
-                        newBankSlipClaimDO.setOtherSideAccountNo(bankSlipDetailDO.getOtherSideAccountNo());
-                        newBankSlipClaimDO.setCustomerNo(customerCompanyDO.getCustomerNo());
-                        newBankSlipClaimDO.setCustomerName(customerCompanyDO.getCompanyName());
-                        newBankSlipClaimDO.setClaimAmount(bankSlipDetailDO.getTradeAmount());
-                        newBankSlipClaimDO.setClaimSerialNo(System.currentTimeMillis());
-                        newBankSlipClaimDO.setRechargeStatus(RechargeStatus.INITIALIZE);
-                        newBankSlipClaimDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                        newBankSlipClaimDO.setCreateUser(userId);
-                        newBankSlipClaimDO.setCreateTime(now);
-                        newBankSlipClaimDO.setUpdateUser(userId);
-                        newBankSlipClaimDO.setUpdateTime(now);
-                        bankSlipClaimDOList.add(newBankSlipClaimDO);
-                        //改变流水项状态
-                        bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.CLAIMED);
-                        //已认领数量
-                        claimCount = claimCount + 1;
-                        // 添加操作日志
-                        BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
-                        bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
-                        bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.MOTION_CLAIM);
-                        bankSlipDetailOperationLogDO.setOperationContent("自动认领(付款人和已有的客户相同数据过滤)(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + ",银行：" + BankSlipSupport.getBankTypeName(bankSlipDO.getBankType()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",认领人：" + "系统" + "，认领时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",客户编号：" + customerCompanyDO.getCustomerNo() + ",认领：" + newBankSlipClaimDO.getClaimAmount() + "元");
-                        bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                        bankSlipDetailOperationLogDO.setCreateTime(now);
-                        bankSlipDetailOperationLogDO.setCreateUser(userId);
-                        bankSlipDetailOperationLogDOList.add(bankSlipDetailOperationLogDO);
-                    } else {
-                        lastTwoBankSlipDetailDOList.add(bankSlipDetailDO);
-                        iter.remove();
-                    }
-                }
-            }
-        }
-
-        //改变总表的已认领数量和未认领数量
-        bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() - claimCount);
-        bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() + claimCount);
-
-        //创建各个数据批量存储
-        if (CollectionUtil.isNotEmpty(bankSlipClaimDOList)) {
-            bankSlipClaimMapper.saveBankSlipClaimDO(bankSlipClaimDOList);
-        }
-        if (CollectionUtil.isNotEmpty(newBankSlipDetailDOList)) {
-            bankSlipDetailMapper.updateBankSlipDetailDO(newBankSlipDetailDOList);
-            bankSlipMapper.update(bankSlipDO);
-        }
-        //跟新付款人名称和已有的公司简单名称相同的数据 的流水详情表状态
-        if (CollectionUtil.isNotEmpty(lastBankSlipDetailDOList)) {
-            bankSlipDetailMapper.updateBankSlipDetailDO(lastBankSlipDetailDOList);
-        }
-
-        //如果是总公司才操作
-        List<BankSlipDetailDO> headerBankSlipDetailDOList = new ArrayList<>();
-        //查询所有已归属的总公司数据
-        List<BankSlipDetailDO> localizationBankSlipDetailDOList = bankSlipDetailMapper.findLocalizationBankSlipDetailDO();
-        Map<String, BankSlipDetailDO> localizationBankSlipDetailDOMap = ListUtil.listToMap(localizationBankSlipDetailDOList, "otherSideAccountNo");
-        int localizationCount = 0;
-        for (Integer key : newBankSlipDetailDOMap.keySet()) {
-            BankSlipDetailDO bankSlipDetailDO = newBankSlipDetailDOMap.get(key);
-            String otherSideAccountNo = bankSlipDetailDO.getOtherSideAccountNo();
-            if (localizationBankSlipDetailDOMap.containsKey(otherSideAccountNo)) {
-                BankSlipDetailDO dbBankSlipDetailDO = localizationBankSlipDetailDOMap.get(otherSideAccountNo);
-                bankSlipDetailDO.setSubCompanyId(dbBankSlipDetailDO.getSubCompanyId());
-                bankSlipDetailDO.setIsLocalization(CommonConstant.COMMON_CONSTANT_YES);
-                bankSlipDetailDO.setUpdateUser(userId);
-                bankSlipDetailDO.setUpdateTime(now);
-                localizationCount++;
-                headerBankSlipDetailDOList.add(bankSlipDetailDO);
-                // 添加操作日志
-                BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
-                bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
-                bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.MOTION_LOCALIZATION);
-                bankSlipDetailOperationLogDO.setOperationContent("自动属地化(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + ",银行：" + BankSlipSupport.getBankTypeName(bankSlipDO.getBankType()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",属地化人：" + "系统" + "，属地化时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",属地化到公司：" + dbBankSlipDetailDO.getSubCompanyName());
-                bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-
-                bankSlipDetailOperationLogDO.setCreateTime(now);
-                bankSlipDetailOperationLogDO.setCreateUser(userId);
-                bankSlipDetailOperationLogDOList.add(bankSlipDetailOperationLogDO);
-            }
-        }
-        if (CollectionUtil.isNotEmpty(headerBankSlipDetailDOList)) {
-            bankSlipDetailMapper.updateSubCompanyAndIsLocalization(headerBankSlipDetailDOList);
-        }
-        bankSlipDO.setLocalizationCount((bankSlipDO.getLocalizationCount() == null ? 0 : bankSlipDO.getLocalizationCount()) + localizationCount);
-        bankSlipMapper.update(bankSlipDO);
-
-        // 保存日志list
-        if (CollectionUtil.isNotEmpty(bankSlipDetailOperationLogDOList)) {
-            bankSlipDetailOperationLogMapper.saveBankSlipDetailOperationLogDOList(bankSlipDetailOperationLogDOList);
-        }
-    }
+//    /**
+//     * 自动认领和自动归属化
+//     *
+//     * @param : result
+//     * @Author : XiaoLuYu
+//     * @Date : Created in 2018/5/26 11:31
+//     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+//     */
+//    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+//    void automaticClaimAndLocalization(BankSlipDO bankSlipDO) {
+//        Date now = new Date();
+//        String userId = CommonConstant.SUPER_USER_ID.toString();
+//
+//        //跟新 需要认领数据
+//        List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDO.getBankSlipDetailDOList();
+//        //查一边是否是 流入金额
+//        List<BankSlipDetailDO> newBankSlipDetailDOList = new ArrayList<>();
+//
+//        // 查询出导入时间的所有本公司的所有导入数据
+//        for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
+//            if (LoanSignType.INCOME.equals(bankSlipDetailDO.getLoanSign())) {
+//                newBankSlipDetailDOList.add(bankSlipDetailDO);
+//            }
+//        }
+//
+//        //查询一边所有本银行认领 只有一条认领数据的认领数据
+//        List<BankSlipClaimDO> dbBankSlipClaimDOList = bankSlipClaimMapper.findBankSlipClaimPaySuccess();
+//
+//        //数据库的当前银行所有的已确认的银行流水项
+//        Map<String, BankSlipClaimDO> bankSlipClaimDOMap = ListUtil.listToMap(dbBankSlipClaimDOList, "otherSideAccountNo");
+//
+//        //上传的当前银行所有的已确认的银行流水项
+//        Map<Integer, BankSlipDetailDO> newBankSlipDetailDOMap = ListUtil.listToMap(newBankSlipDetailDOList, "id");
+//
+//        //认领数据批量跟新
+//        List<BankSlipClaimDO> bankSlipClaimDOList = new ArrayList<>();
+//
+//        //没有认领的数据
+//        List<BankSlipDetailDO> lastBankSlipDetailDOList = new ArrayList<>();
+//
+//        //第二步没有认领的数据
+//        List<BankSlipDetailDO> lastTwoBankSlipDetailDOList = new ArrayList<>();
+//
+//        //没有认领的数据
+//        List<BankSlipDetailOperationLogDO> bankSlipDetailOperationLogDOList = new ArrayList<>();
+//        //对公流水项批量跟新
+//        int claimCount = 0;
+//        for (Integer id : newBankSlipDetailDOMap.keySet()) {
+//            //如果是就创建一条认领数据
+//            BankSlipDetailDO bankSlipDetailDO = newBankSlipDetailDOMap.get(id);
+//            String otherSideAccountNo = bankSlipDetailDO.getOtherSideAccountNo();
+//            if (bankSlipClaimDOMap.containsKey(otherSideAccountNo)) {
+//                BankSlipClaimDO bankSlipClaimDO = bankSlipClaimDOMap.get(otherSideAccountNo);
+//                BankSlipClaimDO newBankSlipClaimDO = new BankSlipClaimDO();
+//                newBankSlipClaimDO.setBankSlipDetailId(id);
+//                newBankSlipClaimDO.setOtherSideAccountNo(otherSideAccountNo);
+//                newBankSlipClaimDO.setCustomerNo(bankSlipClaimDO.getCustomerNo());
+//                newBankSlipClaimDO.setCustomerName(bankSlipClaimDO.getCustomerName());
+//                newBankSlipClaimDO.setClaimAmount(bankSlipDetailDO.getTradeAmount());
+//                newBankSlipClaimDO.setClaimSerialNo(System.currentTimeMillis());
+//                newBankSlipClaimDO.setRechargeStatus(RechargeStatus.INITIALIZE);
+//                newBankSlipClaimDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+//                newBankSlipClaimDO.setCreateUser(userId);
+//                newBankSlipClaimDO.setCreateTime(now);
+//                newBankSlipClaimDO.setUpdateUser(userId);
+//                newBankSlipClaimDO.setUpdateTime(now);
+//                bankSlipClaimDOList.add(newBankSlipClaimDO);
+//                //改变流水项状态
+//                bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.CLAIMED);
+//                //已认领数量
+//                claimCount = claimCount + 1;
+//                // 添加已有认领数据自动认领操作日志
+//                BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
+//                bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
+//                bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.MOTION_CLAIM);
+//                bankSlipDetailOperationLogDO.setOperationContent("自动认领(已有的认领数据过滤)(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + ",银行：" + BankSlipSupport.getBankTypeName(bankSlipDO.getBankType()) + "）--银行对公流水明细id：" + id + ",认领人：" + "系统" + "，认领时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",客户名称：" + bankSlipClaimDO.getCustomerNo() + ",认领：" + newBankSlipClaimDO.getClaimAmount() + "元");
+//                bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+//                bankSlipDetailOperationLogDO.setCreateTime(now);
+//                bankSlipDetailOperationLogDO.setCreateUser(userId);
+//                bankSlipDetailOperationLogDOList.add(bankSlipDetailOperationLogDO);
+//            } else {
+//                lastBankSlipDetailDOList.add(bankSlipDetailDO);
+//            }
+//        }
+//
+//
+//        //自动认领最新一次记录
+//        if (CollectionUtil.isNotEmpty(lastBankSlipDetailDOList)) {
+//            List<CustomerCompanyDO> customerCompanyDOList = new ArrayList<>();
+//            for (BankSlipDetailDO bankSlipDetailDO : lastBankSlipDetailDOList) {
+//                if (!StringUtil.isEmpty(bankSlipDetailDO.getPayerName())) {
+//                    String simpleName = StrReplaceUtil.nameToSimple(bankSlipDetailDO.getPayerName());
+//                    CustomerCompanyDO customerCompanyDO = new CustomerCompanyDO();
+//                    customerCompanyDO.setSimpleCompanyName(simpleName);
+//                    customerCompanyDOList.add(customerCompanyDO);
+//                }
+//            }
+//            if (CollectionUtil.isNotEmpty(customerCompanyDOList)) {
+//                //List<CustomerCompanyDO> dbCustomerCompanyDOList = customerCompanyMapper.findCustomerCompanyByName(customerCompanyDOList);
+//                List<BankSipAutomaticClaimDTO> bankSipAutomaticClaimDTOList = bankSlipClaimMapper.findBankSlipClaimPaySuccessByName(customerCompanyDOList);
+//                if (CollectionUtil.isNotEmpty(bankSipAutomaticClaimDTOList)) {
+//                    Map<String, BankSipAutomaticClaimDTO> bankSipAutomaticClaimDTOMap = this.bankSipAutomaticClaimToMap(bankSipAutomaticClaimDTOList);
+//                    Iterator<BankSlipDetailDO> iter = lastBankSlipDetailDOList.iterator();
+//                    nameIsNull:
+//                    while (iter.hasNext()) {
+//                        BankSlipDetailDO bankSlipDetailDO = iter.next();
+//                        String simple = StrReplaceUtil.nameToSimple(bankSlipDetailDO.getPayerName());
+//                        if (StringUtil.isEmpty(simple)) {
+//                            iter.remove();
+//                            continue nameIsNull;
+//                        }
+//                        if (bankSipAutomaticClaimDTOMap.containsKey(simple)) {
+//                            BankSipAutomaticClaimDTO bankSipAutomaticClaimDTO = bankSipAutomaticClaimDTOMap.get(simple);
+//
+//                            BankSlipClaimDO newBankSlipClaimDO = new BankSlipClaimDO();
+//                            newBankSlipClaimDO.setBankSlipDetailId(bankSlipDetailDO.getId());
+//                            newBankSlipClaimDO.setOtherSideAccountNo(bankSlipDetailDO.getOtherSideAccountNo());
+//                            newBankSlipClaimDO.setCustomerNo(bankSipAutomaticClaimDTO.getCompanyNo());
+//                            newBankSlipClaimDO.setCustomerName(bankSipAutomaticClaimDTO.getCompanyName());
+//                            newBankSlipClaimDO.setClaimAmount(bankSlipDetailDO.getTradeAmount());
+//                            newBankSlipClaimDO.setClaimSerialNo(System.currentTimeMillis());
+//                            newBankSlipClaimDO.setRechargeStatus(RechargeStatus.INITIALIZE);
+//                            newBankSlipClaimDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+//                            newBankSlipClaimDO.setCreateUser(userId);
+//                            newBankSlipClaimDO.setCreateTime(now);
+//                            newBankSlipClaimDO.setUpdateUser(userId);
+//                            newBankSlipClaimDO.setUpdateTime(now);
+//                            bankSlipClaimDOList.add(newBankSlipClaimDO);
+//                            //改变流水项状态
+//                            bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.CLAIMED);
+//                            //已认领数量
+//                            claimCount = claimCount + 1;
+//                            // 添加操作日志
+//                            BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
+//                            bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
+//                            bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.MOTION_CLAIM);
+//                            bankSlipDetailOperationLogDO.setOperationContent("自动认领(付款人和已有的客户相同数据过滤)(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + ",银行：" + BankSlipSupport.getBankTypeName(bankSlipDO.getBankType()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",认领人：" + "系统" + "，认领时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",客户编号：" + bankSipAutomaticClaimDTO.getCompanyNo() + ",认领：" + newBankSlipClaimDO.getClaimAmount() + "元");
+//                            bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+//                            bankSlipDetailOperationLogDO.setCreateTime(now);
+//                            bankSlipDetailOperationLogDO.setCreateUser(userId);
+//                            bankSlipDetailOperationLogDOList.add(bankSlipDetailOperationLogDO);
+//                        } else {
+//                            lastTwoBankSlipDetailDOList.add(bankSlipDetailDO);
+//                            iter.remove();
+//                        }
+//                    }
+//                } else {
+//                    lastTwoBankSlipDetailDOList = lastBankSlipDetailDOList;
+//                }
+//            } else {
+//                lastTwoBankSlipDetailDOList = lastBankSlipDetailDOList;
+//            }
+//        }
+//
+//        //自动认领付款人名称和已有的公司简单名称相同的数据
+//        if (CollectionUtil.isNotEmpty(lastTwoBankSlipDetailDOList)) {
+//            List<CustomerCompanyDO> customerCompanyDOList = new ArrayList<>();
+//            for (BankSlipDetailDO bankSlipDetailDO : lastTwoBankSlipDetailDOList) {
+//                String simpleName = StrReplaceUtil.nameToSimple(bankSlipDetailDO.getPayerName());
+//                CustomerCompanyDO customerCompanyDO = new CustomerCompanyDO();
+//                customerCompanyDO.setSimpleCompanyName(simpleName);
+//                customerCompanyDOList.add(customerCompanyDO);
+//            }
+//            List<CustomerCompanyDO> dbCustomerCompanyDOList = customerCompanyMapper.findCustomerCompanyByName(customerCompanyDOList);
+//            if (CollectionUtil.isNotEmpty(dbCustomerCompanyDOList)) {
+//                Map<String, CustomerCompanyDO> dbCustomerCompanyDOMap = ListUtil.listToMap(dbCustomerCompanyDOList, "simpleCompanyName");
+//                Iterator<BankSlipDetailDO> iter = lastTwoBankSlipDetailDOList.iterator();
+//                isNameNull:
+//                while (iter.hasNext()) {
+//                    BankSlipDetailDO bankSlipDetailDO = iter.next();
+//                    String simple = StrReplaceUtil.nameToSimple(bankSlipDetailDO.getPayerName());
+//                    if (StringUtil.isEmpty(simple)) {
+//                        iter.remove();
+//                        continue isNameNull;
+//                    }
+//                    if (dbCustomerCompanyDOMap.containsKey(simple)) {
+//                        CustomerCompanyDO customerCompanyDO = dbCustomerCompanyDOMap.get(simple);
+//                        BankSlipClaimDO newBankSlipClaimDO = new BankSlipClaimDO();
+//                        newBankSlipClaimDO.setBankSlipDetailId(bankSlipDetailDO.getId());
+//                        newBankSlipClaimDO.setOtherSideAccountNo(bankSlipDetailDO.getOtherSideAccountNo());
+//                        newBankSlipClaimDO.setCustomerNo(customerCompanyDO.getCustomerNo());
+//                        newBankSlipClaimDO.setCustomerName(customerCompanyDO.getCompanyName());
+//                        newBankSlipClaimDO.setClaimAmount(bankSlipDetailDO.getTradeAmount());
+//                        newBankSlipClaimDO.setClaimSerialNo(System.currentTimeMillis());
+//                        newBankSlipClaimDO.setRechargeStatus(RechargeStatus.INITIALIZE);
+//                        newBankSlipClaimDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+//                        newBankSlipClaimDO.setCreateUser(userId);
+//                        newBankSlipClaimDO.setCreateTime(now);
+//                        newBankSlipClaimDO.setUpdateUser(userId);
+//                        newBankSlipClaimDO.setUpdateTime(now);
+//                        bankSlipClaimDOList.add(newBankSlipClaimDO);
+//                        //改变流水项状态
+//                        bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.CLAIMED);
+//                        //已认领数量
+//                        claimCount = claimCount + 1;
+//                        // 添加操作日志
+//                        BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
+//                        bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
+//                        bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.MOTION_CLAIM);
+//                        bankSlipDetailOperationLogDO.setOperationContent("自动认领(付款人和已有的客户相同数据过滤)(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + ",银行：" + BankSlipSupport.getBankTypeName(bankSlipDO.getBankType()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",认领人：" + "系统" + "，认领时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",客户编号：" + customerCompanyDO.getCustomerNo() + ",认领：" + newBankSlipClaimDO.getClaimAmount() + "元");
+//                        bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+//                        bankSlipDetailOperationLogDO.setCreateTime(now);
+//                        bankSlipDetailOperationLogDO.setCreateUser(userId);
+//                        bankSlipDetailOperationLogDOList.add(bankSlipDetailOperationLogDO);
+//                    } else {
+//                        lastTwoBankSlipDetailDOList.add(bankSlipDetailDO);
+//                        iter.remove();
+//                    }
+//                }
+//            }
+//        }
+//
+//        //改变总表的已认领数量和未认领数量
+//        bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() - claimCount);
+//        bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() + claimCount);
+//
+//        //创建各个数据批量存储
+//        if (CollectionUtil.isNotEmpty(bankSlipClaimDOList)) {
+//            bankSlipClaimMapper.saveBankSlipClaimDO(bankSlipClaimDOList);
+//        }
+//        if (CollectionUtil.isNotEmpty(newBankSlipDetailDOList)) {
+//            bankSlipDetailMapper.updateBankSlipDetailDO(newBankSlipDetailDOList);
+//            bankSlipMapper.update(bankSlipDO);
+//        }
+//        //跟新付款人名称和已有的公司简单名称相同的数据 的流水详情表状态
+//        if (CollectionUtil.isNotEmpty(lastBankSlipDetailDOList)) {
+//            bankSlipDetailMapper.updateBankSlipDetailDO(lastBankSlipDetailDOList);
+//        }
+//
+//        //如果是总公司才操作
+//        List<BankSlipDetailDO> headerBankSlipDetailDOList = new ArrayList<>();
+//        //查询所有已归属的总公司数据
+//        List<BankSlipDetailDO> localizationBankSlipDetailDOList = bankSlipDetailMapper.findLocalizationBankSlipDetailDO();
+//        Map<String, BankSlipDetailDO> localizationBankSlipDetailDOMap = ListUtil.listToMap(localizationBankSlipDetailDOList, "otherSideAccountNo");
+//        int localizationCount = 0;
+//        for (Integer key : newBankSlipDetailDOMap.keySet()) {
+//            BankSlipDetailDO bankSlipDetailDO = newBankSlipDetailDOMap.get(key);
+//            String otherSideAccountNo = bankSlipDetailDO.getOtherSideAccountNo();
+//            if (localizationBankSlipDetailDOMap.containsKey(otherSideAccountNo)) {
+//                BankSlipDetailDO dbBankSlipDetailDO = localizationBankSlipDetailDOMap.get(otherSideAccountNo);
+//                bankSlipDetailDO.setSubCompanyId(dbBankSlipDetailDO.getSubCompanyId());
+//                bankSlipDetailDO.setIsLocalization(CommonConstant.COMMON_CONSTANT_YES);
+//                bankSlipDetailDO.setUpdateUser(userId);
+//                bankSlipDetailDO.setUpdateTime(now);
+//                localizationCount++;
+//                headerBankSlipDetailDOList.add(bankSlipDetailDO);
+//                // 添加操作日志
+//                BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
+//                bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
+//                bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.MOTION_LOCALIZATION);
+//                bankSlipDetailOperationLogDO.setOperationContent("自动属地化(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + ",银行：" + BankSlipSupport.getBankTypeName(bankSlipDO.getBankType()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",属地化人：" + "系统" + "，属地化时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",属地化到公司：" + dbBankSlipDetailDO.getSubCompanyName());
+//                bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+//
+//                bankSlipDetailOperationLogDO.setCreateTime(now);
+//                bankSlipDetailOperationLogDO.setCreateUser(userId);
+//                bankSlipDetailOperationLogDOList.add(bankSlipDetailOperationLogDO);
+//            }
+//        }
+//        if (CollectionUtil.isNotEmpty(headerBankSlipDetailDOList)) {
+//            bankSlipDetailMapper.updateSubCompanyAndIsLocalization(headerBankSlipDetailDOList);
+//        }
+//        bankSlipDO.setLocalizationCount((bankSlipDO.getLocalizationCount() == null ? 0 : bankSlipDO.getLocalizationCount()) + localizationCount);
+//        bankSlipMapper.update(bankSlipDO);
+//
+//        // 保存日志list
+//        if (CollectionUtil.isNotEmpty(bankSlipDetailOperationLogDOList)) {
+//            bankSlipDetailOperationLogMapper.saveBankSlipDetailOperationLogDOList(bankSlipDetailOperationLogDOList);
+//        }
+//    }
 
     /**
      * 当前用户如不是总公司,看是否有权先操作 （总表数据和属地化数据）
@@ -2108,6 +2111,19 @@ public class BankSlipServiceImpl implements BankSlipService {
     void saveBankSlipClaimDOAndBankSlipDetailOperationLog(BankSlipDO bankSlipDO, BankSlipClaim bankSlipClaim, List<ClaimParam> claimParamList, BankSlipDetailDO bankSlipDetailDO, Long currentTimeMillis, Date now) {
 
         StringBuffer stringBuffer = new StringBuffer("");
+        Set<String> hashSet = new HashSet<>();
+        for (ClaimParam claimParam : claimParamList) {
+            hashSet.add(claimParam.getCustomerNo());
+        }
+
+        Map<String, CustomerCompanyDO> customerCompanyNoMap = null;
+        if(CollectionUtil.isNotEmpty(hashSet)){
+            List<CustomerCompanyDO> customerCompanyNoList = customerCompanyMapper.findByCustomerNoList(new ArrayList<>(hashSet));
+            if (CollectionUtil.isNotEmpty(customerCompanyNoList)) {
+                customerCompanyNoMap = ListUtil.listToMap(customerCompanyNoList, "customerNo");
+            }
+        }
+
         for (ClaimParam claimParam : claimParamList) {
             BankSlipClaimDO bankSlipClaimDO = ConverterUtil.convert(claimParam, BankSlipClaimDO.class);
             bankSlipClaimDO.setBankSlipDetailId(bankSlipClaim.getBankSlipDetailId());
@@ -2121,7 +2137,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             bankSlipClaimDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             bankSlipClaimDO.setUpdateTime(now);
             bankSlipClaimMapper.save(bankSlipClaimDO);
-            stringBuffer.append(("".equals(String.valueOf(stringBuffer)) ? "" : ",") + "手动认领(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",(认领人：" + userSupport.getCurrentUserCompany().getSubCompanyName() + "  " + userSupport.getCurrentUser().getRoleList().get(0).getDepartmentName() + "  " + userSupport.getCurrentUser().getRealName() + ",客户编号：" + bankSlipClaimDO.getCustomerNo() + ",认领时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",认领：" + bankSlipClaimDO.getClaimAmount() + "元)");
+            stringBuffer.append(("".equals(String.valueOf(stringBuffer)) ? "" : ",") + "手动认领(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",(认领人：" + userSupport.getCurrentUserCompany().getSubCompanyName() + "  " + userSupport.getCurrentUser().getRoleList().get(0).getDepartmentName() + "  " + userSupport.getCurrentUser().getRealName() + ",客户名称：" + (customerCompanyNoMap == null ? "":customerCompanyNoMap.get(bankSlipClaimDO.getCustomerNo()).getCompanyName()) + ",认领时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",认领：" + bankSlipClaimDO.getClaimAmount() + "元)");
         }
         // 添加操作日志
         BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
