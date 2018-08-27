@@ -5,6 +5,7 @@ import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerCompanyDO;import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 @Repository
@@ -41,4 +42,6 @@ public interface CustomerCompanyMapper extends BaseMysqlDAO<CustomerCompanyDO> {
 	 * @return
 	 */
 	CustomerCompanyDTO findParentCustomerByCustomerId(@Param("customerId") Integer customerId);
+
+	List<CustomerCompanyDO>  findByCustomerNoList(@Param("list") List<String> companyNoList);
 }

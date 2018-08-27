@@ -373,4 +373,11 @@
 		</foreach>
 	</update>
 
+
+	<select id="findByCustomerNoList" resultMap="CustomerCompanyDO" >
+		SELECT * FROM `erp_customer_company` ecc WHERE ecc.data_status = 1 AND ecc.customer_no IN
+		<foreach collection="list" index="index" item="customerNo" open="(" separator="," close=")">
+			#{customerNo,jdbcType=VARCHAR}
+		</foreach>
+	</select>
 </mapper>
