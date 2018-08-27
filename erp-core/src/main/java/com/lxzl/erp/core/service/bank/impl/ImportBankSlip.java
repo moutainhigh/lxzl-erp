@@ -601,7 +601,7 @@ public class ImportBankSlip {
         }
         return bankSipAutomaticClaimMap;
     }
-    private Map<String, CustomerCompanyDO> getCustomerCompanyNoMap(Set<String> customerNoSet) {
+    public Map<String, CustomerCompanyDO> getCustomerCompanyNoMap(Set<String> customerNoSet) {
         Map<String, CustomerCompanyDO> customerCompanyNoMap = null;
         if(CollectionUtil.isNotEmpty(customerNoSet)){
             List<CustomerCompanyDO> customerCompanyNoList = customerCompanyMapper.findByCustomerNoList(new ArrayList<>(customerNoSet));
