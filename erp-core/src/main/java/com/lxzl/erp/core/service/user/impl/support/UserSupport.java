@@ -179,6 +179,21 @@ public class UserSupport {
         }
         return false;
     }
+    /**
+     * 仓库人员
+     */
+    public boolean isWarehousePerson() {
+        List<Role> userRoleList = getCurrentUser().getRoleList();
+        if (CollectionUtil.isNotEmpty(userRoleList)) {
+            for (Role role : userRoleList) {
+                DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
+                if (DepartmentType.DEPARTMENT_TYPE_WAREHOUSE.equals(departmentDO.getDepartmentType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * 是否是财务人员
