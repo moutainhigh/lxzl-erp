@@ -1,6 +1,7 @@
 package com.lxzl.erp.core.service.Job;
 
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.job.AutomaticUnknownBankSlipDetailRequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,5 +11,5 @@ import javax.servlet.http.HttpServletRequest;
  * @Time : Created in 14:00
  */
 public interface JobService {
-    ServiceResult<String,String> automaticUnknownBankSlipDetail(HttpServletRequest request);
+    ServiceResult<String,String> automaticUnknownBankSlipDetail(AutomaticUnknownBankSlipDetailRequestParam automaticUnknownBankSlipDetailRequestParam, HttpServletRequest request);
 }

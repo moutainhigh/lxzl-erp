@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.bank.BankSlipDetailOperationLogQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
 import com.lxzl.erp.common.domain.bank.pojo.*;
+import com.lxzl.erp.common.domain.job.AutomaticUnknownBankSlipDetailRequestParam;
 import com.lxzl.erp.common.domain.payment.AddOnlineBankSlipQueryParam;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
 
@@ -189,6 +190,6 @@ public interface BankSlipService {
      * 3天未认领数据自动流入公海
      * @Author : xiao
      */
-    void automaticUnknownBankSlipDetail();
+    void automaticUnknownBankSlipDetail(AutomaticUnknownBankSlipDetailRequestParam automaticUnknownBankSlipDetailRequestParam);
 }
 
