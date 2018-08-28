@@ -230,6 +230,12 @@
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayEnd != null">
 				<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=TIMESTAMP} ]]>
 			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeAmountStart != null">
+				<![CDATA[ and ebsd.trade_amount >= #{maps.bankSlipDetailQueryParam.tradeAmountStart,jdbcType=DECIMAL} ]]>
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeAmountEnd != null">
+				<![CDATA[ and ebsd.trade_amount <= #{maps.bankSlipDetailQueryParam.tradeAmountEnd,jdbcType=DECIMAL} ]]>
+			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
 			</if>
@@ -304,6 +310,12 @@
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayEnd != null">
 				<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeAmountStart != null">
+				<![CDATA[ and ebsd.trade_amount >= #{maps.bankSlipDetailQueryParam.tradeAmountStart,jdbcType=DECIMAL} ]]>
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeAmountEnd != null">
+				<![CDATA[ and ebsd.trade_amount <= #{maps.bankSlipDetailQueryParam.tradeAmountEnd,jdbcType=DECIMAL} ]]>
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
