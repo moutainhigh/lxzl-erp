@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.Job.impl;
 
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.job.AutomaticUnknownBankSlipDetailRequestParam;
 import com.lxzl.erp.core.service.Job.JobService;
 import com.lxzl.erp.core.service.Job.impl.support.JobSupport;
 import com.lxzl.erp.core.service.bank.BankSlipService;
@@ -30,7 +31,7 @@ public class JobServiceImpl implements JobService{
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> automaticUnknownBankSlipDetail(HttpServletRequest request) {
+    public ServiceResult<String, String> automaticUnknownBankSlipDetail(AutomaticUnknownBankSlipDetailRequestParam automaticUnknownBankSlipDetailRequestParam,HttpServletRequest request) {
 
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         ServiceResult<String, String> verifyServiceResult = JobSupport.verifyAppIdAndAppSecret(request);
@@ -38,7 +39,7 @@ public class JobServiceImpl implements JobService{
             serviceResult.setErrorCode(verifyServiceResult.getErrorCode());
             return serviceResult;
         }
-        bankSlipService.automaticUnknownBankSlipDetail();
+        bankSlipService.automaticUnknownBankSlipDetail(automaticUnknownBankSlipDetailRequestParam);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }

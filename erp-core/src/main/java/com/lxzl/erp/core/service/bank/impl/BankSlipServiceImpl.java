@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.*;
 import com.lxzl.erp.common.domain.bank.pojo.*;
 import com.lxzl.erp.common.domain.bank.pojo.dto.BankSipAutomaticClaimDTO;
+import com.lxzl.erp.common.domain.job.AutomaticUnknownBankSlipDetailRequestParam;
 import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
 import com.lxzl.erp.common.util.*;
@@ -1530,10 +1531,11 @@ public class BankSlipServiceImpl implements BankSlipService {
      */
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
-    public void automaticUnknownBankSlipDetail() {
+    public void automaticUnknownBankSlipDetail(AutomaticUnknownBankSlipDetailRequestParam automaticUnknownBankSlipDetailRequestParam) {
         //查询总公司所有已当前时间起三天未认领数据
         Date now = new Date();
-        Date threeDaysAgo = DateUtil.getDayByCurrentOffset(-3);
+        Integer timeInterval = automaticUnknownBankSlipDetailRequestParam.getTimeInterval();
+        Date threeDaysAgo = DateUtil.getDayByCurrentOffset(-1 * (timeInterval == null ? 0: timeInterval));
 
         List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDetailMapper.findByThreeDaysAgo(threeDaysAgo);
         String userId = CommonConstant.SUPER_USER_ID.toString();

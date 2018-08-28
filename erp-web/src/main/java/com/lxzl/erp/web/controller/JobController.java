@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.TaskSchedulerSystemConfig;
+import com.lxzl.erp.common.domain.job.AutomaticUnknownBankSlipDetailRequestParam;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.Job.JobService;
@@ -52,8 +53,8 @@ public class JobController {
 
 
     @RequestMapping(value = "automaticUnknownBankSlipDetail",method = RequestMethod.POST)
-    public Result automaticUnknownBankSlipDetail(HttpServletRequest request){
-        ServiceResult<String,String> serviceResult =  jobService.automaticUnknownBankSlipDetail(request);
+    public Result automaticUnknownBankSlipDetail(@RequestBody AutomaticUnknownBankSlipDetailRequestParam automaticUnknownBankSlipDetailRequestParam, HttpServletRequest request){
+        ServiceResult<String,String> serviceResult =  jobService.automaticUnknownBankSlipDetail(automaticUnknownBankSlipDetailRequestParam,request);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 
