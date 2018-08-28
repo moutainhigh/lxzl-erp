@@ -94,6 +94,9 @@
         <if test="maps.k3ReturnOrderQueryParam.createUserName != null &amp;&amp; maps.k3ReturnOrderQueryParam.createUserName != ''">
             INNER JOIN erp_user eu ON eu.id = ekro.create_user
         </if>
+        <if test="maps.permissionParam.permissionSubCompanyIdForDelivery!= null &amp;&amp; maps.permissionParam.permissionUserIdList!= null">
+            INNER JOIN erp_customer ec ON ec.customer_no = ekro.k3_customer_no
+        </if>
         <where>
             <if test="maps.k3ReturnOrderQueryParam.createUserName != null &amp;&amp; maps.k3ReturnOrderQueryParam.createUserName != ''">
                 and eu.real_name like CONCAT('%','${maps.k3ReturnOrderQueryParam.createUserName}','%' )
@@ -143,6 +146,9 @@
         </if>
         <if test="maps.k3ReturnOrderQueryParam.createUserName != null &amp;&amp; maps.k3ReturnOrderQueryParam.createUserName != ''">
             INNER JOIN erp_user eu ON eu.id = ekro.create_user
+        </if>
+        <if test="maps.permissionParam.permissionSubCompanyIdForDelivery!= null &amp;&amp; maps.permissionParam.permissionUserIdList!= null">
+            INNER JOIN erp_customer ec ON ec.customer_no = ekro.k3_customer_no
         </if>
         <where>
             <if test="maps.k3ReturnOrderQueryParam.createUserName != null &amp;&amp; maps.k3ReturnOrderQueryParam.createUserName != ''">

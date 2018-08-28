@@ -382,7 +382,13 @@
 					<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
 							 separator="," close=")">
 						#{item}
-					</foreach>)
+					</foreach>
+					OR ec.id in
+					<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+							 separator="," close=")">
+						#{item}
+					</foreach>
+					)
 				</if>
 				<if test="maps.permissionParam.permissionSubCompanyIdForDelivery!= null &amp;&amp; maps.permissionParam.permissionUserIdList== null">
 					AND ekro.delivery_sub_company_id = #{maps.permissionParam.permissionSubCompanyIdForDelivery}
