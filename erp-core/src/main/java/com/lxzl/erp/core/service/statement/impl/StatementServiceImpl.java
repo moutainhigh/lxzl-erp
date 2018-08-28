@@ -4727,9 +4727,10 @@ public class StatementServiceImpl implements StatementService {
 
             //押金结算(退货押金直接扣除)
             if (ifDealDeposit && StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
-                BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), returnCount);
-                BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), returnCount);
-                reStatementOrderSubDeposit(loginUserId, returnTime, currentTime, statementOrderDetailDO, thisReturnRentDepositAmount, thisReturnDepositAmount);
+//                BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), returnCount);
+//                BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), returnCount);
+//                reStatementOrderSubDeposit(loginUserId, returnTime, currentTime, statementOrderDetailDO, thisReturnRentDepositAmount, thisReturnDepositAmount,k3ReturnOrderDetailDO);
+                deleteDepositReturnRecord(k3ReturnOrderDetailDO);
                 continue;
             }
             statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
@@ -4829,9 +4830,10 @@ public class StatementServiceImpl implements StatementService {
                     continue;
                 //押金结算不处理
                 if (ifDealDeposit && StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
-                    BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getRentDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
-                    BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
-                    reStatementOrderSubDeposit(loginUserId, returnTime, currentTime, statementOrderDetailDO, thisReturnRentDepositAmount, thisReturnDepositAmount);
+//                    BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getRentDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
+//                    BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
+//                    reStatementOrderSubDeposit(loginUserId, returnTime, currentTime, statementOrderDetailDO, thisReturnRentDepositAmount, thisReturnDepositAmount,k3ReturnOrderDetailDO);
+                    deleteDepositReturnRecord(k3ReturnOrderDetailDO);
                     continue;
                 }
 
@@ -4900,7 +4902,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     /**
-     * 重算时减去退货的押金（临时解决方案）
+     * 重算时减去退货的押金（临时解决方案） 改为 重算押金以订单原额重新续交
      *
      * @param loginUserId
      * @param returnTime
@@ -4909,26 +4911,39 @@ public class StatementServiceImpl implements StatementService {
      * @param thisReturnRentDepositAmount
      * @param thisReturnDepositAmount
      */
-    private void reStatementOrderSubDeposit(Integer loginUserId, Date returnTime, Date currentTime, StatementOrderDetailDO statementOrderDetailDO, BigDecimal thisReturnRentDepositAmount, BigDecimal thisReturnDepositAmount) {
-        StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
-        if (BigDecimalUtil.compare(thisReturnDepositAmount, BigDecimal.ZERO) > 0) {
-            statementOrderDetailDO.setStatementDetailDepositAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositAmount(), thisReturnDepositAmount));
-            statementOrderDetailDO.setStatementDetailDepositReturnTime(currentTime);
-            statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(), thisReturnDepositAmount));
-            statementOrderDO.setStatementDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementDepositAmount(), thisReturnDepositAmount));
-            statementOrderDO.setStatementAmount(BigDecimalUtil.sub(statementOrderDO.getStatementAmount(), thisReturnDepositAmount));
-            statementReturnSupport.saveStatementReturnRecord(statementOrderDO.getId(), statementOrderDO.getCustomerId(), statementOrderDetailDO.getOrderId(), statementOrderDetailDO.getOrderItemReferId(), StatementReturnType.RETURN_TYPE_DEPOSIT, thisReturnDepositAmount, returnTime, loginUserId, currentTime);
+ //   private void reStatementOrderSubDeposit(Integer loginUserId, Date returnTime, Date currentTime, StatementOrderDetailDO statementOrderDetailDO, BigDecimal thisReturnRentDepositAmount, BigDecimal thisReturnDepositAmount,K3ReturnOrderDetailDO k3ReturnOrderDetailDO) {
+//        StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
+//        if (BigDecimalUtil.compare(thisReturnDepositAmount, BigDecimal.ZERO) > 0) {
+//            statementOrderDetailDO.setStatementDetailDepositAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositAmount(), thisReturnDepositAmount));
+//            statementOrderDetailDO.setStatementDetailDepositReturnTime(currentTime);
+//            statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(), thisReturnDepositAmount));
+//            statementOrderDO.setStatementDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementDepositAmount(), thisReturnDepositAmount));
+//            statementOrderDO.setStatementAmount(BigDecimalUtil.sub(statementOrderDO.getStatementAmount(), thisReturnDepositAmount));
+//            statementReturnSupport.saveStatementReturnRecord(statementOrderDO.getId(), statementOrderDO.getCustomerId(), statementOrderDetailDO.getOrderId(), statementOrderDetailDO.getOrderItemReferId(), StatementReturnType.RETURN_TYPE_DEPOSIT, thisReturnDepositAmount, returnTime, loginUserId, currentTime);
+//        }
+//        if (BigDecimalUtil.compare(thisReturnRentDepositAmount, BigDecimal.ZERO) > 0) {
+//            statementOrderDetailDO.setStatementDetailRentDepositAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositAmount(), thisReturnRentDepositAmount));
+//            statementOrderDetailDO.setStatementDetailRentDepositReturnTime(currentTime);
+//            statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(), thisReturnRentDepositAmount));
+//            statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositAmount(), thisReturnRentDepositAmount));
+//            statementOrderDO.setStatementAmount(BigDecimalUtil.sub(statementOrderDO.getStatementAmount(), thisReturnRentDepositAmount));
+//            statementReturnSupport.saveStatementReturnRecord(statementOrderDO.getId(), statementOrderDO.getCustomerId(), statementOrderDetailDO.getOrderId(), statementOrderDetailDO.getOrderItemReferId(), StatementReturnType.RETURN_TYPE_RENT_DEPOSIT, thisReturnRentDepositAmount, returnTime, loginUserId, currentTime);
+//        }
+//        statementOrderDetailMapper.update(statementOrderDetailDO);
+//        statementOrderMapper.update(statementOrderDO);
+
+ //   }
+
+    /**
+     * 删除退押金记录
+     * @param k3ReturnOrderDetailDO
+     */
+    private void deleteDepositReturnRecord(K3ReturnOrderDetailDO k3ReturnOrderDetailDO){
+        //删除退押金记录
+        List<StatementOrderReturnDetailDO> returnDetailDOS=statementOrderReturnDetailMapper.findByReturnOrderDetailId(k3ReturnOrderDetailDO.getId());
+        if(CollectionUtil.isNotEmpty(returnDetailDOS)){
+            statementOrderReturnDetailMapper.batchDelete(returnDetailDOS);
         }
-        if (BigDecimalUtil.compare(thisReturnRentDepositAmount, BigDecimal.ZERO) > 0) {
-            statementOrderDetailDO.setStatementDetailRentDepositAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositAmount(), thisReturnRentDepositAmount));
-            statementOrderDetailDO.setStatementDetailRentDepositReturnTime(currentTime);
-            statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(), thisReturnRentDepositAmount));
-            statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositAmount(), thisReturnRentDepositAmount));
-            statementOrderDO.setStatementAmount(BigDecimalUtil.sub(statementOrderDO.getStatementAmount(), thisReturnRentDepositAmount));
-            statementReturnSupport.saveStatementReturnRecord(statementOrderDO.getId(), statementOrderDO.getCustomerId(), statementOrderDetailDO.getOrderId(), statementOrderDetailDO.getOrderItemReferId(), StatementReturnType.RETURN_TYPE_RENT_DEPOSIT, thisReturnRentDepositAmount, returnTime, loginUserId, currentTime);
-        }
-        statementOrderDetailMapper.update(statementOrderDetailDO);
-        statementOrderMapper.update(statementOrderDO);
     }
 
     /**

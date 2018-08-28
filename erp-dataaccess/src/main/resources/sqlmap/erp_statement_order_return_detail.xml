@@ -120,4 +120,9 @@
 		#{item.id,jdbcType=INTEGER}
 	    </foreach>
 	</update>
+
+	<select id="findByReturnOrderDetailId" resultMap="StatementOrderReturnDetailDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statement_order_return_detail esord
+		WHERE esord.return_order_detail_id = #{returnOrderDetailId, jdbcType=INTEGER} AND esord.data_status = 1
+	</select>
 </mapper>
