@@ -78,7 +78,7 @@ public class ImportNanJingBank {
                     if (("贷方发生额".equals(value)) ||
                             ("查询账号[ Inquirer account number ]".equals(value)) ||
                             ("借方发生额".equals(value)) ||
-                            ("流水号".equals(value)) ||
+                            ("柜员流水号".equals(value)) ||
                             ("对方账号".equals(value)) ||
                             ("备注信息".equals(value)) ||
                             ("交易日期".equals(value)) ||
@@ -111,7 +111,7 @@ public class ImportNanJingBank {
                             debtorAccountNo = y;
                             continue ccc;
                         }
-                        if ("流水号".equals(value)) {
+                        if ("柜员流水号".equals(value)) {
                             paySerialNumberNo = y;
                             continue ccc;
                         }
@@ -156,10 +156,12 @@ public class ImportNanJingBank {
 
 
                     bankSlipDetailDO = new BankSlipDetailDO();
+                    debtorAccount = debtorAccount.replaceAll(",","");
+                    tradeAmount = tradeAmount.replaceAll(",","");
                     try {
-                        if (!"".equals(debtorAccount)) {
+                        if (!"".equals(debtorAccount) && !("0.00".equals(debtorAccount))) {
                             bankSlipDetailDO.setTradeAmount(new BigDecimal(debtorAccount));
-                        } else if (!"".equals(tradeAmount)) {
+                        } else if (!"".equals(tradeAmount) && !("0.00".equals(tradeAmount))) {
                             bankSlipDetailDO.setTradeAmount(new BigDecimal(tradeAmount));
                         }
 
@@ -181,9 +183,9 @@ public class ImportNanJingBank {
                     bankSlipDetailDO.setTradeSerialNo(tradeSerialNo);
                     bankSlipDetailDO.setPayerName(payerName);
                     bankSlipDetailDO.setTradeMessage(tradeMessage);
-                    if (!("".equals(debtorAccount))) {
+                    if (!("".equals(debtorAccount)) && !("0.00".equals(debtorAccount))) {
                         bankSlipDetailDO.setLoanSign(LoanSignType.EXPENDITURE);
-                    } else if (!("".equals(tradeAmount))) {
+                    } else if (!("".equals(tradeAmount)) && !("0.00".equals(tradeAmount))) {
                         bankSlipDetailDO.setLoanSign(LoanSignType.INCOME);
                         //进款比数
                         inCount = inCount + 1;

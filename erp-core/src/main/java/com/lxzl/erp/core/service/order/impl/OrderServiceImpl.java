@@ -5,6 +5,7 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.dto.CustomerCompanyDTO;
+import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryByCustomerNoParam;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
@@ -2288,7 +2289,7 @@ public class OrderServiceImpl implements OrderService {
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, orderDO.getId());
         Map<Integer, StatementOrderDO> statementOrderDOMap = statementOrderSupport.getStatementOrderByDetails(statementOrderDetailDOList);
         //审核中或者待发货订单，处理风控额度及结算单
-        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
+         if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
                 OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus()) ||
                 OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())) {
             //恢复信用额度
@@ -2297,7 +2298,13 @@ public class OrderServiceImpl implements OrderService {
                 customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.FORCE_CANCEL_ORDER_TYPE, orderDO.getOrderNo(), "");
             }
             statementOrderSupport.reStatement(currentTime, statementOrderDOMap, statementOrderDetailDOList);
-        }
+             //强制取消后，更新结算单状态
+             for (Integer key : statementOrderDOMap.keySet()) {
+                 StatementOrderDO statementOrderDO = statementOrderDOMap.get(key);
+                 statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                 statementOrderMapper.update(statementOrderDO);
+             }
+         }
         orderDO.setCancelOrderReasonType(cancelOrderReasonType);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
         orderDO.setUpdateTime(currentTime);
@@ -2342,6 +2349,12 @@ public class OrderServiceImpl implements OrderService {
             }
             //处理结算单总状态及已支付金额
             statementOrderSupport.reStatementPaid(statementOrderDOMap, statementOrderDetailDOList);
+            //强制取消后，更新结算单状态
+            for (Integer key : statementOrderDOMap.keySet()) {
+                StatementOrderDO statementOrderDO = statementOrderDOMap.get(key);
+                statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                statementOrderMapper.update(statementOrderDO);
+            }
             String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(), rentPaidAmount, BigDecimalUtil.addAll(otherPaidAmount, overduePaidAmount, penaltyPaidAmount)
                     , rentDepositPaidAmount, depositPaidAmount, "超级管理员强制取消已支付订单，已支付金额退还到客户余额");
             if (!ErrorCode.SUCCESS.equals(returnCode)) {
@@ -2763,6 +2776,18 @@ public class OrderServiceImpl implements OrderService {
         result.setResult(page);
         return result;
     }
+
+    @Override
+    public ServiceResult<String, List<Order>> queryAllOrderByCustomerNo(InterfaceOrderQueryByCustomerNoParam interfaceOrderQueryParam) {
+        ServiceResult<String, List<Order>> result = new ServiceResult<>();
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("orderQueryParam", interfaceOrderQueryParam);
+        List<OrderDO> orderDOList = orderMapper.findOrderByCustomerNo(maps);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(ConverterUtil.convertList(orderDOList, Order.class));
+        return result;
+    }
+
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
