@@ -383,7 +383,7 @@
 							 separator="," close=")">
 						#{item}
 					</foreach>
-					OR ec.id in
+					OR ec.create_user in
 					<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
 							 separator="," close=")">
 						#{item}
