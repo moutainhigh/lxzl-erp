@@ -1535,10 +1535,6 @@ public class BankSlipServiceImpl implements BankSlipService {
         Date now = new Date();
         Date threeDaysAgo = DateUtil.getDayByCurrentOffset(-3);
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm;ss");
-        String format = simpleDateFormat.format(threeDaysAgo);
-        System.out.println(format);
-
         List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDetailMapper.findByThreeDaysAgo(threeDaysAgo);
         String userId = CommonConstant.SUPER_USER_ID.toString();
         if (CollectionUtil.isNotEmpty(bankSlipDetailDOList)) {
@@ -1552,7 +1548,7 @@ public class BankSlipServiceImpl implements BankSlipService {
                 BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
                 bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
                 bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.UNKNOWN);
-                bankSlipDetailOperationLogDO.setOperationContent("属地化到流水公海--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",属地化人：系统  ，属地化时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now));
+                bankSlipDetailOperationLogDO.setOperationContent("公开到流水公海--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",属地化人：系统  ，属地化时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now));
                 bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 bankSlipDetailOperationLogDO.setCreateTime(now);
                 bankSlipDetailOperationLogDO.setCreateUser(userId);
