@@ -1240,7 +1240,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
         bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
         bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.UNKNOWN);
-        bankSlipDetailOperationLogDO.setOperationContent("属地化到流水公海--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",属地化人：" + userSupport.getCurrentUserCompany().getSubCompanyName() + "  " + userSupport.getCurrentUser().getRoleList().get(0).getDepartmentName() + "  " + userSupport.getCurrentUser().getRealName() + "，属地化时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now));
+        bankSlipDetailOperationLogDO.setOperationContent("公开到流水公海--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",属地化人：" + userSupport.getCurrentUserCompany().getSubCompanyName() + "  " + userSupport.getCurrentUser().getRoleList().get(0).getDepartmentName() + "  " + userSupport.getCurrentUser().getRealName() + "，属地化时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now));
         bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         bankSlipDetailOperationLogDO.setCreateTime(now);
         bankSlipDetailOperationLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
@@ -1363,16 +1363,16 @@ public class BankSlipServiceImpl implements BankSlipService {
                 bankSlipClaimDO.setUpdateTime(now);
                 newBankSlipClaimDOList.add(bankSlipClaimDO);
             }
-            // 添加操作日志
-            BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
-            bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
-            bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.RECHARGE);
-            bankSlipDetailOperationLogDO.setOperationContent(String.valueOf(stringBuffer));
-            bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            bankSlipDetailOperationLogDO.setCreateTime(now);
-            bankSlipDetailOperationLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
-            bankSlipDetailOperationLogDOList.add(bankSlipDetailOperationLogDO);
         }
+        // 添加操作日志
+        BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
+        bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
+        bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.RECHARGE);
+        bankSlipDetailOperationLogDO.setOperationContent(String.valueOf(stringBuffer));
+        bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        bankSlipDetailOperationLogDO.setCreateTime(now);
+        bankSlipDetailOperationLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        bankSlipDetailOperationLogDOList.add(bankSlipDetailOperationLogDO);
 
         //银行对公流水明细记录变为已确定
         bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.CONFIRMED);
