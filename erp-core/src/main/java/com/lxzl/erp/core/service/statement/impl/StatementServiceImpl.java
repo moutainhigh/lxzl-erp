@@ -376,6 +376,11 @@ public class StatementServiceImpl implements StatementService {
                 if (orderStatementDateSplitDO.getStatementDateChangeTime().compareTo(reletOrderDO.getRentStartTime()) <= 0)
                     reletOrderDO.setStatementDate(orderStatementDateSplitDO.getAfterStatementDate());
             }
+            //如果续租单的续租期数小于等于0
+            if ((null != reletOrderDO.getReletOrderProductDOList() && reletOrderDO.getReletOrderProductDOList().get(0).getPaymentCycle() <=0)
+                    || (null != reletOrderDO.getReletOrderMaterialDOList() && reletOrderDO.getReletOrderMaterialDOList().get(0).getPaymentCycle() <= 0)) {
+                isNeedAlign = false;
+            }
             //获取当前续租是否结算单对齐
             if (isNeedAlign){
                 isNeedAlign = isNeedAlignStatement(reletOrderDO.getOrderId(), reletOrderDO.getRentType());
