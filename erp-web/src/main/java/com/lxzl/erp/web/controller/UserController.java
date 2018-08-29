@@ -16,6 +16,7 @@ import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.web.util.NetworkUtil;
 import com.lxzl.se.common.domain.Result;
+import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,7 +173,7 @@ public class UserController extends BaseController {
                     Object user = session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
                     if (null != user) {
                         User userInfo = (User) user;
-                        if (null != userMap.get(userInfo.getUserName()))
+                        if (null != userMap.get(userInfo.getUserName())||StringUtil.isEmpty(userInfo.getUserName()))
                             continue;
                         userMap.put(userInfo.getUserName(),userInfo.getUserName());
                         Map<String, Object> userInfoMap = new HashMap<>();//采用map封装一行数据，然后放在list 中去，就是一个表的数据
