@@ -174,6 +174,7 @@ public class UserController extends BaseController {
                         User userInfo = (User) user;
                         if (null != userMap.get(userInfo.getUserName()))
                             continue;
+                        userMap.put(userInfo.getUserName(),userInfo.getUserName());
                         Map<String, Object> userInfoMap = new HashMap<>();//采用map封装一行数据，然后放在list 中去，就是一个表的数据
                         //userInfoMap.put("id", session.getId());//获取session的id
                         userInfoMap.put("createTime", session.getCreationTime());//创建的时间.传过去的是date类型我们前台进行解析，显示出来
