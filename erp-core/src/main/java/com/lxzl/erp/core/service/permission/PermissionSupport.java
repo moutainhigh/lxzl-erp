@@ -139,7 +139,7 @@ public class PermissionSupport {
      * @return
      */
     public Integer getCanAccessSubCompanyForWarehouse(Integer userId) {
-        if (userSupport.isWarehousePerson()) {
+        if (userSupport.isDepartmentPerson()) {
             return userSupport.getCompanyIdByUser(userId);
         }
         return null;
