@@ -158,19 +158,22 @@ public class UserController extends BaseController {
      * @return
      */
     @RequestMapping(value = "onLineUserInfo", method = RequestMethod.POST)
-    public Result onLineUserInfo(HttpServletRequest request,@RequestBody UserOnLineQueryParam userOnLineQueryParam) {
+    public Result onLineUserInfo(HttpServletRequest request, @RequestBody UserOnLineQueryParam userOnLineQueryParam) {
         ServiceResult<String, Page<Map<String, Object>>> result = new ServiceResult<>();
         List<Map<String, Object>> userlist = new ArrayList<>();//采用list装数据
         HttpSession httpSession = request.getSession();
         if (null != httpSession) {
             Map<String, HttpSession> onLineList = (Map<String, HttpSession>) httpSession.getServletContext().getAttribute("onLineMap");
             Iterator<Map.Entry<String, HttpSession>> it = onLineList.entrySet().iterator();
+            Map<String, String> userMap = new HashMap<>();
             while (it.hasNext()) {
                 HttpSession session = it.next().getValue();//拿到单个的session对象了
                 if (null != session) {
                     Object user = session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
                     if (null != user) {
                         User userInfo = (User) user;
+                        if (null != userMap.get(userInfo.getUserName()))
+                            continue;
                         Map<String, Object> userInfoMap = new HashMap<>();//采用map封装一行数据，然后放在list 中去，就是一个表的数据
                         //userInfoMap.put("id", session.getId());//获取session的id
                         userInfoMap.put("createTime", session.getCreationTime());//创建的时间.传过去的是date类型我们前台进行解析，显示出来
@@ -198,8 +201,8 @@ public class UserController extends BaseController {
                 }
             };
             Collections.sort(userlist, c);
-            int pageStar=(userOnLineQueryParam.getPageNo() - 1) * userOnLineQueryParam.getPageSize();
-            List<Map<String, Object>> pageList=userlist.subList(pageStar,count-pageStar>userOnLineQueryParam.getPageSize()?pageStar+userOnLineQueryParam.getPageSize():count);
+            int pageStar = (userOnLineQueryParam.getPageNo() - 1) * userOnLineQueryParam.getPageSize();
+            List<Map<String, Object>> pageList = userlist.subList(pageStar, count - pageStar > userOnLineQueryParam.getPageSize() ? pageStar + userOnLineQueryParam.getPageSize() : count);
             Page<Map<String, Object>> page = new Page<>(pageList, count, userOnLineQueryParam.getPageNo(), userOnLineQueryParam.getPageSize());
             result.setResult(page);
             result.setErrorCode(ErrorCode.SUCCESS);
@@ -255,7 +258,7 @@ public class UserController extends BaseController {
                     User userInfo = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
                     if (name.equals(userInfo.getUserName())) {
                         session.invalidate();
-                        break;
+                        //break;
                     }
                 }
             }
