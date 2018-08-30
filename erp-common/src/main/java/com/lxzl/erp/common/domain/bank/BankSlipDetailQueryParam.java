@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePageParam;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -27,6 +28,24 @@ public class BankSlipDetailQueryParam extends BasePageParam {
     private String tradeSerialNo;   //交易流水号
     private Integer ownerSubCompanyId; //数据归属化公司
     private Integer subCompanyId; //属地化分公司
+    private BigDecimal tradeAmountStart; //查询起始交易金额
+    private BigDecimal tradeAmountEnd; //查询结束交易金额
+
+    public BigDecimal getTradeAmountStart() {
+        return tradeAmountStart;
+    }
+
+    public void setTradeAmountStart(BigDecimal tradeAmountStart) {
+        this.tradeAmountStart = tradeAmountStart;
+    }
+
+    public BigDecimal getTradeAmountEnd() {
+        return tradeAmountEnd;
+    }
+
+    public void setTradeAmountEnd(BigDecimal tradeAmountEnd) {
+        this.tradeAmountEnd = tradeAmountEnd;
+    }
 
     public Integer getOwnerSubCompanyId() {
         return ownerSubCompanyId;

@@ -99,7 +99,7 @@
 			ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR}
 			or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
 			or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
-			or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}) THEN 1 = 1 ELSE 1=2 END )
+			or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}) THEN 1 = 1 ELSE 1=2 END ) OR ebsd.is_localization = 2
 			)
 		</if>
 	</select>
@@ -194,10 +194,10 @@
 	</update>
 
 	<select id="findBankSlipDetailDOCountByParams" resultType="Integer" parameterType="map">
-		SELECT  COUNT(DISTINCT ebsd.id) FROM erp_bank_slip_detail ebsd
+		SELECT sum(ebsdId) FROM ((SELECT COUNT(DISTINCT ebsd.id) AS ebsdId FROM erp_bank_slip_detail ebsd
 		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
-		LEFT JOIN  erp_bank_slip_claim ebsc ON ebsd.id = ebsc.bank_slip_detail_id AND ebsc.data_status = 1
-		LEFT JOIN  erp_customer ec ON ebsc.customer_no = ec.customer_no
+		LEFT JOIN erp_bank_slip_claim ebsc ON ebsd.id = ebsc.bank_slip_detail_id AND ebsc.data_status = 1
+		LEFT JOIN erp_customer ec ON ebsc.customer_no = ec.customer_no
 
 		<where>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.ownerSubCompanyId != null ">
@@ -230,13 +230,19 @@
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayEnd != null">
 				<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=TIMESTAMP} ]]>
 			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeAmountStart != null">
+				<![CDATA[ and ebsd.trade_amount >= #{maps.bankSlipDetailQueryParam.tradeAmountStart,jdbcType=DECIMAL} ]]>
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeAmountEnd != null">
+				<![CDATA[ and ebsd.trade_amount <= #{maps.bankSlipDetailQueryParam.tradeAmountEnd,jdbcType=DECIMAL} ]]>
+			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
 			</if>
-			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 0">
+			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 0">
 				and 1=2
 			</if>
-			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 1">
+			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 1">
 				and 1=1
 			</if>
 			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 2">
@@ -245,21 +251,28 @@
 			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 3">
 				and ebs.slip_status !=0 AND ebsd.detail_status != 5
 				AND (ebsd.detail_status = 1 OR ebsd.detail_status = 2 OR
-				( ebsd.detail_status = 3 and (ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR} or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
+				( ebsd.detail_status = 3 and (ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR} or ec.union_user =
+				#{maps.currentUser,jdbcType=VARCHAR}
 				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
 				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR})))
 			</if>
-			<if  test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
-				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND (ebs.slip_status = 1 OR ebs.slip_status = 2) AND ebsd.detail_status != 5) OR
-				( ebsd.detail_status = 3 and (ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR} or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
+			<if test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
+				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id =
+				#{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND (ebs.slip_status = 1 OR
+				ebs.slip_status = 2) AND ebsd.detail_status != 5) OR
+				( ebsd.detail_status = 3 and (ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR} or ec.union_user =
+				#{maps.currentUser,jdbcType=VARCHAR}
 				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
 				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR})))
-			</if>
+			</if>)
+			<if test="maps.bankSlipDetailQueryParam == null || maps.bankSlipDetailQueryParam.isLocalization == null || maps.bankSlipDetailQueryParam.isLocalization == 2">
+				UNION ALL <include refid="findUnknownBankSlipDetailDOCountByParams"/>
+			</if>) allCount
 		</where>
 </select>
 
 	<select id="findBankSlipDetailDOByParams" resultMap="BankSlipDetailDO" parameterType="map">
-		SELECT  result.*,escLocalization.sub_company_name AS subCompanyName,escOwner.sub_company_name AS ownerSubCompanyName,ek3mc.k3_customer_code AS k3CustomerNo,ebs.sub_company_id AS ownerSubCompanyId,ebs.bank_type AS bankSlipBankType,<include refid="claim_column_List"/>,ec.customer_name AS customerName,esc.sub_company_name AS customerSubCompanyName
+		(SELECT  result.*,escLocalization.sub_company_name AS subCompanyName,escOwner.sub_company_name AS ownerSubCompanyName,ek3mc.k3_customer_code AS k3CustomerNo,ebs.sub_company_id AS ownerSubCompanyId,ebs.bank_type AS bankSlipBankType,<include refid="claim_column_List"/>,ec.customer_name AS customerName,esc.sub_company_name AS customerSubCompanyName
 	  	FROM (SELECT  <include refid="column_List"/> FROM erp_bank_slip_detail ebsd
 		WHERE ebsd.id in (SELECT * FROM(
 		SELECT  ebsd.id FROM erp_bank_slip_detail ebsd
@@ -298,6 +311,12 @@
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayEnd != null">
 				<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=TIMESTAMP} ]]>
 			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeAmountStart != null">
+				<![CDATA[ and ebsd.trade_amount >= #{maps.bankSlipDetailQueryParam.tradeAmountStart,jdbcType=DECIMAL} ]]>
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeAmountEnd != null">
+				<![CDATA[ and ebsd.trade_amount <= #{maps.bankSlipDetailQueryParam.tradeAmountEnd,jdbcType=DECIMAL} ]]>
+			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
 			</if>
@@ -334,7 +353,10 @@
 		LEFT JOIN  erp_sub_company esc ON esc.id = ec.owner_sub_company_id  AND esc.data_status = 1
 		LEFT JOIN  erp_sub_company escOwner ON escOwner.id = ebs.sub_company_id AND escOwner.data_status = 1
 		LEFT JOIN  erp_sub_company escLocalization ON escLocalization.id = result.sub_company_id AND escLocalization.data_status = 1
-		LEFT JOIN   erp_k3_mapping_customer ek3mc ON ek3mc.erp_customer_code = ebsc.customer_no
+		LEFT JOIN   erp_k3_mapping_customer ek3mc ON ek3mc.erp_customer_code = ebsc.customer_no)
+		<if test="maps.bankSlipDetailQueryParam == null || maps.bankSlipDetailQueryParam.isLocalization == null || maps.bankSlipDetailQueryParam.isLocalization == 2">
+			UNION ALL <include refid="findUnknownBankSlipDetailDOByParams"/>
+		</if>
 	</select>
 
 	<select id="findClaimedByBankSlipId" resultMap="BankSlipDetailDO" parameterType="java.lang.Integer">
@@ -544,29 +566,47 @@
 		UPDATE erp_bank_slip ebs,erp_bank_slip_detail ebsd SET ebsd.detail_status = 1,ebs.claim_count=claim_count-1,ebs.need_claim_count=need_claim_count+1,ebsd.update_time = #{updateTime,jdbcType=TIMESTAMP},ebsd.update_user = #{updateUser,jdbcType=VARCHAR}  WHERE ebsd.bank_slip_id = ebs.id AND ebsd.id = #{bankSlipDetailId, jdbcType=INTEGER} AND ebs.data_status = 1 AND ebsd.data_status = 1
 	</update>
 
-	<select id="findUnknownBankSlipDetailDOCountByParams" resultType="Integer" parameterType="map">
-		SELECT COUNT(DISTINCT ebsd.id)  FROM erp_bank_slip_detail ebsd
+	<sql id="findUnknownBankSlipDetailDOCountByParams">
+		(SELECT COUNT(DISTINCT ebsd.id) FROM erp_bank_slip_detail ebsd
 		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
 		LEFT JOIN erp_bank_slip_claim ebsc ON ebsd.id = ebsc.bank_slip_detail_id AND ebsc.data_status = 1
 		LEFT JOIN erp_customer ec ON ebsc.customer_no = ec.customer_no
 		<where>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.ownerSubCompanyId != null ">
+				and ebs.sub_company_id = #{maps.bankSlipDetailQueryParam.ownerSubCompanyId,jdbcType=INTEGER}
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.subCompanyId != null ">
+				and ebsd.sub_company_id = #{maps.bankSlipDetailQueryParam.subCompanyId,jdbcType=INTEGER}
+			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != ''">
 				and ebsd.payer_name like CONCAT('%','${maps.bankSlipDetailQueryParam.payerName}','%' )
 			</if>
-			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.loanSign != null ">
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.loanSign != null">
 				and ebsd.loan_sign = #{maps.bankSlipDetailQueryParam.loanSign,jdbcType=INTEGER}
 			</if>
-			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.detailStatus != null">
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.detailStatus != null ">
 				and ebsd.detail_status = #{maps.bankSlipDetailQueryParam.detailStatus,jdbcType=INTEGER}
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.bankSlipId != null ">
+				and ebsd.bank_slip_id = #{maps.bankSlipDetailQueryParam.bankSlipId,jdbcType=INTEGER}
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeSerialNo != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeSerialNo != ''">
 				and ebsd.trade_serial_no = #{maps.bankSlipDetailQueryParam.tradeSerialNo,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.isLocalization != null ">
+				and ebsd.is_localization = #{maps.bankSlipDetailQueryParam.isLocalization,jdbcType=INTEGER}
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayStart != null">
 				<![CDATA[ and ebs.slip_day >= #{maps.bankSlipDetailQueryParam.slipDayStart,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayEnd != null">
 				<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeAmountStart != null">
+				<![CDATA[ and ebsd.trade_amount >= #{maps.bankSlipDetailQueryParam.tradeAmountStart,jdbcType=DECIMAL} ]]>
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeAmountEnd != null">
+				<![CDATA[ and ebsd.trade_amount <= #{maps.bankSlipDetailQueryParam.tradeAmountEnd,jdbcType=DECIMAL} ]]>
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
@@ -582,17 +622,17 @@
 			</if>
 			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 3">
 				and ebs.slip_status !=0 AND ebsd.detail_status != 5
-				AND (ebsd.detail_status = 1 OR ebsd.detail_status = 2 OR ( ebsd.detail_status = 3 and (ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR} or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
+				AND (ebsd.detail_status = 1 OR ebsd.detail_status = 2 OR ( ebsd.detail_status = 3 and (ec.OWNER =
+				#{maps.currentUser,jdbcType=VARCHAR} or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
 				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
 				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR})))
 			</if>
-			and ebsd.is_localization = 2 and ebs.sub_company_id = 1
-		</where>
+				AND (CASE WHEN ebs.slip_status = 1 THEN ebsd.is_localization = 2 ELSE 1 = 2 END )
+		</where>)
+	</sql>
 
-	</select>
-
-	<select id="findUnknownBankSlipDetailDOByParams" resultMap="BankSlipDetailDO" parameterType="map">
-		SELECT  result.*,escLocalization.sub_company_name AS subCompanyName,escOwner.sub_company_name AS ownerSubCompanyName,ek3mc.k3_customer_code AS k3CustomerNo,ebs.sub_company_id AS ownerSubCompanyId,ebs.bank_type AS bankSlipBankType,<include refid="claim_column_List"/>,ec.customer_name AS customerName,esc.sub_company_name AS customerSubCompanyName
+	<sql id="findUnknownBankSlipDetailDOByParams">
+		(SELECT  result.*,escLocalization.sub_company_name AS subCompanyName,escOwner.sub_company_name AS ownerSubCompanyName,ek3mc.k3_customer_code AS k3CustomerNo,ebs.sub_company_id AS ownerSubCompanyId,ebs.bank_type AS bankSlipBankType,<include refid="claim_column_List"/>,ec.customer_name AS customerName,esc.sub_company_name AS customerSubCompanyName
 		FROM (SELECT  <include refid="column_List"/> FROM erp_bank_slip_detail ebsd
 		WHERE ebsd.id in (SELECT * FROM(
 		SELECT  ebsd.id FROM erp_bank_slip_detail ebsd
@@ -601,6 +641,12 @@
 		LEFT JOIN  erp_customer ec ON ebsc.customer_no = ec.customer_no
 		LEFT JOIN  erp_sub_company esc ON esc.id = ec.owner_sub_company_id  AND esc.data_status = 1
 			<where>
+				<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.ownerSubCompanyId != null ">
+					and ebs.sub_company_id = #{maps.bankSlipDetailQueryParam.ownerSubCompanyId,jdbcType=INTEGER}
+				</if>
+				<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.subCompanyId != null ">
+					and ebsd.sub_company_id = #{maps.bankSlipDetailQueryParam.subCompanyId,jdbcType=INTEGER}
+				</if>
 				<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != ''">
 					and ebsd.payer_name like CONCAT('%','${maps.bankSlipDetailQueryParam.payerName}','%' )
 				</if>
@@ -610,14 +656,26 @@
 				<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.detailStatus != null ">
 					and ebsd.detail_status = #{maps.bankSlipDetailQueryParam.detailStatus,jdbcType=INTEGER}
 				</if>
+				<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.bankSlipId != null ">
+					and ebsd.bank_slip_id = #{maps.bankSlipDetailQueryParam.bankSlipId,jdbcType=INTEGER}
+				</if>
 				<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeSerialNo != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeSerialNo != ''">
 					and ebsd.trade_serial_no = #{maps.bankSlipDetailQueryParam.tradeSerialNo,jdbcType=VARCHAR}
+				</if>
+				<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.isLocalization != null ">
+					and ebsd.is_localization = #{maps.bankSlipDetailQueryParam.isLocalization,jdbcType=INTEGER}
 				</if>
 				<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayStart != null">
 					<![CDATA[ and ebs.slip_day >= #{maps.bankSlipDetailQueryParam.slipDayStart,jdbcType=TIMESTAMP} ]]>
 				</if>
 				<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayEnd != null">
 					<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=TIMESTAMP} ]]>
+				</if>
+				<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeAmountStart != null">
+					<![CDATA[ and ebsd.trade_amount >= #{maps.bankSlipDetailQueryParam.tradeAmountStart,jdbcType=DECIMAL} ]]>
+				</if>
+				<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeAmountEnd != null">
+					<![CDATA[ and ebsd.trade_amount <= #{maps.bankSlipDetailQueryParam.tradeAmountEnd,jdbcType=DECIMAL} ]]>
 				</if>
 				<if test="maps.isQueryAll == null">
 					and ebsd.data_status = 1
@@ -637,7 +695,7 @@
 					or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
 					or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR})))
 				</if>
-				and ebsd.is_localization = 2 and ebs.sub_company_id = 1
+				AND (CASE WHEN ebs.slip_status = 1 THEN ebsd.is_localization = 2 ELSE 1 = 2 END )
 			</where>
 			GROUP BY ebsd.id
 			ORDER BY ebsd.detail_status ASC ,ebsd.payer_name DESC
@@ -649,8 +707,8 @@
 		LEFT JOIN  erp_sub_company esc ON esc.id = ec.owner_sub_company_id  AND esc.data_status = 1
 		LEFT JOIN  erp_sub_company escOwner ON escOwner.id = ebs.sub_company_id AND escOwner.data_status = 1
 		LEFT JOIN  erp_sub_company escLocalization ON escLocalization.id = result.sub_company_id AND escLocalization.data_status = 1
-		LEFT JOIN   erp_k3_mapping_customer ek3mc ON ek3mc.erp_customer_code = ebsc.customer_no
-	</select>
+		LEFT JOIN   erp_k3_mapping_customer ek3mc ON ek3mc.erp_customer_code = ebsc.customer_no)
+	</sql>
 
 	<select id="findUnknownBankSlipDetailById" resultMap="BankSlipDetailDO" parameterType="map">
 		SELECT  <include refid="column_List"/>,escLocalization.sub_company_name AS subCompanyName,ebs.sub_company_id AS ownerSubCompanyId,escOwner.sub_company_name AS ownerSubCompanyName,ebs.bank_type AS bankSlipBankType,<include refid="claim_column_List"/>,ek3mc.k3_customer_code AS k3CustomerNo,ec.customer_name AS customerName FROM erp_bank_slip_detail ebsd
@@ -701,7 +759,7 @@
 		SELECT newEbsd.* FROM(
 			SELECT <include refid="column_List"/>  FROM erp_bank_slip_detail ebsd
 			INNER JOIN erp_bank_slip ebs ON ebs.id = ebsd.bank_slip_id AND  ebs.data_status = 1
-			WHERE  ebsd.loan_sign = 1 and ebsd.data_status = 1  AND ebs.sub_company_id = 1 AND ebsd.is_localization != 2
+			WHERE  ebsd.loan_sign = 1 and ebsd.data_status = 1 AND ebsd.is_localization = 0 AND ebsd.detail_status = 1
 		)newEbsd
 		LEFT JOIN erp_bank_slip_detail_operation_log ebsdol ON newEbsd.id = ebsdol.bank_slip_detail_id AND ebsdol.data_status = 1
 		WHERE #{createTime,jdbcType=TIMESTAMP} >= ebsdol.create_time AND ebsdol.operation_type = 1

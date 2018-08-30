@@ -82,6 +82,13 @@
                                                 <input type="text" name="payerName" id="payerName" class="form-control input-sm bradius" autocomplete="off" placeholder="付款人姓名">
                                             </div>
                                         </div>
+                                        <div class="col-md-2">
+                                            <div class="field form-group mn" style="display: flex;justify-content: space-between;" >
+                                                <input type="text" name="tradeAmountStart" id="tradeAmountStart" class="form-control input-sm bradius" autocomplete="off" placeholder="交易金额">
+                                                <span style="line-height: 30px;width: 30px;text-align: center">-</span>
+                                                <input type="text" name="tradeAmountEnd" id="tradeAmountEnd" class="form-control input-sm bradius" autocomplete="off" placeholder="交易金额">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <hr class="short alt">
@@ -117,6 +124,8 @@
                                 <input type="hidden" class="detailStatus" name="detailStatus" value="">
                                 <input type="hidden" class="slipDayStart" name="slipDayStart" value="">
                                 <input type="hidden" class="slipDayEnd" name="slipDayEnd" value="">
+                                <input type="hidden" class="tradeAmountStart" name="tradeAmountStart" value="">
+                                <input type="hidden" class="tradeAmountEnd" name="tradeAmountEnd" value="">
                                 <input type="submit" class="btn btn-primary btn-sm exportBtn"  value="导出">
                             </form>
                             <iframe id="exportFrame" name="exportFrame" src="about:blank" style="display:none;"></iframe>
@@ -136,6 +145,7 @@
                                     </label>
                                 </th>
                                {{/hasCommonActionButtons}}
+                                <th>资金流水ID</th>
                                 <th>付款人</th>
                                 <th>商户订单号</th>
                                 <th>对方账号</th>
@@ -166,6 +176,7 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
+                                <td>{{bankSlipId}}</td>
                                 <td>{{payerName}}</td>
                                 <td>{{merchantOrderNo}}</td>
                                 <td>{{otherSideAccountNo}}</td>
@@ -203,7 +214,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="15" class="text-center">没有查询到资金流水信息</td>
+                                <td valign="top" colspan="18" class="text-center">没有查询到资金流水信息</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}

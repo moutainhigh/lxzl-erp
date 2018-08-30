@@ -165,7 +165,7 @@
                                             <tr>
                                                 <td>{{bankSlipDetailId}}</td>
                                                 <td>{{operationTypeValue}}</td>
-                                                <td><div style="max-width:1000px;">{{operationContent}}</div></td>
+                                                <td>{{operationContent}}</td>
                                                 <td>
                                                     <p class="mn">{{createUserRealName}}</p>
                                                     <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>

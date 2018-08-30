@@ -125,11 +125,11 @@ public class BankSlipController {
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 
-    @RequestMapping(value = "queryUnknownBankSlipDetail", method = RequestMethod.POST)
-    public Result queryUnknownBankSlipDetail(@RequestBody @Validated(IdGroup.class) BankSlipDetail bankSlipDetail, BindingResult validated) throws Exception {
-        ServiceResult<String, BankSlipDetail> serviceResult = bankSlipService.queryUnknownBankSlipDetail(bankSlipDetail);
-        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
-    }
+//    @RequestMapping(value = "queryUnknownBankSlipDetail", method = RequestMethod.POST)
+//    public Result queryUnknownBankSlipDetail(@RequestBody @Validated(IdGroup.class) BankSlipDetail bankSlipDetail, BindingResult validated) throws Exception {
+//        ServiceResult<String, BankSlipDetail> serviceResult = bankSlipService.queryUnknownBankSlipDetail(bankSlipDetail);
+//        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+//    }
 
     @RequestMapping(value = "pageBankSlipDetailOperationLog", method = RequestMethod.POST)
     public Result pageBankSlipDetailOperationLog(@RequestBody @Validated(QueryGroup.class) BankSlipDetailOperationLogQueryParam bankSlipDetailOperationLogQueryParam, BindingResult validated) throws Exception {
@@ -137,11 +137,11 @@ public class BankSlipController {
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 
-    @RequestMapping(value = "pageUnknownBankSlipDetail", method = RequestMethod.POST)
-    public Result pageUnknownBankSlipDetail(@RequestBody BankSlipDetailQueryParam bankSlipDetailQueryParam, BindingResult validated) throws Exception {
-        ServiceResult<String, Page<BankSlipDetail>> serviceResult = bankSlipService.pageUnknownBankSlipDetail(bankSlipDetailQueryParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
-    }
+//    @RequestMapping(value = "pageUnknownBankSlipDetail", method = RequestMethod.POST)
+//    public Result pageUnknownBankSlipDetail(@RequestBody BankSlipDetailQueryParam bankSlipDetailQueryParam, BindingResult validated) throws Exception {
+//        ServiceResult<String, Page<BankSlipDetail>> serviceResult = bankSlipService.pageUnknownBankSlipDetail(bankSlipDetailQueryParam);
+//        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+//    }
 
     @RequestMapping(value = "unknownBankSlipDetail", method = RequestMethod.POST)
     public Result unknownBankSlipDetail(@RequestBody @Validated(IdGroup.class) BankSlipDetail bankSlipDetail, BindingResult validated) throws Exception {
@@ -159,4 +159,5 @@ public class BankSlipController {
         ServiceResult<String, BankSlipClaimPage> serviceResult = bankSlipService.pageBankSlipClaimDetail(bankSlipClaimDetailQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
+
 }
