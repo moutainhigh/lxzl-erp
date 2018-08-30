@@ -2301,8 +2301,7 @@ public class OrderServiceImpl implements OrderService {
              //强制取消后，更新结算单状态
              for (Integer key : statementOrderDOMap.keySet()) {
                  StatementOrderDO statementOrderDO = statementOrderDOMap.get(key);
-                 statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                 statementOrderMapper.update(statementOrderDO);
+                 statementOrderSupport.fixOneStatementOrderStatementTime(statementOrderDO);
              }
          }
         orderDO.setCancelOrderReasonType(cancelOrderReasonType);
@@ -2352,8 +2351,7 @@ public class OrderServiceImpl implements OrderService {
             //强制取消后，更新结算单状态
             for (Integer key : statementOrderDOMap.keySet()) {
                 StatementOrderDO statementOrderDO = statementOrderDOMap.get(key);
-                statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                statementOrderMapper.update(statementOrderDO);
+                statementOrderSupport.fixOneStatementOrderStatementTime(statementOrderDO);
             }
             String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(), rentPaidAmount, BigDecimalUtil.addAll(otherPaidAmount, overduePaidAmount, penaltyPaidAmount)
                     , rentDepositPaidAmount, depositPaidAmount, "超级管理员强制取消已支付订单，已支付金额退还到客户余额");

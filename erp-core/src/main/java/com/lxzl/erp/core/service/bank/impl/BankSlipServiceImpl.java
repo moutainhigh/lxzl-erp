@@ -185,14 +185,21 @@ public class BankSlipServiceImpl implements BankSlipService {
     public ServiceResult<String, Page<BankSlipDetail>> pageBankSlipDetail(BankSlipDetailQueryParam bankSlipDetailQueryParam) {
         ServiceResult<String, Page<BankSlipDetail>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(bankSlipDetailQueryParam.getPageNo(), bankSlipDetailQueryParam.getPageSize());
-
+        //导入时间处理
         if (bankSlipDetailQueryParam.getSlipDayStart() != null) {
             bankSlipDetailQueryParam.setSlipDayStart(DateUtil.getDayByOffset(bankSlipDetailQueryParam.getSlipDayStart(), CommonConstant.COMMON_ZERO));
         }
         if (bankSlipDetailQueryParam.getSlipDayEnd() != null) {
             bankSlipDetailQueryParam.setSlipDayEnd(DateUtil.getDayByOffset(bankSlipDetailQueryParam.getSlipDayEnd(), CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD));
-
         }
+        //交易时间处理
+        if (bankSlipDetailQueryParam.getTradeTimeStart() != null) {
+            bankSlipDetailQueryParam.setTradeTimeStart(DateUtil.getDayByOffset(bankSlipDetailQueryParam.getTradeTimeStart(), CommonConstant.COMMON_ZERO));
+        }
+        if (bankSlipDetailQueryParam.getTradeTimeEnd() != null) {
+            bankSlipDetailQueryParam.setTradeTimeEnd(DateUtil.getDayByOffset(bankSlipDetailQueryParam.getTradeTimeEnd(), CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD));
+        }
+
         Integer departmentType = bankSlipSupport.departmentType();
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
