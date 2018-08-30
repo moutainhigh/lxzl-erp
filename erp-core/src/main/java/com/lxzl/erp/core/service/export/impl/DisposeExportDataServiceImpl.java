@@ -27,6 +27,8 @@ import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
 import com.lxzl.se.common.domain.Result;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +57,9 @@ public class DisposeExportDataServiceImpl implements DisposeExportDataService {
     private DynamicSqlService dynamicSqlService;
     @Autowired
     private ResultGenerator resultGenerator;
+
+    private static final Logger logger = LoggerFactory.getLogger(DisposeExportDataServiceImpl.class);
+
     @Override
     public ServiceResult<String, String> disposePageBankSlipDetail(BankSlipDetailQueryParam bankSlipDetailQueryParam, HttpServletResponse response) {
         ServiceResult<String, String> result = new ServiceResult<>();
@@ -115,13 +120,18 @@ public class DisposeExportDataServiceImpl implements DisposeExportDataService {
 
     @Override
     public ServiceResult<String, String> disposePageStatementOrder(StatementOrderDetailQueryParam statementOrderDetailQueryParam, HttpServletResponse response) {
+
+        logger.info("--------------------queryMethodStart导出结算单列表查询方法开始---------------------");
         ServiceResult<String, String> result = new ServiceResult<>();
         ServiceResult<String, Page<FinanceStatementOrderPayDetail>> financeStatementOrderPayDetailResult = statementService.queryFinanceStatementOrderPayDetail(statementOrderDetailQueryParam);
+        logger.info("--------------------queryMethodEnd导出结算单列表查询方法结束---------------------");
         if(!ErrorCode.SUCCESS.equals(financeStatementOrderPayDetailResult.getErrorCode())){
             result.setErrorCode(financeStatementOrderPayDetailResult.getErrorCode());
             return result;
         }
+        logger.info("--------------------exportMethodStart导出结算单列表导出方法开始---------------------");
         ServiceResult<String, String> serviceResult = excelExportService.export(financeStatementOrderPayDetailResult.getResult().getItemList(), ExcelExportConfigGroup.statementOrderPayDetailConfig,"支付明细", "sheet1", response);
+        logger.info("--------------------exportMethodEnd导出结算单列表导出方法结束---------------------");
         return serviceResult;
     }
 
