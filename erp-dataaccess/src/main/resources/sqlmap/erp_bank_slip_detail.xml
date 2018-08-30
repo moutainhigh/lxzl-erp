@@ -240,7 +240,7 @@
 				<![CDATA[ and ebsd.trade_time >= #{maps.bankSlipDetailQueryParam.tradeTimeStart,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeTimeEnd != null">
-				<![CDATA[ and ebsd.trade_time <= #{maps.bankSlipDetailQueryParam.tradeTimeEnd,jdbcType=TIMESTAMP} ]]>
+				<![CDATA[ and ebsd.trade_time < #{maps.bankSlipDetailQueryParam.tradeTimeEnd,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
@@ -327,7 +327,7 @@
 				<![CDATA[ and ebsd.trade_time >= #{maps.bankSlipDetailQueryParam.tradeTimeStart,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeTimeEnd != null">
-				<![CDATA[ and ebsd.trade_time <= #{maps.bankSlipDetailQueryParam.tradeTimeEnd,jdbcType=TIMESTAMP} ]]>
+				<![CDATA[ and ebsd.trade_time < #{maps.bankSlipDetailQueryParam.tradeTimeEnd,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
@@ -624,7 +624,7 @@
 				<![CDATA[ and ebsd.trade_time >= #{maps.bankSlipDetailQueryParam.tradeTimeStart,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeTimeEnd != null">
-				<![CDATA[ and ebsd.trade_time <= #{maps.bankSlipDetailQueryParam.tradeTimeEnd,jdbcType=TIMESTAMP} ]]>
+				<![CDATA[ and ebsd.trade_time < #{maps.bankSlipDetailQueryParam.tradeTimeEnd,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
@@ -699,7 +699,7 @@
 					<![CDATA[ and ebsd.trade_time >= #{maps.bankSlipDetailQueryParam.tradeTimeStart,jdbcType=TIMESTAMP} ]]>
 				</if>
 				<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeTimeEnd != null">
-					<![CDATA[ and ebsd.trade_time <= #{maps.bankSlipDetailQueryParam.tradeTimeEnd,jdbcType=TIMESTAMP} ]]>
+					<![CDATA[ and ebsd.trade_time < #{maps.bankSlipDetailQueryParam.tradeTimeEnd,jdbcType=TIMESTAMP} ]]>
 				</if>
 				<if test="maps.isQueryAll == null">
 					and ebsd.data_status = 1
