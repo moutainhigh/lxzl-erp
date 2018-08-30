@@ -4368,3 +4368,20 @@ INSERT INTO `erp_bank_slip_detail_manual_claim_and_localization_config`  VALUES 
 
 
 
+-- 工作流新增模版 V1.0.23-shopping --
+INSERT INTO `erp_workflow_template` VALUES ('20', '商城订单审批流程', '商城订单审批流程', '20', '1', NULL, '2018-08-24 10:45:00', '500001', '2018-08-24 10:45:00', '500001');
+INSERT INTO `erp_workflow_template` VALUES ('21', '商城换货单审批流程', '商城换货单审批流程', '21', '1', NULL, '2018-08-24 10:45:00', '500001', '2018-08-24 10:45:00', '500001');
+INSERT INTO `erp_workflow_template` VALUES ('22', '商城退货单审批流程', '商城退货单审批流程', '22', '1', NULL, '2018-08-24 10:45:00', '500001', '2018-08-24 10:45:00', '500001');
+INSERT INTO `erp_workflow_template` VALUES ('23', '商城维修单审批流程', '商城维修单审批流程', '23', '1', NULL, '2018-08-24 10:45:00', '500001', '2018-08-24 10:45:00', '500001');
+INSERT INTO `erp_workflow_template` VALUES ('24', '商城续租单审批流程', '商城续租单审批流程', '24', '1', NULL, '2018-08-24 10:45:00', '500001', '2018-08-24 10:45:00', '500001');
+INSERT INTO `erp_workflow_template` VALUES ('25', '商城客户审批流程', '商城客户审批流程', '25', '1', NULL, '2018-08-24 10:45:00', '500001', '2018-08-24 10:45:00', '500001');
+INSERT INTO `erp_workflow_template` VALUES ('26', '商城客户收货地址审批流程', '商城客户收货地址审批流程', '26', '1', NULL, '2018-08-24 10:45:00', '500001', '2018-08-24 10:45:00', '500001');
+-- 工作流新增模版节点 V1.0.23-shopping --
+INSERT INTO `erp_workflow_node` VALUES ('28', '商务部审核商城订单', '20', '1', NULL, '29', '300006', NULL, NULL, NULL, '1', NULL, '2018-08-24 10:45:00', '500001', '2018-08-24 10:45:00', '500001', NULL);
+INSERT INTO `erp_workflow_node` VALUES ('29', '仓库文员审核商城订单', '20', '2', '28', NULL, NULL, NULL, NULL, NULL, '1', NULL, '2018-08-24 10:45:00', '500001', '2018-08-24 10:45:00', '500001', '700004');
+INSERT INTO `erp_workflow_node` VALUES ('30', '商务部审核商城换货单', '21', '1', NULL, NULL, '300006', NULL, NULL, NULL, '1', NULL, '2018-08-24 10:45:00', '500001', '2018-08-24 10:45:00', '500001', NULL);
+INSERT INTO `erp_workflow_node` VALUES ('31', '商务部审核商城退货单', '22', '1', NULL, NULL, '300006', NULL, NULL, NULL, '1', NULL, '2018-08-24 10:45:00', '500001', '2018-08-24 10:45:00', '500001', NULL);
+INSERT INTO `erp_workflow_node` VALUES ('32', '商务部审核商城维修单', '23', '1', NULL, NULL, '300006', NULL, NULL, NULL, '1', NULL, '2018-08-24 10:45:00', '500001', '2018-08-24 10:45:00', '500001', NULL);
+INSERT INTO `erp_workflow_node` VALUES ('33', '商务部审核商城续租单', '24', '1', NULL, NULL, '300006', NULL, NULL, NULL, '1', NULL, '2018-08-24 10:45:00', '500001', '2018-08-24 10:45:00', '500001', NULL);
+INSERT INTO `erp_workflow_node` VALUES ('34', '总公司风控审批商城客户', '25', '1', NULL, NULL, '300013', '400017', NULL, NULL, '1', NULL, '2018-08-24 10:45:00', '500001', '2018-08-24 10:45:00', '500001', NULL);
+INSERT INTO `erp_workflow_node` VALUES ('35', '总公司风控审批商城客户收货地址', '26', '1', NULL, NULL, '300013', '400017', NULL, NULL, '1', NULL, '2018-08-24 10:45:00', '500001', '2018-08-24 10:45:00', '500001', NULL);

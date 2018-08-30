@@ -60,6 +60,7 @@ public class ErrorCode {
     public static final String SUB_COMPANY_ID_NOT_NULL = "J100031";
     public static final String WORKFLOW_CONFIG_ERROR = "J100032";
     public static final String WORKFLOW_CUSTOMER_CAN_NOT_BACK_PREVIOUS = "J100033";
+    public static final String WORKFLOW_VERIFY_USER_IS_NULL = "J100034";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -1151,6 +1152,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_RETURN_ID_NOT_NULL, "客户的回访记录的ID不能为空");
         MAP.put(CUSTOMER_RETURN_VISIT_NOT_EXISTS, "客户的回访记录不存在");
         MAP.put(WORKFLOW_CUSTOMER_CAN_NOT_BACK_PREVIOUS, "客户工作流不允许驳回到上一级");
+        MAP.put(WORKFLOW_VERIFY_USER_IS_NULL, "商城工作流审核人未配置");
 
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");

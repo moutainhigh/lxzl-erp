@@ -90,6 +90,41 @@ public class WorkflowType {
      */
     public static final Integer WORKFLOW_TYPE_RELET_ORDER_INFO = 19;
 
+    /**
+     * 商城订单审批流程
+     */
+    public static final Integer WORKFLOW_TYPE_MALL_ORDER = 20;
+
+    /**
+     * 商城换货单审批流程
+     */
+    public static final Integer WORKFLOW_TYPE_MALL_CHANGE_ORDER = 21;
+
+    /**
+     * 商城退货单审批流程
+     */
+    public static final Integer WORKFLOW_TYPE_MALL_RETURN_ORDER = 22;
+
+    /**
+     * 商城维修单审批流程
+     */
+    public static final Integer WORKFLOW_TYPE_MALL_REPAIR_ORDER = 23;
+
+    /**
+     * 商城续租单审批流程
+     */
+    public static final Integer WORKFLOW_TYPE_MALL_RELET_ORDER = 24;
+
+    /**
+     * 商城客户审批流程
+     */
+    public static final Integer WORKFLOW_TYPE_MALL_CUSTOMER = 25;
+
+    /**
+     * 商城客户收货地址审批流程
+     */
+    public static final Integer WORKFLOW_TYPE_MALL_CUSTOMER_CONSIGN = 26;
+
     public static String getWorkflowTypeDesc(Integer workflowType) {
         if (WORKFLOW_TYPE_PURCHASE.equals(workflowType)) {
             return "采购订单";
@@ -125,6 +160,20 @@ public class WorkflowType {
             return "客户地址";
         } else if (WORKFLOW_TYPE_RELET_ORDER_INFO.equals(workflowType)) {
             return "续租";
+        } else if (WORKFLOW_TYPE_MALL_ORDER.equals(workflowType)) {
+            return "商城订单";
+        } else if (WORKFLOW_TYPE_MALL_CHANGE_ORDER.equals(workflowType)) {
+            return "商城换货单";
+        } else if (WORKFLOW_TYPE_MALL_RETURN_ORDER.equals(workflowType)) {
+            return "商城退货单";
+        } else if (WORKFLOW_TYPE_MALL_REPAIR_ORDER.equals(workflowType)) {
+            return "商城维修单";
+        } else if (WORKFLOW_TYPE_MALL_RELET_ORDER.equals(workflowType)) {
+            return "商城续租单";
+        } else if (WORKFLOW_TYPE_MALL_CUSTOMER.equals(workflowType)) {
+            return "商城客户";
+        } else if (WORKFLOW_TYPE_MALL_CUSTOMER_CONSIGN.equals(workflowType)) {
+            return "商城收货地址";
         } else {
             return "其他";
         }

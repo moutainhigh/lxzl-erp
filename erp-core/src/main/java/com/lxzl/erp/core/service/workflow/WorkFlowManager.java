@@ -51,8 +51,6 @@ public class WorkFlowManager {
     @Autowired
     private StatementOrderCorrectService statementOrderCorrectService;
     @Autowired
-    private K3Service k3Service;
-    @Autowired
     private CustomerService customerService;
     @Autowired
     private K3ChangeOrderService k3ChangeOrderService;
@@ -61,10 +59,12 @@ public class WorkFlowManager {
     @Autowired
     private ReletOrderService reletOrderService;
 
+    //todo 剩下客户 订单 退货 续租 回调 逻辑需要修改推送
     public VerifyReceiver getService(Integer workflowType) {
         if (WorkflowType.WORKFLOW_TYPE_PURCHASE.equals(workflowType)) {
             return purchaseOrderService;
-        } else if (WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)) {
+        } else if (WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)
+                || WorkflowType.WORKFLOW_TYPE_MALL_ORDER.equals(workflowType)) {
             return orderService;
         } else if (WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO.equals(workflowType)) {
             return deploymentOrderService;
@@ -76,23 +76,25 @@ public class WorkFlowManager {
             return returnOrderService;
         } else if (WorkflowType.WORKFLOW_TYPE_PURCHASE_APPLY_ORDER.equals(workflowType)) {
             return purchaseApplyOrderService;
-        } else if(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER.equals(workflowType)
-                ||WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER.equals(workflowType)){
+        } else if (WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER.equals(workflowType)
+                || WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER.equals(workflowType)) {
             return transferOrderService;
-        }else if(WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_INTO.equals(workflowType)
-                ||WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_OUT.equals(workflowType)){
+        } else if (WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_INTO.equals(workflowType)
+                || WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_OUT.equals(workflowType)) {
             return peerDeploymentOrderService;
-        }else if(WorkflowType.WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT.equals(workflowType)){
+        } else if (WorkflowType.WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT.equals(workflowType)) {
             return statementOrderCorrectService;
-        }else if(WorkflowType.WORKFLOW_TYPE_K3_CHANGE.equals(workflowType)){
+        } else if (WorkflowType.WORKFLOW_TYPE_K3_CHANGE.equals(workflowType)) {
             return k3ChangeOrderService;
-        }else if(WorkflowType.WORKFLOW_TYPE_K3_RETURN.equals(workflowType)){
+        } else if (WorkflowType.WORKFLOW_TYPE_K3_RETURN.equals(workflowType)
+                || WorkflowType.WORKFLOW_TYPE_MALL_RETURN_ORDER.equals(workflowType)) {
             return k3ReturnOrderService;
-        }else if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)||
-                WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowType)||
-                WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowType)){
+        } else if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType) ||
+                WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowType) ||
+                WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowType)) {
             return customerService;
-        }else if (WorkflowType.WORKFLOW_TYPE_RELET_ORDER_INFO.equals(workflowType)) {
+        } else if (WorkflowType.WORKFLOW_TYPE_RELET_ORDER_INFO.equals(workflowType)
+                || WorkflowType.WORKFLOW_TYPE_MALL_RELET_ORDER.equals(workflowType)) {
             return reletOrderService;
         }
         return null;
