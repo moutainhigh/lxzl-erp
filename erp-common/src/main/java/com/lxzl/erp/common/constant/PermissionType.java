@@ -8,4 +8,5 @@ public class PermissionType {
     public static final Integer PERMISSION_TYPE_WAREHOUSE_SUB_COMPANY = 5;//分公司级别权限,两个公司查看
     public static final Integer PERMISSION_TYPE_SUB_COMPANY_ALL = 6;//全部公司
     public static final Integer PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS = 7;//分公司级别权限,商务部不受此限制
+    public static final Integer PERMISSION_TYPE_SUB_COMPANY_FOR_WAREHOUSE = 8;//分公司级别权限,仓库人员
 }
