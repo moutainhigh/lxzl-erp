@@ -89,6 +89,14 @@
                                                 <input type="text" name="tradeAmountEnd" id="tradeAmountEnd" class="form-control input-sm bradius" autocomplete="off" placeholder="交易金额">
                                             </div>
                                         </div>
+                                        <div class="col-md-2">
+                                            <input type="hidden" name="tradeTimeStart" id="tradeTimeStart" />
+                                            <input type="hidden" name="tradeTimeEnd" id="tradeTimeEnd" />
+                                            <div class="input-group date" id="tradeTimePicker">
+                                                <input type="text" name="tradeTimePickerInput" id="tradeTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="请选择交易时间">
+                                                <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <hr class="short alt">
@@ -126,6 +134,8 @@
                                 <input type="hidden" class="slipDayEnd" name="slipDayEnd" value="">
                                 <input type="hidden" class="tradeAmountStart" name="tradeAmountStart" value="">
                                 <input type="hidden" class="tradeAmountEnd" name="tradeAmountEnd" value="">
+                                <input type="hidden" class="tradeTimeStart" name="tradeTimeStart" value="">
+                                <input type="hidden" class="tradeTimeEnd" name="tradeTimeEnd" value="">
                                 <input type="submit" class="btn btn-primary btn-sm exportBtn"  value="导出">
                             </form>
                             <iframe id="exportFrame" name="exportFrame" src="about:blank" style="display:none;"></iframe>
