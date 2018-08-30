@@ -377,6 +377,59 @@ public class StatementOrderSupport {
     }
 
 
+    /**
+     * 修正单个结算单开始结束时间，状态等
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/8/17 10:25
+     * @param
+     * @return
+     */
+    public void fixOneStatementOrderStatementTime(StatementOrderDO statementOrderDO){
+        if (statementOrderDO == null){
+            return;
+        }
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByStatementOrderId(statementOrderDO.getId());
+
+        if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)){
+            Date minStartTime = null, maxEndTime = null;
+            for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
+                StatementOrderDetailDO orderDetailDO = statementOrderDetailDOList.get(i);
+                if (i == 0) {
+                    minStartTime = orderDetailDO.getStatementStartTime();
+                    maxEndTime = orderDetailDO.getStatementEndTime();
+                } else {
+                    if (minStartTime.compareTo(orderDetailDO.getStatementStartTime()) > 0)
+                        minStartTime = orderDetailDO.getStatementStartTime();
+                    if (maxEndTime.compareTo(orderDetailDO.getStatementEndTime()) < 0)
+                        maxEndTime = orderDetailDO.getStatementEndTime();
+                }
+            }
+            if(DateUtil.daysBetween(minStartTime,statementOrderDO.getStatementStartTime())!=0||DateUtil.daysBetween(maxEndTime,statementOrderDO.getStatementEndTime())!=0){
+                statementOrderDO.setStatementStartTime(minStartTime);
+                statementOrderDO.setStatementEndTime(maxEndTime);
+            }
+        }
+
+        if(BigDecimalUtil.compare(BigDecimal.ZERO,statementOrderDO.getStatementAmount())==0){
+            if(CollectionUtil.isEmpty(statementOrderDetailDOList)){
+                statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            }else{
+                statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
+            }
+        }
+        else if(BigDecimalUtil.compare(statementOrderDO.getStatementPaidAmount(),statementOrderDO.getStatementAmount())==0){
+            statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
+        }else if(BigDecimalUtil.compare(statementOrderDO.getStatementPaidAmount(),BigDecimal.ZERO)>0){
+            statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
+        }else{
+            statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
+        }
+        statementOrderMapper.update(statementOrderDO);
+    }
+
+
+
 
     @Autowired
     private UserSupport userSupport;
