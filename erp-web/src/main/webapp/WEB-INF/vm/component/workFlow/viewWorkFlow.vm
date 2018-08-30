@@ -94,10 +94,21 @@
                                             <small class="{{textClass}}">{{verifyStatusValue}}</small>
                                         </blockquote>
                                     </div>
+                                    
+                                    {{#showAction}}
+                                    {{#show}}
+                                    <div class="panel-footer text-right">
+                                        {{#actionButtons}}
+                                        <button class="btn btn-sm {{class}}" data-rowdata="{{rowData}}">{{text}}</button>
+                                        {{/actionButtons}}
+                                        #*<button class="btn btn-sm btn-danger rejectButton">驳回</button>
+                                        <button class="btn btn-sm btn-primary passButton">同意</button>*#
+                                    </div>
+                                    {{/show}}
+                                    {{/showAction}}
 
                                     {{/verifyUserGroupDataSource}}
                                     {{/verifyUserGroup}}
-
                                 </div>
                             </div>
                             {{/dataSource}}
