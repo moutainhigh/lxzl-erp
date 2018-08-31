@@ -31,6 +31,12 @@ public class WorkbenchController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "queryWorkhouseWorkbenchCount", method = RequestMethod.POST)
+    public Result queryWorkhouseWorkbenchCount(@RequestBody WorkbenchQueryParam workbenchQueryParam, BindingResult validResult) {
+        ServiceResult<String, Workbench> serviceResult = workbenchService.queryWorkhouseWorkbenchCount(workbenchQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @Autowired
     private ResultGenerator resultGenerator;
 

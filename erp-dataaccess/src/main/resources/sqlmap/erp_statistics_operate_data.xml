@@ -1,0 +1,1690 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsOperateDataMapper">
+
+	<resultMap id="StatisticsOperateDataDO" type="com.lxzl.erp.dataaccess.domain.statistics.StatisticsOperateDataDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
+		<result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
+		<result column="owner_id" jdbcType="INTEGER" property="ownerId" />
+		<result column="owner_name" jdbcType="VARCHAR" property="ownerName" />
+		<result column="statistical_dimension" jdbcType="INTEGER" property="statisticalDimension" />
+		<result column="long_rent_increase_count" jdbcType="INTEGER" property="longRentIncreaseCount" />
+		<result column="long_rent_increase_amount" jdbcType="DECIMAL" property="longRentIncreaseAmount" />
+		<result column="long_rent_increase_customer_count" jdbcType="INTEGER" property="longRentIncreaseCustomerCount" />
+		<result column="long_rent_renting_customer_count" jdbcType="INTEGER" property="longRentRentingCustomerCount" />
+		<result column="long_rent_return_customer_count" jdbcType="INTEGER" property="longRentReturnCustomerCount" />
+		<result column="long_rent_return_count" jdbcType="INTEGER" property="longRentReturnCount" />
+		<result column="long_rent_renting_count" jdbcType="INTEGER" property="longRentRentingCount" />
+		<result column="short_rent_increase_count" jdbcType="INTEGER" property="shortRentIncreaseCount" />
+		<result column="short_rent_increase_amount" jdbcType="DECIMAL" property="shortRentIncreaseAmount" />
+		<result column="short_rent_increase_customer_count" jdbcType="INTEGER" property="shortRentIncreaseCustomerCount" />
+		<result column="short_rent_renting_customer_count" jdbcType="INTEGER" property="shortRentRentingCustomerCount" />
+		<result column="short_rent_return_customer_count" jdbcType="INTEGER" property="shortRentReturnCustomerCount" />
+		<result column="short_rent_return_count" jdbcType="INTEGER" property="shortRentReturnCount" />
+		<result column="short_rent_renting_count" jdbcType="INTEGER" property="shortRentRentingCount" />
+		<result column="ultrashort_rent_increase_count" jdbcType="INTEGER" property="ultrashortRentIncreaseCount" />
+		<result column="ultrashort_rent_increase_amount" jdbcType="DECIMAL" property="ultrashortRentIncreaseAmount" />
+		<result column="ultrashort_rent_increase_customer_count" jdbcType="INTEGER" property="ultrashortRentIncreaseCustomerCount" />
+		<result column="ultrashort_rent_renting_customer_count" jdbcType="INTEGER" property="ultrashortRentRentingCustomerCount" />
+		<result column="ultrashort_rent_return_customer_count" jdbcType="INTEGER" property="ultrashortRentReturnCustomerCount" />
+		<result column="ultrashort_rent_return_count" jdbcType="INTEGER" property="ultrashortRentReturnCount" />
+		<result column="ultrashort_rent_renting_count" jdbcType="INTEGER" property="ultrashortRentRentingCount" />
+		<result column="increase_customer_count" jdbcType="INTEGER" property="increaseCustomerCount" />
+		<result column="increase_risk_customer_count" jdbcType="INTEGER" property="increaseRiskCustomerCount" />
+		<result column="start_statistics_time" jdbcType="TIMESTAMP" property="startStatisticsTime" />
+		<result column="end_statistics_time" jdbcType="TIMESTAMP" property="endStatisticsTime" />
+		<result column="statistical_status" jdbcType="INTEGER" property="statisticalStatus" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		esod.id,esod.sub_company_id,esod.sub_company_name,esod.owner_id,esod.owner_name,esod.statistical_dimension,esod.long_rent_increase_count,esod.long_rent_increase_amount,esod.long_rent_increase_customer_count,esod.long_rent_renting_customer_count,esod.long_rent_return_customer_count,esod.long_rent_return_count,esod.long_rent_renting_count,esod.short_rent_increase_count,esod.short_rent_increase_amount,esod.short_rent_increase_customer_count,esod.short_rent_renting_customer_count,esod.short_rent_return_customer_count,esod.short_rent_return_count,esod.short_rent_renting_count,esod.ultrashort_rent_increase_count,esod.ultrashort_rent_increase_amount,esod.ultrashort_rent_increase_customer_count,esod.ultrashort_rent_renting_customer_count,esod.ultrashort_rent_return_customer_count,esod.ultrashort_rent_return_count,esod.ultrashort_rent_renting_count,esod.increase_customer_count,esod.increase_risk_customer_count,esod.start_statistics_time,esod.end_statistics_time,esod.statistical_status,esod.data_status,esod.create_time,esod.create_user
+	</sql>
+
+	<select id="findById" resultMap="StatisticsOperateDataDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statistics_operate_data esod 
+		WHERE esod.id = #{id, jdbcType=INTEGER} AND esod.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(esod.id) FROM erp_statistics_operate_data esod 
+		<where>
+			<if test="true">
+				AND esod.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="StatisticsOperateDataDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_statistics_operate_data esod 
+		<where>
+			<if test="true">
+				AND esod.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="subCompanyId != null">
+				sub_company_id = #{subCompanyId,jdbcType=INTEGER},
+			</if>
+			<if test="subCompanyName != null">
+				sub_company_name = #{subCompanyName,jdbcType=VARCHAR},
+			</if>
+			<if test="ownerId != null">
+				owner_id = #{ownerId,jdbcType=INTEGER},
+			</if>
+			<if test="ownerName != null">
+				owner_name = #{ownerName,jdbcType=VARCHAR},
+			</if>
+			<if test="statisticalDimension != null">
+				statistical_dimension = #{statisticalDimension,jdbcType=INTEGER},
+			</if>
+			<if test="longRentIncreaseCount != null">
+				long_rent_increase_count = #{longRentIncreaseCount,jdbcType=INTEGER},
+			</if>
+			<if test="longRentIncreaseAmount != null">
+				long_rent_increase_amount = #{longRentIncreaseAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="longRentIncreaseCustomerCount != null">
+				long_rent_increase_customer_count = #{longRentIncreaseCustomerCount,jdbcType=INTEGER},
+			</if>
+			<if test="longRentRentingCustomerCount != null">
+				long_rent_renting_customer_count = #{longRentRentingCustomerCount,jdbcType=INTEGER},
+			</if>
+			<if test="longRentReturnCustomerCount != null">
+				long_rent_return_customer_count = #{longRentReturnCustomerCount,jdbcType=INTEGER},
+			</if>
+			<if test="longRentReturnCount != null">
+				long_rent_return_count = #{longRentReturnCount,jdbcType=INTEGER},
+			</if>
+			<if test="longRentRentingCount != null">
+				long_rent_renting_count = #{longRentRentingCount,jdbcType=INTEGER},
+			</if>
+			<if test="shortRentIncreaseCount != null">
+				short_rent_increase_count = #{shortRentIncreaseCount,jdbcType=INTEGER},
+			</if>
+			<if test="shortRentIncreaseAmount != null">
+				short_rent_increase_amount = #{shortRentIncreaseAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="shortRentIncreaseCustomerCount != null">
+				short_rent_increase_customer_count = #{shortRentIncreaseCustomerCount,jdbcType=INTEGER},
+			</if>
+			<if test="shortRentRentingCustomerCount != null">
+				short_rent_renting_customer_count = #{shortRentRentingCustomerCount,jdbcType=INTEGER},
+			</if>
+			<if test="shortRentReturnCustomerCount != null">
+				short_rent_return_customer_count = #{shortRentReturnCustomerCount,jdbcType=INTEGER},
+			</if>
+			<if test="shortRentReturnCount != null">
+				short_rent_return_count = #{shortRentReturnCount,jdbcType=INTEGER},
+			</if>
+			<if test="shortRentRentingCount != null">
+				short_rent_renting_count = #{shortRentRentingCount,jdbcType=INTEGER},
+			</if>
+			<if test="ultrashortRentIncreaseCount != null">
+				ultrashort_rent_increase_count = #{ultrashortRentIncreaseCount,jdbcType=INTEGER},
+			</if>
+			<if test="ultrashortRentIncreaseAmount != null">
+				ultrashort_rent_increase_amount = #{ultrashortRentIncreaseAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="ultrashortRentIncreaseCustomerCount != null">
+				ultrashort_rent_increase_customer_count = #{ultrashortRentIncreaseCustomerCount,jdbcType=INTEGER},
+			</if>
+			<if test="ultrashortRentRentingCustomerCount != null">
+				ultrashort_rent_renting_customer_count = #{ultrashortRentRentingCustomerCount,jdbcType=INTEGER},
+			</if>
+			<if test="ultrashortRentReturnCustomerCount != null">
+				ultrashort_rent_return_customer_count = #{ultrashortRentReturnCustomerCount,jdbcType=INTEGER},
+			</if>
+			<if test="ultrashortRentReturnCount != null">
+				ultrashort_rent_return_count = #{ultrashortRentReturnCount,jdbcType=INTEGER},
+			</if>
+			<if test="ultrashortRentRentingCount != null">
+				ultrashort_rent_renting_count = #{ultrashortRentRentingCount,jdbcType=INTEGER},
+			</if>
+			<if test="increaseCustomerCount != null">
+				increase_customer_count = #{increaseCustomerCount,jdbcType=INTEGER},
+			</if>
+			<if test="increaseRiskCustomerCount != null">
+				increase_risk_customer_count = #{increaseRiskCustomerCount,jdbcType=INTEGER},
+			</if>
+			<if test="startStatisticsTime != null">
+				start_statistics_time = #{startStatisticsTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endStatisticsTime != null">
+				end_statistics_time = #{endStatisticsTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="statisticalStatus != null">
+				statistical_status = #{statisticalStatus,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.statistics.StatisticsOperateDataDO">
+		INSERT INTO erp_statistics_operate_data <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.statistics.StatisticsOperateDataDO">
+		UPDATE erp_statistics_operate_data <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+	<select id="findDataListForSubCompanyDate" resultMap="StatisticsOperateDataDO" parameterType="map">
+		SELECT  esc.id AS sub_company_id,esc.sub_company_name AS sub_company_name,
+		IFNULL(a1.long_rent_increase_count,0) AS long_rent_increase_count,
+		IFNULL(a2.long_rent_increase_amount,0) AS long_rent_increase_amount,
+		IFNULL(a3.long_rent_increase_customer_count,0) AS long_rent_increase_customer_count,
+		IFNULL(a4.long_rent_renting_customer_count,0) AS long_rent_renting_customer_count,
+		IFNULL(a5.long_rent_return_customer_count,0) AS long_rent_return_customer_count,
+		IFNULL(a6.long_rent_return_count,0) AS long_rent_return_count,
+		IFNULL(a7.long_rent_renting_count,0) AS long_rent_renting_count,
+		IFNULL(b1.short_rent_increase_count,0) AS short_rent_increase_count,
+		IFNULL(b2.short_rent_increase_amount,0) AS short_rent_increase_amount,
+		IFNULL(b3.short_rent_increase_customer_count,0) AS short_rent_increase_customer_count,
+		IFNULL(b4.short_rent_renting_customer_count,0) AS short_rent_renting_customer_count,
+		IFNULL(b5.short_rent_return_customer_count,0) AS short_rent_return_customer_count,
+		IFNULL(b6.short_rent_return_count,0) AS short_rent_return_count,
+		IFNULL(b7.short_rent_renting_count,0) AS short_rent_renting_count,
+		IFNULL(c1.ultrashort_rent_increase_count,0) AS ultrashort_rent_increase_count,
+		IFNULL(c2.ultrashort_rent_increase_amount,0) AS ultrashort_rent_increase_amount,
+		IFNULL(c3.ultrashort_rent_increase_customer_count,0) AS ultrashort_rent_increase_customer_count,
+		IFNULL(c4.ultrashort_rent_renting_customer_count,0) AS ultrashort_rent_renting_customer_count,
+		IFNULL(c5.ultrashort_rent_return_customer_count,0) AS ultrashort_rent_return_customer_count,
+		IFNULL(c6.ultrashort_rent_return_count,0) AS ultrashort_rent_return_count,
+		IFNULL(c7.ultrashort_rent_renting_count,0) AS ultrashort_rent_renting_count,
+		IFNULL(d1.increase_customer_count,0) AS increase_customer_count,
+		IFNULL(d2.increase_risk_customer_count,0) AS increase_risk_customer_count
+		from erp_sub_company esc
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,sum(t2.product_count) AS long_rent_increase_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[ t1.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) = TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) a1 on a1.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,sum(t2.product_amount) AS long_rent_increase_amount from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[ t1.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.rent_start_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) a2 on a2.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,count(distinct t3.id) as long_rent_increase_customer_count from erp_order t1 inner join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		inner join erp_customer t3 on t1.buyer_customer_id = t3.id
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[ t1.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t3.create_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) a3 on a3.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select m1.sub_company_id as sub_company_id,count(m1.buyer_customer_name) as long_rent_renting_customer_count from
+		(
+		select t1.order_sub_company_id AS sub_company_id,t1.buyer_customer_name,COALESCE(sum(t4.renting_product_count),0) as rc from erp_order t1
+		left join erp_order_product t4 on t1.id = t4.order_id and t4.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.data_status = 1 and t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[t1.rent_time_length >= 6]]>
+			</if>
+			<if test="maps.startTime != null ">
+				<![CDATA[ AND to_days(t1.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.buyer_customer_name,t1.order_sub_company_id
+		) m1 left join (
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				AND t1.data_status = 1 and t1.return_order_status = 20 and t3.data_status = 1 AND t3.rent_type=2 AND <![CDATA[ t3.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time)  >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_name
+		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		<where>
+			<if test="true">
+				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
+			</if>
+		</where>
+		  GROUP BY m1.sub_company_id
+		) a4 on a4.sub_company_id = esc.id
+
+		LEFT JOIN (
+		SELECT ec.owner_sub_company_id as sub_company_id, count(rec_customer.k3_customer_name) as long_rent_return_customer_count
+		FROM (SELECT t1.k3_customer_no, t1.k3_customer_name, COALESCE (sum(t2.real_product_count)) AS rec FROM erp_k3_return_order t1
+		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1 and t2.order_item_type = 1
+		INNER JOIN erp_order t3 ON t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				AND t1.data_status = 1 and t1.return_order_status = 20 and t3.data_status = 1 and t3.rent_type = 2 AND <![CDATA[ t3.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.k3_customer_no,t1.k3_customer_name HAVING <![CDATA[ rec > 0  ]]>) rec_customer LEFT JOIN erp_customer ec on rec_customer.k3_customer_no = ec.customer_no AND ec.data_status = 1
+		GROUP BY ec.owner_sub_company_id
+		) a5 on a5.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select  ec.owner_sub_company_id as sub_company_id,sum(rec_count.rec) as long_rent_return_count from
+		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				AND t1.data_status = 1 and t1.return_order_status = 20 and t3.data_status = 1 and t3.rent_type = 2 AND <![CDATA[ t3.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_no,t1.k3_customer_name having <![CDATA[ rec > 0  ]]>) rec_count LEFT JOIN erp_customer ec on rec_count.k3_customer_no = ec.customer_no AND ec.data_status = 1
+		GROUP BY ec.owner_sub_company_id
+		) a6 on a6.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select m1.sub_company_id as sub_company_id,sum(m1.rc+m2.rec) as long_rent_renting_count from
+		(
+		select t1.order_sub_company_id AS sub_company_id,t1.buyer_customer_name,COALESCE(sum(t4.renting_product_count),0) as rc from erp_order t1
+		left join erp_order_product t4 on t1.id = t4.order_id and t4.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.data_status = 1 and t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[ t1.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ and to_days(t1.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.buyer_customer_name,t1.order_sub_company_id
+		) m1 left join (
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				AND t1.data_status = 1 and t1.return_order_status = 20 and t3.data_status = 1 and t3.rent_type = 2 AND <![CDATA[ t3.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_name
+		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		<where>
+			<if test="true">
+				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
+			</if>
+		</where>
+		GROUP BY m1.sub_company_id
+		) a7 on a7.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,sum(t2.product_count) AS short_rent_increase_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>))
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.rent_start_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) b1 on b1.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,sum(t2.product_amount) AS short_rent_increase_amount from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>))
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.rent_start_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) b2 on b2.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,count(distinct t3.id) as short_rent_increase_customer_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		inner join erp_customer t3 on t1.buyer_customer_id = t3.id
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>))
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.create_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) b3 on b3.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select m1.sub_company_id as sub_company_id,count(m1.buyer_customer_name) as short_rent_renting_customer_count from
+		(
+		select t1.order_sub_company_id AS sub_company_id,t1.buyer_customer_name,COALESCE(sum(t4.renting_product_count),0) as rc from erp_order t1
+		left join erp_order_product t4 on t1.id = t4.order_id and t4.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>)) AND t1.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND to_days(t1.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.buyer_customer_name,t1.order_sub_company_id
+		) m1 left join (
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t1.return_order_status = 20 and ((t3.rent_type=2 AND <![CDATA[ t3.rent_time_length < 6 ]]>) OR (t3.rent_type=1 AND <![CDATA[ t3.rent_time_length >= 30 ]]>)) AND t1.data_status = 1 and t3.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_name
+		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		<where>
+			<if test="true">
+				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
+			</if>
+		</where>
+		GROUP BY m1.sub_company_id
+		) b4 on b4.sub_company_id = esc.id
+
+		LEFT JOIN (
+		SELECT ec.owner_sub_company_id as sub_company_id, count(rec_customer.k3_customer_name) as short_rent_return_customer_count
+		FROM (SELECT t1.k3_customer_no, t1.k3_customer_name, COALESCE (sum(t2.real_product_count)) AS rec FROM erp_k3_return_order t1
+		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1 and t2.order_item_type = 1
+		INNER JOIN erp_order t3 ON t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t1.return_order_status = 20 and ((t3.rent_type=2 AND <![CDATA[ t3.rent_time_length < 6 ]]>) OR (t3.rent_type=1 AND <![CDATA[ t3.rent_time_length >= 30 ]]>)) AND t1.data_status = 1 and t3.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.k3_customer_no,t1.k3_customer_name HAVING <![CDATA[ rec > 0]]>) rec_customer LEFT JOIN erp_customer ec on rec_customer.k3_customer_no = ec.customer_no AND ec.data_status = 1
+		GROUP BY ec.owner_sub_company_id
+		) b5 on b5.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select  ec.owner_sub_company_id as sub_company_id,sum(rec_count.rec) as short_rent_return_count from
+		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t1.return_order_status = 20 and ((t3.rent_type=2 AND <![CDATA[ t3.rent_time_length < 6 ]]>) OR (t3.rent_type=1 AND <![CDATA[ t3.rent_time_length >= 30 ]]>)) AND t1.data_status = 1 and t3.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_no,t1.k3_customer_name having <![CDATA[ rec > 0 ]]>) rec_count LEFT JOIN erp_customer ec on rec_count.k3_customer_no = ec.customer_no AND ec.data_status = 1
+		GROUP BY ec.owner_sub_company_id
+		) b6 on b6.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select m1.sub_company_id as sub_company_id,sum(m1.rc+m2.rec) as short_rent_renting_count from
+		(
+		select t1.order_sub_company_id AS sub_company_id,t1.buyer_customer_name,COALESCE(sum(t4.renting_product_count),0) as rc from erp_order t1
+		left join erp_order_product t4 on t1.id = t4.order_id and t4.data_status = 1
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>)) AND t1.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND to_days(t1.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.buyer_customer_name,t1.order_sub_company_id
+		) m1 left join (
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t1.return_order_status = 20 and ((t3.rent_type=2 AND <![CDATA[ t3.rent_time_length < 6 ]]>) OR (t3.rent_type=1 AND <![CDATA[ t3.rent_time_length >= 30 ]]>)) AND t1.data_status = 1 and t3.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_name
+		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		<where>
+			<if test="true">
+				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
+			</if>
+		</where>
+		GROUP BY m1.sub_company_id
+		) b7 on b7.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,sum(t2.product_count) AS ultrashort_rent_increase_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.rent_start_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) c1 on c1.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,sum(t2.product_amount) AS ultrashort_rent_increase_amount from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.rent_start_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) c2 on c2.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,count(distinct t3.id) as ultrashort_rent_increase_customer_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		inner join erp_customer t3 on t1.buyer_customer_id = t3.id
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.create_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) c3 on c3.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select m1.sub_company_id as sub_company_id,count(m1.buyer_customer_name) as ultrashort_rent_renting_customer_count from
+		(
+		select t1.order_sub_company_id AS sub_company_id,t1.buyer_customer_name,COALESCE(sum(t4.renting_product_count),0) as rc from erp_order t1
+		left join erp_order_product t4 on t1.id = t4.order_id and t4.data_status = 1
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]> AND t1.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND to_days(t1.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.buyer_customer_name,t1.order_sub_company_id
+		) m1 left join (
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t3.data_status = 1  and t3.rent_type = 1  AND <![CDATA[ t3.rent_time_length < 30 ]]> AND t1.data_status = 1 and t1.return_order_status = 20
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_name
+		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		<where>
+			<if test="true">
+				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
+			</if>
+		</where>
+		GROUP BY m1.sub_company_id
+		) c4 on c4.sub_company_id = esc.id
+
+		LEFT JOIN (
+		SELECT ec.owner_sub_company_id as sub_company_id, count(rec_customer.k3_customer_name) as ultrashort_rent_return_customer_count
+		FROM (SELECT t1.k3_customer_no, t1.k3_customer_name, COALESCE (sum(t2.real_product_count)) AS rec FROM erp_k3_return_order t1
+		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1 and t2.order_item_type = 1
+		INNER JOIN erp_order t3 ON t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t3.data_status = 1  and t3.rent_type = 1  AND <![CDATA[ t3.rent_time_length < 30 ]]> AND t1.data_status = 1 and t1.return_order_status = 20
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.k3_customer_no,t1.k3_customer_name HAVING <![CDATA[ rec > 0 ]]>) rec_customer LEFT JOIN erp_customer ec on rec_customer.k3_customer_no = ec.customer_no AND ec.data_status = 1
+		GROUP BY ec.owner_sub_company_id
+		) c5 on c5.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select  ec.owner_sub_company_id as sub_company_id,sum(rec_count.rec) as ultrashort_rent_return_count from
+		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t3.data_status = 1  and t3.rent_type = 1  AND <![CDATA[ t3.rent_time_length < 30 ]]> AND t1.data_status = 1 and t1.return_order_status = 20
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_no,t1.k3_customer_name having <![CDATA[ rec > 0 ]]>) rec_count LEFT JOIN erp_customer ec on rec_count.k3_customer_no = ec.customer_no AND ec.data_status = 1
+		GROUP BY ec.owner_sub_company_id
+		) c6 on c6.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select m1.sub_company_id as sub_company_id,sum(m1.rc+m2.rec) as ultrashort_rent_renting_count from
+		(
+		select t1.order_sub_company_id AS sub_company_id,t1.buyer_customer_name,COALESCE(sum(t4.renting_product_count),0) as rc from erp_order t1
+		left join erp_order_product t4 on t1.id = t4.order_id and t4.data_status = 1
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]> AND t1.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND to_days(t1.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.buyer_customer_name,t1.order_sub_company_id
+		) m1 left join (
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t3.data_status = 1  and t3.rent_type = 1  AND <![CDATA[ t3.rent_time_length < 30 ]]> AND t1.data_status = 1 and t1.return_order_status = 20
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_name
+		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		<where>
+			<if test="true">
+				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
+			</if>
+		</where>
+		GROUP BY m1.sub_company_id
+		) c7 on c7.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.owner_sub_company_id as sub_company_id,count(distinct t1.customer_no) as increase_customer_count from erp_customer t1
+		<where>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.create_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.owner_sub_company_id
+		) d1 on d1.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.owner_sub_company_id as sub_company_id,count(distinct t1.customer_no) as increase_risk_customer_count from erp_customer t1 left join erp_customer_risk_management t2 on t1.id = t2.customer_id
+		<where>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t2.create_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.owner_sub_company_id
+		) d2 on d2.sub_company_id = esc.id
+		ORDER BY esc.id
+	</select>
+
+	<select id="findDataListForSubCompanyWeekAndMonth" resultMap="StatisticsOperateDataDO" parameterType="map">
+		SELECT  esc.id AS sub_company_id,esc.sub_company_name AS sub_company_name,
+		IFNULL(a1.long_rent_increase_count,0) AS long_rent_increase_count,
+		IFNULL(a2.long_rent_increase_amount,0) AS long_rent_increase_amount,
+		IFNULL(a3.long_rent_increase_customer_count,0) AS long_rent_increase_customer_count,
+		IFNULL(b1.short_rent_increase_count,0) AS short_rent_increase_count,
+		IFNULL(b2.short_rent_increase_amount,0) AS short_rent_increase_amount,
+		IFNULL(b3.short_rent_increase_customer_count,0) AS short_rent_increase_customer_count,
+		IFNULL(c1.ultrashort_rent_increase_count,0) AS ultrashort_rent_increase_count,
+		IFNULL(c2.ultrashort_rent_increase_amount,0) AS ultrashort_rent_increase_amount,
+		IFNULL(c3.ultrashort_rent_increase_customer_count,0) AS ultrashort_rent_increase_customer_count,
+		IFNULL(d1.increase_customer_count,0) AS increase_customer_count,
+		IFNULL(d2.increase_risk_customer_count,0) AS increase_risk_customer_count
+		from erp_sub_company esc
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,sum(t2.product_count) AS long_rent_increase_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[ t1.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) a1 on a1.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,sum(t2.product_amount) AS long_rent_increase_amount from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[ t1.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) a2 on a2.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,count(distinct t3.id) as long_rent_increase_customer_count from erp_order t1 inner join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		inner join erp_customer t3 on t1.buyer_customer_id = t3.id
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[ t1.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t3.create_time)  >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t3.create_time)  < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) a3 on a3.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,sum(t2.product_count) AS short_rent_increase_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>))
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) b1 on b1.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,sum(t2.product_amount) AS short_rent_increase_amount from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>))
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) b2 on b2.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,count(distinct t3.id) as short_rent_increase_customer_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		inner join erp_customer t3 on t1.buyer_customer_id = t3.id
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>))
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) b3 on b3.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,sum(t2.product_count) AS ultrashort_rent_increase_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) c1 on c1.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,sum(t2.product_amount) AS ultrashort_rent_increase_amount from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) c2 on c2.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.order_sub_company_id AS sub_company_id,count(distinct t3.id) as ultrashort_rent_increase_customer_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		inner join erp_customer t3 on t1.buyer_customer_id = t3.id
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.create_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.create_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_sub_company_id
+		) c3 on c3.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.owner_sub_company_id as sub_company_id,count(distinct t1.customer_no) as increase_customer_count from erp_customer t1
+		<where>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.create_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.create_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.owner_sub_company_id
+		) d1 on d1.sub_company_id = esc.id
+
+		LEFT JOIN (
+		select t1.owner_sub_company_id as sub_company_id,count(distinct t1.customer_no) as increase_risk_customer_count from erp_customer t1 left join erp_customer_risk_management t2 on t1.id = t2.customer_id
+		<where>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t2.create_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t2.create_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.owner_sub_company_id
+		) d2 on d2.sub_company_id = esc.id
+		ORDER BY esc.id
+	</select>
+
+	<insert id="addList" parameterType="java.util.ArrayList" >
+		INSERT INTO erp_statistics_operate_data
+		(sub_company_id,sub_company_name,owner_id,owner_name,statistical_dimension,
+		long_rent_increase_count,long_rent_increase_amount,long_rent_increase_customer_count,long_rent_renting_customer_count,long_rent_return_customer_count,long_rent_return_count,long_rent_renting_count,
+		short_rent_increase_count,short_rent_increase_amount,short_rent_increase_customer_count,short_rent_renting_customer_count,short_rent_return_customer_count,short_rent_return_count,short_rent_renting_count,
+		ultrashort_rent_increase_count,ultrashort_rent_increase_amount,ultrashort_rent_increase_customer_count,ultrashort_rent_renting_customer_count,ultrashort_rent_return_customer_count,ultrashort_rent_return_count,
+		ultrashort_rent_renting_count,increase_customer_count,increase_risk_customer_count,start_statistics_time,end_statistics_time,statistical_status,data_status,create_time,create_user)
+		values
+		<foreach collection="list" item="StatisticsOperateDataDO" separator="," >
+			(#{StatisticsOperateDataDO.subCompanyId}, #{StatisticsOperateDataDO.subCompanyName},#{StatisticsOperateDataDO.ownerId},
+			#{StatisticsOperateDataDO.ownerName},#{StatisticsOperateDataDO.statisticalDimension},#{StatisticsOperateDataDO.longRentIncreaseCount},
+			#{StatisticsOperateDataDO.longRentIncreaseAmount},#{StatisticsOperateDataDO.longRentIncreaseCustomerCount},#{StatisticsOperateDataDO.longRentRentingCustomerCount},
+			#{StatisticsOperateDataDO.longRentReturnCustomerCount},#{StatisticsOperateDataDO.longRentReturnCount},#{StatisticsOperateDataDO.longRentRentingCount},
+			#{StatisticsOperateDataDO.shortRentIncreaseCount},#{StatisticsOperateDataDO.shortRentIncreaseAmount},#{StatisticsOperateDataDO.shortRentIncreaseCustomerCount},
+			#{StatisticsOperateDataDO.shortRentRentingCustomerCount},#{StatisticsOperateDataDO.shortRentReturnCustomerCount},#{StatisticsOperateDataDO.shortRentReturnCount},
+			#{StatisticsOperateDataDO.shortRentRentingCount},#{StatisticsOperateDataDO.ultrashortRentIncreaseCount},#{StatisticsOperateDataDO.ultrashortRentIncreaseAmount},
+			#{StatisticsOperateDataDO.ultrashortRentIncreaseCustomerCount},#{StatisticsOperateDataDO.ultrashortRentRentingCustomerCount},#{StatisticsOperateDataDO.ultrashortRentReturnCustomerCount},
+			#{StatisticsOperateDataDO.ultrashortRentReturnCount},#{StatisticsOperateDataDO.ultrashortRentRentingCount},#{StatisticsOperateDataDO.increaseCustomerCount},
+			#{StatisticsOperateDataDO.increaseRiskCustomerCount},#{StatisticsOperateDataDO.startStatisticsTime},#{StatisticsOperateDataDO.endStatisticsTime},
+			#{StatisticsOperateDataDO.statisticalStatus},#{StatisticsOperateDataDO.dataStatus},#{StatisticsOperateDataDO.createTime},#{StatisticsOperateDataDO.createUser})
+		</foreach>
+	</insert>
+
+	<select id="findDataListForSalesmanDate" resultMap="StatisticsOperateDataDO" parameterType="map">
+		SELECT  DISTINCT eu.id as owner_id,eu.real_name as owner_name,esc.id AS sub_company_id,esc.sub_company_name AS sub_company_name,
+		IFNULL(a1.long_rent_increase_count,0) AS long_rent_increase_count,
+		IFNULL(a2.long_rent_increase_amount,0) AS long_rent_increase_amount,
+		IFNULL(a3.long_rent_increase_customer_count,0) AS long_rent_increase_customer_count,
+		IFNULL(a4.long_rent_renting_customer_count,0) AS long_rent_renting_customer_count,
+		IFNULL(a5.long_rent_return_customer_count,0) AS long_rent_return_customer_count,
+		IFNULL(a6.long_rent_return_count,0) AS long_rent_return_count,
+		IFNULL(a7.long_rent_renting_count,0) AS long_rent_renting_count,
+		IFNULL(b1.short_rent_increase_count,0) AS short_rent_increase_count,
+		IFNULL(b2.short_rent_increase_amount,0) AS short_rent_increase_amount,
+		IFNULL(b3.short_rent_increase_customer_count,0) AS short_rent_increase_customer_count,
+		IFNULL(b4.short_rent_renting_customer_count,0) AS short_rent_renting_customer_count,
+		IFNULL(b5.short_rent_return_customer_count,0) AS short_rent_return_customer_count,
+		IFNULL(b6.short_rent_return_count,0) AS short_rent_return_count,
+		IFNULL(b7.short_rent_renting_count,0) AS short_rent_renting_count,
+		IFNULL(c1.ultrashort_rent_increase_count,0) AS ultrashort_rent_increase_count,
+		IFNULL(c2.ultrashort_rent_increase_amount,0) AS ultrashort_rent_increase_amount,
+		IFNULL(c3.ultrashort_rent_increase_customer_count,0) AS ultrashort_rent_increase_customer_count,
+		IFNULL(c4.ultrashort_rent_renting_customer_count,0) AS ultrashort_rent_renting_customer_count,
+		IFNULL(c5.ultrashort_rent_return_customer_count,0) AS ultrashort_rent_return_customer_count,
+		IFNULL(c6.ultrashort_rent_return_count,0) AS ultrashort_rent_return_count,
+		IFNULL(c7.ultrashort_rent_renting_count,0) AS ultrashort_rent_renting_count,
+		IFNULL(d1.increase_customer_count,0) AS increase_customer_count,
+		IFNULL(d2.increase_risk_customer_count,0) AS increase_risk_customer_count
+
+		from erp_department ed
+		LEFT JOIN erp_role er on er.department_id = ed.id AND er.data_status =1
+		LEFT JOIN erp_user_role eur on eur.role_id = er.id AND eur.data_status = 1
+		LEFT JOIN erp_user eu on eu.id = eur.user_id
+		LEFT JOIN erp_sub_company esc ON ed.sub_company_id = esc.id AND esc.data_status = 1
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,sum(t2.product_count) AS long_rent_increase_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[ t1.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) = TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) a1 on a1.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,sum(t2.product_amount) AS long_rent_increase_amount from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[ t1.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.rent_start_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) a2 on a2.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,count(distinct t3.id) as long_rent_increase_customer_count from erp_order t1 inner join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		inner join erp_customer t3 on t1.buyer_customer_id = t3.id
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[ t1.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t3.create_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) a3 on a3.user_id = eu.id
+
+		LEFT JOIN (
+		select m1.user_id as user_id,count(m1.buyer_customer_name) as long_rent_renting_customer_count from
+		(
+		select t1.order_seller_id as user_id,t1.buyer_customer_name,COALESCE(sum(t4.renting_product_count),0) as rc from erp_order t1
+		left join erp_order_product t4 on t1.id = t4.order_id and t4.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.data_status = 1 and t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[t1.rent_time_length >= 6]]>
+			</if>
+			<if test="maps.startTime != null ">
+				<![CDATA[ AND to_days(t1.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.buyer_customer_name,t1.order_seller_id
+		) m1 left join (
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				AND t1.data_status = 1 and t1.return_order_status = 20 and t3.data_status = 1 AND t3.rent_type=2 AND <![CDATA[ t3.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time)  >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_name
+		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		<where>
+			<if test="true">
+				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
+			</if>
+		</where>
+		GROUP BY m1.user_id
+		) a4 on a4.user_id = eu.id
+
+		LEFT JOIN (
+		SELECT ec.owner as user_id, count(rec_customer.k3_customer_name) as long_rent_return_customer_count
+		FROM (SELECT t1.k3_customer_no, t1.k3_customer_name, COALESCE (sum(t2.real_product_count)) AS rec FROM erp_k3_return_order t1
+		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1 and t2.order_item_type = 1
+		INNER JOIN erp_order t3 ON t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				AND t1.data_status = 1 and t1.return_order_status = 20 and t3.data_status = 1 and t3.rent_type = 2 AND <![CDATA[ t3.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.k3_customer_no,t1.k3_customer_name HAVING <![CDATA[ rec > 0  ]]>) rec_customer LEFT JOIN erp_customer ec on rec_customer.k3_customer_no = ec.customer_no AND ec.data_status = 1
+		GROUP BY ec.owner
+		) a5 on a5.user_id = eu.id
+
+		LEFT JOIN (
+		select  ec.owner as user_id,sum(rec_count.rec) as long_rent_return_count from
+		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				AND t1.data_status = 1 and t1.return_order_status = 20 and t3.data_status = 1 and t3.rent_type = 2 AND <![CDATA[ t3.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_no,t1.k3_customer_name having <![CDATA[ rec > 0  ]]>) rec_count LEFT JOIN erp_customer ec on rec_count.k3_customer_no = ec.customer_no AND ec.data_status = 1
+		GROUP BY ec.owner
+		) a6 on a6.user_id = eu.id
+
+		LEFT JOIN (
+		select m1.user_id as user_id,sum(m1.rc+m2.rec) as long_rent_renting_count from
+		(
+		select t1.order_seller_id as user_id,t1.buyer_customer_name,COALESCE(sum(t4.renting_product_count),0) as rc from erp_order t1
+		left join erp_order_product t4 on t1.id = t4.order_id and t4.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.data_status = 1 and t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[ t1.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ and to_days(t1.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.buyer_customer_name,t1.order_seller_id
+		) m1 left join (
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				AND t1.data_status = 1 and t1.return_order_status = 20 and t3.data_status = 1 and t3.rent_type = 2 AND <![CDATA[ t3.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_name
+		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		<where>
+			<if test="true">
+				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
+			</if>
+		</where>
+		GROUP BY m1.user_id
+		) a7 on a7.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,sum(t2.product_count) AS short_rent_increase_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>))
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.rent_start_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) b1 on b1.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,sum(t2.product_amount) AS short_rent_increase_amount from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>))
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.rent_start_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) b2 on b2.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,count(distinct t3.id) as short_rent_increase_customer_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		inner join erp_customer t3 on t1.buyer_customer_id = t3.id
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>))
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.create_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) b3 on b3.user_id = eu.id
+
+		LEFT JOIN (
+		select m1.user_id as user_id,count(m1.buyer_customer_name) as short_rent_renting_customer_count from
+		(
+		select t1.order_seller_id as user_id,t1.buyer_customer_name,COALESCE(sum(t4.renting_product_count),0) as rc from erp_order t1
+		left join erp_order_product t4 on t1.id = t4.order_id and t4.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>)) AND t1.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND to_days(t1.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.buyer_customer_name,t1.order_seller_id
+		) m1 left join (
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t1.return_order_status = 20 and ((t3.rent_type=2 AND <![CDATA[ t3.rent_time_length < 6 ]]>) OR (t3.rent_type=1 AND <![CDATA[ t3.rent_time_length >= 30 ]]>)) AND t1.data_status = 1 and t3.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_name
+		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		<where>
+			<if test="true">
+				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
+			</if>
+		</where>
+		GROUP BY m1.user_id
+		) b4 on b4.user_id = eu.id
+
+		LEFT JOIN (
+		SELECT ec.owner as user_id, count(rec_customer.k3_customer_name) as short_rent_return_customer_count
+		FROM (SELECT t1.k3_customer_no, t1.k3_customer_name, COALESCE (sum(t2.real_product_count)) AS rec FROM erp_k3_return_order t1
+		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1 and t2.order_item_type = 1
+		INNER JOIN erp_order t3 ON t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t1.return_order_status = 20 and ((t3.rent_type=2 AND <![CDATA[ t3.rent_time_length < 6 ]]>) OR (t3.rent_type=1 AND <![CDATA[ t3.rent_time_length >= 30 ]]>)) AND t1.data_status = 1 and t3.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.k3_customer_no,t1.k3_customer_name HAVING <![CDATA[ rec > 0]]>) rec_customer LEFT JOIN erp_customer ec on rec_customer.k3_customer_no = ec.customer_no AND ec.data_status = 1
+		GROUP BY ec.owner
+		) b5 on b5.user_id = eu.id
+
+		LEFT JOIN (
+		select  ec.owner as user_id,sum(rec_count.rec) as short_rent_return_count from
+		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t1.return_order_status = 20 and ((t3.rent_type=2 AND <![CDATA[ t3.rent_time_length < 6 ]]>) OR (t3.rent_type=1 AND <![CDATA[ t3.rent_time_length >= 30 ]]>)) AND t1.data_status = 1 and t3.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_no,t1.k3_customer_name having <![CDATA[ rec > 0 ]]>) rec_count LEFT JOIN erp_customer ec on rec_count.k3_customer_no = ec.customer_no AND ec.data_status = 1
+		GROUP BY ec.owner
+		) b6 on b6.user_id = eu.id
+
+		LEFT JOIN (
+		select m1.user_id as user_id,sum(m1.rc+m2.rec) as short_rent_renting_count from
+		(
+		select t1.order_seller_id as user_id,t1.buyer_customer_name,COALESCE(sum(t4.renting_product_count),0) as rc from erp_order t1
+		left join erp_order_product t4 on t1.id = t4.order_id and t4.data_status = 1
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>)) AND t1.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND to_days(t1.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.buyer_customer_name,t1.order_seller_id
+		) m1 left join (
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t1.return_order_status = 20 and ((t3.rent_type=2 AND <![CDATA[ t3.rent_time_length < 6 ]]>) OR (t3.rent_type=1 AND <![CDATA[ t3.rent_time_length >= 30 ]]>)) AND t1.data_status = 1 and t3.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_name
+		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		<where>
+			<if test="true">
+				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
+			</if>
+		</where>
+		GROUP BY m1.user_id
+		) b7 on b7.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,sum(t2.product_count) AS ultrashort_rent_increase_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.rent_start_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) c1 on c1.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,sum(t2.product_amount) AS ultrashort_rent_increase_amount from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.rent_start_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) c2 on c2.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,count(distinct t3.id) as ultrashort_rent_increase_customer_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		inner join erp_customer t3 on t1.buyer_customer_id = t3.id
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.create_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) c3 on c3.user_id = eu.id
+
+		LEFT JOIN (
+		select m1.user_id as user_id,count(m1.buyer_customer_name) as ultrashort_rent_renting_customer_count from
+		(
+		select t1.order_seller_id as user_id,t1.buyer_customer_name,COALESCE(sum(t4.renting_product_count),0) as rc from erp_order t1
+		left join erp_order_product t4 on t1.id = t4.order_id and t4.data_status = 1
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]> AND t1.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND to_days(t1.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.buyer_customer_name,t1.order_seller_id
+		) m1 left join (
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t3.data_status = 1  and t3.rent_type = 1  AND <![CDATA[ t3.rent_time_length < 30 ]]> AND t1.data_status = 1 and t1.return_order_status = 20
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_name
+		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		<where>
+			<if test="true">
+				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
+			</if>
+		</where>
+		GROUP BY m1.user_id
+		) c4 on c4.user_id = eu.id
+
+		LEFT JOIN (
+		SELECT ec.owner as user_id, count(rec_customer.k3_customer_name) as ultrashort_rent_return_customer_count
+		FROM (SELECT t1.k3_customer_no, t1.k3_customer_name, COALESCE (sum(t2.real_product_count)) AS rec FROM erp_k3_return_order t1
+		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1 and t2.order_item_type = 1
+		INNER JOIN erp_order t3 ON t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t3.data_status = 1  and t3.rent_type = 1  AND <![CDATA[ t3.rent_time_length < 30 ]]> AND t1.data_status = 1 and t1.return_order_status = 20
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.k3_customer_no,t1.k3_customer_name HAVING <![CDATA[ rec > 0 ]]>) rec_customer LEFT JOIN erp_customer ec on rec_customer.k3_customer_no = ec.customer_no AND ec.data_status = 1
+		GROUP BY ec.owner
+		) c5 on c5.user_id = eu.id
+
+		LEFT JOIN (
+		select  ec.owner as user_id,sum(rec_count.rec) as ultrashort_rent_return_count from
+		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t3.data_status = 1  and t3.rent_type = 1  AND <![CDATA[ t3.rent_time_length < 30 ]]> AND t1.data_status = 1 and t1.return_order_status = 20
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_no,t1.k3_customer_name having <![CDATA[ rec > 0 ]]>) rec_count LEFT JOIN erp_customer ec on rec_count.k3_customer_no = ec.customer_no AND ec.data_status = 1
+		GROUP BY ec.owner
+		) c6 on c6.user_id = eu.id
+
+		LEFT JOIN (
+		select m1.user_id as user_id,sum(m1.rc+m2.rec) as ultrashort_rent_renting_count from
+		(
+		select t1.order_seller_id as user_id,t1.buyer_customer_name,COALESCE(sum(t4.renting_product_count),0) as rc from erp_order t1
+		left join erp_order_product t4 on t1.id = t4.order_id and t4.data_status = 1
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]> AND t1.data_status = 1
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND to_days(t1.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.buyer_customer_name,t1.order_seller_id
+		) m1 left join (
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		inner join erp_order t3 on t2.order_no = t3.order_no
+		<where>
+			<if test="true">
+				and t3.data_status = 1  and t3.rent_type = 1  AND <![CDATA[ t3.rent_time_length < 30 ]]> AND t1.data_status = 1 and t1.return_order_status = 20
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
+				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+		</where>
+		group by t1.k3_customer_name
+		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		<where>
+			<if test="true">
+				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
+			</if>
+		</where>
+		GROUP BY m1.user_id
+		) c7 on c7.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.owner as user_id,count(distinct t1.customer_no) as increase_customer_count from erp_customer t1
+		<where>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t1.create_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.owner
+		) d1 on d1.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.owner as user_id,count(distinct t1.customer_no) as increase_risk_customer_count from erp_customer t1 left join erp_customer_risk_management t2 on t1.id = t2.customer_id
+		<where>
+			<if test="maps.startTime != null">
+				AND TO_DAYS(t2.create_time) = TO_DAYS(#{maps.startTime})
+			</if>
+		</where>
+		GROUP BY t1.owner
+		) d2 on d2.user_id = eu.id
+		where esc.id is not null and eu.id is not null and ed.department_type in (select department_type from erp_business_commission_config) and ed.data_status = 1
+		ORDER BY eu.id,esc.id
+	</select>
+
+	<select id="findDataListForSalesmanWeekAndMonth" resultMap="StatisticsOperateDataDO" parameterType="map">
+		SELECT  DISTINCT eu.id as owner_id,eu.real_name as owner_name,esc.id AS sub_company_id,esc.sub_company_name AS sub_company_name,
+		IFNULL(a1.long_rent_increase_count,0) AS long_rent_increase_count,
+		IFNULL(a2.long_rent_increase_amount,0) AS long_rent_increase_amount,
+		IFNULL(a3.long_rent_increase_customer_count,0) AS long_rent_increase_customer_count,
+		IFNULL(b1.short_rent_increase_count,0) AS short_rent_increase_count,
+		IFNULL(b2.short_rent_increase_amount,0) AS short_rent_increase_amount,
+		IFNULL(b3.short_rent_increase_customer_count,0) AS short_rent_increase_customer_count,
+		IFNULL(c1.ultrashort_rent_increase_count,0) AS ultrashort_rent_increase_count,
+		IFNULL(c2.ultrashort_rent_increase_amount,0) AS ultrashort_rent_increase_amount,
+		IFNULL(c3.ultrashort_rent_increase_customer_count,0) AS ultrashort_rent_increase_customer_count,
+		IFNULL(d1.increase_customer_count,0) AS increase_customer_count,
+		IFNULL(d2.increase_risk_customer_count,0) AS increase_risk_customer_count
+		from erp_department ed
+		LEFT JOIN erp_role er on er.department_id = ed.id AND er.data_status =1
+		LEFT JOIN erp_user_role eur on eur.role_id = er.id AND eur.data_status = 1
+		LEFT JOIN erp_user eu on eu.id = eur.user_id
+		LEFT JOIN erp_sub_company esc ON ed.sub_company_id = esc.id AND esc.data_status = 1
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,sum(t2.product_count) AS long_rent_increase_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[ t1.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) a1 on a1.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,sum(t2.product_amount) AS long_rent_increase_amount from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[ t1.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) a2 on a2.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,count(distinct t3.id) as long_rent_increase_customer_count from erp_order t1 inner join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		inner join erp_customer t3 on t1.buyer_customer_id = t3.id
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and t1.rent_type=2 AND <![CDATA[ t1.rent_time_length >= 6 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t3.create_time)  >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t3.create_time)  < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) a3 on a3.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,sum(t2.product_count) AS short_rent_increase_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>))
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) b1 on b1.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,sum(t2.product_amount) AS short_rent_increase_amount from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>))
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) b2 on b2.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,count(distinct t3.id) as short_rent_increase_customer_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		inner join erp_customer t3 on t1.buyer_customer_id = t3.id
+		<where>
+			<if test="true">
+				AND t1.order_status in (16,20,22,24) and ((t1.rent_type=2 AND <![CDATA[ t1.rent_time_length < 6 ]]>) OR (t1.rent_type=1 AND <![CDATA[ t1.rent_time_length >= 30 ]]>))
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) b3 on b3.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,sum(t2.product_count) AS ultrashort_rent_increase_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) c1 on c1.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,sum(t2.product_amount) AS ultrashort_rent_increase_amount from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.rent_start_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) c2 on c2.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.order_seller_id as user_id,count(distinct t3.id) as ultrashort_rent_increase_customer_count from erp_order t1 left join erp_order_product t2 on t1.id = t2.order_id and t2.data_status = 1
+		inner join erp_customer t3 on t1.buyer_customer_id = t3.id
+		<where>
+			<if test="true">
+				and t1.order_status in (16,20,22,24) and t1.rent_type = 1 AND <![CDATA[ t1.rent_time_length < 30 ]]>
+			</if>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.create_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.create_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.order_seller_id
+		) c3 on c3.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.owner as user_id,count(distinct t1.customer_no) as increase_customer_count from erp_customer t1
+		<where>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t1.create_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t1.create_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.owner
+		) d1 on d1.user_id = eu.id
+
+		LEFT JOIN (
+		select t1.owner as user_id,count(distinct t1.customer_no) as increase_risk_customer_count from erp_customer t1 left join erp_customer_risk_management t2 on t1.id = t2.customer_id
+		<where>
+			<if test="maps.startTime != null">
+				<![CDATA[ AND TO_DAYS(t2.create_time) >= TO_DAYS(#{maps.startTime}) ]]>
+			</if>
+			<if test="maps.endTime != null ">
+				<![CDATA[ AND TO_DAYS(t2.create_time) < TO_DAYS(#{maps.endTime}) ]]>
+			</if>
+		</where>
+		GROUP BY t1.owner
+		) d2 on d2.user_id = eu.id
+		where esc.id is not null and eu.id is not null and ed.department_type in (select department_type from erp_business_commission_config) and ed.data_status = 1
+		ORDER BY eu.id,esc.id
+	</select>
+
+	<select id="findStatisticsOperateDataByParams" resultMap="StatisticsOperateDataDO" parameterType="map">
+		SELECT <include refid="column_List"/>
+		FROM erp_statistics_operate_data esod
+		<where>
+			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.subCompanyId != null ">
+				and esod.sub_company_id = #{maps.statisticsOperateDataPageParam.subCompanyId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.salesmanName != null &amp;&amp; maps.statisticsOperateDataPageParam.salesmanName != ''">
+				and esod.owner_name LIKE CONCAT('%','${maps.statisticsOperateDataPageParam.salesmanName}','%' )
+			</if>
+			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.statisticalDimension != null ">
+				and esod.statistical_dimension = #{maps.statisticsOperateDataPageParam.statisticalDimension, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.statisticalStatus != null ">
+				and esod.statistical_status = #{maps.statisticsOperateDataPageParam.statisticalStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.startTime != null ">
+				<![CDATA[ AND TO_DAYS(esod.start_statistics_time) = TO_DAYS(#{maps.statisticsOperateDataPageParam.startTime}) ]]>
+			</if>
+			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.createTime != null ">
+				<![CDATA[ AND TO_DAYS(esod.create_time) = TO_DAYS(#{maps.statisticsOperateDataPageParam.createTime}) ]]>
+			</if>
+			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.createTime == null ">
+				AND esod.create_time = (select MAX(esod.create_time) FROM erp_statistics_operate_data esod
+				<where>
+					<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.subCompanyId != null ">
+						and esod.sub_company_id = #{maps.statisticsOperateDataPageParam.subCompanyId, jdbcType=INTEGER}
+					</if>
+					<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.salesmanName != null &amp;&amp; maps.statisticsOperateDataPageParam.salesmanName != ''">
+						and esod.owner_name LIKE CONCAT('%','${maps.statisticsOperateDataPageParam.salesmanName}','%' )
+					</if>
+					<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.statisticalDimension != null ">
+						and esod.statistical_dimension = #{maps.statisticsOperateDataPageParam.statisticalDimension, jdbcType=INTEGER}
+					</if>
+					<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.statisticalStatus != null ">
+						and esod.statistical_status = #{maps.statisticsOperateDataPageParam.statisticalStatus, jdbcType=INTEGER}
+					</if>
+					<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.startTime != null ">
+						<![CDATA[ AND TO_DAYS(esod.start_statistics_time) = TO_DAYS(#{maps.statisticsOperateDataPageParam.startTime}) ]]>
+					</if>
+					<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.createTime != null ">
+						<![CDATA[ AND TO_DAYS(esod.create_time) = TO_DAYS(#{maps.statisticsOperateDataPageParam.createTime}) ]]>
+					</if>
+					<if test="true">
+						AND esod.data_status = 1
+					</if>
+				</where>
+				)
+			</if>
+			<if test="true">
+				AND esod.data_status = 1
+			</if>
+		</where>
+		ORDER BY esod.create_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<select id="findStatisticsOperateDataCountByParams" resultType="Integer" parameterType="map">
+		SELECT count(id)
+		FROM erp_statistics_operate_data esod
+		<where>
+			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.subCompanyId != null ">
+				and esod.sub_company_id = #{maps.statisticsOperateDataPageParam.subCompanyId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.salesmanName != null &amp;&amp; maps.statisticsOperateDataPageParam.salesmanName != ''">
+				and esod.owner_name LIKE CONCAT('%','${maps.statisticsOperateDataPageParam.salesmanName}','%' )
+			</if>
+			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.statisticalDimension != null ">
+				and esod.statistical_dimension = #{maps.statisticsOperateDataPageParam.statisticalDimension, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.statisticalStatus != null ">
+				and esod.statistical_status = #{maps.statisticsOperateDataPageParam.statisticalStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.startTime != null ">
+				<![CDATA[ AND TO_DAYS(esod.start_statistics_time) = TO_DAYS(#{maps.statisticsOperateDataPageParam.startTime}) ]]>
+			</if>
+			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.createTime != null ">
+				<![CDATA[ AND TO_DAYS(esod.create_time) = TO_DAYS(#{maps.statisticsOperateDataPageParam.createTime}) ]]>
+			</if>
+			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.createTime == null ">
+				AND esod.create_time = (select MAX(esod.create_time) FROM erp_statistics_operate_data esod
+				<where>
+					<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.subCompanyId != null ">
+						and esod.sub_company_id = #{maps.statisticsOperateDataPageParam.subCompanyId, jdbcType=INTEGER}
+					</if>
+					<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.salesmanName != null &amp;&amp; maps.statisticsOperateDataPageParam.salesmanName != ''">
+						and esod.owner_name LIKE CONCAT('%','${maps.statisticsOperateDataPageParam.salesmanName}','%' )
+					</if>
+					<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.statisticalDimension != null ">
+						and esod.statistical_dimension = #{maps.statisticsOperateDataPageParam.statisticalDimension, jdbcType=INTEGER}
+					</if>
+					<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.statisticalStatus != null ">
+						and esod.statistical_status = #{maps.statisticsOperateDataPageParam.statisticalStatus, jdbcType=INTEGER}
+					</if>
+					<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.startTime != null ">
+						<![CDATA[ AND TO_DAYS(esod.start_statistics_time) = TO_DAYS(#{maps.statisticsOperateDataPageParam.startTime}) ]]>
+					</if>
+					<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.createTime != null ">
+						<![CDATA[ AND TO_DAYS(esod.create_time) = TO_DAYS(#{maps.statisticsOperateDataPageParam.createTime}) ]]>
+					</if>
+					<if test="true">
+						AND esod.data_status = 1
+					</if>
+				</where>
+				)
+			</if>
+			<if test="true">
+				AND esod.data_status = 1
+			</if>
+		</where>
+	</select>
+</mapper>
