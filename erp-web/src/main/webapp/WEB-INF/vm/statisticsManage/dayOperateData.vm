@@ -65,7 +65,7 @@
                                                 <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
                                             </div>
                                         </div>
-                                        <div class="pull-left ml10" style="width:200px; height:30px;">
+                                        <div class="pull-left ml10 hide" id="addTimeBox" style="width:200px; height:30px;">
                                             <div class="form-group mn">
                                                 <input type="hidden" name="addTime" id="addTime" />
                                                 <div class="input-group date" id="addTimePicker">
@@ -156,7 +156,6 @@
                                 <td>{{ultrashortRentRentingCustomerCount}}</td>
                                 <td>{{ultrashortRentReturnCustomerCount}}</td>
                                 <td>{{ultrashortRentReturnCount}}</td>
-                                <td>{{ultrashortRentRentingCount}}</td>
                                 <td>{{ultrashortRentRentingCount}}</td>
                                 <td>{{increaseCustomerCount}}</td>
                                 <td>{{increaseRiskCustomerCount}}</td>
