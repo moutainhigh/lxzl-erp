@@ -343,7 +343,7 @@ public class WorkflowSupport {
     }
 
     public void saveWorkflowVerifyUserGroup(String verifyUserGroupId, List<User> verifyUserList, Date currentTime, Integer verifyUser, Integer loginUser,Integer verifyType) {
-        if (VerifyType.VERIFY_TYPE_ALL_USER_THIS_IS_PASS.equals(verifyType)) {
+        if (VerifyType.VERIFY_TYPE_ALL_USER_THIS_IS_PASS.equals(verifyType) || VerifyType.VERIFY_TYPE_THE_SAME_GROUP_ALL_PASS.equals(verifyType)) {
             List<WorkflowVerifyUserGroupDO> workflowVerifyUserGroupDOList = new ArrayList<>();
             for (User user : verifyUserList) {
                 workflowVerifyUserGroupDOList.add(getWorkflowVerifyUserGroupDO(verifyUserGroupId, user.getUserId(), currentTime, loginUser.toString(), verifyType));
@@ -434,7 +434,7 @@ public class WorkflowSupport {
     public List<User> checkVerifyUserType(WorkflowNodeDO thisWorkflowNodeDO ,Integer subCompanyId,Integer verifyUser){
         List<User> verifyUserList = null;
         //todo 针对商城 获取审核人列表
-        if (VerifyType.VERIFY_TYPE_ALL_USER_THIS_IS_PASS.equals(thisWorkflowNodeDO.getVerifyType())) {
+        if (VerifyType.VERIFY_TYPE_ALL_USER_THIS_IS_PASS.equals(thisWorkflowNodeDO.getVerifyType()) || VerifyType.VERIFY_TYPE_THE_SAME_GROUP_ALL_PASS.equals(thisWorkflowNodeDO.getVerifyType())) {
             verifyUserList = getUserListByNode(thisWorkflowNodeDO, subCompanyId);
             if (CollectionUtil.isEmpty(verifyUserList)) {
                 throw new BusinessException(ErrorCode.WORKFLOW_VERIFY_USER_IS_NULL, ErrorCode.getMessage(ErrorCode.WORKFLOW_VERIFY_USER_IS_NULL));
