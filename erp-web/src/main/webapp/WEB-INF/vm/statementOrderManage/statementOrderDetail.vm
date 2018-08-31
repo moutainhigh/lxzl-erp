@@ -147,9 +147,9 @@
                                 <tr>
 ##                                        <td class="nowrap">{{statementOrderDetailId}}</td>
                                     <td class="nowrap">{{orderTypeValue}}</td>
-                                    <td class="nowrap"><a href="{{orderDetailUrl}}" target="_blank" style="max-width:80px; white-space:pre-wrap;">{{orderNo}}</a></td>
+                                    <td class="nowrap"><a href="{{orderDetailUrl}}" target="_blank" style="width:80px; white-space:pre-wrap;">{{orderNo}}</a></td>
                                     <td class="nowrap">{{orderItemTypeValue}}</td>
-                                    <td class="nowrap"><div style="max-width:200px; word-wrap:break-word; white-space:pre-wrap;">{{itemName}}</div></td>
+                                    <td class="nowrap"><div style="width:200px; word-wrap:break-word; white-space:pre-wrap;">{{itemName}}</div></td>
                                     <td class="nowrap text-info">￥{{#price}}{{statementDetailAmount}}{{/price}}</td>
 ##                                        <td class="nowrap">{{statementDetailTypeValue}}</td>
                                     <td class="nowrap">￥{{#price}}{{unitAmount}}{{/price}}</td>
@@ -197,6 +197,7 @@
                                                 data-orderId="{{orderId}}"
                                                 data-orderItemReferId="{{orderItemReferId}}"
                                                 data-no="{{no}}"
+                                                data-amount="{{statementDetailAmount}}"
                                                 data-statementOrderDetailId="{{statementOrderDetailId}}"
                                                 data-mergelist="{{mergeListStr}}">{{text}}</a>
                                             {{/rowActionButtons}}
