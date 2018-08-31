@@ -182,6 +182,29 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/statistics/updateStatisticsSalesmanMonth", statisticsSalesmanMonth);
     }
 
+    @Test
+    public void createStatisticsOperateData() throws Exception {
+        Date date = new Date();
+        System.out.println(JSON.toJSONString(date));
+        TestResult testResult = getJsonTestResult("/statistics/createStatisticsOperateData", date);
+    }
+
+    @Test
+    public void queryStatisticsOperateDataForDay() throws Exception {
+        StatisticsOperateDataPageParam statisticsOperateDataPageParam = new StatisticsOperateDataPageParam();
+        statisticsOperateDataPageParam.setPageSize(1);
+        Date date = new Date();
+        Calendar ca1 = Calendar.getInstance();
+        ca1.setTime(date);
+        ca1.add(Calendar.DATE,-10);
+        Date endTime = ca1.getTime();
+        statisticsOperateDataPageParam.setStartTime(endTime);
+        statisticsOperateDataPageParam.setStatisticalStatus(2);
+        statisticsOperateDataPageParam.setStatisticalDimension(2);
+        TestResult testResult = getJsonTestResult("/statistics/queryStatisticsOperateDataForWeek", statisticsOperateDataPageParam);
+        System.out.println(JSON.toJSONString(testResult));
+    }
+
     private Date getFistByMonth() {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.MONTH, 0);

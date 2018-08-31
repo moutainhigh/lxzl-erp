@@ -1082,6 +1082,14 @@ public class ErrorCode {
     //Mall
     public static final String MALL_SYSTEM_CONNECT_EXCEPTION = "Mall00001";
 
+    //经营数据提取
+    public static final String STATISTICAL_STATUS_NOT_NULL = "J300000001";
+    public static final String STATISTICAL_STATUS_DAY_ERROR = "J300000002";
+    public static final String STATISTICAL_STATUS_WEEK_ERROR = "J300000003";
+    public static final String STATISTICAL_STATUS_MONTH_ERROR = "J300000004";
+    public static final String STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR = "J300000005";
+    public static final String STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR = "J300000006";
+
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -2145,6 +2153,13 @@ public class ErrorCode {
 
 
         MAP.put(MALL_SYSTEM_CONNECT_EXCEPTION, "连接Mall-App系统异常");
+
+        MAP.put(STATISTICAL_STATUS_NOT_NULL, "查询类型不能为空");
+        MAP.put(STATISTICAL_STATUS_DAY_ERROR, "查询日经营数据传递查询参数错误");
+        MAP.put(STATISTICAL_STATUS_WEEK_ERROR, "查询周经营数据传递查询参数错误");
+        MAP.put(STATISTICAL_STATUS_MONTH_ERROR, "查询月经营数据传递查询参数错误");
+        MAP.put(STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR, "查询周经营数据传入的查询开始时间必须是星期一");
+        MAP.put(STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR, "查询月经营数据传入的查询开始时间必须是月初一号");
 
     }
 
