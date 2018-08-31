@@ -55,16 +55,16 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="field form-group mn" style="display: flex;justify-content: space-between;" >
-                                            <input type="text" name="startTradeAmount" id="startTradeAmount" class="form-control input-sm bradius" autocomplete="off" placeholder="交易金额">
-                                            <span style="line-height: 30px;width: 30px;text-align: center">-</span>
-                                            <input type="text" name="endTradeAmount" id="endTradeAmount" class="form-control input-sm bradius" autocomplete="off" placeholder="交易金额">
+                                            <input type="text" name="startTradeAmount" id="startTradeAmount" class="form-control input-sm bradius" style="float:left;width:47%;" autocomplete="off" placeholder="交易金额">
+                                            <span style="line-height:30px;float:left;width:6%;" class="text-center">-</span>
+                                            <input type="text" name="endTradeAmount" id="endTradeAmount" class="form-control input-sm bradius" style="float:left;width:47%;" autocomplete="off" placeholder="交易金额">
                                         </div>
                                     </div>
                                     <div class="col-md-2">
-                                        <div class="field form-group mn" style="display: flex;justify-content: space-between;" >
-                                            <input type="text" name="startClaimAmount" id="startClaimAmount" class="form-control input-sm bradius" autocomplete="off" placeholder="认领金额">
-                                            <span style="line-height: 30px;width: 30px;text-align: center">-</span>
-                                            <input type="text" name="endClaimAmount" id="endClaimAmount" class="form-control input-sm bradius" autocomplete="off" placeholder="认领金额">
+                                        <div class="field form-group mn">
+                                            <input type="text" name="startClaimAmount" id="startClaimAmount" class="form-control input-sm bradius" style="float:left;width:47%;" autocomplete="off" placeholder="认领金额">
+                                            <span style="line-height:30px;float:left;width:6%;" class="text-center">-</span>
+                                            <input type="text" name="endClaimAmount" id="endClaimAmount" class="form-control input-sm bradius" style="float:left;width:47%;" autocomplete="off" placeholder="认领金额">
                                         </div>
                                     </div>
                                 </div>

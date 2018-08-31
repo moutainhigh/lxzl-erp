@@ -98,7 +98,7 @@
 
                 <div class="panel">
                     <div class="panel-body light pn">
-                        <div class="table-responsive" style="overflow-x: scroll; max-height: 500px;">
+                        <div class="table-responsive">
                             <script type="text/html" id="dataListTpl">
                                 <thead>
                                 <tr class="bg-light">
