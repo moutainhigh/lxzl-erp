@@ -15,6 +15,7 @@ public class WorkflowNode extends BasePO {
     private Integer workflowStep;   //流程步骤
     private Integer workflowPreviousNodeId;    // 上级节点
     private Integer workflowNextNodeId;        // 下级节点
+    private Integer verifyType;   //审核类型，1-本条审核通过则直接通过，2-相同审核组的所有2状态的审核通过才算通过
     private Integer workflowDepartmentType;   //本步骤可审批部门类型
     private Integer workflowDepartment;   //本步骤可审批部门
     private Integer workflowRole;   //本步骤可审批角色
@@ -177,4 +178,8 @@ public class WorkflowNode extends BasePO {
     public Integer getWorkflowRoleType() { return workflowRoleType; }
 
     public void setWorkflowRoleType(Integer workflowRoleType) { this.workflowRoleType = workflowRoleType; }
+
+    public Integer getVerifyType() { return verifyType; }
+
+    public void setVerifyType(Integer verifyType) { this.verifyType = verifyType; }
 }

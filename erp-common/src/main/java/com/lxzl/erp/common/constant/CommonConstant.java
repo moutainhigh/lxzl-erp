@@ -66,6 +66,7 @@ public class CommonConstant {
     public static final Integer COMMON_SALES_AND_BUSINESS_AFFAIRS_WORKBENCH = 2;//工作台类型，2-业务和商务工作台
     public static final Integer COMMON_WORKHOUSE_WORKBENCH = 3;//工作台类型，3-仓库工作台
     public static final Integer WORKFLOW_STEP_TWO = 2;
+    public static final Integer WORKFLOW_STEP_THREE = 3;
 
     public static final Integer RELET_TIME_OF_RENT_TYPE_MONTH = 30;  //按月租提前30天
     public static final Integer RELET_TIME_OF_RENT_TYPE_DAY = 15;   //按天租提前15天

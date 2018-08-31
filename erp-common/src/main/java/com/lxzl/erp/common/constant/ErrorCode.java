@@ -644,6 +644,7 @@ public class ErrorCode {
     public static final String RETURN_STATEMENT_ORDER_CREATE_ERROR = "J500185";
 
     public static final String CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST = "J500186";
+    public static final String CUSTOMER_STATUS_IS_NOT_PASS = "J500187";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1152,7 +1153,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_RETURN_ID_NOT_NULL, "客户的回访记录的ID不能为空");
         MAP.put(CUSTOMER_RETURN_VISIT_NOT_EXISTS, "客户的回访记录不存在");
         MAP.put(WORKFLOW_CUSTOMER_CAN_NOT_BACK_PREVIOUS, "客户工作流不允许驳回到上一级");
-        MAP.put(WORKFLOW_VERIFY_USER_IS_NULL, "商城工作流审核人未配置");
+        MAP.put(WORKFLOW_VERIFY_USER_IS_NULL, "工作流审核人未配置");
 
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
@@ -2140,6 +2141,7 @@ public class ErrorCode {
         MAP.put(SPLIT_STATEMENT_TIME_ERROR, "分段重算时间必须在订单起租时间与订单预计归还时间之间");
         MAP.put(RETURN_STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，该退货单结算单详情已存在，不能重复生成结算单");
         MAP.put(CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST, "客户为已经为确认坏账状态");
+        MAP.put(CUSTOMER_STATUS_IS_NOT_PASS, "客户状态须审核通过，才能使用此功能");
 
 
         MAP.put(MALL_SYSTEM_CONNECT_EXCEPTION, "连接Mall-App系统异常");

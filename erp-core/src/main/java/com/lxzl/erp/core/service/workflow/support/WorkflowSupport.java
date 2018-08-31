@@ -342,18 +342,18 @@ public class WorkflowSupport {
         return workflowVerifyUserGroupDO;
     }
 
-    public void saveWorkflowVerifyUserGroup(WorkflowTemplateDO workflowTemplateDO, String verifyUserGroupId, List<User> verifyUserList, Date currentTime, Integer verifyUser, Integer loginUser) {
-        if (WorkflowType.WORKFLOW_TYPE_MALL_ORDER.equals(workflowTemplateDO.getWorkflowType()) || WorkflowType.WORKFLOW_TYPE_MALL_CHANGE_ORDER.equals(workflowTemplateDO.getWorkflowType()) || WorkflowType.WORKFLOW_TYPE_MALL_RETURN_ORDER.equals(workflowTemplateDO.getWorkflowType()) || WorkflowType.WORKFLOW_TYPE_MALL_REPAIR_ORDER.equals(workflowTemplateDO.getWorkflowType()) || WorkflowType.WORKFLOW_TYPE_MALL_RELET_ORDER.equals(workflowTemplateDO.getWorkflowType()) || WorkflowType.WORKFLOW_TYPE_MALL_CUSTOMER.equals(workflowTemplateDO.getWorkflowType()) || WorkflowType.WORKFLOW_TYPE_MALL_CUSTOMER_CONSIGN.equals(workflowTemplateDO.getWorkflowType())) {
+    public void saveWorkflowVerifyUserGroup(String verifyUserGroupId, List<User> verifyUserList, Date currentTime, Integer verifyUser, Integer loginUser,Integer verifyType) {
+        if (VerifyType.VERIFY_TYPE_ALL_USER_THIS_IS_PASS.equals(verifyType)) {
             List<WorkflowVerifyUserGroupDO> workflowVerifyUserGroupDOList = new ArrayList<>();
             for (User user : verifyUserList) {
-                workflowVerifyUserGroupDOList.add(getWorkflowVerifyUserGroupDO(verifyUserGroupId, user.getUserId(), currentTime, loginUser.toString(), VerifyType.VERIFY_TYPE_THIS_IS_PASS));
+                workflowVerifyUserGroupDOList.add(getWorkflowVerifyUserGroupDO(verifyUserGroupId, user.getUserId(), currentTime, loginUser.toString(), verifyType));
             }
             if (CollectionUtil.isNotEmpty(workflowVerifyUserGroupDOList)) {
                 SqlLogInterceptor.setExecuteSql("skip print  workflowVerifyUserGroupMapper.saveList  sql ......");
                 workflowVerifyUserGroupMapper.saveList(workflowVerifyUserGroupDOList);
             }
         } else {
-            workflowVerifyUserGroupMapper.save(getWorkflowVerifyUserGroupDO(verifyUserGroupId, verifyUser, currentTime, loginUser.toString(), VerifyType.VERIFY_TYPE_THIS_IS_PASS));
+            workflowVerifyUserGroupMapper.save(getWorkflowVerifyUserGroupDO(verifyUserGroupId, verifyUser, currentTime, loginUser.toString(), verifyType));
         }
     }
     /** 得到经营范围的公司id */
@@ -427,6 +427,22 @@ public class WorkflowSupport {
         if (CollectionUtil.isNotEmpty(workflowVerifyUserGroupDOList)) {
             SqlLogInterceptor.setExecuteSql("skip print  workflowVerifyUserGroupMapper.saveList  sql ......");
             workflowVerifyUserGroupMapper.saveList(workflowVerifyUserGroupDOList);
+        }
+        return verifyUserList;
+    }
+
+    public List<User> checkVerifyUserType(WorkflowNodeDO thisWorkflowNodeDO ,Integer subCompanyId,Integer verifyUser){
+        List<User> verifyUserList = null;
+        //todo 针对商城 获取审核人列表
+        if (VerifyType.VERIFY_TYPE_ALL_USER_THIS_IS_PASS.equals(thisWorkflowNodeDO.getVerifyType())) {
+            verifyUserList = getUserListByNode(thisWorkflowNodeDO, subCompanyId);
+            if (CollectionUtil.isEmpty(verifyUserList)) {
+                throw new BusinessException(ErrorCode.WORKFLOW_VERIFY_USER_IS_NULL, ErrorCode.getMessage(ErrorCode.WORKFLOW_VERIFY_USER_IS_NULL));
+            }
+        } else {
+            if (!verifyVerifyUsers(thisWorkflowNodeDO, verifyUser, subCompanyId)) {
+                throw new BusinessException(ErrorCode.WORKFLOW_VERIFY_USER_ERROR, ErrorCode.getMessage(ErrorCode.WORKFLOW_VERIFY_USER_ERROR));
+            }
         }
         return verifyUserList;
     }

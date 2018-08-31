@@ -1074,3 +1074,7 @@ CREATE TABLE `erp_return_order_rollback_log` (
 
 ALTER TABLE `erp_statement_order_return_detail` ADD COLUMN `return_order_id` int(20)   COMMENT '退货单ID';
 ALTER TABLE `erp_statement_order_return_detail` ADD COLUMN `return_order_detail_id` int(20)  COMMENT '退货单详情ID';
+
+
+-- 工作流新增字段 V1.0.23-shopping --
+ALTER TABLE erp_workflow_node add `verify_type` INT(11) NOT NULL DEFAULT 1 COMMENT '审核类型:1-本条通过则通过,2-相同审核组的所有2的通过则通过,3-不用获取审核人该条通过直接通过';
