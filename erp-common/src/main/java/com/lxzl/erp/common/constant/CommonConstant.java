@@ -57,9 +57,10 @@ public class CommonConstant {
     public static final Integer ORDER_NEED_VERIFY_PRODUCT_COUNT = 100;
     public static final BigDecimal ORDER_NEED_VERIFY_PRODUCT_AMOUNT = new BigDecimal(200000);
 
-    public static final Integer COMMON_ZERO = 0;
-    public static final Integer COMMON_ONE = 1;
-    public static final Integer COMMON_TWO = 2;
+    public static final Integer COMMON_SALES_WORKBENCH = 0;
+    public static final Integer COMMON_BUSINESS_AFFAIRS_WORKBENCH = 1;
+    public static final Integer COMMON_SALES_AND_BUSINESS_AFFAIRS_WORKBENCH = 2;
+    public static final Integer COMMON_WORKHOUSE_WORKBENCH = 3;
     public static final Integer WORKFLOW_STEP_TWO = 2;
 
     public static final Integer RELET_TIME_OF_RENT_TYPE_MONTH = 30;  //按月租提前30天

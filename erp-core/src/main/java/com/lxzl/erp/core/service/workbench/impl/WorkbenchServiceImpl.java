@@ -53,7 +53,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
         Map<String,Object> maps = new HashMap<>();
 
         //业务工作台
-        if (CommonConstant.COMMON_ZERO.equals(workbenchQueryParam.getWorkbenchName())){
+        if (CommonConstant.COMMON_SALES_WORKBENCH.equals(workbenchQueryParam.getWorkbenchName())){
 
             Workbench workbenchRedis = redisManager.get("SALES_WORKBENCH_" + userSupport.getCurrentUserId().toString(), Workbench.class);
             if (workbenchRedis != null){
@@ -209,7 +209,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
         }
 
         //商务工作台
-        if (CommonConstant.COMMON_ONE.equals(workbenchQueryParam.getWorkbenchName())){
+        if (CommonConstant.COMMON_BUSINESS_AFFAIRS_WORKBENCH.equals(workbenchQueryParam.getWorkbenchName())){
 
             Workbench workbenchRedis = redisManager.get("BUSINESS_WORKBENCH_" + userSupport.getCurrentUserId().toString(), Workbench.class);
             if (workbenchRedis != null){
@@ -324,7 +324,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             redisManager.add("BUSINESS_WORKBENCH_"+userSupport.getCurrentUserId().toString(),workbench,CommonConstant.WORKBENCH_REDIS_SAVE_TIME);
         }
 
-        if (CommonConstant.COMMON_TWO.equals(workbenchQueryParam.getWorkbenchName())){
+        if (CommonConstant.COMMON_SALES_AND_BUSINESS_AFFAIRS_WORKBENCH.equals(workbenchQueryParam.getWorkbenchName())){
 
             Workbench workbenchRedis = redisManager.get("BUSINESS_AND_SALES_WORKBENCH_" + userSupport.getCurrentUserId().toString(), Workbench.class);
             if (workbenchRedis != null){
@@ -545,7 +545,23 @@ public class WorkbenchServiceImpl implements WorkbenchService{
         return serviceResult;
     }
 
+    @Override
+    public ServiceResult<String, Workbench> queryWorkhouseWorkbenchCount(WorkbenchQueryParam workbenchQueryParam) {
+        ServiceResult<String, Workbench> serviceResult = new ServiceResult<>();
+        Workbench workbench = new Workbench();
 
+        if (CommonConstant.COMMON_WORKHOUSE_WORKBENCH.equals(workbenchQueryParam.getWorkbenchName())){
+
+
+
+        }
+
+
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(workbench);
+        return serviceResult;
+    }
 
     @Autowired
     private UserSupport userSupport;
