@@ -494,6 +494,21 @@ public class DateUtil {
         return diff;
     }
 
+    /**
+     * 判断当前日期是星期几
+     */
+    public static int dayForWeek(Date date){
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        int dayForWeek = 0;
+        if(c.get(Calendar.DAY_OF_WEEK) == 1){
+            dayForWeek = 7;
+        }else{
+            dayForWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+        }
+        return dayForWeek;
+    }
+
     public static void main(String[] args) {
 //        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        List<Date> dateList = getCurrentYearPassedMonth();
@@ -514,7 +529,7 @@ public class DateUtil {
 //            System.out.println(simpleDateFormat.format(date));
 //        }
 //        System.out.println(simpleDateFormat.format(getDayByOffset(1)));
-        Date d = DateUtil.getEndMonthDate(new Date());
+        int d = DateUtil.dayForWeek(new Date());
         System.out.println(d);
     }
 }

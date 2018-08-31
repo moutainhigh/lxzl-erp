@@ -83,4 +83,29 @@ public interface StatisticsService extends BaseService {
     ServiceResult<String, Page<FinanceStatisticsDataMeta>> findAllStatisticsFinanceDataMeta(FinanceStatisticsParam paramVo);
     ServiceResult<String, List<FinanceStatisticsRentProductDetail>> statisticsRentProductDetail(FinanceStatisticsParam paramVo);
     ServiceResult<String, List<FinanceStatisticsReturnProductDetail>> statisticsReturnProductDetail(FinanceStatisticsParam paramVo);
+
+    /**
+     * 生成经营数据记录(定时任务调度)
+     * @param date
+     * @return
+     */
+    ServiceResult<String,String> createStatisticsOperateData(Date date);
+    /**
+     * 查询日经营数据
+     * @param statisticsOperateDataPageParam
+     * @return
+     */
+    ServiceResult<String,Page<StatisticsOperateData>> queryStatisticsOperateDataForDay(StatisticsOperateDataPageParam statisticsOperateDataPageParam);
+    /**
+     * 查询周经营数据
+     * @param statisticsOperateDataPageParam
+     * @return
+     */
+    ServiceResult<String,Page<StatisticsOperateData>> queryStatisticsOperateDataForWeek(StatisticsOperateDataPageParam statisticsOperateDataPageParam);
+    /**
+     * 查询月经营数据
+     * @param statisticsOperateDataPageParam
+     * @return
+     */
+    ServiceResult<String,Page<StatisticsOperateData>> queryStatisticsOperateDataForMonth(StatisticsOperateDataPageParam statisticsOperateDataPageParam);
 }
