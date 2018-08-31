@@ -135,14 +135,14 @@
                                 <td>{{longRentReturnCount}}</td>
                                 <td>{{longRentRentingCount}}</td>
                                 <td>{{shortRentIncreaseCount}}</td>
-                                <td>{{shortRentIncreaseAmount}}</td>
+                                <td>￥{{#price}}{{shortRentIncreaseAmount}}{{/price}}</td>
                                 <td>{{shortRentIncreaseCustomerCount}}</td>
                                 <td>{{shortRentRentingCustomerCount}}</td>
                                 <td>{{shortRentReturnCustomerCount}}</td>
                                 <td>{{shortRentReturnCount}}</td>
                                 <td>{{shortRentRentingCount}}</td>
                                 <td>{{ultrashortRentIncreaseCount}}</td>
-                                <td>{{ultrashortRentIncreaseAmount}}</td>
+                                <td>￥{{#price}}{{ultrashortRentIncreaseAmount}}{{/price}}</td>
                                 <td>{{ultrashortRentIncreaseCustomerCount}}</td>
                                 <td>{{ultrashortRentRentingCustomerCount}}</td>
                                 <td>{{ultrashortRentReturnCustomerCount}}</td>
