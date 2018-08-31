@@ -65,6 +65,15 @@
                                                 <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
                                             </div>
                                         </div>
+                                        <div class="pull-left ml10" style="width:200px; height:30px;">
+                                            <div class="form-group mn">
+                                                <input type="hidden" name="addTime" id="addTime" />
+                                                <div class="input-group date" id="addTimePicker">
+                                                    <input type="text" name="addTimeInput" id="addTimeInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择时间">
+                                                    <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                         
                                         <div class="pull-right mn mr5">
                                             <button type="submit" id="searchBtn" class="btn btn-primary btn-sm">查询</button>
