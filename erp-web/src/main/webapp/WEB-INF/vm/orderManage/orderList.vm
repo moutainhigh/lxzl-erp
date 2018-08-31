@@ -329,7 +329,9 @@
                 'manage.order.relet.add.js',
                 'manage.order.change.price.js',
                 'modal.input.js',
-                'modal.submit.audit.js');
+                'modal.submit.audit.js',
+                'manage.audit.pass.js', 
+                'manage.audit.reject.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
