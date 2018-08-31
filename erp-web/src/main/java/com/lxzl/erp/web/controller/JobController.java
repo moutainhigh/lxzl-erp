@@ -59,11 +59,10 @@ public class JobController {
 
     /**
      * 生成经营数据记录(定时任务调度)
-     * @param validResult
      * @return
      */
-    @RequestMapping(value = "createStatisticsOperateData",method = RequestMethod.POST)
-    public Result createStatisticsOperateData(@RequestBody @Validated BindingResult validResult){
+    @RequestMapping(value = "createStatisticsOperateDataForTime",method = RequestMethod.POST)
+    public Result createStatisticsOperateDataForTime(){
         ServiceResult<String, String> serviceResult = statisticsService.createStatisticsOperateDataForTime();
         return resultGenerator.generate(serviceResult);
     }
