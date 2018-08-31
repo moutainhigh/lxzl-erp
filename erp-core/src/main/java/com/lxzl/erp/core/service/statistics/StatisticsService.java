@@ -85,7 +85,7 @@ public interface StatisticsService extends BaseService {
     ServiceResult<String, List<FinanceStatisticsReturnProductDetail>> statisticsReturnProductDetail(FinanceStatisticsParam paramVo);
 
     /**
-     * 生成经营数据记录(定时任务调度)
+     * 生成经营数据记录（手动）
      * @param date
      * @return
      */
@@ -108,4 +108,11 @@ public interface StatisticsService extends BaseService {
      * @return
      */
     ServiceResult<String,Page<StatisticsOperateData>> queryStatisticsOperateDataForMonth(StatisticsOperateDataPageParam statisticsOperateDataPageParam);
+
+    /**
+     * 生成经营数据记录(定时任务调度)
+     * @param date
+     * @return
+     */
+    ServiceResult<String,String> createStatisticsOperateDataForTime(Date date);
 }

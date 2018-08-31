@@ -65,7 +65,7 @@ public class JobController {
      */
     @RequestMapping(value = "createStatisticsOperateData",method = RequestMethod.POST)
     public Result createStatisticsOperateData(@RequestBody @Validated Date date, BindingResult validResult){
-        ServiceResult<String, String> serviceResult = statisticsService.createStatisticsOperateData(date);
+        ServiceResult<String, String> serviceResult = statisticsService.createStatisticsOperateDataForTime(date);
         return resultGenerator.generate(serviceResult);
     }
 
