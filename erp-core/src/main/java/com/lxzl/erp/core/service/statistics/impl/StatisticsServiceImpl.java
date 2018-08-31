@@ -1223,7 +1223,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     /**
-     * 生成经营数据记录(定时任务调度)
+     * 生成经营数据记录(手动)
      * @param date
      * @return
      */
@@ -1345,8 +1345,30 @@ public class StatisticsServiceImpl implements StatisticsService {
         return serviceResult;
     }
 
+    /**
+     * 生成经营数据记录(定时任务调度)
+     * @param date
+     * @return
+     */
+    @Override
+    public ServiceResult<String, String> createStatisticsOperateDataForTime(Date date) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        // TODO: 2018\8\27 0027 获取前一天的数据
+        createStatisticsOperateDataForDayForTime(date);
+        // TODO: 2018\8\27 0027 判断是否是星期一，如果是星期一生成上一周的数据
+        if (CommonConstant.COMMON_ONE.equals(DateUtil.dayForWeek(date))) {
+            createStatisticsOperateDataForWeekForTime(date);
+        }
+        // TODO: 2018\8\27 0027 判断是否是月份第一天，如果是生成上月份数据
+        SimpleDateFormat sdf = new SimpleDateFormat("dd");
+        if ("01".equals(sdf.format(date))) {
+            createStatisticsOperateDataForMonthForTime(date);
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
     /** 生成上月经营数据记录(定时任务调度)*/
-    private void createStatisticsOperateDataForMonth(Date date) {
+    private void createStatisticsOperateDataForMonthForTime(Date date) {
         Date nowDate = new Date();
         Calendar ca = Calendar.getInstance();
         ca.setTime(date);
@@ -1388,6 +1410,127 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     }
     /** 生成前一周经营数据记录(定时任务调度)*/
+    private void createStatisticsOperateDataForWeekForTime (Date date) {
+        Date nowDate = new Date();
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.add(Calendar.DATE,-7);
+        Date startTime = ca.getTime();
+        Calendar ca1 = Calendar.getInstance();
+        ca1.setTime(date);
+        ca1.add(Calendar.DATE,-1);
+        Date endTime = ca1.getTime();
+        // TODO: 2018\8\28 0028 获取前一周周一的时间
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("startTime", startTime);
+        maps.put("endTime", date);
+        //分公司数据
+        List<StatisticsOperateDataDO> statisticsOperateDataDOList = statisticsOperateDataMapper.findDataListForSubCompanyWeekAndMonth(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_ONE);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(endTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_WEEK);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(null);
+        }
+        // TODO: 2018\8\29 0029 生成业务员数据
+        List<StatisticsOperateDataDO> statisticsSalesmanOperateDataDOList = statisticsOperateDataMapper.findDataListForSalesmanWeekAndMonth(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsSalesmanOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_TWO);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(endTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_WEEK);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        }
+        statisticsOperateDataDOList.addAll(statisticsSalesmanOperateDataDOList);
+        //批量保存
+        statisticsOperateDataMapper.addList(statisticsOperateDataDOList);
+
+    }
+    /** 生成前一天经营数据记录(定时任务调度) */
+    private void createStatisticsOperateDataForDayForTime (Date date) {
+        Date nowDate = new Date();
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.add(Calendar.DATE,-1);
+        Date startTime = ca.getTime();
+        // TODO: 2018\8\28 0028 获取前一天的时间
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("startTime", startTime);
+        //分公司数据
+        List<StatisticsOperateDataDO> statisticsOperateDataDOList = statisticsOperateDataMapper.findDataListForSubCompanyDate(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_ONE);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(startTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_DAY);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(null);
+        }
+        // TODO: 2018\8\29 0029 生成业务员数据
+        List<StatisticsOperateDataDO> statisticsSalesmanOperateDataDOList = statisticsOperateDataMapper.findDataListForSalesmanDate(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsSalesmanOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_TWO);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(startTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_DAY);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(null);
+        }
+        statisticsOperateDataDOList.addAll(statisticsSalesmanOperateDataDOList);
+        //批量保存
+        statisticsOperateDataMapper.addList(statisticsOperateDataDOList);
+    }
+
+    /** 生成上月经营数据记录(手动)*/
+    private void createStatisticsOperateDataForMonth(Date date) {
+        Date nowDate = new Date();
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.add(Calendar.MONTH,-1);
+        Date startTime = ca.getTime();
+        Calendar ca1 = Calendar.getInstance();
+        ca1.setTime(date);
+        ca1.add(Calendar.DATE,-1);
+        Date endTime = ca1.getTime();
+        // TODO: 2018\8\28 0028 获取上月的时间
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("startTime", startTime);
+        maps.put("endTime", date);
+        List<StatisticsOperateDataDO> statisticsOperateDataDOList = statisticsOperateDataMapper.findDataListForSubCompanyWeekAndMonth(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_ONE);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(endTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_MONTH);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        }
+        // TODO: 2018\8\29 0029 生成业务员数据
+        List<StatisticsOperateDataDO> statisticsSalesmanOperateDataDOList = statisticsOperateDataMapper.findDataListForSalesmanWeekAndMonth(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsSalesmanOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_TWO);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(endTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_MONTH);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        }
+        statisticsOperateDataDOList.addAll(statisticsSalesmanOperateDataDOList);
+        //批量保存
+        statisticsOperateDataMapper.addList(statisticsOperateDataDOList);
+
+
+    }
+    /** 生成前一周经营数据记录(手动)*/
     private void createStatisticsOperateDataForWeek(Date date) {
         Date nowDate = new Date();
         Calendar ca = Calendar.getInstance();
@@ -1411,7 +1554,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_WEEK);
             statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             statisticsOperateDataDO.setCreateTime(nowDate);
-            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            statisticsOperateDataDO.setCreateUser(null);
         }
         // TODO: 2018\8\29 0029 生成业务员数据
         List<StatisticsOperateDataDO> statisticsSalesmanOperateDataDOList = statisticsOperateDataMapper.findDataListForSalesmanWeekAndMonth(maps);
@@ -1422,14 +1565,14 @@ public class StatisticsServiceImpl implements StatisticsService {
             statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_WEEK);
             statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             statisticsOperateDataDO.setCreateTime(nowDate);
-            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            statisticsOperateDataDO.setCreateUser(null);
         }
         statisticsOperateDataDOList.addAll(statisticsSalesmanOperateDataDOList);
         //批量保存
         statisticsOperateDataMapper.addList(statisticsOperateDataDOList);
 
     }
-    /** 生成前一天经营数据记录(定时任务调度) */
+    /** 生成前一天经营数据记录(手动) */
     private void createStatisticsOperateDataForDay(Date date) {
         Date nowDate = new Date();
         Calendar ca = Calendar.getInstance();
