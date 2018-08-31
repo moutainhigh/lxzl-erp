@@ -1347,12 +1347,12 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     /**
      * 生成经营数据记录(定时任务调度)
-     * @param date
      * @return
      */
     @Override
-    public ServiceResult<String, String> createStatisticsOperateDataForTime(Date date) {
+    public ServiceResult<String, String> createStatisticsOperateDataForTime() {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date date = new Date();
         // TODO: 2018\8\27 0027 获取前一天的数据
         createStatisticsOperateDataForDayForTime(date);
         // TODO: 2018\8\27 0027 判断是否是星期一，如果是星期一生成上一周的数据

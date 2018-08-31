@@ -114,5 +114,5 @@ public interface StatisticsService extends BaseService {
      * @param date
      * @return
      */
-    ServiceResult<String,String> createStatisticsOperateDataForTime(Date date);
+    ServiceResult<String,String> createStatisticsOperateDataForTime();
 }
