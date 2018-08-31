@@ -149,9 +149,7 @@
                                     <td class="nowrap">{{orderTypeValue}}</td>
                                     <td class="nowrap"><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></td>
                                     <td class="nowrap">{{orderItemTypeValue}}</td>
-                                    <td class="nowrap">
-                                        {{itemName}}
-                                    </td>
+                                    <td class="nowrap"><div style="max-width:250px;">{{itemName}}</div></td>
 ##                                        <td class="nowrap">{{statementDetailTypeValue}}</td>
                                     <td class="nowrap">￥{{#price}}{{unitAmount}}{{/price}}</td>
                                     <td class="nowrap">{{itemCount}}</td>
