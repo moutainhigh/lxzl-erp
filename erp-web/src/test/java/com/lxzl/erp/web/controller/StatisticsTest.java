@@ -185,6 +185,7 @@ public class StatisticsTest extends ERPUnTransactionalTest {
     @Test
     public void createStatisticsOperateData() throws Exception {
         Date date = new Date();
+        System.out.println(JSON.toJSONString(date));
         TestResult testResult = getJsonTestResult("/statistics/createStatisticsOperateData", date);
     }
 
