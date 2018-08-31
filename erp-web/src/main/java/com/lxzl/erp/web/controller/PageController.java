@@ -860,6 +860,20 @@ public class PageController extends BaseController {
         return "/statisticsManage/salesmanDeduct";
     }
 
+    @RequestMapping("/statistics/day-operate-data")
+    public String statisticsDayOperateData() {
+        return "/statisticsManage/dayOperateData";
+    }
+
+    @RequestMapping("/statistics/week-operate-data")
+    public String statisticsWeekOperateData() {
+        return "/statisticsManage/weekOperateData";
+    }
+
+    @RequestMapping("/statistics/month-operate-data")
+    public String statisticsMonthOperateData() {
+        return "/statisticsManage/monthOperateData";
+    }
 
     //充值记录
     @RequestMapping("/recharge-manage/list")
@@ -1148,6 +1162,7 @@ public class PageController extends BaseController {
     public String amountClaimDetailList() {
         return "/financialManage/amountClaimDetailList";
     }
+
 
     /**
      * 系统功能开关设置

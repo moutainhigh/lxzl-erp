@@ -2,11 +2,13 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.TaskSchedulerSystemConfig;
+import com.lxzl.erp.common.domain.job.AutomaticUnknownBankSlipDetailRequestParam;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.bank.BankSlipService;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.core.service.Job.JobService;
 import com.lxzl.se.common.domain.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,9 +68,17 @@ public class JobController {
         ServiceResult<String, String> serviceResult = statisticsService.createStatisticsOperateData(date);
         return resultGenerator.generate(serviceResult);
     }
-    @Autowired
-    private ResultGenerator resultGenerator;
 
+    @RequestMapping(value = "automaticUnknownBankSlipDetail",method = RequestMethod.POST)
+    public Result automaticUnknownBankSlipDetail(@RequestBody AutomaticUnknownBankSlipDetailRequestParam automaticUnknownBankSlipDetailRequestParam, HttpServletRequest request){
+        ServiceResult<String,String> serviceResult =  jobService.automaticUnknownBankSlipDetail(automaticUnknownBankSlipDetailRequestParam,request);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+
+    @Autowired
+    private JobService jobService;
+    @Autowired
+    ResultGenerator resultGenerator;
     @Autowired
     private StatisticsService statisticsService;
 }

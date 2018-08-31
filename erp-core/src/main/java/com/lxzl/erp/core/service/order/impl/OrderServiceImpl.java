@@ -2289,7 +2289,7 @@ public class OrderServiceImpl implements OrderService {
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, orderDO.getId());
         Map<Integer, StatementOrderDO> statementOrderDOMap = statementOrderSupport.getStatementOrderByDetails(statementOrderDetailDOList);
         //审核中或者待发货订单，处理风控额度及结算单
-        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
+         if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
                 OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus()) ||
                 OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())) {
             //恢复信用额度
@@ -2298,7 +2298,12 @@ public class OrderServiceImpl implements OrderService {
                 customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.FORCE_CANCEL_ORDER_TYPE, orderDO.getOrderNo(), "");
             }
             statementOrderSupport.reStatement(currentTime, statementOrderDOMap, statementOrderDetailDOList);
-        }
+             //强制取消后，更新结算单状态
+             for (Integer key : statementOrderDOMap.keySet()) {
+                 StatementOrderDO statementOrderDO = statementOrderDOMap.get(key);
+                 statementOrderSupport.fixOneStatementOrderStatementTime(statementOrderDO);
+             }
+         }
         orderDO.setCancelOrderReasonType(cancelOrderReasonType);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
         orderDO.setUpdateTime(currentTime);
@@ -2343,6 +2348,11 @@ public class OrderServiceImpl implements OrderService {
             }
             //处理结算单总状态及已支付金额
             statementOrderSupport.reStatementPaid(statementOrderDOMap, statementOrderDetailDOList);
+            //强制取消后，更新结算单状态
+            for (Integer key : statementOrderDOMap.keySet()) {
+                StatementOrderDO statementOrderDO = statementOrderDOMap.get(key);
+                statementOrderSupport.fixOneStatementOrderStatementTime(statementOrderDO);
+            }
             String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(), rentPaidAmount, BigDecimalUtil.addAll(otherPaidAmount, overduePaidAmount, penaltyPaidAmount)
                     , rentDepositPaidAmount, depositPaidAmount, "超级管理员强制取消已支付订单，已支付金额退还到客户余额");
             if (!ErrorCode.SUCCESS.equals(returnCode)) {

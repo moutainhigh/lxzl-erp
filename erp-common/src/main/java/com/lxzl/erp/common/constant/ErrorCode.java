@@ -927,6 +927,11 @@ public class ErrorCode {
     public static final String CHARGE_RECORD_IS_NULL = "J18000059";
     public static final String CHARGE_TYPE_IS_BALANCE_PAID = "J18000060";
     public static final String CHARGE_TYPE_IS_BANK_SLIP_CHARGE = "J18000061";
+    public static final String UNKNOWN_BANK_SLIP_DETAIL_NOT_UNCLAIM = "J18000062";
+    public static final String UNKNOWN_BANK_SLIP_DETAIL_SAVE_FAIL = "J18000063";
+    public static final String UNKNOWN_BANK_SLIP_DETAIL_NOT_DISPLAY = "J18000064";
+    public static final String BANK_SLIP_DETAIL_IS_UNKNOWN_CANNOT_OPERATION = "J18000065";
+    public static final String UNKNOWN_BANK_SLIP_DETAIL_NOT_LOCALIZATION = "J18000066";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1045,6 +1050,9 @@ public class ErrorCode {
     public static final String QUARTZ_TASK_EXECUTOR_SYSTEM_TYPE_NOT_NUMBER = "J250000030";
     public static final String QUARTZ_TASK_EXECUTOR_JOB_TYPE_NOT_NUMBER = "J250000031";
     public static final String QUARTZ_TASK_EXECUTOR_REQUEST_BODY_ERROR = "J250000032";
+    public static final String QUARTZ_SYSTEM_ERROR = "J250000033";
+    public static final String QUARTZ_APP_ID_ERROR = "J250000034";
+    public static final String QUARTZ_APP_SECRET_ERROR = "J250000035";
 
     // 动态SQL查询
     public static final String DYNAMIC_SQL_ERROR = "J260000001";
@@ -1957,7 +1965,7 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_NOT_LOCALIZATION, "当前流水项不是属地化状态");
         MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED, "银行对公流水记录是确认状态,");
         MAP.put(BANK_SLIP_DETAIL_DATA_IS_NULL, "银行对公流水无导入数据,");
-        MAP.put(BANK_SLIP_DETAIL_IS_UNKNOWN, "银行对公流水是未知状态,");
+        MAP.put(BANK_SLIP_DETAIL_IS_UNKNOWN, "银行对公流水已是公开状态,");
         MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT, "填写金额大于银行对公流水记录项金额");
         MAP.put(IMPORT_BANK_SLIP_DETAILS_IS_EXIST, "导入银行对公流水记录已存在");
         MAP.put(CHARGE_RECORD_NOT_EXISTS, "充值记录不存在");
@@ -1972,6 +1980,11 @@ public class ErrorCode {
         MAP.put(CHARGE_RECORD_IS_NULL, "充值记录为空");
         MAP.put(CHARGE_TYPE_IS_BALANCE_PAID, "充值记录是余额支付");
         MAP.put(CHARGE_TYPE_IS_BANK_SLIP_CHARGE, "充值记录是对公加款");
+        MAP.put(UNKNOWN_BANK_SLIP_DETAIL_NOT_UNCLAIM, "需要公开的银行流水不是未认领状态");
+        MAP.put(UNKNOWN_BANK_SLIP_DETAIL_SAVE_FAIL, "保存下推银行流水明细到公海失败");
+        MAP.put(UNKNOWN_BANK_SLIP_DETAIL_NOT_DISPLAY, "需要公开的银行流水不是可见状态");
+        MAP.put(BANK_SLIP_DETAIL_IS_UNKNOWN_CANNOT_OPERATION, "不能操作已是公开状态的银行对公流水");
+        MAP.put(UNKNOWN_BANK_SLIP_DETAIL_NOT_LOCALIZATION, "需要公开的银行流水不是未属地化状态");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");
@@ -2090,6 +2103,9 @@ public class ErrorCode {
         MAP.put(QUARTZ_TASK_EXECUTOR_SYSTEM_TYPE_NOT_NUMBER, "定时任务执行者系统类型不是数字");
         MAP.put(QUARTZ_TASK_EXECUTOR_JOB_TYPE_NOT_NUMBER, "定时任务执行者任务类型不是数字");
         MAP.put(QUARTZ_TASK_EXECUTOR_REQUEST_BODY_ERROR, "定时任务执行者json字符串格式不正确");
+        MAP.put(QUARTZ_SYSTEM_ERROR, "定时任务系统验证失败");
+        MAP.put(QUARTZ_APP_ID_ERROR, "定时任务系统appId不能为空");
+        MAP.put(QUARTZ_APP_SECRET_ERROR, "定时任务系统appSecret不能为空");
 
 
         MAP.put(DYNAMIC_SQL_ERROR, "动态SQL查询语句不正确");
