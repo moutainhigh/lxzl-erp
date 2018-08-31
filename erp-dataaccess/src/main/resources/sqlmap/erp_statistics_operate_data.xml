@@ -264,7 +264,7 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_sub_company_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -288,7 +288,7 @@
 		LEFT JOIN (
 		SELECT ec.owner_sub_company_id as sub_company_id, count(rec_customer.k3_customer_name) as long_rent_return_customer_count
 		FROM (SELECT t1.k3_customer_no, t1.k3_customer_name, COALESCE (sum(t2.real_product_count)) AS rec FROM erp_k3_return_order t1
-		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1
+		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1 and t2.order_item_type = 1
 		INNER JOIN erp_order t3 ON t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -305,7 +305,7 @@
 
 		LEFT JOIN (
 		select  ec.owner_sub_company_id as sub_company_id,sum(rec_count.rec) as long_rent_return_count from
-		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -335,7 +335,7 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_sub_company_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -411,7 +411,7 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_sub_company_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -435,7 +435,7 @@
 		LEFT JOIN (
 		SELECT ec.owner_sub_company_id as sub_company_id, count(rec_customer.k3_customer_name) as short_rent_return_customer_count
 		FROM (SELECT t1.k3_customer_no, t1.k3_customer_name, COALESCE (sum(t2.real_product_count)) AS rec FROM erp_k3_return_order t1
-		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1
+		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1 and t2.order_item_type = 1
 		INNER JOIN erp_order t3 ON t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -452,7 +452,7 @@
 
 		LEFT JOIN (
 		select  ec.owner_sub_company_id as sub_company_id,sum(rec_count.rec) as short_rent_return_count from
-		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -482,7 +482,7 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_sub_company_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -558,7 +558,7 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_sub_company_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -582,7 +582,7 @@
 		LEFT JOIN (
 		SELECT ec.owner_sub_company_id as sub_company_id, count(rec_customer.k3_customer_name) as ultrashort_rent_return_customer_count
 		FROM (SELECT t1.k3_customer_no, t1.k3_customer_name, COALESCE (sum(t2.real_product_count)) AS rec FROM erp_k3_return_order t1
-		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1
+		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1 and t2.order_item_type = 1
 		INNER JOIN erp_order t3 ON t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -599,7 +599,7 @@
 
 		LEFT JOIN (
 		select  ec.owner_sub_company_id as sub_company_id,sum(rec_count.rec) as ultrashort_rent_return_count from
-		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -629,7 +629,7 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_sub_company_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -972,7 +972,7 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_seller_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -996,7 +996,7 @@
 		LEFT JOIN (
 		SELECT ec.owner as user_id, count(rec_customer.k3_customer_name) as long_rent_return_customer_count
 		FROM (SELECT t1.k3_customer_no, t1.k3_customer_name, COALESCE (sum(t2.real_product_count)) AS rec FROM erp_k3_return_order t1
-		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1
+		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1 and t2.order_item_type = 1
 		INNER JOIN erp_order t3 ON t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -1013,7 +1013,7 @@
 
 		LEFT JOIN (
 		select  ec.owner as user_id,sum(rec_count.rec) as long_rent_return_count from
-		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -1043,7 +1043,7 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_seller_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -1119,7 +1119,7 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_seller_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -1143,7 +1143,7 @@
 		LEFT JOIN (
 		SELECT ec.owner as user_id, count(rec_customer.k3_customer_name) as short_rent_return_customer_count
 		FROM (SELECT t1.k3_customer_no, t1.k3_customer_name, COALESCE (sum(t2.real_product_count)) AS rec FROM erp_k3_return_order t1
-		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1
+		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1 and t2.order_item_type = 1
 		INNER JOIN erp_order t3 ON t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -1160,7 +1160,7 @@
 
 		LEFT JOIN (
 		select  ec.owner as user_id,sum(rec_count.rec) as short_rent_return_count from
-		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -1190,7 +1190,7 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_seller_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -1266,7 +1266,7 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_seller_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -1290,7 +1290,7 @@
 		LEFT JOIN (
 		SELECT ec.owner as user_id, count(rec_customer.k3_customer_name) as ultrashort_rent_return_customer_count
 		FROM (SELECT t1.k3_customer_no, t1.k3_customer_name, COALESCE (sum(t2.real_product_count)) AS rec FROM erp_k3_return_order t1
-		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1
+		INNER JOIN erp_k3_return_order_detail t2 ON t2.return_order_id = t1.id AND t2.data_status = 1 and t2.order_item_type = 1
 		INNER JOIN erp_order t3 ON t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -1307,7 +1307,7 @@
 
 		LEFT JOIN (
 		select  ec.owner as user_id,sum(rec_count.rec) as ultrashort_rent_return_count from
-		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		(select t1.k3_customer_no,t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
@@ -1337,7 +1337,7 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_seller_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1
+		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
 		inner join erp_order t3 on t2.order_no = t3.order_no
 		<where>
 			<if test="true">
