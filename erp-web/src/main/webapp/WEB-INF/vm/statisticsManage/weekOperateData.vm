@@ -87,52 +87,52 @@
                     </div>
                 </div>
                 <div class="panel-body pn">
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="overflow-x:scroll;">
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr class="bg-light">
-                                <th class="text-center">分公司名称</th>
-                                <th class="text-center">业务员</th>
-                                <th class="text-center">统计维度</th>
-                                <th class="text-center">长租新增台数</th>
-                                <th class="text-center text-system">长租新增租金</th>
-                                <th class="text-center">长租新增客户</th>
-                                <th class="text-center">短租新增台数</th>
-                                <th class="text-center text-warning">短租新增租金</th>
-                                <th class="text-center">短租新增客户</th>
-                                <th class="text-center">短短租新增台数</th>
-                                <th class="text-center text-primary">短短租新增租金</th>
-                                <th class="text-center">短短租新增客户</th>
-                                <th class="text-center">新增录入客户</th>
-                                <th class="text-center">新增授信客户数</th>
-                                <th class="text-center">统计开始时间</th>
-                                <th class="text-center">统计结束时间</th>
-                                <th class="text-center">创建</th>
+                                <th class="nowrap text-center">分公司名称</th>
+                                <th class="nowrap text-center">业务员</th>
+                                <th class="nowrap text-center">统计维度</th>
+                                <th class="nowrap text-center">长租新增台数</th>
+                                <th class="nowrap text-center text-system">长租新增租金</th>
+                                <th class="nowrap text-center">长租新增客户</th>
+                                <th class="nowrap text-center">短租新增台数</th>
+                                <th class="nowrap text-center text-warning">短租新增租金</th>
+                                <th class="nowrap text-center">短租新增客户</th>
+                                <th class="nowrap text-center">短短租新增台数</th>
+                                <th class="nowrap text-center text-primary">短短租新增租金</th>
+                                <th class="nowrap text-center">短短租新增客户</th>
+                                <th class="nowrap text-center">新增录入客户</th>
+                                <th class="nowrap text-center">新增授信客户数</th>
+                                <th class="nowrap text-center">统计开始时间</th>
+                                <th class="nowrap text-center">统计结束时间</th>
+                                <th class="nowrap text-center">创建</th>
                             </tr>
                             </thead>
                             <tbody>
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                <td>{{subCompanyName}}</td>
-                                <td>{{ownerName}}</td>
-                                <td>{{statisticalDimensionVal}}</td>
-                                <td class="text-center">{{longRentIncreaseCount}}</td>
-                                <td class="text-center text-system">￥{{#price}}{{longRentIncreaseAmount}}{{/price}}</td>
-                                <td class="text-center">{{longRentIncreaseCustomerCount}}</td>
-                                <td class="text-center">{{shortRentIncreaseCount}}</td>
-                                <td class="text-center text-warning">￥{{#price}}{{shortRentIncreaseAmount}}{{/price}}</td>
-                                <td class="text-center">{{shortRentIncreaseCustomerCount}}</td>
-                                <td class="text-center">{{ultrashortRentIncreaseCount}}</td>
-                                <td class="text-center text-primary">￥{{#price}}{{ultrashortRentIncreaseAmount}}{{/price}}</td>
-                                <td class="text-center">{{ultrashortRentIncreaseCustomerCount}}</td>
-                                <td class="text-center">{{increaseCustomerCount}}</td>
-                                <td class="text-center">{{increaseRiskCustomerCount}}</td>
-                                <td class="text-center">{{#clockTime}}{{startStatisticsTime}}{{/clockTime}}</td>
-                                <td class="text-center">{{#clockTime}}{{endStatisticsTime}}{{/clockTime}}</td>
+                                <td class="nowrap text-center">{{subCompanyName}}</td>
+                                <td class="nowrap text-center">{{ownerName}}</td>
+                                <td class="nowrap text-center">{{statisticalDimensionVal}}</td>
+                                <td class="nowrap text-center">{{longRentIncreaseCount}}</td>
+                                <td class="nowrap text-center text-system">￥{{#price}}{{longRentIncreaseAmount}}{{/price}}</td>
+                                <td class="nowrap text-center">{{longRentIncreaseCustomerCount}}</td>
+                                <td class="nowrap text-center">{{shortRentIncreaseCount}}</td>
+                                <td class="nowrap text-center text-warning">￥{{#price}}{{shortRentIncreaseAmount}}{{/price}}</td>
+                                <td class="nowrap text-center">{{shortRentIncreaseCustomerCount}}</td>
+                                <td class="nowrap text-center">{{ultrashortRentIncreaseCount}}</td>
+                                <td class="nowrap text-center text-primary">￥{{#price}}{{ultrashortRentIncreaseAmount}}{{/price}}</td>
+                                <td class="nowrap text-center">{{ultrashortRentIncreaseCustomerCount}}</td>
+                                <td class="nowrap text-center">{{increaseCustomerCount}}</td>
+                                <td class="nowrap text-center">{{increaseRiskCustomerCount}}</td>
+                                <td class="nowrap text-center">{{#clockTime}}{{startStatisticsTime}}{{/clockTime}}</td>
+                                <td class="nowrap text-center">{{#clockTime}}{{endStatisticsTime}}{{/clockTime}}</td>
                                 <td class="nowrap">
-                                    <p class="mn">{{createUserRealName}}</p>
-                                    <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                    <span class="mr5">{{createUserRealName}}</span>
+                                    <span>{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</span>
                                 </td>
                             </tr>
                             {{/listData}}

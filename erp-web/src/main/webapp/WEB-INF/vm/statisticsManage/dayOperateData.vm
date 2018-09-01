@@ -167,8 +167,8 @@
                                 <td class="nowrap text-center">{{increaseCustomerCount}}</td>
                                 <td class="nowrap text-center">{{increaseRiskCustomerCount}}</td>
                                 <td class="nowrap">
-                                    <p class="mn">{{createUserRealName}}</p>
-                                    <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                    <span class="mr5">{{createUserRealName}}</span>
+                                    <span>{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</span>
                                 </td>
                             </tr>
                             {{/listData}}
