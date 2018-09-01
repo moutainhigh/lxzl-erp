@@ -113,7 +113,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkNo = workflowLinkDO.getWorkflowLinkNo();
             }
             //发送信息
-            if (VerifyType.VERIFY_TYPE_ALL_USER_THIS_IS_PASS.equals(thisWorkflowNodeDO.getVerifyType())) {
+            if (VerifyType.VERIFY_TYPE_ALL_USER_THIS_IS_PASS.equals(thisWorkflowNodeDO.getVerifyType()) || VerifyType.VERIFY_TYPE_THE_SAME_GROUP_ALL_PASS.equals(thisWorkflowNodeDO.getVerifyType())) {
                 for (User user : verifyUserList) {
                     messageService.superSendMessage(MessageContant.WORKFLOW_COMMIT_TITLE, String.format(MessageContant.WORKFLOW_COMMIT_CONTENT, WorkflowType.getWorkflowTypeDesc(workflowLinkDO.getWorkflowType()), workflowLinkDO.getWorkflowLinkNo()), user.getUserId());
                 }
@@ -1366,7 +1366,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkDetailMapper.save(workflowLinkDetailDO);
 
             //发送信息
-            if (VerifyType.VERIFY_TYPE_ALL_USER_THIS_IS_PASS.equals(thisWorkflowNodeDO.getVerifyType())) {
+            if (VerifyType.VERIFY_TYPE_ALL_USER_THIS_IS_PASS.equals(thisWorkflowNodeDO.getVerifyType()) || VerifyType.VERIFY_TYPE_THE_SAME_GROUP_ALL_PASS.equals(thisWorkflowNodeDO.getVerifyType())) {
                 for (User user : verifyUserList) {
                     messageService.superSendMessage(MessageContant.WORKFLOW_COMMIT_TITLE, String.format(MessageContant.WORKFLOW_COMMIT_CONTENT, WorkflowType.getWorkflowTypeDesc(workflowLinkDO.getWorkflowType()), workflowLinkDO.getWorkflowLinkNo()), user.getUserId());
                 }
