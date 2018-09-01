@@ -87,52 +87,52 @@
                     </div>
                 </div>
                 <div class="panel-body pn">
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="overflow-x:scroll;">
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr class="bg-light">
-                                <th>分公司名称</th>
-                                <th>业务员</th>
-                                <th>统计维度</th>
-                                <th>长租新增台数</th>
-                                <th>长租新增租金</th>
-                                <th>长租新增客户</th>
-                                <th>短租新增台数</th>
-                                <th>短租新增租金</th>
-                                <th>短租新增客户</th>
-                                <th>短短租新增台数</th>
-                                <th>短短租新增租金</th>
-                                <th>短短租新增客户</th>
-                                <th>新增录入客户</th>
-                                <th>新增授信客户数</th>
-                                <th>统计开始时间</th>
-                                <th>统计结束时间</th>
-                                <th>创建</th>
+                                <th class="nowrap text-center">分公司名称</th>
+                                <th class="nowrap text-center">业务员</th>
+                                <th class="nowrap text-center">统计维度</th>
+                                <th class="nowrap text-center">长租新增台数</th>
+                                <th class="nowrap text-center text-system">长租新增租金</th>
+                                <th class="nowrap text-center">长租新增客户</th>
+                                <th class="nowrap text-center">短租新增台数</th>
+                                <th class="nowrap text-center text-warning">短租新增租金</th>
+                                <th class="nowrap text-center">短租新增客户</th>
+                                <th class="nowrap text-center">短短租新增台数</th>
+                                <th class="nowrap text-center text-primary">短短租新增租金</th>
+                                <th class="nowrap text-center">短短租新增客户</th>
+                                <th class="nowrap text-center">新增录入客户</th>
+                                <th class="nowrap text-center">新增授信客户数</th>
+                                <th class="nowrap text-center">统计开始时间</th>
+                                <th class="nowrap text-center">统计结束时间</th>
+                                <th class="nowrap text-center">创建</th>
                             </tr>
                             </thead>
                             <tbody>
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                <td>{{subCompanyName}}</td>
-                                <td>{{ownerName}}</td>
-                                <td>{{statisticalDimensionVal}}</td>
-                                <td>{{longRentIncreaseCount}}</td>
-                                <td>￥{{#price}}{{longRentIncreaseAmount}}{{/price}}</td>
-                                <td>{{longRentIncreaseCustomerCount}}</td>
-                                <td>{{shortRentIncreaseCount}}</td>
-                                <td>￥{{#price}}{{shortRentIncreaseAmount}}{{/price}}</td>
-                                <td>{{shortRentIncreaseCustomerCount}}</td>
-                                <td>{{ultrashortRentIncreaseCount}}</td>
-                                <td>￥{{#price}}{{ultrashortRentIncreaseAmount}}{{/price}}</td>
-                                <td>{{ultrashortRentIncreaseCustomerCount}}</td>
-                                <td>{{increaseCustomerCount}}</td>
-                                <td>{{increaseRiskCustomerCount}}</td>
-                                <td>{{#clockTime}}{{startStatisticsTime}}{{/clockTime}}</td>
-                                <td>{{#clockTime}}{{endStatisticsTime}}{{/clockTime}}</td>
-                                <td>
-                                    <p class="mn">{{createUserRealName}}</p>
-                                    <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                <td class="nowrap text-center">{{subCompanyName}}</td>
+                                <td class="nowrap text-center">{{ownerName}}</td>
+                                <td class="nowrap text-center">{{statisticalDimensionVal}}</td>
+                                <td class="nowrap text-center">{{longRentIncreaseCount}}</td>
+                                <td class="nowrap text-center text-system">￥{{#price}}{{longRentIncreaseAmount}}{{/price}}</td>
+                                <td class="nowrap text-center">{{longRentIncreaseCustomerCount}}</td>
+                                <td class="nowrap text-center">{{shortRentIncreaseCount}}</td>
+                                <td class="nowrap text-center text-warning">￥{{#price}}{{shortRentIncreaseAmount}}{{/price}}</td>
+                                <td class="nowrap text-center">{{shortRentIncreaseCustomerCount}}</td>
+                                <td class="nowrap text-center">{{ultrashortRentIncreaseCount}}</td>
+                                <td class="nowrap text-center text-primary">￥{{#price}}{{ultrashortRentIncreaseAmount}}{{/price}}</td>
+                                <td class="nowrap text-center">{{ultrashortRentIncreaseCustomerCount}}</td>
+                                <td class="nowrap text-center">{{increaseCustomerCount}}</td>
+                                <td class="nowrap text-center">{{increaseRiskCustomerCount}}</td>
+                                <td class="nowrap text-center">{{#clockTime}}{{startStatisticsTime}}{{/clockTime}}</td>
+                                <td class="nowrap text-center">{{#clockTime}}{{endStatisticsTime}}{{/clockTime}}</td>
+                                <td class="nowrap">
+                                    <span class="mr5">{{createUserRealName}}</span>
+                                    <span>{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</span>
                                 </td>
                             </tr>
                             {{/listData}}
@@ -144,7 +144,7 @@
                             {{/dataSource}}
                             </tbody>
                         </script>
-                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                        <table class="table admin-form table-bordered theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                     </div>
                 </div>
                 <div class="panel-footer">
