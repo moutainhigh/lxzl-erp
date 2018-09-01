@@ -102,14 +102,14 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr class="bg-light">
-                                <th class="nowrap" rowspan="2" style="line-height:78px;">分公司名称</th>
-                                <th class="nowrap" rowspan="2" style="line-height:78px;">业务员</th>
-                                <th class="nowrap" rowspan="2" style="line-height:78px;">统计维度</th>
+                                <th class="nowrap text-center" rowspan="2" style="line-height:78px;">分公司名称</th>
+                                <th class="nowrap text-center" rowspan="2" style="line-height:78px;">业务员</th>
+                                <th class="nowrap text-center" rowspan="2" style="line-height:78px;">统计维度</th>
                                 <th class="text-center bg-system" colspan="7">长租</th>
                                 <th class="text-center bg-warning" colspan="7">短租</th>
                                 <th class="text-center bg-primary" colspan="7">短短租</th>
-                                <th class="nowrap" rowspan="2" style="line-height:78px;">新增录入客户</th>
-                                <th class="nowrap" rowspan="2" style="line-height:78px;">新增授信客户数</th>
+                                <th class="nowrap text-center" rowspan="2" style="line-height:78px;">新增录入客户</th>
+                                <th class="nowrap text-center" rowspan="2" style="line-height:78px;">新增授信客户数</th>
                                 <th class="nowrap text-center" rowspan="2" style="line-height:78px;">创建</th>
                             </tr>
                             <tr class="bg-light">
