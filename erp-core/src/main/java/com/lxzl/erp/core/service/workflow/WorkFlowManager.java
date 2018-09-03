@@ -60,6 +60,7 @@ public class WorkFlowManager {
     private ReletOrderService reletOrderService;
 
     //todo 剩下客户 订单 退货 续租 回调 逻辑需要修改推送
+    //todo 换货单 志鹏要新写service，如果商城要换货单 写同service下
     public VerifyReceiver getService(Integer workflowType) {
         if (WorkflowType.WORKFLOW_TYPE_PURCHASE.equals(workflowType)) {
             return purchaseOrderService;

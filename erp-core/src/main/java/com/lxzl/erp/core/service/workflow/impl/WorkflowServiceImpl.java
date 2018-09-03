@@ -512,8 +512,11 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
         if (workflowLinkDO == null) {
-            result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
-            return result;
+            WorkflowLinkDO customerWorkflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(WorkflowType.WORKFLOW_TYPE_CUSTOMER, workflowReferNo);
+            if(customerWorkflowLinkDO == null){
+                result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+                return result;
+            }
         }
         result.setResult(ConverterUtil.convert(workflowSupport.getVerifyUserGroupAndImg(workflowLinkDO), WorkflowLink.class));
         result.setErrorCode(ErrorCode.SUCCESS);
