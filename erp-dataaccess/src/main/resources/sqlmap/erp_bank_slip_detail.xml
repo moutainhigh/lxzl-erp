@@ -194,7 +194,6 @@
 	</update>
 
 	<select id="findBankSlipDetailDOCountByParams" resultType="Integer" parameterType="map">
-
 		SELECT sum(DISTINCT allCount.ebsdId) FROM (SELECT COUNT(DISTINCT ebsd.id) AS ebsdId FROM erp_bank_slip_detail ebsd
 		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
 		LEFT JOIN erp_bank_slip_claim ebsc ON ebsd.id = ebsc.bank_slip_detail_id AND ebsc.data_status = 1
@@ -270,15 +269,14 @@
 				( ebsd.detail_status = 3 and (ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR} or ec.union_user =
 				#{maps.currentUser,jdbcType=VARCHAR}
 				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
-
 				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}))
 				OR (CASE WHEN ebs.slip_status = 1 THEN ebsd.is_localization = 2 END ))
 			</if>
 		</where>) allCount
-</select>
+	</select>
 
 	<select id="findBankSlipDetailDOByParams" resultMap="BankSlipDetailDO" parameterType="map">
-		SELECT  result.*,escLocalization.sub_company_name AS subCompanyName,escOwner.sub_company_name AS ownerSubCompanyName,ek3mc.k3_customer_code AS k3CustomerNo,ebs.sub_company_id AS ownerSubCompanyId,ebs.bank_type AS bankSlipBankType,<include refid="claim_column_List"/>,ec.customer_name AS customerName,esc.sub_company_name AS customerSubCompanyName
+		(SELECT  result.*,escLocalization.sub_company_name AS subCompanyName,escOwner.sub_company_name AS ownerSubCompanyName,ek3mc.k3_customer_code AS k3CustomerNo,ebs.sub_company_id AS ownerSubCompanyId,ebs.bank_type AS bankSlipBankType,<include refid="claim_column_List"/>,ec.customer_name AS customerName,esc.sub_company_name AS customerSubCompanyName
 		FROM (SELECT  <include refid="column_List"/> FROM erp_bank_slip_detail ebsd
 		WHERE ebsd.id in (SELECT * FROM(
 		SELECT  ebsd.id FROM erp_bank_slip_detail ebsd
@@ -355,7 +353,6 @@
 				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}))
 				OR (CASE WHEN ebs.slip_status = 1 THEN ebsd.is_localization = 2 END ))
 			</if>
-			AND (CASE WHEN (ebsd.is_localization = 2 AND ebs.slip_status = 1)THEN  1=2 ELSE 1=1 END)
 		</where>
 		GROUP BY ebsd.id
 		ORDER BY ebsd.detail_status ASC ,ebsd.payer_name DESC
@@ -367,7 +364,7 @@
 		LEFT JOIN  erp_sub_company esc ON esc.id = ec.owner_sub_company_id  AND esc.data_status = 1
 		LEFT JOIN  erp_sub_company escOwner ON escOwner.id = ebs.sub_company_id AND escOwner.data_status = 1
 		LEFT JOIN  erp_sub_company escLocalization ON escLocalization.id = result.sub_company_id AND escLocalization.data_status = 1
-		LEFT JOIN   erp_k3_mapping_customer ek3mc ON ek3mc.erp_customer_code = ebsc.customer_no
+		LEFT JOIN   erp_k3_mapping_customer ek3mc ON ek3mc.erp_customer_code = ebsc.customer_no)
 	</select>
 
 	<select id="findClaimedByBankSlipId" resultMap="BankSlipDetailDO" parameterType="java.lang.Integer">
@@ -518,9 +515,9 @@
 	</update>
 
 	<select id="findLocalizationBankSlipDetailDO" resultMap="BankSlipDetailDO">
-		  SELECT <include refid="column_List"/>,esc.sub_company_name AS subCompanyName FROM erp_bank_slip_detail ebsd
-		  LEFT JOIN erp_sub_company esc ON ebsd.sub_company_id = esc.id AND esc.data_status = 1
-		  WHERE ebsd.is_localization = 1 AND ebsd.data_status = 1
+		SELECT <include refid="column_List"/>,esc.sub_company_name AS subCompanyName FROM erp_bank_slip_detail ebsd
+		LEFT JOIN erp_sub_company esc ON ebsd.sub_company_id = esc.id AND esc.data_status = 1
+		WHERE ebsd.is_localization = 1 AND ebsd.data_status = 1
 	</select>
 
 	<update id="updateSubCompanyAndIsLocalization" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List">
@@ -780,9 +777,9 @@
 
 	<select id="findByThreeDaysAgo" resultMap="BankSlipDetailDO" parameterType="map">
 		SELECT newEbsd.* FROM(
-			SELECT <include refid="column_List"/>  FROM erp_bank_slip_detail ebsd
-			INNER JOIN erp_bank_slip ebs ON ebs.id = ebsd.bank_slip_id AND  ebs.data_status = 1
-			WHERE  ebsd.loan_sign = 1 and ebsd.data_status = 1 AND ebsd.is_localization = 0 AND ebsd.detail_status = 1
+		SELECT <include refid="column_List"/>  FROM erp_bank_slip_detail ebsd
+		INNER JOIN erp_bank_slip ebs ON ebs.id = ebsd.bank_slip_id AND  ebs.data_status = 1
+		WHERE  ebsd.loan_sign = 1 and ebsd.data_status = 1 AND ebsd.is_localization = 0 AND ebsd.detail_status = 1
 		)newEbsd
 		LEFT JOIN erp_bank_slip_detail_operation_log ebsdol ON newEbsd.id = ebsdol.bank_slip_detail_id AND ebsdol.data_status = 1
 		WHERE #{createTime,jdbcType=TIMESTAMP} >= ebsdol.create_time AND ebsdol.operation_type = 1
@@ -809,7 +806,7 @@
 				when #{item.id,jdbcType=INTEGER} then #{item.updateUser,jdbcType=VARCHAR}
 			</foreach>
 		</trim>
-		  WHERE ebsd.id IN
+		WHERE ebsd.id IN
 		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
 			#{item.id,jdbcType=INTEGER}
 		</foreach>
