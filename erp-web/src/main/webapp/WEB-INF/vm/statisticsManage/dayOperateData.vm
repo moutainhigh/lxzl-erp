@@ -26,15 +26,7 @@
                                 <div class="section row">
                                     <div class="col-md-2"></div>
                                     <div class="col-md-2"></div>
-                                    <div class="col-md-2">
-                                        <div class="form-group mn">
-                                            <input type="hidden" name="createTime" id="createTime" />
-                                            <div class="input-group date" id="createTimePicker">
-                                                <input type="text" name="createTimeInput" id="createTimeInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="数据创建时间">
-                                                <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <div class="col-md-2"></div>
                                     <div class="col-md-2">
                                         <div class="field form-group mn" >
                                             <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId"></select>
