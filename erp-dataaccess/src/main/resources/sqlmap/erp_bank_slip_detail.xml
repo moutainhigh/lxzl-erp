@@ -194,7 +194,7 @@
 	</update>
 
 	<select id="findBankSlipDetailDOCountByParams" resultType="Integer" parameterType="map">
-		SELECT sum(allCount.ebsdId) FROM ((SELECT COUNT(DISTINCT ebsd.id) AS ebsdId FROM erp_bank_slip_detail ebsd
+		SELECT sum(DISTINCT allCount.ebsdId) FROM (SELECT COUNT(DISTINCT ebsd.id) AS ebsdId FROM erp_bank_slip_detail ebsd
 		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
 		LEFT JOIN erp_bank_slip_claim ebsc ON ebsd.id = ebsc.bank_slip_detail_id AND ebsc.data_status = 1
 		LEFT JOIN erp_customer ec ON ebsc.customer_no = ec.customer_no
@@ -269,13 +269,10 @@
 				( ebsd.detail_status = 3 and (ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR} or ec.union_user =
 				#{maps.currentUser,jdbcType=VARCHAR}
 				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
-				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR})))
+				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}))
+				OR (CASE WHEN ebs.slip_status = 1 THEN ebsd.is_localization = 2 END ))
 			</if>
-			AND (CASE WHEN (ebsd.is_localization = 2 AND ebs.slip_status = 1)THEN  1=2 ELSE 1=1 END))
-			<if test="maps.bankSlipDetailQueryParam == null || maps.bankSlipDetailQueryParam.isLocalization == null || maps.bankSlipDetailQueryParam.isLocalization == 2">
-				UNION ALL <include refid="findUnknownBankSlipDetailDOCountByParams"/>
-			</if>) allCount
-		</where>
+		</where>) allCount
 </select>
 
 	<select id="findBankSlipDetailDOByParams" resultMap="BankSlipDetailDO" parameterType="map">
@@ -353,9 +350,9 @@
 				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND (ebs.slip_status = 1 OR ebs.slip_status = 2) AND ebsd.detail_status != 5) OR
 				( ebsd.detail_status = 3 and (ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR} or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
 				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
-				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR})))
+				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}))
+				OR (CASE WHEN ebs.slip_status = 1 THEN ebsd.is_localization = 2 END ))
 			</if>
-			AND (CASE WHEN (ebsd.is_localization = 2 AND ebs.slip_status = 1)THEN  1=2 ELSE 1=1 END)
 		</where>
 		GROUP BY ebsd.id
 		ORDER BY ebsd.detail_status ASC ,ebsd.payer_name DESC
@@ -368,9 +365,6 @@
 		LEFT JOIN  erp_sub_company escOwner ON escOwner.id = ebs.sub_company_id AND escOwner.data_status = 1
 		LEFT JOIN  erp_sub_company escLocalization ON escLocalization.id = result.sub_company_id AND escLocalization.data_status = 1
 		LEFT JOIN   erp_k3_mapping_customer ek3mc ON ek3mc.erp_customer_code = ebsc.customer_no)
-		<if test="maps.bankSlipDetailQueryParam == null || maps.bankSlipDetailQueryParam.isLocalization == null || maps.bankSlipDetailQueryParam.isLocalization == 2">
-			UNION ALL <include refid="findUnknownBankSlipDetailDOByParams"/>
-		</if>
 	</select>
 
 	<select id="findClaimedByBankSlipId" resultMap="BankSlipDetailDO" parameterType="java.lang.Integer">

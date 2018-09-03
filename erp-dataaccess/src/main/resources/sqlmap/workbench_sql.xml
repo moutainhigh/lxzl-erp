@@ -307,53 +307,26 @@
 	</sql>
 
 	<sql id="bank_slip_detail_business_affairs_workbench">
-		(SELECT sum(allCount.ebsdId) AS waitClaimCount FROM ((SELECT COUNT(DISTINCT ebsd.id) AS ebsdId FROM erp_bank_slip_detail ebsd
+		(SELECT  COUNT(DISTINCT ebsd.id) AS waitClaimCount FROM erp_bank_slip_detail ebsd
 		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
 		<where>
 			and ebsd.loan_sign = 1
 			and ebsd.detail_status = 1
 			and ebsd.data_status = 1
-			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 0">
+			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 0">
 				and 1=2
 			</if>
-			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 1">
+			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 1">
 				and ebs.slip_status !=2
 			</if>
 			<if test="maps.departmentType != null &amp;&amp;(maps.departmentType == 2 or maps.departmentType == 3 )">
 				and ebs.slip_status = 1
 			</if>
-			<if test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
-				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id =
-				#{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND ebs.slip_status = 1 ))
+			<if  test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
+				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND ebs.slip_status = 1 )	OR (CASE WHEN ebs.slip_status = 1 THEN ebsd.is_localization = 2 END )
+				)
 			</if>
-			AND (CASE WHEN (ebsd.is_localization = 2 AND ebs.slip_status = 1)THEN  1=2 ELSE 1=1 END)
-		</where>) UNION ALL
-		(SELECT COUNT(DISTINCT ebsd.id) AS ebsdId FROM erp_bank_slip_detail ebsd
-		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
-		<where>
-			and ebsd.data_status = 1
-			and ebsd.loan_sign = 1
-			and ebsd.detail_status = 1
-			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 0">
-				and 1=2
-			</if>
-			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 1">
-				and ebs.slip_status =1
-			</if>
-			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 2">
-				and ebs.slip_status =1
-			</if>
-			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 3">
-				and ebs.slip_status !=0 AND ebsd.detail_status != 5
-				AND (ebsd.detail_status = 1 OR ebsd.detail_status = 2 OR ( ebsd.detail_status = 3 and (ec.OWNER =
-				#{maps.currentUser,jdbcType=VARCHAR} or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
-				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
-				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR})))
-			</if>
-			AND (CASE WHEN ebs.slip_status = 1 THEN ebsd.is_localization = 2 ELSE 1 = 2 END )
-		</where>)
-		) allCount
-		) bank_slip_detail
+		</where>) bank_slip_detail
 	</sql>
 
 	<sql id="statement_order_business_affairs_workbench">
