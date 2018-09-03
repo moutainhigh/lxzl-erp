@@ -220,7 +220,6 @@ public class OrderController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-
     /**
      * 更改测试机订单转为租赁订单
      * @param order

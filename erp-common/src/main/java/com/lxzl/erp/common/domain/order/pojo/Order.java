@@ -84,6 +84,7 @@ public class Order extends BasePO {
     private Integer isK3Order;                                  // 是否是K3订单，1是0否
     private Integer statementDate;                              //结算时间（天），20和31两种情况，如果为空取系统设定
     private String orderMessage;                                //订单消息
+    private Integer isTestMachineOrder;                         //是否为测试机订单;1-是,0-否
 
     private String testMachineOrderNo;                         //原测试机订单的编号
 
@@ -793,5 +794,13 @@ public class Order extends BasePO {
 
     public void setIsTurnRentOrder(Integer isTurnRentOrder) {
         this.isTurnRentOrder = isTurnRentOrder;
+    }
+
+    public Integer getIsTestMachineOrder() {
+        return isTestMachineOrder;
+    }
+
+    public void setIsTestMachineOrder(Integer isTestMachineOrder) {
+        this.isTestMachineOrder = isTestMachineOrder;
     }
 }

@@ -3,7 +3,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper">
-
     <resultMap type="com.lxzl.erp.dataaccess.domain.order.OrderProductDO" id="OrderProductDO">
         <id column="id" property="id"/>
         <result column="order_id" property="orderId"/>
@@ -276,8 +275,8 @@
         </foreach>
     </update>
 
-    <select id="findByOrderIdAndIsItemdelivered" resultMap="OrderProductDO" parameterType="java.lang.Integer">
-        select <include refid="column_List"/> from erp_order_product as eop where order_id = #{orderId, jdbcType=INTEGER} AND is_item_delivered = 1 and data_status = 1
+    <select id="findByOrderIdAndIsItemDelivered" resultMap="OrderProductDO" parameterType="java.lang.Integer">
+        select <include refid="column_List"/> from erp_order_product eop where eop.order_id = #{orderId, jdbcType=INTEGER} AND eop.is_item_delivered = 1 and eop.data_status = 1
     </select>
 
 </mapper>

@@ -1799,6 +1799,11 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = ConverterUtil.convert(orderDO, Order.class);
 
+        //如果订单是按日，并且租期为30以内就标记为测试机
+        if (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && order.getRentTimeLength() <= CommonConstant.ORDER_TEST_MACHINE_RENT_TIME){
+            order.setIsTestMachineOrder(CommonConstant.COMMON_CONSTANT_YES);
+        }
+
         //如果订单是由测试机订单转换过来的就标记位测试机转为租赁订单
         OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(order.getOrderNo());
         if (orderFromTestMachineDO != null){
@@ -2179,11 +2184,27 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
             return result;
         }
+        //如果订单是由测试机订单转为租赁的就要取消掉关联，同时原测试机订单的是否转为租赁订单的标记也要取消
+        OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(orderDO.getOrderNo());
+        if (orderFromTestMachineDO != null){
+            OrderDO testMachineOrderDO = orderMapper.findByNo(orderFromTestMachineDO.getTestMachineOrderNo());
+            testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_CONSTANT_NO);
+            testMachineOrderDO.setUpdateTime(currentTime);
+            testMachineOrderDO.setUpdateUser(loginUser.getUserId().toString());
+            orderMapper.update(testMachineOrderDO);
+
+            orderFromTestMachineDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            orderFromTestMachineDO.setUpdateTime(currentTime);
+            orderFromTestMachineDO.setUpdateUser(loginUser.getUserId().toString());
+            orderFromTestMachineMapper.update(orderFromTestMachineDO);
+        }
+
         orderDO.setCancelOrderReasonType(cancelOrderReasonType);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
         orderDO.setUpdateTime(currentTime);
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderMapper.update(orderDO);
+
         // 记录订单时间轴
         orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.CANCEL_ORDER);
         // TODO: 2018\4\26 0026  清除之前订单锁定的优惠券
@@ -2668,6 +2689,11 @@ public class OrderServiceImpl implements OrderService {
                 for (OrderDO orderDO : orderDOList) {
                     orderNoList.add(orderDO.getOrderNo());
                     Order order = ConverterUtil.convert(orderDO, Order.class);
+                    //订单符合按日租并且租期为30天以内的为测试机订单
+                    if (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && order.getRentTimeLength() <= CommonConstant.ORDER_TEST_MACHINE_RENT_TIME){
+                        order.setIsTestMachineOrder(CommonConstant.COMMON_CONSTANT_YES);
+                    }
+
                     orderDOMap.put(orderDO.getOrderNo(), order);
                     order.setCanReletOrder(CanReletOrderStatus.CAN_RELET_ORDER_STATUS_YES);
                     Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
@@ -2675,7 +2701,6 @@ public class OrderServiceImpl implements OrderService {
                     canReletOrderList.add(order);
                 }
             }
-
 
             List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
             if (CollectionUtil.isNotEmpty(workflowLinkDOList)) {
@@ -2709,6 +2734,11 @@ public class OrderServiceImpl implements OrderService {
         for (OrderDO orderDO : orderDOList) {
             orderNoList.add(orderDO.getOrderNo());
             Order order = ConverterUtil.convert(orderDO, Order.class);
+
+            //订单符合按日租并且租期为30天以内的为测试机订单
+            if (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && order.getRentTimeLength() <= CommonConstant.ORDER_TEST_MACHINE_RENT_TIME){
+                order.setIsTestMachineOrder(CommonConstant.COMMON_CONSTANT_YES);
+            }
             orderDOMap.put(orderDO.getOrderNo(), order);
             //判断是否可续租
             Integer canReletOrder = orderSupport.isOrderCanRelet(order);
@@ -4132,7 +4162,7 @@ public class OrderServiceImpl implements OrderService {
         //关联测试机订单与新订单
         OrderFromTestMachineDO orderFromTestMachineDO = new OrderFromTestMachineDO();
         orderFromTestMachineDO.setTestMachineOrderNo(testMachineOrderDO.getOrderNo());
-        orderFromTestMachineDO.setOrderNo(order.getOrderNo());
+        orderFromTestMachineDO.setOrderNo(orderDO.getOrderNo());
         orderFromTestMachineDO.setCreateTime(currentTime);
         orderFromTestMachineDO.setCreateUser(loginUser.getUserId().toString());
         orderFromTestMachineDO.setUpdateTime(currentTime);
@@ -4215,14 +4245,14 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
-        CustomerDO testMachineCustomerDO =  customerMapper.findByNo(dbOrderDO.getBuyerCustomerNo());
-        OrderConsignInfoDO testMachineOrderConsignInfoDO = dbOrderDO.getOrderConsignInfoDO();
+        CustomerDO testMachineCustomerDO =  customerMapper.findById(dbOrderDO.getBuyerCustomerId());
+        OrderConsignInfoDO testMachineOrderConsignInfoDO = orderConsignInfoMapper.findByOrderId(dbOrderDO.getId());
         //原样式机的商品项和配件项
         List<OrderProductDO> testMachineOrderProductDOList = orderProductMapper.findByOrderIdAndIsItemDelivered(dbOrderDO.getId());
         List<OrderMaterialDO> testMachineOrderMaterialDOList = orderMaterialMapper.findByOrderIdAndIsItemDelivered(dbOrderDO.getId());
 
         //客户不允许修改
-        if(!order.getBuyerCustomerId().equals(testMachineCustomerDO.getCustomerNo())){
+        if(!order.getBuyerCustomerId().equals(testMachineCustomerDO.getId())){
             result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_CUSTOMER_CAN_NOT_UPDATE);
             return result;
         }
@@ -4242,7 +4272,7 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         //新的租赁订单中测试机的原来商品项和配件项不能为空
-        if (CollectionUtil.isNotEmpty(testMachineOrderProductDOList) && CollectionUtil.isNotEmpty(testMachineOrderMaterialDOList)){
+        if (CollectionUtil.isEmpty(testMachineOrderProductDOList) && CollectionUtil.isEmpty(testMachineOrderMaterialDOList)){
             result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_PRODUCT_AND_MATERIAL_NOT_NULL);
             return result;
         }
