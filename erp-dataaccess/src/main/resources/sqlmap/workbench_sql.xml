@@ -323,7 +323,8 @@
 				and ebs.slip_status = 1
 			</if>
 			<if  test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
-				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND ebs.slip_status = 1 ))
+				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND ebs.slip_status = 1 )	OR (CASE WHEN ebs.slip_status = 1 THEN ebsd.is_localization = 2 END )
+				)
 			</if>
 		</where>) bank_slip_detail
 	</sql>
