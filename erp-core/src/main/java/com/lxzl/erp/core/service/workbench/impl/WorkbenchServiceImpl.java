@@ -607,24 +607,24 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
             //----------------------仓库待审核工作数量---------------------------
             Map<String,Object> workflowLinkWaitVerifyWarehouseMap = new HashMap();
-            workflowLinkWaitVerifyWarehouseMap.put("params","verifyStatus");
-            workflowLinkWaitVerifyWarehouseMap.put("paramsValue",VerifyStatus.VERIFY_STATUS_COMMIT);
+            workflowLinkWaitVerifyWarehouseMap.put("params","isWorkbench");
+            workflowLinkWaitVerifyWarehouseMap.put("paramsValue",CommonConstant.COMMON_CONSTANT_YES);
             workflowLinkWaitVerifyWarehouseMap.put("workbenchType",WorkbenchType.WORK_FLOW_LINK_WAIT_VERIFY);  //审核中的工作流
             workflowLinkWaitVerifyWarehouseMap.put("count",workflowWarehouseCountMap.get("waitVerifyWorkflowWarehouseWorkbenchCount"));
             workflowWarehouseListMap.add(workflowLinkWaitVerifyWarehouseMap);
             //----------------------仓库待审核工作流数量---------------------------
             //----------------------仓库未打印的订单数量---------------------------
             Map<String,Object> notPrintLogOderWarehouseMap = new HashMap();
-            notPrintLogOderWarehouseMap.put("params","orderStatus");
-            notPrintLogOderWarehouseMap.put("paramsValue",OrderStatus.ORDER_STATUS_VERIFYING);
+            notPrintLogOderWarehouseMap.put("params","warehouseWorkbenchOrderType");
+            notPrintLogOderWarehouseMap.put("paramsValue",WarehouseWorkbenchOrderType.NOT_PRINT_LOG_ODER);
             notPrintLogOderWarehouseMap.put("workbenchType",WorkbenchType.NOT_PRINT_LOG_ODER);  //未打印订单
             notPrintLogOderWarehouseMap.put("count",orderCountMap.get("notPrintLogOderWarehouseWorkbenchCount"));
             orderWarehouseListMap.add(notPrintLogOderWarehouseMap);
             //----------------------仓库未打印的订单数量---------------------------
             // ----------------------今日待发货的订单数量---------------------------
             Map<String,Object> todayAwaitDeliveryOderWarehouseMap = new HashMap();
-            todayAwaitDeliveryOderWarehouseMap.put("params","orderStatus");
-            todayAwaitDeliveryOderWarehouseMap.put("paramsValue",OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
+            todayAwaitDeliveryOderWarehouseMap.put("params","warehouseWorkbenchOrderType");
+            todayAwaitDeliveryOderWarehouseMap.put("paramsValue",WarehouseWorkbenchOrderType.TODAY_AWAIT_DELIVERY_ODER);
             todayAwaitDeliveryOderWarehouseMap.put("workbenchType",WorkbenchType.TODAY_AWAIT_DELIVERY_ODER);
             todayAwaitDeliveryOderWarehouseMap.put("count",orderCountMap.get("todayAwaitDeliveryOderCount"));
             orderWarehouseListMap.add(todayAwaitDeliveryOderWarehouseMap);
@@ -632,8 +632,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
             //----------------------快递待发货的订单数量---------------------------
             Map<String,Object> expressAwaitDeliveryOderWarehouseMap = new HashMap();
-            expressAwaitDeliveryOderWarehouseMap.put("params","orderStatus");
-            expressAwaitDeliveryOderWarehouseMap.put("paramsValue",OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
+            expressAwaitDeliveryOderWarehouseMap.put("params","warehouseWorkbenchOrderType");
+            expressAwaitDeliveryOderWarehouseMap.put("paramsValue",WarehouseWorkbenchOrderType.EXPRESS_AWAIT_DELIVERY_ODER);
             expressAwaitDeliveryOderWarehouseMap.put("workbenchType",WorkbenchType.EXPRESS_AWAIT_DELIVERY_ODER);
             expressAwaitDeliveryOderWarehouseMap.put("count",orderCountMap.get("expressAwaitDeliveryOderCount"));
             orderWarehouseListMap.add(expressAwaitDeliveryOderWarehouseMap);
@@ -641,8 +641,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
             //----------------------转单待发货的订单数量---------------------------
             Map<String,Object> slipAwaitDeliveryOderWarehouseMap = new HashMap();
-            slipAwaitDeliveryOderWarehouseMap.put("params","orderStatus");
-            slipAwaitDeliveryOderWarehouseMap.put("paramsValue",OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
+            slipAwaitDeliveryOderWarehouseMap.put("params","warehouseWorkbenchOrderType");
+            slipAwaitDeliveryOderWarehouseMap.put("paramsValue",WarehouseWorkbenchOrderType.SLIP_AWAIT_DELIVERY_ODER);
             slipAwaitDeliveryOderWarehouseMap.put("workbenchType",WorkbenchType.SLIP_AWAIT_DELIVERY_ODER);
             slipAwaitDeliveryOderWarehouseMap.put("count",orderCountMap.get("slipAwaitDeliveryOderCount"));
             orderWarehouseListMap.add(slipAwaitDeliveryOderWarehouseMap);
@@ -651,8 +651,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
             //----------------------逾期未发货的订单数量---------------------------
             Map<String,Object> overdueAwaitDeliveryOderWarehouseMap = new HashMap();
-            overdueAwaitDeliveryOderWarehouseMap.put("params","orderStatus");
-            overdueAwaitDeliveryOderWarehouseMap.put("paramsValue",OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
+            overdueAwaitDeliveryOderWarehouseMap.put("params","warehouseWorkbenchOrderType");
+            overdueAwaitDeliveryOderWarehouseMap.put("paramsValue",WarehouseWorkbenchOrderType.OVERDUE_UN_SHIPPED_DELIVERY_ODER);
             overdueAwaitDeliveryOderWarehouseMap.put("workbenchType",WorkbenchType.OVERDUE_UN_SHIPPED_DELIVERY_ODER);
             overdueAwaitDeliveryOderWarehouseMap.put("count",orderCountMap.get("overdueUnShippedDeliveryOderCount"));
             orderWarehouseListMap.add(overdueAwaitDeliveryOderWarehouseMap);
@@ -661,8 +661,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
             //----------------------未确认收货的订单数量---------------------------
             Map<String,Object> unConfirmedAwaitDeliveryOderWarehouseMap = new HashMap();
-            unConfirmedAwaitDeliveryOderWarehouseMap.put("params","orderStatus");
-            unConfirmedAwaitDeliveryOderWarehouseMap.put("paramsValue",OrderStatus.ORDER_STATUS_DELIVERED);
+            unConfirmedAwaitDeliveryOderWarehouseMap.put("params","warehouseWorkbenchOrderType");
+            unConfirmedAwaitDeliveryOderWarehouseMap.put("paramsValue",WarehouseWorkbenchOrderType.UN_CONFIRMED_DELIVERY_ODER);
             unConfirmedAwaitDeliveryOderWarehouseMap.put("workbenchType",WorkbenchType.UN_CONFIRMED_AWAIT_DELIVERY_ODER);
             unConfirmedAwaitDeliveryOderWarehouseMap.put("count",orderCountMap.get("unConfirmedDeliveryOderCount"));
             orderWarehouseListMap.add(unConfirmedAwaitDeliveryOderWarehouseMap);
@@ -670,8 +670,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
             //----------------------处理中的退货单数量---------------------------
             Map<String,Object> returnOrderWarehouseMap = new HashMap();
-            returnOrderWarehouseMap.put("params","returnOrderStatus");
-            returnOrderWarehouseMap.put("paramsValue",ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
+            returnOrderWarehouseMap.put("params","isWarehouseWorkbench");
+            returnOrderWarehouseMap.put("paramsValue",CommonConstant.COMMON_CONSTANT_YES);
             returnOrderWarehouseMap.put("workbenchType",WorkbenchType.RETURN_ORDER_STATUS_PROCESSING);
             returnOrderWarehouseMap.put("count",returnOrderCountMap.get("processingReturnOderCount"));
             returnOrderWarehouseListMap.add(returnOrderWarehouseMap);
