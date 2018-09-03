@@ -101,6 +101,7 @@ import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerCompanyMapper;
+import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +111,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import javax.lang.model.type.ErrorType;
 import javax.xml.rpc.ServiceException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -139,7 +141,6 @@ public class OrderServiceImpl implements OrderService {
         verifyCustomerRiskInfo(orderDO);
         calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
         calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
-
 
         SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
         if (order.getDeliverySubCompanyId() == null || subCompanyDO == null) {
@@ -1797,6 +1798,12 @@ public class OrderServiceImpl implements OrderService {
 //        orderDO.setReletOrderDOList(reletOrderDOList);
 
         Order order = ConverterUtil.convert(orderDO, Order.class);
+
+        //如果订单是由测试机订单转换过来的就标记位测试机转为租赁订单
+        OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(order.getOrderNo());
+        if (orderFromTestMachineDO != null){
+            order.setTestMachineOrderNo(orderFromTestMachineDO.getTestMachineOrderNo());
+        }
 
         if (orderDO.getOrderUnionSellerId() != null) {
             UserDO unionUser = userMapper.findByUserId(orderDO.getOrderUnionSellerId());
@@ -3783,7 +3790,6 @@ public class OrderServiceImpl implements OrderService {
                     skuName = productSku.getSkuName();
                 }
 
-
                 // 小于等于90天的,不走风控，大于90天的，走风控授信
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
                     if (orderProductDO.getProductCount() > 0) {
@@ -3993,6 +3999,398 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
+    @Override
+    public ServiceResult<String, String> testMachineOrderConvertOrder(Order order) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+
+        //加入测试机转租赁的校验
+        OrderDO testMachineOrderDO = orderMapper.findByNo(order.getTestMachineOrderNo());
+        if (testMachineOrderDO == null){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_IS_NOT_EXISTS);
+            return result;
+        }
+        //检验测试机订单是否已经转为租赁订单
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(testMachineOrderDO.getIsTurnRentOrder())){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER);
+            return result;
+        }
+        //该测试机订单是否是已经正在转为租赁订单中
+        OrderFromTestMachineDO machineMapperByTestOrderNo = orderFromTestMachineMapper.findByTestOrderNo(order.getTestMachineOrderNo());
+        if (machineMapperByTestOrderNo != null){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_HAVING_TURN_RENT_ORDER);
+            return result;
+        }
+        //只有按日租，并且租期小于30天的订单才能执行测试机转为租赁的操作
+        if (!OrderRentType.RENT_TYPE_DAY.equals(testMachineOrderDO.getRentType()) || testMachineOrderDO.getRentTimeLength() > CommonConstant.RELET_TIME_OF_RENT_TYPE_MONTH){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_RENT_CONDITION_IS_WRONG);
+            return result;
+        }
+
+        String verifyCreateOrderCode = verifyOperateOrder(order);
+        if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
+            result.setErrorCode(verifyCreateOrderCode);
+            return result;
+        }
+
+        if (order.getDeliverySubCompanyId() == null) {
+            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return result;
+        }
+
+        if (order.getOrderSubCompanyId() == null){
+            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return result;
+        }
+
+        CustomerDO testMachineCustomerDO =  customerMapper.findById(testMachineOrderDO.getBuyerCustomerId());
+        OrderConsignInfoDO testMachineOrderConsignInfoDO = orderConsignInfoMapper.findByOrderId(testMachineOrderDO.getId());
+        //原样式机的商品项和配件项
+        List<OrderProductDO> testMachineOrderProductDOList = orderProductMapper.findByOrderId(testMachineOrderDO.getId());
+        List<OrderMaterialDO> testMachineOrderMaterialDOList = orderMaterialMapper.findByOrderId(testMachineOrderDO.getId());
+
+        //客户不允许修改
+        if(!order.getBuyerCustomerId().equals(testMachineCustomerDO.getId())){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_CUSTOMER_CAN_NOT_UPDATE);
+            return result;
+        }
+        //收货地址不允许修改
+        if (!order.getCustomerConsignId().equals(testMachineOrderConsignInfoDO.getCustomerConsignId())){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_CUSTOMER_CONSIGN_CAN_NOT_UPDATE);
+            return result;
+        }
+        //原样式机订单的所需分公司也不能修改
+        if(order.getOrderSubCompanyId().equals(testMachineOrderDO.getOrderSubCompanyId())){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_ORDER_SUB_COMPANY_CAN_NOT_UPDATE);
+            return result;
+        }
+        //发货分公司不允许修改
+        if (!order.getDeliverySubCompanyId().equals(testMachineOrderDO.getDeliverySubCompanyId())){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_DELIVERY_SUB_COMPANY_CAN_NOT_UPDATE);
+            return result;
+        }
+        //新的租赁订单中测试机的原来商品项和配件项不能为空
+        if (CollectionUtil.isEmpty(testMachineOrderProductDOList) && CollectionUtil.isEmpty(testMachineOrderMaterialDOList)){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_PRODUCT_AND_MATERIAL_NOT_NULL);
+            return result;
+        }
+        //对原测试机订单的商品项和配件项只允许修改单价，其他都不能改变
+        if (CollectionUtil.isNotEmpty(testMachineOrderProductDOList)){
+            String validateOrderProductResult = validateOrderProductInfo(testMachineOrderProductDOList,order.getOrderProductList());
+            if (!ErrorCode.SUCCESS.equals(validateOrderProductResult)){
+                result.setErrorCode(validateOrderProductResult);
+                return result;
+            }
+        }
+        if (CollectionUtil.isNotEmpty(testMachineOrderMaterialDOList)){
+            String validateOrderMaterialResult = validateOrderMaterialInfo(testMachineOrderMaterialDOList,order.getOrderMaterialList());
+            if (!ErrorCode.SUCCESS.equals(validateOrderMaterialResult)){
+                result.setErrorCode(validateOrderMaterialResult);
+                return result;
+            }
+        }
+
+        OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
+
+        // 校验客户风控信息
+        verifyCustomerRiskInfo(orderDO);
+        calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
+        calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
+
+//        SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
+
+        SubCompanyDO orderSubCompanyDO = subCompanyMapper.findById(orderDO.getOrderSubCompanyId());
+        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
+        orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime, orderSubCompanyDO != null ? orderSubCompanyDO.getSubCompanyCode() : null));
+        orderDO.setOrderSellerId(testMachineCustomerDO.getOwner());
+
+        //获取
+        orderDO.setStatementDate(testMachineCustomerDO.getStatementDate());
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
+        orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        orderDO.setCreateUser(loginUser.getUserId().toString());
+        orderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderDO.setCreateTime(currentTime);
+        orderDO.setUpdateTime(currentTime);
+        //添加当前客户名称
+        orderDO.setBuyerCustomerName(testMachineCustomerDO.getCustomerName());
+
+        Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
+        orderDO.setExpectReturnTime(expectReturnTime);
+        orderMapper.save(orderDO);
+
+        saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
+        saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
+        //为了不影响之前的订单逻辑，这里暂时使用修改的方式
+        setOrderProductSummary(orderDO);
+        orderMapper.update(orderDO);
+        updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
+
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.CREATE_ORDER);
+
+        //关联测试机订单与新订单
+        OrderFromTestMachineDO orderFromTestMachineDO = new OrderFromTestMachineDO();
+        orderFromTestMachineDO.setTestMachineOrderNo(testMachineOrderDO.getOrderNo());
+        orderFromTestMachineDO.setOrderNo(order.getOrderNo());
+        orderFromTestMachineDO.setCreateTime(currentTime);
+        orderFromTestMachineDO.setCreateUser(loginUser.getUserId().toString());
+        orderFromTestMachineDO.setUpdateTime(currentTime);
+        orderFromTestMachineDO.setUpdateUser(loginUser.getUserId().toString());
+        orderFromTestMachineMapper.save(orderFromTestMachineDO);
+        // TODO: 2018\4\26 0026 使用优惠券
+        if (CollectionUtil.isEmpty(order.getCouponList())) {
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(orderDO.getOrderNo());
+            return result;
+        }
+        String rs = couponSupport.useCoupon(order);
+        if (!ErrorCode.SUCCESS.equals(rs)) {
+            result.setErrorCode(rs);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(orderDO.getOrderNo());
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> updateTestMachineOrderConvertOrder(Order order) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+
+        OrderDO dbOrderDO = orderMapper.findByOrderNo(order.getOrderNo());
+        if (dbOrderDO == null) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(dbOrderDO.getOrderStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
+        if (!loginUser.getUserId().toString().equals(dbOrderDO.getCreateUser())) {
+            result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
+            return result;
+        }
+
+        //加入测试机转租赁的校验
+//        OrderDO testMachineOrderDO = orderMapper.findByNo(order.getTestMachineOrderNo());
+//        if (testMachineOrderDO == null){
+//            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_IS_NOT_EXISTS);
+//            return result;
+//        }
+        //检验测试机订单是否已经转为租赁订单
+//        if (CommonConstant.COMMON_CONSTANT_YES.equals(dbOrderDO.getIsTurnRentOrder())){
+//            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER);
+//            return result;
+//        }
+
+        //该测试机订单是否是已经正在转为租赁订单中
+//        OrderFromTestMachineDO machineMapperByTestOrderNo = orderFromTestMachineMapper.findByTestOrderNo(order.getTestMachineOrderNo());
+//        if (machineMapperByTestOrderNo != null){
+//            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_HAVING_TURN_RENT_ORDER);
+//            return result;
+//        }
+        //只有按日租，并且租期小于30天的订单才能执行测试机转为租赁的操作
+//        if (!OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) || order.getRentTimeLength() > CommonConstant.RELET_TIME_OF_RENT_TYPE_MONTH){
+//            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_RENT_CONDITION_IS_WRONG);
+//            return result;
+//        }
+
+        String verifyCreateOrderCode = verifyOperateOrder(order);
+        if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
+            result.setErrorCode(verifyCreateOrderCode);
+            return result;
+        }
+
+        if (order.getDeliverySubCompanyId() == null) {
+            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return result;
+        }
+
+        if (order.getOrderSubCompanyId() == null){
+            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return result;
+        }
+
+        CustomerDO testMachineCustomerDO =  customerMapper.findByNo(dbOrderDO.getBuyerCustomerNo());
+        OrderConsignInfoDO testMachineOrderConsignInfoDO = dbOrderDO.getOrderConsignInfoDO();
+        //原样式机的商品项和配件项
+        List<OrderProductDO> testMachineOrderProductDOList = orderProductMapper.findByOrderIdAndIsItemDelivered(dbOrderDO.getId());
+        List<OrderMaterialDO> testMachineOrderMaterialDOList = orderMaterialMapper.findByOrderIdAndIsItemDelivered(dbOrderDO.getId());
+
+        //客户不允许修改
+        if(!order.getBuyerCustomerId().equals(testMachineCustomerDO.getCustomerNo())){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_CUSTOMER_CAN_NOT_UPDATE);
+            return result;
+        }
+        //收货地址不允许修改
+        if (!order.getCustomerConsignId().equals(testMachineOrderConsignInfoDO.getCustomerConsignId())){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_CUSTOMER_CONSIGN_CAN_NOT_UPDATE);
+            return result;
+        }
+        //原样式机订单的所需分公司也不能修改
+        if(order.getOrderSubCompanyId().equals(dbOrderDO.getOrderSubCompanyId())){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_ORDER_SUB_COMPANY_CAN_NOT_UPDATE);
+            return result;
+        }
+        //发货分公司不允许修改
+        if (!order.getDeliverySubCompanyId().equals(dbOrderDO.getDeliverySubCompanyId())){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_DELIVERY_SUB_COMPANY_CAN_NOT_UPDATE);
+            return result;
+        }
+        //新的租赁订单中测试机的原来商品项和配件项不能为空
+        if (CollectionUtil.isNotEmpty(testMachineOrderProductDOList) && CollectionUtil.isNotEmpty(testMachineOrderMaterialDOList)){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_PRODUCT_AND_MATERIAL_NOT_NULL);
+            return result;
+        }
+
+        //对原测试机的订单只允许修改单价，其他都不能改变
+        if (CollectionUtil.isNotEmpty(testMachineOrderProductDOList)){
+            String validateOrderProductResult = validateOrderProductInfo(testMachineOrderProductDOList,order.getOrderProductList());
+            if (!ErrorCode.SUCCESS.equals(validateOrderProductResult)){
+                result.setErrorCode(validateOrderProductResult);
+                return result;
+            }
+        }
+        if (CollectionUtil.isNotEmpty(testMachineOrderMaterialDOList)){
+            String validateOrderMaterialResult = validateOrderMaterialInfo(testMachineOrderMaterialDOList,order.getOrderMaterialList());
+            if (!ErrorCode.SUCCESS.equals(validateOrderMaterialResult)){
+                result.setErrorCode(validateOrderMaterialResult);
+                return result;
+            }
+        }
+
+        List<OrderProductDO> orderProductDOList = ConverterUtil.convertList(order.getOrderProductList(), OrderProductDO.class);
+        List<OrderMaterialDO> orderMaterialDOList = ConverterUtil.convertList(order.getOrderMaterialList(), OrderMaterialDO.class);
+        OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
+        orderDO.setOrderProductDOList(orderProductDOList);
+        orderDO.setOrderMaterialDOList(orderMaterialDOList);
+        // 校验客户风控信息
+        verifyCustomerRiskInfo(orderDO);
+        calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
+        calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
+
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
+        if (order.getDeliverySubCompanyId() == null || subCompanyDO == null) {
+            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return result;
+        }
+        orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+        orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
+
+        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
+        orderDO.setId(dbOrderDO.getId());
+        orderDO.setOrderNo(dbOrderDO.getOrderNo());
+        orderDO.setOrderSellerId(testMachineCustomerDO.getOwner());
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
+        orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        orderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderDO.setUpdateTime(currentTime);
+        //添加当前客户名称
+        orderDO.setBuyerCustomerName(testMachineCustomerDO.getCustomerName());
+
+        //添加客户的结算时间（天）
+//        Date rentStartTime = order.getRentStartTime();
+        orderDO.setStatementDate(testMachineCustomerDO.getStatementDate());
+
+        Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
+        orderDO.setExpectReturnTime(expectReturnTime);
+        orderMapper.update(orderDO);
+
+        saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
+        saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
+        //为了不影响之前的订单逻辑，这里暂时使用修改的方式
+        setOrderProductSummary(orderDO);
+        orderMapper.update(orderDO);
+
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.UPDATE_ORDER);
+
+        updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
+        // TODO: 2018\4\26 0026  清除之前订单锁定的优惠券
+        String revertresult = couponSupport.revertCoupon(order.getOrderNo());
+        if (!ErrorCode.SUCCESS.equals(revertresult)) {
+            result.setErrorCode(revertresult);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
+        // TODO: 2018\4\26 0026  重新使用优惠券
+        if (CollectionUtil.isEmpty(order.getCouponList())) {
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(orderDO.getOrderNo());
+            return result;
+        }
+        String rs = couponSupport.useCoupon(order);
+        if (!ErrorCode.SUCCESS.equals(rs)) {
+            result.setErrorCode(rs);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(orderDO.getOrderNo());
+        return result;
+    }
+
+    private String validateOrderProductInfo(List<OrderProductDO> testMachineOrderProductDOList, List<OrderProduct> orderProductList) {
+        Map<Integer, OrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(testMachineOrderProductDOList, "id");
+        if (CollectionUtil.isNotEmpty(orderProductList)){
+            Map<Integer,OrderProduct> newOrderProductMap = new HashMap<>();
+            for (OrderProduct orderProduct :orderProductList){
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProduct.getIsItemDelivered())){
+                    if (dbOrderProductDOMap.get(orderProduct.getOrderProductId()) != null){
+                        newOrderProductMap.put(orderProduct.getOrderProductId(),orderProduct);
+                    }
+                }
+            }
+
+            if (MapUtils.isEmpty(newOrderProductMap) && testMachineOrderProductDOList.size() != newOrderProductMap.size()){
+                return ErrorCode.TEST_MACHINE_ORDER_PRODUCT_CAN_NOT_UPDATE;
+            }
+
+            for (OrderProductDO testMachineOrderProductDO : testMachineOrderProductDOList){
+                if(newOrderProductMap.get(testMachineOrderProductDO.getId()) != null){
+                    OrderProduct orderProduct = newOrderProductMap.get(testMachineOrderProductDO.getId());
+                    if (!testMachineOrderProductDO.getProductCount().equals(orderProduct.getProductCount())){
+                        return ErrorCode.TEST_MACHINE_ORDER_PRODUCT_COUNT_CAN_NOT_UPDATE;
+                    }
+                }
+            }
+        }
+
+        return ErrorCode.SUCCESS;
+    }
+
+    private String validateOrderMaterialInfo(List<OrderMaterialDO> testMachineOrderMaterialDOList, List<OrderMaterial> orderMaterialList) {
+        Map<Integer, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(testMachineOrderMaterialDOList, "id");
+        if (CollectionUtil.isNotEmpty(orderMaterialList)){
+            Map<Integer,OrderMaterial> newOrderMaterialMap = new HashMap<>();
+            for (OrderMaterial orderMaterial :orderMaterialList){
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterial.getIsItemDelivered())){
+                    if (dbOrderMaterialDOMap.get(orderMaterial.getOrderMaterialId()) != null){
+                        newOrderMaterialMap.put(orderMaterial.getOrderMaterialId(),orderMaterial);
+                    }
+                }
+            }
+
+            if (MapUtils.isEmpty(newOrderMaterialMap) || testMachineOrderMaterialDOList.size() != newOrderMaterialMap.size()){
+                return ErrorCode.TEST_MACHINE_ORDER_MATERIAL_CAN_NOT_UPDATE;
+            }
+
+            for (OrderMaterialDO testMachineOrderMaterialDO : testMachineOrderMaterialDOList){
+                if(newOrderMaterialMap.get(testMachineOrderMaterialDO.getId()) != null){
+                    OrderMaterial orderMaterial = newOrderMaterialMap.get(testMachineOrderMaterialDO.getId());
+                    if (!testMachineOrderMaterialDO.getMaterialCount().equals(orderMaterial.getMaterialCount())){
+                        return ErrorCode.TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE;
+                    }
+                }
+            }
+        }
+
+        return ErrorCode.SUCCESS;
+    }
+
 
     private String verifyOperateOrder(Order order) {
         if (order == null) {
@@ -4022,7 +4420,6 @@ public class OrderServiceImpl implements OrderService {
 
         // 判断逾期情况，如果客户存在未支付的逾期的结算单，不能产生新订单
         List<StatementOrderDO> overdueStatementOrderList = statementOrderSupport.getOverdueStatementOrderList(customerDO.getId());
-
 
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(order.getCustomerConsignId());
         if (customerConsignInfoDO == null || !customerConsignInfoDO.getCustomerId().equals(customerDO.getId())) {
@@ -4551,5 +4948,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private CustomerCompanyMapper customerCompanyMapper;
+
+    @Autowired
+    private OrderFromTestMachineMapper orderFromTestMachineMapper;
+
+
 
 }

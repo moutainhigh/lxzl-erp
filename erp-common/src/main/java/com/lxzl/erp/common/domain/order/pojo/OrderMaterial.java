@@ -39,6 +39,7 @@ public class OrderMaterial extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+	private Integer isItemDelivered; //是否已发货，0否1是
 
 	private List<OrderMaterialBulk> orderMaterialBulkList;
 
@@ -351,5 +352,13 @@ public class OrderMaterial extends BasePO {
 
 	public void setStableMaterialCount(Integer stableMaterialCount) {
 		this.stableMaterialCount = stableMaterialCount;
+	}
+
+	public Integer getIsItemDelivered() {
+		return isItemDelivered;
+	}
+
+	public void setIsItemDelivered(Integer isItemDelivered) {
+		this.isItemDelivered = isItemDelivered;
 	}
 }

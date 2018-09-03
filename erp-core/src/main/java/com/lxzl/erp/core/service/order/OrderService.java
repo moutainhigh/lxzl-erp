@@ -262,4 +262,18 @@ public interface OrderService extends VerifyReceiver {
 
     void saveOrderProductInfo(List<OrderProductDO> orderProductDOList, Integer orderId, User loginUser, Date currentTime);
     void saveOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, Integer orderId, User loginUser, Date currentTime);
+
+    /**
+     * 原测试机订单转为租赁订单
+     * @param order
+     * @return
+     */
+    ServiceResult<String,String> testMachineOrderConvertOrder(Order order);
+
+    /**
+     * 更改测试机订单转为租赁订单
+     * @param order
+     * @return
+     */
+    ServiceResult<String,String> updateTestMachineOrderConvertOrder(Order order);
 }
