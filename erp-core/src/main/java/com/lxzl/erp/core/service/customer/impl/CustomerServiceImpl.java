@@ -3050,6 +3050,12 @@ public class CustomerServiceImpl implements CustomerService {
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             return serviceResult;
         }
+
+        if (!CustomerStatus.STATUS_PASS.equals(customerDO.getCustomerStatus())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_STATUS_ERROR);
+            return serviceResult;
+        }
+
         //添加客户修改日志
         serviceResult = updateCustomerOwnerAndUnionUser(customerDO, customer, now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {

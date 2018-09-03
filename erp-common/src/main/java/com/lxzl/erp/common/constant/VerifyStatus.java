@@ -10,5 +10,6 @@ public class VerifyStatus {
     public static final Integer VERIFY_STATUS_PASS = 2;          // 2-审批通过
     public static final Integer VERIFY_STATUS_BACK = 3;          // 3-审批驳回
     public static final Integer VERIFY_STATUS_CANCEL = 4;          // 4-取消
+    public static final Integer VERIFY_STATUS_OTHER_PASS = 5;          // 5-他人审核通过
 
 }
