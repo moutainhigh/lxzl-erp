@@ -30,6 +30,7 @@ public class OrderMaterialDO  extends BaseDO {
 	private Integer rentingMaterialCount;
 	private Integer dataStatus;
 	private String remark;
+	private Integer isItemDelivered;
 
 	private String serialNumber;        // 序号
 
@@ -268,5 +269,13 @@ public class OrderMaterialDO  extends BaseDO {
 
 	public void setStableMaterialCount(Integer stableMaterialCount) {
 		this.stableMaterialCount = stableMaterialCount;
+	}
+
+	public Integer getIsItemDelivered() {
+		return isItemDelivered;
+	}
+
+	public void setIsItemDelivered(Integer isItemDelivered) {
+		this.isItemDelivered = isItemDelivered;
 	}
 }

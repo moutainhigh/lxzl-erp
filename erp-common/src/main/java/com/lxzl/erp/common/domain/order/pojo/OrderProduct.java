@@ -44,6 +44,8 @@ public class OrderProduct extends BasePO {
     private BigDecimal firstNeedPayDepositAmount;      // 首付押金金额
 
     private String serialNumber;        // 序号
+    private Integer isItemDelivered;    //是否已发货，0否1是
+
 
     private Integer orderJointProductId; // 订单组合商品id
     private Integer jointProductProductId; // 关联的组合商品商品项id
@@ -341,4 +343,13 @@ public class OrderProduct extends BasePO {
     public void setStableProductCount(Integer stableProductCount) {
         this.stableProductCount = stableProductCount;
     }
+
+    public Integer getIsItemDelivered() {
+        return isItemDelivered;
+    }
+
+    public void setIsItemDelivered(Integer isItemDelivered) {
+        this.isItemDelivered = isItemDelivered;
+    }
+
 }

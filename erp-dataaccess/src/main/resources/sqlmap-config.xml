@@ -201,6 +201,8 @@
         <mapper resource="sqlmap/erp_return_order_rollback_log.xml" />
 
         <mapper resource="sqlmap/erp_customer_risk_log.xml" />
+
+        <mapper resource="sqlmap/erp_order_from_test_machine.xml" />
     </mappers>
 
 </configuration>
