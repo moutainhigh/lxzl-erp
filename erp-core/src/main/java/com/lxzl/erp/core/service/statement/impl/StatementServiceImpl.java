@@ -377,8 +377,8 @@ public class StatementServiceImpl implements StatementService {
                     reletOrderDO.setStatementDate(orderStatementDateSplitDO.getAfterStatementDate());
             }
             //如果续租单的续租期数小于等于0
-            if ((null != reletOrderDO.getReletOrderProductDOList() && reletOrderDO.getReletOrderProductDOList().get(0).getPaymentCycle() <=0)
-                    || (null != reletOrderDO.getReletOrderMaterialDOList() && reletOrderDO.getReletOrderMaterialDOList().get(0).getPaymentCycle() <= 0)) {
+            if ((null != reletOrderDO.getReletOrderProductDOList() && reletOrderDO.getReletOrderProductDOList().size()>0 && reletOrderDO.getReletOrderProductDOList().get(0).getPaymentCycle() <=0)
+                    || (null != reletOrderDO.getReletOrderMaterialDOList() && reletOrderDO.getReletOrderMaterialDOList().size()>0 && reletOrderDO.getReletOrderMaterialDOList().get(0).getPaymentCycle() <= 0)) {
                 isNeedAlign = false;
             }
             //获取当前续租是否结算单对齐
