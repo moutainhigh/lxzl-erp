@@ -184,29 +184,31 @@ public class WorkflowSupport {
      * 得到审核组人和图片
      */
     public WorkflowLinkDO getVerifyUserGroupAndImg(WorkflowLinkDO workflowLinkDO) {
-        if (workflowLinkDO.getVerifyUserGroupId() != null) {
-            List<WorkflowVerifyUserGroupDO> workflowVerifyUserGroupDOList = workflowVerifyUserGroupMapper.findByVerifyUserGroupId(workflowLinkDO.getVerifyUserGroupId());
-            if (CollectionUtil.isEmpty(workflowVerifyUserGroupDOList)) {
-                throw new BusinessException(ErrorCode.WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS, ErrorCode.getMessage(ErrorCode.WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS));
-            }
-            workflowLinkDO.setWorkflowVerifyUserGroupDOList(workflowVerifyUserGroupDOList);
-            for (WorkflowLinkDetailDO workflowLinkDetailDO : workflowLinkDO.getWorkflowLinkDetailDOList()) {
-                if (workflowLinkDetailDO.getVerifyUserGroupId() != null) {
-                    workflowVerifyUserGroupDOList = workflowVerifyUserGroupMapper.findByVerifyUserGroupId(workflowLinkDetailDO.getVerifyUserGroupId());
-                    if (CollectionUtil.isEmpty(workflowVerifyUserGroupDOList)) {
-                        throw new BusinessException(ErrorCode.WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS, ErrorCode.getMessage(ErrorCode.WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS));
+        if(workflowLinkDO != null){
+            if (workflowLinkDO.getVerifyUserGroupId() != null) {
+                List<WorkflowVerifyUserGroupDO> workflowVerifyUserGroupDOList = workflowVerifyUserGroupMapper.findByVerifyUserGroupId(workflowLinkDO.getVerifyUserGroupId());
+                if (CollectionUtil.isEmpty(workflowVerifyUserGroupDOList)) {
+                    throw new BusinessException(ErrorCode.WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS, ErrorCode.getMessage(ErrorCode.WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS));
+                }
+                workflowLinkDO.setWorkflowVerifyUserGroupDOList(workflowVerifyUserGroupDOList);
+                for (WorkflowLinkDetailDO workflowLinkDetailDO : workflowLinkDO.getWorkflowLinkDetailDOList()) {
+                    if (workflowLinkDetailDO.getVerifyUserGroupId() != null) {
+                        workflowVerifyUserGroupDOList = workflowVerifyUserGroupMapper.findByVerifyUserGroupId(workflowLinkDetailDO.getVerifyUserGroupId());
+                        if (CollectionUtil.isEmpty(workflowVerifyUserGroupDOList)) {
+                            throw new BusinessException(ErrorCode.WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS, ErrorCode.getMessage(ErrorCode.WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS));
+                        }
+                        workflowLinkDetailDO.setWorkflowVerifyUserGroupDOList(workflowVerifyUserGroupDOList);
                     }
-                    workflowLinkDetailDO.setWorkflowVerifyUserGroupDOList(workflowVerifyUserGroupDOList);
                 }
             }
-        }
-        if (CollectionUtil.isNotEmpty(workflowLinkDO.getWorkflowLinkDetailDOList())) {
-            for (WorkflowLinkDetailDO workflowLinkDetailDO : workflowLinkDO.getWorkflowLinkDetailDOList()) {
-                if (CollectionUtil.isNotEmpty(workflowLinkDetailDO.getWorkflowVerifyUserGroupDOList())) {
-                    for (WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO : workflowLinkDetailDO.getWorkflowVerifyUserGroupDOList()) {
-                        List<ImageDO> groupImageDOList = imgMysqlMapper.findByRefIdAndType(workflowVerifyUserGroupDO.getId().toString(), ImgType.WORKFLOW_IMG_TYPE);
-                        if (CollectionUtil.isNotEmpty(groupImageDOList)) {
-                            workflowVerifyUserGroupDO.setImageDOList(groupImageDOList);
+            if (CollectionUtil.isNotEmpty(workflowLinkDO.getWorkflowLinkDetailDOList())) {
+                for (WorkflowLinkDetailDO workflowLinkDetailDO : workflowLinkDO.getWorkflowLinkDetailDOList()) {
+                    if (CollectionUtil.isNotEmpty(workflowLinkDetailDO.getWorkflowVerifyUserGroupDOList())) {
+                        for (WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO : workflowLinkDetailDO.getWorkflowVerifyUserGroupDOList()) {
+                            List<ImageDO> groupImageDOList = imgMysqlMapper.findByRefIdAndType(workflowVerifyUserGroupDO.getId().toString(), ImgType.WORKFLOW_IMG_TYPE);
+                            if (CollectionUtil.isNotEmpty(groupImageDOList)) {
+                                workflowVerifyUserGroupDO.setImageDOList(groupImageDOList);
+                            }
                         }
                     }
                 }
