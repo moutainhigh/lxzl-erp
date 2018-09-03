@@ -17,6 +17,33 @@ public class Workbench {
     private List<Map<String,Object>> workflowBusinessAffairsListMap ;
     private List<Map<String,Object>> bankSlipDetailBusinessAffairsListMap ;
     private List<Map<String,Object>> statementOrderBusinessAffairsListMap ;
+    private List<Map<String,Object>> workflowWarehouseListMap ;
+    private List<Map<String,Object>> orderWarehouseListMap ;
+    private List<Map<String,Object>> returnOrderWarehouseListMap ;
+
+    public List<Map<String, Object>> getOrderWarehouseListMap() {
+        return orderWarehouseListMap;
+    }
+
+    public void setOrderWarehouseListMap(List<Map<String, Object>> orderWarehouseListMap) {
+        this.orderWarehouseListMap = orderWarehouseListMap;
+    }
+
+    public List<Map<String, Object>> getReturnOrderWarehouseListMap() {
+        return returnOrderWarehouseListMap;
+    }
+
+    public void setReturnOrderWarehouseListMap(List<Map<String, Object>> returnOrderWarehouseListMap) {
+        this.returnOrderWarehouseListMap = returnOrderWarehouseListMap;
+    }
+
+    public List<Map<String, Object>> getWorkflowWarehouseListMap() {
+        return workflowWarehouseListMap;
+    }
+
+    public void setWorkflowWarehouseListMap(List<Map<String, Object>> workflowWarehouseListMap) {
+        this.workflowWarehouseListMap = workflowWarehouseListMap;
+    }
 
     public List<Map<String, Object>> getWorkflowBusinessAffairsListMap() {
         return workflowBusinessAffairsListMap;

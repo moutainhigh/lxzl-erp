@@ -60,6 +60,10 @@ public class CommonConstant {
     public static final Integer COMMON_ZERO = 0;
     public static final Integer COMMON_ONE = 1;
     public static final Integer COMMON_TWO = 2;
+    public static final Integer COMMON_SIX = 6;
+    public static final Integer COMMON_FIVE = 5;
+    public static final Integer COMMON_SEVEN = 7;
+    public static final Integer COMMON_EIGHT = 8;
 
     public static final Integer COMMON_SALES_WORKBENCH = 0;//工作台类型，0-业务工作台
     public static final Integer COMMON_BUSINESS_AFFAIRS_WORKBENCH = 1;//工作台类型，1-商务工作台

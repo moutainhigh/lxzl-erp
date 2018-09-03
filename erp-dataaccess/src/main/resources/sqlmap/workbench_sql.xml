@@ -340,4 +340,130 @@
 		</where>) statement_order
 	</sql>
 
+	<!--以下是仓库工作台sql-->
+
+	<select id="findWorkflowWarehouseWorkbenchCount" resultType="java.util.HashMap" parameterType="map">
+		SELECT
+		workflow_link.waitVerifyWorkflowWarehouseWorkbenchCount
+		FROM
+		<include refid="workflow_warehouse_workbench"/>
+	</select>
+	<sql id="workflow_warehouse_workbench">
+		(SELECT COUNT(DISTINCT verify_user_group_id) AS waitVerifyWorkflowWarehouseWorkbenchCount FROM `erp_workflow_verify_user_group`
+		<where>
+			AND data_status = 1 AND verify_status = 1
+			AND verify_user = #{maps.currentUserId,jdbcType=INTEGER}
+		</where>) workflow_link
+	</sql>
+
+	<select id="findOrderWarehouseWorkbenchCount" resultType="java.util.HashMap" parameterType="map">
+		SELECT
+		not_print_log_oder.notPrintLogOderWarehouseWorkbenchCount,
+		today_await_delivery_oder.todayAwaitDeliveryOderCount,
+		express_await_delivery_oder.expressAwaitDeliveryOderCount,
+		slip_await_delivery_oder.slipAwaitDeliveryOderCount,
+		overdue_unShipped_delivery_oder.overdueUnShippedDeliveryOderCount,
+		un_confirmed_delivery_oder.unConfirmedDeliveryOderCount
+		FROM
+		<include refid="not_print_log_oder_warehouse_workbench"/>,
+		<include refid="today_await_delivery_oder_warehouse_workbench"/>,
+		<include refid="express_await_delivery_oder_warehouse_workbench"/>,
+		<include refid="slip_await_delivery_oder_warehouse_workbench"/>,
+		<include refid="overdue_unShipped_delivery_oder_warehouse_workbench"/>,
+		<include refid="un_confirmed_await_delivery_oder_warehouse_workbench"/>
+	</select>
+	<sql id="not_print_log_oder_warehouse_workbench">
+		(SELECT count(crrentUserAllOrderNo.oderNo) AS notPrintLogOderWarehouseWorkbenchCount FROM (SELECT DISTINCT eo.order_no AS oderNo FROM erp_workflow_link ewl
+		INNER JOIN erp_order eo ON eo.order_no = ewl.workflow_refer_no AND eo.data_status = 1
+		INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+		<where>
+			AND ewl.workflow_step > 1
+			AND ewl.data_status = 1
+			<include refid="permission_sql.order_control"/>
+		</where>) crrentUserAllOrderNo WHERE crrentUserAllOrderNo.oderNo
+		NOT IN (
+		SELECT DISTINCT epl.refer_no FROM `erp_print_log` epl
+		<where>
+			AND epl.data_status = 1
+			AND epl.create_user = #{maps.currentUserId,jdbcType=INTEGER}
+		</where>)
+		)not_print_log_oder
+	</sql>
+
+	<sql id="today_await_delivery_oder_warehouse_workbench">
+		(SELECT COUNT(eo.id) AS todayAwaitDeliveryOderCount FROM erp_order eo
+		INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+		WHERE eo.order_status = 8 AND eo.data_status = 1
+		AND eo.delivery_sub_company_id = #{maps.deliverySubCompanyId,jdbcType=INTEGER}
+		AND eo.order_sub_company_id = #{maps.orderSubCompanyId,jdbcType=INTEGER}
+		AND eo.expect_delivery_time >= #{maps.currentDateTime,jdbcType=TIMESTAMP}
+		AND #{maps.currentDateAddOne,jdbcType=TIMESTAMP} >= eo.expect_delivery_time
+		<include refid="permission_sql.order_control"/>
+		)today_await_delivery_oder
+	</sql>
+
+	<sql id="express_await_delivery_oder_warehouse_workbench">
+		(SELECT COUNT(eo.id) AS expressAwaitDeliveryOderCount FROM erp_order eo
+		INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+		WHERE eo.order_status = 8 AND eo.data_status = 1
+		AND eo.delivery_mode = 1
+		AND eo.delivery_sub_company_id = #{maps.deliverySubCompanyId,jdbcType=INTEGER}
+		AND eo.order_sub_company_id = #{maps.orderSubCompanyId,jdbcType=INTEGER}
+		AND  #{maps.currentDateAddSix,jdbcType=TIMESTAMP} >= eo.expect_delivery_time
+		AND eo.expect_delivery_time >= #{maps.currentDateTime,jdbcType=TIMESTAMP}
+		<include refid="permission_sql.order_control"/>
+		)express_await_delivery_oder
+	</sql>
+
+	<sql id="slip_await_delivery_oder_warehouse_workbench">
+		(SELECT COUNT(eo.id) AS slipAwaitDeliveryOderCount FROM erp_order eo
+		INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+		WHERE eo.order_status = 8 AND eo.data_status = 1
+		AND eo.delivery_sub_company_id = #{maps.deliverySubCompanyId,jdbcType=INTEGER}
+		AND eo.order_sub_company_id != #{maps.orderSubCompanyId,jdbcType=INTEGER}
+		AND  #{maps.currentDateAddEight,jdbcType=TIMESTAMP} >= eo.expect_delivery_time
+		AND eo.expect_delivery_time >= #{maps.currentDateTime,jdbcType=TIMESTAMP}
+		<include refid="permission_sql.order_control"/>
+		)slip_await_delivery_oder
+	</sql>
+
+	<sql id="overdue_unShipped_delivery_oder_warehouse_workbench">
+		(SELECT COUNT(eo.id) AS overdueUnShippedDeliveryOderCount FROM erp_order eo
+		INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+		WHERE eo.order_status = 8 AND eo.data_status = 1
+		AND eo.delivery_sub_company_id = #{maps.deliverySubCompanyId,jdbcType=INTEGER}
+		AND  #{maps.currentDateTime,jdbcType=TIMESTAMP} >= eo.expect_delivery_time
+		<include refid="permission_sql.order_control"/>
+		)overdue_unShipped_delivery_oder
+	</sql>
+
+	<sql id="un_confirmed_await_delivery_oder_warehouse_workbench">
+		(SELECT COUNT(eo.id) AS unConfirmedDeliveryOderCount FROM erp_order eo
+		INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+		WHERE eo.order_status = 16  AND eo.data_status = 1
+		AND eo.delivery_sub_company_id = #{maps.deliverySubCompanyId,jdbcType=INTEGER}
+		AND  #{maps.currentDateTime,jdbcType=TIMESTAMP} >= eo.expect_delivery_time
+		<include refid="permission_sql.order_control"/>
+		)un_confirmed_delivery_oder
+	</sql>
+
+
+	<select id="findReturnOderWarehouseWorkbenchCount" resultType="java.util.HashMap" parameterType="map">
+		SELECT
+		processing_return_oder.processingReturnOderCount
+		FROM
+		<include refid="return_oder_warehouse_workbench"/>
+	</select>
+
+	<sql id="return_oder_warehouse_workbench">
+		(SELECT COUNT(ekro.id) AS processingReturnOderCount FROM erp_k3_return_order ekro
+		INNER JOIN erp_customer ec ON ec.customer_no = ekro.k3_customer_no
+		WHERE ekro.return_order_status = 12
+		AND ekro.data_status = 1
+		<include refid="permission_sql.k3_return_order_control"/>
+		)processing_return_oder
+	</sql>
+
+	<!--以上是仓库工作台sql-->
+
 </mapper>
