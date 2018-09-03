@@ -3051,7 +3051,7 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        if (!CustomerStatus.STATUS_PASS.equals(customerDO.getCustomerStatus())) {
+        if (CustomerStatus.STATUS_COMMIT.equals(customerDO.getCustomerStatus())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_STATUS_ERROR);
             return serviceResult;
         }
