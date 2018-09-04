@@ -607,8 +607,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
             //----------------------仓库待审核工作数量---------------------------
             Map<String,Object> workflowLinkWaitVerifyWarehouseMap = new HashMap();
-            workflowLinkWaitVerifyWarehouseMap.put("params","isWorkbench");
-            workflowLinkWaitVerifyWarehouseMap.put("paramsValue",CommonConstant.COMMON_CONSTANT_YES);
+            workflowLinkWaitVerifyWarehouseMap.put("params","verifyStatus");
+            workflowLinkWaitVerifyWarehouseMap.put("paramsValue",VerifyStatus.VERIFY_STATUS_COMMIT);
             workflowLinkWaitVerifyWarehouseMap.put("workbenchType",WorkbenchType.WORK_FLOW_LINK_WAIT_VERIFY);  //审核中的工作流
             workflowLinkWaitVerifyWarehouseMap.put("count",workflowWarehouseCountMap.get("waitVerifyWorkflowWarehouseWorkbenchCount"));
             workflowWarehouseListMap.add(workflowLinkWaitVerifyWarehouseMap);
@@ -670,8 +670,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
             //----------------------处理中的退货单数量---------------------------
             Map<String,Object> returnOrderWarehouseMap = new HashMap();
-            returnOrderWarehouseMap.put("params","isWarehouseWorkbench");
-            returnOrderWarehouseMap.put("paramsValue",CommonConstant.COMMON_CONSTANT_YES);
+            returnOrderWarehouseMap.put("params","returnOrderStatus");
+            returnOrderWarehouseMap.put("paramsValue",ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
             returnOrderWarehouseMap.put("workbenchType",WorkbenchType.RETURN_ORDER_STATUS_PROCESSING);
             returnOrderWarehouseMap.put("count",returnOrderCountMap.get("processingReturnOderCount"));
             returnOrderWarehouseListMap.add(returnOrderWarehouseMap);
