@@ -1,0 +1,125 @@
+<div id="splitOrderModal" class="popup-basic admin-form mfp-with-anim popup-lg">
+        <div class="panel">
+            <div class="panel-heading">
+                <span class="panel-title"></span>
+            </div>
+            <form method="post" id="splitOrderForm" description="订单拆单">
+##                <div class="panel-body p25">
+##                    <div class="section row">
+##                        <label class="col-md-4 control-label text-right" style="line-height:42px;"><em class="text-danger">*</em>拆分数量：</label>
+##                        <div class="col-md-8">
+##                            <input type="text" name="splitCount" id="splitCount" class="gui-input required splitCount" />
+##                        </div>
+##                    </div>
+##
+##                    <div class="section row">
+##                        <label class="col-md-4 control-label text-right" style="line-height:25px;">是否同行调拨：</label>
+##                        <div class="col-md-8">
+##                            <div class="input-group">
+##                                <label class="block mn switch switch-primary">
+##                                    <input type="checkbox" name="isPeer" id="isPeer" value="0" />
+##                                    <label for="isPeer" data-on="是" data-off="否"></label>
+##                                    <span></span>
+##                                </label>
+##                            </div>
+##                        </div>
+##                    </div>
+##
+##                    <div class="section row" id="deliveryCompanyBox">
+##                        <label for="deliverySubCompanyId" class="col-md-4 control-label text-right" style="line-height:42px;">发货分公司：</label>
+##                        <div class="col-md-8">
+##                            <select class="form-control bradius" name="deliverySubCompanyId" id="deliverySubCompanyId"  style="height:42px;line-height:42px;" disabled>
+##                                <option value="">请选择</option>
+##                            </select>
+##                        </div>
+##                    </div>
+##                </div>
+
+                <div class="panel-body pn">
+                    <div class="panel-menu br-n br-b">
+                        <div class="row">
+                            <div class="pull-left ml10">
+                                <div class="btn-group" id="actionCommonButtons">
+                                    <button type="button" class="btn btn-primary btn-sm" id="addOneSplit" title="选择客户">
+                                        <i class="fa fa-plus"></i> 添加拆单项
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm" id="batchDeleteSplit" title="删除">
+                                        <i class="fa fa-trash-o"></i> 删除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <script type="text/html" id="splitDetailTpl">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <label class="option block mn">
+                                        <input type="checkbox" name="checkAll" value="">
+                                        <span class="checkbox mn"></span>
+                                    </label>
+                                </th>
+                                <th>是否同行调拨</th>
+                                <th>发货分公司</th>
+                                <th>拆分数量</th>
+                                <th class="text-right">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#dataSource}}
+                            {{#listData}}
+                            <tr data-rowdata="{{rowData}}" class="splitRow" data-id="{{orderSplitDetailId}}" data-serial="{{serialNumber}}">
+                                <td>
+                                    <label class="option block mn">
+                                        <input type="checkbox" name="checkItem" value="{{serialNumber}}">
+                                        <span class="checkbox mn"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="field select">
+                                        <select name="isPeer" class="isPeer required">
+                                            <option value="">是否同行调拨</option>
+                                            {{#isPeerList}}
+                                            <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                            {{/isPeerList}}
+                                        </select>
+                                        <i class="arrow"></i>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="field select">
+                                        <select name="deliverySubCompanyId" class="deliverySubCompanyId" style="min-width: 130px;" {{#isDisabled}}disabled{{/isDisabled}}>
+                                            <option value="">选择分公司</option>
+                                            {{#subCompanyList}}
+                                            <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                            {{/subCompanyList}}
+                                        </select>
+                                        <i class="arrow"></i>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="field prepend-icon">
+                                        <input type="text" name="splitCount" value="{{splitCount}}" class="splitCount Number form-control required pl10" placeholder="输入数量" aria-required="true" aria-invalid="false"/>
+                                    </label>
+                                </td>
+                                <td class="text-right">
+                                    <div class="btn-group text-right">
+                                        <a href="#" type="button" class="btn btn-default btn-xs delButton" data-serial="{{serialNumber}}">删除</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{/listData}}
+                            {{/dataSource}}
+                            </tbody>
+                        </script>
+                        <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="splitDetailTable"></table>
+                    </div>
+                </div>
+                <div class="panel-footer text-right">
+                    <button type="submit" class="button btn-primary">确定</button>
+                    <button type="button" class="button btn-default cancelButton">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
