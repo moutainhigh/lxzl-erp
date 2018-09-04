@@ -230,7 +230,7 @@
 
 	<select id="findByOrderIdAndIsItemDelivered" resultMap="OrderMaterialDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_order_material eom
-		WHERE eom.id = #{id, jdbcType=INTEGER} AND eom.is_item_delivered = 1 AND eom.data_status = 1
+		WHERE eom.order_id = #{orderId, jdbcType=INTEGER} AND eom.is_item_delivered = 1 AND eom.data_status = 1
 	</select>
 
 </mapper>

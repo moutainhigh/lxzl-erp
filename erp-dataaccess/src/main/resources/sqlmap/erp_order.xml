@@ -104,7 +104,7 @@
         <result column="product_pay_mode" jdbcType="INTEGER" property="payMode"/>
         <result column="product_is_new_product" jdbcType="INTEGER" property="isNewProduct"/>
         <result column="product_renting_product_count" jdbcType="INTEGER" property="rentingProductCount"/>
-        <result column="product_is_item_delivered" jdbcType="INTEGER" property="productIsItemDelivered"/>
+        <result column="product_is_item_delivered" jdbcType="INTEGER" property="isItemDelivered"/>
         <result column="product_data_status" property="dataStatus"/>
         <result column="product_remark" property="remark"/>
         <result column="product_create_user" property="createUser"/>
@@ -139,7 +139,7 @@
         <result column="material_payment_cycle" jdbcType="INTEGER" property="paymentCycle"/>
         <result column="material_pay_mode" jdbcType="INTEGER" property="payMode"/>
         <result column="material_is_new_material" jdbcType="INTEGER" property="isNewMaterial"/>
-        <result column="material_is_item_delivered" jdbcType="INTEGER" property="materialIsItemDelivered"/>
+        <result column="material_is_item_delivered" jdbcType="INTEGER" property="isItemDelivered"/>
         <result column="material_data_status" jdbcType="INTEGER" property="dataStatus"/>
         <result column="material_remark" jdbcType="VARCHAR" property="remark"/>
         <result column="material_create_time" jdbcType="TIMESTAMP" property="createTime"/>

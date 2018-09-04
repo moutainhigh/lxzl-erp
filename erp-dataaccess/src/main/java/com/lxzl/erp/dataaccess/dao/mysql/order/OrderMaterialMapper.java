@@ -29,5 +29,5 @@ public interface OrderMaterialMapper extends BaseMysqlDAO<OrderMaterialDO> {
 
     void batchUpdateRentingCount(@Param("list") List<OrderMaterialDO> list);
 
-    List<OrderMaterialDO> findByOrderIdAndIsItemDelivered(@Param("list") Integer id);
+    List<OrderMaterialDO> findByOrderIdAndIsItemDelivered(@Param("orderId") Integer orderId);
 }
