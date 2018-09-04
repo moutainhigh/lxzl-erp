@@ -50,6 +50,16 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     private String createName; //创建人
 
+    private Integer warehouseWorkbenchOrderType; //仓库工作台状态
+
+    public Integer getWarehouseWorkbenchOrderType() {
+        return warehouseWorkbenchOrderType;
+    }
+
+    public void setWarehouseWorkbenchOrderType(Integer warehouseWorkbenchOrderType) {
+        this.warehouseWorkbenchOrderType = warehouseWorkbenchOrderType;
+    }
+
     public Integer getOrderId() {
         return orderId;
     }
