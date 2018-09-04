@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerPersonGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerPersonGroup;
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.Date;
@@ -18,6 +19,7 @@ public class CustomerPerson extends BasePO {
 	private Integer customerPersonId;   //唯一标识
 	private Integer customerId;   //客户ID
 	@NotBlank(message = ErrorCode.CUSTOMER_PERSON_NAME_NOT_NULL,groups={AddCustomerPersonGroup.class,UpdateCustomerPersonGroup.class})
+	@Length(max = 7,message = ErrorCode.CUSTOMER_PERSON_NAME_IS_LENGTH,groups = {AddCustomerPersonGroup.class, UpdateCustomerPersonGroup.class})
 	private String realName;   //真实姓名
 	@Email(message = ErrorCode.EMAIL_ERROR,groups={AddCustomerPersonGroup.class,UpdateCustomerPersonGroup.class})
 	private String email;   //电子邮件
@@ -42,6 +44,17 @@ public class CustomerPerson extends BasePO {
 	private String provinceName;
 	private String cityName;
 	private String districtName;
+
+	@Length(max = 20,message = ErrorCode.CUSTOMER_PERSON_NAME_IS_LENGTH,groups = {AddCustomerPersonGroup.class, UpdateCustomerPersonGroup.class})
+	private String internalName;//内部名称
+
+	public String getInternalName() {
+		return internalName;
+	}
+
+	public void setInternalName(String internalName) {
+		this.internalName = internalName;
+	}
 
 	private List<CustomerConsignInfo> customerConsignInfoList;
 
