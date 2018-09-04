@@ -12,6 +12,8 @@ import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.messagethirdchannel.MessageThirdChannelService;
+import com.lxzl.erp.core.service.order.impl.support.OrderSupport;
+import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
@@ -28,6 +30,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCor
 import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.dingdingGroupMessageConfig.DingdingGroupMessageConfigDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderStatementDateChangeLogDO;
@@ -38,6 +41,11 @@ import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrec
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -428,7 +436,148 @@ public class StatementOrderSupport {
         statementOrderMapper.update(statementOrderDO);
     }
 
+    /**
+     * stop the test machine order in a special day
+     * change the end time of the order,update the statement orders and return part of amount
+     * @param orderNo
+     * @param changeTime
+     * @return
+     */
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public String stopTestMachineOrder(String orderNo,Date changeTime){
+        Assert.notNull(orderNo,"订单号不能为空!");
+        Assert.notNull(changeTime,"转单时间不能为空!");
+        OrderDO orderDO=orderMapper.findByOrderNoSimple(orderNo);
+        if(orderDO==null){
+            return ErrorCode.ORDER_NOT_EXISTS;
+        }
+        //TODO 填写客户no
+        CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
+        if (customerDO == null) {
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
+                customerDO = customerMapper.findByName(orderDO.getBuyerCustomerName());
+                if (customerDO == null) {
+                    return ErrorCode.CUSTOMER_NOT_EXISTS;
+                }
+                orderDO.setBuyerCustomerId(customerDO.getId());
+                orderDO.setBuyerCustomerNo(customerDO.getCustomerNo());
+            } else {
+                return ErrorCode.CUSTOMER_NOT_EXISTS;
+            }
+        }
 
+        boolean isTestMachineOrder = isTestMachineOrder(orderDO);
+        if(!isTestMachineOrder){
+            return ErrorCode.IS_NOT_TEST_MECHANINE_ORDER;
+        }
+        Date stopTime=DateUtil.getDayByOffset(changeTime,-1);
+
+        //考虑到续租会覆盖原订单的归还时间
+        Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
+        boolean isStopTimeInOrderLifcycle=DateUtil.daysBetween(orderDO.getRentStartTime(),stopTime)>=0&&DateUtil.daysBetween(stopTime,expectReturnTime)>=0;
+        if(!isStopTimeInOrderLifcycle){
+            return ErrorCode.TEST_MECHANINE_ORDER_CHANGE_TIME_ERROR;
+        }
+        int oldTimeLength=DateUtil.daysBetween(orderDO.getRentStartTime(),expectReturnTime);
+        int timeLength=DateUtil.daysBetween(orderDO.getRentStartTime(),stopTime);
+        if(oldTimeLength==0){
+            return ErrorCode.ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL;
+        }
+        BigDecimal percent=BigDecimalUtil.div(new BigDecimal(timeLength),new BigDecimal(oldTimeLength),BigDecimalUtil.SCALE);
+
+        //是否测试机正常结束转单
+        boolean isLastDayChangeOrder=DateUtil.daysBetween(stopTime,expectReturnTime)==0;
+        if(!isLastDayChangeOrder){
+            //todo String userId=userSupport.getCurrentUserId()==null?null:userSupport.getCurrentUserId().toString();
+            String userId="1";
+
+            Date updateTime=new Date();
+            List<StatementOrderDetailDO> statementOrderDetailDOS= statementOrderDetailMapper.findByOrderId(orderDO.getId());
+            List<StatementOrderDetailDO> needUpdateDetailDOList=new ArrayList<>();
+            Map<Integer,StatementOrderDO> statementOrderDOMap=new HashMap<>();
+            BigDecimal needReturnRentAmount=BigDecimal.ZERO;
+            if(CollectionUtil.isNotEmpty(statementOrderDetailDOS)){
+                for(StatementOrderDetailDO statementOrderDetailDO:statementOrderDetailDOS){
+                    if(statementOrderDetailDO.getReletOrderItemReferId()!=null){
+                        return  ErrorCode.TEST_MECHANINE_ORDER_HAS_RELET;
+                    }
+
+                    BigDecimal rentPaidAmountSub = subRentAmountByPercent(percent,statementOrderDOMap, needUpdateDetailDOList, statementOrderDetailDO,userId,updateTime,stopTime);
+                    needReturnRentAmount=BigDecimalUtil.add(needReturnRentAmount,rentPaidAmountSub);
+                }
+            }
+            if(CollectionUtil.isNotEmpty(needUpdateDetailDOList)){
+                statementOrderDetailMapper.batchUpdate(needUpdateDetailDOList);
+            }
+            Collection<StatementOrderDO> needUpdateStatementOrderDOS=statementOrderDOMap.values();
+            if(CollectionUtil.isNotEmpty(needUpdateStatementOrderDOS)){
+                for(StatementOrderDO statementOrderDO:needUpdateStatementOrderDOS){
+                    statementOrderMapper.update(statementOrderDO);
+                }
+            }
+
+            //退款
+            if(BigDecimalUtil.compare(needReturnRentAmount,BigDecimal.ZERO)>0){
+                String payResultCode=paymentService.returnDepositExpand(customerDO.getCustomerNo(),needReturnRentAmount,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,"测试机转单退款");
+                if (!ErrorCode.SUCCESS.equals(payResultCode)) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    return payResultCode;
+                }
+            }
+        }
+        return ErrorCode.SUCCESS;
+    }
+
+    private BigDecimal subRentAmountByPercent(BigDecimal percent,Map<Integer,StatementOrderDO> statementOrderDOMap, List<StatementOrderDetailDO> needUpdateDetailDOList, StatementOrderDetailDO statementOrderDetailDO,String userId,Date updateTime,Date changeTime) {
+        BigDecimal oldRentAmount=statementOrderDetailDO.getStatementDetailRentAmount();
+        //只需处理租金
+        if(BigDecimalUtil.compare(oldRentAmount,BigDecimal.ZERO)==0) return BigDecimal.ZERO;
+        BigDecimal oldRentPaidAmount=statementOrderDetailDO.getStatementDetailRentPaidAmount();
+        BigDecimal rentAmount= getMul(percent,oldRentAmount);
+
+        BigDecimal rentAmountSub=BigDecimalUtil.sub(oldRentAmount,rentAmount);
+        statementOrderDetailDO.setStatementDetailRentAmount(rentAmount);
+        statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(),rentAmountSub,BigDecimalUtil.STANDARD_SCALE));
+        statementOrderDetailDO.setUpdateTime(updateTime);
+        statementOrderDetailDO.setUpdateUser(userId);
+
+        Integer statementOrderId=statementOrderDetailDO.getStatementOrderId();
+        if(!statementOrderDOMap.containsKey(statementOrderId)){
+            statementOrderDOMap.put(statementOrderId,statementOrderMapper.findById(statementOrderId));
+        }
+        StatementOrderDO statementOrderDO=statementOrderDOMap.get(statementOrderId);
+        BigDecimal rentPaidAmountSub=BigDecimal.ZERO;
+        if(BigDecimalUtil.compare(oldRentPaidAmount,rentAmount)>0){
+            statementOrderDetailDO.setStatementDetailRentPaidAmount(rentAmount);
+            rentPaidAmountSub=BigDecimalUtil.sub(oldRentPaidAmount,statementOrderDetailDO.getStatementDetailRentPaidAmount());
+            statementOrderDO.setStatementRentPaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentPaidAmount(),rentPaidAmountSub));
+        }
+
+        if(DateUtil.daysBetween(changeTime,statementOrderDetailDO.getStatementEndTime())>0){
+            statementOrderDetailDO.setStatementEndTime(changeTime);
+        }
+        //兼容部分特殊情况
+        if(DateUtil.daysBetween(changeTime,statementOrderDetailDO.getStatementStartTime())>0){
+            statementOrderDetailDO.setStatementStartTime(changeTime);
+        }
+
+        needUpdateDetailDOList.add(statementOrderDetailDO);
+
+        statementOrderDO.setStatementRentAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentAmount(),rentAmountSub));
+        statementOrderDO.setStatementAmount(BigDecimalUtil.sub(statementOrderDO.getStatementAmount(),rentAmountSub));
+        statementOrderDO.setUpdateTime(updateTime);
+        statementOrderDO.setUpdateUser(userId);
+
+        return rentPaidAmountSub;
+    }
+
+    private BigDecimal getMul(BigDecimal amount,BigDecimal percent) {
+        return BigDecimalUtil.mul(amount,percent,BigDecimalUtil.STANDARD_SCALE);
+    }
+
+    private boolean isTestMachineOrder(OrderDO orderDO) {
+        return OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())&&orderDO.getRentTimeLength()<30;
+    }
 
 
     @Autowired
@@ -447,5 +596,9 @@ public class StatementOrderSupport {
     private MessageThirdChannelService messageThirdChannelService;
     @Autowired
     private OrderMapper orderMapper;
+    @Autowired
+    private OrderSupport orderSupport;
+    @Autowired
+    private PaymentService paymentService;
 
 }
