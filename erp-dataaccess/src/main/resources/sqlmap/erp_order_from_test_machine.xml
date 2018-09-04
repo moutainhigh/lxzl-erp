@@ -84,9 +84,9 @@
 		WHERE eoftm.test_machine_order_no = #{testMachineOrderNo, jdbcType=VARCHAR} AND eoftm.data_status = 1
 	</select>
 
-	<select id="findByOrderNo" resultMap="OrderFromTestMachineDO" parameterType="java.lang.Integer">
+	<select id="findByOrderNo" resultMap="OrderFromTestMachineDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> FROM erp_order_from_test_machine eoftm
-		WHERE eoftm.order_no = #{orderNo, jdbcType=INTEGER} AND eoftm.data_status = 1
+		WHERE eoftm.order_no = #{orderNo, jdbcType=VARCHAR} AND eoftm.data_status = 1
 	</select>
 
 </mapper>

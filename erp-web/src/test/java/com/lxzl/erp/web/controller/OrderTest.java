@@ -21,7 +21,7 @@ import java.util.*;
  * @author gaochao
  * @date 2017-11-15 14:14
  */
-public class OrderTest extends ERPTransactionalTest {
+public class OrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void testCancelOrder() throws Exception {
@@ -91,7 +91,7 @@ public class OrderTest extends ERPTransactionalTest {
         order.setBuyerRemark("2018.3.22 18:52 测试");
         order.setRentStartTime(new Date());
         order.setExpectDeliveryTime(new Date());
-        order.setOrderSubCompanyId(3);
+        order.setOrderSubCompanyId(8);
         order.setDeliverySubCompanyId(1);
 
         order.setRentType(OrderRentType.RENT_TYPE_DAY);
@@ -177,8 +177,8 @@ public class OrderTest extends ERPTransactionalTest {
 
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerNo("LXCC-1000-20180831-00003");
-        order.setCustomerConsignId(6762);
+        order.setBuyerCustomerNo("LXCC-027-20180824-00067");
+        order.setCustomerConsignId(6558);
         order.setRentStartTime(new Date());
         order.setIsPeer(0);
 
@@ -452,8 +452,8 @@ public class OrderTest extends ERPTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         OrderCommitParam order = new OrderCommitParam();
-        order.setOrderNo("LXO-20180821-1000-00003");
-        order.setVerifyUser(500013);//审核人
+        order.setOrderNo("LXO-20180904-021-00005");
+        order.setVerifyUser(500359);//审核人
         List<Integer> imageList = new ArrayList<>();
         imageList.add(1818);
         order.setImgIdList(imageList);
@@ -565,12 +565,8 @@ public class OrderTest extends ERPTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         
-        Date now = new Date();
-        now.getTime();
-
-
         Order order = new Order();
-        order.setOrderNo("LXO-20180709-0755-00047");
+        order.setOrderNo("LXO-20180903-025-00010");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
     }
 
@@ -748,7 +744,7 @@ public class OrderTest extends ERPTransactionalTest {
     @Test
     public void testMachineOrderConvertOrder() throws Exception {
         Order order = new Order();
-        order.setTestMachineOrderNo("LXO-20180903-027-00022");
+        order.setTestMachineOrderNo("LXO-20180904-027-00004");
         order.setDeliveryMode(DeliveryMode.DELIVERY_MODE_EXPRESS);
         order.setLogisticsAmount(new BigDecimal(12));
         order.setBuyerRemark("2018.3.22 18:52 测试");
@@ -762,7 +758,7 @@ public class OrderTest extends ERPTransactionalTest {
 
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
-        orderProduct.setOrderProductId(14560);
+        orderProduct.setOrderProductId(4363);
         orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
         orderProduct.setProductId(2000018);
         orderProduct.setProductSkuId(218);
@@ -806,8 +802,8 @@ public class OrderTest extends ERPTransactionalTest {
 
         OrderMaterial orderMaterial = new OrderMaterial();
         orderMaterial.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+        orderMaterial.setOrderMaterialId(7068);
         orderMaterial.setMaterialId(40);
-        orderMaterial.setOrderMaterialId(4389);
         orderMaterial.setMaterialCount(3);
         orderMaterial.setIsNewMaterial(1);
         orderMaterial.setInsuranceAmount(new BigDecimal(600.0));
@@ -844,8 +840,8 @@ public class OrderTest extends ERPTransactionalTest {
 
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerNo("LXCC-1000-20180831-00003");
-        order.setCustomerConsignId(6762);
+        order.setBuyerCustomerNo("LXCC-027-20180824-00067");
+        order.setCustomerConsignId(6558);
         order.setRentStartTime(new Date());
         order.setIsPeer(0);
 
