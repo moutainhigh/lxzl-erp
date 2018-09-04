@@ -379,6 +379,7 @@
 		<where>
 			AND ewl.workflow_step > 1
 			AND ewl.data_status = 1
+			AND eo.order_status in(4,8)
 			<include refid="permission_sql.order_control"/>
 		</where>) crrentUserAllOrderNo WHERE crrentUserAllOrderNo.oderNo
 		NOT IN (

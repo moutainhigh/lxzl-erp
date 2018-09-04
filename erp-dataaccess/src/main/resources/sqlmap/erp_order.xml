@@ -2101,6 +2101,7 @@
                 <where>
                     AND ewl.workflow_step > 1
                     AND ewl.data_status = 1
+                    AND eo.order_status in(4,8)
                 </where>) crrentUserAllOrderNo WHERE crrentUserAllOrderNo.oderNo
                 NOT IN (
                 SELECT DISTINCT epl.refer_no FROM `erp_print_log` epl
@@ -2288,6 +2289,7 @@
                 <where>
                     AND ewl.workflow_step > 1
                     AND ewl.data_status = 1
+                    AND eo.order_status in(4,8)
                 </where>) crrentUserAllOrderNo WHERE crrentUserAllOrderNo.oderNo
                 NOT IN (
                 SELECT DISTINCT epl.refer_no FROM `erp_print_log` epl
