@@ -4061,6 +4061,12 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_IS_NOT_EXISTS);
             return result;
         }
+        //测试机订单的状态必须为租赁中和部分退货
+        if (!OrderStatus.ORDER_STATUS_CONFIRM.equals(testMachineOrderDO.getOrderStatus()) &&
+               !OrderStatus.ORDER_STATUS_PART_RETURN.equals(testMachineOrderDO.getOrderStatus())){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_STATUS_MUST_BE_RENTING_OR_PART_RETURN);
+            return result;
+        }
         //检验测试机订单是否已经转为租赁订单
         if (CommonConstant.COMMON_CONSTANT_YES.equals(testMachineOrderDO.getIsTurnRentOrder())){
             result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER);
@@ -4077,18 +4083,15 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_RENT_CONDITION_IS_WRONG);
             return result;
         }
-
         String verifyCreateOrderCode = verifyOperateOrder(order);
         if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
             result.setErrorCode(verifyCreateOrderCode);
             return result;
         }
-
         if (order.getDeliverySubCompanyId() == null) {
             result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
             return result;
         }
-
         if (order.getOrderSubCompanyId() == null){
             result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
             return result;
@@ -4402,7 +4405,7 @@ public class OrderServiceImpl implements OrderService {
             for (OrderProductDO testMachineOrderProductDO : testMachineOrderProductDOList){
                 if(newOrderProductMap.get(testMachineOrderProductDO.getId()) != null){
                     OrderProduct orderProduct = newOrderProductMap.get(testMachineOrderProductDO.getId());
-                    if (!testMachineOrderProductDO.getProductCount().equals(orderProduct.getProductCount())){
+                    if (!testMachineOrderProductDO.getRentingProductCount().equals(orderProduct.getProductCount())){
                         return ErrorCode.TEST_MACHINE_ORDER_PRODUCT_COUNT_CAN_NOT_UPDATE;
                     }
                 }
@@ -4431,7 +4434,7 @@ public class OrderServiceImpl implements OrderService {
             for (OrderMaterialDO testMachineOrderMaterialDO : testMachineOrderMaterialDOList){
                 if(newOrderMaterialMap.get(testMachineOrderMaterialDO.getId()) != null){
                     OrderMaterial orderMaterial = newOrderMaterialMap.get(testMachineOrderMaterialDO.getId());
-                    if (!testMachineOrderMaterialDO.getMaterialCount().equals(orderMaterial.getMaterialCount())){
+                    if (!testMachineOrderMaterialDO.getRentingMaterialCount().equals(orderMaterial.getMaterialCount())){
                         return ErrorCode.TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE;
                     }
                 }
