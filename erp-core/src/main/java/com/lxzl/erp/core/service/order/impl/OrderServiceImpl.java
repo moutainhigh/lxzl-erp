@@ -1746,6 +1746,17 @@ public class OrderServiceImpl implements OrderService {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return createStatementOrderResult.getErrorCode();
                 }
+
+                //审核通过后对测试机订单做已经转为租赁单的标记
+                OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(orderDO.getOrderNo());
+                if (orderFromTestMachineDO != null){
+                    OrderDO testMachineOrderDO = orderMapper.findByNo(orderFromTestMachineDO.getTestMachineOrderNo());
+                    testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_CONSTANT_YES);
+                    testMachineOrderDO.setUpdateTime(currentTime);
+                    testMachineOrderDO.setUpdateUser(loginUser.getUserId().toString());
+                    orderMapper.update(testMachineOrderDO);
+                }
+
                 orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
                 orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_SUCCESS);
                 orderDO.setUpdateTime(currentTime);
