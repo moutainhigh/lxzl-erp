@@ -87,6 +87,8 @@ public class Order extends BasePO {
     private Integer isTestMachineOrder;                         //是否为测试机订单;1-是,0-否
 
     private String testMachineOrderNo;                         //原测试机订单的编号
+    private String rentOrderNo;                               //转租的新订单编号
+    private Date turnRentTime;                                 //转为租赁订单的时间
 
     private List<OrderProduct> orderProductList;                // 订单商品项
     private List<OrderMaterial> orderMaterialList;              // 订单配件项
@@ -802,5 +804,21 @@ public class Order extends BasePO {
 
     public void setIsTestMachineOrder(Integer isTestMachineOrder) {
         this.isTestMachineOrder = isTestMachineOrder;
+    }
+
+    public String getRentOrderNo() {
+        return rentOrderNo;
+    }
+
+    public void setRentOrderNo(String rentOrderNo) {
+        this.rentOrderNo = rentOrderNo;
+    }
+
+    public Date getTurnRentTime() {
+        return turnRentTime;
+    }
+
+    public void setTurnRentTime(Date turnRentTime) {
+        this.turnRentTime = turnRentTime;
     }
 }

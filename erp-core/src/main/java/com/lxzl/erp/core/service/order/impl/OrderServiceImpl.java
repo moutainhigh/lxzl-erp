@@ -1804,6 +1804,13 @@ public class OrderServiceImpl implements OrderService {
             order.setIsTestMachineOrder(CommonConstant.COMMON_CONSTANT_YES);
         }
 
+        //订单原本就是测试机订单
+        OrderFromTestMachineDO fromTestMachineMapperByTestOrderNo = orderFromTestMachineMapper.findByTestOrderNo(order.getOrderNo());
+        if(fromTestMachineMapperByTestOrderNo != null){
+            order.setRentOrderNo(fromTestMachineMapperByTestOrderNo.getOrderNo());
+            order.setTurnRentTime(fromTestMachineMapperByTestOrderNo.getCreateTime());
+        }
+
         //如果订单是由测试机订单转换过来的就标记位测试机转为租赁订单
         OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(order.getOrderNo());
         if (orderFromTestMachineDO != null){
