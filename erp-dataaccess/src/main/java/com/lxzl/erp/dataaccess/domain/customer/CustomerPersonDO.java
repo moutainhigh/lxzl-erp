@@ -32,17 +32,7 @@ public class CustomerPersonDO  extends BaseDO {
 	@Transient
 	private String districtName;
 
-	private String internalName;//内部名称
-
 	List<CustomerConsignInfoDO> customerConsignInfoDOList;
-
-	public String getInternalName() {
-		return internalName;
-	}
-
-	public void setInternalName(String internalName) {
-		this.internalName = internalName;
-	}
 
 	public Integer getId(){
 		return id;

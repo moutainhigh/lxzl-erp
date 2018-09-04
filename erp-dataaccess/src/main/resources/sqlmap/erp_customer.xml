@@ -145,7 +145,6 @@
 		<result column="ecp_person_no" jdbcType="VARCHAR" property="personNo" />
 		<result column="ecp_connect_real_name" jdbcType="VARCHAR" property="connectRealName" />
 		<result column="ecp_connect_phone" jdbcType="VARCHAR" property="connectPhone" />
-		<result column="ecp_internal_name" jdbcType="VARCHAR" property="internalName" />
 	</resultMap>
 
 	<resultMap id="CustomerConsignInfoDO" type="com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO">
@@ -188,7 +187,7 @@
 		ecc.ecc_id AS ecc_id,ecc.ecc_customer_id AS ecc_customer_id,ecc.ecc_landline AS ecc_landline,ecc.ecc_connect_real_name AS ecc_connect_real_name,ecc.ecc_connect_phone AS ecc_connect_phone,ecc.ecc_company_name AS ecc_company_name,ecc.ecc_company_abb AS ecc_company_abb,ecc.ecc_province AS ecc_province,ecc.ecc_city AS ecc_city,ecc.ecc_district AS ecc_district,ecc.ecc_address AS ecc_address,ecc.ecc_legal_person AS ecc_legal_person,ecc.ecc_legal_person_no AS ecc_legal_person_no,ecc.ecc_business_license_no AS ecc_business_license_no,ecc.ecc_data_status AS ecc_data_status,ecc.ecc_remark AS ecc_remark,ecc.ecc_create_time AS ecc_create_time,ecc.ecc_create_user AS ecc_create_user,ecc.ecc_update_time AS ecc_update_time,ecc.ecc_update_user AS ecc_update_user,ecc.ecc_customer_origin AS ecc_customer_origin,ecc.ecc_company_found_time AS ecc_company_found_time,ecc.ecc_industry AS ecc_industry,ecc.ecc_registered_capital AS ecc_registered_capital,ecc.ecc_office_number AS ecc_office_number,ecc.ecc_product_purpose AS ecc_product_purpose,ecc.ecc_customer_company_need_first_json AS ecc_customer_company_need_first_json,ecc.ecc_customer_company_need_later_json AS ecc_customer_company_need_later_json,ecc.ecc_agent_person_name AS ecc_agent_person_name,ecc.ecc_agent_person_phone AS ecc_agent_person_phone,ecc.ecc_agent_person_no AS ecc_agent_person_no,ecc.ecc_unified_credit_code AS ecc_unified_credit_code,ecc.ecc_customer_no AS ecc_customer_no,ecc.ecc_is_legal_person_apple AS ecc_is_legal_person_apple,ecc.ecc_legal_person_phone AS ecc_legal_person_phone,ecc.ecc_operating_area AS ecc_operating_area,ecc.ecc_unit_insured_number AS ecc_unit_insured_number,ecc.ecc_affiliated_enterprise AS ecc_affiliated_enterprise,ecc.ecc_is_subsidiary AS ecc_is_subsidiary
 	</sql>
 	<sql id="person_column_List">
-		ecp.id AS ecp_id,ecp.customer_id AS ecp_customer_id,ecp.real_name AS ecp_real_name,ecp.email AS ecp_email,ecp.phone AS ecp_phone,ecp.province AS ecp_province,ecp.city AS ecp_city,ecp.district AS ecp_district,ecp.address AS ecp_address,ecp.data_status AS ecp_data_status,ecp.remark AS ecp_remark,ecp.create_time AS ecp_create_time,ecp.create_user AS ecp_create_user,ecp.update_time AS ecp_update_time,ecp.update_user AS ecp_update_user,ecp.person_no AS ecp_person_no, ecp.connect_real_name AS ecp_connect_real_name, ecp.connect_phone AS ecp_connect_phone,ecp.internal_name AS ecp_internal_name
+		ecp.id AS ecp_id,ecp.customer_id AS ecp_customer_id,ecp.real_name AS ecp_real_name,ecp.email AS ecp_email,ecp.phone AS ecp_phone,ecp.province AS ecp_province,ecp.city AS ecp_city,ecp.district AS ecp_district,ecp.address AS ecp_address,ecp.data_status AS ecp_data_status,ecp.remark AS ecp_remark,ecp.create_time AS ecp_create_time,ecp.create_user AS ecp_create_user,ecp.update_time AS ecp_update_time,ecp.update_user AS ecp_update_user,ecp.person_no AS ecp_person_no, ecp.connect_real_name AS ecp_connect_real_name, ecp.connect_phone AS ecp_connect_phone
 	</sql>
 	<sql id="risk_column_List">
 		ecrm.id AS ecrm_id,ecrm.customer_id AS ecrm_customer_id,ecrm.credit_amount AS ecrm_credit_amount,ecrm.credit_amount_used AS ecrm_credit_amount_used,ecrm.deposit_cycle AS ecrm_deposit_cycle,ecrm.payment_cycle AS ecrm_payment_cycle,ecrm.apple_deposit_cycle AS ecrm_apple_deposit_cycle,ecrm.apple_payment_cycle AS ecrm_apple_payment_cycle,ecrm.new_deposit_cycle AS ecrm_new_deposit_cycle,ecrm.new_payment_cycle AS ecrm_new_payment_cycle,ecrm.apple_pay_mode AS ecrm_apple_pay_mode,ecrm.new_pay_mode AS ecrm_new_pay_mode,ecrm.pay_mode AS ecrm_pay_mode,ecrm.is_limit_apple as ecrm_is_limit_apple,ecrm.is_limit_new as ecrm_is_limit_new,ecrm.single_limit_price as ecrm_single_limit_price,ecrm.return_visit_frequency as ecrm_return_visit_frequency,ecrm.data_status AS ecrm_data_status,ecrm.remark AS ecrm_remark,ecrm.create_time AS ecrm_create_time,ecrm.create_user AS ecrm_create_user,ecrm.update_time AS ecrm_update_time,ecrm.update_user AS ecrm_update_user,ecrm.is_full_deposit as ecrm_is_full_deposit
@@ -614,9 +613,6 @@
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.confirmBadAccountStatus != null">
 				AND ec.confirm_bad_account_status = #{maps.customerPersonQueryParam.confirmBadAccountStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.customerPersonQueryParam.internalName != null &amp;&amp; maps.customerPersonQueryParam.internalName != ''">
-				and ecp.internal_name like CONCAT('%','${maps.customerPersonQueryParam.internalName}','%' )
-			</if>
 			<include refid="permission_sql.customer_control"/>
 		</where>
 	</select>
@@ -687,9 +683,6 @@
 			</if>
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.confirmBadAccountStatus != null">
 				AND ec.confirm_bad_account_status = #{maps.customerPersonQueryParam.confirmBadAccountStatus, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerPersonQueryParam.internalName != null &amp;&amp; maps.customerPersonQueryParam.internalName != ''">
-				and ecp.internal_name like CONCAT('%','${maps.customerPersonQueryParam.internalName}','%' )
 			</if>
 			<include refid="permission_sql.customer_control"/>
 		</where>

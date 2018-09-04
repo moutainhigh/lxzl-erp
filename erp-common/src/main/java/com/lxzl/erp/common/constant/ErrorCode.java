@@ -645,8 +645,6 @@ public class ErrorCode {
 
     public static final String CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST = "J500186";
     public static final String CUSTOMER_STATUS_IS_NOT_PASS = "J500187";
-    public static final String CUSTOMER_PERSON_NAME_IS_LENGTH = "J500188";
-    public static final String CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH = "J500189";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -2162,9 +2160,6 @@ public class ErrorCode {
         MAP.put(STATISTICAL_STATUS_MONTH_ERROR, "查询月经营数据传递查询参数错误");
         MAP.put(STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR, "查询周经营数据传入的查询开始时间必须是星期一");
         MAP.put(STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR, "查询月经营数据传入的查询开始时间必须是月初一号");
-
-        MAP.put(CUSTOMER_PERSON_NAME_IS_LENGTH, "个人客户名称长度不能超过7个中文字符");
-        MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
 
     }
 
