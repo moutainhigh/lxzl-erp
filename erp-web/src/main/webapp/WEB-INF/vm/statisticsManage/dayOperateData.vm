@@ -24,15 +24,9 @@
                         <div class="col-lg-12">
                             <form id="searchForm" class="form-horizontal">
                                 <div class="section row">
-                                    <div class="col-md-2">
-                                        <div class="form-group mn">
-                                            <input type="hidden" name="createTime" id="createTime" />
-                                            <div class="input-group date" id="createTimePicker">
-                                                <input type="text" name="createTimeInput" id="createTimeInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="数据创建时间">
-                                                <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <div class="col-md-2"></div>
+                                    <div class="col-md-2"></div>
+                                    <div class="col-md-2"></div>
                                     <div class="col-md-2">
                                         <div class="field form-group mn" >
                                             <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId"></select>
@@ -96,72 +90,77 @@
                     </div>
                 </div>
                 <div class="panel-body pn">
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="overflow-x:scroll;">
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr class="bg-light">
-                                <th>分公司名称</th>
-                                <th>业务员</th>
-                                <th>统计维度</th>
-                                <th>长租新增台数</th>
-                                <th>长租新增租金</th>
-                                <th>长租新增客户数</th>
-                                <th>长租在租客户数</th>
-                                <th>长租退货客户数</th>
-                                <th>长租退货台数</th>
-                                <th>长租在租台数</th>
-                                <th>短租新增台数</th>
-                                <th>短租新增租金</th>
-                                <th>短租新增客户数</th>
-                                <th>短租在租客户数</th>
-                                <th>短租退货客户数</th>
-                                <th>短租退货台数</th>
-                                <th>短租在租台数</th>
-                                <th>短短租新增台数</th>
-                                <th>短短租新增租金</th>
-                                <th>短短租新增客户数</th>
-                                <th>短短租在租客户数</th>
-                                <th>短短租退货客户数</th>
-                                <th>短短租退货台数</th>
-                                <th>短短租在租台数</th>
-                                <th>新增录入客户</th>
-                                <th>新增授信客户数</th>
-                                <th>创建</th>
+                                <th class="nowrap text-center" rowspan="2" style="line-height:78px;">分公司名称</th>
+                                <th class="nowrap text-center" rowspan="2" style="line-height:78px;">业务员</th>
+                                <th class="nowrap text-center" rowspan="2" style="line-height:78px;">统计维度</th>
+                                <th class="text-center bg-system" colspan="7">长租</th>
+                                <th class="text-center bg-warning" colspan="7">短租</th>
+                                <th class="text-center bg-primary" colspan="7">短短租</th>
+                                <th class="nowrap text-center" rowspan="2" style="line-height:78px;">新增录入客户</th>
+                                <th class="nowrap text-center" rowspan="2" style="line-height:78px;">新增授信客户数</th>
+                                <th class="nowrap text-center" rowspan="2" style="line-height:78px;">创建</th>
+                            </tr>
+                            <tr class="bg-light">
+                                <th class="nowrap">新增台数</th>
+                                <th class="nowrap text-system">新增租金</th>
+                                <th class="nowrap">新增客户数</th>
+                                <th class="nowrap">在租客户数</th>
+                                <th class="nowrap">退货客户数</th>
+                                <th class="nowrap">退货台数</th>
+                                <th class="nowrap">在租台数</th>
+                                <th class="nowrap">新增台数</th>
+                                <th class="nowrap text-warning">新增租金</th>
+                                <th class="nowrap">新增客户数</th>
+                                <th class="nowrap">在租客户数</th>
+                                <th class="nowrap">退货客户数</th>
+                                <th class="nowrap">退货台数</th>
+                                <th class="nowrap">在租台数</th>
+                                <th class="nowrap">新增台数</th>
+                                <th class="nowrap text-primary">新增租金</th>
+                                <th class="nowrap">新增客户数</th>
+                                <th class="nowrap">在租客户数</th>
+                                <th class="nowrap">退货客户数</th>
+                                <th class="nowrap">退货台数</th>
+                                <th class="nowrap">在租台数</th>
                             </tr>
                             </thead>
                             <tbody>
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                <td>{{subCompanyName}}</td>
-                                <td>{{ownerName}}</td>
-                                <td>{{statisticalDimensionVal}}</td>
-                                <td>{{longRentIncreaseCount}}</td>
-                                <td>￥{{#price}}{{longRentIncreaseAmount}}{{/price}}</td>
-                                <td>{{longRentIncreaseCustomerCount}}</td>
-                                <td>{{longRentRentingCustomerCount}}</td>
-                                <td>{{longRentReturnCustomerCount}}</td>
-                                <td>{{longRentReturnCount}}</td>
-                                <td>{{longRentRentingCount}}</td>
-                                <td>{{shortRentIncreaseCount}}</td>
-                                <td>￥{{#price}}{{shortRentIncreaseAmount}}{{/price}}</td>
-                                <td>{{shortRentIncreaseCustomerCount}}</td>
-                                <td>{{shortRentRentingCustomerCount}}</td>
-                                <td>{{shortRentReturnCustomerCount}}</td>
-                                <td>{{shortRentReturnCount}}</td>
-                                <td>{{shortRentRentingCount}}</td>
-                                <td>{{ultrashortRentIncreaseCount}}</td>
-                                <td>￥{{#price}}{{ultrashortRentIncreaseAmount}}{{/price}}</td>
-                                <td>{{ultrashortRentIncreaseCustomerCount}}</td>
-                                <td>{{ultrashortRentRentingCustomerCount}}</td>
-                                <td>{{ultrashortRentReturnCustomerCount}}</td>
-                                <td>{{ultrashortRentReturnCount}}</td>
-                                <td>{{ultrashortRentRentingCount}}</td>
-                                <td>{{increaseCustomerCount}}</td>
-                                <td>{{increaseRiskCustomerCount}}</td>
-                                <td>
-                                    <p class="mn">{{createUserRealName}}</p>
-                                    <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                <td class="nowrap text-center">{{subCompanyName}}</td>
+                                <td class="nowrap text-center">{{ownerName}}</td>
+                                <td class="nowrap text-center">{{statisticalDimensionVal}}</td>
+                                <td class="nowrap text-center">{{longRentIncreaseCount}}</td>
+                                <td class="nowrap text-center text-system">￥{{#price}}{{longRentIncreaseAmount}}{{/price}}</td>
+                                <td class="nowrap text-center">{{longRentIncreaseCustomerCount}}</td>
+                                <td class="nowrap text-center">{{longRentRentingCustomerCount}}</td>
+                                <td class="nowrap text-center">{{longRentReturnCustomerCount}}</td>
+                                <td class="nowrap text-center">{{longRentReturnCount}}</td>
+                                <td class="nowrap text-center">{{longRentRentingCount}}</td>
+                                <td class="nowrap text-center">{{shortRentIncreaseCount}}</td>
+                                <td class="nowrap text-center text-warning">￥{{#price}}{{shortRentIncreaseAmount}}{{/price}}</td>
+                                <td class="nowrap text-center">{{shortRentIncreaseCustomerCount}}</td>
+                                <td class="nowrap text-center">{{shortRentRentingCustomerCount}}</td>
+                                <td class="nowrap text-center">{{shortRentReturnCustomerCount}}</td>
+                                <td class="nowrap text-center">{{shortRentReturnCount}}</td>
+                                <td class="nowrap text-center">{{shortRentRentingCount}}</td>
+                                <td class="nowrap text-center">{{ultrashortRentIncreaseCount}}</td>
+                                <td class="nowrap text-center text-primary">￥{{#price}}{{ultrashortRentIncreaseAmount}}{{/price}}</td>
+                                <td class="nowrap text-center">{{ultrashortRentIncreaseCustomerCount}}</td>
+                                <td class="nowrap text-center">{{ultrashortRentRentingCustomerCount}}</td>
+                                <td class="nowrap text-center">{{ultrashortRentReturnCustomerCount}}</td>
+                                <td class="nowrap text-center">{{ultrashortRentReturnCount}}</td>
+                                <td class="nowrap text-center">{{ultrashortRentRentingCount}}</td>
+                                <td class="nowrap text-center">{{increaseCustomerCount}}</td>
+                                <td class="nowrap text-center">{{increaseRiskCustomerCount}}</td>
+                                <td class="nowrap">
+                                    <span class="mr5">{{createUserRealName}}</span>
+                                    <span>{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</span>
                                 </td>
                             </tr>
                             {{/listData}}
@@ -173,7 +172,7 @@
                             {{/dataSource}}
                             </tbody>
                         </script>
-                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                        <table class="table admin-form table-bordered theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                     </div>
                 </div>
                 <div class="panel-footer">

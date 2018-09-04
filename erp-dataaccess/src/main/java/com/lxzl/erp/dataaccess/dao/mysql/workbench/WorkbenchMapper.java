@@ -28,4 +28,10 @@ public interface WorkbenchMapper extends BaseMysqlDAO {
     Map<String,Integer> findBankSlipDetailBusinessAffairsWorkbenchCount(@Param("maps")Map<String, Object> paramMap);
 
     Map<String,Integer> findStatementOrderBusinessAffairsWorkbenchCount(@Param("maps")Map<String, Object> paramMap);
+
+    Map<String,Integer> findWorkflowWarehouseWorkbenchCount(@Param("maps")Map<String, Object> paramMap);
+
+    Map<String,Integer> findOrderWarehouseWorkbenchCount(@Param("maps")Map<String, Object> paramMap);
+
+    Map<String,Integer> findReturnOderWarehouseWorkbenchCount(@Param("maps")Map<String, Object> orderWarehouseWorkbenchParamMap);
 }
