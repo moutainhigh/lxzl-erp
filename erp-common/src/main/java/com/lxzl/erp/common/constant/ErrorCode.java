@@ -457,6 +457,7 @@ public class ErrorCode {
     public static final String IS_NOT_TEST_MECHANINE_ORDER = "J400166";
     public static final String TEST_MECHANINE_ORDER_HAS_RELET = "J400167";
     public static final String TEST_MECHANINE_ORDER_CHANGE_TIME_ERROR = "J400168";
+    public static final String TEST_MECHANINE_ORDER_HAS_CHANGE_RENT_ORDER = "J400169";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -1700,6 +1701,7 @@ public class ErrorCode {
         MAP.put(IS_NOT_TEST_MECHANINE_ORDER, "不是测试机单无法进行终止");
         MAP.put(TEST_MECHANINE_ORDER_HAS_RELET, "测试机单已续租结算无法终止");
         MAP.put(TEST_MECHANINE_ORDER_CHANGE_TIME_ERROR, "测试机转单日期必须在测试机单有效期内");
+        MAP.put(TEST_MECHANINE_ORDER_HAS_CHANGE_RENT_ORDER, "已完成转租的测试机单不允许重算");
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
         MAP.put(MESSAGE_RECEIVER_NOT_NULL, "站内信收件人不能为空");
