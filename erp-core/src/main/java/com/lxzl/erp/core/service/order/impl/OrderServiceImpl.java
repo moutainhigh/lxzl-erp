@@ -4050,6 +4050,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> testMachineOrderConvertOrder(Order order) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -4083,6 +4084,12 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_RENT_CONDITION_IS_WRONG);
             return result;
         }
+
+        /***** 增加的组合商品逻辑 start*******/
+        // 预处理订单中的组合商品项
+        preValidateOrderJointProduct(order);
+        /***** 增加的组合商品逻辑 end*******/
+
         String verifyCreateOrderCode = verifyOperateOrder(order);
         if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
             result.setErrorCode(verifyCreateOrderCode);
@@ -4151,7 +4158,11 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
         calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
-//        SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
+        if (order.getDeliverySubCompanyId() == null || subCompanyDO == null) {
+            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return result;
+        }
 
         SubCompanyDO orderSubCompanyDO = subCompanyMapper.findById(orderDO.getOrderSubCompanyId());
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
@@ -4173,6 +4184,9 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setExpectReturnTime(expectReturnTime);
         orderMapper.save(orderDO);
 
+        /***** 增加的组合商品逻辑 start*******/
+        saveOrderJointProductInfo(orderDO.getOrderJointProductDOList(), orderDO, loginUser, currentTime);
+        /***** 增加的组合商品逻辑 end*******/
         saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
         saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
         //为了不影响之前的订单逻辑，这里暂时使用修改的方式
@@ -4209,6 +4223,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateTestMachineOrderConvertOrder(Order order) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -4251,18 +4266,20 @@ public class OrderServiceImpl implements OrderService {
 //            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_RENT_CONDITION_IS_WRONG);
 //            return result;
 //        }
+        /***** 增加的组合商品逻辑 start*******/
+        // 预处理订单中的组合商品项
+        preValidateOrderJointProduct(order);
+        /***** 增加的组合商品逻辑 end*******/
 
         String verifyCreateOrderCode = verifyOperateOrder(order);
         if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
             result.setErrorCode(verifyCreateOrderCode);
             return result;
         }
-
         if (order.getDeliverySubCompanyId() == null) {
             result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
             return result;
         }
-
         if (order.getOrderSubCompanyId() == null){
             result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
             return result;
@@ -4352,6 +4369,10 @@ public class OrderServiceImpl implements OrderService {
         Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
         orderMapper.update(orderDO);
+
+        /***** 增加的组合商品逻辑 start*******/
+        saveOrderJointProductInfo(orderDO.getOrderJointProductDOList(), orderDO, loginUser, currentTime);
+        /***** 增加的组合商品逻辑 end*******/
 
         saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
         saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
