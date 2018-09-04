@@ -1,5 +1,7 @@
 package com.lxzl.erp.web.service;
 
+import com.lxzl.erp.ERPTransactionalTest;
+import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
@@ -8,6 +10,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +20,7 @@ import java.util.List;
  * @author gaochao
  * @date 2018-01-27 10:19
  */
-public class StatementOrderTest  extends BaseUnTransactionalTest {
+public class StatementOrderTest  extends ERPUnTransactionalTest {
 
     @Autowired
     private StatementService statementService;
@@ -41,5 +44,13 @@ public class StatementOrderTest  extends BaseUnTransactionalTest {
     public void getOverdueStatementOrderList(){
         List<StatementOrderDO> statementOrderDOList = statementOrderSupport.getOverdueStatementOrderList(731477);
         System.out.println(statementOrderDOList.size());
+    }
+
+
+    @Test
+    public void stopTestMachineOrder(){
+        Calendar calendar=Calendar.getInstance();
+        calendar.set(2018,2,19);
+        statementOrderSupport.stopTestMachineOrder("LXO-20180309-0755-00395",calendar.getTime());
     }
 }

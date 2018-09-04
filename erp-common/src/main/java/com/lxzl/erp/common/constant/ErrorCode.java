@@ -454,6 +454,9 @@ public class ErrorCode {
     public static final String ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400163";
     public static final String RELET_ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400164";
     public static final String EXPECT_RTURN_TIME_LESS_RETURN_TIME = "J400165";
+    public static final String IS_NOT_TEST_MECHANINE_ORDER = "J400166";
+    public static final String TEST_MECHANINE_ORDER_HAS_RELET = "J400167";
+    public static final String TEST_MECHANINE_ORDER_CHANGE_TIME_ERROR = "J400168";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -1694,6 +1697,9 @@ public class ErrorCode {
         MAP.put(ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT, "订单当前状态不允许重算");
         MAP.put(RELET_ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT, "续租单当前状态不允许重算");
         MAP.put(EXPECT_RTURN_TIME_LESS_RETURN_TIME, "所选退货时间为【%s 】，订单【%s 】预计退货时间为【%s 】，所选退货时间不能超过订单预计归还时间,如符合真实情况请尝试【续租】");
+        MAP.put(IS_NOT_TEST_MECHANINE_ORDER, "不是测试机单无法进行终止");
+        MAP.put(TEST_MECHANINE_ORDER_HAS_RELET, "测试机单已续租结算无法终止");
+        MAP.put(TEST_MECHANINE_ORDER_CHANGE_TIME_ERROR, "测试机转单日期必须在测试机单有效期内");
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
         MAP.put(MESSAGE_RECEIVER_NOT_NULL, "站内信收件人不能为空");

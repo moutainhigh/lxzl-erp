@@ -1755,6 +1755,8 @@ public class OrderServiceImpl implements OrderService {
                     testMachineOrderDO.setUpdateTime(currentTime);
                     testMachineOrderDO.setUpdateUser(loginUser.getUserId().toString());
                     orderMapper.update(testMachineOrderDO);
+
+                    statementOrderSupport.stopTestMachineOrder(orderFromTestMachineDO.getTestMachineOrderNo(),orderFromTestMachineDO.getCreateTime());
                 }
 
                 orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
