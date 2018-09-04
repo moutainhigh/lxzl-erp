@@ -4050,6 +4050,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> testMachineOrderConvertOrder(Order order) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -4059,6 +4060,12 @@ public class OrderServiceImpl implements OrderService {
         OrderDO testMachineOrderDO = orderMapper.findByNo(order.getTestMachineOrderNo());
         if (testMachineOrderDO == null){
             result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_IS_NOT_EXISTS);
+            return result;
+        }
+        //测试机订单的状态必须为租赁中和部分退货
+        if (!OrderStatus.ORDER_STATUS_CONFIRM.equals(testMachineOrderDO.getOrderStatus()) &&
+               !OrderStatus.ORDER_STATUS_PART_RETURN.equals(testMachineOrderDO.getOrderStatus())){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_STATUS_MUST_BE_RENTING_OR_PART_RETURN);
             return result;
         }
         //检验测试机订单是否已经转为租赁订单
@@ -4078,17 +4085,20 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
+        /***** 增加的组合商品逻辑 start*******/
+        // 预处理订单中的组合商品项
+        preValidateOrderJointProduct(order);
+        /***** 增加的组合商品逻辑 end*******/
+
         String verifyCreateOrderCode = verifyOperateOrder(order);
         if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
             result.setErrorCode(verifyCreateOrderCode);
             return result;
         }
-
         if (order.getDeliverySubCompanyId() == null) {
             result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
             return result;
         }
-
         if (order.getOrderSubCompanyId() == null){
             result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
             return result;
@@ -4111,7 +4121,7 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         //原样式机订单的所需分公司也不能修改
-        if(order.getOrderSubCompanyId().equals(testMachineOrderDO.getOrderSubCompanyId())){
+        if(!order.getOrderSubCompanyId().equals(testMachineOrderDO.getOrderSubCompanyId())){
             result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_ORDER_SUB_COMPANY_CAN_NOT_UPDATE);
             return result;
         }
@@ -4148,7 +4158,11 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
         calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
-//        SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
+        if (order.getDeliverySubCompanyId() == null || subCompanyDO == null) {
+            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return result;
+        }
 
         SubCompanyDO orderSubCompanyDO = subCompanyMapper.findById(orderDO.getOrderSubCompanyId());
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
@@ -4170,6 +4184,9 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setExpectReturnTime(expectReturnTime);
         orderMapper.save(orderDO);
 
+        /***** 增加的组合商品逻辑 start*******/
+        saveOrderJointProductInfo(orderDO.getOrderJointProductDOList(), orderDO, loginUser, currentTime);
+        /***** 增加的组合商品逻辑 end*******/
         saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
         saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
         //为了不影响之前的订单逻辑，这里暂时使用修改的方式
@@ -4206,6 +4223,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateTestMachineOrderConvertOrder(Order order) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -4248,18 +4266,20 @@ public class OrderServiceImpl implements OrderService {
 //            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_RENT_CONDITION_IS_WRONG);
 //            return result;
 //        }
+        /***** 增加的组合商品逻辑 start*******/
+        // 预处理订单中的组合商品项
+        preValidateOrderJointProduct(order);
+        /***** 增加的组合商品逻辑 end*******/
 
         String verifyCreateOrderCode = verifyOperateOrder(order);
         if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
             result.setErrorCode(verifyCreateOrderCode);
             return result;
         }
-
         if (order.getDeliverySubCompanyId() == null) {
             result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
             return result;
         }
-
         if (order.getOrderSubCompanyId() == null){
             result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
             return result;
@@ -4350,6 +4370,10 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setExpectReturnTime(expectReturnTime);
         orderMapper.update(orderDO);
 
+        /***** 增加的组合商品逻辑 start*******/
+        saveOrderJointProductInfo(orderDO.getOrderJointProductDOList(), orderDO, loginUser, currentTime);
+        /***** 增加的组合商品逻辑 end*******/
+
         saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
         saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
         //为了不影响之前的订单逻辑，这里暂时使用修改的方式
@@ -4402,7 +4426,7 @@ public class OrderServiceImpl implements OrderService {
             for (OrderProductDO testMachineOrderProductDO : testMachineOrderProductDOList){
                 if(newOrderProductMap.get(testMachineOrderProductDO.getId()) != null){
                     OrderProduct orderProduct = newOrderProductMap.get(testMachineOrderProductDO.getId());
-                    if (!testMachineOrderProductDO.getProductCount().equals(orderProduct.getProductCount())){
+                    if (!testMachineOrderProductDO.getRentingProductCount().equals(orderProduct.getProductCount())){
                         return ErrorCode.TEST_MACHINE_ORDER_PRODUCT_COUNT_CAN_NOT_UPDATE;
                     }
                 }
@@ -4431,7 +4455,7 @@ public class OrderServiceImpl implements OrderService {
             for (OrderMaterialDO testMachineOrderMaterialDO : testMachineOrderMaterialDOList){
                 if(newOrderMaterialMap.get(testMachineOrderMaterialDO.getId()) != null){
                     OrderMaterial orderMaterial = newOrderMaterialMap.get(testMachineOrderMaterialDO.getId());
-                    if (!testMachineOrderMaterialDO.getMaterialCount().equals(orderMaterial.getMaterialCount())){
+                    if (!testMachineOrderMaterialDO.getRentingMaterialCount().equals(orderMaterial.getMaterialCount())){
                         return ErrorCode.TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE;
                     }
                 }

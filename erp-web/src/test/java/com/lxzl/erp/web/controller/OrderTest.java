@@ -21,7 +21,7 @@ import java.util.*;
  * @author gaochao
  * @date 2017-11-15 14:14
  */
-public class OrderTest extends ERPUnTransactionalTest {
+public class OrderTest extends ERPTransactionalTest {
 
     @Test
     public void testCancelOrder() throws Exception {
@@ -739,6 +739,15 @@ public class OrderTest extends ERPUnTransactionalTest {
 
 
         TestResult testResult = getJsonTestResult("/order/supperUserChangeOrder", orderConfirmChangeParam);
+    }
+
+    @Test
+    public void testMachineOrderConvertOrderJSON() throws Exception {
+        String str = "{\"buyerCustomerNo\":\"LXCP-025-20180902-00001\",\"rentStartTime\":1536019200000,\"expectDeliveryTime\":1536019200000,\"buyerRemark\":\"\",\"customerConsignId\":\"6765\",\"highTaxRate\":\"80\",\"lowTaxRate\":\"20\",\"deliveryMode\":\"3\",\"rentType\":\"1\",\"rentTimeLength\":\"12\",\"isPeer\":\"0\",\"deliverySubCompanyId\":\"6\",\"orderSellerId\":500381,\"orderSubCompanyId\":6,\"testMachineOrderNo\":\"LXO-20180903-025-00010\",\"isTurnRentOrder\":0,\"orderProductList\":[{\"serialNumber\":\"XjWakDwy\",\"productSkuId\":1697,\"productUnitAmount\":\"10\",\"productCount\":\"10\",\"rentTimeLength\":\"\",\"insuranceAmount\":\"\",\"payMode\":\"1\",\"isNewProduct\":1,\"depositAmount\":\"100\",\"isItemDelivered\":\"1\",\"orderProductId\":\"14540\"},{\"serialNumber\":\"fi9VzPrJ\",\"productSkuId\":1698,\"productUnitAmount\":\"10\",\"productCount\":\"10\",\"rentTimeLength\":\"\",\"insuranceAmount\":\"\",\"payMode\":\"1\",\"isNewProduct\":1,\"depositAmount\":\"100\",\"isItemDelivered\":\"1\",\"orderProductId\":\"14541\"}]}";
+
+        Order order = JSONUtil.parseObject(str,Order.class);
+        TestResult testResult = getJsonTestResult("/order/testMachineOrderConvertOrder", order);
+        System.err.println(testResult);
     }
 
     @Test
