@@ -21,7 +21,7 @@ import java.util.*;
  * @author gaochao
  * @date 2017-11-15 14:14
  */
-public class OrderTest extends ERPUnTransactionalTest {
+public class OrderTest extends ERPTransactionalTest {
 
     @Test
     public void testCancelOrder() throws Exception {
