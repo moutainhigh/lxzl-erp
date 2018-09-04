@@ -742,6 +742,15 @@ public class OrderTest extends ERPUnTransactionalTest {
     }
 
     @Test
+    public void testMachineOrderConvertOrderJSON() throws Exception {
+        String str = "{\"buyerCustomerNo\":\"LXCP-025-20180902-00001\",\"rentStartTime\":1536019200000,\"expectDeliveryTime\":1536019200000,\"buyerRemark\":\"\",\"customerConsignId\":\"6765\",\"highTaxRate\":\"80\",\"lowTaxRate\":\"20\",\"deliveryMode\":\"3\",\"rentType\":\"1\",\"rentTimeLength\":\"12\",\"isPeer\":\"0\",\"deliverySubCompanyId\":\"6\",\"orderSellerId\":500381,\"orderSubCompanyId\":6,\"testMachineOrderNo\":\"LXO-20180903-025-00010\",\"isTurnRentOrder\":0,\"orderProductList\":[{\"serialNumber\":\"XjWakDwy\",\"productSkuId\":1697,\"productUnitAmount\":\"10\",\"productCount\":\"10\",\"rentTimeLength\":\"\",\"insuranceAmount\":\"\",\"payMode\":\"1\",\"isNewProduct\":1,\"depositAmount\":\"100\",\"isItemDelivered\":\"1\",\"orderProductId\":\"14540\"},{\"serialNumber\":\"fi9VzPrJ\",\"productSkuId\":1698,\"productUnitAmount\":\"10\",\"productCount\":\"10\",\"rentTimeLength\":\"\",\"insuranceAmount\":\"\",\"payMode\":\"1\",\"isNewProduct\":1,\"depositAmount\":\"100\",\"isItemDelivered\":\"1\",\"orderProductId\":\"14541\"}]}";
+
+        Order order = JSONUtil.parseObject(str,Order.class);
+        TestResult testResult = getJsonTestResult("/order/testMachineOrderConvertOrder", order);
+        System.err.println(testResult);
+    }
+
+    @Test
     public void testMachineOrderConvertOrder() throws Exception {
         Order order = new Order();
         order.setTestMachineOrderNo("LXO-20180904-027-00004");
