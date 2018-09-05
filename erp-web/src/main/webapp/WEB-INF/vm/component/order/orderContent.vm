@@ -408,7 +408,7 @@
                                 {{/showDepositAmount}}
                                 {{^showDepositAmount}}
                                 {{#isRentTypeByMonth}}
-                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                <p class="mn">押{{depositCycle}}付{{paymentCycle}}</p>
                                 {{/isRentTypeByMonth}}
                                 {{/showDepositAmount}}
                             </td>
@@ -428,7 +428,7 @@
 
                                 {{/showDepositAmount}}
                                 {{^showDepositAmount}}
-                                    <p>{{payModeValue}}</p>
+                                    <p class="mn">{{payModeValue}}</p>
 
                                 {{/showDepositAmount}}
                             </td>
