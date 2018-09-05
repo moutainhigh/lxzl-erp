@@ -1803,7 +1803,7 @@ public class OrderServiceImpl implements OrderService {
                 OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(orderDO.getOrderNo());
                 if (orderFromTestMachineDO != null){
                     OrderDO testMachineOrderDO = orderMapper.findByNo(orderFromTestMachineDO.getTestMachineOrderNo());
-                    testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_CONSTANT_YES);
+                    testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_TWO);
                     testMachineOrderDO.setUpdateTime(currentTime);
                     testMachineOrderDO.setUpdateUser(loginUser.getUserId().toString());
                     orderMapper.update(testMachineOrderDO);
@@ -2260,7 +2260,7 @@ public class OrderServiceImpl implements OrderService {
         OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(orderDO.getOrderNo());
         if (orderFromTestMachineDO != null){
             OrderDO testMachineOrderDO = orderMapper.findByNo(orderFromTestMachineDO.getTestMachineOrderNo());
-            testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_CONSTANT_NO);
+            testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_ZERO);
             testMachineOrderDO.setUpdateTime(currentTime);
             testMachineOrderDO.setUpdateUser(loginUser.getUserId().toString());
             orderMapper.update(testMachineOrderDO);
@@ -4114,6 +4114,11 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_IS_NOT_EXISTS);
             return result;
         }
+        //如果原测试机订单已经续租就不能进行转租赁的操作
+        if (testMachineOrderDO.getReletOrderId() != null){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_HAD_RELET_CAN_NOT_BE_RENT);
+            return result;
+        }
         //测试机订单的状态必须为租赁中和部分退货
         if (!OrderStatus.ORDER_STATUS_CONFIRM.equals(testMachineOrderDO.getOrderStatus()) &&
                !OrderStatus.ORDER_STATUS_PART_RETURN.equals(testMachineOrderDO.getOrderStatus())){
@@ -4235,6 +4240,12 @@ public class OrderServiceImpl implements OrderService {
         Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
         orderMapper.save(orderDO);
+
+        //原测试机订单加入转为租赁单的标记
+        testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_ONE);
+        testMachineOrderDO.setUpdateTime(currentTime);
+        testMachineOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderMapper.update(testMachineOrderDO);
 
         /***** 增加的组合商品逻辑 start*******/
         saveOrderJointProductInfo(orderDO.getOrderJointProductDOList(), orderDO, loginUser, currentTime);
