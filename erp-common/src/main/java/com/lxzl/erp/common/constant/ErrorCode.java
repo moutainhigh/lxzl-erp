@@ -1097,6 +1097,7 @@ public class ErrorCode {
     public static final String TEST_MACHINE_ORDER_HAVING_TURN_RENT_ORDER = "J30000013";
     public static final String TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER = "J30000014";
     public static final String TEST_MACHINE_ORDER_STATUS_MUST_BE_RENTING_OR_PART_RETURN = "J30000014";
+    public static final String TEST_MACHINE_ORDER_HAD_RELET_CAN_NOT_BE_RENT = "J30000015";
 
     //Mall
     public static final String MALL_SYSTEM_CONNECT_EXCEPTION = "Mall00001";
@@ -2181,6 +2182,7 @@ public class ErrorCode {
         MAP.put(TEST_MACHINE_ORDER_HAVING_TURN_RENT_ORDER, "测试样机的订单正在转为订单的过程中，如需进行此操作请取消已经转变的订单");
         MAP.put(TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER, "测试样机的订单已经转为新订单，该订单禁止此操作");
         MAP.put(TEST_MACHINE_ORDER_STATUS_MUST_BE_RENTING_OR_PART_RETURN, "只有租赁中和部分退货的测试样机订单才能转为租赁订单");
+        MAP.put(TEST_MACHINE_ORDER_HAD_RELET_CAN_NOT_BE_RENT, "已经有续租的订单，不能执行该操作");
 
 
         MAP.put(MALL_SYSTEM_CONNECT_EXCEPTION, "连接Mall-App系统异常");
