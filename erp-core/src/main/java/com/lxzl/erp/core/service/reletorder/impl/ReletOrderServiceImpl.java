@@ -106,6 +106,11 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             result.setErrorCode(orderServiceResult.getErrorCode());
             return result;
         }
+        if (null != orderServiceResult.getResult().getIsTurnRentOrder() && !CommonConstant.COMMON_ZERO.equals(orderServiceResult.getResult().getIsTurnRentOrder())){
+            //转租赁的原测试机订单不能操作
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_RENT);
+            return  result;
+        }
         //如果按天租的订单，续租时长不允许超过89天   //按月租的订单，续租时长不允许超过2年
         if(OrderRentType.RENT_TYPE_DAY.equals(orderServiceResult.getResult().getRentType())&&order.getRentTimeLength()>89){
             result.setErrorCode(ErrorCode.RELET_ORDER_RENT_TYPE_DAY_CAN_NOT_RENT_TOO_LONG);
