@@ -153,7 +153,7 @@
                                     <td class="nowrap text-info">￥{{#price}}{{statementDetailAmount}}{{/price}}</td>
 ##                                        <td class="nowrap">{{statementDetailTypeValue}}</td>
                                     <td class="nowrap">￥{{#price}}{{unitAmount}}{{/price}}</td>
-                                    <td class="nowrap text-center">{{itemCount}}</td>
+                                    <td class="nowrap text-center"><div style="width:61px;">{{itemCount}}</div></td>
                                     <td class="nowrap">{{itemRentTypeValue}}</td>
                                     <td class="nowrap">{{statementDetailPhase}}</td>
                                     <td class="nowrap">{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
