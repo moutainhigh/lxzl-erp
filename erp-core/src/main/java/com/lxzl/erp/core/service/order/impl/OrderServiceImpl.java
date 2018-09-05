@@ -574,7 +574,7 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
             //原样式机订单的所需分公司也不能修改
-            if(order.getOrderSubCompanyId().equals(dbOrderDO.getOrderSubCompanyId())){
+            if(!order.getOrderSubCompanyId().equals(dbOrderDO.getOrderSubCompanyId())){
                 result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_ORDER_SUB_COMPANY_CAN_NOT_UPDATE);
                 return result;
             }
