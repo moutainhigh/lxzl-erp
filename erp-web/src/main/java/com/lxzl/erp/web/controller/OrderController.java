@@ -226,11 +226,11 @@ public class OrderController extends BaseController {
      * @param validResult
      * @return
      */
-    @RequestMapping(value = "updateTestMachineOrderConvertOrder", method = RequestMethod.POST)
-    public Result updateTestMachineOrderConvertOrder(@RequestBody Order order, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = orderService.updateTestMachineOrderConvertOrder(order);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
+//    @RequestMapping(value = "updateTestMachineOrderConvertOrder", method = RequestMethod.POST)
+//    public Result updateTestMachineOrderConvertOrder(@RequestBody Order order, BindingResult validResult) {
+//        ServiceResult<String, String> serviceResult = orderService.updateTestMachineOrderConvertOrder(order);
+//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+//    }
 
 
     @Autowired

@@ -275,5 +275,5 @@ public interface OrderService extends VerifyReceiver {
      * @param order
      * @return
      */
-    ServiceResult<String,String> updateTestMachineOrderConvertOrder(Order order);
+//    ServiceResult<String,String> updateTestMachineOrderConvertOrder(Order order);
 }
