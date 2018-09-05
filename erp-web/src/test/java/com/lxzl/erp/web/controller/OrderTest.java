@@ -751,6 +751,14 @@ public class OrderTest extends ERPTransactionalTest {
     }
 
     @Test
+    public void updateOrderNewJSON() throws Exception {
+        String str = "{\"orderNo\":\"LXO-20180905-027-00029\",\"buyerCustomerNo\":\"LXCC-027-20180724-00095\",\"rentStartTime\":1536105600000,\"expectDeliveryTime\":1536105600000,\"orderSellerId\":500154,\"orderSubCompanyId\":8,\"buyerRemark\":\"\",\"customerConsignId\":\"6477\",\"highTaxRate\":\"80\",\"lowTaxRate\":\"20\",\"deliveryMode\":\"3\",\"rentType\":\"2\",\"rentTimeLength\":\"12\",\"isPeer\":\"0\",\"deliverySubCompanyId\":\"8\",\"isTurnRentOrder\":0,\"orderProductList\":[{\"serialNumber\":\"Sr8eJegq\",\"productId\":2000577,\"productSkuId\":1689,\"productUnitAmount\":\"10\",\"productCount\":\"5\",\"rentTimeLength\":\"\",\"insuranceAmount\":\"\",\"isNewProduct\":0,\"depositAmount\":0,\"isItemDelivered\":\"1\",\"orderProductId\":\"4398\"},{\"serialNumber\":\"JhTa1WhR\",\"productId\":2000690,\"productSkuId\":1719,\"productUnitAmount\":\"50\",\"productCount\":\"20\",\"rentTimeLength\":\"\",\"insuranceAmount\":\"\",\"isNewProduct\":0,\"depositAmount\":0,\"isItemDelivered\":\"0\",\"orderProductId\":\"4399\"}],\"orderMaterialList\":[{\"serialNumber\":\"FH463nUV\",\"materialNo\":\"LX-IPAD2YC-20180212-00577\",\"materialId\":577,\"materialUnitAmount\":\"10\",\"materialCount\":\"5\",\"productCount\":\"\",\"rentTimeLength\":\"\",\"productUnitAmount\":\"\",\"insuranceAmount\":\"\",\"isNewMaterial\":0,\"depositAmount\":0,\"isItemDelivered\":\"1\",\"orderMaterialId\":\"7099\"},{\"serialNumber\":\"rGuKe9oE\",\"materialNo\":\"LX-LP29X220-20180212-00015\",\"materialId\":15,\"materialUnitAmount\":\"10\",\"materialCount\":\"20\",\"productCount\":\"\",\"rentTimeLength\":\"\",\"productUnitAmount\":\"\",\"insuranceAmount\":\"\",\"isNewMaterial\":0,\"depositAmount\":0,\"isItemDelivered\":\"0\",\"orderMaterialId\":\"7100\"}]}";
+
+        Order order = JSONUtil.parseObject(str,Order.class);
+        TestResult testResult = getJsonTestResult("/order/updateNew", order);
+        System.err.println(testResult);
+    }
+    @Test
     public void testMachineOrderConvertOrder() throws Exception {
         Order order = new Order();
         order.setTestMachineOrderNo("LXO-20180904-027-00004");
