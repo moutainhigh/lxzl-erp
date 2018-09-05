@@ -591,14 +591,14 @@ public class OrderServiceImpl implements OrderService {
 
             //对原测试机的订单只允许修改单价，其他都不能改变
             if (CollectionUtil.isNotEmpty(testMachineOrderProductDOList)){
-                String validateOrderProductResult = validateOrderProductInfo(testMachineOrderProductDOList,order.getOrderProductList());
+                String validateOrderProductResult = validateOrderProductInfo(testMachineOrderProductDOList,order.getOrderProductList(),CommonConstant.COMMON_CONSTANT_NO);
                 if (!ErrorCode.SUCCESS.equals(validateOrderProductResult)){
                     result.setErrorCode(validateOrderProductResult);
                     return result;
                 }
             }
             if (CollectionUtil.isNotEmpty(testMachineOrderMaterialDOList)){
-                String validateOrderMaterialResult = validateOrderMaterialInfo(testMachineOrderMaterialDOList,order.getOrderMaterialList());
+                String validateOrderMaterialResult = validateOrderMaterialInfo(testMachineOrderMaterialDOList,order.getOrderMaterialList(),CommonConstant.COMMON_CONSTANT_NO);
                 if (!ErrorCode.SUCCESS.equals(validateOrderMaterialResult)){
                     result.setErrorCode(validateOrderMaterialResult);
                     return result;
@@ -1803,6 +1803,7 @@ public class OrderServiceImpl implements OrderService {
                 OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(orderDO.getOrderNo());
                 if (orderFromTestMachineDO != null){
                     OrderDO testMachineOrderDO = orderMapper.findByNo(orderFromTestMachineDO.getTestMachineOrderNo());
+                    testMachineOrderDO.setOrderStatus(OrderStatus.ORDER_STATUS_OVER); //测试机订单转为新订单后，当新订单通过审核后，将原测试机订单改为已结束状态
                     testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_TWO);
                     testMachineOrderDO.setUpdateTime(currentTime);
                     testMachineOrderDO.setUpdateUser(loginUser.getUserId().toString());
@@ -4194,14 +4195,14 @@ public class OrderServiceImpl implements OrderService {
         }
         //对原测试机订单的商品项和配件项只允许修改单价，其他都不能改变
         if (CollectionUtil.isNotEmpty(testMachineOrderProductDOList)){
-            String validateOrderProductResult = validateOrderProductInfo(testMachineOrderProductDOList,order.getOrderProductList());
+            String validateOrderProductResult = validateOrderProductInfo(testMachineOrderProductDOList,order.getOrderProductList(),CommonConstant.COMMON_CONSTANT_YES);
             if (!ErrorCode.SUCCESS.equals(validateOrderProductResult)){
                 result.setErrorCode(validateOrderProductResult);
                 return result;
             }
         }
         if (CollectionUtil.isNotEmpty(testMachineOrderMaterialDOList)){
-            String validateOrderMaterialResult = validateOrderMaterialInfo(testMachineOrderMaterialDOList,order.getOrderMaterialList());
+            String validateOrderMaterialResult = validateOrderMaterialInfo(testMachineOrderMaterialDOList,order.getOrderMaterialList(),CommonConstant.COMMON_CONSTANT_YES);
             if (!ErrorCode.SUCCESS.equals(validateOrderMaterialResult)){
                 result.setErrorCode(validateOrderMaterialResult);
                 return result;
@@ -4447,7 +4448,7 @@ public class OrderServiceImpl implements OrderService {
 //        return result;
 //    }
 
-    private String validateOrderProductInfo(List<OrderProductDO> testMachineOrderProductDOList, List<OrderProduct> orderProductList) {
+    private String validateOrderProductInfo(List<OrderProductDO> testMachineOrderProductDOList, List<OrderProduct> orderProductList,Integer orderAction) {
         Map<Integer, OrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(testMachineOrderProductDOList, "id");
         if (CollectionUtil.isNotEmpty(orderProductList)){
             Map<Integer,OrderProduct> newOrderProductMap = new HashMap<>();
@@ -4463,11 +4464,23 @@ public class OrderServiceImpl implements OrderService {
                 return ErrorCode.TEST_MACHINE_ORDER_PRODUCT_CAN_NOT_UPDATE;
             }
 
-            for (OrderProductDO testMachineOrderProductDO : testMachineOrderProductDOList){
-                if(newOrderProductMap.get(testMachineOrderProductDO.getId()) != null){
-                    OrderProduct orderProduct = newOrderProductMap.get(testMachineOrderProductDO.getId());
-                    if (!testMachineOrderProductDO.getRentingProductCount().equals(orderProduct.getProductCount())){
-                        return ErrorCode.TEST_MACHINE_ORDER_PRODUCT_COUNT_CAN_NOT_UPDATE;
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderAction)){
+                //操作类型为1，则是执行的测试机订单转为新的订单的操作
+                for (OrderProductDO testMachineOrderProductDO : testMachineOrderProductDOList){
+                    if(newOrderProductMap.get(testMachineOrderProductDO.getId()) != null){
+                        OrderProduct orderProduct = newOrderProductMap.get(testMachineOrderProductDO.getId());
+                        if (!testMachineOrderProductDO.getRentingProductCount().equals(orderProduct.getProductCount())){
+                            return ErrorCode.TEST_MACHINE_ORDER_PRODUCT_COUNT_CAN_NOT_UPDATE;
+                        }
+                    }
+                }
+            }else{
+                for (OrderProductDO testMachineOrderProductDO : testMachineOrderProductDOList){
+                    if(newOrderProductMap.get(testMachineOrderProductDO.getId()) != null){
+                        OrderProduct orderProduct = newOrderProductMap.get(testMachineOrderProductDO.getId());
+                        if (!testMachineOrderProductDO.getProductCount().equals(orderProduct.getProductCount())){
+                            return ErrorCode.TEST_MACHINE_ORDER_PRODUCT_COUNT_CAN_NOT_UPDATE;
+                        }
                     }
                 }
             }
@@ -4476,7 +4489,7 @@ public class OrderServiceImpl implements OrderService {
         return ErrorCode.SUCCESS;
     }
 
-    private String validateOrderMaterialInfo(List<OrderMaterialDO> testMachineOrderMaterialDOList, List<OrderMaterial> orderMaterialList) {
+    private String validateOrderMaterialInfo(List<OrderMaterialDO> testMachineOrderMaterialDOList, List<OrderMaterial> orderMaterialList,Integer orderAction) {
         Map<Integer, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(testMachineOrderMaterialDOList, "id");
         if (CollectionUtil.isNotEmpty(orderMaterialList)){
             Map<Integer,OrderMaterial> newOrderMaterialMap = new HashMap<>();
@@ -4492,11 +4505,23 @@ public class OrderServiceImpl implements OrderService {
                 return ErrorCode.TEST_MACHINE_ORDER_MATERIAL_CAN_NOT_UPDATE;
             }
 
-            for (OrderMaterialDO testMachineOrderMaterialDO : testMachineOrderMaterialDOList){
-                if(newOrderMaterialMap.get(testMachineOrderMaterialDO.getId()) != null){
-                    OrderMaterial orderMaterial = newOrderMaterialMap.get(testMachineOrderMaterialDO.getId());
-                    if (!testMachineOrderMaterialDO.getRentingMaterialCount().equals(orderMaterial.getMaterialCount())){
-                        return ErrorCode.TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE;
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderAction)){
+                //操作类型为1，则是执行的测试机订单转为新的订单的操作
+                for (OrderMaterialDO testMachineOrderMaterialDO : testMachineOrderMaterialDOList){
+                    if(newOrderMaterialMap.get(testMachineOrderMaterialDO.getId()) != null){
+                        OrderMaterial orderMaterial = newOrderMaterialMap.get(testMachineOrderMaterialDO.getId());
+                        if (!testMachineOrderMaterialDO.getRentingMaterialCount().equals(orderMaterial.getMaterialCount())){
+                            return ErrorCode.TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE;
+                        }
+                    }
+                }
+            }else{
+                for (OrderMaterialDO testMachineOrderMaterialDO : testMachineOrderMaterialDOList){
+                    if(newOrderMaterialMap.get(testMachineOrderMaterialDO.getId()) != null){
+                        OrderMaterial orderMaterial = newOrderMaterialMap.get(testMachineOrderMaterialDO.getId());
+                        if (!testMachineOrderMaterialDO.getMaterialCount().equals(orderMaterial.getMaterialCount())){
+                            return ErrorCode.TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE;
+                        }
                     }
                 }
             }
