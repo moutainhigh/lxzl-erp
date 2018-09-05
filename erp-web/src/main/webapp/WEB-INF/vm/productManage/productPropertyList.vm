@@ -50,7 +50,7 @@
                                         <th>属性类型</th>
                                         <th>分类名称</th>
                                         <th>配件类型</th>
-                                        <th>是否为输入属性</th>
+                                        <th class="text-center">是否为输入属性</th>
                                         <th>备注</th>
                                         <th>创建</th>
                                         <th>修改</th>
@@ -65,7 +65,7 @@
                                             <td>{{propertyTypeVal}}</td>
                                             <td>{{categoryName}}</td>
                                             <td>{{materialTypeName}}</td>
-                                            <td>{{isInputVal}}</td>
+                                            <td class="text-center">{{isInputVal}}</td>
                                             <td>{{remark}}</td>
                                             <td>
                                                 <p class="mn">{{createUserRealName}}</p>
