@@ -264,7 +264,7 @@ public class CustomerServiceImpl implements CustomerService {
         Date now = new Date();
         //CustomerPerson的RealName是否符合规则（中文名不能带特殊符号、英文字母，英文名中只能带空格）
         if (!StrReplaceUtil.checkRealName(customer.getCustomerPerson().getRealName())) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_REAL_NAME_ERROR); 
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_REAL_NAME_ERROR);
             return serviceResult;
         }
         CustomerDO dbCustomerDO = customerMapper.findByRealNameAndPersonNo(customer.getCustomerPerson().getRealName(),
