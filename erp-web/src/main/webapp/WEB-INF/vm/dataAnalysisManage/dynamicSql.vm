@@ -34,7 +34,7 @@
                                             <div class="col-md-12">
                                                 <label for="sq" class="field-label">sql查询语句</label>
                                                 <label class="field prepend-icon">
-                                                    <textarea class="gui-textarea" id="sql" name="sql" placeholder="输入SQL查询语句"></textarea>
+                                                    <textarea class="form-control" id="sql" name="sql" placeholder="输入SQL查询语句" style="min-height:150px;"></textarea>
                                                     <label for="comment" class="field-icon"><i class="fa fa-search"></i>
                                                     </label>
 ##                                                    <span class="input-footer"><strong>Hint:</strong>Don't be negative or off topic! just be awesome...</span>

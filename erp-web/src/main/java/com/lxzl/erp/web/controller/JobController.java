@@ -5,17 +5,23 @@ import com.lxzl.erp.common.domain.TaskSchedulerSystemConfig;
 import com.lxzl.erp.common.domain.job.AutomaticUnknownBankSlipDetailRequestParam;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
+import com.lxzl.erp.core.service.bank.BankSlipService;
+import com.lxzl.erp.core.service.statistics.StatisticsService;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.Job.JobService;
 import com.lxzl.se.common.domain.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -51,6 +57,15 @@ public class JobController {
         System.out.println("♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥");
     }
 
+    /**
+     * 生成经营数据记录(定时任务调度)
+     * @return
+     */
+    @RequestMapping(value = "createStatisticsOperateDataForTime",method = RequestMethod.POST)
+    public Result createStatisticsOperateDataForTime(){
+        ServiceResult<String, String> serviceResult = statisticsService.createStatisticsOperateDataForTime();
+        return resultGenerator.generate(serviceResult);
+    }
 
     @RequestMapping(value = "automaticUnknownBankSlipDetail",method = RequestMethod.POST)
     public Result automaticUnknownBankSlipDetail(@RequestBody AutomaticUnknownBankSlipDetailRequestParam automaticUnknownBankSlipDetailRequestParam, HttpServletRequest request){
@@ -62,5 +77,6 @@ public class JobController {
     private JobService jobService;
     @Autowired
     ResultGenerator resultGenerator;
-
+    @Autowired
+    private StatisticsService statisticsService;
 }

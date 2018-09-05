@@ -184,6 +184,7 @@
                                                 <button type="reset" class="btn btn-default btn-sm">重置</button>
                                                 <button type="button" id="recycleBtn" class="btn btn-default btn-sm">回收站</button>
                                                 <input type="hidden" name="isRecycleBin" id="isRecycleBin" value="0">
+                                                <input type="hidden" name="warehouseWorkbenchOrderType" id="warehouseWorkbenchOrderType" value="">
                                             </div>
                                         </div>
                                     </div>
