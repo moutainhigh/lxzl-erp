@@ -73,7 +73,7 @@ public class Order extends BasePO {
     private Integer dataStatus;
     private String remark;                                      // 备注信息
     private Date createTime;                                    // 订单创建时间
-    private Integer isTurnRentOrder;                            // 是否已经转为租赁单,1-是;0-否。(测试机专用字段）
+    private Integer isTurnRentOrder;                            // 是否已经转为租赁单,0-否;1-生成新订单;2-新订单审核通过;。(测试机专用字段)
 
     private Integer customerConsignId;
     private String buyerCustomerNo;                             // 客户编号
