@@ -89,7 +89,7 @@
                                             <td>{{jointProductName}}</td>
                                             <td>{{groupedProductTostr}}</td>
                                             <td>{{groupedMaterialTostr}}</td>
-                                            <td>{{remark}}</td>
+                                            <td><div class="mw200">{{remark}}</div></td>
                                             <td>
                                                 <p class="mn">{{createUserRealName}}</p>
                                                 <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
