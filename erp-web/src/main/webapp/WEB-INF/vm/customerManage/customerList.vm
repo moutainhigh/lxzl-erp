@@ -235,7 +235,9 @@
                 'manage.customer.address.add.js',
                 'manage.customer.confirm.statement.js',
                 'modal.input.js',
-                'modal.submit.audit.js');
+                'modal.submit.audit.js',
+                'manage.audit.pass.js', 
+                'manage.audit.reject.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

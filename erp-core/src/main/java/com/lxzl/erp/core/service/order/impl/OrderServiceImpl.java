@@ -554,6 +554,70 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
+        OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(order.getOrderNo());
+        if (orderFromTestMachineDO != null){
+            //该订单是由测试机订单转为租赁的订单
+            OrderDO testMachineOrderDO = orderMapper.findByOrderNo(orderFromTestMachineDO.getTestMachineOrderNo());
+            if (testMachineOrderDO == null) {
+                result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_IS_NOT_EXISTS);
+                return result;
+            }
+            //新订单开始时间必须大于测试机订单开始时间，小于测试机结束时间下一天
+            if (com.lxzl.erp.common.util.DateUtil.daysBetween(testMachineOrderDO.getRentStartTime(), order.getRentStartTime()) <= 0
+                    || com.lxzl.erp.common.util.DateUtil.daysBetween(DateUtil.dateInterval(testMachineOrderDO.getExpectReturnTime(), 1), order.getRentStartTime()) > 0){
+                result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_RENT_START_TIME_ERROR);
+                return result;
+            }
+
+            CustomerDO testMachineCustomerDO =  customerMapper.findById(dbOrderDO.getBuyerCustomerId());
+            OrderConsignInfoDO testMachineOrderConsignInfoDO = orderConsignInfoMapper.findByOrderId(dbOrderDO.getId());
+            //原样式机的商品项和配件项
+            List<OrderProductDO> testMachineOrderProductDOList = orderProductMapper.findByOrderIdAndIsItemDelivered(dbOrderDO.getId());
+            List<OrderMaterialDO> testMachineOrderMaterialDOList = orderMaterialMapper.findByOrderIdAndIsItemDelivered(dbOrderDO.getId());
+
+            //客户不允许修改
+            if(!order.getBuyerCustomerNo().equals(testMachineCustomerDO.getCustomerNo())){
+                result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_CUSTOMER_CAN_NOT_UPDATE);
+                return result;
+            }
+            //收货地址不允许修改
+            if (!order.getCustomerConsignId().equals(testMachineOrderConsignInfoDO.getCustomerConsignId())){
+                result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_CUSTOMER_CONSIGN_CAN_NOT_UPDATE);
+                return result;
+            }
+            //原样式机订单的所需分公司也不能修改
+            if(!order.getOrderSubCompanyId().equals(dbOrderDO.getOrderSubCompanyId())){
+                result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_ORDER_SUB_COMPANY_CAN_NOT_UPDATE);
+                return result;
+            }
+            //发货分公司不允许修改
+            if (!order.getDeliverySubCompanyId().equals(dbOrderDO.getDeliverySubCompanyId())){
+                result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_DELIVERY_SUB_COMPANY_CAN_NOT_UPDATE);
+                return result;
+            }
+            //新的租赁订单中测试机的原来商品项和配件项不能为空
+            if (CollectionUtil.isEmpty(testMachineOrderProductDOList) && CollectionUtil.isEmpty(testMachineOrderMaterialDOList)){
+                result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_PRODUCT_AND_MATERIAL_NOT_NULL);
+                return result;
+            }
+
+            //对原测试机的订单只允许修改单价，其他都不能改变
+            if (CollectionUtil.isNotEmpty(testMachineOrderProductDOList)){
+                String validateOrderProductResult = validateOrderProductInfo(testMachineOrderProductDOList,order.getOrderProductList(),CommonConstant.COMMON_CONSTANT_NO);
+                if (!ErrorCode.SUCCESS.equals(validateOrderProductResult)){
+                    result.setErrorCode(validateOrderProductResult);
+                    return result;
+                }
+            }
+            if (CollectionUtil.isNotEmpty(testMachineOrderMaterialDOList)){
+                String validateOrderMaterialResult = validateOrderMaterialInfo(testMachineOrderMaterialDOList,order.getOrderMaterialList(),CommonConstant.COMMON_CONSTANT_NO);
+                if (!ErrorCode.SUCCESS.equals(validateOrderMaterialResult)){
+                    result.setErrorCode(validateOrderMaterialResult);
+                    return result;
+                }
+            }
+        }
+
         List<OrderProductDO> orderProductDOList = ConverterUtil.convertList(order.getOrderProductList(), OrderProductDO.class);
         List<OrderMaterialDO> orderMaterialDOList = ConverterUtil.convertList(order.getOrderMaterialList(), OrderMaterialDO.class);
         OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
@@ -1751,7 +1815,8 @@ public class OrderServiceImpl implements OrderService {
                 OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(orderDO.getOrderNo());
                 if (orderFromTestMachineDO != null){
                     OrderDO testMachineOrderDO = orderMapper.findByNo(orderFromTestMachineDO.getTestMachineOrderNo());
-                    testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_CONSTANT_YES);
+                    testMachineOrderDO.setOrderStatus(OrderStatus.ORDER_STATUS_OVER); //测试机订单转为新订单后，当新订单通过审核后，将原测试机订单改为已结束状态
+                    testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_TWO);
                     testMachineOrderDO.setUpdateTime(currentTime);
                     testMachineOrderDO.setUpdateUser(loginUser.getUserId().toString());
                     orderMapper.update(testMachineOrderDO);
@@ -1761,8 +1826,7 @@ public class OrderServiceImpl implements OrderService {
                     if(ErrorCode.SUCCESS.equals(stopResult)){
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                         return stopResult;
-                    }
-                }
+                    }                }
 
                 orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
                 orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_SUCCESS);
@@ -1816,24 +1880,6 @@ public class OrderServiceImpl implements OrderService {
 //        orderDO.setReletOrderDOList(reletOrderDOList);
 
         Order order = ConverterUtil.convert(orderDO, Order.class);
-
-        //如果订单是按日，并且租期为30以内就标记为测试机
-        if (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && order.getRentTimeLength() <= CommonConstant.ORDER_TEST_MACHINE_RENT_TIME){
-            order.setIsTestMachineOrder(CommonConstant.COMMON_CONSTANT_YES);
-        }
-
-        //订单原本就是测试机订单
-        OrderFromTestMachineDO fromTestMachineMapperByTestOrderNo = orderFromTestMachineMapper.findByTestOrderNo(order.getOrderNo());
-        if(fromTestMachineMapperByTestOrderNo != null){
-            order.setRentOrderNo(fromTestMachineMapperByTestOrderNo.getOrderNo());
-            order.setTurnRentTime(fromTestMachineMapperByTestOrderNo.getCreateTime());
-        }
-
-        //如果订单是由测试机订单转换过来的就标记位测试机转为租赁订单
-        OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(order.getOrderNo());
-        if (orderFromTestMachineDO != null){
-            order.setTestMachineOrderNo(orderFromTestMachineDO.getTestMachineOrderNo());
-        }
 
         if (orderDO.getOrderUnionSellerId() != null) {
             UserDO unionUser = userMapper.findByUserId(orderDO.getOrderUnionSellerId());
@@ -1930,6 +1976,24 @@ public class OrderServiceImpl implements OrderService {
         order.setCanReletOrder(canReletOrder);
         Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
         order.setIsReletOrder(isReletOrder);
+
+        //如果订单是按日，并且租期为30以内就标记为测试机
+        if (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && order.getRentTimeLength() <= CommonConstant.ORDER_TEST_MACHINE_RENT_TIME && CommonConstant.COMMON_CONSTANT_YES.equals(order.getCanReletOrder())){
+            order.setIsTestMachineOrder(CommonConstant.COMMON_CONSTANT_YES);
+        }
+
+        //订单原本就是测试机订单
+        OrderFromTestMachineDO fromTestMachineMapperByTestOrderNo = orderFromTestMachineMapper.findByTestOrderNo(order.getOrderNo());
+        if(fromTestMachineMapperByTestOrderNo != null){
+            order.setRentOrderNo(fromTestMachineMapperByTestOrderNo.getOrderNo());
+        }
+
+        //如果订单是由测试机订单转换过来的就返回原测试机的单号
+        OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(order.getOrderNo());
+        if (orderFromTestMachineDO != null){
+            order.setTestMachineOrderNo(orderFromTestMachineDO.getTestMachineOrderNo());
+        }
+
 
         //获取确认收货变更原因及交货单客户签字图片逻辑
         if (order.getOrderStatus() > OrderStatus.ORDER_STATUS_DELIVERED) {
@@ -2213,7 +2277,7 @@ public class OrderServiceImpl implements OrderService {
         OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(orderDO.getOrderNo());
         if (orderFromTestMachineDO != null){
             OrderDO testMachineOrderDO = orderMapper.findByNo(orderFromTestMachineDO.getTestMachineOrderNo());
-            testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_CONSTANT_NO);
+            testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_ZERO);
             testMachineOrderDO.setUpdateTime(currentTime);
             testMachineOrderDO.setUpdateUser(loginUser.getUserId().toString());
             orderMapper.update(testMachineOrderDO);
@@ -2714,16 +2778,16 @@ public class OrderServiceImpl implements OrderService {
                 for (OrderDO orderDO : orderDOList) {
                     orderNoList.add(orderDO.getOrderNo());
                     Order order = ConverterUtil.convert(orderDO, Order.class);
-                    //订单符合按日租并且租期为30天以内的为测试机订单
-                    if (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && order.getRentTimeLength() <= CommonConstant.ORDER_TEST_MACHINE_RENT_TIME){
-                        order.setIsTestMachineOrder(CommonConstant.COMMON_CONSTANT_YES);
-                    }
-
                     orderDOMap.put(orderDO.getOrderNo(), order);
                     order.setCanReletOrder(CanReletOrderStatus.CAN_RELET_ORDER_STATUS_YES);
                     Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
                     order.setIsReletOrder(isReletOrder);
                     canReletOrderList.add(order);
+
+                    //订单符合按日租并且租期为30天以内的为测试机订单
+                    if (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && order.getRentTimeLength() <= CommonConstant.ORDER_TEST_MACHINE_RENT_TIME && CommonConstant.COMMON_CONSTANT_YES.equals(order.getCanReletOrder())){
+                        order.setIsTestMachineOrder(CommonConstant.COMMON_CONSTANT_YES);
+                    }
                 }
             }
 
@@ -2759,11 +2823,6 @@ public class OrderServiceImpl implements OrderService {
         for (OrderDO orderDO : orderDOList) {
             orderNoList.add(orderDO.getOrderNo());
             Order order = ConverterUtil.convert(orderDO, Order.class);
-
-            //订单符合按日租并且租期为30天以内的为测试机订单
-            if (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && order.getRentTimeLength() <= CommonConstant.ORDER_TEST_MACHINE_RENT_TIME){
-                order.setIsTestMachineOrder(CommonConstant.COMMON_CONSTANT_YES);
-            }
             orderDOMap.put(orderDO.getOrderNo(), order);
             //判断是否可续租
             Integer canReletOrder = orderSupport.isOrderCanRelet(order);
@@ -2771,6 +2830,11 @@ public class OrderServiceImpl implements OrderService {
             Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
             order.setIsReletOrder(isReletOrder);
             orderList.add(order);
+
+            //订单符合按日租并且租期为30天以内的为测试机订单
+            if (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && order.getRentTimeLength() <= CommonConstant.ORDER_TEST_MACHINE_RENT_TIME && CommonConstant.COMMON_CONSTANT_YES.equals(order.getCanReletOrder())){
+                order.setIsTestMachineOrder(CommonConstant.COMMON_CONSTANT_YES);
+            }
         }
         List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
         for (WorkflowLinkDO workflowLinkDO : workflowLinkDOList) {
@@ -4055,6 +4119,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> testMachineOrderConvertOrder(Order order) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -4066,15 +4131,27 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_IS_NOT_EXISTS);
             return result;
         }
-        //检验测试机订单是否已经转为租赁订单
-        if (CommonConstant.COMMON_CONSTANT_YES.equals(testMachineOrderDO.getIsTurnRentOrder())){
-            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER);
+        //如果原测试机订单已经续租就不能进行转租赁的操作
+        if (testMachineOrderDO.getReletOrderId() != null){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_HAD_RELET_CAN_NOT_BE_RENT);
             return result;
         }
-        //该测试机订单是否是已经正在转为租赁订单中
-        OrderFromTestMachineDO machineMapperByTestOrderNo = orderFromTestMachineMapper.findByTestOrderNo(order.getTestMachineOrderNo());
-        if (machineMapperByTestOrderNo != null){
-            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_HAVING_TURN_RENT_ORDER);
+        //测试机订单的状态必须为租赁中和部分退货
+        if (!OrderStatus.ORDER_STATUS_CONFIRM.equals(testMachineOrderDO.getOrderStatus()) &&
+               !OrderStatus.ORDER_STATUS_PART_RETURN.equals(testMachineOrderDO.getOrderStatus())){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_STATUS_MUST_BE_RENTING_OR_PART_RETURN);
+            return result;
+        }
+        //新订单开始时间必须大于测试机订单开始时间，小于测试机结束时间下一天
+        if (com.lxzl.erp.common.util.DateUtil.daysBetween(testMachineOrderDO.getRentStartTime(), order.getRentStartTime()) <= 0
+                || com.lxzl.erp.common.util.DateUtil.daysBetween(DateUtil.dateInterval(testMachineOrderDO.getExpectReturnTime(), 1), order.getRentStartTime()) > 0){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_RENT_START_TIME_ERROR);
+            return result;
+        }
+        //该测试机订单是否是已经正在转为租赁订单
+//        OrderFromTestMachineDO machineMapperByTestOrderNo = orderFromTestMachineMapper.findByTestOrderNo(order.getTestMachineOrderNo());
+        if (CommonConstant.COMMON_ONE.equals(testMachineOrderDO.getIsTurnRentOrder()) || CommonConstant.COMMON_TWO.equals(testMachineOrderDO.getIsTurnRentOrder())) {
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER);
             return result;
         }
         //只有按日租，并且租期小于30天的订单才能执行测试机转为租赁的操作
@@ -4083,17 +4160,20 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
+        /***** 增加的组合商品逻辑 start*******/
+        // 预处理订单中的组合商品项
+        preValidateOrderJointProduct(order);
+        /***** 增加的组合商品逻辑 end*******/
+
         String verifyCreateOrderCode = verifyOperateOrder(order);
         if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
             result.setErrorCode(verifyCreateOrderCode);
             return result;
         }
-
         if (order.getDeliverySubCompanyId() == null) {
             result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
             return result;
         }
-
         if (order.getOrderSubCompanyId() == null){
             result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
             return result;
@@ -4106,7 +4186,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderMaterialDO> testMachineOrderMaterialDOList = orderMaterialMapper.findByOrderId(testMachineOrderDO.getId());
 
         //客户不允许修改
-        if(!order.getBuyerCustomerId().equals(testMachineCustomerDO.getId())){
+        if(!order.getBuyerCustomerNo().equals(testMachineCustomerDO.getCustomerNo())){
             result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_CUSTOMER_CAN_NOT_UPDATE);
             return result;
         }
@@ -4116,7 +4196,7 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         //原样式机订单的所需分公司也不能修改
-        if(order.getOrderSubCompanyId().equals(testMachineOrderDO.getOrderSubCompanyId())){
+        if(!order.getOrderSubCompanyId().equals(testMachineOrderDO.getOrderSubCompanyId())){
             result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_ORDER_SUB_COMPANY_CAN_NOT_UPDATE);
             return result;
         }
@@ -4132,14 +4212,14 @@ public class OrderServiceImpl implements OrderService {
         }
         //对原测试机订单的商品项和配件项只允许修改单价，其他都不能改变
         if (CollectionUtil.isNotEmpty(testMachineOrderProductDOList)){
-            String validateOrderProductResult = validateOrderProductInfo(testMachineOrderProductDOList,order.getOrderProductList());
+            String validateOrderProductResult = validateOrderProductInfo(testMachineOrderProductDOList,order.getOrderProductList(),CommonConstant.COMMON_CONSTANT_YES);
             if (!ErrorCode.SUCCESS.equals(validateOrderProductResult)){
                 result.setErrorCode(validateOrderProductResult);
                 return result;
             }
         }
         if (CollectionUtil.isNotEmpty(testMachineOrderMaterialDOList)){
-            String validateOrderMaterialResult = validateOrderMaterialInfo(testMachineOrderMaterialDOList,order.getOrderMaterialList());
+            String validateOrderMaterialResult = validateOrderMaterialInfo(testMachineOrderMaterialDOList,order.getOrderMaterialList(),CommonConstant.COMMON_CONSTANT_YES);
             if (!ErrorCode.SUCCESS.equals(validateOrderMaterialResult)){
                 result.setErrorCode(validateOrderMaterialResult);
                 return result;
@@ -4153,7 +4233,11 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
         calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
-//        SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
+        if (order.getDeliverySubCompanyId() == null || subCompanyDO == null) {
+            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return result;
+        }
 
         SubCompanyDO orderSubCompanyDO = subCompanyMapper.findById(orderDO.getOrderSubCompanyId());
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
@@ -4175,6 +4259,15 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setExpectReturnTime(expectReturnTime);
         orderMapper.save(orderDO);
 
+        //原测试机订单加入转为租赁单的标记
+        testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_ONE);
+        testMachineOrderDO.setUpdateTime(currentTime);
+        testMachineOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderMapper.update(testMachineOrderDO);
+
+        /***** 增加的组合商品逻辑 start*******/
+        saveOrderJointProductInfo(orderDO.getOrderJointProductDOList(), orderDO, loginUser, currentTime);
+        /***** 增加的组合商品逻辑 end*******/
         saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
         saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
         //为了不影响之前的订单逻辑，这里暂时使用修改的方式
@@ -4188,6 +4281,7 @@ public class OrderServiceImpl implements OrderService {
         OrderFromTestMachineDO orderFromTestMachineDO = new OrderFromTestMachineDO();
         orderFromTestMachineDO.setTestMachineOrderNo(testMachineOrderDO.getOrderNo());
         orderFromTestMachineDO.setOrderNo(orderDO.getOrderNo());
+        orderFromTestMachineDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         orderFromTestMachineDO.setCreateTime(currentTime);
         orderFromTestMachineDO.setCreateUser(loginUser.getUserId().toString());
         orderFromTestMachineDO.setUpdateTime(currentTime);
@@ -4210,185 +4304,7 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
-    @Override
-    public ServiceResult<String, String> updateTestMachineOrderConvertOrder(Order order) {
-        ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = userSupport.getCurrentUser();
-        Date currentTime = new Date();
-
-        OrderDO dbOrderDO = orderMapper.findByOrderNo(order.getOrderNo());
-        if (dbOrderDO == null) {
-            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-            return result;
-        }
-        if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(dbOrderDO.getOrderStatus())) {
-            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
-            return result;
-        }
-        if (!loginUser.getUserId().toString().equals(dbOrderDO.getCreateUser())) {
-            result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
-            return result;
-        }
-
-        //加入测试机转租赁的校验
-//        OrderDO testMachineOrderDO = orderMapper.findByNo(order.getTestMachineOrderNo());
-//        if (testMachineOrderDO == null){
-//            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_IS_NOT_EXISTS);
-//            return result;
-//        }
-        //检验测试机订单是否已经转为租赁订单
-//        if (CommonConstant.COMMON_CONSTANT_YES.equals(dbOrderDO.getIsTurnRentOrder())){
-//            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER);
-//            return result;
-//        }
-
-        //该测试机订单是否是已经正在转为租赁订单中
-//        OrderFromTestMachineDO machineMapperByTestOrderNo = orderFromTestMachineMapper.findByTestOrderNo(order.getTestMachineOrderNo());
-//        if (machineMapperByTestOrderNo != null){
-//            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_HAVING_TURN_RENT_ORDER);
-//            return result;
-//        }
-        //只有按日租，并且租期小于30天的订单才能执行测试机转为租赁的操作
-//        if (!OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) || order.getRentTimeLength() > CommonConstant.RELET_TIME_OF_RENT_TYPE_MONTH){
-//            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_RENT_CONDITION_IS_WRONG);
-//            return result;
-//        }
-
-        String verifyCreateOrderCode = verifyOperateOrder(order);
-        if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
-            result.setErrorCode(verifyCreateOrderCode);
-            return result;
-        }
-
-        if (order.getDeliverySubCompanyId() == null) {
-            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
-            return result;
-        }
-
-        if (order.getOrderSubCompanyId() == null){
-            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
-            return result;
-        }
-
-        CustomerDO testMachineCustomerDO =  customerMapper.findById(dbOrderDO.getBuyerCustomerId());
-        OrderConsignInfoDO testMachineOrderConsignInfoDO = orderConsignInfoMapper.findByOrderId(dbOrderDO.getId());
-        //原样式机的商品项和配件项
-        List<OrderProductDO> testMachineOrderProductDOList = orderProductMapper.findByOrderIdAndIsItemDelivered(dbOrderDO.getId());
-        List<OrderMaterialDO> testMachineOrderMaterialDOList = orderMaterialMapper.findByOrderIdAndIsItemDelivered(dbOrderDO.getId());
-
-        //客户不允许修改
-        if(!order.getBuyerCustomerId().equals(testMachineCustomerDO.getId())){
-            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_CUSTOMER_CAN_NOT_UPDATE);
-            return result;
-        }
-        //收货地址不允许修改
-        if (!order.getCustomerConsignId().equals(testMachineOrderConsignInfoDO.getCustomerConsignId())){
-            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_CUSTOMER_CONSIGN_CAN_NOT_UPDATE);
-            return result;
-        }
-        //原样式机订单的所需分公司也不能修改
-        if(order.getOrderSubCompanyId().equals(dbOrderDO.getOrderSubCompanyId())){
-            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_ORDER_SUB_COMPANY_CAN_NOT_UPDATE);
-            return result;
-        }
-        //发货分公司不允许修改
-        if (!order.getDeliverySubCompanyId().equals(dbOrderDO.getDeliverySubCompanyId())){
-            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_DELIVERY_SUB_COMPANY_CAN_NOT_UPDATE);
-            return result;
-        }
-        //新的租赁订单中测试机的原来商品项和配件项不能为空
-        if (CollectionUtil.isEmpty(testMachineOrderProductDOList) && CollectionUtil.isEmpty(testMachineOrderMaterialDOList)){
-            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_PRODUCT_AND_MATERIAL_NOT_NULL);
-            return result;
-        }
-
-        //对原测试机的订单只允许修改单价，其他都不能改变
-        if (CollectionUtil.isNotEmpty(testMachineOrderProductDOList)){
-            String validateOrderProductResult = validateOrderProductInfo(testMachineOrderProductDOList,order.getOrderProductList());
-            if (!ErrorCode.SUCCESS.equals(validateOrderProductResult)){
-                result.setErrorCode(validateOrderProductResult);
-                return result;
-            }
-        }
-        if (CollectionUtil.isNotEmpty(testMachineOrderMaterialDOList)){
-            String validateOrderMaterialResult = validateOrderMaterialInfo(testMachineOrderMaterialDOList,order.getOrderMaterialList());
-            if (!ErrorCode.SUCCESS.equals(validateOrderMaterialResult)){
-                result.setErrorCode(validateOrderMaterialResult);
-                return result;
-            }
-        }
-
-        List<OrderProductDO> orderProductDOList = ConverterUtil.convertList(order.getOrderProductList(), OrderProductDO.class);
-        List<OrderMaterialDO> orderMaterialDOList = ConverterUtil.convertList(order.getOrderMaterialList(), OrderMaterialDO.class);
-        OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
-        orderDO.setOrderProductDOList(orderProductDOList);
-        orderDO.setOrderMaterialDOList(orderMaterialDOList);
-        // 校验客户风控信息
-        verifyCustomerRiskInfo(orderDO);
-        calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
-        calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
-
-        SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
-        if (order.getDeliverySubCompanyId() == null || subCompanyDO == null) {
-            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
-            return result;
-        }
-        orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
-        orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
-
-        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
-        orderDO.setId(dbOrderDO.getId());
-        orderDO.setOrderNo(dbOrderDO.getOrderNo());
-        orderDO.setOrderSellerId(testMachineCustomerDO.getOwner());
-        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
-        orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        orderDO.setUpdateUser(loginUser.getUserId().toString());
-        orderDO.setUpdateTime(currentTime);
-        //添加当前客户名称
-        orderDO.setBuyerCustomerName(testMachineCustomerDO.getCustomerName());
-
-        //添加客户的结算时间（天）
-//        Date rentStartTime = order.getRentStartTime();
-        orderDO.setStatementDate(testMachineCustomerDO.getStatementDate());
-
-        Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
-        orderDO.setExpectReturnTime(expectReturnTime);
-        orderMapper.update(orderDO);
-
-        saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
-        saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
-        //为了不影响之前的订单逻辑，这里暂时使用修改的方式
-        setOrderProductSummary(orderDO);
-        orderMapper.update(orderDO);
-
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.UPDATE_ORDER);
-
-        updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
-        // TODO: 2018\4\26 0026  清除之前订单锁定的优惠券
-        String revertresult = couponSupport.revertCoupon(order.getOrderNo());
-        if (!ErrorCode.SUCCESS.equals(revertresult)) {
-            result.setErrorCode(revertresult);
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            return result;
-        }
-        // TODO: 2018\4\26 0026  重新使用优惠券
-        if (CollectionUtil.isEmpty(order.getCouponList())) {
-            result.setErrorCode(ErrorCode.SUCCESS);
-            result.setResult(orderDO.getOrderNo());
-            return result;
-        }
-        String rs = couponSupport.useCoupon(order);
-        if (!ErrorCode.SUCCESS.equals(rs)) {
-            result.setErrorCode(rs);
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            return result;
-        }
-        result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(orderDO.getOrderNo());
-        return result;
-    }
-
-    private String validateOrderProductInfo(List<OrderProductDO> testMachineOrderProductDOList, List<OrderProduct> orderProductList) {
+    private String validateOrderProductInfo(List<OrderProductDO> testMachineOrderProductDOList, List<OrderProduct> orderProductList,Integer orderAction) {
         Map<Integer, OrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(testMachineOrderProductDOList, "id");
         if (CollectionUtil.isNotEmpty(orderProductList)){
             Map<Integer,OrderProduct> newOrderProductMap = new HashMap<>();
@@ -4404,11 +4320,23 @@ public class OrderServiceImpl implements OrderService {
                 return ErrorCode.TEST_MACHINE_ORDER_PRODUCT_CAN_NOT_UPDATE;
             }
 
-            for (OrderProductDO testMachineOrderProductDO : testMachineOrderProductDOList){
-                if(newOrderProductMap.get(testMachineOrderProductDO.getId()) != null){
-                    OrderProduct orderProduct = newOrderProductMap.get(testMachineOrderProductDO.getId());
-                    if (!testMachineOrderProductDO.getProductCount().equals(orderProduct.getProductCount())){
-                        return ErrorCode.TEST_MACHINE_ORDER_PRODUCT_COUNT_CAN_NOT_UPDATE;
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderAction)){
+                //操作类型为1，则是执行的测试机订单转为新的订单的操作
+                for (OrderProductDO testMachineOrderProductDO : testMachineOrderProductDOList){
+                    if(newOrderProductMap.get(testMachineOrderProductDO.getId()) != null){
+                        OrderProduct orderProduct = newOrderProductMap.get(testMachineOrderProductDO.getId());
+                        if (!testMachineOrderProductDO.getRentingProductCount().equals(orderProduct.getProductCount())){
+                            return ErrorCode.TEST_MACHINE_ORDER_PRODUCT_COUNT_CAN_NOT_UPDATE;
+                        }
+                    }
+                }
+            }else{
+                for (OrderProductDO testMachineOrderProductDO : testMachineOrderProductDOList){
+                    if(newOrderProductMap.get(testMachineOrderProductDO.getId()) != null){
+                        OrderProduct orderProduct = newOrderProductMap.get(testMachineOrderProductDO.getId());
+                        if (!testMachineOrderProductDO.getProductCount().equals(orderProduct.getProductCount())){
+                            return ErrorCode.TEST_MACHINE_ORDER_PRODUCT_COUNT_CAN_NOT_UPDATE;
+                        }
                     }
                 }
             }
@@ -4417,7 +4345,7 @@ public class OrderServiceImpl implements OrderService {
         return ErrorCode.SUCCESS;
     }
 
-    private String validateOrderMaterialInfo(List<OrderMaterialDO> testMachineOrderMaterialDOList, List<OrderMaterial> orderMaterialList) {
+    private String validateOrderMaterialInfo(List<OrderMaterialDO> testMachineOrderMaterialDOList, List<OrderMaterial> orderMaterialList,Integer orderAction) {
         Map<Integer, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(testMachineOrderMaterialDOList, "id");
         if (CollectionUtil.isNotEmpty(orderMaterialList)){
             Map<Integer,OrderMaterial> newOrderMaterialMap = new HashMap<>();
@@ -4433,11 +4361,23 @@ public class OrderServiceImpl implements OrderService {
                 return ErrorCode.TEST_MACHINE_ORDER_MATERIAL_CAN_NOT_UPDATE;
             }
 
-            for (OrderMaterialDO testMachineOrderMaterialDO : testMachineOrderMaterialDOList){
-                if(newOrderMaterialMap.get(testMachineOrderMaterialDO.getId()) != null){
-                    OrderMaterial orderMaterial = newOrderMaterialMap.get(testMachineOrderMaterialDO.getId());
-                    if (!testMachineOrderMaterialDO.getMaterialCount().equals(orderMaterial.getMaterialCount())){
-                        return ErrorCode.TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE;
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderAction)){
+                //操作类型为1，则是执行的测试机订单转为新的订单的操作
+                for (OrderMaterialDO testMachineOrderMaterialDO : testMachineOrderMaterialDOList){
+                    if(newOrderMaterialMap.get(testMachineOrderMaterialDO.getId()) != null){
+                        OrderMaterial orderMaterial = newOrderMaterialMap.get(testMachineOrderMaterialDO.getId());
+                        if (!testMachineOrderMaterialDO.getRentingMaterialCount().equals(orderMaterial.getMaterialCount())){
+                            return ErrorCode.TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE;
+                        }
+                    }
+                }
+            }else{
+                for (OrderMaterialDO testMachineOrderMaterialDO : testMachineOrderMaterialDOList){
+                    if(newOrderMaterialMap.get(testMachineOrderMaterialDO.getId()) != null){
+                        OrderMaterial orderMaterial = newOrderMaterialMap.get(testMachineOrderMaterialDO.getId());
+                        if (!testMachineOrderMaterialDO.getMaterialCount().equals(orderMaterial.getMaterialCount())){
+                            return ErrorCode.TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE;
+                        }
                     }
                 }
             }

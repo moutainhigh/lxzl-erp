@@ -64,6 +64,10 @@ public class OrderSupport {
      */
     public Integer isOrderCanRelet(Order order){
 
+        if (null != order.getIsTurnRentOrder() && !CommonConstant.COMMON_ZERO.equals(order.getIsTurnRentOrder())){
+            //转租赁的原测试机订单不能操作
+            return  CanReletOrderStatus.CAN_RELET_ORDER_STATUS_NO;
+        }
         //检查是否在续租时间范围
         Date currentTime = new Date();
         Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(currentTime, order.getExpectReturnTime());

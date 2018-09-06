@@ -1094,8 +1094,11 @@ public class ErrorCode {
     public static final String TEST_MACHINE_ORDER_PRODUCT_UNIT_AMOUNT_CAN_NOT_UPDATE = "J30000010";
     public static final String TEST_MACHINE_ORDER_MATERIAL_CAN_NOT_UPDATE = "J30000011";
     public static final String TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE = "J30000012";
-    public static final String TEST_MACHINE_ORDER_HAVING_TURN_RENT_ORDER = "J30000013";
-    public static final String TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER = "J30000014";
+    public static final String TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER = "J30000013";
+    public static final String TEST_MACHINE_ORDER_STATUS_MUST_BE_RENTING_OR_PART_RETURN = "J30000014";
+    public static final String TEST_MACHINE_ORDER_HAD_RELET_CAN_NOT_BE_RENT = "J30000015";
+    public static final String TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_RENT = "J30000016";
+    public static final String TEST_MACHINE_ORDER_RENT_START_TIME_ERROR = "J30000017";
 
     //Mall
     public static final String MALL_SYSTEM_CONNECT_EXCEPTION = "Mall00001";
@@ -2166,20 +2169,22 @@ public class ErrorCode {
 
 
         MAP.put(TEST_MACHINE_ORDER_RENT_CONDITION_IS_WRONG, "只有按天租并且租期小于30的订单，才能执行此操作");
-        MAP.put(TEST_MACHINE_ORDER_CUSTOMER_CAN_NOT_UPDATE, "测试样机订单的客户不允许修改");
-        MAP.put(TEST_MACHINE_ORDER_CUSTOMER_CONSIGN_CAN_NOT_UPDATE, "测试样机订单的客户收货地址不允许修改");
-        MAP.put(TEST_MACHINE_ORDER_ORDER_SUB_COMPANY_CAN_NOT_UPDATE, "测试样机的订单所需分公司不允许修改");
-        MAP.put(TEST_MACHINE_ORDER_DELIVERY_SUB_COMPANY_CAN_NOT_UPDATE, "测试样机的订单发货分公司不允许修改");
-        MAP.put(TEST_MACHINE_ORDER_PRODUCT_CAN_NOT_UPDATE, "测试样机的订单商品项必须存在，并且数量不能修改");
-        MAP.put(TEST_MACHINE_ORDER_IS_NOT_EXISTS, "测试样机的订单不存在");
-        MAP.put(TEST_MACHINE_ORDER_PRODUCT_AND_MATERIAL_NOT_NULL, "测试样机的订单的商品和配件不能都为空，请检查原样机订单是否有误");
-        MAP.put(TEST_MACHINE_ORDER_PRODUCT_UNIT_AMOUNT_CAN_NOT_UPDATE, "测试样机的订单的商品项的商品单价不允许修改");
-        MAP.put(TEST_MACHINE_ORDER_PRODUCT_COUNT_CAN_NOT_UPDATE, "测试样机的订单的商品项的商品数量不允许修改");
-        MAP.put(TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE, "测试样机的订单的配件项的配件数量不允许修改");
-        MAP.put(TEST_MACHINE_ORDER_MATERIAL_CAN_NOT_UPDATE, "测试样机的订配件项必须存在，并且数量不能修改");
-        MAP.put(TEST_MACHINE_ORDER_HAVING_TURN_RENT_ORDER, "测试样机的订单正在转为订单的过程中，如需进行此操作请取消已经转变的订单");
-        MAP.put(TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER, "测试样机的订单已经转为新订单，该订单禁止此操作");
-
+        MAP.put(TEST_MACHINE_ORDER_CUSTOMER_CAN_NOT_UPDATE, "测试机订单的客户不允许修改");
+        MAP.put(TEST_MACHINE_ORDER_CUSTOMER_CONSIGN_CAN_NOT_UPDATE, "测试机订单的客户收货地址不允许修改");
+        MAP.put(TEST_MACHINE_ORDER_ORDER_SUB_COMPANY_CAN_NOT_UPDATE, "测试机的订单所需分公司不允许修改");
+        MAP.put(TEST_MACHINE_ORDER_DELIVERY_SUB_COMPANY_CAN_NOT_UPDATE, "测试机的订单发货分公司不允许修改");
+        MAP.put(TEST_MACHINE_ORDER_PRODUCT_CAN_NOT_UPDATE, "测试机的订单商品项必须存在，并且数量不能修改");
+        MAP.put(TEST_MACHINE_ORDER_IS_NOT_EXISTS, "测试机的订单不存在");
+        MAP.put(TEST_MACHINE_ORDER_PRODUCT_AND_MATERIAL_NOT_NULL, "测试机的订单的商品和配件不能都为空，请检查原样机订单是否有误");
+        MAP.put(TEST_MACHINE_ORDER_PRODUCT_UNIT_AMOUNT_CAN_NOT_UPDATE, "测试机的订单的商品项的商品单价不允许修改");
+        MAP.put(TEST_MACHINE_ORDER_PRODUCT_COUNT_CAN_NOT_UPDATE, "测试机的订单的商品项的商品数量不允许修改");
+        MAP.put(TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE, "测试机的订单的配件项的配件数量不允许修改");
+        MAP.put(TEST_MACHINE_ORDER_MATERIAL_CAN_NOT_UPDATE, "测试机的订单配件项必须存在，并且数量不能修改");
+        MAP.put(TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER, "测试样的订单已经转为新订单，如需进行此操作请取消已经转变的订单");
+        MAP.put(TEST_MACHINE_ORDER_STATUS_MUST_BE_RENTING_OR_PART_RETURN, "只有租赁中和部分退货的测试机订单才能转为租赁订单");
+        MAP.put(TEST_MACHINE_ORDER_HAD_RELET_CAN_NOT_BE_RENT, "已经有续租的订单，不能执行该操作");
+        MAP.put(TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_RENT, "转租赁的原测试机订单，不能执行该操作");
+        MAP.put(TEST_MACHINE_ORDER_RENT_START_TIME_ERROR, "新订单的起租时间需大于原测试机订单的起租时间，且小于等于原测试机订单结束时间的下一天");
 
         MAP.put(MALL_SYSTEM_CONNECT_EXCEPTION, "连接Mall-App系统异常");
 

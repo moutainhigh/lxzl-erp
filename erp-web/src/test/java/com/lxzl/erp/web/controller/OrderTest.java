@@ -91,7 +91,7 @@ public class OrderTest extends ERPTransactionalTest {
         order.setBuyerRemark("2018.3.22 18:52 测试");
         order.setRentStartTime(new Date());
         order.setExpectDeliveryTime(new Date());
-        order.setOrderSubCompanyId(3);
+        order.setOrderSubCompanyId(8);
         order.setDeliverySubCompanyId(1);
 
         order.setRentType(OrderRentType.RENT_TYPE_DAY);
@@ -177,8 +177,8 @@ public class OrderTest extends ERPTransactionalTest {
 
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerNo("LXCC-1000-20180831-00003");
-        order.setCustomerConsignId(6762);
+        order.setBuyerCustomerNo("LXCC-027-20180824-00067");
+        order.setCustomerConsignId(6558);
         order.setRentStartTime(new Date());
         order.setIsPeer(0);
 
@@ -452,8 +452,8 @@ public class OrderTest extends ERPTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         OrderCommitParam order = new OrderCommitParam();
-        order.setOrderNo("LXO-20180821-1000-00003");
-        order.setVerifyUser(500013);//审核人
+        order.setOrderNo("LXO-20180904-021-00005");
+        order.setVerifyUser(500359);//审核人
         List<Integer> imageList = new ArrayList<>();
         imageList.add(1818);
         order.setImgIdList(imageList);
@@ -565,12 +565,8 @@ public class OrderTest extends ERPTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         
-        Date now = new Date();
-        now.getTime();
-
-
         Order order = new Order();
-        order.setOrderNo("LXO-20180709-0755-00047");
+        order.setOrderNo("LXO-20180903-025-00010");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
     }
 
@@ -746,9 +742,26 @@ public class OrderTest extends ERPTransactionalTest {
     }
 
     @Test
+    public void testMachineOrderConvertOrderJSON() throws Exception {
+        String str = "{\"buyerCustomerNo\":\"LXCC-0755-20180905-00002\",\"rentStartTime\":1536105600000,\"expectDeliveryTime\":1536019200000,\"buyerRemark\":\"asf\",\"customerConsignId\":\"6583\",\"highTaxRate\":\"10\",\"lowTaxRate\":\"90\",\"deliveryMode\":\"3\",\"rentType\":\"2\",\"rentTimeLength\":\"6\",\"isPeer\":\"0\",\"deliverySubCompanyId\":\"2\",\"orderSellerId\":500383,\"orderSubCompanyId\":2,\"testMachineOrderNo\":\"LXO-20180905-0755-00001\",\"isTurnRentOrder\":0,\"orderProductList\":[{\"serialNumber\":\"exF7pPsm\",\"productSkuId\":1689,\"productUnitAmount\":\"299\",\"productCount\":\"10\",\"rentTimeLength\":\"\",\"insuranceAmount\":\"\",\"isNewProduct\":0,\"depositAmount\":0,\"isItemDelivered\":\"1\",\"orderProductId\":\"4403\"},{\"serialNumber\":\"rIiK0nkl\",\"productSkuId\":1689,\"productUnitAmount\":\"299\",\"productCount\":\"20\",\"rentTimeLength\":\"\",\"insuranceAmount\":\"\",\"isNewProduct\":1,\"depositAmount\":0,\"isItemDelivered\":\"0\",\"orderProductId\":\"\"}],\"orderMaterialList\":[{\"serialNumber\":\"6SgIZxXk\",\"materialNo\":\"LX-IPAD2YC-20180212-00577\",\"materialId\":577,\"materialUnitAmount\":\"20\",\"materialCount\":\"10\",\"productCount\":\"\",\"rentTimeLength\":\"\",\"productUnitAmount\":\"\",\"insuranceAmount\":\"\",\"isNewMaterial\":0,\"depositAmount\":0,\"isItemDelivered\":\"1\",\"orderMaterialId\":\"7045\"}]}";
+
+        Order order = JSONUtil.parseObject(str,Order.class);
+        TestResult testResult = getJsonTestResult("/order/testMachineOrderConvertOrder", order);
+        System.err.println(testResult);
+    }
+
+    @Test
+    public void updateOrderNewJSON() throws Exception {
+        String str = "{\"orderNo\":\"LXO-20180905-027-00029\",\"buyerCustomerNo\":\"LXCC-027-20180724-00095\",\"rentStartTime\":1536105600000,\"expectDeliveryTime\":1536105600000,\"buyerRemark\":\"\",\"customerConsignId\":\"6477\",\"highTaxRate\":\"80\",\"lowTaxRate\":\"20\",\"deliveryMode\":\"3\",\"rentType\":\"2\",\"rentTimeLength\":\"12\",\"isPeer\":\"0\",\"deliverySubCompanyId\":\"8\",\"orderProductList\":[{\"serialNumber\":\"80Mb7FRo\",\"productId\":2000577,\"productSkuId\":1689,\"productUnitAmount\":\"10\",\"productCount\":\"5\",\"rentTimeLength\":\"\",\"insuranceAmount\":\"\",\"isNewProduct\":0,\"depositAmount\":0},{\"serialNumber\":\"HbSudGU0\",\"productId\":2000690,\"productSkuId\":1719,\"productUnitAmount\":\"50\",\"productCount\":\"20\",\"rentTimeLength\":\"\",\"insuranceAmount\":\"\",\"isNewProduct\":0,\"depositAmount\":0}],\"orderMaterialList\":[{\"serialNumber\":\"wnY0HrTF\",\"materialNo\":\"LX-IPAD2YC-20180212-00577\",\"materialId\":577,\"materialUnitAmount\":\"10\",\"materialCount\":\"5\",\"productCount\":\"\",\"rentTimeLength\":\"\",\"productUnitAmount\":\"\",\"insuranceAmount\":\"\",\"isNewMaterial\":0,\"depositAmount\":0},{\"serialNumber\":\"Osyz94JD\",\"materialNo\":\"LX-LP29X220-20180212-00015\",\"materialId\":15,\"materialUnitAmount\":\"10\",\"materialCount\":\"20\",\"productCount\":\"\",\"rentTimeLength\":\"\",\"productUnitAmount\":\"\",\"insuranceAmount\":\"\",\"isNewMaterial\":0,\"depositAmount\":0}]}";
+
+        Order order = JSONUtil.parseObject(str,Order.class);
+        TestResult testResult = getJsonTestResult("/order/updateNew", order);
+        System.err.println(testResult);
+    }
+    @Test
     public void testMachineOrderConvertOrder() throws Exception {
         Order order = new Order();
-        order.setTestMachineOrderNo("LXO-20180903-027-00022");
+        order.setTestMachineOrderNo("LXO-20180904-027-00004");
         order.setDeliveryMode(DeliveryMode.DELIVERY_MODE_EXPRESS);
         order.setLogisticsAmount(new BigDecimal(12));
         order.setBuyerRemark("2018.3.22 18:52 测试");
@@ -762,7 +775,7 @@ public class OrderTest extends ERPTransactionalTest {
 
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
-        orderProduct.setOrderProductId(14560);
+        orderProduct.setOrderProductId(4363);
         orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
         orderProduct.setProductId(2000018);
         orderProduct.setProductSkuId(218);
@@ -806,8 +819,8 @@ public class OrderTest extends ERPTransactionalTest {
 
         OrderMaterial orderMaterial = new OrderMaterial();
         orderMaterial.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+        orderMaterial.setOrderMaterialId(7068);
         orderMaterial.setMaterialId(40);
-        orderMaterial.setOrderMaterialId(4389);
         orderMaterial.setMaterialCount(3);
         orderMaterial.setIsNewMaterial(1);
         orderMaterial.setInsuranceAmount(new BigDecimal(600.0));
@@ -844,8 +857,8 @@ public class OrderTest extends ERPTransactionalTest {
 
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerNo("LXCC-1000-20180831-00003");
-        order.setCustomerConsignId(6762);
+        order.setBuyerCustomerNo("LXCC-027-20180824-00067");
+        order.setCustomerConsignId(6558);
         order.setRentStartTime(new Date());
         order.setIsPeer(0);
 

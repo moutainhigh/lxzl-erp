@@ -220,18 +220,6 @@ public class OrderController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    /**
-     * 更改测试机订单转为租赁订单
-     * @param order
-     * @param validResult
-     * @return
-     */
-    @RequestMapping(value = "updateTestMachineOrderConvertOrder", method = RequestMethod.POST)
-    public Result updateTestMachineOrderConvertOrder(@RequestBody Order order, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = orderService.updateTestMachineOrderConvertOrder(order);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
-
 
     @Autowired
     private ResultGenerator resultGenerator;

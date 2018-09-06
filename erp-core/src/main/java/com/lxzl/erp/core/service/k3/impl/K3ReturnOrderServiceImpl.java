@@ -1195,6 +1195,11 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 if (!orderCatch.containsKey(k3ReturnOrderDetail.getOrderNo())) {
                     // 改成从erp里查询订单
                     OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
+                    if (null != orderDO.getIsTurnRentOrder() && !CommonConstant.COMMON_ZERO.equals(orderDO.getIsTurnRentOrder())){
+                        //转租赁的原测试机订单不能操作
+                        result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_RENT);
+                        return  result;
+                    }
                     //不是K3老订单进行自加操作
                     if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
                         erpOrderCount++;

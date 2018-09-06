@@ -270,10 +270,4 @@ public interface OrderService extends VerifyReceiver {
      */
     ServiceResult<String,String> testMachineOrderConvertOrder(Order order);
 
-    /**
-     * 更改测试机订单转为租赁订单
-     * @param order
-     * @return
-     */
-    ServiceResult<String,String> updateTestMachineOrderConvertOrder(Order order);
 }

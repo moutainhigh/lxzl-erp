@@ -294,6 +294,16 @@ public class PageController extends BaseController {
         return "/orderManage/orderPickListPrint";
     }
 
+    @RequestMapping("/order-manage/choose-relet-type")
+    public String orderChooseReletType() {
+        return "/component/order/reletChooseType";
+    }
+
+    @RequestMapping("/order-manage/test-relet-add")
+    public String orderTestReletAdd() {
+        return "/orderManage/orderTestReletAdd";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
@@ -860,6 +870,20 @@ public class PageController extends BaseController {
         return "/statisticsManage/salesmanDeduct";
     }
 
+    @RequestMapping("/statistics/day-operate-data")
+    public String statisticsDayOperateData() {
+        return "/statisticsManage/dayOperateData";
+    }
+
+    @RequestMapping("/statistics/week-operate-data")
+    public String statisticsWeekOperateData() {
+        return "/statisticsManage/weekOperateData";
+    }
+
+    @RequestMapping("/statistics/month-operate-data")
+    public String statisticsMonthOperateData() {
+        return "/statisticsManage/monthOperateData";
+    }
 
     //充值记录
     @RequestMapping("/recharge-manage/list")

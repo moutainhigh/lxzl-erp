@@ -73,7 +73,7 @@ public class Order extends BasePO {
     private Integer dataStatus;
     private String remark;                                      // 备注信息
     private Date createTime;                                    // 订单创建时间
-    private Integer isTurnRentOrder;                            // 是否已经转为租赁单,1-是;0-否。(测试机专用字段）
+    private Integer isTurnRentOrder;                            // 是否已经转为租赁单,0-否;1-生成新订单;2-新订单审核通过;。(测试机专用字段)
 
     private Integer customerConsignId;
     private String buyerCustomerNo;                             // 客户编号
@@ -88,7 +88,6 @@ public class Order extends BasePO {
 
     private String testMachineOrderNo;                         //原测试机订单的编号
     private String rentOrderNo;                               //转租的新订单编号
-    private Date turnRentTime;                                 //转为租赁订单的时间
 
     private List<OrderProduct> orderProductList;                // 订单商品项
     private List<OrderMaterial> orderMaterialList;              // 订单配件项
@@ -814,11 +813,4 @@ public class Order extends BasePO {
         this.rentOrderNo = rentOrderNo;
     }
 
-    public Date getTurnRentTime() {
-        return turnRentTime;
-    }
-
-    public void setTurnRentTime(Date turnRentTime) {
-        this.turnRentTime = turnRentTime;
-    }
 }
