@@ -1815,7 +1815,7 @@ public class OrderServiceImpl implements OrderService {
                 OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(orderDO.getOrderNo());
                 if (orderFromTestMachineDO != null){
                     OrderDO testMachineOrderDO = orderMapper.findByNo(orderFromTestMachineDO.getTestMachineOrderNo());
-                    testMachineOrderDO.setOrderStatus(OrderStatus.ORDER_STATUS_OVER); //测试机订单转为新订单后，当新订单通过审核后，将原测试机订单改为已结束状态
+                    testMachineOrderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK); //测试机订单转为新订单后，当新订单通过审核后，将原测试机订单改为已归还状态
                     testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_TWO);
                     testMachineOrderDO.setUpdateTime(currentTime);
                     testMachineOrderDO.setUpdateUser(loginUser.getUserId().toString());
