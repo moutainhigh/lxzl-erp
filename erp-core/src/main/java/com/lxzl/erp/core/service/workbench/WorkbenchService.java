@@ -19,4 +19,10 @@ public interface WorkbenchService {
      */
     ServiceResult<String,Workbench> queryWorkbenchCount(WorkbenchQueryParam workbenchQueryParam);
 
+    /**
+     * 查询仓库工作台数量
+     * @param workbenchQueryParam
+     * @return
+     */
+    ServiceResult<String, Workbench> queryWarehouseWorkbenchCount(WorkbenchQueryParam workbenchQueryParam);
 }

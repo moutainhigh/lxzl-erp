@@ -45,10 +45,15 @@
 		<result column="unit_insured_number" jdbcType="INTEGER" property="unitInsuredNumber" />
 		<result column="affiliated_enterprise" jdbcType="VARCHAR" property="affiliatedEnterprise" />
 		<result column="simple_company_name" jdbcType="VARCHAR" property="simpleCompanyName"/>
+
+		<result column="is_subsidiary" jdbcType="BIT" property="isSubsidiary"/>
+		<result column="parent_customer_id" jdbcType="INTEGER" property="parentCustomerId"/>
+		<result column="is_parent" jdbcType="BIT" property="isParent"/>
 	</resultMap>
 
 	<sql id="column_List">
 		ecc.id,ecc.customer_id,ecc.landline,ecc.connect_real_name,ecc.connect_phone,ecc.company_name,ecc.company_abb,ecc.province,ecc.city,ecc.district,ecc.address,ecc.legal_person,ecc.legal_person_no,ecc.business_license_no,ecc.data_status,ecc.remark,ecc.create_time,ecc.create_user,ecc.update_time,ecc.update_user,ecc.customer_origin,ecc.company_found_time,ecc.industry,ecc.registered_capital,ecc.office_number,ecc.product_purpose,ecc.customer_company_need_first_json,ecc.customer_company_need_later_json,ecc.agent_person_name,ecc.agent_person_phone,ecc.agent_person_no,ecc.unified_credit_code,ecc.customer_no,ecc.is_legal_person_apple,ecc.legal_person_phone,ecc.operating_area,ecc.unit_insured_number,ecc.affiliated_enterprise,ecc.default_address_refer_id,ecc.address_verify_status,ecc.simple_company_name
+		,ecc.is_subsidiary,ecc.parent_customer_id,ecc.is_parent
 	</sql>
 
 	<select id="findById" resultMap="CustomerCompanyDO" parameterType="java.lang.Integer">
@@ -59,6 +64,16 @@
 	<select id="findByCustomerId" resultMap="CustomerCompanyDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_customer_company ecc
 		WHERE ecc.customer_id = #{customerId, jdbcType=INTEGER} AND ecc.data_status = 1
+	</select>
+
+	<select id="findParentCustomerByCustomerId" resultType="com.lxzl.erp.common.domain.customer.pojo.dto.CustomerCompanyDTO" parameterType="java.lang.Integer">
+		SELECT
+		 ecc.is_subsidiary as isSubsidiary ,
+		 pcc.customer_no as parentCustomerNo,
+		 pcc.company_name as parentCustomerName
+		FROM erp_customer_company AS ecc
+		LEFT JOIN erp_customer_company AS pcc ON pcc.customer_id=ecc.parent_customer_id
+		WHERE ecc.customer_id= #{customerId, jdbcType=INTEGER}
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -192,6 +207,15 @@
 			<if test="addressVerifyStatus != null">
 				address_verify_status = #{addressVerifyStatus, jdbcType=VARCHAR},
 			</if>
+			<if test="isSubsidiary != null">
+				is_subsidiary = #{isSubsidiary, jdbcType=BIT},
+			</if>
+			<if test="parentCustomerId != null">
+				parent_customer_id = #{parentCustomerId, jdbcType=INTEGER},
+			</if>
+			<if test="isParent != null">
+				is_parent = #{isParent, jdbcType=BIT},
+			</if>
 		</set>
 	</sql>
 
@@ -314,4 +338,46 @@
 
 	</select>
 
+	<select id="findByCustomerIdList" resultMap="CustomerCompanyDO" >
+		SELECT * FROM `erp_customer_company` ecc WHERE ecc.data_status = 1 AND ecc.customer_id IN
+		<foreach collection="list" index="index" item="customerId" open="(" separator="," close=")">
+			#{customerId,jdbcType=INTEGER}
+		</foreach>
+	</select>
+
+	<update id="updateList" parameterType="java.util.ArrayList">
+		update erp_customer_company
+		SET
+		<trim>
+			is_subsidiary =
+			<foreach item="customerCompanyDO" collection="customerCompanyDOList"  index="index" separator=" " open="case id" close="end">
+				when #{customerCompanyDO.id} then #{customerCompanyDO.isSubsidiary}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			parent_customer_id =
+			<foreach item="customerCompanyDO" collection="customerCompanyDOList"  index="index" separator=" " open="case id" close="end">
+				when #{customerCompanyDO.id} then #{customerCompanyDO.parentCustomerId}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			is_parent =
+			<foreach item="customerCompanyDO" collection="customerCompanyDOList"  index="index" separator=" " open="case id" close="end">
+				when #{customerCompanyDO.id} then #{customerCompanyDO.isParent}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="customerCompanyDOList" index="index" item="customerCompanyDO"
+				 separator="," open="(" close=")">
+			#{customerCompanyDO.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+
+
+	<select id="findByCustomerNoList" resultMap="CustomerCompanyDO" >
+		SELECT * FROM `erp_customer_company` ecc WHERE ecc.data_status = 1 AND ecc.customer_no IN
+		<foreach collection="list" index="index" item="customerNo" open="(" separator="," close=")">
+			#{customerNo,jdbcType=VARCHAR}
+		</foreach>
+	</select>
 </mapper>

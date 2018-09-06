@@ -157,6 +157,11 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group mn">
+                                                    <input type="text" name="createName" id="createName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入创建人">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <hr class="short alt">
@@ -179,6 +184,7 @@
                                                 <button type="reset" class="btn btn-default btn-sm">重置</button>
                                                 <button type="button" id="recycleBtn" class="btn btn-default btn-sm">回收站</button>
                                                 <input type="hidden" name="isRecycleBin" id="isRecycleBin" value="0">
+                                                <input type="hidden" name="warehouseWorkbenchOrderType" id="warehouseWorkbenchOrderType" value="">
                                             </div>
                                         </div>
                                     </div>
@@ -193,7 +199,7 @@
                                 <thead>
                                     <tr class="bg-light">
                                         <th>编号</th>
-                                        <th>订单归属公司</th>
+                                        <th>订单归属</th>
                                         <th>客户名称</th>
                                         <th>收货人信息</th>
                                         <th>类型/期限</th>
@@ -324,7 +330,9 @@
                 'manage.order.relet.add.js',
                 'manage.order.change.price.js',
                 'modal.input.js',
-                'modal.submit.audit.js');
+                'modal.submit.audit.js',
+                'manage.audit.pass.js', 
+                'manage.audit.reject.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

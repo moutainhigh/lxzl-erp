@@ -1,6 +1,7 @@
 package com.lxzl.erp.web.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.*;
@@ -177,7 +178,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerNo("LXCC-027-20180322-00784");
+        order.setBuyerCustomerNo("LXCC-0755-20180112-00002");
         order.setCustomerConsignId(5445);
         order.setRentStartTime(new Date());
         order.setIsPeer(0);
@@ -452,7 +453,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         OrderCommitParam order = new OrderCommitParam();
-        order.setOrderNo("LXO-20180712-1000-00098");
+        order.setOrderNo("LXO-20180821-1000-00003");
         order.setVerifyUser(500013);//审核人
         List<Integer> imageList = new ArrayList<>();
         imageList.add(1818);
@@ -531,19 +532,20 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        param.setPayStatus(0);
 //        param.setOrderNo("LXO-20180608-027-00059");
 //        param.setOrderSellerId(500355);
-//        param.setOrderSellerName("诚");
+        param.setOrderSellerName("刘君诚");
 //          param.setIsReturnOverDue(1);
         param.setIsCanReletOrder(1);
         param.setIsRecycleBin(0);
-        param.setPageNo(4);
-        param.setPageSize(15);
+//        param.setPageNo(4);
+//        param.setPageSize(15);
+//        param.setCreateName("刘君诚");
 
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
 
     @Test
     public void queryAllOrderJSON() throws Exception {
-        String str = "{\"pageNo\":1,\"pageSize\":15,\"orderSellerName\":\"\",\"buyerRealName\":\"\",\"deliverySubCompanyId\":\"\",\"subCompanyId\":\"\",\"rentType\":\"\",\"orderNo\":\"\",\"isCanReletOrder\":\"\",\"startExpectDeliveryTime\":\"1533916800000\",\"endExpectDeliveryTime\":\"1534348799999\",\"rentTimePicker\":\"2018-08-11 - 2018-08-15\",\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\",\"payStatus\":\"\",\"isReturnOverDue\":\"\",\"isReletOrder\":\"\",\"isRecycleBin\":\"0\"}";
+        String str = "{\"pageNo\":1,\"pageSize\":15,\"orderSellerName\":\"\",\"buyerRealName\":\"\",\"deliverySubCompanyId\":\"\",\"subCompanyId\":\"\",\"rentType\":\"\",\"orderNo\":\"\",\"isCanReletOrder\":\"\",\"startRentStartTime\":\"\",\"endRentStartTime\":\"\",\"rentTimePicker\":\"\",\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\",\"payStatus\":\"\",\"isReturnOverDue\":\"\",\"isReletOrder\":\"\",\"startExpectDeliveryTime\":\"\",\"endExpectDeliveryTime\":\"\",\"deliveryTimePicker\":\"\",\"createName\":\"张婷\",\"isRecycleBin\":\"0\"}";
         OrderQueryParam param = FastJsonUtil.toBean(str,OrderQueryParam.class);
 //        param.setBuyerRealName("荣焱");
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
@@ -563,6 +565,11 @@ public class OrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void queryOrderByNo() throws Exception {
+        
+        Date now = new Date();
+        now.getTime();
+
+
         Order order = new Order();
         order.setOrderNo("LXO-20180709-0755-00047");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);

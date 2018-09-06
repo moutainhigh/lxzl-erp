@@ -60,6 +60,8 @@ public class ErrorCode {
     public static final String SUB_COMPANY_ID_NOT_NULL = "J100031";
     public static final String WORKFLOW_CONFIG_ERROR = "J100032";
     public static final String WORKFLOW_CUSTOMER_CAN_NOT_BACK_PREVIOUS = "J100033";
+    public static final String WORKFLOW_VERIFY_USER_IS_NULL = "J100034";
+    public static final String USER_ADMIN_PASSWORD_ERROR = "J100035";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -154,6 +156,13 @@ public class ErrorCode {
     public static final String MATERIAL_K3_MATERIAL_NO_IS_ERROR = "J200090";
     public static final String MATERIAL_K3_MATERIAL_NO_NOT_NULL = "J200091";
     public static final String ORDERN_AND_CUSTOMER_ERROR = "J200092";
+    public static final String CUSTOMER_ID_IS_NOT_NULL = "J200093";
+    public static final String PARENT_CUSTOMER_ID_IS_NOT_NULL = "J200094";
+    public static final String CUSTOMER_COPANY_NOT_EXISTS = "J200095";
+    public static final String PARENT_CUSTOMER_COPANY_IS_SUBSIDIARY = "J200096";
+    public static final String CUSTOMER_COPANY_IS_SUBSIDIARY = "J200097";
+    public static final String ADD_PARENT_COMPANY_COUNT_ADD_SELF = "J200098";
+    public static final String QUERY_CUSTOMER_ID_IS_NOT_NULL = "J200099";
 
     public static final String PROPERTY_CAPACITY_VALUE_NOT_NULL = "J800086";
     public static final String PROPERTY_NAME_NOT_MATCH_MATERIAL_TYPE_NAME = "J800087";
@@ -620,6 +629,7 @@ public class ErrorCode {
 
     public static final String CUSTOMER_CONFIRM_STATEMENT_EXIST = "J500172";
     public static final String CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE = "J500173";
+    public static final String CUSTOMER_CONFIRM_STATEMENT_STATUS_MUST_BE_CONFIRM = "J500174";
 
     public static final String STATEMENT_DATE_NOT_SUPPORT = "J500174";
 
@@ -636,6 +646,8 @@ public class ErrorCode {
     public static final String RETURN_STATEMENT_ORDER_CREATE_ERROR = "J500185";
 
     public static final String CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST = "J500186";
+    public static final String CUSTOMER_STATUS_IS_NOT_PASS = "J500187";
+    public static final String CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH = "J500188";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -920,6 +932,11 @@ public class ErrorCode {
     public static final String CHARGE_RECORD_IS_NULL = "J18000059";
     public static final String CHARGE_TYPE_IS_BALANCE_PAID = "J18000060";
     public static final String CHARGE_TYPE_IS_BANK_SLIP_CHARGE = "J18000061";
+    public static final String UNKNOWN_BANK_SLIP_DETAIL_NOT_UNCLAIM = "J18000062";
+    public static final String UNKNOWN_BANK_SLIP_DETAIL_SAVE_FAIL = "J18000063";
+    public static final String UNKNOWN_BANK_SLIP_DETAIL_NOT_DISPLAY = "J18000064";
+    public static final String BANK_SLIP_DETAIL_IS_UNKNOWN_CANNOT_OPERATION = "J18000065";
+    public static final String UNKNOWN_BANK_SLIP_DETAIL_NOT_LOCALIZATION = "J18000066";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1038,6 +1055,9 @@ public class ErrorCode {
     public static final String QUARTZ_TASK_EXECUTOR_SYSTEM_TYPE_NOT_NUMBER = "J250000030";
     public static final String QUARTZ_TASK_EXECUTOR_JOB_TYPE_NOT_NUMBER = "J250000031";
     public static final String QUARTZ_TASK_EXECUTOR_REQUEST_BODY_ERROR = "J250000032";
+    public static final String QUARTZ_SYSTEM_ERROR = "J250000033";
+    public static final String QUARTZ_APP_ID_ERROR = "J250000034";
+    public static final String QUARTZ_APP_SECRET_ERROR = "J250000035";
 
     // 动态SQL查询
     public static final String DYNAMIC_SQL_ERROR = "J260000001";
@@ -1064,6 +1084,14 @@ public class ErrorCode {
 
     //Mall
     public static final String MALL_SYSTEM_CONNECT_EXCEPTION = "Mall00001";
+
+    //经营数据提取
+    public static final String STATISTICAL_STATUS_NOT_NULL = "J300000001";
+    public static final String STATISTICAL_STATUS_DAY_ERROR = "J300000002";
+    public static final String STATISTICAL_STATUS_WEEK_ERROR = "J300000003";
+    public static final String STATISTICAL_STATUS_MONTH_ERROR = "J300000004";
+    public static final String STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR = "J300000005";
+    public static final String STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR = "J300000006";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1093,6 +1121,7 @@ public class ErrorCode {
         MAP.put(USER_NAME_NOT_FOUND, "用户名不存在");
         MAP.put(USER_NOT_ACTIVATED, "用户未激活，请联系管理员");
         MAP.put(USER_PASSWORD_ERROR, "用户密码错误");
+        MAP.put(USER_ADMIN_PASSWORD_ERROR, "管理员密码错误");
         MAP.put(USER_EXISTS, "用户已存在");
         MAP.put(USER_NAME_NOT_NULL, "用户名不能为空");
         MAP.put(USER_PASSWORD_NOT_NULL, "用户密码不能为空，请输入密码");
@@ -1136,6 +1165,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_RETURN_ID_NOT_NULL, "客户的回访记录的ID不能为空");
         MAP.put(CUSTOMER_RETURN_VISIT_NOT_EXISTS, "客户的回访记录不存在");
         MAP.put(WORKFLOW_CUSTOMER_CAN_NOT_BACK_PREVIOUS, "客户工作流不允许驳回到上一级");
+        MAP.put(WORKFLOW_VERIFY_USER_IS_NULL, "工作流审核人未配置");
 
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
@@ -1673,6 +1703,13 @@ public class ErrorCode {
         MAP.put(MATERIAL_K3_MATERIAL_NO_IS_ERROR , "物料的K3编号填写有误，请重新填写");
         MAP.put(MATERIAL_K3_MATERIAL_NO_NOT_NULL , "物料的K3编号不能为空");
         MAP.put(ORDERN_AND_CUSTOMER_ERROR , "订单客户与当前所选客户不一致，不能创建退货单");
+        MAP.put(CUSTOMER_ID_IS_NOT_NULL , "要添加的子公司不能为空");
+        MAP.put(PARENT_CUSTOMER_ID_IS_NOT_NULL , "选取的母公司ID不能为空");
+        MAP.put(CUSTOMER_COPANY_NOT_EXISTS , "企业客户不存在");
+        MAP.put(PARENT_CUSTOMER_COPANY_IS_SUBSIDIARY , "所选取的母公司是其他公司的子公司，不能再添加子公司");
+        MAP.put(CUSTOMER_COPANY_IS_SUBSIDIARY , "选取的子公司已经存在母公司或选择的公司为其他公司母公司，不能重复添加");
+        MAP.put(ADD_PARENT_COMPANY_COUNT_ADD_SELF , "所添加子公司与母公司一致，请重新选择");
+        MAP.put(QUERY_CUSTOMER_ID_IS_NOT_NULL , "查询子公司的母公司ID不能为空");
 
         MAP.put(EQUIPMENT_AND_BULK_MATERIAL_IS_NOT_NULL, "设备维修单明细表不能为空");
         MAP.put(REPAIR_REASON_IS_NOT_NULL, "设备维修单的维修原因不能为空");
@@ -1935,7 +1972,7 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_NOT_LOCALIZATION, "当前流水项不是属地化状态");
         MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED, "银行对公流水记录是确认状态,");
         MAP.put(BANK_SLIP_DETAIL_DATA_IS_NULL, "银行对公流水无导入数据,");
-        MAP.put(BANK_SLIP_DETAIL_IS_UNKNOWN, "银行对公流水是未知状态,");
+        MAP.put(BANK_SLIP_DETAIL_IS_UNKNOWN, "银行对公流水已是公开状态,");
         MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT, "填写金额大于银行对公流水记录项金额");
         MAP.put(IMPORT_BANK_SLIP_DETAILS_IS_EXIST, "导入银行对公流水记录已存在");
         MAP.put(CHARGE_RECORD_NOT_EXISTS, "充值记录不存在");
@@ -1950,6 +1987,11 @@ public class ErrorCode {
         MAP.put(CHARGE_RECORD_IS_NULL, "充值记录为空");
         MAP.put(CHARGE_TYPE_IS_BALANCE_PAID, "充值记录是余额支付");
         MAP.put(CHARGE_TYPE_IS_BANK_SLIP_CHARGE, "充值记录是对公加款");
+        MAP.put(UNKNOWN_BANK_SLIP_DETAIL_NOT_UNCLAIM, "需要公开的银行流水不是未认领状态");
+        MAP.put(UNKNOWN_BANK_SLIP_DETAIL_SAVE_FAIL, "保存下推银行流水明细到公海失败");
+        MAP.put(UNKNOWN_BANK_SLIP_DETAIL_NOT_DISPLAY, "需要公开的银行流水不是可见状态");
+        MAP.put(BANK_SLIP_DETAIL_IS_UNKNOWN_CANNOT_OPERATION, "不能操作已是公开状态的银行对公流水");
+        MAP.put(UNKNOWN_BANK_SLIP_DETAIL_NOT_LOCALIZATION, "需要公开的银行流水不是未属地化状态");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");
@@ -2068,6 +2110,9 @@ public class ErrorCode {
         MAP.put(QUARTZ_TASK_EXECUTOR_SYSTEM_TYPE_NOT_NUMBER, "定时任务执行者系统类型不是数字");
         MAP.put(QUARTZ_TASK_EXECUTOR_JOB_TYPE_NOT_NUMBER, "定时任务执行者任务类型不是数字");
         MAP.put(QUARTZ_TASK_EXECUTOR_REQUEST_BODY_ERROR, "定时任务执行者json字符串格式不正确");
+        MAP.put(QUARTZ_SYSTEM_ERROR, "定时任务系统验证失败");
+        MAP.put(QUARTZ_APP_ID_ERROR, "定时任务系统appId不能为空");
+        MAP.put(QUARTZ_APP_SECRET_ERROR, "定时任务系统appSecret不能为空");
 
 
         MAP.put(DYNAMIC_SQL_ERROR, "动态SQL查询语句不正确");
@@ -2094,6 +2139,7 @@ public class ErrorCode {
 
 
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户已经为确认结算单状态");
+        MAP.put(CUSTOMER_CONFIRM_STATEMENT_STATUS_MUST_BE_CONFIRM, "客户的结算单状态必须为确认");
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE, "客户为确认结算单状态时不允许重算结算单");
         MAP.put(STATEMENT_DATE_NOT_SUPPORT, "不支持结算类型【%s 】");
         MAP.put(STATEMENT_DATE_SPLIT_TIME_NOT_NULL, "结算分段日期不能为空");
@@ -2108,9 +2154,19 @@ public class ErrorCode {
         MAP.put(SPLIT_STATEMENT_TIME_ERROR, "分段重算时间必须在订单起租时间与订单预计归还时间之间");
         MAP.put(RETURN_STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，该退货单结算单详情已存在，不能重复生成结算单");
         MAP.put(CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST, "客户为已经为确认坏账状态");
+        MAP.put(CUSTOMER_STATUS_IS_NOT_PASS, "客户状态须审核通过，才能使用此功能");
 
 
         MAP.put(MALL_SYSTEM_CONNECT_EXCEPTION, "连接Mall-App系统异常");
+
+        MAP.put(STATISTICAL_STATUS_NOT_NULL, "查询类型不能为空");
+        MAP.put(STATISTICAL_STATUS_DAY_ERROR, "查询日经营数据传递查询参数错误");
+        MAP.put(STATISTICAL_STATUS_WEEK_ERROR, "查询周经营数据传递查询参数错误");
+        MAP.put(STATISTICAL_STATUS_MONTH_ERROR, "查询月经营数据传递查询参数错误");
+        MAP.put(STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR, "查询周经营数据传入的查询开始时间必须是星期一");
+        MAP.put(STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR, "查询月经营数据传入的查询开始时间必须是月初一号");
+
+        MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
 
     }
 

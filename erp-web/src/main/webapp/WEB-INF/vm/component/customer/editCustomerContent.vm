@@ -3,7 +3,7 @@
         <div class="col-md-3">
             <label for="realName" class="field-label"><em class="text-danger">*</em>真实姓名</label>
             <label for="realName" class="field prepend-icon">
-                <input type="text" name="realName" id="realName" class="gui-input required letterOrChinese" placeholder="请输入真实姓名..." maxlength="10">
+                <input type="text" name="realName" id="realName" class="gui-input required letterOrChinese" placeholder="请输入真实姓名..." maxlength="7">
                 <label for="lastname" class="field-icon"><i class="fa fa-user"></i>
                 </label>
             </label>
@@ -79,6 +79,14 @@
             <label class="field select">
                 <select id="statementDate" name="statementDate" class="required"></select>
                 <i class="arrow"></i>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="internalName" class="field-label">内部姓名备注</label>
+            <label for="internalName" class="field prepend-icon">
+                <input type="text" name="internalName" id="internalName" class="gui-input letterOrChinese" placeholder="内部名称(最多20字)" maxlength="20">
+                <label for="lastname" class="field-icon"><i class="fa fa-user"></i>
+                </label>
             </label>
         </div>
     </div>

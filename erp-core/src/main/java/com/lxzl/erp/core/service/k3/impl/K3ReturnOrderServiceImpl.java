@@ -1,6 +1,8 @@
 package com.lxzl.erp.core.service.k3.impl;
 
-import com.alibaba.fastjson.*;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.K3Config;
 import com.lxzl.erp.common.domain.Page;
@@ -8,8 +10,13 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.OrderForReturnQueryParam;
-import com.lxzl.erp.common.domain.k3.pojo.order.*;
-import com.lxzl.erp.common.domain.k3.pojo.returnOrder.*;
+import com.lxzl.erp.common.domain.k3.pojo.order.Order;
+import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
+import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3HistoricalReturnOrder;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -34,7 +41,9 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.*;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
@@ -42,7 +51,9 @@ import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
-import com.lxzl.erp.dataaccess.domain.order.*;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -54,7 +65,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.*;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.io.PrintWriter;
@@ -517,11 +530,16 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         ServiceResult<String, Page<K3ReturnOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(k3ReturnOrderQueryParam.getPageNo(), k3ReturnOrderQueryParam.getPageSize());
 
+        //判断是否是仓库工作台
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(k3ReturnOrderQueryParam.getIsWarehouseWorkbench())){
+            k3ReturnOrderQueryParam.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
+        }
+
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("k3ReturnOrderQueryParam", k3ReturnOrderQueryParam);
-        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER,PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_WAREHOUSE));
 
         Integer totalCount = k3ReturnOrderMapper.listCount(maps);
         List<K3ReturnOrderDO> orderDOList = k3ReturnOrderMapper.listPage(maps);

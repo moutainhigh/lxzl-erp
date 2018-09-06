@@ -93,6 +93,16 @@ public class UserController extends BaseController {
     public Result login(@RequestBody LoginParam loginParam) {
         return resultGenerator.generate(userService.login(loginParam, NetworkUtil.getIpAddress(request)));
     }
+    /**
+     * 强行登陆
+     *
+     * @param loginParam
+     * @return Result
+     */
+    @RequestMapping(value = "adminLogin", method = RequestMethod.POST)
+    public Result adminLogin(@RequestBody LoginParam loginParam) {
+        return resultGenerator.generate(userService.adminLogin(loginParam, NetworkUtil.getIpAddress(request)));
+    }
 
     @RequestMapping(value = "getUserById", method = RequestMethod.POST)
     public Result getUserById(@RequestBody UserQueryParam userQueryParam) {

@@ -14,6 +14,7 @@ public class WorkflowNodeDO  extends BaseDO {
 	private Integer workflowStep;
 	private Integer workflowPreviousNodeId;
 	private Integer workflowNextNodeId;
+	private Integer verifyType;   //审核类型，1-本条审核通过则直接通过，2-相同审核组的所有2状态的审核通过才算通过
 	private Integer workflowDepartmentType;
 	private Integer workflowDepartment;
 	private Integer workflowRole;
@@ -144,4 +145,8 @@ public class WorkflowNodeDO  extends BaseDO {
 	public Integer getWorkflowRoleType() { return workflowRoleType; }
 
 	public void setWorkflowRoleType(Integer workflowRoleType) { this.workflowRoleType = workflowRoleType; }
+
+	public Integer getVerifyType() { return verifyType; }
+
+	public void setVerifyType(Integer verifyType) { this.verifyType = verifyType; }
 }

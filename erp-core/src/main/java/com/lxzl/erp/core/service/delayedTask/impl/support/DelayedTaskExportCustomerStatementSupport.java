@@ -1022,67 +1022,109 @@ public class DelayedTaskExportCustomerStatementSupport {
                     //退货单和冲正单取No和原因
                     if (OrderType.ORDER_TYPE_RETURN.equals(exportStatementOrderDetail.getOrderType()) ||
                             CommonConstant.ORDER_TYPE_RELET_RETURN.equals(exportStatementOrderDetail.getOrderType())) {
-
-                        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(exportStatementOrderDetail.getOrderId());
-                        StringBuffer k3ReturnOrderDONo = new StringBuffer();
-                        StringBuffer returnReasonType = new StringBuffer();
-                        if (k3ReturnOrderDO != null) {
-                            k3ReturnOrderDONo.append(k3ReturnOrderDO.getReturnOrderNo());
-                            returnReasonType.append(formatReturnReasonType(k3ReturnOrderDO.getReturnReasonType()));
-                            //订单
-                            K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(exportStatementOrderDetail.getOrderItemReferId());
-                            if (k3ReturnOrderDetailDO != null) {
-                                OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
-                                exportStatementOrderDetailBase.setOrderNo(orderDO.getOrderNo());
-                                exportStatementOrderDetail.setOrderRentStartTime(orderDO.getRentStartTime());//租赁开始日期
-                                exportStatementOrderDetail.setOrderExpectReturnTime(orderDO.getExpectReturnTime());//租赁结束日期
-                                exportStatementOrderDetail.setOrderRentType(orderDO.getRentType());
-                                exportStatementOrderDetail.setOrderRentTimeLength(orderDO.getRentTimeLength());
-                                if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())) {
-                                    OrderProductDO orderProductDO = null;
-                                    if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()) && k3ReturnOrderDetailDO.getOrderEntry() != null) {
-                                        orderProductDO = orderProductMapper.findK3OrderProduct(orderDO.getId(), Integer.parseInt(k3ReturnOrderDetailDO.getOrderEntry()));
-                                    } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
-                                        String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
-                                        orderProductDO = orderProductMapper.findById(Integer.parseInt(orderItemId));
-                                    }
+                        //处理续租之前退货造出来的数据
+                        if (null == exportStatementOrderDetail.getCustomerId() && null == exportStatementOrderDetail.getStatementOrderDetailId()) {
+                            K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(exportStatementOrderDetail.getOrderId());
+                            StringBuffer k3ReturnOrderDONo = new StringBuffer();
+                            StringBuffer returnReasonType = new StringBuffer();
+                            if (k3ReturnOrderDO != null) {
+                                k3ReturnOrderDONo.append(k3ReturnOrderDO.getReturnOrderNo());
+                                returnReasonType.append(formatReturnReasonType(k3ReturnOrderDO.getReturnReasonType()));
+                                //订单
+                                if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType()) && null != exportStatementOrderDetail.getOrderItemReferId()) {
+                                    OrderProductDO orderProductDO = orderProductMapper.findById(exportStatementOrderDetail.getOrderItemReferId());
                                     if (orderProductDO != null) {
                                         Integer isNewProduct = orderProductDO.getIsNewProduct();
                                         exportStatementOrderDetailBase.setIsNew(isNewProduct);
+                                        OrderDO orderDO = orderMapper.findByOrderId(orderProductDO.getOrderId());
+                                        if (orderDO != null) {
+                                            exportStatementOrderDetailBase.setOrderNo(orderDO.getOrderNo());
+                                            exportStatementOrderDetail.setOrderRentStartTime(orderDO.getRentStartTime());//租赁开始日期
+                                            exportStatementOrderDetail.setOrderExpectReturnTime(orderDO.getExpectReturnTime());//租赁结束日期
+                                            exportStatementOrderDetail.setOrderRentType(orderDO.getRentType());
+                                            exportStatementOrderDetail.setOrderRentTimeLength(orderDO.getRentTimeLength());
+                                        }
                                     }
                                 } else if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType())) {
-                                    OrderMaterialDO orderMaterialDO = null;
-                                    if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()) && k3ReturnOrderDetailDO.getOrderEntry() != null) {
-                                        orderMaterialDO = orderMaterialMapper.findK3OrderMaterial(orderDO.getId(), Integer.parseInt(k3ReturnOrderDetailDO.getOrderEntry()));
-                                    } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
-                                        String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
-                                        orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(orderItemId));
-                                    }
-
+                                    OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(exportStatementOrderDetail.getOrderItemReferId());
                                     if (orderMaterialDO != null) {
                                         Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
                                         exportStatementOrderDetailBase.setIsNew(isNewMaterial);
+                                        OrderDO orderDO = orderMapper.findByOrderId(orderMaterialDO.getOrderId());
+                                        if (orderDO != null) {
+                                            exportStatementOrderDetailBase.setOrderNo(orderDO.getOrderNo());
+                                            exportStatementOrderDetail.setOrderRentStartTime(orderDO.getRentStartTime());//租赁开始日期
+                                            exportStatementOrderDetail.setOrderExpectReturnTime(orderDO.getExpectReturnTime());//租赁结束日期
+                                            exportStatementOrderDetail.setOrderRentType(orderDO.getRentType());
+                                            exportStatementOrderDetail.setOrderRentTimeLength(orderDO.getRentTimeLength());
+                                        }
                                     }
                                 }
                             }
+                            exportStatementOrderDetailBase.setK3ReturnOrderDONo(String.valueOf(k3ReturnOrderDONo));
+                            exportStatementOrderDetailBase.setReturnReasonType(String.valueOf(returnReasonType));
+                        }else {//处理正常退货
+                            K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(exportStatementOrderDetail.getOrderId());
+                            StringBuffer k3ReturnOrderDONo = new StringBuffer();
+                            StringBuffer returnReasonType = new StringBuffer();
+                            if (k3ReturnOrderDO != null) {
+                                k3ReturnOrderDONo.append(k3ReturnOrderDO.getReturnOrderNo());
+                                returnReasonType.append(formatReturnReasonType(k3ReturnOrderDO.getReturnReasonType()));
+                                //订单
+                                K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(exportStatementOrderDetail.getOrderItemReferId());
+                                if (k3ReturnOrderDetailDO != null) {
+                                    OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
+                                    exportStatementOrderDetailBase.setOrderNo(orderDO.getOrderNo());
+                                    exportStatementOrderDetail.setOrderRentStartTime(orderDO.getRentStartTime());//租赁开始日期
+                                    exportStatementOrderDetail.setOrderExpectReturnTime(orderDO.getExpectReturnTime());//租赁结束日期
+                                    exportStatementOrderDetail.setOrderRentType(orderDO.getRentType());
+                                    exportStatementOrderDetail.setOrderRentTimeLength(orderDO.getRentTimeLength());
+                                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())) {
+                                        OrderProductDO orderProductDO = null;
+                                        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()) && k3ReturnOrderDetailDO.getOrderEntry() != null) {
+                                            orderProductDO = orderProductMapper.findK3OrderProduct(orderDO.getId(), Integer.parseInt(k3ReturnOrderDetailDO.getOrderEntry()));
+                                        } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
+                                            String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
+                                            orderProductDO = orderProductMapper.findById(Integer.parseInt(orderItemId));
+                                        }
+                                        if (orderProductDO != null) {
+                                            Integer isNewProduct = orderProductDO.getIsNewProduct();
+                                            exportStatementOrderDetailBase.setIsNew(isNewProduct);
+                                        }
+                                    } else if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType())) {
+                                        OrderMaterialDO orderMaterialDO = null;
+                                        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()) && k3ReturnOrderDetailDO.getOrderEntry() != null) {
+                                            orderMaterialDO = orderMaterialMapper.findK3OrderMaterial(orderDO.getId(), Integer.parseInt(k3ReturnOrderDetailDO.getOrderEntry()));
+                                        } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
+                                            String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
+                                            orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(orderItemId));
+                                        }
 
-
-                            //冲正单单号和原因保存
-                            List<StatementOrderCorrectDO> returnStatementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderIdAndReferId(exportStatementOrderDetail.getStatementOrderId(), exportStatementOrderDetail.getOrderId());
-                            if (CollectionUtil.isNotEmpty(returnStatementOrderCorrectDOList)) {
-                                StringBuffer statementCorrectNo = new StringBuffer();
-                                StringBuffer statementCorrectReason = new StringBuffer();
-                                for (StatementOrderCorrectDO statementOrderCorrectDO : returnStatementOrderCorrectDOList) {
-                                    statementCorrectNo.append(statementOrderCorrectDO.getStatementCorrectNo() + "/n");
-                                    statementCorrectReason.append(statementOrderCorrectDO.getStatementCorrectReason() + "/n");
+                                        if (orderMaterialDO != null) {
+                                            Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
+                                            exportStatementOrderDetailBase.setIsNew(isNewMaterial);
+                                        }
+                                    }
                                 }
-                                exportStatementOrderDetailBase.setStatementCorrectNo(String.valueOf(statementCorrectNo));
-                                exportStatementOrderDetailBase.setStatementCorrectReason(String.valueOf(statementCorrectReason));
-                            }
 
+
+                                //冲正单单号和原因保存
+                                List<StatementOrderCorrectDO> returnStatementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderIdAndReferId(exportStatementOrderDetail.getStatementOrderId(), exportStatementOrderDetail.getOrderId());
+                                if (CollectionUtil.isNotEmpty(returnStatementOrderCorrectDOList)) {
+                                    StringBuffer statementCorrectNo = new StringBuffer();
+                                    StringBuffer statementCorrectReason = new StringBuffer();
+                                    for (StatementOrderCorrectDO statementOrderCorrectDO : returnStatementOrderCorrectDOList) {
+                                        statementCorrectNo.append(statementOrderCorrectDO.getStatementCorrectNo() + "/n");
+                                        statementCorrectReason.append(statementOrderCorrectDO.getStatementCorrectReason() + "/n");
+                                    }
+                                    exportStatementOrderDetailBase.setStatementCorrectNo(String.valueOf(statementCorrectNo));
+                                    exportStatementOrderDetailBase.setStatementCorrectReason(String.valueOf(statementCorrectReason));
+                                }
+
+                            }
+                            exportStatementOrderDetailBase.setK3ReturnOrderDONo(String.valueOf(k3ReturnOrderDONo));
+                            exportStatementOrderDetailBase.setReturnReasonType(String.valueOf(returnReasonType));
                         }
-                        exportStatementOrderDetailBase.setK3ReturnOrderDONo(String.valueOf(k3ReturnOrderDONo));
-                        exportStatementOrderDetailBase.setReturnReasonType(String.valueOf(returnReasonType));
                     }
 
                     //-------------------以下是全部结算单-----------------------------
@@ -1386,6 +1428,7 @@ public class DelayedTaskExportCustomerStatementSupport {
         String fileName = ConstantConfig.exportFileUrl + (customerName + "对账单") +simpleDate+ ".xlsx";
         String saveFileName = (customerName + "对账单") +simpleDate+ ".xlsx";
 //        String fileName = "D:\\xxxxxxx\\"+ (customerName + "对账单") +delayedTaskDO.getId()+ ".xlsx";
+
         try {
             FileUtil.outputExcel(fileName,hssfWorkbook);
             // TODO: 2018\7\27 0027 存储地址，发送钉钉消息晒啥

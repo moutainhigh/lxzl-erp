@@ -89,9 +89,9 @@
                                 <th>商品供应商</th>
                                 <th>仓库</th>
                                 <th>发票供应商</th>
-                                <th>是否有发票</th>
+                                <th class="text-center">是否有发票</th>
                                 <th>分拨情况</th>
-                                <th>是否全新机</th>
+                                <th class="text-center">是否全新机</th>
                                 <th>收货状态</th>
                                 <th>创建人</th>
                                 {{#hasRowActionButtons}}
@@ -116,9 +116,9 @@
                                 <td>{{productSupplierName}}</td>
                                 <td>{{warehouse}}</td>
                                 <td>{{invoiceSupplierName}}</td>
-                                <td>{{isInvoiceStr}}</td>
+                                <td class="text-center">{{isInvoiceStr}}</td>
                                 <td>{{autoAllotStatusStr}}</td>
-                                <td>{{isNewStr}}</td>
+                                <td class="text-center">{{isNewStr}}</td>
                                 <td>
                                     <p class="mn {{purchaseReceiveOrderStatusClass}}">{{purchaseReceiveOrderStatusValue}}</p>
                                     <p class="mn mt5" title="确认时间">{{#clockTime}}{{confirmTime}}{{/clockTime}}</p>

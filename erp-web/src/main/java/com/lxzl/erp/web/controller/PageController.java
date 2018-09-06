@@ -62,6 +62,11 @@ public class PageController extends BaseController {
         return "/component/user/password";
     }
 
+    @RequestMapping("/user-manage/compel-login")
+    public String userManageCompelLogin() {
+        return "/component/user/compelLogin";
+    }
+
     @RequestMapping("/user-manage/list")
     public String userManageList() {
         return "/userManage/userList";
@@ -504,6 +509,10 @@ public class PageController extends BaseController {
         return "/customerManage/serviceCustomerDetail";
     }
 
+    @RequestMapping("/customer-manage/add-subCompany")
+    public String customerManageAddSubCompany() {
+        return "/component/customerBusiness/addSubCompany";
+    }
     //采购管理
     @RequestMapping("/purchase-manage/list")
     public String purchaseManageList() {
@@ -856,6 +865,20 @@ public class PageController extends BaseController {
         return "/statisticsManage/salesmanDeduct";
     }
 
+    @RequestMapping("/statistics/day-operate-data")
+    public String statisticsDayOperateData() {
+        return "/statisticsManage/dayOperateData";
+    }
+
+    @RequestMapping("/statistics/week-operate-data")
+    public String statisticsWeekOperateData() {
+        return "/statisticsManage/weekOperateData";
+    }
+
+    @RequestMapping("/statistics/month-operate-data")
+    public String statisticsMonthOperateData() {
+        return "/statisticsManage/monthOperateData";
+    }
 
     //充值记录
     @RequestMapping("/recharge-manage/list")
@@ -1144,6 +1167,7 @@ public class PageController extends BaseController {
     public String amountClaimDetailList() {
         return "/financialManage/amountClaimDetailList";
     }
+
 
     /**
      * 系统功能开关设置

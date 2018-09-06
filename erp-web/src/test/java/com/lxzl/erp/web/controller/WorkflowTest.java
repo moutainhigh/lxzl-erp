@@ -6,25 +6,18 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.domain.workflow.VerifyWorkflowParam;
-import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
-import com.lxzl.erp.common.domain.workflow.WorkflowTemplateQueryParam;
-import com.lxzl.erp.common.domain.workflow.pojo.WorkflowNode;
-import com.lxzl.erp.common.domain.workflow.pojo.WorkflowTemplate;
+import com.lxzl.erp.common.domain.workflow.*;
+import com.lxzl.erp.common.domain.workflow.pojo.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyCityCoverMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkDetailMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowVerifyUserGroupMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.workflow.*;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
-import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
-import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDetailDO;
-import com.lxzl.erp.dataaccess.domain.workflow.WorkflowVerifyUserGroupDO;
+import com.lxzl.erp.dataaccess.domain.workflow.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -235,6 +228,14 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     public void test123() throws Exception {
 
         TestResult testResult = getJsonTestResult("/workflow/workflowImportData", null);
+    }
+
+    @Test
+    public void commit() throws Exception {
+        WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
+        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_MALL_ORDER);
+        workflowLinkQueryParam.setWorkflowReferNo("LXO-20180529-1000-00056");
+        TestResult testResult = getJsonTestResult("/workflow/commitWorkFlow", workflowLinkQueryParam);
     }
 
     @Autowired

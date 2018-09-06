@@ -121,6 +121,7 @@
                                 <tr>
                                     <th>客户编号</th>
                                     <th>公司名称</th>
+                                    <th>是否为子公司</th>
                                     <th>联系方式</th>
                                     <th>所属公司</th>
                                     <th>业务员</th>
@@ -146,6 +147,7 @@
                                         <a href="{{detailUrl}}" target="_blank">{{customerNo}}</a>
                                     </td>
                                     <td><a href="{{detailUrl}}" target="_blank">{{customerCompany.companyName}}</a></td>
+                                    <td>{{subsidiary}}</td>
                                     <td>
                                         <p class="mn">{{customerCompany.connectRealName}}</p>
                                         <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{customerCompany.connectPhone}}</p>
@@ -184,6 +186,7 @@
                                                     <a href="${ctx}{{menuUrl}}?no={{customerNo}}"
                                                        data-customerno="{{customerNo}}"
                                                        data-customername="{{customerName}}"
+                                                       data-id="{{customerId}}"
                                                        data-statementdate="{{statementDate}}"
                                                        data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
                                                        data-customertype="{{customerType}}"
@@ -244,8 +247,12 @@
                 'manage.customer.address.add.js',
                 'manage.customer.return.visit.add.js',
                 'manage.customer.confirm.statement.js',
+                'manage.customer.subsidiary.add.js',
+                'modal.choose.customer.business.js',
                 'modal.input.js',
-                'modal.submit.audit.js');
+                'modal.submit.audit.js',
+                'manage.audit.pass.js', 
+                'manage.audit.reject.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
