@@ -123,7 +123,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         }else{
             UserDO oldUserDO = userMapper.findByUsername(userInfo.getUserName());
             if (!oldUserDO.getPassword().equals(generateMD5Password(oldUserDO.getUserName(), loginParam.getPassword(), ApplicationConfig.authKey))) {
-                result.setErrorCode(ErrorCode.USER_PASSWORD_ERROR);
+                result.setErrorCode(ErrorCode.USER_ADMIN_PASSWORD_ERROR);
             }else{
                 UserDO userDO = userMapper.findByUsername(loginParam.getUserName());
                 if (userDO == null) {
