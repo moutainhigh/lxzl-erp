@@ -78,8 +78,8 @@
                                 <th>发货单编号</th>
                                 <th>采购单编号</th>
                                 <th>仓库</th>
-                                <th>是否有发票</th>
-                                <th>是否全新机</th>
+                                <th class="text-center">是否有发票</th>
+                                <th class="text-center">是否全新机</th>
                                 <th>发货状态</th>
                                 <th>创建人</th>
                                 {{#hasRowActionButtons}}
@@ -102,8 +102,8 @@
                                 <td><a href="{{detailUrl}}" target="_blank">{{purchaseDeliveryNo}}</a></td>
                                 <td><a href="{{purchaseDetailUrl}}" target="_blank">{{purchaseOrderNo}}</a></td>
                                 <td>{{warehouse}}</td>
-                                <td>{{isInvoiceStr}}</td>
-                                <td>{{isNewStr}}</td>
+                                <td class="text-center">{{isInvoiceStr}}</td>
+                                <td class="text-center">{{isNewStr}}</td>
                                 <td>
                                     <p class="mn">{{purchaseDeliveryOrderStatusValue}}</p>
                                     <p class="mn mt5">{{#clockTime}}{{deliveryTime}}{{/clockTime}}</p>

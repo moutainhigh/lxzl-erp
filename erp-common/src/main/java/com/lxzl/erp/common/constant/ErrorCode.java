@@ -61,6 +61,7 @@ public class ErrorCode {
     public static final String WORKFLOW_CONFIG_ERROR = "J100032";
     public static final String WORKFLOW_CUSTOMER_CAN_NOT_BACK_PREVIOUS = "J100033";
     public static final String WORKFLOW_VERIFY_USER_IS_NULL = "J100034";
+    public static final String USER_ADMIN_PASSWORD_ERROR = "J100035";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -628,6 +629,7 @@ public class ErrorCode {
 
     public static final String CUSTOMER_CONFIRM_STATEMENT_EXIST = "J500172";
     public static final String CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE = "J500173";
+    public static final String CUSTOMER_CONFIRM_STATEMENT_STATUS_MUST_BE_CONFIRM = "J500174";
 
     public static final String STATEMENT_DATE_NOT_SUPPORT = "J500174";
 
@@ -645,6 +647,7 @@ public class ErrorCode {
 
     public static final String CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST = "J500186";
     public static final String CUSTOMER_STATUS_IS_NOT_PASS = "J500187";
+    public static final String CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH = "J500188";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1118,6 +1121,7 @@ public class ErrorCode {
         MAP.put(USER_NAME_NOT_FOUND, "用户名不存在");
         MAP.put(USER_NOT_ACTIVATED, "用户未激活，请联系管理员");
         MAP.put(USER_PASSWORD_ERROR, "用户密码错误");
+        MAP.put(USER_ADMIN_PASSWORD_ERROR, "管理员密码错误");
         MAP.put(USER_EXISTS, "用户已存在");
         MAP.put(USER_NAME_NOT_NULL, "用户名不能为空");
         MAP.put(USER_PASSWORD_NOT_NULL, "用户密码不能为空，请输入密码");
@@ -2135,6 +2139,7 @@ public class ErrorCode {
 
 
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户已经为确认结算单状态");
+        MAP.put(CUSTOMER_CONFIRM_STATEMENT_STATUS_MUST_BE_CONFIRM, "客户的结算单状态必须为确认");
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE, "客户为确认结算单状态时不允许重算结算单");
         MAP.put(STATEMENT_DATE_NOT_SUPPORT, "不支持结算类型【%s 】");
         MAP.put(STATEMENT_DATE_SPLIT_TIME_NOT_NULL, "结算分段日期不能为空");
@@ -2160,6 +2165,8 @@ public class ErrorCode {
         MAP.put(STATISTICAL_STATUS_MONTH_ERROR, "查询月经营数据传递查询参数错误");
         MAP.put(STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR, "查询周经营数据传入的查询开始时间必须是星期一");
         MAP.put(STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR, "查询月经营数据传入的查询开始时间必须是月初一号");
+
+        MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
 
     }
 

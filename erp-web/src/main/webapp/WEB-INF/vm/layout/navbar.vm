@@ -101,6 +101,10 @@
                     <a href="#" id="navUpdatePassword" class="fw600 p12 animated animated-short fadeInDown">
                         <span class="fa fa-lock pr5"></span> 修改密码 </a>
                 </li>
+                <li class="br-t of-h hide" id="compelLoginItem">
+                    <a href="#" id="navbarCompelLogin" class="fw600 p12 animated animated-short fadeInDown">
+                        <span class="fa fa-lock pr5"></span> 强制登录 </a>
+                </li>
                 <li class="br-t of-h">
                     <a href="#" id="navbarLogout" class="fw600 p12 animated animated-short fadeInDown">
                         <span class="fa fa-power-off pr5"></span> 退出 </a>

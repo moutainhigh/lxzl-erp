@@ -23,6 +23,15 @@ public interface UserService extends BaseService {
     ServiceResult<String, User> login(LoginParam loginParam, String ip);
 
     /**
+     * 管理员强行登陆其他用户
+     *
+     * @param loginParam 登录参数
+     * @param ip         ip
+     * @return 用户信息
+     */
+    ServiceResult<String, User> adminLogin(LoginParam loginParam, String ip);
+
+    /**
      * 添加用户
      *
      * @param user 用户信息
