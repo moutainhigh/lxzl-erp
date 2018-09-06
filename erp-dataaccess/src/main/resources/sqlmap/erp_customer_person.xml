@@ -22,10 +22,11 @@
 		<result column="person_no" jdbcType="VARCHAR" property="personNo" />
 		<result column="connect_real_name" jdbcType="VARCHAR" property="connectRealName" />
 		<result column="connect_phone" jdbcType="VARCHAR" property="connectPhone" />
+		<result column="internal_name" jdbcType="VARCHAR" property="internalName" />
 	</resultMap>
 
 	<sql id="column_List">
-		ecp.id,ecp.customer_id,ecp.real_name,ecp.email,ecp.phone,ecp.province,ecp.city,ecp.district,ecp.address,ecp.data_status,ecp.remark,ecp.create_time,ecp.create_user,ecp.update_time,ecp.update_user,ecp.person_no,ecp.connect_real_name,ecp.connect_phone
+		ecp.id,ecp.customer_id,ecp.real_name,ecp.email,ecp.phone,ecp.province,ecp.city,ecp.district,ecp.address,ecp.data_status,ecp.remark,ecp.create_time,ecp.create_user,ecp.update_time,ecp.update_user,ecp.person_no,ecp.connect_real_name,ecp.connect_phone,ecp.internal_name
 	</sql>
 
 	<select id="findById" resultMap="CustomerPersonDO" parameterType="java.lang.Integer">
@@ -110,6 +111,9 @@
 			<if test="connectPhone != null">
 				connect_phone = #{connectPhone,jdbcType=VARCHAR},
 			</if>
+			<if test="internalName != null">
+				internal_name = #{internalName,jdbcType=VARCHAR},
+			</if>
 		</set>
 	</sql>
 
@@ -152,6 +156,9 @@
 			<if test="maps.queryParam.connectPhone != null &amp;&amp; maps.queryParam.connectPhone != ''">
 				and ecp.connect_phone = #{maps.queryParam.connectPhone, jdbcType=VARCHAR}
 			</if>
+			<if test="maps.queryParam.internalName != null &amp;&amp; maps.queryParam.internalName != ''">
+				and ecp.internal_name like CONCAT('%','${maps.queryParam.internalName}','%' )
+			</if>
 			<if test="true">
 				and ecp.data_status = 1
 			</if>
@@ -188,6 +195,9 @@
 			</if>
 			<if test="maps.queryParam.connectPhone != null &amp;&amp; maps.queryParam.connectPhone != ''">
 				and ecp.connect_phone = #{maps.queryParam.connectPhone, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.internalName != null &amp;&amp; maps.queryParam.internalName != ''">
+				and ecp.internal_name like CONCAT('%','${maps.queryParam.internalName}','%' )
 			</if>
 			<if test="true">
 				and ecp.data_status = 1
