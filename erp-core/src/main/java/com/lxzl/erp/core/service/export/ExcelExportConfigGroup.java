@@ -114,6 +114,9 @@ public class ExcelExportConfigGroup {
                 .addConfig(new ColConfig("orderSubCompanyId", "订单分公司", createSubCompanyExcelExportView()))
                 .addConfig(new ColConfig("deliverySubCompanyId", "发货分公司", createSubCompanyExcelExportView()))
                 .addConfig(new ColConfig("customerName","客户名称"))
+                .addConfig(new ColConfig("customerOrigin","客户来源"))
+                .addConfig(new ColConfig("industry","客户行业"))
+                .addConfig(new ColConfig("k3CustomerCode","K3客户编码"))
                 .addConfig(new ColConfig("rentType","租赁类型", createRentTypeExcelExportView()))
                 .addConfig(new ColConfig("rentTimeLength","租赁时长"))
                 .addConfig(new ColConfig("rentLengthType","租赁长短类型", createRentLengthTypeExcelExportView()))
@@ -152,12 +155,16 @@ public class ExcelExportConfigGroup {
                 .addConfig(new ColConfig("deliverySubCompanyId", "发货分公司", createSubCompanyExcelExportView()))
                 .addConfig(new ColConfig("customerNo", "客户编号"))
                 .addConfig(new ColConfig("customerName", "客户名称"))
+                .addConfig(new ColConfig("customerOrigin","客户来源"))
+                .addConfig(new ColConfig("industry","客户行业"))
+                .addConfig(new ColConfig("k3CustomerCode","K3客户编码"))
                 .addConfig(new ColConfig("rentType","租赁类型", createRentTypeExcelExportView()))
                 .addConfig(new ColConfig("rentTimeLength","租赁时长"))
                 .addConfig(new ColConfig("rentLengthType","租赁长短类型", createRentLengthTypeExcelExportView()))
                 .addConfig(new ColConfig("returnTime","退货时间", DateExcelExportView.getInstance()))
                 .addConfig(new ColConfig("rentStartTime","订单起租时间",DateExcelExportView.getInstance()))
-                .addConfig(new ColConfig("expectReturnTime","订单截止时间", DateExcelExportView.getInstance()));
+                .addConfig(new ColConfig("expectReturnTime","订单截止时间", DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("returnReasonType","退货原因"));
     }
 
     private static void initStatisticsFinanceWeeklyConfig() {

@@ -119,7 +119,7 @@ public class FinanceStatisticsWeeklySupport {
 
     // 获取此日期所在周的第一天
      public Date getFirstDayOfCurrentWeek(Date date) {
-        Calendar cal = Calendar.getInstance();
+        /*Calendar cal = Calendar.getInstance();
         try {
             cal.setTime(date);
             //cal.setFirstDayOfWeek(Calendar.MONDAY);  //设置星期一为当周第一天
@@ -128,11 +128,38 @@ public class FinanceStatisticsWeeklySupport {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return cal.getTime();*/
+        return getFirstDayOfCurrentWeek(date, SETTING_FIRST_DAY_OF_WEEK);
+    }
+
+    public Date getFirstDayOfCurrentWeek(Date date, int settingFirstDayOfWeek) {
+        Calendar cal = Calendar.getInstance();
+        try {
+            cal.setTime(date);
+            cal.setFirstDayOfWeek(settingFirstDayOfWeek);//设置星期五为当周第一天
+            cal.setMinimalDaysInFirstWeek(1); //第一周的最小天数
+            cal.set(Calendar.DAY_OF_WEEK, settingFirstDayOfWeek);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cal.getTime();
+    }
+
+    public Date getLastDayOfCurrentWeek(Date date, int settingFirstDayOfWeek) {
+        Calendar cal = Calendar.getInstance();
+        try {
+            cal.setTime(date);
+            cal.setFirstDayOfWeek(settingFirstDayOfWeek);//设置星期五为当周第一天
+            cal.setMinimalDaysInFirstWeek(1); //第一周的最小天数
+            cal.set(Calendar.DAY_OF_WEEK, settingFirstDayOfWeek - 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return cal.getTime();
     }
 
     public int getMaxWeekCountOfYearAndMonth(int year, int month) {
-        Calendar currentCalendar = Calendar.getInstance();
+        Calendar currentCalendar = getCalendarInstance(SETTING_FIRST_DAY_OF_WEEK)/*Calendar.getInstance()*/;
         currentCalendar.set(Calendar.YEAR, year);
         currentCalendar.set(Calendar.MONTH, month - 1);
         currentCalendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -468,7 +495,7 @@ public class FinanceStatisticsWeeklySupport {
     private boolean isCurrentWeek(int year, int month, int weekOfMonth) {
         //获取现在的时间
         Date now = new Date();
-        Calendar currentCalendar = Calendar.getInstance();
+        Calendar currentCalendar = getCalendarInstance(SETTING_FIRST_DAY_OF_WEEK)/*Calendar.getInstance()*/;
         // 测试使用(修改当前时间)
         /**
        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -484,7 +511,7 @@ public class FinanceStatisticsWeeklySupport {
         int currentWeekOfMonth = currentCalendar.get(Calendar.WEEK_OF_MONTH);
         Date firstDayOfThisWeek = getFirstDayOfCurrentWeek(now);
         if (firstDayOfThisWeek.compareTo(DateUtil.getStartMonthDate(now)) < 0) { //如果这周第一天的日期比当月第一天的时间还小，说明这周已经跨月份
-            Calendar firstDayOfThisWeekCalendar = Calendar.getInstance();
+            Calendar firstDayOfThisWeekCalendar = getCalendarInstance(SETTING_FIRST_DAY_OF_WEEK)/*Calendar.getInstance()*/;
             firstDayOfThisWeekCalendar.setTime(firstDayOfThisWeek);
             int firstDayOfThisWeekInYear = firstDayOfThisWeekCalendar.get(Calendar.YEAR);
             int firstDayOfThisWeekInMonth = firstDayOfThisWeekCalendar.get(Calendar.MONTH) + 1;  // 因为日历获取的月份比实际月份小1
@@ -564,7 +591,7 @@ public class FinanceStatisticsWeeklySupport {
             return financeStatisticsDataWeeklyDOList;
         }
 
-        Calendar currentCalendar = Calendar.getInstance();
+        Calendar currentCalendar = getCalendarInstance(SETTING_FIRST_DAY_OF_WEEK)/*Calendar.getInstance()*/;
         currentCalendar.set(Calendar.YEAR, year);
         currentCalendar.set(Calendar.MONTH, (month -1));  //因为日历的月份是从0开始到11
         currentCalendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -692,7 +719,7 @@ public class FinanceStatisticsWeeklySupport {
     }
 
     public StatisticsInterval createStatisticsInterval(int year, int month, int weekOfMonth) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = getCalendarInstance(SETTING_FIRST_DAY_OF_WEEK);
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month - 1);  // 因为日历获取的月份比实际月份小1
         calendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -701,7 +728,8 @@ public class FinanceStatisticsWeeklySupport {
         Date statisticsEndTime = null;  //统计结束时间
         Date endTimeInCurrentMonth = DateUtil.getEndMonthDate(firstDayInCurrentMonth);
         calendar.set(Calendar.WEEK_OF_MONTH, weekOfMonth);
-        calendar.set(Calendar.DAY_OF_WEEK, 7);
+        //calendar.set(Calendar.DAY_OF_WEEK, 7);
+        calendar.set(Calendar.DAY_OF_WEEK, SETTING_FIRST_DAY_OF_WEEK - 1);
         calendar.set(Calendar.HOUR_OF_DAY ,23);
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 59);
@@ -716,6 +744,13 @@ public class FinanceStatisticsWeeklySupport {
         statisticsInterval.setStatisticsStartTime(statisticsStartTime);
         statisticsInterval.setStatisticsEndTime(statisticsEndTime);
         return statisticsInterval;
+    }
+
+    public Calendar getCalendarInstance(int settingFirstDayOfWeek) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setFirstDayOfWeek(settingFirstDayOfWeek);
+        calendar.setMinimalDaysInFirstWeek(1);
+        return calendar;
     }
 
     public StatisticsInterval createStatisticsInterval(int statisticsInterval, int year, int month, int weekOfMonth) {
@@ -736,5 +771,7 @@ public class FinanceStatisticsWeeklySupport {
 
     @Autowired
     private SubCompanyMapper subCompanyMapper;
+
+    public static int SETTING_FIRST_DAY_OF_WEEK = Calendar.FRIDAY;
 
 }
