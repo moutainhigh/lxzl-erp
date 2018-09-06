@@ -2,10 +2,12 @@ package com.lxzl.erp.common.domain.replace.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.ReturnOrChangeMode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
+import com.lxzl.erp.common.util.validate.constraints.In;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
@@ -27,7 +29,7 @@ public class ReplaceOrder extends BasePO {
 	private Integer customerId;   //客户ID
 	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups = {AddGroup.class})
 	private String customerNo;   //客户编号
-//	@NotNull(message = ErrorCode.REPLACE_TIME_NOT_NULL, groups = {AddGroup.class})
+	@NotNull(message = ErrorCode.REPLACE_TIME_NOT_NULL, groups = {AddGroup.class})
 	private Date replaceTime;   //换货时间
 	private Integer totalReplaceProductCount;   //换货商品总数
 	private Integer totalReplaceMaterialCount;   //换货配件总数
@@ -36,11 +38,12 @@ public class ReplaceOrder extends BasePO {
 	private BigDecimal serviceCost;   //服务费
 	private BigDecimal logisticsCost;   //运费
 	private BigDecimal repairCost;   //维修费
-//	@Min(value = 0, message = ErrorCode.REPLACE_REASON_TYPE_ERROR, groups = {AddGroup.class})
-//	@Max(value = 2, message = ErrorCode.REPLACE_REASON_TYPE_ERROR, groups = {AddGroup.class})
+	@Min(value = 0, message = ErrorCode.REPLACE_REASON_TYPE_ERROR, groups = {AddGroup.class})
+	@Max(value = 2, message = ErrorCode.REPLACE_REASON_TYPE_ERROR, groups = {AddGroup.class})
 	private Integer replaceReasonType;   //换货原因类型,0-升级 ，1-损坏，2-其他
 	private String replaceReason;   //换货原因
-//	@NotNull(message = ErrorCode.REPLACE_MODE_IS_NULL, groups = {AddGroup.class})
+	@NotNull(message = ErrorCode.RETURN_OR_CHANGE_MODE_NOT_NULL, groups = {AddGroup.class})
+	@In(value = {ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR, ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_MAIL}, message = ErrorCode.RETURN_OR_CHANGE_MODE_ERROR)
 	private Integer replaceMode;   //换货方式，1-上门取件，2邮寄
 	private Integer replaceOrderStatus;   //换货订单状态，0-待提交，4-审核中，8-待发货，12-处理中，16-已发货，20-已完成，24-取消
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -52,8 +55,9 @@ public class ReplaceOrder extends BasePO {
 	private Date confirmReplaceTime;   //确认换货时间
 	private String confirmReplaceUser;   //确认换货人
 	@Valid
-//	@CollectionNotNull(message = ErrorCode.REPLACE_ORDER_DETAIL_LIST_NOT_NULL, groups = {AddGroup.class})
-	private List<ReplaceOrderDetail> replaceOrderDetailList;
+	private List<ReplaceOrderProduct> replaceOrderProductList;
+	@Valid
+	private List<ReplaceOrderMaterial> replaceOrderMaterialList;
 
 
 	public Integer getReplaceOrderId(){
@@ -264,11 +268,19 @@ public class ReplaceOrder extends BasePO {
 		this.confirmReplaceUser = confirmReplaceUser;
 	}
 
-	public List<ReplaceOrderDetail> getReplaceOrderDetailList() {
-		return replaceOrderDetailList;
+	public List<ReplaceOrderProduct> getReplaceOrderProductList() {
+		return replaceOrderProductList;
 	}
 
-	public void setReplaceOrderDetailList(List<ReplaceOrderDetail> replaceOrderDetailList) {
-		this.replaceOrderDetailList = replaceOrderDetailList;
+	public void setReplaceOrderProductList(List<ReplaceOrderProduct> replaceOrderProductList) {
+		this.replaceOrderProductList = replaceOrderProductList;
+	}
+
+	public List<ReplaceOrderMaterial> getReplaceOrderMaterialList() {
+		return replaceOrderMaterialList;
+	}
+
+	public void setReplaceOrderMaterialList(List<ReplaceOrderMaterial> replaceOrderMaterialList) {
+		this.replaceOrderMaterialList = replaceOrderMaterialList;
 	}
 }

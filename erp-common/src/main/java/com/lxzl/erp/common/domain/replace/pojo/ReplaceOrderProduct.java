@@ -1,47 +1,53 @@
-package com.lxzl.erp.dataaccess.domain.replace;
+package com.lxzl.erp.common.domain.replace.pojo;
 
-import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 import java.util.Date;
 import java.math.BigDecimal;
 
-public class ReplaceOrderDetailDO  extends BaseDO {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ReplaceOrderProduct extends BasePO {
 
-	private Integer id;
-	private Integer replaceOrderId;
-	private String replaceOrderNo;
-	private Integer orderItemType;
-	private Integer oldOrderItemId;
-	private Integer oldOrderEntry;
-	private Integer newOrderItemId;
-	private Integer rentType;
-	private Integer rentTimeLength;
-	private Integer rentLengthType;
-	private Integer depositCycle;
-	private Integer paymentCycle;
-	private Integer payMode;
-	private BigDecimal oldProductUnitAmount;
-	private Integer productId;
-	private String productName;
-	private Integer productSkuId;
-	private String productSkuName;
-	private Integer productCount;
-	private BigDecimal productUnitAmount;
-	private BigDecimal rentDepositAmount;
-	private BigDecimal depositAmount;
-	private BigDecimal creditDepositAmount;
-	private Integer isNewProduct;
-	private Integer dataStatus;
-	private String remark;
-	private Integer realReplaceProductCount;
-	private Integer isReletOrderReplace;
-	private Integer reletOrderItemId;
+	private Integer replaceOrderProductId;   //唯一标识
+	private Integer replaceOrderId;   //换货单ID
+	private String replaceOrderNo;   //换货编号
+	private Integer oldOrderProductId;   //原订单商品项id
+	private Integer oldProductEntry;   //原订单行号
+	private Integer newOrderProductId;   //新订单商品项id
+	private Integer rentType;   //租赁方式，1按天租，2按月租
+	private Integer rentTimeLength;   //租赁期限
+	private Integer rentLengthType;   //租赁期限类型，1短租，2长租
+	private Integer depositCycle;   //押金期数
+	private Integer paymentCycle;   //付款期数
+	private Integer payMode;   //支付方式：1先用后付，2先付后用
+	private BigDecimal oldProductUnitAmount;   //原商品单价
+	private Integer productId;   //商品ID
+	private String productName;   //商品名称
+	private Integer productSkuId;   //商品SKU ID
+	private String productSkuName;   //商品SKU名称
+	private Integer productCount;   //商品总数
+	private BigDecimal productUnitAmount;   //商品单价
+	private BigDecimal rentDepositAmount;   //租金押金金额
+	private BigDecimal depositAmount;   //设备押金金额
+	private BigDecimal creditDepositAmount;   //授信押金金额
+	private Integer isNewProduct;   //是否是全新机，1是0否
+	private Integer dataStatus;   //状态：0不可用；1可用；2删除
+	private String remark;   //备注
+	private Date createTime;   //添加时间
+	private String createUser;   //添加人
+	private Date updateTime;   //修改时间
+	private String updateUser;   //修改人
+	private Integer realReplaceProductCount;   //实际换货数量
+	private Integer isReletOrderReplace;   //是否是续租单换货，1是0否
+	private Integer reletOrderItemId;   //续租项ID
 
-	public Integer getId(){
-		return id;
+
+	public Integer getReplaceOrderProductId(){
+		return replaceOrderProductId;
 	}
 
-	public void setId(Integer id){
-		this.id = id;
+	public void setReplaceOrderProductId(Integer replaceOrderProductId){
+		this.replaceOrderProductId = replaceOrderProductId;
 	}
 
 	public Integer getReplaceOrderId(){
@@ -60,36 +66,28 @@ public class ReplaceOrderDetailDO  extends BaseDO {
 		this.replaceOrderNo = replaceOrderNo;
 	}
 
-	public Integer getOrderItemType(){
-		return orderItemType;
+	public Integer getOldOrderProductId(){
+		return oldOrderProductId;
 	}
 
-	public void setOrderItemType(Integer orderItemType){
-		this.orderItemType = orderItemType;
+	public void setOldOrderProductId(Integer oldOrderProductId){
+		this.oldOrderProductId = oldOrderProductId;
 	}
 
-	public Integer getOldOrderItemId(){
-		return oldOrderItemId;
+	public Integer getOldProductEntry(){
+		return oldProductEntry;
 	}
 
-	public void setOldOrderItemId(Integer oldOrderItemId){
-		this.oldOrderItemId = oldOrderItemId;
+	public void setOldProductEntry(Integer oldProductEntry){
+		this.oldProductEntry = oldProductEntry;
 	}
 
-	public Integer getOldOrderEntry(){
-		return oldOrderEntry;
+	public Integer getNewOrderProductId(){
+		return newOrderProductId;
 	}
 
-	public void setOldOrderEntry(Integer oldOrderEntry){
-		this.oldOrderEntry = oldOrderEntry;
-	}
-
-	public Integer getNewOrderItemId(){
-		return newOrderItemId;
-	}
-
-	public void setNewOrderItemId(Integer newOrderItemId){
-		this.newOrderItemId = newOrderItemId;
+	public void setNewOrderProductId(Integer newOrderProductId){
+		this.newOrderProductId = newOrderProductId;
 	}
 
 	public Integer getRentType(){
@@ -242,6 +240,38 @@ public class ReplaceOrderDetailDO  extends BaseDO {
 
 	public void setRemark(String remark){
 		this.remark = remark;
+	}
+
+	public Date getCreateTime(){
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+
+	public String getCreateUser(){
+		return createUser;
+	}
+
+	public void setCreateUser(String createUser){
+		this.createUser = createUser;
+	}
+
+	public Date getUpdateTime(){
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime){
+		this.updateTime = updateTime;
+	}
+
+	public String getUpdateUser(){
+		return updateUser;
+	}
+
+	public void setUpdateUser(String updateUser){
+		this.updateUser = updateUser;
 	}
 
 	public Integer getRealReplaceProductCount(){

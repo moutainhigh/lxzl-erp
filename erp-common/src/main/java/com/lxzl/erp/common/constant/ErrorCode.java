@@ -1090,6 +1090,17 @@ public class ErrorCode {
     public static final String STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR = "J300000005";
     public static final String STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR = "J300000006";
 
+    //换货
+    public static final String REPLACE_TIME_NOT_NULL = "J310000001";//换货时间不能为空
+    public static final String REPLACE_REASON_TYPE_ERROR = "J310000002";//换货原因类型错误
+    public static final String REPLACE_ORDER_DETAIL_LIST_NOT_NULL = "J310000003";//换货详情列表不能为空
+    public static final String ORDER_ITEM_TYPE_NOT_NULL = "J310000004";//换货商品类型不能为空
+    public static final String ORDER_ITEM_ENTRY_NOT_NULL = "J310000005";//换货项行号不能为空
+    public static final String REPLACE_ORDER_STATUS_ERROR = "J310000006";//只有订单状态为租赁中和部分退货的订单才能进行换货操作
+    public static final String REPLACE_TIME_PARSE_ERROR = "J310000007";//校验换货时间parse出错
+    public static final String REPLACE_TIME_MUST_AFTER_RENT_START_TIME = "J310000008";//换货时间必须大于订单起租时间
+    public static final String REPLACE_TIME_MUST_BEFORE_EXPECT_RETURN_TIME = "J310000009";//换货时间不能大于订单预计归还时间
+
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -2160,6 +2171,16 @@ public class ErrorCode {
         MAP.put(STATISTICAL_STATUS_MONTH_ERROR, "查询月经营数据传递查询参数错误");
         MAP.put(STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR, "查询周经营数据传入的查询开始时间必须是星期一");
         MAP.put(STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR, "查询月经营数据传入的查询开始时间必须是月初一号");
+
+        MAP.put(REPLACE_TIME_NOT_NULL, "换货时间不能为空");
+        MAP.put(REPLACE_REASON_TYPE_ERROR, "换货原因类型错误");
+        MAP.put(REPLACE_ORDER_DETAIL_LIST_NOT_NULL, "换货详情不能为空");
+        MAP.put(ORDER_ITEM_TYPE_NOT_NULL, "换货商品类型不能为空");
+        MAP.put(ORDER_ITEM_ENTRY_NOT_NULL, "换货项行号不能为空");
+        MAP.put(REPLACE_ORDER_STATUS_ERROR, "只有订单状态为租赁中和部分退货的订单才能进行换货操作");
+        MAP.put(REPLACE_TIME_PARSE_ERROR, "校验换货时间parse出错");
+        MAP.put(REPLACE_TIME_MUST_AFTER_RENT_START_TIME, "换货时间必须大于订单起租时间");
+        MAP.put(REPLACE_TIME_MUST_BEFORE_EXPECT_RETURN_TIME, "换货时间必须小于订单预计归还时间");
 
     }
 

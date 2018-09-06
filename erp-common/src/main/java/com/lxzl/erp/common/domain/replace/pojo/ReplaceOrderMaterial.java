@@ -1,62 +1,51 @@
 package com.lxzl.erp.common.domain.replace.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
-import com.lxzl.erp.common.domain.validGroup.AddGroup;
-
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ReplaceOrderDetail extends BasePO {
+public class ReplaceOrderMaterial extends BasePO {
 
-	private Integer replaceOrderDetailId;   //唯一标识
+	private Integer replaceOrderMaterialId;   //唯一标识
 	private Integer replaceOrderId;   //换货单ID
 	private String replaceOrderNo;   //换货编号
-//	@NotNull(message = ErrorCode.ORDER_ITEM_TYPE_NOT_NULL,groups = {AddGroup.class})
-	private Integer orderItemType;   //商品类型,1-商品,2-配件
-//	@NotNull(message = ErrorCode.ORDER_ITEM_ID_NOT_NULL,groups = {AddGroup.class})
-	private Integer oldOrderItemId;   //原订单项id
-//	@NotNull(message = ErrorCode.ORDER_ITEM_ENTRY_NOT_NULL,groups = {AddGroup.class})
-	private Integer oldOrderEntry;   //原订单行号
-	private Integer newOrderItemId;   //新订单项id
+	private Integer oldOrderMaterialId;   //原订单配件项id
+	private Integer oldMaterialEntry;   //原订单行号
+	private Integer newOrderMaterialId;   //新订单配件项id
 	private Integer rentType;   //租赁方式，1按天租，2按月租
 	private Integer rentTimeLength;   //租赁期限
 	private Integer rentLengthType;   //租赁期限类型，1短租，2长租
 	private Integer depositCycle;   //押金期数
 	private Integer paymentCycle;   //付款期数
 	private Integer payMode;   //支付方式：1先用后付，2先付后用
-	private BigDecimal oldProductUnitAmount;   //原商品单价
-
-	private Integer productId;   //商品ID
-	private String productName;   //商品名称
-	private Integer productSkuId;   //商品SKU ID
-	private String productSkuName;   //商品SKU名称
-	private Integer productCount;   //商品总数
-	private BigDecimal productUnitAmount;   //商品单价
+	private BigDecimal oldMaterialUnitAmount;   //原配件单价
+	private Integer materialId;   //配件ID
+	private String materialName;   //配件名称
+	private Integer materialCount;   //配件总数
+	private BigDecimal materialUnitAmount;   //配件单价
 	private BigDecimal rentDepositAmount;   //租金押金金额
 	private BigDecimal depositAmount;   //设备押金金额
 	private BigDecimal creditDepositAmount;   //授信押金金额
-	private Integer isNewProduct;   //是否是全新机，1是0否
+	private Integer isNewMaterial;   //是否是全新机，1是0否
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
-	private Integer realReplaceProductCount;   //实际换货数量
+	private Integer realReplaceMaterialCount;   //实际换货数量
 	private Integer isReletOrderReplace;   //是否是续租单换货，1是0否
 	private Integer reletOrderItemId;   //续租项ID
 
 
-	public Integer getReplaceOrderDetailId(){
-		return replaceOrderDetailId;
+	public Integer getReplaceOrderMaterialId(){
+		return replaceOrderMaterialId;
 	}
 
-	public void setReplaceOrderDetailId(Integer replaceOrderDetailId){
-		this.replaceOrderDetailId = replaceOrderDetailId;
+	public void setReplaceOrderMaterialId(Integer replaceOrderMaterialId){
+		this.replaceOrderMaterialId = replaceOrderMaterialId;
 	}
 
 	public Integer getReplaceOrderId(){
@@ -75,36 +64,28 @@ public class ReplaceOrderDetail extends BasePO {
 		this.replaceOrderNo = replaceOrderNo;
 	}
 
-	public Integer getOrderItemType(){
-		return orderItemType;
+	public Integer getOldOrderMaterialId(){
+		return oldOrderMaterialId;
 	}
 
-	public void setOrderItemType(Integer orderItemType){
-		this.orderItemType = orderItemType;
+	public void setOldOrderMaterialId(Integer oldOrderMaterialId){
+		this.oldOrderMaterialId = oldOrderMaterialId;
 	}
 
-	public Integer getOldOrderItemId(){
-		return oldOrderItemId;
+	public Integer getOldMaterialEntry(){
+		return oldMaterialEntry;
 	}
 
-	public void setOldOrderItemId(Integer oldOrderItemId){
-		this.oldOrderItemId = oldOrderItemId;
+	public void setOldMaterialEntry(Integer oldMaterialEntry){
+		this.oldMaterialEntry = oldMaterialEntry;
 	}
 
-	public Integer getOldOrderEntry(){
-		return oldOrderEntry;
+	public Integer getNewOrderMaterialId(){
+		return newOrderMaterialId;
 	}
 
-	public void setOldOrderEntry(Integer oldOrderEntry){
-		this.oldOrderEntry = oldOrderEntry;
-	}
-
-	public Integer getNewOrderItemId(){
-		return newOrderItemId;
-	}
-
-	public void setNewOrderItemId(Integer newOrderItemId){
-		this.newOrderItemId = newOrderItemId;
+	public void setNewOrderMaterialId(Integer newOrderMaterialId){
+		this.newOrderMaterialId = newOrderMaterialId;
 	}
 
 	public Integer getRentType(){
@@ -155,60 +136,44 @@ public class ReplaceOrderDetail extends BasePO {
 		this.payMode = payMode;
 	}
 
-	public BigDecimal getOldProductUnitAmount(){
-		return oldProductUnitAmount;
+	public BigDecimal getOldMaterialUnitAmount(){
+		return oldMaterialUnitAmount;
 	}
 
-	public void setOldProductUnitAmount(BigDecimal oldProductUnitAmount){
-		this.oldProductUnitAmount = oldProductUnitAmount;
+	public void setOldMaterialUnitAmount(BigDecimal oldMaterialUnitAmount){
+		this.oldMaterialUnitAmount = oldMaterialUnitAmount;
 	}
 
-	public Integer getProductId(){
-		return productId;
+	public Integer getMaterialId(){
+		return materialId;
 	}
 
-	public void setProductId(Integer productId){
-		this.productId = productId;
+	public void setMaterialId(Integer materialId){
+		this.materialId = materialId;
 	}
 
-	public String getProductName(){
-		return productName;
+	public String getMaterialName(){
+		return materialName;
 	}
 
-	public void setProductName(String productName){
-		this.productName = productName;
+	public void setMaterialName(String materialName){
+		this.materialName = materialName;
 	}
 
-	public Integer getProductSkuId(){
-		return productSkuId;
+	public Integer getMaterialCount(){
+		return materialCount;
 	}
 
-	public void setProductSkuId(Integer productSkuId){
-		this.productSkuId = productSkuId;
+	public void setMaterialCount(Integer materialCount){
+		this.materialCount = materialCount;
 	}
 
-	public String getProductSkuName(){
-		return productSkuName;
+	public BigDecimal getMaterialUnitAmount(){
+		return materialUnitAmount;
 	}
 
-	public void setProductSkuName(String productSkuName){
-		this.productSkuName = productSkuName;
-	}
-
-	public Integer getProductCount(){
-		return productCount;
-	}
-
-	public void setProductCount(Integer productCount){
-		this.productCount = productCount;
-	}
-
-	public BigDecimal getProductUnitAmount(){
-		return productUnitAmount;
-	}
-
-	public void setProductUnitAmount(BigDecimal productUnitAmount){
-		this.productUnitAmount = productUnitAmount;
+	public void setMaterialUnitAmount(BigDecimal materialUnitAmount){
+		this.materialUnitAmount = materialUnitAmount;
 	}
 
 	public BigDecimal getRentDepositAmount(){
@@ -235,12 +200,12 @@ public class ReplaceOrderDetail extends BasePO {
 		this.creditDepositAmount = creditDepositAmount;
 	}
 
-	public Integer getIsNewProduct(){
-		return isNewProduct;
+	public Integer getIsNewMaterial(){
+		return isNewMaterial;
 	}
 
-	public void setIsNewProduct(Integer isNewProduct){
-		this.isNewProduct = isNewProduct;
+	public void setIsNewMaterial(Integer isNewMaterial){
+		this.isNewMaterial = isNewMaterial;
 	}
 
 	public Integer getDataStatus(){
@@ -291,12 +256,12 @@ public class ReplaceOrderDetail extends BasePO {
 		this.updateUser = updateUser;
 	}
 
-	public Integer getRealReplaceProductCount(){
-		return realReplaceProductCount;
+	public Integer getRealReplaceMaterialCount(){
+		return realReplaceMaterialCount;
 	}
 
-	public void setRealReplaceProductCount(Integer realReplaceProductCount){
-		this.realReplaceProductCount = realReplaceProductCount;
+	public void setRealReplaceMaterialCount(Integer realReplaceMaterialCount){
+		this.realReplaceMaterialCount = realReplaceMaterialCount;
 	}
 
 	public Integer getIsReletOrderReplace(){
