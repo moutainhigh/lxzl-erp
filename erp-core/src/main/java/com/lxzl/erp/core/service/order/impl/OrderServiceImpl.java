@@ -1821,8 +1821,12 @@ public class OrderServiceImpl implements OrderService {
                     testMachineOrderDO.setUpdateUser(loginUser.getUserId().toString());
                     orderMapper.update(testMachineOrderDO);
 
-                    statementOrderSupport.stopTestMachineOrder(orderFromTestMachineDO.getTestMachineOrderNo(),orderDO.getRentStartTime());
-                }
+                    //修改原测试机结算
+                    String stopResult=statementOrderSupport.stopTestMachineOrder(orderFromTestMachineDO.getTestMachineOrderNo(),orderFromTestMachineDO.getCreateTime());
+                    if(ErrorCode.SUCCESS.equals(stopResult)){
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                        return stopResult;
+                    }                }
 
                 orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
                 orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_SUCCESS);

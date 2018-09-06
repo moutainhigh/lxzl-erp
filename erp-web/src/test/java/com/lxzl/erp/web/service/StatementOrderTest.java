@@ -20,7 +20,7 @@ import java.util.List;
  * @author gaochao
  * @date 2018-01-27 10:19
  */
-public class StatementOrderTest  extends ERPUnTransactionalTest {
+public class StatementOrderTest  extends ERPTransactionalTest {
 
     @Autowired
     private StatementService statementService;
@@ -50,7 +50,7 @@ public class StatementOrderTest  extends ERPUnTransactionalTest {
     @Test
     public void stopTestMachineOrder(){
         Calendar calendar=Calendar.getInstance();
-        calendar.set(2018,2,19);
-        statementOrderSupport.stopTestMachineOrder("LXO-20180309-0755-00395",calendar.getTime());
+        calendar.set(2018,8,7);
+        statementOrderSupport.stopTestMachineOrder("LXO-20180905-0755-00001",calendar.getTime());
     }
 }
