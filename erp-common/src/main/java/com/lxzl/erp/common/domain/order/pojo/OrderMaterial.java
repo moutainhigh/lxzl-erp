@@ -32,7 +32,7 @@ public class OrderMaterial extends BasePO {
 	private Integer paymentCycle;
 	private Integer payMode;
 	private Integer isNewMaterial;
-	private Integer rentingMaterialCount;
+	private Integer rentingMaterialCount; //在租配件总数
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间

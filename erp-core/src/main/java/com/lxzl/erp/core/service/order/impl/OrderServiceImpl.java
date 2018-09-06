@@ -1865,23 +1865,6 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = ConverterUtil.convert(orderDO, Order.class);
 
-        //如果订单是按日，并且租期为30以内就标记为测试机
-        if (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && order.getRentTimeLength() <= CommonConstant.ORDER_TEST_MACHINE_RENT_TIME && CommonConstant.COMMON_CONSTANT_YES.equals(order.getCanReletOrder())){
-            order.setIsTestMachineOrder(CommonConstant.COMMON_CONSTANT_YES);
-        }
-
-        //订单原本就是测试机订单
-        OrderFromTestMachineDO fromTestMachineMapperByTestOrderNo = orderFromTestMachineMapper.findByTestOrderNo(order.getOrderNo());
-        if(fromTestMachineMapperByTestOrderNo != null){
-            order.setRentOrderNo(fromTestMachineMapperByTestOrderNo.getOrderNo());
-        }
-
-        //如果订单是由测试机订单转换过来的就返回原测试机的单号
-        OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(order.getOrderNo());
-        if (orderFromTestMachineDO != null){
-            order.setTestMachineOrderNo(orderFromTestMachineDO.getTestMachineOrderNo());
-        }
-
         if (orderDO.getOrderUnionSellerId() != null) {
             UserDO unionUser = userMapper.findByUserId(orderDO.getOrderUnionSellerId());
             if (unionUser != null) {
@@ -1977,6 +1960,24 @@ public class OrderServiceImpl implements OrderService {
         order.setCanReletOrder(canReletOrder);
         Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
         order.setIsReletOrder(isReletOrder);
+
+        //如果订单是按日，并且租期为30以内就标记为测试机
+        if (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && order.getRentTimeLength() <= CommonConstant.ORDER_TEST_MACHINE_RENT_TIME && CommonConstant.COMMON_CONSTANT_YES.equals(order.getCanReletOrder())){
+            order.setIsTestMachineOrder(CommonConstant.COMMON_CONSTANT_YES);
+        }
+
+        //订单原本就是测试机订单
+        OrderFromTestMachineDO fromTestMachineMapperByTestOrderNo = orderFromTestMachineMapper.findByTestOrderNo(order.getOrderNo());
+        if(fromTestMachineMapperByTestOrderNo != null){
+            order.setRentOrderNo(fromTestMachineMapperByTestOrderNo.getOrderNo());
+        }
+
+        //如果订单是由测试机订单转换过来的就返回原测试机的单号
+        OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(order.getOrderNo());
+        if (orderFromTestMachineDO != null){
+            order.setTestMachineOrderNo(orderFromTestMachineDO.getTestMachineOrderNo());
+        }
+
 
         //获取确认收货变更原因及交货单客户签字图片逻辑
         if (order.getOrderStatus() > OrderStatus.ORDER_STATUS_DELIVERED) {
