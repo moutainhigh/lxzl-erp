@@ -114,6 +114,39 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, User> adminLogin(LoginParam loginParam, String ip) {
+        ServiceResult<String, User> result = new ServiceResult<>();
+        User userInfo = (User)  session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        //超级管理员不加权限控制,只有超级管理员才可以进行
+        if (userInfo == null&& userInfo.getUserId() == null || !userRoleService.isSuperAdmin(userInfo.getUserId())) {
+            result.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
+        }else{
+            UserDO oldUserDO = userMapper.findByUsername(userInfo.getUserName());
+            if (!oldUserDO.getPassword().equals(generateMD5Password(oldUserDO.getUserName(), loginParam.getPassword(), ApplicationConfig.authKey))) {
+                result.setErrorCode(ErrorCode.USER_PASSWORD_ERROR);
+            }else{
+                UserDO userDO = userMapper.findByUsername(loginParam.getUserName());
+                if (userDO == null) {
+                    result.setErrorCode(ErrorCode.USER_NAME_NOT_FOUND);
+                } else if (userDO.getIsDisabled().equals(CommonConstant.COMMON_CONSTANT_YES)) {
+                    result.setErrorCode(ErrorCode.USER_DISABLE);
+                } else if (userDO.getIsActivated().equals(CommonConstant.COMMON_CONSTANT_NO)) {
+                    result.setErrorCode(ErrorCode.USER_NOT_ACTIVATED);
+                }else {
+                    User user = ConverterUtil.convert(userDO, User.class);
+                    session.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, user);
+                    SessionManagement.getInstance().removeSession(session.getId());
+                    SessionManagement.getInstance().addSessionId(user.getUserId().toString());
+                    result.setErrorCode(ErrorCode.SUCCESS);
+                    result.setResult(user);
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> addUser(User user) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
