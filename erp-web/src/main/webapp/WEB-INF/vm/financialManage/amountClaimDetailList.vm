@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-统计管理-流水认领明细列表</title>
+    <title>凌雄ERP-财务管理-流水认领明细列表</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
 </head>

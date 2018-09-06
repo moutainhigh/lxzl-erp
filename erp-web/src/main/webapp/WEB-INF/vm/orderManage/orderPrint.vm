@@ -227,7 +227,14 @@
                     <tr>
                         <td class="text-center" style="padding: 0px 2px;">{{rowNum}}</td>
                         <td class="text-center">
-                            {{productName}}({{isNewProductValue}})
+                            {{#isTestMachine}}
+                            <p style="white-space: nowrap">{{productName}}</p>
+                            <p style="white-space: nowrap">({{isNewProductValue}}、样机转租赁)</p>
+                            {{/isTestMachine}}
+                            {{^isTestMachine}}
+                                <p>{{productName}}({{isNewProductValue}})</p>
+                            {{/isTestMachine}}
+                            
 ##                            <p>{{propertiesToStr}}</p>
                         </td>
                         <td class="text-center">{{propertiesToStr}}</td>

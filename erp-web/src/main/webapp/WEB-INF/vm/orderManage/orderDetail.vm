@@ -31,7 +31,7 @@
                                 <script type="text/html" id="actionButtonsTpl">
                                     {{#acitonButtons}}
                                     <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" 
-                                    title="{{menuName}}" data-orderno="{{orderNo}}" data-canrelet="{{canReletOrder}}">
+                                    title="{{menuName}}" data-orderno="{{orderNo}}" data-canrelet="{{canReletOrder}}" data-istest="{{isTestMachineOrder}}">
                                         <i class="{{iClass}}"></i> {{text}}
                                     </a>
                                     {{/acitonButtons}}

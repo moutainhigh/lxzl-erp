@@ -184,6 +184,7 @@
                                                 <button type="reset" class="btn btn-default btn-sm">重置</button>
                                                 <button type="button" id="recycleBtn" class="btn btn-default btn-sm">回收站</button>
                                                 <input type="hidden" name="isRecycleBin" id="isRecycleBin" value="0">
+                                                <input type="hidden" name="warehouseWorkbenchOrderType" id="warehouseWorkbenchOrderType" value="">
                                             </div>
                                         </div>
                                     </div>
@@ -197,19 +198,20 @@
                             <script type="text/html" id="dataListTpl">
                                 <thead>
                                     <tr class="bg-light">
-                                        <th>编号</th>
-                                        <th>订单归属</th>
-                                        <th>客户名称</th>
-                                        <th>收货人信息</th>
-                                        <th>类型/期限</th>
-                                        <th>商品名称</th>
-                                        <th>订单金额</th>
-                                        <th>发货公司</th>
-                                        <th>送货日期</th>
-                                        <th>业务员</th>
-                                        <th>创建人</th>
-                                        <th>支付状态</th>
-                                        <th>订单状态</th>
+                                        <th class="nowrap">编号</th>
+                                        <th class="nowrap">订单归属</th>
+                                        <th class="nowrap">客户名称</th>
+                                        <th class="nowrap">收货人信息</th>
+                                        <th class="nowrap">类型/期限</th>
+                                        <th class="nowrap">商品名称</th>
+                                        <th class="nowrap">是否含测试机</th>
+                                        <th class="nowrap">订单金额</th>
+                                        <th class="nowrap">发货公司</th>
+                                        <th class="nowrap">送货日期</th>
+                                        <th class="nowrap">业务员</th>
+                                        <th class="nowrap">创建人</th>
+                                        <th class="nowrap">支付状态</th>
+                                        <th class="nowrap">订单状态</th>
 ##                                        <th>备注</th>
                                         {{#hasRowActionButtons}}
                                         <th class="text-right">操作</th>
@@ -229,7 +231,7 @@
                                                 {{/isReletOrder}}
                                                 <a href="{{detailUrl}}" target="_blank">{{orderNo}}</a>
                                             </td>
-                                            <td>{{orderSubCompanyName}}</td>
+                                            <td class="nowrap">{{orderSubCompanyName}}</td>
                                             <td><a href="{{customerUrl}}" target="_blank">{{buyerCustomerName}}</a></td>
                                             <td>
                                                 <p class="mn">{{orderConsignInfo.consigneeName}}</p>
@@ -240,11 +242,10 @@
                                                 <p class="mn" style="white-space: nowrap;">{{rentTypeValue}}</p>
                                                 <p class="mn mt5" style="white-space: nowrap;">{{rentTimeLength}}{{rentTypeUnit}}</p>
                                             </td>
-                                            <td>
-                                                {{productSummary}}
-                                            </td>
+                                            <td>{{productSummary}}</td>
+                                            <td class="text-center {{isTestMachineClass}}">{{isTestMachine}}</td>
                                             <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
-                                            <td>{{deliverySubCompanyName}}</td>
+                                            <td class="nowrap">{{deliverySubCompanyName}}</td>
                                             <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
                                             <td>{{orderSellerName}}</td>
                                             <td>
@@ -285,7 +286,8 @@
                                                         {{#rowActionButtons}}
                                                         <li>
                                                             <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" class="{{class}}" 
-                                                                data-orderno="{{orderNo}}" data-canrelet="{{canReletOrder}}" data-statement="{{statementDate}}">{{text}}</a>
+                                                                data-orderno="{{orderNo}}" data-canrelet="{{canReletOrder}}" 
+                                                                data-statement="{{statementDate}}" data-istest="{{isTestMachineOrder}}">{{text}}</a>
                                                         </li>
                                                         {{/rowActionButtons}}
                                                     </ul>
