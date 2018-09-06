@@ -676,11 +676,15 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, String> updatePerson(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
-        CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerPerson().getRealName());
-        if (dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())) {
+
+        CustomerDO dbCustomerDO = customerMapper.findByRealNameAndPersonNo(customer.getCustomerPerson().getRealName(),
+                customer.getCustomerPerson().getPersonNo());
+        if (dbCustomerDO != null && !customer.getCustomerNo().equals(dbCustomerDO.getCustomerNo())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_IS_EXISTS);
+            serviceResult.setResult(dbCustomerDO.getCustomerNo());
             return serviceResult;
         }
+
         CustomerDO customerDO = customerMapper.findCustomerPersonByNo(customer.getCustomerNo());
         if (customerDO == null || !CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
