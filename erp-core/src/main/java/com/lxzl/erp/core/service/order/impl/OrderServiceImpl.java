@@ -557,6 +557,18 @@ public class OrderServiceImpl implements OrderService {
         OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(order.getOrderNo());
         if (orderFromTestMachineDO != null){
             //该订单是由测试机订单转为租赁的订单
+            OrderDO testMachineOrderDO = orderMapper.findByOrderNo(orderFromTestMachineDO.getTestMachineOrderNo());
+            if (testMachineOrderDO == null) {
+                result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_IS_NOT_EXISTS);
+                return result;
+            }
+            //新订单开始时间必须大于测试机订单开始时间，小于测试机结束时间下一天
+            if (com.lxzl.erp.common.util.DateUtil.daysBetween(testMachineOrderDO.getRentStartTime(), order.getRentStartTime()) <= 0
+                    || com.lxzl.erp.common.util.DateUtil.daysBetween(DateUtil.dateInterval(testMachineOrderDO.getExpectReturnTime(), 1), order.getRentStartTime()) > 0){
+                result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_RENT_START_TIME_ERROR);
+                return result;
+            }
+
             CustomerDO testMachineCustomerDO =  customerMapper.findById(dbOrderDO.getBuyerCustomerId());
             OrderConsignInfoDO testMachineOrderConsignInfoDO = orderConsignInfoMapper.findByOrderId(dbOrderDO.getId());
             //原样式机的商品项和配件项
@@ -4123,6 +4135,12 @@ public class OrderServiceImpl implements OrderService {
         if (!OrderStatus.ORDER_STATUS_CONFIRM.equals(testMachineOrderDO.getOrderStatus()) &&
                !OrderStatus.ORDER_STATUS_PART_RETURN.equals(testMachineOrderDO.getOrderStatus())){
             result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_STATUS_MUST_BE_RENTING_OR_PART_RETURN);
+            return result;
+        }
+        //新订单开始时间必须大于测试机订单开始时间，小于测试机结束时间下一天
+        if (com.lxzl.erp.common.util.DateUtil.daysBetween(testMachineOrderDO.getRentStartTime(), order.getRentStartTime()) <= 0
+                || com.lxzl.erp.common.util.DateUtil.daysBetween(DateUtil.dateInterval(testMachineOrderDO.getExpectReturnTime(), 1), order.getRentStartTime()) > 0){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_RENT_START_TIME_ERROR);
             return result;
         }
         //该测试机订单是否是已经正在转为租赁订单
