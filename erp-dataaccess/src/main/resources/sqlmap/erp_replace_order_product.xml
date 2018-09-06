@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderDetailMapper">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderProductMapper">
 
-	<resultMap id="ReplaceOrderDetailDO" type="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDetailDO">
+	<resultMap id="ReplaceOrderProductDO" type="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="replace_order_id" jdbcType="INTEGER" property="replaceOrderId" />
 		<result column="replace_order_no" jdbcType="VARCHAR" property="replaceOrderNo" />
-		<result column="order_item_type" jdbcType="INTEGER" property="orderItemType" />
-		<result column="old_order_item_id" jdbcType="INTEGER" property="oldOrderItemId" />
-		<result column="old_order_entry" jdbcType="INTEGER" property="oldOrderEntry" />
-		<result column="new_order_item_id" jdbcType="INTEGER" property="newOrderItemId" />
+		<result column="old_order_product_id" jdbcType="INTEGER" property="oldOrderProductId" />
+		<result column="old_product_entry" jdbcType="INTEGER" property="oldProductEntry" />
+		<result column="new_order_product_id" jdbcType="INTEGER" property="newOrderProductId" />
 		<result column="rent_type" jdbcType="INTEGER" property="rentType" />
 		<result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
 		<result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
@@ -39,28 +38,28 @@
 	</resultMap>
 
 	<sql id="column_List">
-		erod.id,erod.replace_order_id,erod.replace_order_no,erod.order_item_type,erod.old_order_item_id,erod.old_order_entry,erod.new_order_item_id,erod.rent_type,erod.rent_time_length,erod.rent_length_type,erod.deposit_cycle,erod.payment_cycle,erod.pay_mode,erod.old_product_unit_amount,erod.product_id,erod.product_name,erod.product_sku_id,erod.product_sku_name,erod.product_count,erod.product_unit_amount,erod.rent_deposit_amount,erod.deposit_amount,erod.credit_deposit_amount,erod.is_new_product,erod.data_status,erod.remark,erod.create_time,erod.create_user,erod.update_time,erod.update_user,erod.real_replace_product_count,erod.is_relet_order_replace,erod.relet_order_item_id
+		erop.id,erop.replace_order_id,erop.replace_order_no,erop.old_order_product_id,erop.old_product_entry,erop.new_order_product_id,erop.rent_type,erop.rent_time_length,erop.rent_length_type,erop.deposit_cycle,erop.payment_cycle,erop.pay_mode,erop.old_product_unit_amount,erop.product_id,erop.product_name,erop.product_sku_id,erop.product_sku_name,erop.product_count,erop.product_unit_amount,erop.rent_deposit_amount,erop.deposit_amount,erop.credit_deposit_amount,erop.is_new_product,erop.data_status,erop.remark,erop.create_time,erop.create_user,erop.update_time,erop.update_user,erop.real_replace_product_count,erop.is_relet_order_replace,erop.relet_order_item_id
 	</sql>
 
-	<select id="findById" resultMap="ReplaceOrderDetailDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_replace_order_detail erod 
-		WHERE erod.id = #{id, jdbcType=INTEGER} AND erod.data_status = 1 
+	<select id="findById" resultMap="ReplaceOrderProductDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_replace_order_product erop 
+		WHERE erop.id = #{id, jdbcType=INTEGER} AND erop.data_status = 1 
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(erod.id) FROM erp_replace_order_detail erod 
+		SELECT count(erop.id) FROM erp_replace_order_product erop 
 		<where>
 			<if test="true">
-				AND erod.data_status = 1
+				AND erop.data_status = 1
 			</if>
 		</where>
 	</select>
 
-	<select id="listPage" resultMap="ReplaceOrderDetailDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_replace_order_detail erod 
+	<select id="listPage" resultMap="ReplaceOrderProductDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_replace_order_product erop 
 		<where>
 			<if test="true">
-				AND erod.data_status = 1
+				AND erop.data_status = 1
 			</if>
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}
@@ -74,17 +73,14 @@
 			<if test="replaceOrderNo != null">
 				replace_order_no = #{replaceOrderNo,jdbcType=VARCHAR},
 			</if>
-			<if test="orderItemType != null">
-				order_item_type = #{orderItemType,jdbcType=INTEGER},
+			<if test="oldOrderProductId != null">
+				old_order_product_id = #{oldOrderProductId,jdbcType=INTEGER},
 			</if>
-			<if test="oldOrderItemId != null">
-				old_order_item_id = #{oldOrderItemId,jdbcType=INTEGER},
+			<if test="oldProductEntry != null">
+				old_product_entry = #{oldProductEntry,jdbcType=INTEGER},
 			</if>
-			<if test="oldOrderEntry != null">
-				old_order_entry = #{oldOrderEntry,jdbcType=INTEGER},
-			</if>
-			<if test="newOrderItemId != null">
-				new_order_item_id = #{newOrderItemId,jdbcType=INTEGER},
+			<if test="newOrderProductId != null">
+				new_order_product_id = #{newOrderProductId,jdbcType=INTEGER},
 			</if>
 			<if test="rentType != null">
 				rent_type = #{rentType,jdbcType=INTEGER},
@@ -167,11 +163,11 @@
 		</set>
 	</sql>
 
-	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDetailDO">
-		INSERT INTO erp_replace_order_detail <include refid="set_column_sql"/>
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO">
+		INSERT INTO erp_replace_order_product <include refid="set_column_sql"/>
 	</insert>
 
-	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDetailDO">
-		UPDATE erp_replace_order_detail <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO">
+		UPDATE erp_replace_order_product <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
 </mapper>
