@@ -204,7 +204,6 @@
                                         <th class="nowrap">收货人信息</th>
                                         <th class="nowrap">类型/期限</th>
                                         <th class="nowrap">商品名称</th>
-                                        <th class="nowrap">是否含测试机</th>
                                         <th class="nowrap">订单金额</th>
                                         <th class="nowrap">发货公司</th>
                                         <th class="nowrap">送货日期</th>
@@ -243,7 +242,6 @@
                                                 <p class="mn mt5" style="white-space: nowrap;">{{rentTimeLength}}{{rentTypeUnit}}</p>
                                             </td>
                                             <td>{{productSummary}}</td>
-                                            <td class="text-center {{isTestMachineClass}}">{{isTestMachine}}</td>
                                             <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
                                             <td class="nowrap">{{deliverySubCompanyName}}</td>
                                             <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
