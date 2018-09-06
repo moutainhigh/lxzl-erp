@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderDetailMapper">
+
+	<resultMap id="ReplaceOrderDetailDO" type="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDetailDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="replace_order_id" jdbcType="INTEGER" property="replaceOrderId" />
+		<result column="replace_order_no" jdbcType="VARCHAR" property="replaceOrderNo" />
+		<result column="order_item_type" jdbcType="INTEGER" property="orderItemType" />
+		<result column="old_order_item_id" jdbcType="INTEGER" property="oldOrderItemId" />
+		<result column="old_order_entry" jdbcType="INTEGER" property="oldOrderEntry" />
+		<result column="new_order_item_id" jdbcType="INTEGER" property="newOrderItemId" />
+		<result column="rent_type" jdbcType="INTEGER" property="rentType" />
+		<result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+		<result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+		<result column="deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
+		<result column="payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="pay_mode" jdbcType="INTEGER" property="payMode" />
+		<result column="old_product_unit_amount" jdbcType="DECIMAL" property="oldProductUnitAmount" />
+		<result column="product_id" jdbcType="INTEGER" property="productId" />
+		<result column="product_name" jdbcType="VARCHAR" property="productName" />
+		<result column="product_sku_id" jdbcType="INTEGER" property="productSkuId" />
+		<result column="product_sku_name" jdbcType="VARCHAR" property="productSkuName" />
+		<result column="product_count" jdbcType="INTEGER" property="productCount" />
+		<result column="product_unit_amount" jdbcType="DECIMAL" property="productUnitAmount" />
+		<result column="rent_deposit_amount" jdbcType="DECIMAL" property="rentDepositAmount" />
+		<result column="deposit_amount" jdbcType="DECIMAL" property="depositAmount" />
+		<result column="credit_deposit_amount" jdbcType="DECIMAL" property="creditDepositAmount" />
+		<result column="is_new_product" jdbcType="INTEGER" property="isNewProduct" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="real_replace_product_count" jdbcType="INTEGER" property="realReplaceProductCount" />
+		<result column="is_relet_order_replace" jdbcType="INTEGER" property="isReletOrderReplace" />
+		<result column="relet_order_item_id" jdbcType="INTEGER" property="reletOrderItemId" />
+	</resultMap>
+
+	<sql id="column_List">
+		erod.id,erod.replace_order_id,erod.replace_order_no,erod.order_item_type,erod.old_order_item_id,erod.old_order_entry,erod.new_order_item_id,erod.rent_type,erod.rent_time_length,erod.rent_length_type,erod.deposit_cycle,erod.payment_cycle,erod.pay_mode,erod.old_product_unit_amount,erod.product_id,erod.product_name,erod.product_sku_id,erod.product_sku_name,erod.product_count,erod.product_unit_amount,erod.rent_deposit_amount,erod.deposit_amount,erod.credit_deposit_amount,erod.is_new_product,erod.data_status,erod.remark,erod.create_time,erod.create_user,erod.update_time,erod.update_user,erod.real_replace_product_count,erod.is_relet_order_replace,erod.relet_order_item_id
+	</sql>
+
+	<select id="findById" resultMap="ReplaceOrderDetailDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_replace_order_detail erod 
+		WHERE erod.id = #{id, jdbcType=INTEGER} AND erod.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(erod.id) FROM erp_replace_order_detail erod 
+		<where>
+			<if test="true">
+				AND erod.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="ReplaceOrderDetailDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_replace_order_detail erod 
+		<where>
+			<if test="true">
+				AND erod.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="replaceOrderId != null">
+				replace_order_id = #{replaceOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="replaceOrderNo != null">
+				replace_order_no = #{replaceOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderItemType != null">
+				order_item_type = #{orderItemType,jdbcType=INTEGER},
+			</if>
+			<if test="oldOrderItemId != null">
+				old_order_item_id = #{oldOrderItemId,jdbcType=INTEGER},
+			</if>
+			<if test="oldOrderEntry != null">
+				old_order_entry = #{oldOrderEntry,jdbcType=INTEGER},
+			</if>
+			<if test="newOrderItemId != null">
+				new_order_item_id = #{newOrderItemId,jdbcType=INTEGER},
+			</if>
+			<if test="rentType != null">
+				rent_type = #{rentType,jdbcType=INTEGER},
+			</if>
+			<if test="rentTimeLength != null">
+				rent_time_length = #{rentTimeLength,jdbcType=INTEGER},
+			</if>
+			<if test="rentLengthType != null">
+				rent_length_type = #{rentLengthType,jdbcType=INTEGER},
+			</if>
+			<if test="depositCycle != null">
+				deposit_cycle = #{depositCycle,jdbcType=INTEGER},
+			</if>
+			<if test="paymentCycle != null">
+				payment_cycle = #{paymentCycle,jdbcType=INTEGER},
+			</if>
+			<if test="payMode != null">
+				pay_mode = #{payMode,jdbcType=INTEGER},
+			</if>
+			<if test="oldProductUnitAmount != null">
+				old_product_unit_amount = #{oldProductUnitAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="productId != null">
+				product_id = #{productId,jdbcType=INTEGER},
+			</if>
+			<if test="productName != null">
+				product_name = #{productName,jdbcType=VARCHAR},
+			</if>
+			<if test="productSkuId != null">
+				product_sku_id = #{productSkuId,jdbcType=INTEGER},
+			</if>
+			<if test="productSkuName != null">
+				product_sku_name = #{productSkuName,jdbcType=VARCHAR},
+			</if>
+			<if test="productCount != null">
+				product_count = #{productCount,jdbcType=INTEGER},
+			</if>
+			<if test="productUnitAmount != null">
+				product_unit_amount = #{productUnitAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="rentDepositAmount != null">
+				rent_deposit_amount = #{rentDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="depositAmount != null">
+				deposit_amount = #{depositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="creditDepositAmount != null">
+				credit_deposit_amount = #{creditDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="isNewProduct != null">
+				is_new_product = #{isNewProduct,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="realReplaceProductCount != null">
+				real_replace_product_count = #{realReplaceProductCount,jdbcType=INTEGER},
+			</if>
+			<if test="isReletOrderReplace != null">
+				is_relet_order_replace = #{isReletOrderReplace,jdbcType=INTEGER},
+			</if>
+			<if test="reletOrderItemId != null">
+				relet_order_item_id = #{reletOrderItemId,jdbcType=INTEGER},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDetailDO">
+		INSERT INTO erp_replace_order_detail <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDetailDO">
+		UPDATE erp_replace_order_detail <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
