@@ -628,6 +628,7 @@ public class ErrorCode {
 
     public static final String CUSTOMER_CONFIRM_STATEMENT_EXIST = "J500172";
     public static final String CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE = "J500173";
+    public static final String CUSTOMER_CONFIRM_STATEMENT_STATUS_MUST_BE_CONFIRM = "J500174";
 
     public static final String STATEMENT_DATE_NOT_SUPPORT = "J500174";
 
@@ -2136,6 +2137,7 @@ public class ErrorCode {
 
 
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户已经为确认结算单状态");
+        MAP.put(CUSTOMER_CONFIRM_STATEMENT_STATUS_MUST_BE_CONFIRM, "客户的结算单状态必须为确认");
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE, "客户为确认结算单状态时不允许重算结算单");
         MAP.put(STATEMENT_DATE_NOT_SUPPORT, "不支持结算类型【%s 】");
         MAP.put(STATEMENT_DATE_SPLIT_TIME_NOT_NULL, "结算分段日期不能为空");

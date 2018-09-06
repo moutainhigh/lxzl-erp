@@ -3517,6 +3517,32 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> cancelCustomerStatement(String customerNo) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        if (customerDO == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        if (ConfirmStatementStatus.CONFIRM_STATUS_NO.equals(customerDO.getConfirmStatementStatus())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_STATEMENT_STATUS_MUST_BE_CONFIRM);
+            return serviceResult;
+        }
+
+        customerDO.setConfirmStatementStatus(ConfirmStatementStatus.CONFIRM_STATUS_NO);
+        customerDO.setUpdateTime(now);
+        customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerMapper.update(customerDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(customerNo);
+        return serviceResult;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> confirmBadAccount(String customerNo) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
