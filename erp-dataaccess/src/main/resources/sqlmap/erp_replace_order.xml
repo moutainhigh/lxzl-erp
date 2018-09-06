@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper">
+
+	<resultMap id="ReplaceOrderDO" type="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="replace_order_no" jdbcType="VARCHAR" property="replaceOrderNo" />
+		<result column="order_id" jdbcType="INTEGER" property="orderId" />
+		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
+		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+		<result column="replace_time" jdbcType="TIMESTAMP" property="replaceTime" />
+		<result column="total_replace_product_count" jdbcType="INTEGER" property="totalReplaceProductCount" />
+		<result column="total_replace_material_count" jdbcType="INTEGER" property="totalReplaceMaterialCount" />
+		<result column="real_total_replace_product_count" jdbcType="INTEGER" property="realTotalReplaceProductCount" />
+		<result column="real_total_replace_material_count" jdbcType="INTEGER" property="realTotalReplaceMaterialCount" />
+		<result column="service_cost" jdbcType="DECIMAL" property="serviceCost" />
+		<result column="logistics_cost" jdbcType="DECIMAL" property="logisticsCost" />
+		<result column="repair_cost" jdbcType="DECIMAL" property="repairCost" />
+		<result column="replace_reason_type" jdbcType="INTEGER" property="replaceReasonType" />
+		<result column="replace_reason" jdbcType="VARCHAR" property="replaceReason" />
+		<result column="replace_mode" jdbcType="INTEGER" property="replaceMode" />
+		<result column="replace_order_status" jdbcType="INTEGER" property="replaceOrderStatus" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="confirm_replace_time" jdbcType="TIMESTAMP" property="confirmReplaceTime" />
+		<result column="confirm_replace_user" jdbcType="VARCHAR" property="confirmReplaceUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ero.id,ero.replace_order_no,ero.order_id,ero.order_no,ero.customer_id,ero.customer_no,ero.replace_time,ero.total_replace_product_count,ero.total_replace_material_count,ero.real_total_replace_product_count,ero.real_total_replace_material_count,ero.service_cost,ero.logistics_cost,ero.repair_cost,ero.replace_reason_type,ero.replace_reason,ero.replace_mode,ero.replace_order_status,ero.data_status,ero.remark,ero.create_time,ero.create_user,ero.update_time,ero.update_user,ero.confirm_replace_time,ero.confirm_replace_user
+	</sql>
+
+	<select id="findById" resultMap="ReplaceOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_replace_order ero 
+		WHERE ero.id = #{id, jdbcType=INTEGER} AND ero.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ero.id) FROM erp_replace_order ero 
+		<where>
+			<if test="true">
+				AND ero.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="ReplaceOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_replace_order ero 
+		<where>
+			<if test="true">
+				AND ero.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="replaceOrderNo != null">
+				replace_order_no = #{replaceOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderId != null">
+				order_id = #{orderId,jdbcType=INTEGER},
+			</if>
+			<if test="orderNo != null">
+				order_no = #{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="customerId != null">
+				customer_id = #{customerId,jdbcType=INTEGER},
+			</if>
+			<if test="customerNo != null">
+				customer_no = #{customerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="replaceTime != null">
+				replace_time = #{replaceTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="totalReplaceProductCount != null">
+				total_replace_product_count = #{totalReplaceProductCount,jdbcType=INTEGER},
+			</if>
+			<if test="totalReplaceMaterialCount != null">
+				total_replace_material_count = #{totalReplaceMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="realTotalReplaceProductCount != null">
+				real_total_replace_product_count = #{realTotalReplaceProductCount,jdbcType=INTEGER},
+			</if>
+			<if test="realTotalReplaceMaterialCount != null">
+				real_total_replace_material_count = #{realTotalReplaceMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="serviceCost != null">
+				service_cost = #{serviceCost,jdbcType=DECIMAL},
+			</if>
+			<if test="logisticsCost != null">
+				logistics_cost = #{logisticsCost,jdbcType=DECIMAL},
+			</if>
+			<if test="repairCost != null">
+				repair_cost = #{repairCost,jdbcType=DECIMAL},
+			</if>
+			<if test="replaceReasonType != null">
+				replace_reason_type = #{replaceReasonType,jdbcType=INTEGER},
+			</if>
+			<if test="replaceReason != null">
+				replace_reason = #{replaceReason,jdbcType=VARCHAR},
+			</if>
+			<if test="replaceMode != null">
+				replace_mode = #{replaceMode,jdbcType=INTEGER},
+			</if>
+			<if test="replaceOrderStatus != null">
+				replace_order_status = #{replaceOrderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="confirmReplaceTime != null">
+				confirm_replace_time = #{confirmReplaceTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="confirmReplaceUser != null">
+				confirm_replace_user = #{confirmReplaceUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO">
+		INSERT INTO erp_replace_order <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO">
+		UPDATE erp_replace_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
