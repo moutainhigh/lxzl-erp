@@ -1094,8 +1094,7 @@ public class ErrorCode {
     public static final String TEST_MACHINE_ORDER_PRODUCT_UNIT_AMOUNT_CAN_NOT_UPDATE = "J30000010";
     public static final String TEST_MACHINE_ORDER_MATERIAL_CAN_NOT_UPDATE = "J30000011";
     public static final String TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE = "J30000012";
-    public static final String TEST_MACHINE_ORDER_HAVING_TURN_RENT_ORDER = "J30000013";
-    public static final String TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER = "J30000014";
+    public static final String TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER = "J30000013";
     public static final String TEST_MACHINE_ORDER_STATUS_MUST_BE_RENTING_OR_PART_RETURN = "J30000014";
     public static final String TEST_MACHINE_ORDER_HAD_RELET_CAN_NOT_BE_RENT = "J30000015";
     public static final String TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_RENT = "J30000016";
@@ -2180,8 +2179,7 @@ public class ErrorCode {
         MAP.put(TEST_MACHINE_ORDER_PRODUCT_COUNT_CAN_NOT_UPDATE, "测试样机的订单的商品项的商品数量不允许修改");
         MAP.put(TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE, "测试样机的订单的配件项的配件数量不允许修改");
         MAP.put(TEST_MACHINE_ORDER_MATERIAL_CAN_NOT_UPDATE, "测试样机的订配件项必须存在，并且数量不能修改");
-        MAP.put(TEST_MACHINE_ORDER_HAVING_TURN_RENT_ORDER, "测试样机的订单正在转为订单的过程中，如需进行此操作请取消已经转变的订单");
-        MAP.put(TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER, "测试样机的订单已经转为新订单，该订单禁止此操作");
+        MAP.put(TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER, "测试样机的订单已经转为新订单，如需进行此操作请取消已经转变的订单");
         MAP.put(TEST_MACHINE_ORDER_STATUS_MUST_BE_RENTING_OR_PART_RETURN, "只有租赁中和部分退货的测试样机订单才能转为租赁订单");
         MAP.put(TEST_MACHINE_ORDER_HAD_RELET_CAN_NOT_BE_RENT, "已经有续租的订单，不能执行该操作");
         MAP.put(TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_RENT, "转租赁的原测试机订单，不能执行该操作");
