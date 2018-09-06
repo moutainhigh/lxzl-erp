@@ -72,6 +72,11 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-2">
+                                            <div class="field form-group mn" >
+                                                <input type="text" name="internalName" id="internalName" class="form-control input-sm bradius" autocomplete="off" placeholder="内部备注姓名">
+                                            </div>
+                                        </div>
                                     </div>
                                     <hr class="short alt">
                                     <div class="section row">
