@@ -82,7 +82,7 @@
             </label>
         </div>
         <div class="col-md-3">
-            <label for="internalName" class="field-label"><em class="text-danger">*</em>内部名称</label>
+            <label for="internalName" class="field-label"><em class="text-danger">*</em>内部姓名备注</label>
             <label for="internalName" class="field prepend-icon">
                 <input type="text" name="internalName" id="internalName" class="gui-input required letterOrChinese" placeholder="请输入内部名称..." maxlength="20">
                 <label for="lastname" class="field-icon"><i class="fa fa-user"></i>

@@ -111,7 +111,7 @@
                                 <thead>
                                 <tr>
                                     <th>客户编号</th>
-                                    <th>真实姓名</th>
+                                    <th>客户姓名</th>
                                     <th>联系方式</th>
                                     <th>客户状态</th>
                                     <th>创建人</th>
@@ -136,7 +136,10 @@
                                         {{/isBadDebtCustomer}}
                                         <a href="{{detailUrl}}" target="_blank">{{customerNo}}</a>
                                     </td>
-                                    <td><a href="{{detailUrl}}" target="_blank">{{customerPerson.realName}}</a></td>
+                                    <td>
+                                        <p class="mn"><a href="{{detailUrl}}" target="_blank">{{customerPerson.realName}}</a></p>
+                                        {{#customerPerson.internalName}}<p class="mn mt10">{{customerPerson.internalName}}</p>{{/customerPerson.internalName}}
+                                    </td>
                                     <td>
                                         <p class="mn">{{customerPerson.email}}</p>
                                         <p class="mn mt5"><i class="fa fa-mobile mr5"></i>{{customerPerson.phone}}</p>
