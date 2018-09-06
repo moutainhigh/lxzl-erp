@@ -1978,7 +1978,6 @@ public class OrderServiceImpl implements OrderService {
             order.setTestMachineOrderNo(orderFromTestMachineDO.getTestMachineOrderNo());
         }
 
-
         //获取确认收货变更原因及交货单客户签字图片逻辑
         if (order.getOrderStatus() > OrderStatus.ORDER_STATUS_DELIVERED) {
             ImageDO byRefId = imgMysqlMapper.findLastByRefIdAndType(order.getOrderId().toString(), ImgType.DELIVERY_NOTE_CUSTOMER_SIGN);
@@ -2114,6 +2113,12 @@ public class OrderServiceImpl implements OrderService {
         order.setCanReletOrder(canReletOrder);
         Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
         order.setIsReletOrder(isReletOrder);
+
+        //如果订单是由测试机订单转换过来的就返回原测试机的单号
+        OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(order.getOrderNo());
+        if (orderFromTestMachineDO != null){
+            order.setTestMachineOrderNo(orderFromTestMachineDO.getTestMachineOrderNo());
+        }
 
         /*******组合商品逻辑 start********/
         // 将orderJointProductId不为空的订单商品和配件放入对应的OrderJointProduct中, 并将数量除以组合商品数
