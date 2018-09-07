@@ -1821,7 +1821,7 @@ public class OrderServiceImpl implements OrderService {
                     orderMapper.update(testMachineOrderDO);
 
                     //修改原测试机结算
-                    String stopResult=statementOrderSupport.stopTestMachineOrder(orderFromTestMachineDO.getTestMachineOrderNo(),orderFromTestMachineDO.getCreateTime());
+                    String stopResult=statementOrderSupport.stopTestMachineOrder(orderFromTestMachineDO.getTestMachineOrderNo(),orderDO.getRentStartTime());
                     if(!ErrorCode.SUCCESS.equals(stopResult)){
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                         return stopResult;
