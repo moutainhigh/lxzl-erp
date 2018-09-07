@@ -162,11 +162,13 @@
 		INNER JOIN(
 		SELECT Cebsc.other_side_account_no,MAX(Cebsc.claim_serial_no) claim_serial_no FROM(
 		SELECT Bebsc.other_side_account_no,Bebsc.claim_serial_no FROM (
-		SELECT claim_serial_no,COUNT(1) line FROM erp_bank_slip_claim WHERE data_status = 1 AND recharge_status = 2 GROUP BY claim_serial_no
+		SELECT claim_serial_no,COUNT(1) line FROM erp_bank_slip_claim WHERE data_status = 1 AND recharge_status = 2 AND other_side_account_no != '' GROUP BY claim_serial_no
 		)Aebsc
-		INNER JOIN erp_bank_slip_claim Bebsc ON Bebsc.claim_serial_no = Aebsc.claim_serial_no AND Aebsc.line = 1 AND Bebsc.other_side_account_no != ''
+		INNER JOIN erp_bank_slip_claim Bebsc ON Bebsc.claim_serial_no = Aebsc.claim_serial_no
+		 WHERE Aebsc.line = 1 AND Bebsc.other_side_account_no != ''
 		)Cebsc GROUP BY Cebsc.other_side_account_no
 		)Debsc ON Debsc.claim_serial_no = ebsc.claim_serial_no
+		WHERE ebsc.other_side_account_no != ''
 	</select>
 
 	<select id="findBankSlipClaimPaySuccessByName" resultMap="BankSipAutomaticClaimDTO">
