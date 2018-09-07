@@ -22,7 +22,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowVerifyUserGroupMapper;
 import com.lxzl.erp.dataaccess.dao.redis.RedisManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisConnectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -546,17 +545,145 @@ public class WorkbenchServiceImpl implements WorkbenchService{
     }
 
     @Override
-    public ServiceResult<String, Workbench> queryWorkhouseWorkbenchCount(WorkbenchQueryParam workbenchQueryParam) {
+    public ServiceResult<String, Workbench> queryWarehouseWorkbenchCount(WorkbenchQueryParam workbenchQueryParam) {
         ServiceResult<String, Workbench> serviceResult = new ServiceResult<>();
         Workbench workbench = new Workbench();
 
+
+        List<Map<String,Object>> workflowWarehouseListMap = new ArrayList<>();
+        List<Map<String,Object>> orderWarehouseListMap = new ArrayList<>();
+        List<Map<String,Object>> returnOrderWarehouseListMap = new ArrayList<>();
+
         if (CommonConstant.COMMON_WORKHOUSE_WORKBENCH.equals(workbenchQueryParam.getWorkbenchName())){
+            Date now = new Date();
+            Date currentDateTime = DateUtil.getDayByOffset(now, CommonConstant.COMMON_ZERO);
+            Date currentDateAddOne = DateUtil.getDayByOffset(now, CommonConstant.COMMON_ONE);
+            Date currentDateAddSix = com.lxzl.erp.common.util.DateUtil.getDayByOffset(now, CommonConstant.COMMON_SIX);
+            Date currentDateAddEight = com.lxzl.erp.common.util.DateUtil.getDayByOffset(now, CommonConstant.COMMON_EIGHT);
+
+            Workbench workhouseWorkbenchRedis = redisManager.get("WAREHOUSE_WORKBENCH_COUNT_" + userSupport.getCurrentUserId().toString(), Workbench.class);
+            if (workhouseWorkbenchRedis != null){
+                serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                serviceResult.setResult(workhouseWorkbenchRedis);
+                return serviceResult;
+            }
+            //只有审核人数据
+            //----------------------仓库待审核工作流查询条件---------------------------
+            Map<String, Object> workflowWarehouseWorkbenchParamMap = new HashMap<>();
+            workflowWarehouseWorkbenchParamMap.put("currentUserId", userSupport.getCurrentUserId().toString());
+            //----------------------仓库待审核工作流查询条件---------------------------
+
+            //----------------------仓库未打印的订单查询条件---------------------------
+            Map<String, Object> orderWarehouseWorkbenchParamMap = new HashMap<>();
+            orderWarehouseWorkbenchParamMap.put("currentUserId", userSupport.getCurrentUserId().toString());
+            orderWarehouseWorkbenchParamMap.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
+            //----------------------仓库未打印的订单查询条件---------------------------
+
+            //----------------------今日待发货的订单查询条件---------------------------
+            orderWarehouseWorkbenchParamMap.put("deliverySubCompanyId",userSupport.getCurrentUserCompanyId());
+            orderWarehouseWorkbenchParamMap.put("orderSubCompanyId",userSupport.getCurrentUserCompanyId());
+            orderWarehouseWorkbenchParamMap.put("currentDateTime",currentDateTime);
+            orderWarehouseWorkbenchParamMap.put("currentDateAddOne",currentDateAddOne);
+            //----------------------今日待发货的订单查询条件---------------------------
+
+            //----------------------快递待发货的订单查询条件---------------------------
+            orderWarehouseWorkbenchParamMap.put("currentDateAddSix",currentDateAddSix);
+            //----------------------快递待发货的订单查询条件---------------------------
+
+            //----------------------转单待发货的订单查询条件---------------------------
+            orderWarehouseWorkbenchParamMap.put("currentDateAddEight",currentDateAddEight);
+            //----------------------转单待发货的订单查询条件---------------------------
 
 
+            //----------------------处理中的退货单---------------------------
+            Map<String, Object> returnOrderWarehouseWorkbenchParamMap = new HashMap<>();
+            returnOrderWarehouseWorkbenchParamMap.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER,PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_WAREHOUSE));
+            //----------------------处理中的退货单---------------------------
 
+
+            Map<String,Integer> workflowWarehouseCountMap = workbenchMapper.findWorkflowWarehouseWorkbenchCount(workflowWarehouseWorkbenchParamMap);
+            Map<String,Integer> orderCountMap = workbenchMapper.findOrderWarehouseWorkbenchCount(orderWarehouseWorkbenchParamMap);
+            Map<String,Integer> returnOrderCountMap = workbenchMapper.findReturnOderWarehouseWorkbenchCount(returnOrderWarehouseWorkbenchParamMap);
+
+            //----------------------仓库待审核工作数量---------------------------
+            Map<String,Object> workflowLinkWaitVerifyWarehouseMap = new HashMap();
+            workflowLinkWaitVerifyWarehouseMap.put("params","verifyStatus");
+            workflowLinkWaitVerifyWarehouseMap.put("paramsValue",VerifyStatus.VERIFY_STATUS_COMMIT);
+            workflowLinkWaitVerifyWarehouseMap.put("workbenchType",WorkbenchType.WORK_FLOW_LINK_WAIT_VERIFY);  //审核中的工作流
+            workflowLinkWaitVerifyWarehouseMap.put("count",workflowWarehouseCountMap.get("waitVerifyWorkflowWarehouseWorkbenchCount"));
+            workflowWarehouseListMap.add(workflowLinkWaitVerifyWarehouseMap);
+            //----------------------仓库待审核工作流数量---------------------------
+            //----------------------仓库未打印的订单数量---------------------------
+            Map<String,Object> notPrintLogOderWarehouseMap = new HashMap();
+            notPrintLogOderWarehouseMap.put("params","warehouseWorkbenchOrderType");
+            notPrintLogOderWarehouseMap.put("paramsValue",WarehouseWorkbenchOrderType.NOT_PRINT_LOG_ODER);
+            notPrintLogOderWarehouseMap.put("workbenchType",WorkbenchType.NOT_PRINT_LOG_ODER);  //未打印订单
+            notPrintLogOderWarehouseMap.put("count",orderCountMap.get("notPrintLogOderWarehouseWorkbenchCount"));
+            orderWarehouseListMap.add(notPrintLogOderWarehouseMap);
+            //----------------------仓库未打印的订单数量---------------------------
+            // ----------------------今日待发货的订单数量---------------------------
+            Map<String,Object> todayAwaitDeliveryOderWarehouseMap = new HashMap();
+            todayAwaitDeliveryOderWarehouseMap.put("params","warehouseWorkbenchOrderType");
+            todayAwaitDeliveryOderWarehouseMap.put("paramsValue",WarehouseWorkbenchOrderType.TODAY_AWAIT_DELIVERY_ODER);
+            todayAwaitDeliveryOderWarehouseMap.put("workbenchType",WorkbenchType.TODAY_AWAIT_DELIVERY_ODER);
+            todayAwaitDeliveryOderWarehouseMap.put("count",orderCountMap.get("todayAwaitDeliveryOderCount"));
+            orderWarehouseListMap.add(todayAwaitDeliveryOderWarehouseMap);
+            //----------------------今日待发货的订单数量---------------------------
+
+            //----------------------快递待发货的订单数量---------------------------
+            Map<String,Object> expressAwaitDeliveryOderWarehouseMap = new HashMap();
+            expressAwaitDeliveryOderWarehouseMap.put("params","warehouseWorkbenchOrderType");
+            expressAwaitDeliveryOderWarehouseMap.put("paramsValue",WarehouseWorkbenchOrderType.EXPRESS_AWAIT_DELIVERY_ODER);
+            expressAwaitDeliveryOderWarehouseMap.put("workbenchType",WorkbenchType.EXPRESS_AWAIT_DELIVERY_ODER);
+            expressAwaitDeliveryOderWarehouseMap.put("count",orderCountMap.get("expressAwaitDeliveryOderCount"));
+            orderWarehouseListMap.add(expressAwaitDeliveryOderWarehouseMap);
+            //----------------------快递待发货的订单数量---------------------------
+
+            //----------------------转单待发货的订单数量---------------------------
+            Map<String,Object> slipAwaitDeliveryOderWarehouseMap = new HashMap();
+            slipAwaitDeliveryOderWarehouseMap.put("params","warehouseWorkbenchOrderType");
+            slipAwaitDeliveryOderWarehouseMap.put("paramsValue",WarehouseWorkbenchOrderType.SLIP_AWAIT_DELIVERY_ODER);
+            slipAwaitDeliveryOderWarehouseMap.put("workbenchType",WorkbenchType.SLIP_AWAIT_DELIVERY_ODER);
+            slipAwaitDeliveryOderWarehouseMap.put("count",orderCountMap.get("slipAwaitDeliveryOderCount"));
+            orderWarehouseListMap.add(slipAwaitDeliveryOderWarehouseMap);
+            //----------------------转单待发货的订单数量---------------------------
+
+
+            //----------------------逾期未发货的订单数量---------------------------
+            Map<String,Object> overdueAwaitDeliveryOderWarehouseMap = new HashMap();
+            overdueAwaitDeliveryOderWarehouseMap.put("params","warehouseWorkbenchOrderType");
+            overdueAwaitDeliveryOderWarehouseMap.put("paramsValue",WarehouseWorkbenchOrderType.OVERDUE_UN_SHIPPED_DELIVERY_ODER);
+            overdueAwaitDeliveryOderWarehouseMap.put("workbenchType",WorkbenchType.OVERDUE_UN_SHIPPED_DELIVERY_ODER);
+            overdueAwaitDeliveryOderWarehouseMap.put("count",orderCountMap.get("overdueUnShippedDeliveryOderCount"));
+            orderWarehouseListMap.add(overdueAwaitDeliveryOderWarehouseMap);
+            //----------------------逾期未发货的订单数量---------------------------
+
+
+            //----------------------未确认收货的订单数量---------------------------
+            Map<String,Object> unConfirmedAwaitDeliveryOderWarehouseMap = new HashMap();
+            unConfirmedAwaitDeliveryOderWarehouseMap.put("params","warehouseWorkbenchOrderType");
+            unConfirmedAwaitDeliveryOderWarehouseMap.put("paramsValue",WarehouseWorkbenchOrderType.UN_CONFIRMED_DELIVERY_ODER);
+            unConfirmedAwaitDeliveryOderWarehouseMap.put("workbenchType",WorkbenchType.UN_CONFIRMED_AWAIT_DELIVERY_ODER);
+            unConfirmedAwaitDeliveryOderWarehouseMap.put("count",orderCountMap.get("unConfirmedDeliveryOderCount"));
+            orderWarehouseListMap.add(unConfirmedAwaitDeliveryOderWarehouseMap);
+            //----------------------未确认收货的订单数量---------------------------
+
+            //----------------------处理中的退货单数量---------------------------
+            Map<String,Object> returnOrderWarehouseMap = new HashMap();
+            returnOrderWarehouseMap.put("params","returnOrderStatus");
+            returnOrderWarehouseMap.put("paramsValue",ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
+            returnOrderWarehouseMap.put("workbenchType",WorkbenchType.RETURN_ORDER_STATUS_PROCESSING);
+            returnOrderWarehouseMap.put("count",returnOrderCountMap.get("processingReturnOderCount"));
+            returnOrderWarehouseListMap.add(returnOrderWarehouseMap);
+            //----------------------处理中的退货单数量---------------------------
+
+
+            workbench.setWorkflowWarehouseListMap(workflowWarehouseListMap);
+            workbench.setOrderWarehouseListMap(orderWarehouseListMap);
+            workbench.setReturnOrderWarehouseListMap(returnOrderWarehouseListMap);
+
+            redisManager.add("WAREHOUSE_WORKBENCH_COUNT_" + userSupport.getCurrentUserId().toString(),workbench,CommonConstant.WORKBENCH_REDIS_SAVE_TIME);
         }
-
-
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(workbench);

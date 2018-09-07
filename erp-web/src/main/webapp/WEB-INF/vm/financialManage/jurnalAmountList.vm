@@ -201,7 +201,7 @@
                                 <td>{{subCompanyName}}</td>
                                 <td>{{isLocalizationValue}}</td>
                                 <td>{{detailStatusValue}}</td>
-                                <td>{{remark}}</td>
+                                <td><div class="mw200">{{remark}}</div></td>
                                 <td>
                                     <p class="mn">{{createUserRealName}}</p>
                                     <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>

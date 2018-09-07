@@ -60,6 +60,8 @@ public class ErrorCode {
     public static final String SUB_COMPANY_ID_NOT_NULL = "J100031";
     public static final String WORKFLOW_CONFIG_ERROR = "J100032";
     public static final String WORKFLOW_CUSTOMER_CAN_NOT_BACK_PREVIOUS = "J100033";
+    public static final String WORKFLOW_VERIFY_USER_IS_NULL = "J100034";
+    public static final String USER_ADMIN_PASSWORD_ERROR = "J100035";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -631,6 +633,7 @@ public class ErrorCode {
 
     public static final String CUSTOMER_CONFIRM_STATEMENT_EXIST = "J500172";
     public static final String CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE = "J500173";
+    public static final String CUSTOMER_CONFIRM_STATEMENT_STATUS_MUST_BE_CONFIRM = "J500174";
 
     public static final String STATEMENT_DATE_NOT_SUPPORT = "J500174";
 
@@ -647,6 +650,8 @@ public class ErrorCode {
     public static final String RETURN_STATEMENT_ORDER_CREATE_ERROR = "J500185";
 
     public static final String CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST = "J500186";
+    public static final String CUSTOMER_STATUS_IS_NOT_PASS = "J500187";
+    public static final String CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH = "J500188";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1103,6 +1108,13 @@ public class ErrorCode {
     //Mall
     public static final String MALL_SYSTEM_CONNECT_EXCEPTION = "Mall00001";
 
+    //经营数据提取
+    public static final String STATISTICAL_STATUS_NOT_NULL = "J310000001";
+    public static final String STATISTICAL_STATUS_DAY_ERROR = "J310000002";
+    public static final String STATISTICAL_STATUS_WEEK_ERROR = "J310000003";
+    public static final String STATISTICAL_STATUS_MONTH_ERROR = "J310000004";
+    public static final String STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR = "J310000005";
+    public static final String STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR = "J310000006";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1132,6 +1144,7 @@ public class ErrorCode {
         MAP.put(USER_NAME_NOT_FOUND, "用户名不存在");
         MAP.put(USER_NOT_ACTIVATED, "用户未激活，请联系管理员");
         MAP.put(USER_PASSWORD_ERROR, "用户密码错误");
+        MAP.put(USER_ADMIN_PASSWORD_ERROR, "管理员密码错误");
         MAP.put(USER_EXISTS, "用户已存在");
         MAP.put(USER_NAME_NOT_NULL, "用户名不能为空");
         MAP.put(USER_PASSWORD_NOT_NULL, "用户密码不能为空，请输入密码");
@@ -1175,6 +1188,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_RETURN_ID_NOT_NULL, "客户的回访记录的ID不能为空");
         MAP.put(CUSTOMER_RETURN_VISIT_NOT_EXISTS, "客户的回访记录不存在");
         MAP.put(WORKFLOW_CUSTOMER_CAN_NOT_BACK_PREVIOUS, "客户工作流不允许驳回到上一级");
+        MAP.put(WORKFLOW_VERIFY_USER_IS_NULL, "工作流审核人未配置");
 
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
@@ -2152,6 +2166,7 @@ public class ErrorCode {
 
 
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户已经为确认结算单状态");
+        MAP.put(CUSTOMER_CONFIRM_STATEMENT_STATUS_MUST_BE_CONFIRM, "客户的结算单状态必须为确认");
         MAP.put(CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE, "客户为确认结算单状态时不允许重算结算单");
         MAP.put(STATEMENT_DATE_NOT_SUPPORT, "不支持结算类型【%s 】");
         MAP.put(STATEMENT_DATE_SPLIT_TIME_NOT_NULL, "结算分段日期不能为空");
@@ -2166,6 +2181,7 @@ public class ErrorCode {
         MAP.put(SPLIT_STATEMENT_TIME_ERROR, "分段重算时间必须在订单起租时间与订单预计归还时间之间");
         MAP.put(RETURN_STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，该退货单结算单详情已存在，不能重复生成结算单");
         MAP.put(CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST, "客户为已经为确认坏账状态");
+        MAP.put(CUSTOMER_STATUS_IS_NOT_PASS, "客户状态须审核通过，才能使用此功能");
 
 
         MAP.put(TEST_MACHINE_ORDER_RENT_CONDITION_IS_WRONG, "只有按天租并且租期小于30的订单，才能执行此操作");
@@ -2187,6 +2203,15 @@ public class ErrorCode {
         MAP.put(TEST_MACHINE_ORDER_RENT_START_TIME_ERROR, "新订单的起租时间需大于原测试机订单的起租时间，且小于等于原测试机订单结束时间的下一天");
 
         MAP.put(MALL_SYSTEM_CONNECT_EXCEPTION, "连接Mall-App系统异常");
+
+        MAP.put(STATISTICAL_STATUS_NOT_NULL, "查询类型不能为空");
+        MAP.put(STATISTICAL_STATUS_DAY_ERROR, "查询日经营数据传递查询参数错误");
+        MAP.put(STATISTICAL_STATUS_WEEK_ERROR, "查询周经营数据传递查询参数错误");
+        MAP.put(STATISTICAL_STATUS_MONTH_ERROR, "查询月经营数据传递查询参数错误");
+        MAP.put(STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR, "查询周经营数据传入的查询开始时间必须是星期一");
+        MAP.put(STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR, "查询月经营数据传入的查询开始时间必须是月初一号");
+
+        MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
 
     }
 

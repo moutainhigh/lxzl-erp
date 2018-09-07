@@ -79,8 +79,8 @@
                                         <th>品牌</th>
                                         <th>次新租金</th>
                                         <th>全新租金</th>
-                                        <th>是否在租</th>
-                                        <th>允许随时归还</th>
+                                        <th class="text-center">是否在租</th>
+                                        <th class="text-center">允许随时归还</th>
                                         <th>创建人</th>
                                         {{#hasRowActionButtons}}
                                         <th class="text-right">操作</th>
@@ -105,8 +105,8 @@
                                                 <p>日租：{{newDayRentPriceRange}}</p>
                                                 <p>月租：{{newMonthRentPriceRang}}</p>
                                             </td>
-                                            <td>{{isRentStr}}</td>
-                                            <td>{{#boolText}}{{isReturnAnyTime}}{{/boolText}}</td>
+                                            <td class="text-center">{{isRentStr}}</td>
+                                            <td class="text-center">{{#boolText}}{{isReturnAnyTime}}{{/boolText}}</td>
                                             <td>
                                                 <p class="mn">{{createUserRealName}}</p>
                                                 <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>

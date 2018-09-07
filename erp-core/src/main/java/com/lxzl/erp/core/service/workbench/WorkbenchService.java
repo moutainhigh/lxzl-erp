@@ -24,5 +24,5 @@ public interface WorkbenchService {
      * @param workbenchQueryParam
      * @return
      */
-    ServiceResult<String,Workbench> queryWorkhouseWorkbenchCount(WorkbenchQueryParam workbenchQueryParam);
+    ServiceResult<String, Workbench> queryWarehouseWorkbenchCount(WorkbenchQueryParam workbenchQueryParam);
 }

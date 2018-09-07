@@ -21,6 +21,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsOperateDataMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsSalesmanMonthMapper;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.statistics.*;
@@ -33,6 +34,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -1220,6 +1222,393 @@ public class StatisticsServiceImpl implements StatisticsService {
         return serviceResult;
     }
 
+    /**
+     * 生成经营数据记录(手动)
+     * @param date
+     * @return
+     */
+    @Override
+    public ServiceResult<String, String> createStatisticsOperateData(Date date) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        // TODO: 2018\8\27 0027 获取前一天的数据
+        createStatisticsOperateDataForDay(date);
+        // TODO: 2018\8\27 0027 判断是否是星期一，如果是星期一生成上一周的数据
+        if (CommonConstant.COMMON_ONE.equals(DateUtil.dayForWeek(date))) {
+            createStatisticsOperateDataForWeek(date);
+        }
+        // TODO: 2018\8\27 0027 判断是否是月份第一天，如果是生成上月份数据
+        SimpleDateFormat sdf = new SimpleDateFormat("dd");
+        if ("01".equals(sdf.format(date))) {
+            createStatisticsOperateDataForMonth(date);
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+    /**
+     * 查询日经营数据
+     * @param statisticsOperateDataPageParam
+     * @return
+     */
+    @Override
+    public ServiceResult<String, Page<StatisticsOperateData>> queryStatisticsOperateDataForDay(StatisticsOperateDataPageParam statisticsOperateDataPageParam) {
+        ServiceResult<String, Page<StatisticsOperateData>> serviceResult = new ServiceResult<>();
+        if (statisticsOperateDataPageParam.getStatisticalStatus() == null) {
+            serviceResult.setErrorCode(ErrorCode.STATISTICAL_STATUS_NOT_NULL);
+            return serviceResult;
+        }
+        if (!StatisticsOperateDataStatisticalStatus.STATISTICAL_DAY.equals(statisticsOperateDataPageParam.getStatisticalStatus())) {
+            serviceResult.setErrorCode(ErrorCode.STATISTICAL_STATUS_DAY_ERROR);
+            return serviceResult;
+        }
+        PageQuery pageQuery = new PageQuery(statisticsOperateDataPageParam.getPageNo(), statisticsOperateDataPageParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("statisticsOperateDataPageParam", statisticsOperateDataPageParam);
+        Integer totalCount = statisticsOperateDataMapper.findStatisticsOperateDataCountByParams(maps);
+        List<StatisticsOperateDataDO> statisticsOperateDataDOList = statisticsOperateDataMapper.findStatisticsOperateDataByParams(maps);
+        List<StatisticsOperateData> statisticsOperateDataList = ConverterUtil.convertList(statisticsOperateDataDOList, StatisticsOperateData.class);
+        Page<StatisticsOperateData> page = new Page<>(statisticsOperateDataList, totalCount, statisticsOperateDataPageParam.getPageNo(), statisticsOperateDataPageParam.getPageSize());
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(page);
+        return serviceResult;
+    }
+    /**
+     * 查询周经营数据
+     * @param statisticsOperateDataPageParam
+     * @return
+     */
+    @Override
+    public ServiceResult<String, Page<StatisticsOperateData>> queryStatisticsOperateDataForWeek(StatisticsOperateDataPageParam statisticsOperateDataPageParam) {
+        ServiceResult<String, Page<StatisticsOperateData>> serviceResult = new ServiceResult<>();
+        if (statisticsOperateDataPageParam.getStatisticalStatus() == null) {
+            serviceResult.setErrorCode(ErrorCode.STATISTICAL_STATUS_NOT_NULL);
+            return serviceResult;
+        }
+        if (!StatisticsOperateDataStatisticalStatus.STATISTICAL_WEEK.equals(statisticsOperateDataPageParam.getStatisticalStatus())) {
+            serviceResult.setErrorCode(ErrorCode.STATISTICAL_STATUS_WEEK_ERROR);
+            return serviceResult;
+        }
+        //时间参数校验
+        Date startTime = statisticsOperateDataPageParam.getStartTime();
+        if (!CommonConstant.COMMON_ONE.equals(DateUtil.dayForWeek(startTime))) {
+            serviceResult.setErrorCode(ErrorCode.STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR);
+            return serviceResult;
+        }
+
+        PageQuery pageQuery = new PageQuery(statisticsOperateDataPageParam.getPageNo(), statisticsOperateDataPageParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("statisticsOperateDataPageParam", statisticsOperateDataPageParam);
+        Integer totalCount = statisticsOperateDataMapper.findStatisticsOperateDataCountByParams(maps);
+        List<StatisticsOperateDataDO> statisticsOperateDataDOList = statisticsOperateDataMapper.findStatisticsOperateDataByParams(maps);
+        List<StatisticsOperateData> statisticsOperateDataList = ConverterUtil.convertList(statisticsOperateDataDOList, StatisticsOperateData.class);
+        Page<StatisticsOperateData> page = new Page<>(statisticsOperateDataList, totalCount, statisticsOperateDataPageParam.getPageNo(), statisticsOperateDataPageParam.getPageSize());
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(page);
+        return serviceResult;
+    }
+    /**
+     * 查询月经营数据
+     * @param statisticsOperateDataPageParam
+     * @return
+     */
+    @Override
+    public ServiceResult<String, Page<StatisticsOperateData>> queryStatisticsOperateDataForMonth(StatisticsOperateDataPageParam statisticsOperateDataPageParam) {
+        ServiceResult<String, Page<StatisticsOperateData>> serviceResult = new ServiceResult<>();
+        if (statisticsOperateDataPageParam.getStatisticalStatus() == null) {
+            serviceResult.setErrorCode(ErrorCode.STATISTICAL_STATUS_NOT_NULL);
+            return serviceResult;
+        }
+        if (!StatisticsOperateDataStatisticalStatus.STATISTICAL_MONTH.equals(statisticsOperateDataPageParam.getStatisticalStatus())) {
+            serviceResult.setErrorCode(ErrorCode.STATISTICAL_STATUS_MONTH_ERROR);
+            return serviceResult;
+        }
+        // TODO: 2018\8\29 0029 添加时间参数校验
+        SimpleDateFormat sdf = new SimpleDateFormat("dd");
+        if (!"01".equals(sdf.format(statisticsOperateDataPageParam.getStartTime()))) {
+            serviceResult.setErrorCode(ErrorCode.STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR);
+            return serviceResult;
+        }
+        PageQuery pageQuery = new PageQuery(statisticsOperateDataPageParam.getPageNo(), statisticsOperateDataPageParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("statisticsOperateDataPageParam", statisticsOperateDataPageParam);
+        Integer totalCount = statisticsOperateDataMapper.findStatisticsOperateDataCountByParams(maps);
+        List<StatisticsOperateDataDO> statisticsOperateDataDOList = statisticsOperateDataMapper.findStatisticsOperateDataByParams(maps);
+        List<StatisticsOperateData> statisticsOperateDataList = ConverterUtil.convertList(statisticsOperateDataDOList, StatisticsOperateData.class);
+        Page<StatisticsOperateData> page = new Page<>(statisticsOperateDataList, totalCount, statisticsOperateDataPageParam.getPageNo(), statisticsOperateDataPageParam.getPageSize());
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(page);
+        return serviceResult;
+    }
+
+    /**
+     * 生成经营数据记录(定时任务调度)
+     * @return
+     */
+    @Override
+    public ServiceResult<String, String> createStatisticsOperateDataForTime() {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date date = new Date();
+        // TODO: 2018\8\27 0027 获取前一天的数据
+        createStatisticsOperateDataForDayForTime(date);
+        // TODO: 2018\8\27 0027 判断是否是星期一，如果是星期一生成上一周的数据
+        if (CommonConstant.COMMON_ONE.equals(DateUtil.dayForWeek(date))) {
+            createStatisticsOperateDataForWeekForTime(date);
+        }
+        // TODO: 2018\8\27 0027 判断是否是月份第一天，如果是生成上月份数据
+        SimpleDateFormat sdf = new SimpleDateFormat("dd");
+        if ("01".equals(sdf.format(date))) {
+            createStatisticsOperateDataForMonthForTime(date);
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+    /** 生成上月经营数据记录(定时任务调度)*/
+    private void createStatisticsOperateDataForMonthForTime(Date date) {
+        Date nowDate = new Date();
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.add(Calendar.MONTH,-1);
+        Date startTime = ca.getTime();
+        Calendar ca1 = Calendar.getInstance();
+        ca1.setTime(date);
+        ca1.add(Calendar.DATE,-1);
+        Date endTime = ca1.getTime();
+        // TODO: 2018\8\28 0028 获取上月的时间
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("startTime", startTime);
+        maps.put("endTime", date);
+        List<StatisticsOperateDataDO> statisticsOperateDataDOList = statisticsOperateDataMapper.findDataListForSubCompanyWeekAndMonth(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_ONE);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(endTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_MONTH);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        }
+        // TODO: 2018\8\29 0029 生成业务员数据
+        List<StatisticsOperateDataDO> statisticsSalesmanOperateDataDOList = statisticsOperateDataMapper.findDataListForSalesmanWeekAndMonth(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsSalesmanOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_TWO);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(endTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_MONTH);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        }
+        statisticsOperateDataDOList.addAll(statisticsSalesmanOperateDataDOList);
+        //批量保存
+        statisticsOperateDataMapper.addList(statisticsOperateDataDOList);
+
+
+    }
+    /** 生成前一周经营数据记录(定时任务调度)*/
+    private void createStatisticsOperateDataForWeekForTime (Date date) {
+        Date nowDate = new Date();
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.add(Calendar.DATE,-7);
+        Date startTime = ca.getTime();
+        Calendar ca1 = Calendar.getInstance();
+        ca1.setTime(date);
+        ca1.add(Calendar.DATE,-1);
+        Date endTime = ca1.getTime();
+        // TODO: 2018\8\28 0028 获取前一周周一的时间
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("startTime", startTime);
+        maps.put("endTime", date);
+        //分公司数据
+        List<StatisticsOperateDataDO> statisticsOperateDataDOList = statisticsOperateDataMapper.findDataListForSubCompanyWeekAndMonth(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_ONE);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(endTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_WEEK);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(null);
+        }
+        // TODO: 2018\8\29 0029 生成业务员数据
+        List<StatisticsOperateDataDO> statisticsSalesmanOperateDataDOList = statisticsOperateDataMapper.findDataListForSalesmanWeekAndMonth(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsSalesmanOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_TWO);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(endTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_WEEK);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        }
+        statisticsOperateDataDOList.addAll(statisticsSalesmanOperateDataDOList);
+        //批量保存
+        statisticsOperateDataMapper.addList(statisticsOperateDataDOList);
+
+    }
+    /** 生成前一天经营数据记录(定时任务调度) */
+    private void createStatisticsOperateDataForDayForTime (Date date) {
+        Date nowDate = new Date();
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.add(Calendar.DATE,-1);
+        Date startTime = ca.getTime();
+        // TODO: 2018\8\28 0028 获取前一天的时间
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("startTime", startTime);
+        //分公司数据
+        List<StatisticsOperateDataDO> statisticsOperateDataDOList = statisticsOperateDataMapper.findDataListForSubCompanyDate(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_ONE);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(startTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_DAY);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(null);
+        }
+        // TODO: 2018\8\29 0029 生成业务员数据
+        List<StatisticsOperateDataDO> statisticsSalesmanOperateDataDOList = statisticsOperateDataMapper.findDataListForSalesmanDate(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsSalesmanOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_TWO);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(startTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_DAY);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(null);
+        }
+        statisticsOperateDataDOList.addAll(statisticsSalesmanOperateDataDOList);
+        //批量保存
+        statisticsOperateDataMapper.addList(statisticsOperateDataDOList);
+    }
+
+    /** 生成上月经营数据记录(手动)*/
+    private void createStatisticsOperateDataForMonth(Date date) {
+        Date nowDate = new Date();
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.add(Calendar.MONTH,-1);
+        Date startTime = ca.getTime();
+        Calendar ca1 = Calendar.getInstance();
+        ca1.setTime(date);
+        ca1.add(Calendar.DATE,-1);
+        Date endTime = ca1.getTime();
+        // TODO: 2018\8\28 0028 获取上月的时间
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("startTime", startTime);
+        maps.put("endTime", date);
+        List<StatisticsOperateDataDO> statisticsOperateDataDOList = statisticsOperateDataMapper.findDataListForSubCompanyWeekAndMonth(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_ONE);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(endTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_MONTH);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        }
+        // TODO: 2018\8\29 0029 生成业务员数据
+        List<StatisticsOperateDataDO> statisticsSalesmanOperateDataDOList = statisticsOperateDataMapper.findDataListForSalesmanWeekAndMonth(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsSalesmanOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_TWO);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(endTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_MONTH);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        }
+        statisticsOperateDataDOList.addAll(statisticsSalesmanOperateDataDOList);
+        //批量保存
+        statisticsOperateDataMapper.addList(statisticsOperateDataDOList);
+
+
+    }
+    /** 生成前一周经营数据记录(手动)*/
+    private void createStatisticsOperateDataForWeek(Date date) {
+        Date nowDate = new Date();
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.add(Calendar.DATE,-7);
+        Date startTime = ca.getTime();
+        Calendar ca1 = Calendar.getInstance();
+        ca1.setTime(date);
+        ca1.add(Calendar.DATE,-1);
+        Date endTime = ca1.getTime();
+        // TODO: 2018\8\28 0028 获取前一周周一的时间
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("startTime", startTime);
+        maps.put("endTime", date);
+        //分公司数据
+        List<StatisticsOperateDataDO> statisticsOperateDataDOList = statisticsOperateDataMapper.findDataListForSubCompanyWeekAndMonth(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_ONE);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(endTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_WEEK);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(null);
+        }
+        // TODO: 2018\8\29 0029 生成业务员数据
+        List<StatisticsOperateDataDO> statisticsSalesmanOperateDataDOList = statisticsOperateDataMapper.findDataListForSalesmanWeekAndMonth(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsSalesmanOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_TWO);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(endTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_WEEK);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(null);
+        }
+        statisticsOperateDataDOList.addAll(statisticsSalesmanOperateDataDOList);
+        //批量保存
+        statisticsOperateDataMapper.addList(statisticsOperateDataDOList);
+
+    }
+    /** 生成前一天经营数据记录(手动) */
+    private void createStatisticsOperateDataForDay(Date date) {
+        Date nowDate = new Date();
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.add(Calendar.DATE,-1);
+        Date startTime = ca.getTime();
+        // TODO: 2018\8\28 0028 获取前一天的时间
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("startTime", startTime);
+        //分公司数据
+        List<StatisticsOperateDataDO> statisticsOperateDataDOList = statisticsOperateDataMapper.findDataListForSubCompanyDate(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_ONE);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(startTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_DAY);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        }
+        // TODO: 2018\8\29 0029 生成业务员数据
+        List<StatisticsOperateDataDO> statisticsSalesmanOperateDataDOList = statisticsOperateDataMapper.findDataListForSalesmanDate(maps);
+        for (StatisticsOperateDataDO statisticsOperateDataDO:statisticsSalesmanOperateDataDOList) {
+            statisticsOperateDataDO.setStatisticalDimension(CommonConstant.COMMON_TWO);
+            statisticsOperateDataDO.setStartStatisticsTime(startTime);
+            statisticsOperateDataDO.setEndStatisticsTime(startTime);
+            statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_DAY);
+            statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            statisticsOperateDataDO.setCreateTime(nowDate);
+            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        }
+        statisticsOperateDataDOList.addAll(statisticsSalesmanOperateDataDOList);
+        //批量保存
+        statisticsOperateDataMapper.addList(statisticsOperateDataDOList);
+    }
+
     @Override
     public ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyTotalToExcel(FinanceStatisticsParam paramVo){
         ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> serviceResult = new ServiceResult<>();
@@ -1266,4 +1655,6 @@ public class StatisticsServiceImpl implements StatisticsService {
     private UserSupport userSupport;
     @Autowired
     private FinanceStatisticsWeeklySupport financeStatisticsWeeklySupport;
+    @Autowired
+    private StatisticsOperateDataMapper statisticsOperateDataMapper;
 }

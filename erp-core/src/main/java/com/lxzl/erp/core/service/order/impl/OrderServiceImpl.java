@@ -51,6 +51,7 @@ import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
@@ -100,7 +101,6 @@ import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
-import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerCompanyMapper;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +111,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import javax.lang.model.type.ErrorType;
 import javax.xml.rpc.ServiceException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -2814,6 +2813,96 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
+        //-------------------仓库工作台查询----------------------
+        Integer currentUserCompanyId = userSupport.getCurrentUserCompanyId();
+        String currentUserId = userSupport.getCurrentUserId().toString();
+        Date now = new Date();
+        Date currentDateTime = com.lxzl.erp.common.util.DateUtil.getDayByOffset(now, CommonConstant.COMMON_ZERO);
+        Date currentDateAddOne = com.lxzl.erp.common.util.DateUtil.getDayByOffset(now, CommonConstant.COMMON_ONE);
+        Date currentDateAddSix = com.lxzl.erp.common.util.DateUtil.getDayByOffset(now, CommonConstant.COMMON_SIX);
+        Date currentDateAddEight = com.lxzl.erp.common.util.DateUtil.getDayByOffset(now, CommonConstant.COMMON_EIGHT);
+
+        if(WarehouseWorkbenchOrderType.NOT_PRINT_LOG_ODER.equals(orderQueryParam.getWarehouseWorkbenchOrderType())){
+            //未打印的订单
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("start", pageQuery.getStart());
+            maps.put("pageSize", pageQuery.getPageSize());
+            maps.put("currentUserId", currentUserId);
+            maps.put("warehouseWorkbenchOrderType", WarehouseWorkbenchOrderType.NOT_PRINT_LOG_ODER);
+            maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
+
+            return getOrderPage(orderQueryParam,maps);
+
+        }else if(WarehouseWorkbenchOrderType.TODAY_AWAIT_DELIVERY_ODER.equals(orderQueryParam.getWarehouseWorkbenchOrderType())){
+            //今日待发货的订单
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("start", pageQuery.getStart());
+            maps.put("pageSize", pageQuery.getPageSize());
+            maps.put("deliverySubCompanyId", currentUserCompanyId);
+            maps.put("orderSubCompanyId", currentUserCompanyId);
+            maps.put("currentDateTime", currentDateTime);
+            maps.put("currentDateAddOne", currentDateAddOne);
+            maps.put("warehouseWorkbenchOrderType", WarehouseWorkbenchOrderType.TODAY_AWAIT_DELIVERY_ODER);
+            maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
+
+            return getOrderPage(orderQueryParam,maps);
+
+        }else if(WarehouseWorkbenchOrderType.EXPRESS_AWAIT_DELIVERY_ODER.equals(orderQueryParam.getWarehouseWorkbenchOrderType())){
+            //快递待发货的订单
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("start", pageQuery.getStart());
+            maps.put("pageSize", pageQuery.getPageSize());
+            maps.put("deliverySubCompanyId", currentUserCompanyId);
+            maps.put("orderSubCompanyId", currentUserCompanyId);
+            maps.put("currentDateTime", currentDateTime);
+            maps.put("currentDateAddSix", currentDateAddSix);
+            maps.put("warehouseWorkbenchOrderType", WarehouseWorkbenchOrderType.EXPRESS_AWAIT_DELIVERY_ODER);
+            maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
+
+            return getOrderPage(orderQueryParam,maps);
+
+        }else if(WarehouseWorkbenchOrderType.SLIP_AWAIT_DELIVERY_ODER.equals(orderQueryParam.getWarehouseWorkbenchOrderType())){
+            //转单待发货的订单
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("start", pageQuery.getStart());
+            maps.put("pageSize", pageQuery.getPageSize());
+            maps.put("deliverySubCompanyId", currentUserCompanyId);
+            maps.put("orderSubCompanyId", currentUserCompanyId);
+            maps.put("currentDateTime", currentDateTime);
+            maps.put("currentDateAddEight", currentDateAddEight);
+            maps.put("warehouseWorkbenchOrderType", WarehouseWorkbenchOrderType.SLIP_AWAIT_DELIVERY_ODER);
+            maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
+
+            return getOrderPage(orderQueryParam,maps);
+
+        }else if(WarehouseWorkbenchOrderType.OVERDUE_UN_SHIPPED_DELIVERY_ODER.equals(orderQueryParam.getWarehouseWorkbenchOrderType())){
+            //逾期未发货的订单
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("start", pageQuery.getStart());
+            maps.put("pageSize", pageQuery.getPageSize());
+            maps.put("deliverySubCompanyId", currentUserCompanyId);
+            maps.put("currentDateTime", currentDateTime);
+            maps.put("warehouseWorkbenchOrderType", WarehouseWorkbenchOrderType.OVERDUE_UN_SHIPPED_DELIVERY_ODER);
+            maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
+
+            return getOrderPage(orderQueryParam,maps);
+
+        }else if(WarehouseWorkbenchOrderType.UN_CONFIRMED_DELIVERY_ODER.equals(orderQueryParam.getWarehouseWorkbenchOrderType())){
+            //未确认收货的订单
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("start", pageQuery.getStart());
+            maps.put("pageSize", pageQuery.getPageSize());
+            maps.put("deliverySubCompanyId", currentUserCompanyId);
+            maps.put("currentDateTime", currentDateTime);
+            maps.put("warehouseWorkbenchOrderType", WarehouseWorkbenchOrderType.UN_CONFIRMED_DELIVERY_ODER);
+            maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
+
+            return getOrderPage(orderQueryParam,maps);
+
+        }
+
+        //-------------------仓库工作台查询----------------------
+
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -4788,6 +4877,40 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
+    public ServiceResult<String, Page<Order>> getOrderPage(OrderQueryParam orderQueryParam,Map<String, Object> maps){
+        ServiceResult<String, Page<Order>> result = new ServiceResult<>();
+
+        Integer totalCount = orderMapper.findOderCountForWarehouseWorkbench(maps);
+        List<OrderDO> orderDOList = orderMapper.findOderForWarehouseWorkbench(maps);
+
+        List<Order> orderList = new ArrayList<>();
+        List<String> orderNoList = new ArrayList<>();
+        Map<String, Order> orderDOMap = new HashMap<>();
+        for (OrderDO orderDO : orderDOList) {
+            orderNoList.add(orderDO.getOrderNo());
+            Order order = ConverterUtil.convert(orderDO, Order.class);
+            orderDOMap.put(orderDO.getOrderNo(), order);
+            //判断是否可续租
+            Integer canReletOrder = orderSupport.isOrderCanRelet(order);
+            order.setCanReletOrder(canReletOrder);
+            Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
+            order.setIsReletOrder(isReletOrder);
+            orderList.add(order);
+        }
+        List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
+        for (WorkflowLinkDO workflowLinkDO : workflowLinkDOList) {
+            Order order = orderDOMap.get(workflowLinkDO.getWorkflowReferNo());
+            if (order != null) {
+                WorkflowLink workflowLink = ConverterUtil.convert(workflowLinkDO, WorkflowLink.class);
+                order.setWorkflowLink(workflowLink);
+            }
+        }
+
+        Page<Order> page = new Page<>(orderList, totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
 
     @Autowired
     private UserSupport userSupport;
