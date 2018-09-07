@@ -64,7 +64,9 @@ import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
+import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderProductDO;
@@ -2117,17 +2119,17 @@ public class StatementServiceImpl implements StatementService {
                                     return result;
                                 }
                                 // 退货不考虑随租随还
-//                                if (orderDO.getExpectReturnTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
-//                                    if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
-//                                        ProductDO product = productMapper.findById(orderProductDO.getProductId());
-//                                        if (product == null) {
-//                                            result.setErrorCode(ErrorCode.PRODUCT_NOT_EXISTS);
-//                                            return result;
-//                                        }
-//                                        if (product.getIsReturnAnyTime() != IsReturnAnyTime.RETURN_ANY_TIME_YES)
-//                                            continue;
-//                                    }
-//                                }
+                                if (orderDO.getExpectReturnTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
+                                    if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
+                                        ProductDO product = productMapper.findById(orderProductDO.getProductId());
+                                        if (product == null) {
+                                            result.setErrorCode(ErrorCode.PRODUCT_NOT_EXISTS);
+                                            return result;
+                                        }
+                                        if (product.getIsReturnAnyTime() != IsReturnAnyTime.RETURN_ANY_TIME_YES)
+                                            continue;
+                                    }
+                                }
 
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                                 if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
@@ -2312,17 +2314,17 @@ public class StatementServiceImpl implements StatementService {
                                     return result;
                                 }
                                 // 退货不考虑随租随还
-//                                if (orderDO.getExpectReturnTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
-//                                    if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
-//                                        MaterialDO material = materialMapper.findById(orderMaterialDO.getMaterialId());
-//                                        if (material == null) {
-//                                            result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
-//                                            return result;
-//                                        }
-//                                        if (material.getIsReturnAnyTime() != IsReturnAnyTime.RETURN_ANY_TIME_YES)
-//                                            continue;
-//                                    }
-//                                }
+                                if (orderDO.getExpectReturnTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
+                                    if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
+                                        MaterialDO material = materialMapper.findById(orderMaterialDO.getMaterialId());
+                                        if (material == null) {
+                                            result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+                                            return result;
+                                        }
+                                        if (material.getIsReturnAnyTime() != IsReturnAnyTime.RETURN_ANY_TIME_YES)
+                                            continue;
+                                    }
+                                }
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                                 if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
                                     totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, thisReturnDepositAmount);
