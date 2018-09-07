@@ -676,11 +676,15 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, String> updatePerson(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
-        CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerPerson().getRealName());
-        if (dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())) {
+
+        CustomerDO dbCustomerDO = customerMapper.findByRealNameAndPersonNo(customer.getCustomerPerson().getRealName(),
+                customer.getCustomerPerson().getPersonNo());
+        if (dbCustomerDO != null && !customer.getCustomerNo().equals(dbCustomerDO.getCustomerNo())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_IS_EXISTS);
+            serviceResult.setResult(dbCustomerDO.getCustomerNo());
             return serviceResult;
         }
+
         CustomerDO customerDO = customerMapper.findCustomerPersonByNo(customer.getCustomerNo());
         if (customerDO == null || !CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
@@ -3050,6 +3054,12 @@ public class CustomerServiceImpl implements CustomerService {
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             return serviceResult;
         }
+
+        if (CustomerStatus.STATUS_COMMIT.equals(customerDO.getCustomerStatus())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_STATUS_ERROR);
+            return serviceResult;
+        }
+
         //添加客户修改日志
         serviceResult = updateCustomerOwnerAndUnionUser(customerDO, customer, now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
@@ -3496,6 +3506,32 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setConfirmStatementStatus(ConfirmStatementStatus.CONFIRM_STATUS_YES);
         customerDO.setConfirmStatementUser(userSupport.getCurrentUserId());
         customerDO.setConfirmStatementTime(now);
+        customerDO.setUpdateTime(now);
+        customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerMapper.update(customerDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(customerNo);
+        return serviceResult;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> cancelCustomerStatement(String customerNo) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        if (customerDO == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        if (ConfirmStatementStatus.CONFIRM_STATUS_NO.equals(customerDO.getConfirmStatementStatus())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_STATEMENT_STATUS_MUST_BE_CONFIRM);
+            return serviceResult;
+        }
+
+        customerDO.setConfirmStatementStatus(ConfirmStatementStatus.CONFIRM_STATUS_NO);
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerMapper.update(customerDO);

@@ -31,9 +31,9 @@ public class WorkbenchController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "queryWorkhouseWorkbenchCount", method = RequestMethod.POST)
-    public Result queryWorkhouseWorkbenchCount(@RequestBody WorkbenchQueryParam workbenchQueryParam, BindingResult validResult) {
-        ServiceResult<String, Workbench> serviceResult = workbenchService.queryWorkhouseWorkbenchCount(workbenchQueryParam);
+    @RequestMapping(value = "queryWarehouseWorkbenchCount", method = RequestMethod.POST)
+    public Result queryWarehouseWorkbenchCount(@RequestBody WorkbenchQueryParam workbenchQueryParam, BindingResult validResult) {
+        ServiceResult<String, Workbench> serviceResult = workbenchService.queryWarehouseWorkbenchCount(workbenchQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

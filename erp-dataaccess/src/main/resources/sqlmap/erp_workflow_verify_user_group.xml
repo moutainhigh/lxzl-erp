@@ -160,4 +160,13 @@
             #{item.id,jdbcType=INTEGER}
         </foreach>
     </update>
+
+    <insert id="saveList" parameterType="java.util.ArrayList">
+        INSERT INTO erp_workflow_verify_user_group
+        (verify_user_group_id,verify_type,verify_user,verify_status,data_status,create_time,create_user)
+        VALUES
+        <foreach item="workflowVerifyUserGroupDO" index="index" collection="workflowVerifyUserGroupDOList" separator=",">
+            (#{workflowVerifyUserGroupDO.verifyUserGroupId},#{workflowVerifyUserGroupDO.verifyType},#{workflowVerifyUserGroupDO.verifyUser},#{workflowVerifyUserGroupDO.verifyStatus},#{workflowVerifyUserGroupDO.dataStatus},#{workflowVerifyUserGroupDO.createTime},#{workflowVerifyUserGroupDO.createUser})
+        </foreach>
+    </insert>
 </mapper>

@@ -124,7 +124,7 @@
                                             <td>￥{{#price}}{{monthRent}}{{/price}}</td>
                                             <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
                                             <td data-remark="{{remark}}">
-                                                <div class="textOverflow order-remark" style="max-width:100px; cursor: pointer;">{{remark}}</div>
+                                                <div class="textOverflow order-remark mw200" style="cursor: pointer;">{{remark}}</div>
                                             </td>
                                             <td>
                                                 <p class="mn {{statusClass}}">{{statusValue}}</p>

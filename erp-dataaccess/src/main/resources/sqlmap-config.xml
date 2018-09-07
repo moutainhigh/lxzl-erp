@@ -203,6 +203,9 @@
         <mapper resource="sqlmap/erp_customer_risk_log.xml" />
 
         <mapper resource="sqlmap/erp_order_from_test_machine.xml" />
+
+        <mapper resource="sqlmap/erp_statistics_operate_data.xml" />
+
     </mappers>
 
 </configuration>

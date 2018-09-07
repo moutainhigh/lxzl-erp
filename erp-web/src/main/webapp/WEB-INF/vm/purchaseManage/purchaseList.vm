@@ -8,62 +8,62 @@
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
-    <div id="main">
-        #parse("layout/navbar.vm")
-        #parse("layout/sidebar.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
 
-        <section id="content_wrapper">
-            #parse("layout/topbarDropmenu.vm")
-            #parse("layout/topbar.vm")
-            <section id="content" class="animated fadeIn">
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
 
-                #parse("component/loading.vm")
+            #parse("component/loading.vm")
 
-                <div class="panel panel-primary panel-border top">
-                    <div class="panel-menu p12">
-                        <div class="row">
-                            <div class="pull-left ml10">
-                                <script type="text/html" id="actionCommonButtonsTpl">
-                                    <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
-                                    {{#acitonCommonButtons}}
-                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
-                                        <i class="{{iClass}}"></i> {{text}}
-                                    </a>
-                                    {{/acitonCommonButtons}}
-                                </script>
+            <div class="panel panel-primary panel-border top">
+                <div class="panel-menu p12">
+                    <div class="row">
+                        <div class="pull-left ml10">
+                            <script type="text/html" id="actionCommonButtonsTpl">
+                                <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                {{#acitonCommonButtons}}
+                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
+                                    <i class="{{iClass}}"></i> {{text}}
+                                </a>
+                                {{/acitonCommonButtons}}
+                            </script>
 
-                                <div class="btn-group" id="actionCommonButtons"></div>
-                            </div>
-                            <div class="pull-right mr10 text-right">
-                                <form id="searchForm" class="form-horizontal">
-                                    <div class="pull-right">
-                                        <button type="submit" class="btn btn-primary btn-sm">查询</button>
-                                        <button type="reset" class="btn btn-default btn-sm">重置</button>
+                            <div class="btn-group" id="actionCommonButtons"></div>
+                        </div>
+                        <div class="pull-right mr10 text-right">
+                            <form id="searchForm" class="form-horizontal">
+                                <div class="pull-right">
+                                    <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                    <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                </div>
+                                <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                    <input type="text" name="purchaseNo" id="purchaseNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入采购单编号">
+                                </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="purchaseOrderStatus" id="purchaseOrderStatus"></select>
                                     </div>
-                                    <div class="form-group pull-right mn mr10" style="width: 120px;">
-                                        <input type="text" name="purchaseNo" id="purchaseNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入采购单编号">
+                                </div>
+                                <div class="form-group pull-right mn mr10" style="width: 210px;">
+                                    <input type="hidden" name="createStartTime" id="createStartTime" />
+                                    <input type="hidden" name="createEndTime" id="createEndTime" />
+                                    <div class="input-group date" id="createTimePicker">
+                                        <input type="text" name="createTimePicker" id="createTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择采购单创建时间">
+                                        <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                                     </div>
-                                    <div class="form-group pull-right mn mr10">
-                                        <div class="input-group">
-                                            <select class="form-control input-sm bradius" name="purchaseOrderStatus" id="purchaseOrderStatus"></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group pull-right mn mr10" style="width: 210px;">
-                                        <input type="hidden" name="createStartTime" id="createStartTime" />
-                                        <input type="hidden" name="createEndTime" id="createEndTime" />
-                                        <div class="input-group date" id="createTimePicker">
-                                            <input type="text" name="createTimePicker" id="createTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择采购单创建时间">
-                                            <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <div class="panel-body pn">
-                        <div class="table-responsive">
-                            <script type="text/html" id="dataListTpl">
-                                <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" >
+                </div>
+                <div class="panel-body pn">
+                    <div class="table-responsive">
+                        <script type="text/html" id="dataListTpl">
+                            <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" >
                                 <thead>
                                 <tr>
                                     <th>采购单编号</th>
@@ -71,8 +71,8 @@
                                     <th>供应商</th>
                                     <th>发票供应商</th>
                                     <th>仓库</th>
-                                    <th>是否有发票</th>
-                                    <th>是否全新机</th>
+                                    <th class="text-center">是否有发票</th>
+                                    <th class="text-center">是否全新机</th>
                                     <th>采购单状态</th>
                                     <th>创建人</th>
                                     {{#hasRowActionButtons}}
@@ -89,8 +89,8 @@
                                     <td>{{productSupplierName}}</td>
                                     <td>{{invoiceSupplierName}}</td>
                                     <td>{{warehouse}}</td>
-                                    <td>{{isInvoiceStr}}</td>
-                                    <td>{{isNewStr}}</td>
+                                    <td class="text-center">{{isInvoiceStr}}</td>
+                                    <td class="text-center">{{isNewStr}}</td>
                                     <td class="{{purchaseOrderStatusClass}}">{{purchaseOrderStatusValue}}</td>
                                     <td>
                                         <p class="mn">{{createUserRealName}}</p>
@@ -114,45 +114,45 @@
                                 {{/listData}}
                                 {{/dataSource}}
                                 </tbody>
-                                </table>
-                            </script>
-                            <div id="dataListTable"></div>
+                            </table>
+                        </script>
+                        <div id="dataListTable"></div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                            #parse("component/pager.vm")
                         </div>
                     </div>
-                    <div class="panel-footer">
-                        <div class="row">
-                            <div class="col-xs-12 col-md-12 text-right mt10 mb10">
-                                #parse("component/pager.vm")
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
-            </section>
+            </div>
+
         </section>
+    </section>
 
-        #parse("layout/sidebarRight.vm")
-    </div>
+    #parse("layout/sidebarRight.vm")
+</div>
     #parse("layout/footer.vm")
-    <script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.jq.js"></script>
-    <script type="text/javascript">
-        management_load_script('${staticManagement}/js',
-                'manage.purchase.handle.mixin.js',
-                'manage.purchase.js',
+<script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.jq.js"></script>
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js',
+            'manage.purchase.handle.mixin.js',
+            'manage.purchase.js',
 //                'modal.choose.audit.user.js',
-                'modal.submit.audit.js');
-    </script>
-    <script type="text/javascript">
-        //功能事件初始化
-        Rental.init();
-        Layout.init();
-        PurchaseManage.init();
+            'modal.submit.audit.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    PurchaseManage.init();
 
-        //UI效果初始化
-        Core.init();
-        Demo.init();
+    //UI效果初始化
+    Core.init();
+    Demo.init();
 
-    </script>
+</script>
 </body>
 </html>

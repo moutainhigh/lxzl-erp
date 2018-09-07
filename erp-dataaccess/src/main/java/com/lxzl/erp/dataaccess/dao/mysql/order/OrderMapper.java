@@ -88,4 +88,8 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
 
     List<OrderDO> canReletOrderTest(@Param("maps")Map<String, Object> maps);
     void batchUpdateOrderStatus(@Param("list")List<OrderDO> list);
+
+    List<OrderDO>  findOderForWarehouseWorkbench(@Param("maps") Map<String, Object> maps);
+
+    Integer findOderCountForWarehouseWorkbench(@Param("maps") Map<String, Object> maps);
 }

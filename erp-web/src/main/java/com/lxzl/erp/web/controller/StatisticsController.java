@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.statistics.*;
 import com.lxzl.erp.common.domain.statistics.pojo.FinanceStatisticsDataWeeklyExcel;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIndexInfo;
+import com.lxzl.erp.common.domain.statistics.pojo.StatisticsOperateData;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanMonth;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -228,6 +230,48 @@ public class StatisticsController extends BaseController {
     @RequestMapping(value = "getStatisticsFinanceDataDetail", method = RequestMethod.POST)
     public Result getStatisticsFinanceDataDetail(@RequestBody @Validated FinanceStatisticsParam financeStatisticsParam, BindingResult validResult) {
         ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> serviceResult = statisticsService.findStatisticsFinanceDataDetail(financeStatisticsParam);
+        return resultGenerator.generate(serviceResult);
+    }
+    /**
+     * 生成经营数据记录(定时任务调度)
+     * @param date
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "createStatisticsOperateData",method = RequestMethod.POST)
+    public Result createStatisticsOperateData(@RequestBody @Validated Date date, BindingResult validResult){
+        ServiceResult<String, String> serviceResult = statisticsService.createStatisticsOperateData(date);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 查询日经营数据
+     * @param statisticsOperateDataPageParam
+     * @return
+     */
+    @RequestMapping(value = "queryStatisticsOperateDataForDay", method = RequestMethod.POST)
+    public Result queryStatisticsOperateDataForDay(@RequestBody StatisticsOperateDataPageParam statisticsOperateDataPageParam) {
+        ServiceResult<String, Page<StatisticsOperateData>> serviceResult = statisticsService.queryStatisticsOperateDataForDay(statisticsOperateDataPageParam);
+        return resultGenerator.generate(serviceResult);
+    }
+    /**
+     * 查询周经营数据
+     * @param statisticsOperateDataPageParam
+     * @return
+     */
+    @RequestMapping(value = "queryStatisticsOperateDataForWeek", method = RequestMethod.POST)
+    public Result queryStatisticsOperateDataForWeek(@RequestBody StatisticsOperateDataPageParam statisticsOperateDataPageParam) {
+        ServiceResult<String, Page<StatisticsOperateData>> serviceResult = statisticsService.queryStatisticsOperateDataForWeek(statisticsOperateDataPageParam);
+        return resultGenerator.generate(serviceResult);
+    }
+    /**
+     * 查询月经营数据
+     * @param statisticsOperateDataPageParam
+     * @return
+     */
+    @RequestMapping(value = "queryStatisticsOperateDataForMonth", method = RequestMethod.POST)
+    public Result queryStatisticsOperateDataForMonth(@RequestBody StatisticsOperateDataPageParam statisticsOperateDataPageParam) {
+        ServiceResult<String, Page<StatisticsOperateData>> serviceResult = statisticsService.queryStatisticsOperateDataForMonth(statisticsOperateDataPageParam);
         return resultGenerator.generate(serviceResult);
     }
 

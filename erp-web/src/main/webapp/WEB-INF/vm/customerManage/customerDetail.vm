@@ -90,7 +90,11 @@
                                                 {{/isBadDebtCustomer}}
                                                 客户编号：</dt>
                                             <dd>{{customerNo}}</dd>
-                                            <dt class="mb10">客户姓名：</dt><dd>{{customerPerson.realName}}</dd>
+                                            <dt class="mb10">客户姓名：</dt>
+                                            <dd>
+                                                <span>{{customerPerson.realName}}</span>
+                                                {{#customerPerson.internalName}}<span class="ml5 text-info">(内部备注姓名：{{customerPerson.internalName}})</span>{{/customerPerson.internalName}}
+                                            </dd>
                                             <dt class="mb10">身份证号：</dt><dd>{{customerPerson.personNo}}</dd>
                                             <dt class="mb10">邮箱：</dt><dd>{{customerPerson.email}}</dd>
                                             <dt class="mb10">手机号：</dt><dd>{{customerPerson.phone}}</dd>

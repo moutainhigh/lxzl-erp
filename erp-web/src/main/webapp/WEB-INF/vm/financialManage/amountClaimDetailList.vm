@@ -173,8 +173,8 @@
                                 <td>{{#clockShorTime}}{{slipDetailUpdateTime}}{{/clockShorTime}}</td>
                                 <td>{{claimUpdateUserName}}</td>
                                 <td>{{#clockShorTime}}{{claimUpdateTime}}{{/clockShorTime}}</td>
-                                <td>{{slipDetailRemark}}</td>
-                                <td>{{claimRemark}}</td>
+                                <td><div class="mw200">{{slipDetailRemark}}</div></td>
+                                <td><div class="mw200">{{claimRemark}}</div></td>
                             </tr>
                             {{/listData}}
                             {{^listData}}
