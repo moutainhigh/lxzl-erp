@@ -62,6 +62,11 @@ public class PageController extends BaseController {
         return "/component/user/password";
     }
 
+    @RequestMapping("/user-manage/compel-login")
+    public String userManageCompelLogin() {
+        return "/component/user/compelLogin";
+    }
+
     @RequestMapping("/user-manage/list")
     public String userManageList() {
         return "/userManage/userList";

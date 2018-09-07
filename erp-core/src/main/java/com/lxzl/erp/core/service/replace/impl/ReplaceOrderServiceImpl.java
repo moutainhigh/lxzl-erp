@@ -156,8 +156,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         getReturnCount(productCountMap, materialCountMap, k3ReturnOrderDOList);
         //获取该订单的换货单
 //        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNo(replaceOrder.getOrderNo());
-        // TODO: 2018\9\6 0006 将该订单的待提交、审核中、处理中三种状态的换货单商品或配件数量保存
-        //比较设备项
+//        // TODO: 2018\9\6 0006 将该订单的待提交、审核中、处理中三种状态的换货单商品或配件数量保存
+//        //比较设备项
 //        for (ReplaceOrderProduct replaceOrderProduct : replaceOrderDetailList) {
 //            Integer rentingProductCount = rentingProductCountMap.get(orderProduct.getOrderProductId()) == null ? 0 : rentingProductCountMap.get(orderProduct.getOrderProductId());//在租数
 //            Integer processProductCount = productCountMap.get(orderProduct.getOrderProductId()) == null ? 0 : productCountMap.get(orderProduct.getOrderProductId()); //待提交、处理中和审核中数量

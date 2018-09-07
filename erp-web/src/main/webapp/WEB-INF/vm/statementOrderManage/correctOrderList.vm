@@ -156,7 +156,7 @@
                                 <td>￥{{#price}}{{statementCorrectAmount}}{{/price}}</td>
                                 <td>{{statementCorrectReason}}</td>
                                 <td class="{{statementOrderCorrectStatusClass}}">{{statementOrderCorrectStatusValue}}</td>
-                                <td>{{remark}}</td>
+                                <td><div class="mw200">{{remark}}</div></td>
                                 <td>
                                     <p class="mn">{{createUserRealName}}</p>
                                     <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
