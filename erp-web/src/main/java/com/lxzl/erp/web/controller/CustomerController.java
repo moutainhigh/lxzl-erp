@@ -271,6 +271,17 @@ public class CustomerController {
         return resultGenerator.generate(serviceResult);
     }
 
+    /**
+     * 取消客户的结算单确认状态
+     * @param customer
+     * @return
+     */
+    @RequestMapping(value = "cancelCustomerStatement", method = RequestMethod.POST)
+    public Result cancelCustomerStatement(@RequestBody @Validated({IdGroup.class}) Customer customer) {
+        ServiceResult<String, String> serviceResult = customerService.cancelCustomerStatement(customer.getCustomerNo());
+        return resultGenerator.generate(serviceResult);
+    }
+
     @RequestMapping(value = "confirmBadAccount", method = RequestMethod.POST)
     public Result confirmBadAccount(@RequestBody @Validated({IdGroup.class}) Customer customer) {
         ServiceResult<String, String> serviceResult = customerService.confirmBadAccount(customer.getCustomerNo());
