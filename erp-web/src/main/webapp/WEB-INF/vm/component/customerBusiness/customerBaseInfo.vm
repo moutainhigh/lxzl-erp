@@ -149,14 +149,14 @@
 <div class="section row">
     <div class="col-md-12">
         <div class="section-divider mv40" id="spy2">
-            <span>备注</span>
-        </div>
-        <div class="section">
-            <label for="remark" class="field prepend-icon">
-                <textarea class="gui-textarea" id="remark" name="remark" style="height: 155px;" placeholder="输入备注"></textarea>
-                <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
-            </label>
-        </div>
+        <span>备注</span>
+    </div>
+    <div class="section">
+        <label for="remark" class="field prepend-icon">
+            <textarea class="gui-textarea" id="remark" name="remark" style="height: 155px;" placeholder="输入备注"></textarea>
+            <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
+        </label>
+    </div>
     </div>
 </div>
 <div class="section" style="margin: 0 -25px;">
