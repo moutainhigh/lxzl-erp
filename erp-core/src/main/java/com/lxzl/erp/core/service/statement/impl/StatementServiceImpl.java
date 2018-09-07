@@ -7586,8 +7586,8 @@ public class StatementServiceImpl implements StatementService {
 
                             // 暂时只处理订单项押金和支付押金数一致的结算单
                             // 不一致的情况：1. 未交押金前进行退货。 2. 未交押金前对押金进行冲正的情况 （这两种情况暂不处理）
-                            if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), orderProductDO.getRentDepositAmount()) != 0
-                                    || BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), orderProductDO.getDepositAmount()) != 0) {
+                            if (BigDecimalUtil.compare(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), statementOrderDetailDO.getStatementDetailCorrectAmount()), orderProductDO.getRentDepositAmount()) != 0
+                                    || BigDecimalUtil.compare(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailCorrectAmount()), orderProductDO.getDepositAmount()) != 0) {
                                 sb.append("订单号【" + orderNo + "】中的商品项【" + orderProductDO.getProductName() + "】押金和结算单支付押金不一致， 此接口不支持退此类押金。\n");
                                 continue;
                             }
@@ -7601,8 +7601,8 @@ public class StatementServiceImpl implements StatementService {
                             BigDecimal shouldReturnDepositAmount = orderProduct2ReturnDepositAmount.get(orderProductDO.getId());
 
                             // 计算这个订单商品项还应该退的押金
-                            BigDecimal toReturnRentDepositAmount = BigDecimalUtil.sub(shouldReturnRentDepositAmount, returnedRentDepositAmount);
-                            BigDecimal toReturnDepositAmount = BigDecimalUtil.sub(shouldReturnDepositAmount, returnedDepositAmount);
+                            BigDecimal toReturnRentDepositAmount = BigDecimalUtil.sub(BigDecimalUtil.sub(shouldReturnRentDepositAmount, returnedRentDepositAmount), statementOrderDetailDO.getStatementDetailCorrectAmount());
+                            BigDecimal toReturnDepositAmount = BigDecimalUtil.sub(BigDecimalUtil.sub(shouldReturnDepositAmount, returnedDepositAmount), statementOrderDetailDO.getStatementDetailCorrectAmount());
 
                             StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                             // 还应该退的押金大于零，并且未退押金大于还应该退的押金
@@ -7675,8 +7675,8 @@ public class StatementServiceImpl implements StatementService {
                                 && StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
                             // 暂时只处理订单项押金和支付押金数一致的结算单
                             // 不一致的情况：1. 未交押金前进行退货。 2. 未交押金前对押金进行冲正的情况 （这两种情况暂不处理）
-                            if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), orderMaterialDO.getRentDepositAmount()) != 0
-                                    || BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), orderMaterialDO.getDepositAmount()) != 0) {
+                            if (BigDecimalUtil.compare(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), statementOrderDetailDO.getStatementDetailCorrectAmount()), orderMaterialDO.getRentDepositAmount()) != 0
+                                    || BigDecimalUtil.compare(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailCorrectAmount()), orderMaterialDO.getDepositAmount()) != 0) {
                                 sb.append("订单号【" + orderNo + "】中的配件项【" + orderMaterialDO.getMaterialName() + "】押金和结算单支付押金不一致， 此接口不支持退此类押金。\n");
                                 continue;
                             }
@@ -7690,8 +7690,8 @@ public class StatementServiceImpl implements StatementService {
                             BigDecimal shouldReturnDepositAmount = orderMaterial2ReturnDepositAmount.get(orderMaterialDO.getId());
 
                             // 计算这个订单商品项还应该退的押金
-                            BigDecimal toReturnRentDepositAmount = BigDecimalUtil.sub(shouldReturnRentDepositAmount, returnedRentDepositAmount);
-                            BigDecimal toReturnDepositAmount = BigDecimalUtil.sub(shouldReturnDepositAmount, returnedDepositAmount);
+                            BigDecimal toReturnRentDepositAmount = BigDecimalUtil.sub(BigDecimalUtil.sub(shouldReturnRentDepositAmount, returnedRentDepositAmount), statementOrderDetailDO.getStatementDetailCorrectAmount());
+                            BigDecimal toReturnDepositAmount = BigDecimalUtil.sub(BigDecimalUtil.sub(shouldReturnDepositAmount, returnedDepositAmount), statementOrderDetailDO.getStatementDetailCorrectAmount());
 
                             StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                             // 还应该退的押金大于零，并且未退押金大于还应该退的押金
