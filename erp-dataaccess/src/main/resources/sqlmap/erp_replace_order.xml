@@ -29,10 +29,107 @@
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="confirm_replace_time" jdbcType="TIMESTAMP" property="confirmReplaceTime" />
 		<result column="confirm_replace_user" jdbcType="VARCHAR" property="confirmReplaceUser" />
+		<result column="address" jdbcType="VARCHAR" property="address" />
+		<result column="consignee_name" jdbcType="VARCHAR" property="consigneeName" />
+		<result column="consignee_phone" jdbcType="VARCHAR" property="consigneePhone" />
+		<collection property="replaceOrderDetailList" resultMap="ReplaceOrderProductDO"/>
+		<collection property="replaceOrderMaterialList" resultMap="ReplaceOrderMaterialDO"/>
+	</resultMap>
+
+	<resultMap id="ReplaceOrderProductDO" type="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO">
+		<id column="replace_order_product_id" jdbcType="INTEGER" property="id" />
+		<result column="product_replace_order_id" jdbcType="INTEGER" property="replaceOrderId" />
+		<result column="product_replace_order_no" jdbcType="VARCHAR" property="replaceOrderNo" />
+		<result column="product_old_order_product_id" jdbcType="INTEGER" property="oldOrderProductId" />
+		<result column="product_old_product_entry" jdbcType="INTEGER" property="oldProductEntry" />
+		<result column="product_new_order_product_id" jdbcType="INTEGER" property="newOrderProductId" />
+		<result column="product_rent_type" jdbcType="INTEGER" property="rentType" />
+		<result column="product_rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+		<result column="product_rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+		<result column="product_deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
+		<result column="product_payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="product_pay_mode" jdbcType="INTEGER" property="payMode" />
+		<result column="product_old_product_unit_amount" jdbcType="DECIMAL" property="oldProductUnitAmount" />
+		<result column="product_product_id" jdbcType="INTEGER" property="productId" />
+		<result column="product_product_name" jdbcType="VARCHAR" property="productName" />
+		<result column="product_product_sku_id" jdbcType="INTEGER" property="productSkuId" />
+		<result column="product_product_sku_name" jdbcType="VARCHAR" property="productSkuName" />
+		<result column="product_product_count" jdbcType="INTEGER" property="productCount" />
+		<result column="product_product_unit_amount" jdbcType="DECIMAL" property="productUnitAmount" />
+		<result column="product_rent_deposit_amount" jdbcType="DECIMAL" property="rentDepositAmount" />
+		<result column="product_deposit_amount" jdbcType="DECIMAL" property="depositAmount" />
+		<result column="product_credit_deposit_amount" jdbcType="DECIMAL" property="creditDepositAmount" />
+		<result column="product_is_new_product" jdbcType="INTEGER" property="isNewProduct" />
+		<result column="product_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="product_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="product_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="product_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="product_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="product_update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="product_real_replace_product_count" jdbcType="INTEGER" property="realReplaceProductCount" />
+		<result column="product_is_relet_order_replace" jdbcType="INTEGER" property="isReletOrderReplace" />
+		<result column="product_relet_order_item_id" jdbcType="INTEGER" property="reletOrderItemId" />
+	</resultMap>
+
+	<resultMap id="ReplaceOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderMaterialDO">
+		<id column="replace_order_material_id" jdbcType="INTEGER" property="id" />
+		<result column="material_replace_order_id" jdbcType="INTEGER" property="replaceOrderId" />
+		<result column="material_replace_order_no" jdbcType="VARCHAR" property="replaceOrderNo" />
+		<result column="material_old_order_material_id" jdbcType="INTEGER" property="oldOrderMaterialId" />
+		<result column="material_old_material_entry" jdbcType="INTEGER" property="oldMaterialEntry" />
+		<result column="material_new_order_material_id" jdbcType="INTEGER" property="newOrderMaterialId" />
+		<result column="material_rent_type" jdbcType="INTEGER" property="rentType" />
+		<result column="material_rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+		<result column="material_rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+		<result column="material_deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
+		<result column="material_payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="material_pay_mode" jdbcType="INTEGER" property="payMode" />
+		<result column="material_old_material_unit_amount" jdbcType="DECIMAL" property="oldMaterialUnitAmount" />
+		<result column="material_material_id" jdbcType="INTEGER" property="materialId" />
+		<result column="material_material_name" jdbcType="VARCHAR" property="materialName" />
+		<result column="material_material_count" jdbcType="INTEGER" property="materialCount" />
+		<result column="material_material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount" />
+		<result column="material_rent_deposit_amount" jdbcType="DECIMAL" property="rentDepositAmount" />
+		<result column="material_deposit_amount" jdbcType="DECIMAL" property="depositAmount" />
+		<result column="material_credit_deposit_amount" jdbcType="DECIMAL" property="creditDepositAmount" />
+		<result column="material_is_new_material" jdbcType="INTEGER" property="isNewMaterial" />
+		<result column="material_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="material_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="material_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="material_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="material_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="material_update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="material_real_replace_material_count" jdbcType="INTEGER" property="realReplaceMaterialCount" />
+		<result column="material_is_relet_order_replace" jdbcType="INTEGER" property="isReletOrderReplace" />
+		<result column="material_relet_order_item_id" jdbcType="INTEGER" property="reletOrderItemId" />
 	</resultMap>
 
 	<sql id="column_List">
-		ero.id,ero.replace_order_no,ero.order_id,ero.order_no,ero.customer_id,ero.customer_no,ero.replace_time,ero.total_replace_product_count,ero.total_replace_material_count,ero.real_total_replace_product_count,ero.real_total_replace_material_count,ero.service_cost,ero.logistics_cost,ero.repair_cost,ero.replace_reason_type,ero.replace_reason,ero.replace_mode,ero.replace_order_status,ero.data_status,ero.remark,ero.create_time,ero.create_user,ero.update_time,ero.update_user,ero.confirm_replace_time,ero.confirm_replace_user
+		ero.id,ero.replace_order_no,ero.order_id,ero.order_no,ero.customer_id,ero.customer_no,ero.replace_time,ero.total_replace_product_count,ero.total_replace_material_count,ero.real_total_replace_product_count,ero.real_total_replace_material_count,ero.service_cost,ero.logistics_cost,ero.repair_cost,ero.replace_reason_type,ero.replace_reason,ero.replace_mode,ero.replace_order_status,ero.data_status,ero.remark,ero.create_time,ero.create_user,ero.update_time,ero.update_user,ero.confirm_replace_time,ero.confirm_replace_user,
+		ero.address,ero.consignee_name,ero.consignee_phone
+	</sql>
+
+	<sql id="product_column_List">
+		erop.id as replace_order_product_id,erop.replace_order_id as product_replace_order_id,erop.replace_order_no as product_replace_order_no,erop.old_order_product_id as product_old_order_product_id,
+		erop.old_product_entry as product_old_product_entry,erop.new_order_product_id as product_new_order_product_id,erop.rent_type as product_rent_type,erop.rent_time_length as product_rent_time_length,
+		erop.rent_length_type as product_rent_length_type,erop.deposit_cycle as product_deposit_cycle,erop.payment_cycle as product_payment_cycle,
+		erop.pay_mode as product_pay_mode,erop.old_product_unit_amount as product_old_product_unit_amount,erop.product_id as product_product_id,erop.product_name as product_product_name,
+		erop.product_sku_id as product_product_sku_id,erop.product_sku_name as product_product_sku_name,erop.product_count as product_product_count,erop.product_unit_amount as product_product_unit_amount,
+		erop.rent_deposit_amount as product_rent_deposit_amount,erop.deposit_amount as product_deposit_amount,erop.credit_deposit_amount as product_credit_deposit_amount,
+		erop.is_new_product as product_is_new_product,erop.data_status as product_data_status,erop.remark as product_remark,erop.create_time as product_create_time,
+		erop.create_user as product_create_user,erop.update_time as product_update_time,erop.update_user as product_update_user,erop.real_replace_product_count as product_real_replace_product_count,
+		erop.is_relet_order_replace as product_is_relet_order_replace,erop.relet_order_item_id as product_relet_order_item_id
+	</sql>
+
+	<sql id="column_List">
+		erom.id as replace_order_material_id,erom.replace_order_id as material_replace_order_id,erom.replace_order_no AS material_replace_order_no,erom.old_order_material_id as material_old_order_material_id,
+		erom.old_material_entry as material_old_material_entry,erom.new_order_material_id as material_new_order_material_id,erom.rent_type as material_rent_type,erom.rent_time_length as material_rent_time_length,
+		erom.rent_length_type as material_rent_length_type,erom.deposit_cycle as material_deposit_cycle,erom.payment_cycle as material_payment_cycle,erom.pay_mode as material_pay_mode,
+		erom.old_material_unit_amount as material_old_material_unit_amount,erom.material_id as material_material_id,erom.material_name as material_material_name,
+		erom.material_count as material_material_count,erom.material_unit_amount as material_material_unit_amount,erom.rent_deposit_amount as material_rent_deposit_amount,erom.deposit_amount as material_deposit_amount,
+		erom.credit_deposit_amount as material_credit_deposit_amount,erom.is_new_material as material_is_new_material,erom.data_status as material_data_status,erom.remark as material_remark,
+		erom.create_time as material_create_time,erom.create_user as material_create_user,erom.update_time as material_update_time,erom.update_user as material_update_user,
+		erom.real_replace_material_count as material_real_replace_material_count,erom.is_relet_order_replace as material_is_relet_order_replace,erom.relet_order_item_id as material_relet_order_item_id
 	</sql>
 
 	<select id="findById" resultMap="ReplaceOrderDO" parameterType="java.lang.Integer">
@@ -136,6 +233,15 @@
 			<if test="confirmReplaceUser != null">
 				confirm_replace_user = #{confirmReplaceUser,jdbcType=VARCHAR},
 			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeName != null">
+				consignee_name = #{consigneeName,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneePhone != null">
+				consignee_phone = #{consigneePhone,jdbcType=VARCHAR},
+			</if>
 		</set>
 	</sql>
 
@@ -146,4 +252,13 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO">
 		UPDATE erp_replace_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="findByOrderNoForCheck" resultMap="ReplaceOrderDO" parameterType="java.lang.String">
+		SELECT<include refid="column_List"/>,<include refid="product_column_List"/>,
+		<include refid="material_column_List"/>
+		FROM erp_replace_order ero
+		LEFT JOIN erp_replace_order_product erop ON ero.id = erop.replace_order_id and erop.data_status = 1
+		LEFT JOIN erp_replace_order_material erom ON ero.id = erom.replace_order_id and erom.data_status = 1
+		where ero.order_no = #{orderNo, jdbcType=VARCHAR} and ero.data_status = 1 and ero.replace_order_status in (0,4)
+	</select>
 </mapper>

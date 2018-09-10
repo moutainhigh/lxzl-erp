@@ -1,9 +1,13 @@
 package com.lxzl.erp.dataaccess.domain.replace;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import java.util.Date;
 import java.math.BigDecimal;
+import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ReplaceOrderDO  extends BaseDO {
 
 	private Integer id;
@@ -28,6 +32,11 @@ public class ReplaceOrderDO  extends BaseDO {
 	private String remark;
 	private Date confirmReplaceTime;
 	private String confirmReplaceUser;
+	private String address;   //换货地址
+	private String consigneeName;   //联系人
+	private String consigneePhone;   //联系电话
+	private List<ReplaceOrderProductDO> replaceOrderProductDOList;
+	private List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList;
 
 	public Integer getId(){
 		return id;
@@ -205,4 +214,43 @@ public class ReplaceOrderDO  extends BaseDO {
 		this.confirmReplaceUser = confirmReplaceUser;
 	}
 
+	public List<ReplaceOrderProductDO> getReplaceOrderProductDOList() {
+		return replaceOrderProductDOList;
+	}
+
+	public void setReplaceOrderProductDOList(List<ReplaceOrderProductDO> replaceOrderProductDOList) {
+		this.replaceOrderProductDOList = replaceOrderProductDOList;
+	}
+
+	public List<ReplaceOrderMaterialDO> getReplaceOrderMaterialDOList() {
+		return replaceOrderMaterialDOList;
+	}
+
+	public void setReplaceOrderMaterialDOList(List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList) {
+		this.replaceOrderMaterialDOList = replaceOrderMaterialDOList;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getConsigneeName() {
+		return consigneeName;
+	}
+
+	public void setConsigneeName(String consigneeName) {
+		this.consigneeName = consigneeName;
+	}
+
+	public String getConsigneePhone() {
+		return consigneePhone;
+	}
+
+	public void setConsigneePhone(String consigneePhone) {
+		this.consigneePhone = consigneePhone;
+	}
 }
