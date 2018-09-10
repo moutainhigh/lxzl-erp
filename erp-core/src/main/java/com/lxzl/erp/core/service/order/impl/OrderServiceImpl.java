@@ -2353,6 +2353,12 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
         }
+        //测试机订单转租赁审核通过后 新订单不允许取消
+        if (orderDO.getTestMachineOrderNo() != null &&
+                (OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus()) || OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus()))){
+            result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_VERIFIED);
+            return result;
+        }
         IERPService service = null;
         try {
             K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(orderDO.getId(), PostK3Type.POST_K3_TYPE_CANCEL_ORDER);
