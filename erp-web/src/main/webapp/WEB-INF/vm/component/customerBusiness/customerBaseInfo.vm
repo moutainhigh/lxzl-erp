@@ -62,7 +62,7 @@
     <div class="col-md-4">
         <label for="affiliatedEnterprise" class="field-label">关联企业</label>
         <label for="affiliatedEnterprise" class="field prepend-icon">
-            <input type="text" name="affiliatedEnterprise" id="affiliatedEnterprise" class="gui-input" />
+            <input type="text" name="affiliatedEnterprise" id="affiliatedEnterprise" class="gui-input" maxlength="100"/>
             <label for="affiliatedEnterprise" class="field-icon"><i class="fa fa-tag"></i>
             </label>
         </label>
