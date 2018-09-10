@@ -25,4 +25,5 @@ public interface ExcelExportService<T> {
     ServiceResult<String, HSSFWorkbook> getHSSFWorkbook(ServiceResult<String, Page<T>> result, ExcelExportConfig config,String sheetName);
     ServiceResult<String, XSSFWorkbook>  getXSSFWorkbook(XSSFWorkbook hssfWorkbook, XSSFSheet hssSheet, List<T> list, ExcelExportConfig config, String sheetName, Integer rowNo, Integer headlineHeight, Integer rowHeight);
     ServiceResult<String, String> export(Result result, String fileName, String sheetName, HttpServletResponse response, Integer width);
+    ServiceResult<String, String> export(List<ExcelMultiSheetConfig> excelMultiSheetConfigList, HttpServletResponse response, String fileName);
 }

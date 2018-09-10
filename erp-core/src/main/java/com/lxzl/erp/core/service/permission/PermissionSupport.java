@@ -54,7 +54,7 @@ public class PermissionSupport {
                 passiveUserIdList.add(userDO.getId());
             }
         }
-        if(passiveUserIdList.size()==0){
+        if (passiveUserIdList.size() == 0) {
             return null;
         }
         return passiveUserIdList;
@@ -63,7 +63,8 @@ public class PermissionSupport {
     public List<Integer> getCanAccessSubCompanyAllList() {
         ServiceResult<String, List<SubCompany>> subCompanyAll = companyService.subCompanyAll();
         List<SubCompany> subCompanyList = subCompanyAll.getResult();
-        List<Integer> passiveSubCompanyIdList = new ArrayList<>();;
+        List<Integer> passiveSubCompanyIdList = new ArrayList<>();
+        ;
 
         if (CollectionUtil.isNotEmpty(subCompanyList)) {
             for (SubCompany subCompany : subCompanyList) {
@@ -119,6 +120,7 @@ public class PermissionSupport {
         }
         return null;
     }
+
     /**
      * 获取可查看公司（商务部类型用户不限制）
      *
@@ -130,6 +132,19 @@ public class PermissionSupport {
         }
         return null;
     }
+
+    /**
+     * 获取可查看公司（仓库）
+     *
+     * @return
+     */
+    public Integer getCanAccessSubCompanyForWarehouse(Integer userId) {
+        if (userSupport.isDepartmentPerson()) {
+            return userSupport.getCompanyIdByUser(userId);
+        }
+        return null;
+    }
+
     /**
      * 获取当前用户可查看公司
      */
@@ -139,10 +154,10 @@ public class PermissionSupport {
 
     public Integer getCanAccessOrderSubCompany(Integer userId) {
         UserDO userDO = userMapper.findByUserId(userId);
-        for(RoleDO roleDO :userDO.getRoleDOList()){
-            if(!CommonConstant.HEADER_COMPANY_ID.equals(roleDO.getSubCompanyId())){
+        for (RoleDO roleDO : userDO.getRoleDOList()) {
+            if (!CommonConstant.HEADER_COMPANY_ID.equals(roleDO.getSubCompanyId())) {
                 DepartmentDO departmentDO = departmentMapper.findById(roleDO.getDepartmentId());
-                if(DepartmentType.DEPARTMENT_TYPE_BUSINESS_AFFAIRS.equals(departmentDO.getDepartmentType())){
+                if (DepartmentType.DEPARTMENT_TYPE_BUSINESS_AFFAIRS.equals(departmentDO.getDepartmentType())) {
                     return roleDO.getSubCompanyId();
                 }
             }
@@ -153,7 +168,7 @@ public class PermissionSupport {
     public PermissionParam getPermissionParam(Integer... permissionTypes) {
         Integer userId = userSupport.getCurrentUserId();
         //超级管理员不加权限控制
-        if(userId==null||userRoleService.isSuperAdmin(userId)){
+        if (userId == null || userRoleService.isSuperAdmin(userId)) {
             return null;
         }
         Set<Integer> permissionSet = new HashSet<>();
@@ -183,6 +198,12 @@ public class PermissionSupport {
         }
         if (permissionSet.contains(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS)) {
             permissionParam.setPermissionSubCompanyIdForDelivery(getCanAccessSubCompanyForBusinessAffairs(userId));
+        }
+        if (permissionSet.contains(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_WAREHOUSE)) {
+            Integer companyId = getCanAccessSubCompanyForWarehouse(userId);
+            if (null != companyId) {
+                permissionParam.setPermissionSubCompanyIdForDelivery(companyId);
+            }
         }
         return permissionParam;
     }

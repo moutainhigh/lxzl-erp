@@ -175,5 +175,8 @@
 			LIMIT #{maps.start},#{maps.pageSize}
 		</where>
 	</select>
+	<update id="deleteByBankSlipDetailId">
+		UPDATE erp_bank_slip_detail_operation_log SET data_status = 2,create_time = #{now,jdbcType=TIMESTAMP},create_user = #{currentUser,jdbcType=VARCHAR} WHERE bank_slip_detail_id = #{bankSlipDetailId,jdbcType=INTEGER} AND operation_type = 8 AND create_user = #{currentUser,jdbcType=VARCHAR}
+	</update>
 
 </mapper>

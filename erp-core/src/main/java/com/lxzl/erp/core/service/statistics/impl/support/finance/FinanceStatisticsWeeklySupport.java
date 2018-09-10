@@ -1,9 +1,6 @@
 package com.lxzl.erp.core.service.statistics.impl.support.finance;
 
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.StatisticsDealsCountType;
-import com.lxzl.erp.common.constant.StatisticsOrderOriginType;
-import com.lxzl.erp.common.constant.StatisticsRentLengthType;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.statistics.FinanceStatisticsParam;
 import com.lxzl.erp.common.domain.statistics.pojo.FinanceStatisticsDataWeeklyExcel;
 import com.lxzl.erp.common.util.CollectionUtil;
@@ -14,9 +11,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.FinanceStatisticsDataWeeklyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
-import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataMeta;
-import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataWeeklyDO;
-import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDealsCountBySubCompany;
+import com.lxzl.erp.dataaccess.domain.statistics.*;
 import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +44,21 @@ public class FinanceStatisticsWeeklySupport {
         return financeStatisticsDataWeeklyMapper.listFinanceStatisticsDataMetaPage(maps);
     }
 
+    public List<FinanceStatisticsRentProductDetail> statisticsRentProductDetail(FinanceStatisticsParam paramVo) {
+        if (paramVo == null) {
+            return null;
+        }
+        Map<String, Object> maps = financeStatisticsWeeklyParamToMap(paramVo);
+        return statisticsMapper.statisticsRentProductDetail(maps);
+    }
 
+    public List<FinanceStatisticsReturnProductDetail> statisticsReturnProductDetail(FinanceStatisticsParam paramVo) {
+        if (paramVo == null) {
+            return null;
+        }
+        Map<String, Object> maps = financeStatisticsWeeklyParamToMap(paramVo);
+        return statisticsMapper.statisticsReturnProductDetail(maps);
+    }
 
     /**
      * 统计成交客户数量 { 订单所属公司为八个分公司（KA）的订单按订单所属分公司分组统计，订单所属公司为电销或者大客户渠道的订单则按执行分公司分组统计}
@@ -110,7 +119,7 @@ public class FinanceStatisticsWeeklySupport {
 
     // 获取此日期所在周的第一天
      public Date getFirstDayOfCurrentWeek(Date date) {
-        Calendar cal = Calendar.getInstance();
+        /*Calendar cal = Calendar.getInstance();
         try {
             cal.setTime(date);
             //cal.setFirstDayOfWeek(Calendar.MONDAY);  //设置星期一为当周第一天
@@ -119,11 +128,38 @@ public class FinanceStatisticsWeeklySupport {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return cal.getTime();*/
+        return getFirstDayOfCurrentWeek(date, SETTING_FIRST_DAY_OF_WEEK);
+    }
+
+    public Date getFirstDayOfCurrentWeek(Date date, int settingFirstDayOfWeek) {
+        Calendar cal = Calendar.getInstance();
+        try {
+            cal.setTime(date);
+            cal.setFirstDayOfWeek(settingFirstDayOfWeek);//设置星期五为当周第一天
+            cal.setMinimalDaysInFirstWeek(1); //第一周的最小天数
+            cal.set(Calendar.DAY_OF_WEEK, settingFirstDayOfWeek);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cal.getTime();
+    }
+
+    public Date getLastDayOfCurrentWeek(Date date, int settingFirstDayOfWeek) {
+        Calendar cal = Calendar.getInstance();
+        try {
+            cal.setTime(date);
+            cal.setFirstDayOfWeek(settingFirstDayOfWeek);//设置星期五为当周第一天
+            cal.setMinimalDaysInFirstWeek(1); //第一周的最小天数
+            cal.set(Calendar.DAY_OF_WEEK, settingFirstDayOfWeek - 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return cal.getTime();
     }
 
     public int getMaxWeekCountOfYearAndMonth(int year, int month) {
-        Calendar currentCalendar = Calendar.getInstance();
+        Calendar currentCalendar = getCalendarInstance(SETTING_FIRST_DAY_OF_WEEK)/*Calendar.getInstance()*/;
         currentCalendar.set(Calendar.YEAR, year);
         currentCalendar.set(Calendar.MONTH, month - 1);
         currentCalendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -224,6 +260,11 @@ public class FinanceStatisticsWeeklySupport {
         financeStatisticsDataWeeklyMapper.saveList(financeAllStatisticsDataWeekly);
     }
 
+    /**
+     * 被统计的差异数据
+     * @param paramVo
+     * @return
+     */
     public List<FinanceStatisticsDataWeeklyDO> statisticsDiffFinanceDataWeekly(FinanceStatisticsParam paramVo){
         int year = paramVo.getYear();
         int month = paramVo.getMonth();
@@ -267,6 +308,43 @@ public class FinanceStatisticsWeeklySupport {
         //return financeAllStatisticsDataWeekly;
         System.out.println("-------------------------------------------------------------------------------------");*/
         return diffFinanceAllStatisticsDataWeekly;
+    }
+
+    /**
+     * 被统计的累计数据
+     * @param paramVo
+     * @return
+     */
+    public List<FinanceStatisticsDataWeeklyDO> statisticsTotalFinanceDataWeekly(FinanceStatisticsParam paramVo){
+        int year = paramVo.getYear();
+        int month = paramVo.getMonth();
+        int weekOfMonth = paramVo.getWeekOfMonth();
+        boolean isHistoryData = !isCurrentWeek(year, month, weekOfMonth);  //如果不是当前周,则都认为是历史统计数据,后面则从数据库里面取数据
+        List<FinanceStatisticsDataWeeklyDO> financeAllStatisticsDataWeekly = new ArrayList<>();
+        //统计KA
+        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_KA);
+        List<FinanceStatisticsDataWeeklyDO> financeKAStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
+        if (CollectionUtil.isNotEmpty(financeKAStatisticsDataWeekly)) {
+            financeAllStatisticsDataWeekly.addAll(financeKAStatisticsDataWeekly);
+        }
+        //统计电销
+        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_TMK);
+        List<FinanceStatisticsDataWeeklyDO> financeTMKStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
+        if (CollectionUtil.isNotEmpty(financeTMKStatisticsDataWeekly)) {
+            financeAllStatisticsDataWeekly.addAll(financeTMKStatisticsDataWeekly);
+        }
+        // 统计大客户渠道
+        paramVo.setOrderOrigin(StatisticsOrderOriginType.ORDER_ORIGIN_TYPE_BCC);
+        List<FinanceStatisticsDataWeeklyDO> financeBCCStatisticsDataWeekly = statisticsFinanceDataWeekly(paramVo, isHistoryData);
+        if (CollectionUtil.isNotEmpty(financeBCCStatisticsDataWeekly)) {
+            financeAllStatisticsDataWeekly.addAll(financeBCCStatisticsDataWeekly);
+        }
+
+        //如果是当前周,则将此次统计数据保存到数据库
+        if (!isHistoryData && CollectionUtil.isNotEmpty(financeAllStatisticsDataWeekly)) {
+            freshStatisticsDataToDB(year, month, weekOfMonth, financeAllStatisticsDataWeekly);
+        }
+        return financeAllStatisticsDataWeekly;
     }
 
     /**
@@ -417,7 +495,7 @@ public class FinanceStatisticsWeeklySupport {
     private boolean isCurrentWeek(int year, int month, int weekOfMonth) {
         //获取现在的时间
         Date now = new Date();
-        Calendar currentCalendar = Calendar.getInstance();
+        Calendar currentCalendar = getCalendarInstance(SETTING_FIRST_DAY_OF_WEEK)/*Calendar.getInstance()*/;
         // 测试使用(修改当前时间)
         /**
        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -433,7 +511,7 @@ public class FinanceStatisticsWeeklySupport {
         int currentWeekOfMonth = currentCalendar.get(Calendar.WEEK_OF_MONTH);
         Date firstDayOfThisWeek = getFirstDayOfCurrentWeek(now);
         if (firstDayOfThisWeek.compareTo(DateUtil.getStartMonthDate(now)) < 0) { //如果这周第一天的日期比当月第一天的时间还小，说明这周已经跨月份
-            Calendar firstDayOfThisWeekCalendar = Calendar.getInstance();
+            Calendar firstDayOfThisWeekCalendar = getCalendarInstance(SETTING_FIRST_DAY_OF_WEEK)/*Calendar.getInstance()*/;
             firstDayOfThisWeekCalendar.setTime(firstDayOfThisWeek);
             int firstDayOfThisWeekInYear = firstDayOfThisWeekCalendar.get(Calendar.YEAR);
             int firstDayOfThisWeekInMonth = firstDayOfThisWeekCalendar.get(Calendar.MONTH) + 1;  // 因为日历获取的月份比实际月份小1
@@ -513,7 +591,7 @@ public class FinanceStatisticsWeeklySupport {
             return financeStatisticsDataWeeklyDOList;
         }
 
-        Calendar currentCalendar = Calendar.getInstance();
+        Calendar currentCalendar = getCalendarInstance(SETTING_FIRST_DAY_OF_WEEK)/*Calendar.getInstance()*/;
         currentCalendar.set(Calendar.YEAR, year);
         currentCalendar.set(Calendar.MONTH, (month -1));  //因为日历的月份是从0开始到11
         currentCalendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -641,7 +719,7 @@ public class FinanceStatisticsWeeklySupport {
     }
 
     public StatisticsInterval createStatisticsInterval(int year, int month, int weekOfMonth) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = getCalendarInstance(SETTING_FIRST_DAY_OF_WEEK);
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month - 1);  // 因为日历获取的月份比实际月份小1
         calendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -650,7 +728,8 @@ public class FinanceStatisticsWeeklySupport {
         Date statisticsEndTime = null;  //统计结束时间
         Date endTimeInCurrentMonth = DateUtil.getEndMonthDate(firstDayInCurrentMonth);
         calendar.set(Calendar.WEEK_OF_MONTH, weekOfMonth);
-        calendar.set(Calendar.DAY_OF_WEEK, 7);
+        //calendar.set(Calendar.DAY_OF_WEEK, 7);
+        calendar.set(Calendar.DAY_OF_WEEK, SETTING_FIRST_DAY_OF_WEEK - 1);
         calendar.set(Calendar.HOUR_OF_DAY ,23);
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 59);
@@ -667,6 +746,23 @@ public class FinanceStatisticsWeeklySupport {
         return statisticsInterval;
     }
 
+    public Calendar getCalendarInstance(int settingFirstDayOfWeek) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setFirstDayOfWeek(settingFirstDayOfWeek);
+        calendar.setMinimalDaysInFirstWeek(1);
+        return calendar;
+    }
+
+    public StatisticsInterval createStatisticsInterval(int statisticsInterval, int year, int month, int weekOfMonth) {
+        if (StatisticsIntervalType.STATISTICS_INTERVAL_WEEKLY == statisticsInterval) {
+            return createStatisticsInterval(year, month, weekOfMonth);
+        } else if (StatisticsIntervalType.STATISTICS_INTERVAL_MONTHLY == statisticsInterval) {
+            int maxWeekOfMonth = getMaxWeekCountOfYearAndMonth(year, month);
+            return createStatisticsInterval(year, month, maxWeekOfMonth);
+        }
+        return createStatisticsInterval(year, month, weekOfMonth);
+    }
+
     @Autowired
     private FinanceStatisticsDataWeeklyMapper financeStatisticsDataWeeklyMapper;
 
@@ -675,5 +771,7 @@ public class FinanceStatisticsWeeklySupport {
 
     @Autowired
     private SubCompanyMapper subCompanyMapper;
+
+    public static int SETTING_FIRST_DAY_OF_WEEK = Calendar.FRIDAY;
 
 }

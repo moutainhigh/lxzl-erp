@@ -126,7 +126,7 @@
                                 <td>{{chargeTypeValue}}</td>
                                 <td>{{#time}}{{chargeTime}}{{/time}}</td>
                                 <td>{{chargeStatusValue}}</td>
-                                <td>{{remark}}</td>
+                                <td ><div class="mw200">{{remark}}</div></td>
                             </tr>
                             {{/listData}}
                             {{^listData}}

@@ -19,7 +19,17 @@ public class K3ReturnOrderQueryParam extends BasePageParam implements Serializab
     private Integer deliverySubCompanyId;  //发货分公司
     private String createUserName; //创建人姓名
 
+    private Integer isWarehouseWorkbench; //是否是仓库工作台
+
     private Boolean isHandleRent;
+
+    public Integer getIsWarehouseWorkbench() {
+        return isWarehouseWorkbench;
+    }
+
+    public void setIsWarehouseWorkbench(Integer isWarehouseWorkbench) {
+        this.isWarehouseWorkbench = isWarehouseWorkbench;
+    }
 
     public String getOrderNo() {
         return orderNo;

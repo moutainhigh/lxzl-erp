@@ -23,8 +23,17 @@ public class CustomerPersonQueryParam extends BasePageParam {
     private Integer isRisk; //是否授信
     private Integer confirmStatementStatus; // 是否确认结算单
     private Integer confirmBadAccountStatus; // 是否确认坏账状态
+    private String internalName;//内部名称
 
     private List<Integer> passiveUserIdList;
+
+    public String getInternalName() {
+        return internalName;
+    }
+
+    public void setInternalName(String internalName) {
+        this.internalName = internalName;
+    }
 
     public Integer getConfirmBadAccountStatus() {
         return confirmBadAccountStatus;

@@ -14,7 +14,10 @@ import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.export.DisposeExportDataService;
 import com.lxzl.erp.core.service.export.ExportExcelCustomFormatService;
 import com.lxzl.erp.core.service.export.ExportStatisticsFinanceDataService;
+import com.lxzl.erp.core.service.payment.impl.PaymentServiceImpl;
 import com.lxzl.se.common.domain.Result;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +39,8 @@ public class ExcelExportController {
     @Autowired
     private ExportStatisticsFinanceDataService exportStatisticsFinanceDataService;
 
+    private static final Logger logger = LoggerFactory.getLogger(ExcelExportController.class);
+
     @RequestMapping(value = "exportPageBankSlipDetail", method = RequestMethod.POST)
     public Result exportPageBankSlip(BankSlipDetailQueryParam bankSlipDetailQueryParam, HttpServletResponse response) throws Exception {
         return resultGenerator.generate(disposeExportDataService.disposePageBankSlipDetail(bankSlipDetailQueryParam,response).getErrorCode());
@@ -53,6 +58,7 @@ public class ExcelExportController {
 
     @RequestMapping(value = "exportPageStatementOrder", method = RequestMethod.POST)
     public Result exportPageStatementOrder(StatementOrderDetailQueryParam statementOrderDetailQueryParam, HttpServletResponse response) throws Exception {
+        logger.info("--------------------comeIntoController导出结算单列表进入---------------------");
         return resultGenerator.generate(disposeExportDataService.disposePageStatementOrder(statementOrderDetailQueryParam, response).getErrorCode());
     }
 

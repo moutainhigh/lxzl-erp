@@ -168,14 +168,14 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerPerson.setPersonNo("35052119870503651X");
         customerPerson.setConnectRealName("cd");
         customerPerson.setConnectPhone("18171408870");
-        customerPerson.setRealName("李三马");
+        customerPerson.setRealName("李七马李七马请");
         customerPerson.setPhone("18171408871");
         customerPerson.setEmail("1234567@qq.com");
         customerPerson.setProvince(17);
         customerPerson.setCity(172);
         customerPerson.setDistrict(1687);
-        customerPerson.setAddress("老地方烧烤摊儿");
-
+        customerPerson.setAddress("老地方烧烤摊儿11");
+        customerPerson.setInternalName("这是内部名称这是内部名称这是内部名称这是");
 
         customer.setCustomerPerson(customerPerson);
         TestResult result = getJsonTestResult("/customer/addPerson", customer);
@@ -503,19 +503,21 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCP-1000-20180702-00002");
+        customer.setCustomerNo("LXCP-027-20180905-00009");
         customer.setOwner(500025);
         customer.setDeliveryMode(3);
         customer.setIsDefaultConsignAddress(1);
         customer.setStatementDate(31);
         customer.setShortLimitReceivableAmount(new BigDecimal(1000));
         CustomerPerson customerPerson = new CustomerPerson();
-        customerPerson.setPersonNo("422827999857463210");
+        customerPerson.setPersonNo("35052119870503651X");
         customerPerson.setConnectRealName("赵二天111");
         customerPerson.setConnectPhone("18563214987");
-        customerPerson.setRealName("李二马");
+        customerPerson.setRealName("李七马");
         customerPerson.setPhone("13888886666");
         customerPerson.setAddress("update个人信息详细地址测试");
+        customerPerson.setInternalName("跟新内部名称");
+        customerPerson.setInternalName("哦哦内部名称这是内部名称这是内部名称这是取");
         customer.setCustomerPerson(customerPerson);
         TestResult result = getJsonTestResult("/customer/updatePerson", customer);
     }
@@ -570,6 +572,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 //        customerPersonQueryParam.setIsRisk(1);
 //        customerPersonQueryParam.setCustomerStatus(3);
 //        customerPersonQueryParam.setConfirmStatementStatus(ConfirmStatementStatus.CONFIRM_STATUS_YES);
+        customerPersonQueryParam.setInternalName("哦哦内部名称这是内部名称这是内部名称这是");
         TestResult result = getJsonTestResult("/customer/pageCustomerPerson", customerPersonQueryParam);
     }
 
@@ -591,9 +594,10 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-2000-20180212-02830");
+        customer.setCustomerNo("LXCC-0755-20180112-00002");
 
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
+        System.out.println(JSONUtil.convertBeanToJSON(result).toString());
     }
 
     @Test
@@ -606,7 +610,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCD-1000-20180304-00032");
+        customer.setCustomerNo("LXCP-027-20180905-00009");
         TestResult result = getJsonTestResult("/customer/detailCustomerPerson", customer);
     }
 
@@ -937,5 +941,33 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         Customer customer = new Customer();
         customer.setCustomerNo("LXCC-027-20180305-00153");
         TestResult result = getJsonTestResult("/customer/queryRentCountByCustomerNo", customer);
+    }
+
+    @Test
+    public void addParentCompany() throws Exception {
+        CustomerCompanyAddParent customerCompanyAddParent = new CustomerCompanyAddParent();
+        customerCompanyAddParent.setParentCustomerId(700432);
+        List<Integer> customerIdList = new ArrayList<>();
+        customerIdList.add(700435);
+        customerIdList.add(700436);
+        customerCompanyAddParent.setCustomerIdList(customerIdList);
+        TestResult result = getJsonTestResult("/customer/addParentCompany", customerCompanyAddParent);
+    }
+
+    @Test
+    public void queryParentCompanyPage() throws Exception {
+        CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
+//        customerCompanyQueryParam.setCustomerStatus(4);
+        customerCompanyQueryParam.setCustomerNo("LXCC-0755-20180112-00001");
+//        customerCompanyQueryParam.setCompanyName("12312");
+//          customerCompanyQueryParam.setIsRisk(1);
+//        customerCompanyQueryParam.setProductPurpose("测试");
+//        customerCompanyQueryParam.setIsDisabled(0);
+//        customerCompanyQueryParam.setCustomerStatus(CustomerStatus.STATUS_PASS);
+//        customerCompanyQueryParam.setConnectPhone("13726273851");
+
+//        customerCompanyQueryParam.setOwnerSubCompanyId(3);
+//        customerCompanyQueryParam.setConfirmStatementStatus(ConfirmStatementStatus.CONFIRM_STATUS_YES);
+        TestResult result = getJsonTestResult("/customer/queryParentCompanyPage", customerCompanyQueryParam);
     }
 }

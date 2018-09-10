@@ -124,6 +124,41 @@ public class ExcelExportSupport<T> {
         return hssfWorkbook;
     }
 
+    public static <T> HSSFWorkbook createHSSFSheetAttachToHSSFWorkbook(List<T> list, ExcelExportConfig config, String sheetName,HSSFWorkbook targetHssfWorkbook) throws Exception {
+        if (targetHssfWorkbook == null) {
+            targetHssfWorkbook = new HSSFWorkbook();
+        }
+        HSSFSheet hssSheet = targetHssfWorkbook.createSheet(sheetName);
+        HSSFRow hssfRow = hssSheet.createRow(0);
+        int count = 0;
+        List<ColConfig> colConfigList = config.getConfigList();
+        for (int i = 0; i < colConfigList.size(); i++) {
+            ColConfig colConfig = colConfigList.get(i);
+            hssfRow.createCell(count++).setCellValue(colConfig.getColName());
+            hssSheet.setColumnWidth(i, colConfig.getWidth());
+        }
+        if(CollectionUtil.isNotEmpty(list)) {
+            int row =1;
+            for(T t: list) {
+                if(t != null){
+                    HSSFRow newXssfRow = hssSheet.createRow(row);
+                    for (int j = 0; j < colConfigList.size(); j++) {
+                        ColConfig colConfig = colConfigList.get(j);
+                        //开始set值到表里面
+                        String methodName = "get" + StringUtil.toUpperCaseFirstChar(colConfig.getFieldName());
+                        Method method = t.getClass().getMethod(methodName);
+                        Object value = method.invoke(t);
+                        hssSheet.setColumnWidth(j, colConfig.getWidth());
+                        Cell cell = newXssfRow.createCell(j);
+                        cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));
+                    }
+                    row++;
+                }
+            }
+        }
+        return targetHssfWorkbook;
+    }
+
     /**
      * 导出带list数据表格
      *

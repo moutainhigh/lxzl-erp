@@ -5,6 +5,8 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.statistics.*;
 import com.lxzl.erp.common.domain.statistics.pojo.*;
 import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsDataMeta;
+import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsRentProductDetail;
+import com.lxzl.erp.dataaccess.domain.statistics.FinanceStatisticsReturnProductDetail;
 import com.lxzl.se.core.service.BaseService;
 
 import java.util.Date;
@@ -75,6 +77,42 @@ public interface StatisticsService extends BaseService {
     ServiceResult<String, Boolean> reStatisticsFinanceData(FinanceStatisticsParam paramVo);
     ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyToExcel(FinanceStatisticsParam paramVo);
     ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataMonthlyToExcel(FinanceStatisticsParam paramVo);
+    ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataWeeklyTotalToExcel(FinanceStatisticsParam paramVo);
+    ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> statisticsFinanceDataMonthlyTotalToExcel(FinanceStatisticsParam paramVo);
     ServiceResult<String, List<FinanceStatisticsDataWeeklyExcel>> findStatisticsFinanceDataDetail(FinanceStatisticsParam paramVo);
     ServiceResult<String, Page<FinanceStatisticsDataMeta>> findAllStatisticsFinanceDataMeta(FinanceStatisticsParam paramVo);
+    ServiceResult<String, List<FinanceStatisticsRentProductDetail>> statisticsRentProductDetail(FinanceStatisticsParam paramVo);
+    ServiceResult<String, List<FinanceStatisticsReturnProductDetail>> statisticsReturnProductDetail(FinanceStatisticsParam paramVo);
+
+    /**
+     * 生成经营数据记录（手动）
+     * @param date
+     * @return
+     */
+    ServiceResult<String,String> createStatisticsOperateData(Date date);
+    /**
+     * 查询日经营数据
+     * @param statisticsOperateDataPageParam
+     * @return
+     */
+    ServiceResult<String,Page<StatisticsOperateData>> queryStatisticsOperateDataForDay(StatisticsOperateDataPageParam statisticsOperateDataPageParam);
+    /**
+     * 查询周经营数据
+     * @param statisticsOperateDataPageParam
+     * @return
+     */
+    ServiceResult<String,Page<StatisticsOperateData>> queryStatisticsOperateDataForWeek(StatisticsOperateDataPageParam statisticsOperateDataPageParam);
+    /**
+     * 查询月经营数据
+     * @param statisticsOperateDataPageParam
+     * @return
+     */
+    ServiceResult<String,Page<StatisticsOperateData>> queryStatisticsOperateDataForMonth(StatisticsOperateDataPageParam statisticsOperateDataPageParam);
+
+    /**
+     * 生成经营数据记录(定时任务调度)
+     * @param date
+     * @return
+     */
+    ServiceResult<String,String> createStatisticsOperateDataForTime();
 }

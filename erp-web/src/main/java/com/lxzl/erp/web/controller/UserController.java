@@ -16,6 +16,7 @@ import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.web.util.NetworkUtil;
 import com.lxzl.se.common.domain.Result;
+import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +94,16 @@ public class UserController extends BaseController {
     public Result login(@RequestBody LoginParam loginParam) {
         return resultGenerator.generate(userService.login(loginParam, NetworkUtil.getIpAddress(request)));
     }
+    /**
+     * 强行登陆
+     *
+     * @param loginParam
+     * @return Result
+     */
+    @RequestMapping(value = "adminLogin", method = RequestMethod.POST)
+    public Result adminLogin(@RequestBody LoginParam loginParam) {
+        return resultGenerator.generate(userService.adminLogin(loginParam, NetworkUtil.getIpAddress(request)));
+    }
 
     @RequestMapping(value = "getUserById", method = RequestMethod.POST)
     public Result getUserById(@RequestBody UserQueryParam userQueryParam) {
@@ -165,12 +176,16 @@ public class UserController extends BaseController {
         if (null != httpSession) {
             Map<String, HttpSession> onLineList = (Map<String, HttpSession>) httpSession.getServletContext().getAttribute("onLineMap");
             Iterator<Map.Entry<String, HttpSession>> it = onLineList.entrySet().iterator();
+            Map<String, String> userMap = new HashMap<>();
             while (it.hasNext()) {
                 HttpSession session = it.next().getValue();//拿到单个的session对象了
                 if (null != session) {
                     Object user = session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
                     if (null != user) {
                         User userInfo = (User) user;
+                        if (null != userMap.get(userInfo.getUserName())||StringUtil.isEmpty(userInfo.getUserName()))
+                            continue;
+                        userMap.put(userInfo.getUserName(),userInfo.getUserName());
                         Map<String, Object> userInfoMap = new HashMap<>();//采用map封装一行数据，然后放在list 中去，就是一个表的数据
                         //userInfoMap.put("id", session.getId());//获取session的id
                         userInfoMap.put("createTime", session.getCreationTime());//创建的时间.传过去的是date类型我们前台进行解析，显示出来
@@ -198,8 +213,8 @@ public class UserController extends BaseController {
                 }
             };
             Collections.sort(userlist, c);
-            int pageStar=(userOnLineQueryParam.getPageNo() - 1) * userOnLineQueryParam.getPageSize();
-            List<Map<String, Object>> pageList=userlist.subList(pageStar,count-pageStar>userOnLineQueryParam.getPageSize()?pageStar+userOnLineQueryParam.getPageSize():count);
+            int pageStar = (userOnLineQueryParam.getPageNo() - 1) * userOnLineQueryParam.getPageSize();
+            List<Map<String, Object>> pageList = userlist.subList(pageStar, count - pageStar > userOnLineQueryParam.getPageSize() ? pageStar + userOnLineQueryParam.getPageSize() : count);
             Page<Map<String, Object>> page = new Page<>(pageList, count, userOnLineQueryParam.getPageNo(), userOnLineQueryParam.getPageSize());
             result.setResult(page);
             result.setErrorCode(ErrorCode.SUCCESS);

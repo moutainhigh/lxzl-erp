@@ -271,6 +271,17 @@ public class CustomerController {
         return resultGenerator.generate(serviceResult);
     }
 
+    /**
+     * 取消客户的结算单确认状态
+     * @param customer
+     * @return
+     */
+    @RequestMapping(value = "cancelCustomerStatement", method = RequestMethod.POST)
+    public Result cancelCustomerStatement(@RequestBody @Validated({IdGroup.class}) Customer customer) {
+        ServiceResult<String, String> serviceResult = customerService.cancelCustomerStatement(customer.getCustomerNo());
+        return resultGenerator.generate(serviceResult);
+    }
+
     @RequestMapping(value = "confirmBadAccount", method = RequestMethod.POST)
     public Result confirmBadAccount(@RequestBody @Validated({IdGroup.class}) Customer customer) {
         ServiceResult<String, String> serviceResult = customerService.confirmBadAccount(customer.getCustomerNo());
@@ -288,4 +299,25 @@ public class CustomerController {
         return resultGenerator.generate(serviceResult);
     }
 
+    /**
+     * 添加母公司接口
+     * @param customerCompanyAddParent
+     * @return
+     */
+    @RequestMapping(value = "addParentCompany", method = RequestMethod.POST)
+    public Result addParentCompany(@RequestBody CustomerCompanyAddParent customerCompanyAddParent, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.addParentCompany(customerCompanyAddParent);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 查询子公司分页信息
+     * @param customerCompanyQueryParam
+     * @return
+     */
+    @RequestMapping(value = "queryParentCompanyPage", method = RequestMethod.POST)
+    public Result queryParentCompanyPage(@RequestBody CustomerCompanyQueryParam customerCompanyQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<Customer>> serviceResult = customerService.queryParentCompanyPage(customerCompanyQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }
