@@ -17,6 +17,9 @@ public class FinanceStatisticsRentProductDetail {
     private Integer orderSubCompanyId;    // 订单分公司
     private Integer deliverySubCompanyId; //发货分公司
     private String customerName;          // 客户名称
+    private Integer customerOrigin;       //客户来源
+    private String industry;              //客户行业
+    private String k3CustomerCode;        //客户K3编码
     private Integer rentType;             // 租赁类型
     private Integer rentTimeLength;       //租赁时长
     private Integer rentLengthType;       // 租赁长短类型
@@ -61,12 +64,37 @@ public class FinanceStatisticsRentProductDetail {
         this.customerName = customerName;
     }
 
+
     public Integer getRentType() {
         return rentType;
     }
 
     public void setRentType(Integer rentType) {
         this.rentType = rentType;
+    }
+
+    public Integer getCustomerOrigin() {
+        return customerOrigin;
+    }
+
+    public void setCustomerOrigin(Integer customerOrigin) {
+        this.customerOrigin = customerOrigin;
+    }
+
+    public String getIndustry() {
+        return industry;
+    }
+
+    public void setIndustry(String industry) {
+        this.industry = industry;
+    }
+
+    public String getK3CustomerCode() {
+        return k3CustomerCode;
+    }
+
+    public void setK3CustomerCode(String k3CustomerCode) {
+        this.k3CustomerCode = k3CustomerCode;
     }
 
     public Integer getRentTimeLength() {

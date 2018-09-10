@@ -952,14 +952,14 @@ public class StatisticsServiceImpl implements StatisticsService {
         } catch (ParseException e) {
             e.printStackTrace();
         }*/
-        Calendar currentCalendar = Calendar.getInstance();
+        Calendar currentCalendar = financeStatisticsWeeklySupport.getCalendarInstance(FinanceStatisticsWeeklySupport.SETTING_FIRST_DAY_OF_WEEK)/*Calendar.getInstance()*/;
         currentCalendar.setTime(now);
         int currentYear = currentCalendar.get(Calendar.YEAR);
         int currentMonth = currentCalendar.get(Calendar.MONTH) + 1; // 因为日历获取的月份比实际月份小1
         int currentWeekOfMonth = currentCalendar.get(Calendar.WEEK_OF_MONTH);
         Date firstDayOfThisWeek = financeStatisticsWeeklySupport.getFirstDayOfCurrentWeek(now);
         if (firstDayOfThisWeek.compareTo(DateUtil.getStartMonthDate(now)) < 0) { //如果这周第一天的日期比当月第一天的时间还小，说明这周已经跨月份
-            Calendar firstDayOfThisWeekCalendar = Calendar.getInstance();
+            Calendar firstDayOfThisWeekCalendar = financeStatisticsWeeklySupport.getCalendarInstance(FinanceStatisticsWeeklySupport.SETTING_FIRST_DAY_OF_WEEK)/*Calendar.getInstance()*/;
             firstDayOfThisWeekCalendar.setTime(firstDayOfThisWeek);
             int firstDayOfThisWeekInYear = firstDayOfThisWeekCalendar.get(Calendar.YEAR);
             int firstDayOfThisWeekInMonth = firstDayOfThisWeekCalendar.get(Calendar.MONTH) + 1; // 因为日历获取的月份比实际月份小1
