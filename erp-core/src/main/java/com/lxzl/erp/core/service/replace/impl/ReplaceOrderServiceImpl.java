@@ -1,14 +1,12 @@
 package com.lxzl.erp.core.service.replace.impl;
 
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.OrderStatus;
-import com.lxzl.erp.common.constant.ReturnOrderStatus;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderMaterial;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderProduct;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
 import com.lxzl.erp.core.service.material.BulkMaterialService;
@@ -43,6 +41,9 @@ import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderMaterialDO;
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO;
+import com.lxzl.se.common.util.date.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,10 +53,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author: Sunzhipeng
@@ -70,6 +68,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> add(ReplaceOrder replaceOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date date = new Date();
         //校验客户编号
         CustomerDO customerDO = customerMapper.findCustomerPersonByNo(replaceOrder.getCustomerNo());
         if (customerDO == null) {
@@ -90,7 +89,9 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             return serviceResult;
         }
         List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
+        Map<Integer,OrderProductDO> orderProductDOMap = new TreeMap<>();
         List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
+        Map<Integer,OrderMaterialDO> orderMaterialDOMap = new TreeMap<>();
         //只有确认收货和部分归还状态的才可以换货
         if (!OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus()) &&
                 !OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus())) {
@@ -127,13 +128,28 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         //校验换货数量
 
         //获取换货数量
+        Integer totalReplaceProductCount = 0;
+        Integer totalReplaceMaterialCount = 0;
         Map<Integer, Integer> replaceProductCountMap = new HashMap<>();
         Map<Integer, Integer> replaceMaterialCountMap = new HashMap<>();
         for (ReplaceOrderProduct replaceOrderProduct : replaceOrderDetailList) {
-            replaceProductCountMap.put(replaceOrderProduct.getOldOrderProductId(), replaceOrderProduct.getProductCount());
+            totalReplaceProductCount += replaceOrderProduct.getProductCount();
+            if (!replaceProductCountMap.containsKey(replaceOrderProduct.getOldOrderProductId())) {
+                replaceProductCountMap.put(replaceOrderProduct.getOldOrderProductId(), replaceOrderProduct.getProductCount());
+            }else {
+                Integer replaceProductCount = replaceOrderProduct.getProductCount() + replaceProductCountMap.get(replaceOrderProduct.getOldOrderProductId());
+                replaceProductCountMap.put(replaceOrderProduct.getOldOrderProductId(), replaceProductCount);
+            }
+
         }
         for (ReplaceOrderMaterial replaceOrderMaterial : replaceOrderMaterialList) {
-            replaceMaterialCountMap.put(replaceOrderMaterial.getOldOrderMaterialId(), replaceOrderMaterial.getMaterialCount());
+            totalReplaceMaterialCount += replaceOrderMaterial.getMaterialCount();
+            if (!replaceMaterialCountMap.containsKey(replaceOrderMaterial.getOldOrderMaterialId())) {
+                replaceMaterialCountMap.put(replaceOrderMaterial.getOldOrderMaterialId(), replaceOrderMaterial.getMaterialCount());
+            }else {
+                Integer replaceMaterialCount = replaceOrderMaterial.getMaterialCount() + replaceMaterialCountMap.get(replaceOrderMaterial.getOldOrderMaterialId());
+                replaceMaterialCountMap.put(replaceOrderMaterial.getOldOrderMaterialId(), replaceMaterialCount);
+            }
         }
         //获取在租数量
         Map<Integer, Integer> rentingProductCountMap = new HashMap<>();
@@ -148,37 +164,95 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 rentingMaterialCountMap.put(orderMaterialDO.getId(), orderMaterialDO.getRentingMaterialCount());
             }
         }
-        //获取该用户未完成的退货
+        //获取该用户未完成的退货、换货
         Map<Integer, Integer> productCountMap = new HashMap<>();
         Map<Integer, Integer> materialCountMap = new HashMap<>();
         List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findByCustomerNo(orderDO.getBuyerCustomerNo());
         //获取该用户处于待提交、审核中、处理中三种状态的商品或者配件的数量
         getReturnCount(productCountMap, materialCountMap, k3ReturnOrderDOList);
-        //获取该订单的换货单
-//        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNo(replaceOrder.getOrderNo());
-//        // TODO: 2018\9\6 0006 将该订单的待提交、审核中、处理中三种状态的换货单商品或配件数量保存
-//        //比较设备项
-//        for (ReplaceOrderProduct replaceOrderProduct : replaceOrderDetailList) {
-//            Integer rentingProductCount = rentingProductCountMap.get(orderProduct.getOrderProductId()) == null ? 0 : rentingProductCountMap.get(orderProduct.getOrderProductId());//在租数
-//            Integer processProductCount = productCountMap.get(orderProduct.getOrderProductId()) == null ? 0 : productCountMap.get(orderProduct.getOrderProductId()); //待提交、处理中和审核中数量
-//            Integer canReturnProductCount = rentingProductCount - processProductCount;
-//            if (canReturnProductCount < 0) {
-//                canReturnProductCount = 0;
-//            }
-//            orderProduct.setCanReturnProductCount(canReturnProductCount);
-//        }
-//        //比较物料项
-//        for (ReplaceOrderMaterial replaceOrderMaterial : replaceOrderMaterialList) {
-//            Integer rentingMaterialCount = rentingMaterialCountMap.get(orderMaterial.getOrderMaterialId()) == null ? 0 : rentingMaterialCountMap.get(orderMaterial.getOrderMaterialId());//在租数
-//            Integer processMaterialCount = materialCountMap.get(orderMaterial.getOrderMaterialId()) == null ? 0 : materialCountMap.get(orderMaterial.getOrderMaterialId()); //待提交、处理中和审核中数量
-//            Integer canReturnMaterialCount = rentingMaterialCount - processMaterialCount;
-//            if (canReturnMaterialCount < 0) {
-//                canReturnMaterialCount = 0;
-//            }
-//            orderMaterial.setCanReturnMaterialCount(canReturnMaterialCount);
-//        }
+        //获取该订单待提交和审核中的换货单，统计换货的商品和配件的数量
+        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(replaceOrder.getOrderNo());
+        //将该订单的待提交、审核中两种状态的换货单商品或配件数量保存
+        if (CollectionUtil.isNotEmpty(replaceOrderDOList)) {
+            for (ReplaceOrderDO replaceOrderDO:replaceOrderDOList){
+                List<ReplaceOrderProductDO> replaceOrderProductDOList = replaceOrderDO.getReplaceOrderProductDOList();
+                List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList = replaceOrderDO.getReplaceOrderMaterialDOList();
+                if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
+                    for (ReplaceOrderProductDO replaceOrderProductDO:replaceOrderProductDOList) {
+                        if (!productCountMap.containsKey(replaceOrderProductDO.getOldOrderProductId())) {
+                            productCountMap.put(replaceOrderProductDO.getOldOrderProductId(), replaceOrderProductDO.getProductCount());
+                        }else {
+                            Integer productCount = replaceOrderProductDO.getProductCount() + productCountMap.get(replaceOrderProductDO.getOldOrderProductId());
+                            productCountMap.put(replaceOrderProductDO.getOldOrderProductId(), productCount);
+                        }
+                    }
+                }
+                if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
+                    for (ReplaceOrderMaterialDO replaceOrderMaterialDO:replaceOrderMaterialDOList) {
+                        if (!replaceMaterialCountMap.containsKey(replaceOrderMaterialDO.getOldOrderMaterialId())) {
+                            materialCountMap.put(replaceOrderMaterialDO.getOldOrderMaterialId(), replaceOrderMaterialDO.getMaterialCount());
+                        }else {
+                            Integer materialCount = replaceOrderMaterialDO.getMaterialCount() + materialCountMap.get(replaceOrderMaterialDO.getOldOrderMaterialId());
+                            materialCountMap.put(replaceOrderMaterialDO.getOldOrderMaterialId(), materialCount);
+                        }
+                    }
+                }
+            }
+        }
+        //比较设备项
+        for (OrderProductDO orderProductDO : orderProductDOList) {
+            orderProductDOMap.put(orderProductDO.getId(),orderProductDO);
+            Integer rentingProductCount = rentingProductCountMap.get(orderProductDO.getId()) == null ? 0 : rentingProductCountMap.get(orderProductDO.getId());//在租数
+            Integer processProductCount = productCountMap.get(orderProductDO.getId()) == null ? 0 : productCountMap.get(orderProductDO.getId()); //待提交、处理中和审核中数量
+            Integer replaceProductCount = replaceProductCountMap.get(orderProductDO.getId()) == null ? 0 : replaceProductCountMap.get(orderProductDO.getId()); //换货数量
+            Integer canReturnProductCount = rentingProductCount - processProductCount;
+            if (replaceProductCount > canReturnProductCount) {
+                serviceResult.setErrorCode(ErrorCode.REPLACE_PRODUCT_COUNT_MORE_THAN_CANREPLACE_COUNT);
+                return serviceResult;
+            }
+        }
 
-        return null;
+        //比较物料项
+        for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+            orderMaterialDOMap.put(orderMaterialDO.getId(),orderMaterialDO);
+            Integer rentingMaterialCount = rentingMaterialCountMap.get(orderMaterialDO.getId()) == null ? 0 : rentingMaterialCountMap.get(orderMaterialDO.getId());//在租数
+            Integer processMaterialCount = materialCountMap.get(orderMaterialDO.getId()) == null ? 0 : materialCountMap.get(orderMaterialDO.getId()); //待提交、处理中和审核中数量
+            Integer replaceMaterialCount = replaceMaterialCountMap.get(orderMaterialDO.getId()) == null ? 0 : replaceMaterialCountMap.get(orderMaterialDO.getId()); //换货数量
+            Integer canReturnMaterialCount = rentingMaterialCount - processMaterialCount;
+            if (replaceMaterialCount > canReturnMaterialCount) {
+                serviceResult.setErrorCode(ErrorCode.REPLACE_MATERIAL_COUNT_MORE_THAN_CANREPLACE_COUNT);
+                return serviceResult;
+            }
+        }
+        //保存换货单信息
+        ReplaceOrderDO replaceOrderDO = ConverterUtil.convert(replaceOrder, ReplaceOrderDO.class);
+        replaceOrderDO.setReplaceOrderNo("LXREO" + DateUtil.formatDate(date, "yyyyMMddHHmmssSSS"));
+        replaceOrderDO.setOrderId(orderDO.getId());
+        replaceOrderDO.setCustomerId(customerDO.getId());
+        replaceOrderDO.setTotalReplaceProductCount(totalReplaceProductCount);
+        replaceOrderDO.setTotalReplaceMaterialCount(totalReplaceMaterialCount);
+        replaceOrderDO.setRealTotalReplaceProductCount(CommonConstant.COMMON_ZERO);
+        replaceOrderDO.setRealTotalReplaceMaterialCount(CommonConstant.COMMON_ZERO);
+        replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_WAIT_COMMIT);
+        replaceOrderDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+        replaceOrderDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        replaceOrderDO.setCreateTime(date);
+        replaceOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        replaceOrderDO.setUpdateTime(date);
+        replaceOrderDO.setConfirmReplaceUser(null);
+        replaceOrderDO.setConfirmReplaceTime(null);
+        replaceOrderMapper.save(replaceOrderDO);
+        //保存换货商品项
+        List<ReplaceOrderProductDO> replaceOrderProductDOList = new ArrayList<>();
+        for (ReplaceOrderProduct replaceOrderProduct : replaceOrderDetailList) {
+            ReplaceOrderProductDO replaceOrderProductDO = ConverterUtil.convert(replaceOrderProduct, ReplaceOrderProductDO.class);
+            OrderProductDO orderProductDO = orderProductDOMap.get(replaceOrderProductDO.getOldOrderProductId());
+            replaceOrderProductDO.setReplaceOrderId(replaceOrderDO.getId());
+            replaceOrderProductDO.setReplaceOrderNo(replaceOrderDO.getReplaceOrderNo());
+        }
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
     }
     /**
      * 获取该用户处于待提交、审核中、处理中三种状态的商品或者配件的数量

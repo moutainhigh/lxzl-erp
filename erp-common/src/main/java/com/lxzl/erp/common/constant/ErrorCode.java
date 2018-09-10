@@ -1103,6 +1103,11 @@ public class ErrorCode {
     public static final String REPLACE_TIME_PARSE_ERROR = "J310000007";//校验换货时间parse出错
     public static final String REPLACE_TIME_MUST_AFTER_RENT_START_TIME = "J310000008";//换货时间必须大于订单起租时间
     public static final String REPLACE_TIME_MUST_BEFORE_EXPECT_RETURN_TIME = "J310000009";//换货时间不能大于订单预计归还时间
+    public static final String REPLACE_PRODUCT_COUNT_MORE_THAN_CANREPLACE_COUNT = "J310000010";//换货商品超过可换数量
+    public static final String REPLACE_MATERIAL_COUNT_MORE_THAN_CANREPLACE_COUNT = "J310000011";//换货配件超过可换数量
+    public static final String REPLACE_ADDRESS_IS_NULL = "J310000012";//换货地址不能为空
+    public static final String REPLACE_CONSIGNEE_NAME_IS_NULL = "J310000013";//换货收件人姓名不能为空
+    public static final String REPLACE_CONSIGNEE_PHONE_IS_NULL = "J310000014";//换货收件人电话不能为空
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -2187,6 +2192,11 @@ public class ErrorCode {
         MAP.put(REPLACE_TIME_PARSE_ERROR, "校验换货时间parse出错");
         MAP.put(REPLACE_TIME_MUST_AFTER_RENT_START_TIME, "换货时间必须大于订单起租时间");
         MAP.put(REPLACE_TIME_MUST_BEFORE_EXPECT_RETURN_TIME, "换货时间必须小于订单预计归还时间");
+        MAP.put(REPLACE_PRODUCT_COUNT_MORE_THAN_CANREPLACE_COUNT, "换货商品超过可换数量");
+        MAP.put(REPLACE_MATERIAL_COUNT_MORE_THAN_CANREPLACE_COUNT, "换货配件超过可换数量");
+        MAP.put(REPLACE_ADDRESS_IS_NULL, "换货地址不能为空");
+        MAP.put(REPLACE_CONSIGNEE_NAME_IS_NULL, "换货收件人姓名不能为空");
+        MAP.put(REPLACE_CONSIGNEE_PHONE_IS_NULL, "换货收件人电话不能为空");
 
         MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
 

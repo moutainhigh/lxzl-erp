@@ -1,7 +1,12 @@
 package com.lxzl.erp.common.domain.replace.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.math.BigDecimal;
 
@@ -11,7 +16,9 @@ public class ReplaceOrderProduct extends BasePO {
 	private Integer replaceOrderProductId;   //唯一标识
 	private Integer replaceOrderId;   //换货单ID
 	private String replaceOrderNo;   //换货编号
+	@NotNull(message = ErrorCode.ORDER_ITEM_ID_NOT_NULL, groups = {AddGroup.class})
 	private Integer oldOrderProductId;   //原订单商品项id
+	@NotNull(message = ErrorCode.ORDER_ITEM_ENTRY_NOT_NULL, groups = {AddGroup.class})
 	private Integer oldProductEntry;   //原订单行号
 	private Integer newOrderProductId;   //新订单商品项id
 	private Integer rentType;   //租赁方式，1按天租，2按月租
@@ -23,8 +30,11 @@ public class ReplaceOrderProduct extends BasePO {
 	private BigDecimal oldProductUnitAmount;   //原商品单价
 	private Integer productId;   //商品ID
 	private String productName;   //商品名称
+	@NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL)
 	private Integer productSkuId;   //商品SKU ID
 	private String productSkuName;   //商品SKU名称
+	@NotNull(message = ErrorCode.CHANGE_COUNT_ERROR)
+	@Min(value = 1, message = ErrorCode.CHANGE_COUNT_ERROR)
 	private Integer productCount;   //商品总数
 	private BigDecimal productUnitAmount;   //商品单价
 	private BigDecimal rentDepositAmount;   //租金押金金额

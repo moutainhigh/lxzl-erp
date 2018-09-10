@@ -6,6 +6,7 @@ import com.lxzl.erp.common.constant.ReturnOrChangeMode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
 import com.lxzl.erp.common.util.validate.constraints.In;
 import org.hibernate.validator.constraints.NotBlank;
@@ -54,6 +55,12 @@ public class ReplaceOrder extends BasePO {
 	private String updateUser;   //修改人
 	private Date confirmReplaceTime;   //确认换货时间
 	private String confirmReplaceUser;   //确认换货人
+	@NotBlank(message = ErrorCode.REPLACE_ADDRESS_IS_NULL, groups = {AddGroup.class, UpdateGroup.class})
+	private String address;   //换货地址
+	@NotBlank(message = ErrorCode.REPLACE_CONSIGNEE_NAME_IS_NULL, groups = {AddGroup.class, UpdateGroup.class})
+	private String consigneeName;   //联系人
+	@NotBlank(message = ErrorCode.REPLACE_CONSIGNEE_PHONE_IS_NULL, groups = {AddGroup.class, UpdateGroup.class})
+	private String consigneePhone;   //联系电话
 	@Valid
 	private List<ReplaceOrderProduct> replaceOrderProductList;
 	@Valid
@@ -282,5 +289,29 @@ public class ReplaceOrder extends BasePO {
 
 	public void setReplaceOrderMaterialList(List<ReplaceOrderMaterial> replaceOrderMaterialList) {
 		this.replaceOrderMaterialList = replaceOrderMaterialList;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getConsigneeName() {
+		return consigneeName;
+	}
+
+	public void setConsigneeName(String consigneeName) {
+		this.consigneeName = consigneeName;
+	}
+
+	public String getConsigneePhone() {
+		return consigneePhone;
+	}
+
+	public void setConsigneePhone(String consigneePhone) {
+		this.consigneePhone = consigneePhone;
 	}
 }
