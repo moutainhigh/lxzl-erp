@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.replace;
 
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderMaterialDO;import org.apache.ibatis.annotations.Param;
 import java.util.List;
@@ -12,4 +13,6 @@ public interface ReplaceOrderMaterialMapper extends BaseMysqlDAO<ReplaceOrderMat
 	List<ReplaceOrderMaterialDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+    void saveList(@Param("list") List<ReplaceOrderProductDO> saveReplaceOrderProductDOList);
 }
