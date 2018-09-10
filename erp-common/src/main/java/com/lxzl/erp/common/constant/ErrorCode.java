@@ -1099,6 +1099,7 @@ public class ErrorCode {
     public static final String TEST_MACHINE_ORDER_HAD_RELET_CAN_NOT_BE_RENT = "J30000015";
     public static final String TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_RENT = "J30000016";
     public static final String TEST_MACHINE_ORDER_RENT_START_TIME_ERROR = "J30000017";
+    public static final String TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_VERIFIED = "J30000018";
 
     //Mall
     public static final String MALL_SYSTEM_CONNECT_EXCEPTION = "Mall00001";
@@ -2185,6 +2186,7 @@ public class ErrorCode {
         MAP.put(TEST_MACHINE_ORDER_HAD_RELET_CAN_NOT_BE_RENT, "已经有续租的订单，不能执行该操作");
         MAP.put(TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_RENT, "转租赁的原测试机订单，不能执行该操作");
         MAP.put(TEST_MACHINE_ORDER_RENT_START_TIME_ERROR, "新订单的起租时间需大于原测试机订单的起租时间，且小于等于原测试机订单结束时间的下一天");
+        MAP.put(TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_VERIFIED, "测试机转租赁的新订单，不能执行该操作");
 
         MAP.put(MALL_SYSTEM_CONNECT_EXCEPTION, "连接Mall-App系统异常");
 
