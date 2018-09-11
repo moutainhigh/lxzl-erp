@@ -683,7 +683,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
             workbench.setOrderWarehouseListMap(orderWarehouseListMap);
             workbench.setReturnOrderWarehouseListMap(returnOrderWarehouseListMap);
 
-//            redisManager.add("WAREHOUSE_WORKBENCH_COUNT_" + userSupport.getCurrentUserId().toString(),workbench,CommonConstant.WORKBENCH_REDIS_SAVE_TIME);
+            redisManager.add("WAREHOUSE_WORKBENCH_COUNT_" + userSupport.getCurrentUserId().toString(),workbench,CommonConstant.WORKBENCH_REDIS_SAVE_TIME);
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
