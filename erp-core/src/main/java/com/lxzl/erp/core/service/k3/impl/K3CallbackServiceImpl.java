@@ -227,19 +227,19 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             userId = userDO.getId().toString();
 
         }
-        BigDecimal b = k3ReturnOrder.getEqAmount();
-        if (BigDecimalUtil.compare(b, BigDecimal.ZERO) != 0) {
-            K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
-            CustomerDO customerDO = null;
-            if (k3MappingCustomerDO == null) {
-                customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
-            } else {
-                customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
-            }
-            if (customerDO != null) {
-                customerSupport.subCreditAmountUsed(customerDO.getId(), b,CustomerRiskBusinessType.RETURN_ORDER_TYPE,k3ReturnOrder.getReturnOrderNo(),"");
-            }
-        }
+//        BigDecimal b = k3ReturnOrder.getEqAmount();
+//        if (BigDecimalUtil.compare(b, BigDecimal.ZERO) != 0) {
+//            K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
+//            CustomerDO customerDO = null;
+//            if (k3MappingCustomerDO == null) {
+//                customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
+//            } else {
+//                customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
+//            }
+//            if (customerDO != null) {
+//                customerSupport.subCreditAmountUsed(customerDO.getId(), b,CustomerRiskBusinessType.RETURN_ORDER_TYPE,k3ReturnOrder.getReturnOrderNo(),"");
+//            }
+//        }
 
         Date now = new Date();
         Integer returnOrderStatus = k3ReturnOrder.getReturnOrderStatus() == null ? ReturnOrderStatus.RETURN_ORDER_STATUS_END : k3ReturnOrder.getReturnOrderStatus();
@@ -258,8 +258,10 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             getReturnItemMap(k3ReturnOrderDetailDOList, oldOrderProductDOMap, oldOrderMaterialDOMap, erpOrderProductDOMap, erpOrderMaterialDOMap);
             Set<Integer> set = new HashSet();
             //是否生成退货结算单
-            Boolean isCreateReturnStatement = true;
+           // Boolean isCreateReturnStatement = true;
             if (isHandleRent) {
+                //退授信额度
+                BigDecimal totalCreditDepositAmount=BigDecimal.ZERO;
                 for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList) {
                     if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())) {
                         //兼容erp订单和k3订单商品项
@@ -279,6 +281,9 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                             k3ReturnOrderDetailDO.setUpdateUser(userId);
                             k3ReturnOrderDetailDO.setUpdateTime(now);
                             k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
+                            if(null!=orderProductDO.getCreditDepositAmount()&&orderProductDO.getCreditDepositAmount().compareTo(BigDecimal.ZERO)==1){
+                                totalCreditDepositAmount=totalCreditDepositAmount.add(orderProductDO.getCreditDepositAmount());
+                            }
                         } else {
                             dingDingSupport.dingDingSendMessage(getNotFindReturnOrderDetail(k3ReturnOrderDO.getReturnOrderNo(), "商品", k3ReturnOrderDetailDO.getId()));
                         }
@@ -307,6 +312,21 @@ public class K3CallbackServiceImpl implements K3CallbackService {
 
                     }
                 }
+
+                //TODO 更新授信额度
+                if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+                    K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
+                    CustomerDO customerDO = null;
+                    if (k3MappingCustomerDO == null) {
+                        customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
+                    } else {
+                        customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
+                    }
+                    if (customerDO != null) {
+                        customerSupport.subCreditAmountUsed(customerDO.getId(), totalCreditDepositAmount,CustomerRiskBusinessType.RETURN_ORDER_TYPE,k3ReturnOrder.getReturnOrderNo(),"");
+                    }
+                }
+
                 for (Integer orderId : set) {
 
                     Integer totalRentingProductCount = orderProductMapper.findTotalRentingProductCountByOrderId(orderId);
