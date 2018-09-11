@@ -1,7 +1,12 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.replace.ReplaceOrderQueryParam;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.CancelGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.replace.ReplaceOrderService;
@@ -36,8 +41,73 @@ public class ReplaceOrderController {
      * @return
      */
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public Result add(@RequestBody @Validated ReplaceOrder replaceOrder, BindingResult validResult) {
+    public Result add(@RequestBody @Validated(AddGroup.class) ReplaceOrder replaceOrder, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = replaceOrderService.add(replaceOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+    /**
+     * 修改换货单
+     *
+     * @param replaceOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public Result update(@RequestBody @Validated(AddGroup.class) ReplaceOrder replaceOrder, BindingResult validResult) {
+
+        ServiceResult<String, String> serviceResult = replaceOrderService.update(replaceOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+    /**
+     * 换货取消接口
+     *
+     * @param replaceOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "cancel", method = RequestMethod.POST)
+    public Result cancel(@RequestBody @Validated(CancelGroup.class) ReplaceOrder replaceOrder, BindingResult validResult) {
+        return resultGenerator.generate(replaceOrderService.cancel(replaceOrder));
+    }
+
+    /**
+     * 分页查询换货单
+     *
+     * @param param
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "queryAllReplaceOrder", method = RequestMethod.POST)
+    public Result queryAllReplaceOrder(@RequestBody ReplaceOrderQueryParam param, BindingResult validResult) {
+        ServiceResult<String, Page<ReplaceOrder>> serviceResult = replaceOrderService.queryAllReplaceOrder(param);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 通过换货单编号查询换货单详情
+     *
+     * @param replaceOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "queryReplaceOrderByNo", method = RequestMethod.POST)
+    public Result queryReplaceOrderByNo(@RequestBody ReplaceOrder replaceOrder, BindingResult validResult) {
+        ServiceResult<String, ReplaceOrder> serviceResult = replaceOrderService.queryReplaceOrderByNo(replaceOrder.getReplaceOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 确认换货
+     * @Author : sunzhipeng
+     * @param replaceOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "confirmReplaceOrder", method = RequestMethod.POST)
+    public Result confirmReplaceOrder(@RequestBody  ReplaceOrder replaceOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = replaceOrderService.confirmReplaceOrder(replaceOrder);
+        return resultGenerator.generate(serviceResult);
+    }
+
+
 }

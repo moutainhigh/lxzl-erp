@@ -14,4 +14,10 @@ public interface ReplaceOrderMapper extends BaseMysqlDAO<ReplaceOrderDO> {
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
     List<ReplaceOrderDO> findByOrderNoForCheck(@Param("orderNo") String orderNo);
+
+    ReplaceOrderDO findByReplaceOrderNo(@Param("replaceOrderNo") String replaceOrderNo);
+
+    Integer findReplaceOrderCountByParams(@Param("maps") Map<String, Object> maps);
+
+    List<ReplaceOrderDO> findReplaceOrderByParams(@Param("maps") Map<String, Object> maps);
 }

@@ -2,6 +2,7 @@ package com.lxzl.erp.dataaccess.domain.replace;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.springframework.data.annotation.Transient;
 
 import java.util.Date;
 import java.math.BigDecimal;
@@ -37,6 +38,12 @@ public class ReplaceOrderDO  extends BaseDO {
 	private String consigneePhone;   //联系电话
 	private List<ReplaceOrderProductDO> replaceOrderProductDOList;
 	private List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList;
+	@Transient
+	private String createUserName;   //添加人姓名
+	@Transient
+	private String updateUserName;   //修改人
+	@Transient
+	private String confirmReplaceUserName;   //确认换货人
 
 	public Integer getId(){
 		return id;
@@ -252,5 +259,29 @@ public class ReplaceOrderDO  extends BaseDO {
 
 	public void setConsigneePhone(String consigneePhone) {
 		this.consigneePhone = consigneePhone;
+	}
+
+	public String getCreateUserName() {
+		return createUserName;
+	}
+
+	public void setCreateUserName(String createUserName) {
+		this.createUserName = createUserName;
+	}
+
+	public String getUpdateUserName() {
+		return updateUserName;
+	}
+
+	public void setUpdateUserName(String updateUserName) {
+		this.updateUserName = updateUserName;
+	}
+
+	public String getConfirmReplaceUserName() {
+		return confirmReplaceUserName;
+	}
+
+	public void setConfirmReplaceUserName(String confirmReplaceUserName) {
+		this.confirmReplaceUserName = confirmReplaceUserName;
 	}
 }
