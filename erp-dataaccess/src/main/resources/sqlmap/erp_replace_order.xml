@@ -32,6 +32,8 @@
 		<result column="address" jdbcType="VARCHAR" property="address" />
 		<result column="consignee_name" jdbcType="VARCHAR" property="consigneeName" />
 		<result column="consignee_phone" jdbcType="VARCHAR" property="consigneePhone" />
+		<result column="is_relet_order_replace" jdbcType="INTEGER" property="isReletOrderReplace"/>
+		<result column="relet_order_no" jdbcType="VARCHAR" property="reletOrderNo"/>
 		<collection property="replaceOrderDetailList" resultMap="ReplaceOrderProductDO"/>
 		<collection property="replaceOrderMaterialList" resultMap="ReplaceOrderMaterialDO"/>
 	</resultMap>
@@ -106,7 +108,7 @@
 
 	<sql id="column_List">
 		ero.id,ero.replace_order_no,ero.order_id,ero.order_no,ero.customer_id,ero.customer_no,ero.replace_time,ero.total_replace_product_count,ero.total_replace_material_count,ero.real_total_replace_product_count,ero.real_total_replace_material_count,ero.service_cost,ero.logistics_cost,ero.repair_cost,ero.replace_reason_type,ero.replace_reason,ero.replace_mode,ero.replace_order_status,ero.data_status,ero.remark,ero.create_time,ero.create_user,ero.update_time,ero.update_user,ero.confirm_replace_time,ero.confirm_replace_user,
-		ero.address,ero.consignee_name,ero.consignee_phone
+		ero.address,ero.consignee_name,ero.consignee_phone,ero.is_relet_order_replace,ero.relet_order_no
 	</sql>
 
 	<sql id="product_column_List">
@@ -241,6 +243,12 @@
 			</if>
 			<if test="consigneePhone != null">
 				consignee_phone = #{consigneePhone,jdbcType=VARCHAR},
+			</if>
+			<if test="isReletOrderReplace != null">
+				is_relet_order_replace = #{isReletOrderReplace,jdbcType=INTEGER},
+			</if>
+			<if test="reletOrderNo != null">
+				relet_order_no = #{reletOrderNo,jdbcType=VARCHAR},
 			</if>
 		</set>
 	</sql>

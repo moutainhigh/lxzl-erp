@@ -111,12 +111,52 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             return serviceResult;
         }
 
-        //查出该订单的续租单
+        //校验换货时间
+        Date replaceTime = replaceOrder.getReplaceTime();
+        Date rentStartTime = orderDO.getRentStartTime();
+        Date expectReturnTime = orderDO.getExpectReturnTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String replaceTimeString = simpleDateFormat.format(replaceTime);
+        String rentStartTimeString = simpleDateFormat.format(rentStartTime);
+        String expectReturnTimeString = simpleDateFormat.format(expectReturnTime);
+        //校验换货时间
+        if (checkReplaceTime(serviceResult, simpleDateFormat, replaceTimeString, rentStartTimeString, expectReturnTimeString)) {
+            return serviceResult;
+        }
+
+        //校验是否在续租单开始之前换货
+        ReletOrderDO exReletOrderDO = reletOrderMapper.findRecentlyReletOrderByOrderNo(orderDO.getOrderNo());
+        Date reletTime = exReletOrderDO.getRentStartTime();
+        String reletTimeString = simpleDateFormat.format(reletTime);
+        if (checkReplaceTiamAndReletTime(serviceResult, simpleDateFormat, replaceTimeString, reletTimeString)){
+            return serviceResult;
+        }
+
+        //查出该订单的当期续租单
         Map<Integer,ReletOrderProductDO> reletOrderProductDOMap = new HashMap<>();
         Map<Integer,ReletOrderMaterialDO> reletOrderMaterialDOMap = new HashMap<>();
-        ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderDO.getId());
-        //装配该订单续租单map集合
-        assemblyReletOrder(reletOrderProductDOMap, reletOrderMaterialDOMap, reletOrderDO);
+        //查出当前续租期
+        List<ReletOrderDO> reletOrderDOList = reletOrderMapper.findReletedOrdersByOrderId(orderDO.getId());
+        List<ReletOrderDO> list = new ArrayList<>();
+        replaceOrderDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_NO);
+        replaceOrderDO.setReletOrderNo(null);
+        for(ReletOrderDO reletOrderDO:reletOrderDOList) {
+            if (com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getExpectReturnTime()) < 0) {
+                list.add(reletOrderDO);
+            }
+            if (com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getRentStartTime()) >= 0 &&
+                    com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getExpectReturnTime()) < 0 ) {
+                //装配该订单续租单map集合
+                assemblyReletOrder(reletOrderProductDOMap, reletOrderMaterialDOMap, reletOrderDO);
+                replaceOrderDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_YES);
+                replaceOrderDO.setReletOrderNo(reletOrderDO.getReletOrderNo());
+            }
+        }
+        if (list.size()>1) {
+            serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_BEFORE_RELET_TIME);
+            return serviceResult;
+        }
+
 
         List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
         List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
@@ -138,26 +178,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
                 orderMaterialDOMap.put(orderMaterialDO.getId(),orderMaterialDO);
             }
-        }
-
-        //校验换货时间
-        Date replaceTime = replaceOrder.getReplaceTime();
-        Date rentStartTime = orderDO.getRentStartTime();
-        Date expectReturnTime = orderDO.getExpectReturnTime();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String replaceTimeString = simpleDateFormat.format(replaceTime);
-        String rentStartTimeString = simpleDateFormat.format(rentStartTime);
-        String expectReturnTimeString = simpleDateFormat.format(expectReturnTime);
-        //校验换货时间
-        if (checkReplaceTime(serviceResult, simpleDateFormat, replaceTimeString, rentStartTimeString, expectReturnTimeString)) {
-            return serviceResult;
-        }
-        //校验是否在续租单开始之前换货
-        ReletOrderDO exReletOrderDO = reletOrderMapper.findRecentlyReletOrderByOrderNo(orderDO.getOrderNo());
-        Date reletTime = exReletOrderDO.getRentStartTime();
-        String reletTimeString = simpleDateFormat.format(reletTime);
-        if (checkReplaceTiamAndReletTime(serviceResult, simpleDateFormat, replaceTimeString, reletTimeString)){
-            return serviceResult;
         }
 
         //获取客户风控信息
@@ -496,12 +516,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
-        //查出该订单的续租单
-        Map<Integer,ReletOrderProductDO> reletOrderProductDOMap = new HashMap<>();
-        Map<Integer,ReletOrderMaterialDO> reletOrderMaterialDOMap = new HashMap<>();
-        ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderDO.getId());
-        //装配该订单续租单map集合
-        assemblyReletOrder(reletOrderProductDOMap, reletOrderMaterialDOMap, reletOrderDO);
 
         //只有确认收货和部分归还状态的才可以换货
         if (!OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus()) &&
@@ -527,6 +541,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         if (checkReplaceTime(serviceResult, simpleDateFormat, replaceTimeString, rentStartTimeString, expectReturnTimeString)){
             return serviceResult;
         }
+
         //校验是否在续租单开始之前换货
         ReletOrderDO exReletOrderDO = reletOrderMapper.findRecentlyReletOrderByOrderNo(orderDO.getOrderNo());
         Date reletTime = exReletOrderDO.getRentStartTime();
@@ -534,7 +549,30 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         if (checkReplaceTiamAndReletTime(serviceResult, simpleDateFormat, replaceTimeString, reletTimeString)){
             return serviceResult;
         }
-
+        //查出该订单的当期续租单
+        Map<Integer,ReletOrderProductDO> reletOrderProductDOMap = new HashMap<>();
+        Map<Integer,ReletOrderMaterialDO> reletOrderMaterialDOMap = new HashMap<>();
+        //查出当前续租期
+        List<ReletOrderDO> reletOrderDOList = reletOrderMapper.findReletedOrdersByOrderId(orderDO.getId());
+        List<ReletOrderDO> list = new ArrayList<>();
+        replaceOrderDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_NO);
+        replaceOrderDO.setReletOrderNo(null);
+        for(ReletOrderDO reletOrderDO:reletOrderDOList) {
+            if (com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getExpectReturnTime()) < 0) {
+                list.add(reletOrderDO);
+            }
+            if (com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getRentStartTime()) >= 0 &&
+                    com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getExpectReturnTime()) < 0 ) {
+                //装配该订单续租单map集合
+                assemblyReletOrder(reletOrderProductDOMap, reletOrderMaterialDOMap, reletOrderDO);
+                replaceOrderDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_YES);
+                replaceOrderDO.setReletOrderNo(reletOrderDO.getReletOrderNo());
+            }
+        }
+        if (list.size()>1) {
+            serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_BEFORE_RELET_TIME);
+            return serviceResult;
+        }
 
         //获取客户风控信息
         CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(orderDO.getBuyerCustomerId());
