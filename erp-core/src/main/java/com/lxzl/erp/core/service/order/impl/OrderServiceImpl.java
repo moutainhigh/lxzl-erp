@@ -1820,8 +1820,11 @@ public class OrderServiceImpl implements OrderService {
                     testMachineOrderDO.setUpdateUser(loginUser.getUserId().toString());
                     orderMapper.update(testMachineOrderDO);
 
+                    //增加测试机已归还时间轴
+                    orderTimeAxisSupport.addOrderTimeAxis(testMachineOrderDO.getId(), testMachineOrderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.K3_RETURN_CALLBACK);
+
                     //修改原测试机结算
-                    String stopResult=statementOrderSupport.stopTestMachineOrder(orderFromTestMachineDO.getTestMachineOrderNo(),orderFromTestMachineDO.getCreateTime());
+                    String stopResult=statementOrderSupport.stopTestMachineOrder(orderFromTestMachineDO.getTestMachineOrderNo(),orderDO.getRentStartTime());
                     if(!ErrorCode.SUCCESS.equals(stopResult)){
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                         return stopResult;
@@ -2350,6 +2353,15 @@ public class OrderServiceImpl implements OrderService {
                     !OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) &&
                     !OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())) {
                 result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+                return result;
+            }
+        }
+        //测试机订单转租赁审核通过后 新订单不允许取消
+        OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(orderDO.getOrderNo());
+        if (orderFromTestMachineDO != null){
+            if (orderFromTestMachineDO.getTestMachineOrderNo() != null &&
+                    (OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus()) || OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus()))){
+                result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_VERIFIED);
                 return result;
             }
         }
