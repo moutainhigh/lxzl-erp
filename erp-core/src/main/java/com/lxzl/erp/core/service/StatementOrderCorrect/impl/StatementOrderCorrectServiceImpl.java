@@ -407,7 +407,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             return ErrorCode.STATEMENT_ORDER_STATUS_ERROR;
         }
         //校验结算单项是否存在
-        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByStatementOrderIdAndItemReferId(statementOrderCorrectDO.getStatementOrderItemId(), statementOrderDO.getId());
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByStatementOrderIdAndItemReferId(statementOrderCorrectDO.getStatementOrderItemId(), statementOrderDO.getId(), statementOrderCorrectDO.getReletOrderItemReferId());
         if (CollectionUtil.isEmpty(statementOrderDetailDOList)) {
            return ErrorCode.STATEMENT_ORDER_DETAIL_NOT_EXISTS;
         }
