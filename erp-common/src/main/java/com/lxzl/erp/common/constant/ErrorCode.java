@@ -1113,6 +1113,9 @@ public class ErrorCode {
     public static final String REPLACE_ORDER_ERROR = "J310000017";//换货单不存在
     public static final String CANCEL_REPLACE_ORDER_BY_CREATE_USER = "J310000018";//换货单只能创建人取消
     public static final String CANCEL_REPLACE_ORDER_STATUS_ERROR = "J310000019";//换货单只有在提交前才能取消
+    public static final String UPDATE_REPLACE_ORDER_BY_CREATE_USER = "J310000020";//修改换货单只能创建人修改
+    public static final String UPDATE_REPLACE_ORDER_STATUS_ERROR = "J310000021";//换货单只有在提交前才能修改
+
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -2207,6 +2210,8 @@ public class ErrorCode {
         MAP.put(REPLACE_ORDER_ERROR, "换货单不存在");
         MAP.put(CANCEL_REPLACE_ORDER_BY_CREATE_USER, "换货单只能创建人取消");
         MAP.put(CANCEL_REPLACE_ORDER_STATUS_ERROR, "换货单只有在提交前才能取消");
+        MAP.put(UPDATE_REPLACE_ORDER_BY_CREATE_USER, "修改换货单只能创建人修改");
+        MAP.put(UPDATE_REPLACE_ORDER_STATUS_ERROR, "换货单只有在提交前才能修改");
 
         MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
 

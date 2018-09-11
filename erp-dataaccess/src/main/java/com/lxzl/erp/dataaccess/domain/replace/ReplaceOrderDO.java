@@ -44,6 +44,8 @@ public class ReplaceOrderDO  extends BaseDO {
 	private String updateUserName;   //修改人
 	@Transient
 	private String confirmReplaceUserName;   //确认换货人
+	private Integer isReletOrderReplace;   //是否是续租单换货，1是0否
+	private String reletOrderNo;   //续租单编号
 
 	public Integer getId(){
 		return id;
@@ -283,5 +285,21 @@ public class ReplaceOrderDO  extends BaseDO {
 
 	public void setConfirmReplaceUserName(String confirmReplaceUserName) {
 		this.confirmReplaceUserName = confirmReplaceUserName;
+	}
+
+	public Integer getIsReletOrderReplace() {
+		return isReletOrderReplace;
+	}
+
+	public void setIsReletOrderReplace(Integer isReletOrderReplace) {
+		this.isReletOrderReplace = isReletOrderReplace;
+	}
+
+	public String getReletOrderNo() {
+		return reletOrderNo;
+	}
+
+	public void setReletOrderNo(String reletOrderNo) {
+		this.reletOrderNo = reletOrderNo;
 	}
 }
