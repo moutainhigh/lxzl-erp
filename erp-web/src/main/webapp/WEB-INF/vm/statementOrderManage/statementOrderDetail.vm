@@ -199,7 +199,8 @@
                                                 data-no="{{no}}"
                                                 data-amount="{{statementDetailAmount}}"
                                                 data-statementOrderDetailId="{{statementOrderDetailId}}"
-                                                data-mergelist="{{mergeListStr}}">{{text}}</a>
+                                                data-mergelist="{{mergeListStr}}"
+                                                data-reletid="{{reletOrderItemReferId}}">{{text}}</a>
                                             {{/rowActionButtons}}
                                         </div>
                                     </td>
