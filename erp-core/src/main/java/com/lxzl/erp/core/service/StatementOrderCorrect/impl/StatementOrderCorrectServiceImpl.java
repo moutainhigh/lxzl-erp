@@ -422,11 +422,11 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
                 return result.getErrorCode();
             }
-            String rentTypeAmountKey = statementOrderCorrectDO.getStatementOrderId() + "-" + statementOrderCorrectDO.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_RENT + "-" + statementOrderCorrectDO.getStatementOrderItemId();
-            String rentDepositTypeAmountKey = statementOrderCorrectDO.getStatementOrderId() + statementOrderCorrectDO.getStatementOrderReferId() + "-" + "-" + StatementCorrectAmountType.AMOUNT_TYPE_RENT_DEPOSIT + "-" + statementOrderCorrectDO.getStatementOrderItemId();
-            String depositTypeAmountKey = statementOrderCorrectDO.getStatementOrderId() + "-" + statementOrderCorrectDO.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_DEPOSIT + "-" + statementOrderCorrectDO.getStatementOrderItemId();
-            String otherTypeAmountKey = statementOrderCorrectDO.getStatementOrderId() + "-" + statementOrderCorrectDO.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_OTHER + "-0";
-            String overdueTypeAmountKey = statementOrderCorrectDO.getStatementOrderId() + "-" + statementOrderCorrectDO.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_OVERDUE + "-" + statementOrderCorrectDO.getStatementOrderItemId();
+            String rentTypeAmountKey = statementOrderCorrectDO.getStatementOrderId() + "-" + statementOrderCorrectDO.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_RENT + "-" + statementOrderCorrectDO.getStatementOrderItemId() + "-" + statementOrderCorrectDO.getReletOrderItemReferId();
+            String rentDepositTypeAmountKey = statementOrderCorrectDO.getStatementOrderId() + "-" + statementOrderCorrectDO.getStatementOrderReferId()  + "-" + StatementCorrectAmountType.AMOUNT_TYPE_RENT_DEPOSIT + "-" + statementOrderCorrectDO.getStatementOrderItemId()+ "-" + statementOrderCorrectDO.getReletOrderItemReferId();
+            String depositTypeAmountKey = statementOrderCorrectDO.getStatementOrderId() + "-" + statementOrderCorrectDO.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_DEPOSIT + "-" + statementOrderCorrectDO.getStatementOrderItemId()+ "-" + statementOrderCorrectDO.getReletOrderItemReferId();
+            String otherTypeAmountKey = statementOrderCorrectDO.getStatementOrderId() + "-" + statementOrderCorrectDO.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_OTHER + "-0"+ "-" + statementOrderCorrectDO.getReletOrderItemReferId();
+            String overdueTypeAmountKey = statementOrderCorrectDO.getStatementOrderId() + "-" + statementOrderCorrectDO.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_OVERDUE + "-" + statementOrderCorrectDO.getStatementOrderItemId()+ "-" + statementOrderCorrectDO.getReletOrderItemReferId();
 
             Map<String, BigDecimal> itemTypeAmountMap = getAllStatementOrderCorrectAmountMap(ConverterUtil.convert(statementOrderCorrectDO, StatementOrderCorrect.class));
 
@@ -725,12 +725,12 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
 
     private Map<String, BigDecimal> getAllStatementOrderCorrectAmountMap(StatementOrderCorrect statementOrderCorrect) {
 
-        List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderIdAndItemId(statementOrderCorrect.getStatementOrderId(), statementOrderCorrect.getStatementOrderReferId(), statementOrderCorrect.getStatementOrderItemId());
-        String rentTypeAmountKey = statementOrderCorrect.getStatementOrderId() + "-" + statementOrderCorrect.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_RENT + "-" + statementOrderCorrect.getStatementOrderItemId();
-        String rentDepositTypeAmountKey = statementOrderCorrect.getStatementOrderId() + statementOrderCorrect.getStatementOrderReferId() + "-" + "-" + StatementCorrectAmountType.AMOUNT_TYPE_RENT_DEPOSIT + "-" + statementOrderCorrect.getStatementOrderItemId();
-        String depositTypeAmountKey = statementOrderCorrect.getStatementOrderId() + "-" + statementOrderCorrect.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_DEPOSIT + "-" + statementOrderCorrect.getStatementOrderItemId();
-        String otherTypeAmountKey = statementOrderCorrect.getStatementOrderId() + "-" + statementOrderCorrect.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_OTHER + "-0";
-        String overdueTypeAmountKey = statementOrderCorrect.getStatementOrderId() + "-" + statementOrderCorrect.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_OVERDUE + "-" + statementOrderCorrect.getStatementOrderItemId();
+        List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderIdAndItemIdAndReletReferId(statementOrderCorrect.getStatementOrderId(), statementOrderCorrect.getStatementOrderReferId(), statementOrderCorrect.getStatementOrderItemId(), statementOrderCorrect.getReletOrderItemReferId());
+        String rentTypeAmountKey = statementOrderCorrect.getStatementOrderId() + "-" + statementOrderCorrect.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_RENT + "-" + statementOrderCorrect.getStatementOrderItemId()+ "-" + statementOrderCorrect.getReletOrderItemReferId();
+        String rentDepositTypeAmountKey = statementOrderCorrect.getStatementOrderId() + "-" + statementOrderCorrect.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_RENT_DEPOSIT + "-" + statementOrderCorrect.getStatementOrderItemId()+ "-" + statementOrderCorrect.getReletOrderItemReferId();
+        String depositTypeAmountKey = statementOrderCorrect.getStatementOrderId() + "-" + statementOrderCorrect.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_DEPOSIT + "-" + statementOrderCorrect.getStatementOrderItemId()+ "-" + statementOrderCorrect.getReletOrderItemReferId();
+        String otherTypeAmountKey = statementOrderCorrect.getStatementOrderId() + "-" + statementOrderCorrect.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_OTHER + "-0"+ "-" + statementOrderCorrect.getReletOrderItemReferId();
+        String overdueTypeAmountKey = statementOrderCorrect.getStatementOrderId() + "-" + statementOrderCorrect.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_OVERDUE + "-" + statementOrderCorrect.getStatementOrderItemId()+ "-" + statementOrderCorrect.getReletOrderItemReferId();
 
         // 不同类型不同订单项的冲正金额
         Map<String, BigDecimal> itemTypeAmountMap = new HashMap<>();
