@@ -270,7 +270,7 @@
                     <img src="${staticCommon}rental/img/logos/beerLogo.png" class="img-responsive pull-left" alt="凌雄租赁">
                 </div>
                 <div class="print-col" style="line-height:1.2cm;">
-                    <p  class="pn mn text-center printH1"><b>商品配货单</b></p>
+                    <p  class="pn mn text-center printH1"><b>商品备货单</b></p>
                 </div>
                 <div class="print-col text-right">
 ##                    <img src="" class="img-responsive pull-right" id="barcode" alt="凌雄租赁" />
