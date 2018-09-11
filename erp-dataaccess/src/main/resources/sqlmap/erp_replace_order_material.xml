@@ -162,4 +162,21 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderMaterialDO">
 		UPDATE erp_replace_order_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<insert id="saveList" parameterType="java.util.ArrayList" >
+		INSERT INTO erp_replace_order_material (replace_order_id,replace_order_no,old_order_material_id,old_material_entry,new_order_material_id,rent_type,rent_time_length,rent_length_type,deposit_cycle,payment_cycle,pay_mode,
+		old_material_unit_amount,material_id,material_name,material_count,material_unit_amount,rent_deposit_amount,deposit_amount,credit_deposit_amount,is_new_material,data_status,remark,create_time,create_user,update_time,
+		update_user,real_replace_material_count,is_relet_order_replace,relet_order_item_id)
+		values
+		<foreach collection="list" item="replaceOrderMaterialDO" separator="," >
+			(#{replaceOrderMaterialDO.replaceOrderId}, #{replaceOrderMaterialDO.replaceOrderNo},#{replaceOrderMaterialDO.oldOrderMaterialId},
+			#{replaceOrderMaterialDO.oldMaterialEntry},#{replaceOrderMaterialDO.newOrderMaterialId},#{replaceOrderMaterialDO.rentType},#{replaceOrderMaterialDO.rentTimeLength},
+			#{replaceOrderMaterialDO.rentLengthType},#{replaceOrderMaterialDO.depositCycle},#{replaceOrderMaterialDO.paymentCycle},
+			#{replaceOrderMaterialDO.payMode},#{replaceOrderMaterialDO.oldMaterialUnitAmount},#{replaceOrderMaterialDO.materialId},#{replaceOrderMaterialDO.materialName},
+			#{replaceOrderMaterialDO.materialCount},#{replaceOrderMaterialDO.materialUnitAmount},#{replaceOrderMaterialDO.rentDepositAmount},
+			#{replaceOrderMaterialDO.rentDepositAmount},#{replaceOrderMaterialDO.depositAmount},#{replaceOrderMaterialDO.creditDepositAmount},
+			#{replaceOrderMaterialDO.isNewProduct},#{replaceOrderMaterialDO.dataStatus},#{replaceOrderMaterialDO.remark},#{replaceOrderMaterialDO.realReplaceMaterialCount},
+			#{replaceOrderMaterialDO.isReletOrderReplace},#{replaceOrderMaterialDO.reletOrderItemId})
+		</foreach>
+	</insert>
 </mapper>

@@ -12,4 +12,6 @@ public interface ReplaceOrderProductMapper extends BaseMysqlDAO<ReplaceOrderProd
 	List<ReplaceOrderProductDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+    void saveList(@Param("list") List<ReplaceOrderProductDO> saveReplaceOrderProductDOList);
 }

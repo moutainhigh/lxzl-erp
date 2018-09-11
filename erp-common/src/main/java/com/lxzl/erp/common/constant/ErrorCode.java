@@ -1108,6 +1108,7 @@ public class ErrorCode {
     public static final String REPLACE_ADDRESS_IS_NULL = "J310000012";//换货地址不能为空
     public static final String REPLACE_CONSIGNEE_NAME_IS_NULL = "J310000013";//换货收件人姓名不能为空
     public static final String REPLACE_CONSIGNEE_PHONE_IS_NULL = "J310000014";//换货收件人电话不能为空
+    public static final String REPLACE_TIME_BEFORE_RELET_TIME = "J310000015";//该订单的换货时间必须大于该订单的续租时间
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -2197,6 +2198,7 @@ public class ErrorCode {
         MAP.put(REPLACE_ADDRESS_IS_NULL, "换货地址不能为空");
         MAP.put(REPLACE_CONSIGNEE_NAME_IS_NULL, "换货收件人姓名不能为空");
         MAP.put(REPLACE_CONSIGNEE_PHONE_IS_NULL, "换货收件人电话不能为空");
+        MAP.put(REPLACE_TIME_BEFORE_RELET_TIME, "该订单的换货时间必须大于该订单的续租时间");
 
         MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
 

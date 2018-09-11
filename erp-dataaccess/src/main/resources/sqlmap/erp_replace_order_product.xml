@@ -170,4 +170,20 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO">
 		UPDATE erp_replace_order_product <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+	<insert id="saveList" parameterType="java.util.ArrayList" >
+		INSERT INTO erp_replace_order_product (replace_order_id,replace_order_no,old_order_product_id,old_product_entry,new_order_product_id,rent_type,rent_time_length,rent_length_type,deposit_cycle,payment_cycle,pay_mode,
+		old_product_unit_amount,product_id,product_name,product_sku_id,product_sku_name,product_count,product_unit_amount,rent_deposit_amount,deposit_amount,credit_deposit_amount,is_new_product,data_status,remark,create_time,
+		create_user,update_time,update_user,real_replace_product_count,is_relet_order_replace,relet_order_item_id)
+		values
+		<foreach collection="list" item="replaceOrderProductDO" separator="," >
+			(#{replaceOrderProductDO.replaceOrderId}, #{replaceOrderProductDO.replaceOrderNo},#{replaceOrderProductDO.oldOrderProductId},
+			#{replaceOrderProductDO.oldProductEntry},#{replaceOrderProductDO.newOrderProductId},#{replaceOrderProductDO.rentType},#{replaceOrderProductDO.rentTimeLength},
+			#{replaceOrderProductDO.rentLengthType},#{replaceOrderProductDO.depositCycle},#{replaceOrderProductDO.paymentCycle},
+			#{replaceOrderProductDO.payMode},#{replaceOrderProductDO.oldProductUnitAmount},#{replaceOrderProductDO.productId},#{replaceOrderProductDO.productName},
+			#{replaceOrderProductDO.productSkuId},#{replaceOrderProductDO.productSkuName},#{replaceOrderProductDO.productCount},
+			#{replaceOrderProductDO.productUnitAmount},#{replaceOrderProductDO.rentDepositAmount},#{replaceOrderProductDO.depositAmount},#{replaceOrderProductDO.creditDepositAmount},
+			#{replaceOrderProductDO.isNewProduct},#{replaceOrderProductDO.dataStatus},#{replaceOrderProductDO.remark},#{replaceOrderProductDO.realReplaceProductCount},
+			#{replaceOrderProductDO.isReletOrderReplace},#{replaceOrderProductDO.reletOrderItemId})
+		</foreach>
+	</insert>
 </mapper>
