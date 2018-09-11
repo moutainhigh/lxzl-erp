@@ -237,6 +237,8 @@
                         <th class="text-center">K3编码</th>
                         <th class="text-center">配置</th>
                         <th class="text-center" style="white-space: nowrap;">数量</th>
+                        <th class="text-center">租期</th>
+                        <th class="text-center">同行调拨</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -248,6 +250,8 @@
                         <td class="text-center">{{k3Number}}</td>
                         <td class="text-center">{{materialTypeStr}}{{#memorysize}}{{#materialInfo}}{{materialCapacityValue}}{{/materialInfo}}{{/memorysize}}</td>
                         <td class="text-center">{{materialCount}}</td>
+                        <td class="text-center">{{rentTimeLength}}{{rentTypeUnit}}</td>
+                        <td class="text-center">{{#boolText}}{{isPeer}}{{/boolText}}</td>
                     </tr>
                     {{/listData}}
                     {{/dataSource}}
