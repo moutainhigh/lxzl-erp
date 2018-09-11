@@ -179,4 +179,31 @@
 			#{replaceOrderMaterialDO.isReletOrderReplace},#{replaceOrderMaterialDO.reletOrderItemId})
 		</foreach>
 	</insert>
+
+	<update id="updateListForCancel" parameterType="java.util.ArrayList">
+		update erp_replace_order_material
+		SET
+		<trim >
+			update_user =
+			<foreach item="replaceOrderMaterialDO" collection="replaceOrderMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{replaceOrderMaterialDO.id} then #{replaceOrderMaterialDO.updateUser}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			data_status =
+			<foreach item="replaceOrderMaterialDO" collection="replaceOrderMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{replaceOrderMaterialDO.id} then #{replaceOrderMaterialDO.dataStatus}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach item="replaceOrderMaterialDO" collection="replaceOrderMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{replaceOrderMaterialDO.id} then #{replaceOrderMaterialDO.updateTime}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="replaceOrderMaterialDOList" index="index" item="replaceOrderMaterialDO" separator="," open="(" close=")">
+			#{replaceOrderMaterialDO.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
 </mapper>

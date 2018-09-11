@@ -1,10 +1,12 @@
 package com.lxzl.erp.core.service.replace.impl;
 
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
+import com.lxzl.erp.common.domain.replace.ReplaceOrderQueryParam;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderMaterial;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderProduct;
@@ -63,6 +65,7 @@ import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
+import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -389,6 +392,103 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
+
+    /**
+     * 修改换货单
+     */
+    @Override
+    public ServiceResult<String, String> update(ReplaceOrder replaceOrder) {
+        return null;
+    }
+    /**
+     * 换货取消接口
+     */
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult cancel(ReplaceOrder replaceOrder) {
+        ServiceResult serviceResult = new ServiceResult();
+        Date date = new Date();
+        ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(replaceOrder.getReplaceOrderNo());
+        if (replaceOrderDO != null) {
+            serviceResult.setErrorCode(ErrorCode.REPLACE_ORDER_ERROR);
+            return serviceResult;
+        }
+        if (!userSupport.getCurrentUserId().toString().equals(replaceOrder.getCreateUser())) {
+            serviceResult.setErrorCode(ErrorCode.CANCEL_REPLACE_ORDER_BY_CREATE_USER);
+            return serviceResult;
+        }
+        if (!ReplaceOrderStatus.REPLACE_ORDER_STATUS_WAIT_COMMIT.equals(replaceOrder.getReplaceOrderStatus())) {
+            serviceResult.setErrorCode(ErrorCode.CANCEL_REPLACE_ORDER_STATUS_ERROR);
+            return serviceResult;
+        }
+        replaceOrderDO.setDataStatus(CommonConstant.COMMON_TWO);
+        replaceOrderDO.setUpdateTime(date);
+        replaceOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        List<ReplaceOrderProductDO> replaceOrderProductDOList = replaceOrderDO.getReplaceOrderProductDOList();
+        if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
+            for (ReplaceOrderProductDO replaceOrderProductDO:replaceOrderProductDOList) {
+                replaceOrderProductDO.setDataStatus(CommonConstant.COMMON_TWO);
+                replaceOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                replaceOrderProductDO.setUpdateTime(date);
+            }
+        }
+        List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList = replaceOrderDO.getReplaceOrderMaterialDOList();
+        if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
+            for (ReplaceOrderMaterialDO replaceOrderMaterialDO:replaceOrderMaterialDOList) {
+                replaceOrderMaterialDO.setDataStatus(CommonConstant.COMMON_TWO);
+                replaceOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                replaceOrderMaterialDO.setUpdateTime(date);
+            }
+        }
+        replaceOrderMapper.update(replaceOrderDO);
+        replaceOrderProductMapper.updateListForCancel(replaceOrderProductDOList);
+        replaceOrderMaterialMapper.updateListForCancel(replaceOrderMaterialDOList);
+        return null;
+    }
+    /**
+     * 分页查询换货单
+     */
+    @Override
+    public ServiceResult<String, Page<ReplaceOrder>> queryAllReplaceOrder(ReplaceOrderQueryParam param) {
+        ServiceResult<String, Page<ReplaceOrder>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(param.getPageNo(), param.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("replaceOrderQueryParam", param);
+//        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER,PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_WAREHOUSE));
+        Integer totalCount = replaceOrderMapper.findReplaceOrderCountByParams(maps);
+        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findReplaceOrderByParams(maps);
+        List<ReplaceOrder> replaceOrderList = ConverterUtil.convertList(replaceOrderDOList, ReplaceOrder.class);
+        Page<ReplaceOrder> page = new Page<>(replaceOrderList, totalCount, param.getPageNo(), param.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+    /**
+     * 通过换货单编号查询换货单详情
+     */
+    @Override
+    public ServiceResult<String, ReplaceOrder> queryReplaceOrderByNo(String replaceOrderNo) {
+        ServiceResult<String, ReplaceOrder> result = new ServiceResult<>();
+        ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(replaceOrderNo);
+        if (replaceOrderDO == null) {
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_ERROR);
+        }else {
+            ReplaceOrder replaceOrder = ConverterUtil.convert(replaceOrderDO,ReplaceOrder.class);
+            result.setResult(replaceOrder);
+            result.setErrorCode(ErrorCode.SUCCESS);
+        }
+        return result;
+    }
+    /**
+     * 确认换货
+     */
+    @Override
+    public ServiceResult<String, String> confirmReplaceOrder(ReplaceOrder replaceOrder) {
+        return null;
+    }
+
     /**
      * 获取该用户处于待提交、审核中、处理中三种状态的商品或者配件的数量
      *

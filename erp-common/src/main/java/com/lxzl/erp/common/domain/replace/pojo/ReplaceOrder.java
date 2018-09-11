@@ -5,6 +5,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.ReturnOrChangeMode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.CancelGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
@@ -23,6 +24,7 @@ import java.util.List;
 public class ReplaceOrder extends BasePO {
 
 	private Integer replaceOrderId;   //唯一标识
+	@NotBlank(message = ErrorCode.ORDER_NO_NOT_NULL,groups = {CancelGroup.class})
 	private String replaceOrderNo;   //换货编号
 	private Integer orderId;   //原订单ID
 	@NotBlank(message = ErrorCode.ORDER_NO_NOT_NULL,groups = {AddGroup.class})
@@ -65,6 +67,9 @@ public class ReplaceOrder extends BasePO {
 	private List<ReplaceOrderProduct> replaceOrderProductList;
 	@Valid
 	private List<ReplaceOrderMaterial> replaceOrderMaterialList;
+	private String createUserName;   //添加人
+	private String updateUserName;   //修改人
+	private String confirmReplaceUserName;   //确认换货人
 
 
 	public Integer getReplaceOrderId(){
@@ -313,5 +318,29 @@ public class ReplaceOrder extends BasePO {
 
 	public void setConsigneePhone(String consigneePhone) {
 		this.consigneePhone = consigneePhone;
+	}
+
+	public String getCreateUserName() {
+		return createUserName;
+	}
+
+	public void setCreateUserName(String createUserName) {
+		this.createUserName = createUserName;
+	}
+
+	public String getUpdateUserName() {
+		return updateUserName;
+	}
+
+	public void setUpdateUserName(String updateUserName) {
+		this.updateUserName = updateUserName;
+	}
+
+	public String getConfirmReplaceUserName() {
+		return confirmReplaceUserName;
+	}
+
+	public void setConfirmReplaceUserName(String confirmReplaceUserName) {
+		this.confirmReplaceUserName = confirmReplaceUserName;
 	}
 }

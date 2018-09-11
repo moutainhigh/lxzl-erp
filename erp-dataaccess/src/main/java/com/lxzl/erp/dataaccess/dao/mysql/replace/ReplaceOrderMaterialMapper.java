@@ -15,4 +15,6 @@ public interface ReplaceOrderMaterialMapper extends BaseMysqlDAO<ReplaceOrderMat
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
     void saveList(@Param("list") List<ReplaceOrderProductDO> saveReplaceOrderProductDOList);
+
+    void updateListForCancel(@Param("replaceOrderMaterialDOList") List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList);
 }
