@@ -597,6 +597,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 
             //----------------------处理中的退货单---------------------------
             Map<String, Object> returnOrderWarehouseWorkbenchParamMap = new HashMap<>();
+            returnOrderWarehouseWorkbenchParamMap.put("deliverySubCompanyId",userSupport.getCurrentUserCompanyId());
             returnOrderWarehouseWorkbenchParamMap.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER,PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_WAREHOUSE));
             //----------------------处理中的退货单---------------------------
 
