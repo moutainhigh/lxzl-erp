@@ -59,6 +59,17 @@ public class StatementOrderCorrect extends BasePO {
 	private String customerNo; //客户编号
 	private Integer statementOrderCorrectType; //冲正单类型 1订单，2退货单
 
+	private Integer reletOrderItemReferId;  //续租订单项ID
+
+
+	public Integer getReletOrderItemReferId() {
+		return reletOrderItemReferId;
+	}
+
+	public void setReletOrderItemReferId(Integer reletOrderItemReferId) {
+		this.reletOrderItemReferId = reletOrderItemReferId;
+	}
+
 	public Integer getStatementOrderCorrectType() {
 		return statementOrderCorrectType;
 	}
