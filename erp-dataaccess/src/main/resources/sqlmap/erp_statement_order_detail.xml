@@ -575,6 +575,14 @@
         FROM erp_statement_order_detail esod
         WHERE esod.order_item_refer_id = #{itemReferId, jdbcType=INTEGER} AND esod.statement_order_id =
         #{statementOrderId, jdbcType=INTEGER} AND esod.data_status = 1
+        <choose>
+            <when test="reletItemReferId == null">
+                AND esod.relet_order_item_refer_id is NULL
+            </when>
+            <otherwise>
+                AND esod.relet_order_item_refer_id = #{reletItemReferId, jdbcType = INTEGER}
+            </otherwise>
+        </choose>
         ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC
     </select>
 
