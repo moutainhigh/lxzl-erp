@@ -54,7 +54,6 @@ public class ReplaceOrderController {
      */
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public Result update(@RequestBody @Validated(AddGroup.class) ReplaceOrder replaceOrder, BindingResult validResult) {
-
         ServiceResult<String, String> serviceResult = replaceOrderService.update(replaceOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
@@ -109,5 +108,17 @@ public class ReplaceOrderController {
         return resultGenerator.generate(serviceResult);
     }
 
+    /**
+     * 换货单发货回调
+     * @Author : sunzhipeng
+     * @param replaceOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "replaceOrderDeliveryCallBack", method = RequestMethod.POST)
+    public Result replaceOrderDeliveryCallBack(@RequestBody  ReplaceOrder replaceOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = replaceOrderService.replaceOrderDeliveryCallBack(replaceOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 
 }

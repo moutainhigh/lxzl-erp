@@ -42,8 +42,8 @@ public class ReplaceOrder extends BasePO {
 	private BigDecimal logisticsCost;   //运费
 	private BigDecimal repairCost;   //维修费
 	@Min(value = 0, message = ErrorCode.REPLACE_REASON_TYPE_ERROR, groups = {AddGroup.class})
-	@Max(value = 2, message = ErrorCode.REPLACE_REASON_TYPE_ERROR, groups = {AddGroup.class})
-	private Integer replaceReasonType;   //换货原因类型,0-升级 ，1-损坏，2-其他
+	@Max(value = 3, message = ErrorCode.REPLACE_REASON_TYPE_ERROR, groups = {AddGroup.class})
+	private Integer replaceReasonType;   //换货原因类型,0-设备故障等我方原因导致换货 ，1-设备故障等客户方原因导致的换货，2-主观因素等客户方原因导致换货，3-其他
 	private String replaceReason;   //换货原因
 	@NotNull(message = ErrorCode.RETURN_OR_CHANGE_MODE_NOT_NULL, groups = {AddGroup.class})
 	@In(value = {ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR, ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_MAIL}, message = ErrorCode.RETURN_OR_CHANGE_MODE_ERROR)

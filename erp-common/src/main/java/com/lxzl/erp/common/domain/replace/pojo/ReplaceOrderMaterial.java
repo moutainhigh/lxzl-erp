@@ -23,7 +23,7 @@ public class ReplaceOrderMaterial extends BasePO {
 	private BigDecimal oldMaterialUnitAmount;   //原配件单价
 	private Integer materialId;   //配件ID
 	private String materialName;   //配件名称
-	private Integer materialCount;   //配件总数
+	private Integer replaceMaterialCount;   //配件总数
 	private BigDecimal materialUnitAmount;   //配件单价
 	private BigDecimal rentDepositAmount;   //租金押金金额
 	private BigDecimal depositAmount;   //设备押金金额
@@ -160,12 +160,12 @@ public class ReplaceOrderMaterial extends BasePO {
 		this.materialName = materialName;
 	}
 
-	public Integer getMaterialCount(){
-		return materialCount;
+	public Integer getReplaceMaterialCount() {
+		return replaceMaterialCount;
 	}
 
-	public void setMaterialCount(Integer materialCount){
-		this.materialCount = materialCount;
+	public void setReplaceMaterialCount(Integer replaceMaterialCount) {
+		this.replaceMaterialCount = replaceMaterialCount;
 	}
 
 	public BigDecimal getMaterialUnitAmount(){
