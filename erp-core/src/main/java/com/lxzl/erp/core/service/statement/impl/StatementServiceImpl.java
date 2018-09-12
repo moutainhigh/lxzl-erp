@@ -812,7 +812,7 @@ public class StatementServiceImpl implements StatementService {
                     orderProductDO.setProductCount(productCount);
                     itemAllAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(new BigDecimal(productCount), orderProductDO.getProductUnitAmount(), BigDecimalUtil.STANDARD_SCALE), new BigDecimal(orderProductDO.getRentTimeLength()), BigDecimalUtil.STANDARD_SCALE);
                 }
-                List<StatementOrderDetailDO> statementOrderDetailDOList=generateOrderProductStatement(orderDO.getRentTimeLength(),orderDO.getStatementDate(), currentTime, statementDays, loginUserId,  rentStartTime, buyerCustomerId, orderId, orderProductDO, itemAllAmount,true);
+                List<StatementOrderDetailDO> statementOrderDetailDOList=generateOrderProductStatement(orderDO.getRentTimeLength(),orderDO.getStatementDate(), currentTime, statementDays, loginUserId,  rentStartTime, buyerCustomerId, orderId, orderProductDO, itemAllAmount);
                 if(CollectionUtil.isNotEmpty(statementOrderDetailDOList))addStatementOrderDetailDOList.addAll(statementOrderDetailDOList);
             }
         }
@@ -913,24 +913,24 @@ public class StatementServiceImpl implements StatementService {
         return addStatementOrderDetailDOList;
     }
 
-     public List<StatementOrderDetailDO> generateOrderProductStatement(Integer rentTimeLength,Integer statementMode, Date currentTime, Integer statementDays, Integer loginUserId,  Date rentStartTime, Integer buyerCustomerId, Integer orderId, OrderProductDO orderProductDO, BigDecimal itemAllAmount,boolean isStatementDeposit) {
+     public List<StatementOrderDetailDO> generateOrderProductStatement(Integer rentTimeLength,Integer statementMode, Date currentTime, Integer statementDays, Integer loginUserId,  Date rentStartTime, Integer buyerCustomerId, Integer orderId, OrderProductDO orderProductDO, BigDecimal itemAllAmount) {
          List<StatementOrderDetailDO> addStatementOrderDetailDOList=new ArrayList<>();
         Calendar rentStartTimeCalendar = Calendar.getInstance();
         rentStartTimeCalendar.setTime(rentStartTime);
         // 先确定订单需要结算几期
         Integer statementMonthCount = calculateStatementMonthCount(orderProductDO.getRentType(), rentTimeLength, orderProductDO.getPaymentCycle(), orderProductDO.getPayMode(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
-        if(isStatementDeposit){
-            // 无论什么时候交租金，押金必须当天缴纳
-            StatementOrderDetailDO depositDetail = statementCommonSupport.buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, orderProductDO.getRentDepositAmount(), orderProductDO.getDepositAmount(), BigDecimal.ZERO, currentTime, loginUserId, null);
-            if (depositDetail != null) {
-                depositDetail.setSerialNumber(orderProductDO.getSerialNumber());
-                depositDetail.setItemName(orderProductDO.getProductName() + orderProductDO.getProductSkuName());
-                depositDetail.setItemIsNew(orderProductDO.getIsNewProduct());
-                depositDetail.setStatementDetailPhase(0);
-                depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
-                addStatementOrderDetailDOList.add(depositDetail);
-            }
-        }
+
+        // 无论什么时候交租金，押金必须当天缴纳
+         StatementOrderDetailDO depositDetail = statementCommonSupport.buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, orderProductDO.getRentDepositAmount(), orderProductDO.getDepositAmount(), BigDecimal.ZERO, currentTime, loginUserId, null);
+         if (depositDetail != null) {
+             depositDetail.setSerialNumber(orderProductDO.getSerialNumber());
+             depositDetail.setItemName(orderProductDO.getProductName() + orderProductDO.getProductSkuName());
+             depositDetail.setItemIsNew(orderProductDO.getIsNewProduct());
+             depositDetail.setStatementDetailPhase(0);
+             depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
+             addStatementOrderDetailDOList.add(depositDetail);
+         }
+
         if (statementMonthCount == 1) {
             StatementOrderDetailDO statementOrderDetailDO = calculateOneStatementOrderDetail(orderProductDO.getRentType(), rentTimeLength, orderProductDO.getPayMode(), rentStartTime, itemAllAmount, buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), currentTime, loginUserId, null);
             if (statementOrderDetailDO != null) {

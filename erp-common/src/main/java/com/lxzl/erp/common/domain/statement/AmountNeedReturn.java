@@ -22,6 +22,15 @@ public class AmountNeedReturn {
     //已付租金押金
     BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
 
+    public AmountNeedReturn() {
+    }
+
+    public AmountNeedReturn(BigDecimal depositPaidAmount, BigDecimal rentPaidAmount, BigDecimal rentDepositPaidAmount) {
+        this.depositPaidAmount = depositPaidAmount;
+        this.rentPaidAmount = rentPaidAmount;
+        this.rentDepositPaidAmount = rentDepositPaidAmount;
+    }
+
     public BigDecimal getDepositPaidAmount() {
         return depositPaidAmount;
     }
