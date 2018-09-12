@@ -2046,11 +2046,11 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_IS_NOT_NULL);
             return result;
         }
-        //修正续租单，如果有（退货单之后的续租单）
-        ServiceResult<String, BigDecimal> fixResult= fixReletOrderItemCount(k3ReturnOrderDO);
-        if (!ErrorCode.SUCCESS.equals(fixResult.getErrorCode())) {
-            return fixResult;
-        }
+//        //修正续租单，如果有（退货单之后的续租单）
+//        ServiceResult<String, BigDecimal> fixResult= fixReletOrderItemCount(k3ReturnOrderDO);
+//        if (!ErrorCode.SUCCESS.equals(fixResult.getErrorCode())) {
+//            return fixResult;
+//        }
         List<StatementOrderDetailDO> statementOrderDetails = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_RETURN, k3ReturnOrderDO.getId());
         if (CollectionUtil.isNotEmpty(statementOrderDetails)) {
             result.setErrorCode(ErrorCode.RETURN_STATEMENT_ORDER_CREATE_ERROR);
@@ -7166,7 +7166,7 @@ public class StatementServiceImpl implements StatementService {
      * @param k3ReturnOrderDO
      */
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    ServiceResult<String, BigDecimal> fixReletOrderItemCount(K3ReturnOrderDO k3ReturnOrderDO){
+    public ServiceResult<String, BigDecimal> fixReletOrderItemCount(K3ReturnOrderDO k3ReturnOrderDO){
         //默认返回成功
         ServiceResult<String, BigDecimal> result=new ServiceResult<>();
         result.setErrorCode(ErrorCode.SUCCESS);
