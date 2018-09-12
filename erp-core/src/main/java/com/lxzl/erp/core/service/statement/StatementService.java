@@ -12,6 +12,7 @@ import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.CheckStatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
+import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.se.core.service.BaseService;
@@ -264,4 +265,10 @@ public interface StatementService extends BaseService {
      * @return
      */
     ServiceResult<String,String> rollbackSuccessReturnOrder(String returnOrderNo);
+
+    /**
+     * 订单退货时修改已成功还未开始的续租单数量
+     * @param k3ReturnOrderDO
+     */
+    public ServiceResult<String, BigDecimal> fixReletOrderItemCount(K3ReturnOrderDO k3ReturnOrderDO);
 }
