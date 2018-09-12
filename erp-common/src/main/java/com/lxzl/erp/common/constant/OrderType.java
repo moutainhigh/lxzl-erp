@@ -12,4 +12,8 @@ public class OrderType {
     public static final Integer ORDER_TYPE_CHANGE = 3;
     public static final Integer ORDER_TYPE_RETURN = 4;
     public static final Integer ORDER_TYPE_REPAIR = 5;
+    /**
+     * 换货单类型
+     */
+    public static final Integer ORDER_TYPE_REPLACE= 6;
 }

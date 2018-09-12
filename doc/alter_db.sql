@@ -1078,3 +1078,7 @@ ALTER TABLE `erp_statement_order_return_detail` ADD COLUMN `return_order_detail_
 
 -- 工作流新增字段 V1.0.23-shopping --
 ALTER TABLE erp_workflow_node add `verify_type` INT(11) NOT NULL DEFAULT 1 COMMENT '审核类型:1-本条通过则通过,2-相同审核组的所有2的通过则通过,3-不用获取审核人该条通过直接通过';
+
+
+
+ALTER TABLE erp_statement_order_return_detail add `order_type` INT(11) NOT NULL DEFAULT 4 COMMENT '订单类型:4-退货单,6-换货单';

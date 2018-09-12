@@ -649,6 +649,8 @@ public class ErrorCode {
     public static final String CUSTOMER_STATUS_IS_NOT_PASS = "J500187";
     public static final String CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH = "J500188";
 
+    public static final String DEPOSIT_NOT_PAID_BEFORE_REPLACE_ORDER = "J500189";
+
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
     public static final String MESSAGE_RECEIVER_NOT_NULL = "J600003";
@@ -2214,6 +2216,7 @@ public class ErrorCode {
         MAP.put(UPDATE_REPLACE_ORDER_STATUS_ERROR, "换货单只有在提交前才能修改");
 
         MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
+        MAP.put(DEPOSIT_NOT_PAID_BEFORE_REPLACE_ORDER, "换货之前需先支付原订单押金");
 
 
     }
