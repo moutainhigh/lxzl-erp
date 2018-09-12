@@ -26,7 +26,7 @@ public class ReplaceOrderProductDO  extends BaseDO {
 	private String productName;
 	private Integer productSkuId;
 	private String productSkuName;
-	private Integer productCount;
+	private Integer replaceProductCount;
 	private BigDecimal productUnitAmount;
 	private BigDecimal rentDepositAmount;
 	private BigDecimal depositAmount;
@@ -174,12 +174,12 @@ public class ReplaceOrderProductDO  extends BaseDO {
 		this.productSkuName = productSkuName;
 	}
 
-	public Integer getProductCount(){
-		return productCount;
+	public Integer getReplaceProductCount() {
+		return replaceProductCount;
 	}
 
-	public void setProductCount(Integer productCount){
-		this.productCount = productCount;
+	public void setReplaceProductCount(Integer replaceProductCount) {
+		this.replaceProductCount = replaceProductCount;
 	}
 
 	public BigDecimal getProductUnitAmount(){

@@ -56,7 +56,7 @@
 		<result column="product_product_name" jdbcType="VARCHAR" property="productName" />
 		<result column="product_product_sku_id" jdbcType="INTEGER" property="productSkuId" />
 		<result column="product_product_sku_name" jdbcType="VARCHAR" property="productSkuName" />
-		<result column="product_product_count" jdbcType="INTEGER" property="productCount" />
+		<result column="product_replace_product_count" jdbcType="INTEGER" property="replaceProductCount" />
 		<result column="product_product_unit_amount" jdbcType="DECIMAL" property="productUnitAmount" />
 		<result column="product_rent_deposit_amount" jdbcType="DECIMAL" property="rentDepositAmount" />
 		<result column="product_deposit_amount" jdbcType="DECIMAL" property="depositAmount" />
@@ -89,7 +89,7 @@
 		<result column="material_old_material_unit_amount" jdbcType="DECIMAL" property="oldMaterialUnitAmount" />
 		<result column="material_material_id" jdbcType="INTEGER" property="materialId" />
 		<result column="material_material_name" jdbcType="VARCHAR" property="materialName" />
-		<result column="material_material_count" jdbcType="INTEGER" property="materialCount" />
+		<result column="material_replace_material_count" jdbcType="INTEGER" property="replaceMaterialCount" />
 		<result column="material_material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount" />
 		<result column="material_rent_deposit_amount" jdbcType="DECIMAL" property="rentDepositAmount" />
 		<result column="material_deposit_amount" jdbcType="DECIMAL" property="depositAmount" />
@@ -116,7 +116,7 @@
 		erop.old_product_entry as product_old_product_entry,erop.new_order_product_id as product_new_order_product_id,erop.rent_type as product_rent_type,erop.rent_time_length as product_rent_time_length,
 		erop.rent_length_type as product_rent_length_type,erop.deposit_cycle as product_deposit_cycle,erop.payment_cycle as product_payment_cycle,
 		erop.pay_mode as product_pay_mode,erop.old_product_unit_amount as product_old_product_unit_amount,erop.product_id as product_product_id,erop.product_name as product_product_name,
-		erop.product_sku_id as product_product_sku_id,erop.product_sku_name as product_product_sku_name,erop.product_count as product_product_count,erop.product_unit_amount as product_product_unit_amount,
+		erop.product_sku_id as product_product_sku_id,erop.product_sku_name as product_product_sku_name,erop.product_count as product_replace_product_count,erop.product_unit_amount as product_product_unit_amount,
 		erop.rent_deposit_amount as product_rent_deposit_amount,erop.deposit_amount as product_deposit_amount,erop.credit_deposit_amount as product_credit_deposit_amount,
 		erop.is_new_product as product_is_new_product,erop.data_status as product_data_status,erop.remark as product_remark,erop.create_time as product_create_time,
 		erop.create_user as product_create_user,erop.update_time as product_update_time,erop.update_user as product_update_user,erop.real_replace_product_count as product_real_replace_product_count,
@@ -128,7 +128,7 @@
 		erom.old_material_entry as material_old_material_entry,erom.new_order_material_id as material_new_order_material_id,erom.rent_type as material_rent_type,erom.rent_time_length as material_rent_time_length,
 		erom.rent_length_type as material_rent_length_type,erom.deposit_cycle as material_deposit_cycle,erom.payment_cycle as material_payment_cycle,erom.pay_mode as material_pay_mode,
 		erom.old_material_unit_amount as material_old_material_unit_amount,erom.material_id as material_material_id,erom.material_name as material_material_name,
-		erom.material_count as material_material_count,erom.material_unit_amount as material_material_unit_amount,erom.rent_deposit_amount as material_rent_deposit_amount,erom.deposit_amount as material_deposit_amount,
+		erom.material_count as material_replace_material_count,erom.material_unit_amount as material_material_unit_amount,erom.rent_deposit_amount as material_rent_deposit_amount,erom.deposit_amount as material_deposit_amount,
 		erom.credit_deposit_amount as material_credit_deposit_amount,erom.is_new_material as material_is_new_material,erom.data_status as material_data_status,erom.remark as material_remark,
 		erom.create_time as material_create_time,erom.create_user as material_create_user,erom.update_time as material_update_time,erom.update_user as material_update_user,
 		erom.real_replace_material_count as material_real_replace_material_count,erom.is_relet_order_replace as material_is_relet_order_replace,erom.relet_order_item_id as material_relet_order_item_id

@@ -204,10 +204,10 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         Integer totalReplaceProductCount = 0;
         Integer totalReplaceMaterialCount = 0;
         for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderProductDOList) {
-            totalReplaceProductCount += replaceOrderProductDO.getProductCount();
+            totalReplaceProductCount += replaceOrderProductDO.getReplaceProductCount();
         }
         for (ReplaceOrderMaterialDO replaceOrderMaterialDO : replaceOrderMaterialDOList) {
-            totalReplaceMaterialCount += replaceOrderMaterialDO.getMaterialCount();
+            totalReplaceMaterialCount += replaceOrderMaterialDO.getReplaceMaterialCount();
         }
         //获取换货数量
         Map<Integer, Integer> replaceProductCountMap = new HashMap<>();
@@ -321,139 +321,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         return serviceResult;
     }
 
-    /**
-     * 比较物料项
-     */
-    private boolean compareMaterialCount(ServiceResult<String, String> serviceResult, List<OrderMaterialDO> orderMaterialDOList, Map<Integer, OrderMaterialDO> orderMaterialDOMap, Map<Integer, Integer> replaceMaterialCountMap, Map<Integer, Integer> rentingMaterialCountMap, Map<Integer, Integer> materialCountMap) {
-        for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
-            orderMaterialDOMap.put(orderMaterialDO.getId(),orderMaterialDO);
-            Integer rentingMaterialCount = rentingMaterialCountMap.get(orderMaterialDO.getId()) == null ? 0 : rentingMaterialCountMap.get(orderMaterialDO.getId());//在租数
-            Integer processMaterialCount = materialCountMap.get(orderMaterialDO.getId()) == null ? 0 : materialCountMap.get(orderMaterialDO.getId()); //待提交、处理中和审核中数量
-            Integer replaceMaterialCount = replaceMaterialCountMap.get(orderMaterialDO.getId()) == null ? 0 : replaceMaterialCountMap.get(orderMaterialDO.getId()); //换货数量
-            //可换数量=在租数-待提交、处理中和审核中数量（包含退货和换货）
-            Integer canReturnMaterialCount = rentingMaterialCount - processMaterialCount;
-            if (replaceMaterialCount > canReturnMaterialCount) {
-                serviceResult.setErrorCode(ErrorCode.REPLACE_MATERIAL_COUNT_MORE_THAN_CANREPLACE_COUNT);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 比较设备项
-     */
-    private boolean compareProductCount(ServiceResult<String, String> serviceResult, List<OrderProductDO> orderProductDOList, Map<Integer, OrderProductDO> orderProductDOMap, Map<Integer, Integer> replaceProductCountMap, Map<Integer, Integer> rentingProductCountMap, Map<Integer, Integer> productCountMap) {
-        for (OrderProductDO orderProductDO : orderProductDOList) {
-            orderProductDOMap.put(orderProductDO.getId(),orderProductDO);
-            Integer rentingProductCount = rentingProductCountMap.get(orderProductDO.getId()) == null ? 0 : rentingProductCountMap.get(orderProductDO.getId());//在租数
-            Integer processProductCount = productCountMap.get(orderProductDO.getId()) == null ? 0 : productCountMap.get(orderProductDO.getId()); //待提交、处理中和审核中数量
-            Integer replaceProductCount = replaceProductCountMap.get(orderProductDO.getId()) == null ? 0 : replaceProductCountMap.get(orderProductDO.getId()); //换货数量
-            //可换数量=在租数-待提交、处理中和审核中数量（包含退货和换货）
-            Integer canReturnProductCount = rentingProductCount - processProductCount;
-            if (replaceProductCount > canReturnProductCount) {
-                serviceResult.setErrorCode(ErrorCode.REPLACE_PRODUCT_COUNT_MORE_THAN_CANREPLACE_COUNT);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 将该订单的待提交、审核中两种状态的换货单商品或配件数量保存
-     */
-    private void saveExistedReplaceCount( Map<Integer, Integer> productCountMap, Map<Integer, Integer> materialCountMap, List<ReplaceOrderDO> replaceOrderDOList) {
-        if (CollectionUtil.isNotEmpty(replaceOrderDOList)) {
-            for (ReplaceOrderDO exReplaceOrderDO:replaceOrderDOList){
-                List<ReplaceOrderProductDO> exReplaceOrderProductDOList = exReplaceOrderDO.getReplaceOrderProductDOList();
-                List<ReplaceOrderMaterialDO> exReplaceOrderMaterialDOList = exReplaceOrderDO.getReplaceOrderMaterialDOList();
-                if (CollectionUtil.isNotEmpty(exReplaceOrderProductDOList)) {
-                    for (ReplaceOrderProductDO replaceOrderProductDO:exReplaceOrderProductDOList) {
-                        if (!productCountMap.containsKey(replaceOrderProductDO.getOldOrderProductId())) {
-                            productCountMap.put(replaceOrderProductDO.getOldOrderProductId(), replaceOrderProductDO.getProductCount());
-                        }else {
-                            Integer productCount = replaceOrderProductDO.getProductCount() + productCountMap.get(replaceOrderProductDO.getOldOrderProductId());
-                            productCountMap.put(replaceOrderProductDO.getOldOrderProductId(), productCount);
-                        }
-                    }
-                }
-                if (CollectionUtil.isNotEmpty(exReplaceOrderMaterialDOList)) {
-                    for (ReplaceOrderMaterialDO replaceOrderMaterialDO:exReplaceOrderMaterialDOList) {
-                        if (!materialCountMap.containsKey(replaceOrderMaterialDO.getOldOrderMaterialId())) {
-                            materialCountMap.put(replaceOrderMaterialDO.getOldOrderMaterialId(), replaceOrderMaterialDO.getMaterialCount());
-                        }else {
-                            Integer materialCount = replaceOrderMaterialDO.getMaterialCount() + materialCountMap.get(replaceOrderMaterialDO.getOldOrderMaterialId());
-                            materialCountMap.put(replaceOrderMaterialDO.getOldOrderMaterialId(), materialCount);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 校验是否在续租单开始之前换货
-     */
-    private boolean checkReplaceTiamAndReletTime(ServiceResult<String, String> serviceResult, SimpleDateFormat simpleDateFormat, String replaceTimeString, String reletTimeString) {
-        try {
-            Date replaceTimeDate = simpleDateFormat.parse(replaceTimeString);
-            Date reletTimeDate = simpleDateFormat.parse(reletTimeString);
-            if (!(replaceTimeDate.compareTo(reletTimeDate)>0)) {
-                serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_BEFORE_RELET_TIME);
-                return true;
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            logger.error("【创建换货单,校验是否在续租单开始之前换货,时间parse出错】", e);
-            serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_PARSE_ERROR);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 校验换货时间
-     */
-    private boolean checkReplaceTime(ServiceResult<String, String> serviceResult, SimpleDateFormat simpleDateFormat, String replaceTimeString, String rentStartTimeString, String expectReturnTimeString) {
-        try {
-            Date replaceTimeDate = simpleDateFormat.parse(replaceTimeString);
-            Date rentStartTimeDate = simpleDateFormat.parse(rentStartTimeString);
-            Date expectReturnTimeDate = simpleDateFormat.parse(expectReturnTimeString);
-            if (!(replaceTimeDate.compareTo(rentStartTimeDate)>0)) {
-                serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_MUST_AFTER_RENT_START_TIME);
-                return true;
-            } else if (!(rentStartTimeDate.compareTo(expectReturnTimeDate)<0)) {
-                serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_MUST_BEFORE_EXPECT_RETURN_TIME);
-                return true;
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            logger.error("【创建换货单,校验换货时间parse出错】", e);
-            serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_PARSE_ERROR);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 装配该订单续租单map集合
-     */
-    private void assemblyReletOrder(Map<Integer, ReletOrderProductDO> reletOrderProductDOMap, Map<Integer, ReletOrderMaterialDO> reletOrderMaterialDOMap, ReletOrderDO reletOrderDO) {
-        if (reletOrderDO != null){
-            List<ReletOrderProductDO> reletOrderProductDOList = reletOrderDO.getReletOrderProductDOList();
-            List<ReletOrderMaterialDO> reletOrderMaterialDOList = reletOrderDO.getReletOrderMaterialDOList();
-            if (CollectionUtil.isNotEmpty(reletOrderProductDOList)) {
-                for (ReletOrderProductDO reletOrderProductDO:reletOrderProductDOList) {
-                    reletOrderProductDOMap.put(reletOrderProductDO.getOrderProductId(),reletOrderProductDO);
-                }
-            }
-            if (CollectionUtil.isNotEmpty(reletOrderMaterialDOList)) {
-                for (ReletOrderMaterialDO reletOrderMaterialDO:reletOrderMaterialDOList) {
-                    reletOrderMaterialDOMap.put(reletOrderMaterialDO.getOrderMaterialId(),reletOrderMaterialDO);
-                }
-            }
-        }
-    }
 
     /**
      * 修改换货单
@@ -599,10 +466,10 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         Integer totalReplaceProductCount = 0;
         Integer totalReplaceMaterialCount = 0;
         for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderProductDOList) {
-            totalReplaceProductCount += replaceOrderProductDO.getProductCount();
+            totalReplaceProductCount += replaceOrderProductDO.getReplaceProductCount();
         }
         for (ReplaceOrderMaterialDO replaceOrderMaterialDO : replaceOrderMaterialDOList) {
-            totalReplaceMaterialCount += replaceOrderMaterialDO.getMaterialCount();
+            totalReplaceMaterialCount += replaceOrderMaterialDO.getReplaceMaterialCount();
         }
         //获取换货数量并保存到map
         Map<Integer, Integer> replaceProductCountMap = new HashMap<>();
@@ -644,6 +511,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
         //保存换货单信息
         replaceOrderDO.setId(dbreplaceOrderDO.getId());
+        replaceOrderDO.setCreateUser(dbreplaceOrderDO.getCreateUser());
+        replaceOrderDO.setCreateTime(dbreplaceOrderDO.getCreateTime());
         replaceOrderDO.setTotalReplaceProductCount(totalReplaceProductCount);
         replaceOrderDO.setTotalReplaceMaterialCount(totalReplaceMaterialCount);
         replaceOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -710,29 +579,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
-
-    /**
-     * 获取换货数量并保存到map
-     */
-    private void saveRepalceCountInMap(List<ReplaceOrderProductDO> replaceOrderProductDOList, List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList, Map<Integer, Integer> replaceProductCountMap, Map<Integer, Integer> replaceMaterialCountMap) {
-        for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderProductDOList) {
-            if (!replaceProductCountMap.containsKey(replaceOrderProductDO.getOldOrderProductId())) {
-                replaceProductCountMap.put(replaceOrderProductDO.getOldOrderProductId(), replaceOrderProductDO.getProductCount());
-            }else {
-                Integer replaceProductCount = replaceOrderProductDO.getProductCount() + replaceProductCountMap.get(replaceOrderProductDO.getOldOrderProductId());
-                replaceProductCountMap.put(replaceOrderProductDO.getOldOrderProductId(), replaceProductCount);
-            }
-        }
-        for (ReplaceOrderMaterialDO replaceOrderMaterialDO : replaceOrderMaterialDOList) {
-            if (!replaceMaterialCountMap.containsKey(replaceOrderMaterialDO.getOldOrderMaterialId())) {
-                replaceMaterialCountMap.put(replaceOrderMaterialDO.getOldOrderMaterialId(), replaceOrderMaterialDO.getMaterialCount());
-            }else {
-                Integer replaceMaterialCount = replaceOrderMaterialDO.getMaterialCount() + replaceMaterialCountMap.get(replaceOrderMaterialDO.getOldOrderMaterialId());
-                replaceMaterialCountMap.put(replaceOrderMaterialDO.getOldOrderMaterialId(), replaceMaterialCount);
-            }
-        }
-    }
-
     /**
      * 换货取消接口
      */
@@ -746,11 +592,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             serviceResult.setErrorCode(ErrorCode.REPLACE_ORDER_ERROR);
             return serviceResult;
         }
-        if (!userSupport.getCurrentUserId().toString().equals(replaceOrder.getCreateUser())) {
+        if (!userSupport.getCurrentUserId().toString().equals(replaceOrderDO.getCreateUser())) {
             serviceResult.setErrorCode(ErrorCode.CANCEL_REPLACE_ORDER_BY_CREATE_USER);
             return serviceResult;
         }
-        if (!ReplaceOrderStatus.REPLACE_ORDER_STATUS_WAIT_COMMIT.equals(replaceOrder.getReplaceOrderStatus())) {
+        if (!ReplaceOrderStatus.REPLACE_ORDER_STATUS_WAIT_COMMIT.equals(replaceOrderDO.getReplaceOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.CANCEL_REPLACE_ORDER_STATUS_ERROR);
             return serviceResult;
         }
@@ -814,20 +660,197 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
         return result;
     }
+
     /**
      * 确认换货
      */
     @Override
     public ServiceResult<String, String> confirmReplaceOrder(ReplaceOrder replaceOrder) {
+
+
         return null;
     }
 
     /**
+     * 换货单发货回调
+     * @Author : sunzhipeng
+     */
+    @Override
+    public ServiceResult<String, String> replaceOrderDeliveryCallBack(ReplaceOrder replaceOrder) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date date = new Date();
+        if (StringUtil.isEmpty(replaceOrder.getReplaceOrderNo())) {
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_NO_NOT_NULL);
+            return result;
+        }
+        ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(replaceOrder.getReplaceOrderNo());
+        if (replaceOrderDO == null) {
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_NO_ERROR);
+            return result;
+        }
+        replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_DELIVERED);
+        replaceOrderMapper.update(replaceOrderDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+    /*
+     * 比较物料项
+     */
+    private boolean compareMaterialCount(ServiceResult<String, String> serviceResult, List<OrderMaterialDO> orderMaterialDOList, Map<Integer, OrderMaterialDO> orderMaterialDOMap, Map<Integer, Integer> replaceMaterialCountMap, Map<Integer, Integer> rentingMaterialCountMap, Map<Integer, Integer> materialCountMap) {
+        for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+            orderMaterialDOMap.put(orderMaterialDO.getId(),orderMaterialDO);
+            Integer rentingMaterialCount = rentingMaterialCountMap.get(orderMaterialDO.getId()) == null ? 0 : rentingMaterialCountMap.get(orderMaterialDO.getId());//在租数
+            Integer processMaterialCount = materialCountMap.get(orderMaterialDO.getId()) == null ? 0 : materialCountMap.get(orderMaterialDO.getId()); //待提交、处理中和审核中数量
+            Integer replaceMaterialCount = replaceMaterialCountMap.get(orderMaterialDO.getId()) == null ? 0 : replaceMaterialCountMap.get(orderMaterialDO.getId()); //换货数量
+            //可换数量=在租数-待提交、处理中和审核中数量（包含退货和换货）
+            Integer canReturnMaterialCount = rentingMaterialCount - processMaterialCount;
+            if (replaceMaterialCount > canReturnMaterialCount) {
+                serviceResult.setErrorCode(ErrorCode.REPLACE_MATERIAL_COUNT_MORE_THAN_CANREPLACE_COUNT);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+     * 比较设备项
+     */
+    private boolean compareProductCount(ServiceResult<String, String> serviceResult, List<OrderProductDO> orderProductDOList, Map<Integer, OrderProductDO> orderProductDOMap, Map<Integer, Integer> replaceProductCountMap, Map<Integer, Integer> rentingProductCountMap, Map<Integer, Integer> productCountMap) {
+        for (OrderProductDO orderProductDO : orderProductDOList) {
+            orderProductDOMap.put(orderProductDO.getId(),orderProductDO);
+            Integer rentingProductCount = rentingProductCountMap.get(orderProductDO.getId()) == null ? 0 : rentingProductCountMap.get(orderProductDO.getId());//在租数
+            Integer processProductCount = productCountMap.get(orderProductDO.getId()) == null ? 0 : productCountMap.get(orderProductDO.getId()); //待提交、处理中和审核中数量
+            Integer replaceProductCount = replaceProductCountMap.get(orderProductDO.getId()) == null ? 0 : replaceProductCountMap.get(orderProductDO.getId()); //换货数量
+            //可换数量=在租数-待提交、处理中和审核中数量（包含退货和换货）
+            Integer canReturnProductCount = rentingProductCount - processProductCount;
+            if (replaceProductCount > canReturnProductCount) {
+                serviceResult.setErrorCode(ErrorCode.REPLACE_PRODUCT_COUNT_MORE_THAN_CANREPLACE_COUNT);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+     * 将该订单的待提交、审核中两种状态的换货单商品或配件数量保存
+     */
+    private void saveExistedReplaceCount( Map<Integer, Integer> productCountMap, Map<Integer, Integer> materialCountMap, List<ReplaceOrderDO> replaceOrderDOList) {
+        if (CollectionUtil.isNotEmpty(replaceOrderDOList)) {
+            for (ReplaceOrderDO exReplaceOrderDO:replaceOrderDOList){
+                List<ReplaceOrderProductDO> exReplaceOrderProductDOList = exReplaceOrderDO.getReplaceOrderProductDOList();
+                List<ReplaceOrderMaterialDO> exReplaceOrderMaterialDOList = exReplaceOrderDO.getReplaceOrderMaterialDOList();
+                if (CollectionUtil.isNotEmpty(exReplaceOrderProductDOList)) {
+                    for (ReplaceOrderProductDO replaceOrderProductDO:exReplaceOrderProductDOList) {
+                        if (!productCountMap.containsKey(replaceOrderProductDO.getOldOrderProductId())) {
+                            productCountMap.put(replaceOrderProductDO.getOldOrderProductId(), replaceOrderProductDO.getReplaceProductCount());
+                        }else {
+                            Integer productCount = replaceOrderProductDO.getReplaceProductCount() + productCountMap.get(replaceOrderProductDO.getOldOrderProductId());
+                            productCountMap.put(replaceOrderProductDO.getOldOrderProductId(), productCount);
+                        }
+                    }
+                }
+                if (CollectionUtil.isNotEmpty(exReplaceOrderMaterialDOList)) {
+                    for (ReplaceOrderMaterialDO replaceOrderMaterialDO:exReplaceOrderMaterialDOList) {
+                        if (!materialCountMap.containsKey(replaceOrderMaterialDO.getOldOrderMaterialId())) {
+                            materialCountMap.put(replaceOrderMaterialDO.getOldOrderMaterialId(), replaceOrderMaterialDO.getReplaceMaterialCount());
+                        }else {
+                            Integer materialCount = replaceOrderMaterialDO.getReplaceMaterialCount() + materialCountMap.get(replaceOrderMaterialDO.getOldOrderMaterialId());
+                            materialCountMap.put(replaceOrderMaterialDO.getOldOrderMaterialId(), materialCount);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /*
+     * 校验是否在续租单开始之前换货
+     */
+    private boolean checkReplaceTiamAndReletTime(ServiceResult<String, String> serviceResult, SimpleDateFormat simpleDateFormat, String replaceTimeString, String reletTimeString) {
+        try {
+            Date replaceTimeDate = simpleDateFormat.parse(replaceTimeString);
+            Date reletTimeDate = simpleDateFormat.parse(reletTimeString);
+            if (!(replaceTimeDate.compareTo(reletTimeDate)>0)) {
+                serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_BEFORE_RELET_TIME);
+                return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("【创建换货单,校验是否在续租单开始之前换货,时间parse出错】", e);
+            serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_PARSE_ERROR);
+            return true;
+        }
+        return false;
+    }
+
+    /*
+     * 校验换货时间
+     */
+    private boolean checkReplaceTime(ServiceResult<String, String> serviceResult, SimpleDateFormat simpleDateFormat, String replaceTimeString, String rentStartTimeString, String expectReturnTimeString) {
+        try {
+            Date replaceTimeDate = simpleDateFormat.parse(replaceTimeString);
+            Date rentStartTimeDate = simpleDateFormat.parse(rentStartTimeString);
+            Date expectReturnTimeDate = simpleDateFormat.parse(expectReturnTimeString);
+            if (!(replaceTimeDate.compareTo(rentStartTimeDate)>0)) {
+                serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_MUST_AFTER_RENT_START_TIME);
+                return true;
+            } else if (!(rentStartTimeDate.compareTo(expectReturnTimeDate)<0)) {
+                serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_MUST_BEFORE_EXPECT_RETURN_TIME);
+                return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("【创建换货单,校验换货时间parse出错】", e);
+            serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_PARSE_ERROR);
+            return true;
+        }
+        return false;
+    }
+
+    /*
+     * 装配该订单续租单map集合
+     */
+    private void assemblyReletOrder(Map<Integer, ReletOrderProductDO> reletOrderProductDOMap, Map<Integer, ReletOrderMaterialDO> reletOrderMaterialDOMap, ReletOrderDO reletOrderDO) {
+        if (reletOrderDO != null){
+            List<ReletOrderProductDO> reletOrderProductDOList = reletOrderDO.getReletOrderProductDOList();
+            List<ReletOrderMaterialDO> reletOrderMaterialDOList = reletOrderDO.getReletOrderMaterialDOList();
+            if (CollectionUtil.isNotEmpty(reletOrderProductDOList)) {
+                for (ReletOrderProductDO reletOrderProductDO:reletOrderProductDOList) {
+                    reletOrderProductDOMap.put(reletOrderProductDO.getOrderProductId(),reletOrderProductDO);
+                }
+            }
+            if (CollectionUtil.isNotEmpty(reletOrderMaterialDOList)) {
+                for (ReletOrderMaterialDO reletOrderMaterialDO:reletOrderMaterialDOList) {
+                    reletOrderMaterialDOMap.put(reletOrderMaterialDO.getOrderMaterialId(),reletOrderMaterialDO);
+                }
+            }
+        }
+    }
+    /*
+     * 获取换货数量并保存到map
+     */
+    private void saveRepalceCountInMap(List<ReplaceOrderProductDO> replaceOrderProductDOList, List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList, Map<Integer, Integer> replaceProductCountMap, Map<Integer, Integer> replaceMaterialCountMap) {
+        for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderProductDOList) {
+            if (!replaceProductCountMap.containsKey(replaceOrderProductDO.getOldOrderProductId())) {
+                replaceProductCountMap.put(replaceOrderProductDO.getOldOrderProductId(), replaceOrderProductDO.getReplaceProductCount());
+            }else {
+                Integer replaceProductCount = replaceOrderProductDO.getReplaceProductCount() + replaceProductCountMap.get(replaceOrderProductDO.getOldOrderProductId());
+                replaceProductCountMap.put(replaceOrderProductDO.getOldOrderProductId(), replaceProductCount);
+            }
+        }
+        for (ReplaceOrderMaterialDO replaceOrderMaterialDO : replaceOrderMaterialDOList) {
+            if (!replaceMaterialCountMap.containsKey(replaceOrderMaterialDO.getOldOrderMaterialId())) {
+                replaceMaterialCountMap.put(replaceOrderMaterialDO.getOldOrderMaterialId(), replaceOrderMaterialDO.getReplaceMaterialCount());
+            }else {
+                Integer replaceMaterialCount = replaceOrderMaterialDO.getReplaceMaterialCount() + replaceMaterialCountMap.get(replaceOrderMaterialDO.getOldOrderMaterialId());
+                replaceMaterialCountMap.put(replaceOrderMaterialDO.getOldOrderMaterialId(), replaceMaterialCount);
+            }
+        }
+    }
+
+
+    /*
      * 获取该用户处于待提交、审核中、处理中三种状态的商品或者配件的数量
-     *
-     * @param productCountMap
-     * @param materialCountMap
-     * @param k3ReturnOrderDOList
      */
     private void getReturnCount(Map<Integer, Integer> productCountMap, Map<Integer, Integer> materialCountMap, List<K3ReturnOrderDO> k3ReturnOrderDOList) {
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDOList)) {
@@ -842,12 +865,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             }
         }
     }
-    /**
+    /*
      * 获取商品和配件的退货数量和存入集合中
-     *
-     * @param productCountMap
-     * @param materialCountMap
-     * @param dBK3ReturnOrderDetailDOList
      */
     private void getProductAndMaterialReturnCount(Map<Integer, Integer> productCountMap, Map<Integer, Integer> materialCountMap, List<K3ReturnOrderDetailDO> dBK3ReturnOrderDetailDOList) {
         Integer materialId;
@@ -873,7 +892,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             }
         }
     }
-    /**
+    /*
      * 创建换货单校验风控信息
      */
     public void verifyCustomerRiskInfo(ReplaceOrderDO replaceOrderDO,CustomerDO customerDO,OrderDO orderDO,CustomerRiskManagementDO customerRiskManagementDO) {
@@ -1003,27 +1022,27 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
                 // 小于等于90天的,不走风控，大于90天的，走风控授信
                 if (OrderRentType.RENT_TYPE_DAY.equals(replaceOrderProductDO.getRentType()) && replaceOrderProductDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
-                    if (replaceOrderProductDO.getProductCount() > 0) {
-                        BigDecimal remainder = replaceOrderProductDO.getDepositAmount().divideAndRemainder(new BigDecimal(replaceOrderProductDO.getProductCount()))[1];
+                    if (replaceOrderProductDO.getReplaceProductCount() > 0) {
+                        BigDecimal remainder = replaceOrderProductDO.getDepositAmount().divideAndRemainder(new BigDecimal(replaceOrderProductDO.getReplaceProductCount()))[1];
                         if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
                             throw new BusinessException(ErrorCode.ORDER_PRODUCT_DEPOSIT_ERROR);
                         }
                     }
                     depositAmount = replaceOrderProductDO.getDepositAmount();
                 } else if (customerRiskManagementDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
-                    depositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(replaceOrderProductDO.getProductCount()));
+                    depositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(replaceOrderProductDO.getReplaceProductCount()));
                 } else {
                     if ((BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) || CommonConstant.COMMON_CONSTANT_YES.equals(replaceOrderProductDO.getIsNewProduct())) {
                         Integer depositCycle = replaceOrderProductDO.getDepositCycle() <= replaceOrderProductDO.getRentTimeLength() ? replaceOrderProductDO.getDepositCycle() : replaceOrderProductDO.getRentTimeLength();
-                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderProductDO.getProductUnitAmount(), new BigDecimal(replaceOrderProductDO.getProductCount()), 2), new BigDecimal(depositCycle));
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderProductDO.getProductUnitAmount(), new BigDecimal(replaceOrderProductDO.getReplaceProductCount()), 2), new BigDecimal(depositCycle));
                     } else {
                         Integer depositCycle = replaceOrderProductDO.getDepositCycle() <= replaceOrderProductDO.getRentTimeLength() ? replaceOrderProductDO.getDepositCycle() : replaceOrderProductDO.getRentTimeLength();
-                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderProductDO.getProductUnitAmount(), new BigDecimal(replaceOrderProductDO.getProductCount()), 2), new BigDecimal(depositCycle));
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderProductDO.getProductUnitAmount(), new BigDecimal(replaceOrderProductDO.getReplaceProductCount()), 2), new BigDecimal(depositCycle));
                     }
-                    creditDepositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(replaceOrderProductDO.getProductCount()));
+                    creditDepositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(replaceOrderProductDO.getReplaceProductCount()));
                     OrderProductDO orderProductDO = orderProductDOMap.get(replaceOrderProductDO.getOldOrderProductId());
                     BigDecimal oldSkuPrice= BigDecimalUtil.div(orderProductDO.getCreditDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),4);
-                    BigDecimal oldOrderProductCreditDepositAmount = BigDecimalUtil.mul(oldSkuPrice, new BigDecimal(replaceOrderProductDO.getProductCount()));
+                    BigDecimal oldOrderProductCreditDepositAmount = BigDecimalUtil.mul(oldSkuPrice, new BigDecimal(replaceOrderProductDO.getReplaceProductCount()));
                     totalCreditDepositAmount = BigDecimalUtil.sub(totalCreditDepositAmount,oldOrderProductCreditDepositAmount);
                     totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                 }
@@ -1058,8 +1077,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
                 // 小于等于90天的,不走风控，大于90天的，走风控授信
                 if (OrderRentType.RENT_TYPE_DAY.equals(replaceOrderMaterialDO.getRentType()) && replaceOrderMaterialDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
-                    if (replaceOrderMaterialDO.getMaterialCount() > 0) {
-                        BigDecimal remainder = replaceOrderMaterialDO.getDepositAmount().divideAndRemainder(new BigDecimal(replaceOrderMaterialDO.getMaterialCount()))[1];
+                    if (replaceOrderMaterialDO.getReplaceMaterialCount() > 0) {
+                        BigDecimal remainder = replaceOrderMaterialDO.getDepositAmount().divideAndRemainder(new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()))[1];
                         if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
                             throw new BusinessException(ErrorCode.ORDER_MATERIAL_DEPOSIT_ERROR);
                         }
@@ -1067,21 +1086,21 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
                     depositAmount = replaceOrderMaterialDO.getDepositAmount();
                 } else if (customerRiskManagementDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
-                    depositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(replaceOrderMaterialDO.getMaterialCount()));
+                    depositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()));
                 } else {
                     if (CommonConstant.COMMON_CONSTANT_YES.equals(replaceOrderMaterialDO.getIsNewMaterial())) {
-                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(replaceOrderMaterialDO.getMaterialCount()), 2), new BigDecimal(replaceOrderMaterialDO.getDepositCycle()));
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()), 2), new BigDecimal(replaceOrderMaterialDO.getDepositCycle()));
                     } else {
-                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(replaceOrderMaterialDO.getMaterialCount()), 2), new BigDecimal(replaceOrderMaterialDO.getDepositCycle()));
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()), 2), new BigDecimal(replaceOrderMaterialDO.getDepositCycle()));
                     }
                     MaterialTypeDO materialTypeDO = materialTypeMapper.findById(material.getMaterialType());
                     if (materialTypeDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsMainMaterial())) {
-                        creditDepositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(replaceOrderMaterialDO.getMaterialCount()));
+                        creditDepositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()));
                         totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
 
                         OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(replaceOrderMaterialDO.getOldOrderMaterialId());
                         BigDecimal oldSkuPrice= BigDecimalUtil.div(orderMaterialDO.getCreditDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),4);
-                        BigDecimal oldOrderMaterialCreditDepositAmount = BigDecimalUtil.mul(oldSkuPrice, new BigDecimal(replaceOrderMaterialDO.getMaterialCount()));
+                        BigDecimal oldOrderMaterialCreditDepositAmount = BigDecimalUtil.mul(oldSkuPrice, new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()));
                         totalCreditDepositAmount = BigDecimalUtil.sub(totalCreditDepositAmount,oldOrderMaterialCreditDepositAmount);
                         totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                     }

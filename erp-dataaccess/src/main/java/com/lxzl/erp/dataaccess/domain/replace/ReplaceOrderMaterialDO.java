@@ -24,7 +24,7 @@ public class ReplaceOrderMaterialDO  extends BaseDO {
 	private BigDecimal oldMaterialUnitAmount;
 	private Integer materialId;
 	private String materialName;
-	private Integer materialCount;
+	private Integer replaceMaterialCount;
 	private BigDecimal materialUnitAmount;
 	private BigDecimal rentDepositAmount;
 	private BigDecimal depositAmount;
@@ -156,12 +156,12 @@ public class ReplaceOrderMaterialDO  extends BaseDO {
 		this.materialName = materialName;
 	}
 
-	public Integer getMaterialCount(){
-		return materialCount;
+	public Integer getReplaceMaterialCount() {
+		return replaceMaterialCount;
 	}
 
-	public void setMaterialCount(Integer materialCount){
-		this.materialCount = materialCount;
+	public void setReplaceMaterialCount(Integer replaceMaterialCount) {
+		this.replaceMaterialCount = replaceMaterialCount;
 	}
 
 	public BigDecimal getMaterialUnitAmount(){
