@@ -804,7 +804,6 @@ public class StatementServiceImpl implements StatementService {
         // 商品生成结算单
         if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
             for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
-
                 BigDecimal itemAllAmount = orderProductDO.getProductAmount();
                 // 如果是K3订单，那么数量就要为在租数
                 if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
@@ -813,7 +812,8 @@ public class StatementServiceImpl implements StatementService {
                     orderProductDO.setProductCount(productCount);
                     itemAllAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(new BigDecimal(productCount), orderProductDO.getProductUnitAmount(), BigDecimalUtil.STANDARD_SCALE), new BigDecimal(orderProductDO.getRentTimeLength()), BigDecimalUtil.STANDARD_SCALE);
                 }
-                generateOrderProductStatement(orderDO.getRentTimeLength(),orderDO.getStatementDate(), currentTime, statementDays, loginUserId, addStatementOrderDetailDOList, rentStartTime, buyerCustomerId, orderId, orderProductDO, itemAllAmount,true);
+                List<StatementOrderDetailDO> statementOrderDetailDOList=generateOrderProductStatement(orderDO.getRentTimeLength(),orderDO.getStatementDate(), currentTime, statementDays, loginUserId,  rentStartTime, buyerCustomerId, orderId, orderProductDO, itemAllAmount,true);
+                if(CollectionUtil.isNotEmpty(statementOrderDetailDOList))addStatementOrderDetailDOList.addAll(statementOrderDetailDOList);
             }
         }
 
@@ -913,7 +913,8 @@ public class StatementServiceImpl implements StatementService {
         return addStatementOrderDetailDOList;
     }
 
-     public void generateOrderProductStatement(Integer rentTimeLength,Integer statementMode, Date currentTime, Integer statementDays, Integer loginUserId, List<StatementOrderDetailDO> addStatementOrderDetailDOList, Date rentStartTime, Integer buyerCustomerId, Integer orderId, OrderProductDO orderProductDO, BigDecimal itemAllAmount,boolean isStatementDeposit) {
+     public List<StatementOrderDetailDO> generateOrderProductStatement(Integer rentTimeLength,Integer statementMode, Date currentTime, Integer statementDays, Integer loginUserId,  Date rentStartTime, Integer buyerCustomerId, Integer orderId, OrderProductDO orderProductDO, BigDecimal itemAllAmount,boolean isStatementDeposit) {
+         List<StatementOrderDetailDO> addStatementOrderDetailDOList=new ArrayList<>();
         Calendar rentStartTimeCalendar = Calendar.getInstance();
         rentStartTimeCalendar.setTime(rentStartTime);
         // 先确定订单需要结算几期
@@ -1005,6 +1006,7 @@ public class StatementServiceImpl implements StatementService {
                 }
             }
         }
+        return addStatementOrderDetailDOList;
     }
 
     @Override
@@ -3488,7 +3490,7 @@ public class StatementServiceImpl implements StatementService {
         }
     }
 
-    void saveStatementOrder(List<StatementOrderDetailDO> addStatementOrderDetailDOList, Date currentTime, Integer loginUserId) {
+    public void saveStatementOrder(List<StatementOrderDetailDO> addStatementOrderDetailDOList, Date currentTime, Integer loginUserId) {
 
         if (CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)) {
             // 同一个时间的做归集

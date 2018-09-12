@@ -4,19 +4,24 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.DateUtil;
+import com.lxzl.erp.core.service.order.impl.support.OrderSupport;
+import com.lxzl.erp.core.service.statement.impl.StatementServiceImpl;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
+import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
 import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
@@ -28,6 +33,7 @@ import java.util.*;
  * @author: huanglong
  * @since: 2018/9/10/010
  */
+@Component
 public class StatementReplaceOrderSupport {
 
     /**
@@ -51,6 +57,16 @@ public class StatementReplaceOrderSupport {
         Map<Integer, OrderProductDO> orderProductDOMap = new HashMap<>();
         Map<Integer, OrderMaterialDO> orderMaterialDOMap = new HashMap<>();
         initOrderItemCatch(orderDO, orderProductDOMap, orderMaterialDOMap);
+        //获取时间轴
+        Date startTime, endTime;
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(replaceOrderDO.getIsReletOrderReplace())) {
+            ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(replaceOrderDO.getReletOrderNo());
+            startTime = reletOrderDO.getRentStartTime();
+            endTime = reletOrderDO.getExpectReturnTime();
+        } else {
+            startTime = orderDO.getRentStartTime();
+            endTime = orderSupport.generateExpectReturnTime(orderDO);
+        }
 
         //todo 获取换货单所属订单或者续租单生命周期
         Date currentTime = new Date();
@@ -61,24 +77,25 @@ public class StatementReplaceOrderSupport {
         Date endTimeAfterChange = DateUtil.getDayByOffset(changeTime, -1);
         Integer changeOrderId = replaceOrderDO.getId();
         List<StatementOrderDetailDO> needUpdateStatementOrderDetailList = new ArrayList<>();
+        //新增的结算单项，可能不存在结算单项需最后统一处理
+        List<StatementOrderDetailDO> needUpdateOrderBeforeList = new ArrayList<>();
         Map<Integer, StatementOrderDO> needUpdateStatementOrderMap = new HashMap<>();
         BigDecimal totalReturnRentToAccount = BigDecimal.ZERO;
         if (CollectionUtil.isNotEmpty(replaceOrderDO.getReplaceOrderProductDOList())) {
             for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderDO.getReplaceOrderProductDOList()) {
                 Integer changeCount = replaceOrderProductDO.getProductCount();
                 if (changeCount <= 0) continue;
-                OrderProductDO orderProductDO = orderProductDOMap.get(replaceOrderProductDO.getOldOrderProductId());
+                OrderProductDO oldProduct = orderProductDOMap.get(replaceOrderProductDO.getOldOrderProductId());
+                OrderProductDO newProduct = orderProductDOMap.get(replaceOrderProductDO.getNewOrderProductId());
                 //需退押金
-                BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), new BigDecimal(changeCount));
-                BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), new BigDecimal(changeCount));
+                BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(oldProduct.getRentDepositAmount(), new BigDecimal(oldProduct.getProductCount()), BigDecimalUtil.SCALE), new BigDecimal(changeCount));
+                BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(oldProduct.getDepositAmount(), new BigDecimal(oldProduct.getProductCount()), BigDecimalUtil.SCALE), new BigDecimal(changeCount));
 
                 //原订单项关联结算
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, replaceOrderProductDO.getOldOrderProductId());
 
                 if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
                     BigDecimal hasSettleRentAmount = BigDecimal.ZERO;
-                    OrderProductDO oldProduct = orderProductDOMap.get(replaceOrderProductDO.getOldOrderProductId());
-                    OrderProductDO newProduct = orderProductDOMap.get(replaceOrderProductDO.getNewOrderProductId());
                     BigDecimal totalAmount = newProduct.getProductAmount();
                     List<StatementOrderDetailDO> generateStatementDetailList = new ArrayList<>();
                     //处理押金
@@ -100,7 +117,7 @@ public class StatementReplaceOrderSupport {
                     }
                     //处理租金
                     //原被换商品有结算单，则新换货商品与之对齐，否则新商品单独结算
-                    if (BigDecimalUtil.compare(oldProduct.getProductAmount(), BigDecimal.ZERO) >0) {
+                    if (BigDecimalUtil.compare(oldProduct.getProductAmount(), BigDecimal.ZERO) > 0) {
                         for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
                             //只处理订单租金（根据订单租金生成相应换货结算）
                             if (!OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetailDO.getOrderType())) continue;
@@ -108,7 +125,9 @@ public class StatementReplaceOrderSupport {
                             if (DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(), endTimeAfterChange) <= 0) {
                                 continue;
                             }
-                            //todo 订单或续租单时间轴之外跳过
+                            //订单或续租单时间轴之外跳过
+                            if (DateUtil.daysBetween(endTime, statementOrderDetailDO.getStatementStartTime()) > 0 || DateUtil.daysBetween(statementOrderDetailDO.getStatementStartTime(), startTime) > 0)
+                                continue;
                             //截断期
                             if (DateUtil.daysBetween(statementOrderDetailDO.getStatementStartTime(), endTimeAfterChange) >= 0) {
                                 Integer oldDays = DateUtil.daysBetween(statementOrderDetailDO.getStatementStartTime(), statementOrderDetailDO.getStatementEndTime()) + 1;
@@ -130,8 +149,12 @@ public class StatementReplaceOrderSupport {
                         //存在的误差归到在最后一期
                         fillGapAmountToLastPhase(needUpdateStatementOrderMap, hasSettleRentAmount, totalAmount, generateStatementDetailList);
                         needUpdateStatementOrderDetailList.addAll(generateStatementDetailList);
-                    }else{
-
+                    } else {
+                        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), orderDO.getRentStartTime());
+                        List<StatementOrderDetailDO> statementDetailDOList = new StatementServiceImpl().generateOrderProductStatement(orderDO.getRentTimeLength(), orderDO.getStatementDate(), currentTime, statementDays, loginUserId, changeTime, buyerCustomerId, newProduct.getOrderId(), newProduct, newProduct.getProductAmount(), false);
+                        if (CollectionUtil.isNotEmpty(statementDetailDOList)) {
+                            needUpdateOrderBeforeList.addAll(statementDetailDOList);
+                        }
                     }
 
                 }
@@ -144,6 +167,8 @@ public class StatementReplaceOrderSupport {
         //第一期多的钱不退
         //押金（增加退押金记录，增加新商品项需缴押金；计算差价）
 
+        //必须在缓存中结算单更新之后处理新生成的结算单
+        new StatementServiceImpl().saveStatementOrder(needUpdateOrderBeforeList, currentTime, loginUserId);
         //todo 退款
         return null;
     }
@@ -329,4 +354,13 @@ public class StatementReplaceOrderSupport {
 
     @Autowired
     private StatementCommonSupport statementCommonSupport;
+
+    @Autowired
+    private StatementOrderSupport statementOrderSupport;
+
+    @Autowired
+    private ReletOrderMapper reletOrderMapper;
+
+    @Autowired
+    private OrderSupport orderSupport;
 }
