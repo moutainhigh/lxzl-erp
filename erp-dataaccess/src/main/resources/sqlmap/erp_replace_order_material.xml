@@ -18,7 +18,7 @@
 		<result column="old_material_unit_amount" jdbcType="DECIMAL" property="oldMaterialUnitAmount" />
 		<result column="material_id" jdbcType="INTEGER" property="materialId" />
 		<result column="material_name" jdbcType="VARCHAR" property="materialName" />
-		<result column="material_count" jdbcType="INTEGER" property="materialCount" />
+		<result column="replace_material_count" jdbcType="INTEGER" property="replaceMaterialCount" />
 		<result column="material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount" />
 		<result column="rent_deposit_amount" jdbcType="DECIMAL" property="rentDepositAmount" />
 		<result column="deposit_amount" jdbcType="DECIMAL" property="depositAmount" />
@@ -36,7 +36,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		erom.id,erom.replace_order_id,erom.replace_order_no,erom.old_order_material_id,erom.old_material_entry,erom.new_order_material_id,erom.rent_type,erom.rent_time_length,erom.rent_length_type,erom.deposit_cycle,erom.payment_cycle,erom.pay_mode,erom.old_material_unit_amount,erom.material_id,erom.material_name,erom.material_count,erom.material_unit_amount,erom.rent_deposit_amount,erom.deposit_amount,erom.credit_deposit_amount,erom.is_new_material,erom.data_status,erom.remark,erom.create_time,erom.create_user,erom.update_time,erom.update_user,erom.real_replace_material_count,erom.is_relet_order_replace,erom.relet_order_item_id
+		erom.id,erom.replace_order_id,erom.replace_order_no,erom.old_order_material_id,erom.old_material_entry,erom.new_order_material_id,erom.rent_type,erom.rent_time_length,erom.rent_length_type,erom.deposit_cycle,erom.payment_cycle,erom.pay_mode,erom.old_material_unit_amount,erom.material_id,erom.material_name,erom.replace_material_count,erom.material_unit_amount,erom.rent_deposit_amount,erom.deposit_amount,erom.credit_deposit_amount,erom.is_new_material,erom.data_status,erom.remark,erom.create_time,erom.create_user,erom.update_time,erom.update_user,erom.real_replace_material_count,erom.is_relet_order_replace,erom.relet_order_item_id
 	</sql>
 
 	<select id="findById" resultMap="ReplaceOrderMaterialDO" parameterType="java.lang.Integer">
@@ -107,8 +107,8 @@
 			<if test="materialName != null">
 				material_name = #{materialName,jdbcType=VARCHAR},
 			</if>
-			<if test="materialCount != null">
-				material_count = #{materialCount,jdbcType=INTEGER},
+			<if test="replaceMaterialCount != null">
+				replace_material_count = #{replaceMaterialCount,jdbcType=INTEGER},
 			</if>
 			<if test="materialUnitAmount != null">
 				material_unit_amount = #{materialUnitAmount,jdbcType=DECIMAL},
@@ -165,7 +165,7 @@
 
 	<insert id="saveList" parameterType="java.util.ArrayList" >
 		INSERT INTO erp_replace_order_material (replace_order_id,replace_order_no,old_order_material_id,old_material_entry,new_order_material_id,rent_type,rent_time_length,rent_length_type,deposit_cycle,payment_cycle,pay_mode,
-		old_material_unit_amount,material_id,material_name,material_count,material_unit_amount,rent_deposit_amount,deposit_amount,credit_deposit_amount,is_new_material,data_status,remark,create_time,create_user,update_time,
+		old_material_unit_amount,material_id,material_name,replace_material_count,material_unit_amount,rent_deposit_amount,deposit_amount,credit_deposit_amount,is_new_material,data_status,remark,create_time,create_user,update_time,
 		update_user,real_replace_material_count,is_relet_order_replace,relet_order_item_id)
 		values
 		<foreach collection="list" item="replaceOrderMaterialDO" separator="," >
@@ -173,7 +173,7 @@
 			#{replaceOrderMaterialDO.oldMaterialEntry},#{replaceOrderMaterialDO.newOrderMaterialId},#{replaceOrderMaterialDO.rentType},#{replaceOrderMaterialDO.rentTimeLength},
 			#{replaceOrderMaterialDO.rentLengthType},#{replaceOrderMaterialDO.depositCycle},#{replaceOrderMaterialDO.paymentCycle},
 			#{replaceOrderMaterialDO.payMode},#{replaceOrderMaterialDO.oldMaterialUnitAmount},#{replaceOrderMaterialDO.materialId},#{replaceOrderMaterialDO.materialName},
-			#{replaceOrderMaterialDO.materialCount},#{replaceOrderMaterialDO.materialUnitAmount},#{replaceOrderMaterialDO.rentDepositAmount},
+			#{replaceOrderMaterialDO.replaceMaterialCount},#{replaceOrderMaterialDO.materialUnitAmount},#{replaceOrderMaterialDO.rentDepositAmount},
 			#{replaceOrderMaterialDO.rentDepositAmount},#{replaceOrderMaterialDO.depositAmount},#{replaceOrderMaterialDO.creditDepositAmount},
 			#{replaceOrderMaterialDO.isNewProduct},#{replaceOrderMaterialDO.dataStatus},#{replaceOrderMaterialDO.remark},#{replaceOrderMaterialDO.realReplaceMaterialCount},
 			#{replaceOrderMaterialDO.isReletOrderReplace},#{replaceOrderMaterialDO.reletOrderItemId})

@@ -20,7 +20,7 @@
 		<result column="product_name" jdbcType="VARCHAR" property="productName" />
 		<result column="product_sku_id" jdbcType="INTEGER" property="productSkuId" />
 		<result column="product_sku_name" jdbcType="VARCHAR" property="productSkuName" />
-		<result column="product_count" jdbcType="INTEGER" property="productCount" />
+		<result column="replace_product_count" jdbcType="INTEGER" property="replaceProductCount" />
 		<result column="product_unit_amount" jdbcType="DECIMAL" property="productUnitAmount" />
 		<result column="rent_deposit_amount" jdbcType="DECIMAL" property="rentDepositAmount" />
 		<result column="deposit_amount" jdbcType="DECIMAL" property="depositAmount" />
@@ -38,7 +38,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		erop.id,erop.replace_order_id,erop.replace_order_no,erop.old_order_product_id,erop.old_product_entry,erop.new_order_product_id,erop.rent_type,erop.rent_time_length,erop.rent_length_type,erop.deposit_cycle,erop.payment_cycle,erop.pay_mode,erop.old_product_unit_amount,erop.product_id,erop.product_name,erop.product_sku_id,erop.product_sku_name,erop.product_count,erop.product_unit_amount,erop.rent_deposit_amount,erop.deposit_amount,erop.credit_deposit_amount,erop.is_new_product,erop.data_status,erop.remark,erop.create_time,erop.create_user,erop.update_time,erop.update_user,erop.real_replace_product_count,erop.is_relet_order_replace,erop.relet_order_item_id
+		erop.id,erop.replace_order_id,erop.replace_order_no,erop.old_order_product_id,erop.old_product_entry,erop.new_order_product_id,erop.rent_type,erop.rent_time_length,erop.rent_length_type,erop.deposit_cycle,erop.payment_cycle,erop.pay_mode,erop.old_product_unit_amount,erop.product_id,erop.product_name,erop.product_sku_id,erop.product_sku_name,erop.replace_product_count,erop.product_unit_amount,erop.rent_deposit_amount,erop.deposit_amount,erop.credit_deposit_amount,erop.is_new_product,erop.data_status,erop.remark,erop.create_time,erop.create_user,erop.update_time,erop.update_user,erop.real_replace_product_count,erop.is_relet_order_replace,erop.relet_order_item_id
 	</sql>
 
 	<select id="findById" resultMap="ReplaceOrderProductDO" parameterType="java.lang.Integer">
@@ -115,8 +115,8 @@
 			<if test="productSkuName != null">
 				product_sku_name = #{productSkuName,jdbcType=VARCHAR},
 			</if>
-			<if test="productCount != null">
-				product_count = #{productCount,jdbcType=INTEGER},
+			<if test="replaceProductCount != null">
+				replace_product_count = #{replaceProductCount,jdbcType=INTEGER},
 			</if>
 			<if test="productUnitAmount != null">
 				product_unit_amount = #{productUnitAmount,jdbcType=DECIMAL},
@@ -172,7 +172,7 @@
 	</update>
 	<insert id="saveList" parameterType="java.util.ArrayList" >
 		INSERT INTO erp_replace_order_product (replace_order_id,replace_order_no,old_order_product_id,old_product_entry,new_order_product_id,rent_type,rent_time_length,rent_length_type,deposit_cycle,payment_cycle,pay_mode,
-		old_product_unit_amount,product_id,product_name,product_sku_id,product_sku_name,product_count,product_unit_amount,rent_deposit_amount,deposit_amount,credit_deposit_amount,is_new_product,data_status,remark,create_time,
+		old_product_unit_amount,product_id,product_name,product_sku_id,product_sku_name,replace_product_count,product_unit_amount,rent_deposit_amount,deposit_amount,credit_deposit_amount,is_new_product,data_status,remark,create_time,
 		create_user,update_time,update_user,real_replace_product_count,is_relet_order_replace,relet_order_item_id)
 		values
 		<foreach collection="list" item="replaceOrderProductDO" separator="," >
@@ -180,7 +180,7 @@
 			#{replaceOrderProductDO.oldProductEntry},#{replaceOrderProductDO.newOrderProductId},#{replaceOrderProductDO.rentType},#{replaceOrderProductDO.rentTimeLength},
 			#{replaceOrderProductDO.rentLengthType},#{replaceOrderProductDO.depositCycle},#{replaceOrderProductDO.paymentCycle},
 			#{replaceOrderProductDO.payMode},#{replaceOrderProductDO.oldProductUnitAmount},#{replaceOrderProductDO.productId},#{replaceOrderProductDO.productName},
-			#{replaceOrderProductDO.productSkuId},#{replaceOrderProductDO.productSkuName},#{replaceOrderProductDO.productCount},
+			#{replaceOrderProductDO.productSkuId},#{replaceOrderProductDO.productSkuName},#{replaceOrderProductDO.replaceProductCount},
 			#{replaceOrderProductDO.productUnitAmount},#{replaceOrderProductDO.rentDepositAmount},#{replaceOrderProductDO.depositAmount},#{replaceOrderProductDO.creditDepositAmount},
 			#{replaceOrderProductDO.isNewProduct},#{replaceOrderProductDO.dataStatus},#{replaceOrderProductDO.remark},#{replaceOrderProductDO.realReplaceProductCount},
 			#{replaceOrderProductDO.isReletOrderReplace},#{replaceOrderProductDO.reletOrderItemId})

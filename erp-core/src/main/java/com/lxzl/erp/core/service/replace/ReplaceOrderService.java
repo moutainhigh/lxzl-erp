@@ -23,4 +23,6 @@ public interface ReplaceOrderService extends BaseService {
     ServiceResult<String,ReplaceOrder> queryReplaceOrderByNo(String replaceOrderNo);
 
     ServiceResult<String,String> confirmReplaceOrder(ReplaceOrder replaceOrder);
+
+    ServiceResult<String,String> replaceOrderDeliveryCallBack(ReplaceOrder replaceOrder);
 }

@@ -35,7 +35,7 @@ public class ReplaceOrderProduct extends BasePO {
 	private String productSkuName;   //商品SKU名称
 	@NotNull(message = ErrorCode.CHANGE_COUNT_ERROR)
 	@Min(value = 1, message = ErrorCode.CHANGE_COUNT_ERROR)
-	private Integer productCount;   //商品总数
+	private Integer replaceProductCount;   //商品总数
 	private BigDecimal productUnitAmount;   //商品单价
 	private BigDecimal rentDepositAmount;   //租金押金金额
 	private BigDecimal depositAmount;   //设备押金金额
@@ -188,12 +188,12 @@ public class ReplaceOrderProduct extends BasePO {
 		this.productSkuName = productSkuName;
 	}
 
-	public Integer getProductCount(){
-		return productCount;
+	public Integer getReplaceProductCount() {
+		return replaceProductCount;
 	}
 
-	public void setProductCount(Integer productCount){
-		this.productCount = productCount;
+	public void setReplaceProductCount(Integer replaceProductCount) {
+		this.replaceProductCount = replaceProductCount;
 	}
 
 	public BigDecimal getProductUnitAmount(){
