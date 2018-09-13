@@ -1093,6 +1093,31 @@ public class ErrorCode {
     public static final String STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR = "J300000005";
     public static final String STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR = "J300000006";
 
+    //换货
+    public static final String REPLACE_TIME_NOT_NULL = "J310000001";//换货时间不能为空
+    public static final String REPLACE_REASON_TYPE_ERROR = "J310000002";//换货原因类型错误
+    public static final String REPLACE_ORDER_DETAIL_LIST_NOT_NULL = "J310000003";//换货详情列表不能为空
+    public static final String ORDER_ITEM_TYPE_NOT_NULL = "J310000004";//换货商品类型不能为空
+    public static final String ORDER_ITEM_ENTRY_NOT_NULL = "J310000005";//换货项行号不能为空
+    public static final String REPLACE_ORDER_STATUS_ERROR = "J310000006";//只有订单状态为租赁中和部分退货的订单才能进行换货操作
+    public static final String REPLACE_TIME_PARSE_ERROR = "J310000007";//校验换货时间parse出错
+    public static final String REPLACE_TIME_MUST_AFTER_RENT_START_TIME = "J310000008";//换货时间必须大于订单起租时间
+    public static final String REPLACE_TIME_MUST_BEFORE_EXPECT_RETURN_TIME = "J310000009";//换货时间不能大于订单预计归还时间
+    public static final String REPLACE_PRODUCT_COUNT_MORE_THAN_CANREPLACE_COUNT = "J310000010";//换货商品超过可换数量
+    public static final String REPLACE_MATERIAL_COUNT_MORE_THAN_CANREPLACE_COUNT = "J310000011";//换货配件超过可换数量
+    public static final String REPLACE_ADDRESS_IS_NULL = "J310000012";//换货地址不能为空
+    public static final String REPLACE_CONSIGNEE_NAME_IS_NULL = "J310000013";//换货收件人姓名不能为空
+    public static final String REPLACE_CONSIGNEE_PHONE_IS_NULL = "J310000014";//换货收件人电话不能为空
+    public static final String REPLACE_TIME_BEFORE_RELET_TIME = "J310000015";//该订单的换货时间必须大于该订单的续租时间
+    public static final String REPLACE_ORDER_NO_NOT_NULL = "J310000016";//换货单号不能为空
+    public static final String REPLACE_ORDER_ERROR = "J310000017";//换货单不存在
+    public static final String CANCEL_REPLACE_ORDER_BY_CREATE_USER = "J310000018";//换货单只能创建人取消
+    public static final String CANCEL_REPLACE_ORDER_STATUS_ERROR = "J310000019";//换货单只有在提交前才能取消
+    public static final String UPDATE_REPLACE_ORDER_BY_CREATE_USER = "J310000020";//修改换货单只能创建人修改
+    public static final String UPDATE_REPLACE_ORDER_STATUS_ERROR = "J310000021";//换货单只有在提交前才能修改
+    public static final String REPLACE_ORDER_NO_ERROR = "J310000022";//换货单不存在
+
+
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -2166,7 +2191,32 @@ public class ErrorCode {
         MAP.put(STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR, "查询周经营数据传入的查询开始时间必须是星期一");
         MAP.put(STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR, "查询月经营数据传入的查询开始时间必须是月初一号");
 
+
+        MAP.put(REPLACE_TIME_NOT_NULL, "换货时间不能为空");
+        MAP.put(REPLACE_REASON_TYPE_ERROR, "换货原因类型错误");
+        MAP.put(REPLACE_ORDER_DETAIL_LIST_NOT_NULL, "换货详情不能为空");
+        MAP.put(ORDER_ITEM_TYPE_NOT_NULL, "换货商品类型不能为空");
+        MAP.put(ORDER_ITEM_ENTRY_NOT_NULL, "换货项行号不能为空");
+        MAP.put(REPLACE_ORDER_STATUS_ERROR, "只有订单状态为租赁中和部分退货的订单才能进行换货操作");
+        MAP.put(REPLACE_TIME_PARSE_ERROR, "校验换货时间parse出错");
+        MAP.put(REPLACE_TIME_MUST_AFTER_RENT_START_TIME, "换货时间必须大于订单起租时间");
+        MAP.put(REPLACE_TIME_MUST_BEFORE_EXPECT_RETURN_TIME, "换货时间必须小于订单预计归还时间");
+        MAP.put(REPLACE_PRODUCT_COUNT_MORE_THAN_CANREPLACE_COUNT, "换货商品超过可换数量");
+        MAP.put(REPLACE_MATERIAL_COUNT_MORE_THAN_CANREPLACE_COUNT, "换货配件超过可换数量");
+        MAP.put(REPLACE_ADDRESS_IS_NULL, "换货地址不能为空");
+        MAP.put(REPLACE_CONSIGNEE_NAME_IS_NULL, "换货收件人姓名不能为空");
+        MAP.put(REPLACE_CONSIGNEE_PHONE_IS_NULL, "换货收件人电话不能为空");
+        MAP.put(REPLACE_TIME_BEFORE_RELET_TIME, "该订单的换货时间必须大于该订单的续租时间");
+        MAP.put(REPLACE_ORDER_NO_NOT_NULL, "换货单号不能为空");
+        MAP.put(REPLACE_ORDER_ERROR, "换货单不存在");
+        MAP.put(CANCEL_REPLACE_ORDER_BY_CREATE_USER, "换货单只能创建人取消");
+        MAP.put(CANCEL_REPLACE_ORDER_STATUS_ERROR, "换货单只有在提交前才能取消");
+        MAP.put(UPDATE_REPLACE_ORDER_BY_CREATE_USER, "修改换货单只能创建人修改");
+        MAP.put(UPDATE_REPLACE_ORDER_STATUS_ERROR, "换货单只有在提交前才能修改");
+        MAP.put(REPLACE_ORDER_NO_ERROR, "换货单不存在");
+
         MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
+
 
     }
 
