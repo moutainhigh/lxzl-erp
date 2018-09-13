@@ -152,6 +152,20 @@ public class UserRoleServiceImpl implements UserRoleService {
         return false;
     }
 
+    @Override
+    public boolean isAdmin(Integer userId) {
+        List<RoleDO> roleList = roleMapper.findByUserId(userId);
+        if (roleList != null && roleList.size() > 0) {
+            for (RoleDO roleDO : roleList) {
+                if (CommonConstant.ADMIN_REAL_NAME.equals(roleDO.getRoleName()) && CommonConstant.ADMIN_ID.equals(roleDO.getId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
     /**
      * 添加权限
      */

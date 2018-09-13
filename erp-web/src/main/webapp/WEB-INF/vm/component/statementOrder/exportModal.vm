@@ -19,7 +19,7 @@
             </div>
         </form>
 
-        <form action="" method="post" id="exportForm" target="exportFrame">
+        <form action="" method="post" id="exportForm">
             <div class="panel-body pn">
                 <input type="hidden" name="pageNo" id="pageNo" value="1" />
                 <input type="hidden" name="pageSize" id="pageSize" value="100000000"/>
@@ -31,6 +31,5 @@
                 <button type="button" class="button btn-default cancelButton">取消</button>
             </div>
         </form>
-        <iframe id="exportFrame" name="exportFrame" src="about:blank" style="display:none;"></iframe>
     </div>
 </div>
