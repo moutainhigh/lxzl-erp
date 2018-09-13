@@ -106,6 +106,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
+                                            {{#dataSource}}
                                             {{#listData}}
                                             <tr class="productRow skuRow" productRowKey="{{productId}}">
                                                 <td><a href="{{customerUrl}}" target="_blank">{{orderNo}}</a></td>
@@ -113,7 +114,7 @@
                                                     <p class="mn mb5">{{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}{{productName}}</p>  
                                                     <p class="mn mw300">{{productSkuName}}</p> 
                                                 </td>
-                                                <td>{{brandName}}</td>
+                                                <td>￥{{#price}}{{oldProductUnitAmount}}{{/price}}</td>
                                                 <td>{{propertiesToStr}}</td>
                                                 <td>
                                                     <p class="mn mb5">{{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}{{productName}}</p>  
@@ -122,7 +123,11 @@
                                                 <td>{{replaceProductCount}}</td>
                                                 <td>￥{{#price}}{{productUnitAmount}}{{/price}}</td>
                                                 <td>{{remark}}</td>
-                                                <tdclass="text-right"></td>
+                                                <td class="text-right">
+                                                    <div class="btn-group text-right">
+                                                        <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}" data-isnew="{{isNewProduct}}" data-serialnumber="{{serialNumber}}">删除</a>
+                                                    </div>
+                                                </td>
                                             </tr>
                                             {{/listData}}
                                             {{^listData}}
@@ -130,6 +135,7 @@
                                                 <td valign="top" colspan="9" class="text-center">没有选择商品</td>
                                             </tr>
                                             {{/listData}}
+                                            {{/dataSource}}
                                             </tbody>
                                         </script>
                                         <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
