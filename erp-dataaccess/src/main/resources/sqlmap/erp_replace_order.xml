@@ -281,9 +281,9 @@
 
 	<select id="findReplaceOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ero.id) FROM erp_replace_order ero
-		INNER JOIN erp_user eu1 ON eu.id = ero.confirm_replace_user
-		INNER JOIN erp_user eu2 ON eu.id = ero.create_user
-		INNER JOIN erp_user eu3 ON eu.id = ero.update_user
+		INNER JOIN erp_user eu1 ON eu1.id = ero.confirm_replace_user
+		INNER JOIN erp_user eu2 ON eu2.id = ero.create_user
+		INNER JOIN erp_user eu3 ON eu3.id = ero.update_user
 		INNER JOIN erp_customer ec ON ec.id = ero.customer_id AND ec.data_status = 1
 		<where>
 			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderId != null ">
@@ -358,9 +358,9 @@
 			eu1.real_name AS confirmReplaceUserName,eu2.real_name AS createUserName,eu3.real_name AS updateUserName
 		</trim>
 		FROM erp_replace_order ero
-		INNER JOIN erp_user eu1 ON eu.id = ero.confirm_replace_user
-		INNER JOIN erp_user eu2 ON eu.id = ero.create_user
-		INNER JOIN erp_user eu3 ON eu.id = ero.update_user
+		INNER JOIN erp_user eu1 ON eu1.id = ero.confirm_replace_user
+		INNER JOIN erp_user eu2 ON eu2.id = ero.create_user
+		INNER JOIN erp_user eu3 ON eu3.id = ero.update_user
 		INNER JOIN erp_customer ec ON ec.id = ero.customer_id AND ec.data_status = 1
 		<where>
 			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderId != null ">
