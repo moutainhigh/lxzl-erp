@@ -263,15 +263,23 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                 //退授信额度
                 BigDecimal totalCreditDepositAmount=BigDecimal.ZERO;
                 for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList) {
+                    BigDecimal creditDepositAmount=BigDecimal.ZERO;
                     if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())) {
                         //兼容erp订单和k3订单商品项
                         OrderProductDO orderProductDO = productSupport.getOrderProductDO(oldOrderProductDOMap, erpOrderProductDOMap, k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
                         if (orderProductDO != null) {
+                            Integer rentingProductCount=orderProductDO.getRentingProductCount();//实际在租数
                             Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
                             if (productCount < 0) {
                                 dingDingSupport.dingDingSendMessage(getItemLowZero(orderProductDO.getOrderId(), orderProductDO.getId(), productCount));
+                            }else{
+                                if(null!=orderProductDO.getCreditDepositAmount()&&orderProductDO.getCreditDepositAmount().compareTo(BigDecimal.ZERO)==1){
+                                    creditDepositAmount=orderProductDO.getCreditDepositAmount().divide(BigDecimal.valueOf(rentingProductCount)).multiply(BigDecimal.valueOf(k3ReturnOrderDetailDO.getProductCount())).setScale(2,BigDecimal.ROUND_HALF_UP);
+                                    totalCreditDepositAmount=totalCreditDepositAmount.add(creditDepositAmount);
+                                }
                             }
                             productCount = productCount < 0 ? 0 : productCount;
+                            orderProductDO.setCreditDepositAmount(orderProductDO.getCreditDepositAmount().subtract(creditDepositAmount));
                             orderProductDO.setRentingProductCount(productCount);
                             orderProductDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                             orderProductDO.setUpdateTime(now);
@@ -281,9 +289,6 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                             k3ReturnOrderDetailDO.setUpdateUser(userId);
                             k3ReturnOrderDetailDO.setUpdateTime(now);
                             k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
-                            if(null!=orderProductDO.getCreditDepositAmount()&&orderProductDO.getCreditDepositAmount().compareTo(BigDecimal.ZERO)==1){
-                                totalCreditDepositAmount=totalCreditDepositAmount.add(orderProductDO.getCreditDepositAmount());
-                            }
                         } else {
                             dingDingSupport.dingDingSendMessage(getNotFindReturnOrderDetail(k3ReturnOrderDO.getReturnOrderNo(), "商品", k3ReturnOrderDetailDO.getId()));
                         }
@@ -358,11 +363,15 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
                         orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                         orderDO.setUpdateTime(now);
+                        orderDO.setTotalCreditDepositAmount(orderDO.getTotalCreditDepositAmount().subtract(totalCreditDepositAmount));
+                        orderDO.setTotalProductCreditDepositAmount(orderDO.getTotalCreditDepositAmount().subtract(totalCreditDepositAmount));
                         orderMapper.update(orderDO);
                     } else if (orderDO.getTotalProductCount() > totalRentingProductCount || orderDO.getTotalMaterialCount() > totalRentingMaterialCount) {//部分退货
                         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_PART_RETURN);
                         orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                         orderDO.setUpdateTime(now);
+                        orderDO.setTotalCreditDepositAmount(orderDO.getTotalCreditDepositAmount().subtract(totalCreditDepositAmount));
+                        orderDO.setTotalProductCreditDepositAmount(orderDO.getTotalCreditDepositAmount().subtract(totalCreditDepositAmount));
                         orderMapper.update(orderDO);
                     }
                     // 记录订单时间轴
