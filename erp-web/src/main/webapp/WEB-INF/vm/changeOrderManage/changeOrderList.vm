@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-换货单管理-换货单列表</title>
+    <title>凌雄ERP-K3数据-换货单列表</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
 </head>
@@ -61,14 +61,6 @@
                                         <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                                     </div>
                                 </div>
-
-##                                <div class="form-group pull-right mn mr10" style="width: 210px;">
-##                                    <label for="monthpicker2" class="input-group date">
-##                                        <input type="text" name="monthpicker2" id="monthpicker2" data-type="date" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择下单时间">
-##                                        <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
-##                                    </label>
-##                                </div>
-
                             </form>
                         </div>
                     </div>
@@ -79,33 +71,14 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr class="bg-light">
-                                {{#hasCommonActionButtons}}
-                                <th class="text-center">
-                                    <label class="option block mn">
-                                        <input type="checkbox" name="orders" value="">
-                                        <span class="checkbox mn"></span>
-                                    </label>
-                                </th>
-                                {{/hasCommonActionButtons}}
                                 <th>换货单编号</th>
                                 <th>客户编号</th>
-                                <th>起租时间</th>
-##                                <th>商品总数</th>
-##                                <th>配件总数</th>
-##                                <th>实际商品总数</th>
-##                                <th>实际配件总数</th>
-                                <th>总差价</th>
-                                <th>服务费</th>
-                                <th>损坏加收费</th>
-                                <th>是否有损坏</th>
-                                <th>换货原因类型</th>
-                                <th>换货原因</th>
-                                <th>换货方式</th>
-                                <th>换货单状态</th>
+                                <th>客户名称</th>
+                                <th>换货地址</th>
+                                <th>换货类型</th>
+                                <th>状态</th>
                                 <th>备注</th>
-                                <th>跟单员</th>
-                                <th>取货地址</th>
-                                <th>添加人</th>
+                                <th>创建</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
                                 {{/hasRowActionButtons}}
@@ -115,31 +88,12 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                {{#hasCommonActionButtons}}
-                                <td class="text-center">
-                                    <label class="option block mn">
-                                        <input type="checkbox" name="mobileos" value="FR">
-                                        <span class="checkbox mn"></span>
-                                    </label>
-                                </td>
-                                {{/hasCommonActionButtons}}
                                 <td>{{changeOrderNo}}</td>
                                 <td>{{customerNo}}</td>
                                 <td>{{#shortTime}}{{rentStartTime}}{{/shortTime}}</td>
-##                                <td>{{totalChangeProductCount}}</td>
-##                                <td>{{totalChangeMaterialCount}}</td>
-##                                <td>{{realTotalChangeProductCount}}</td>
-##                                <td>{{realTotalChangeMaterialCount}}</td>
                                 <td>￥{{#price}}{{totalPriceDiff}}{{/price}}</td>
                                 <td>￥{{#price}}{{serviceCost}}{{/price}}</td>
-                                <td>￥{{#price}}{{damageCost}}{{/price}}</td>
-                                <td>{{isDamageValue}}</td>
-                                <td>{{changeReasonTypeValue}}</td>
-                                <td>{{changeReason}}</td>
-                                <td>{{changeModeValue}}</td>
                                 <td class="{{changeOrderStatusClass}}">{{changeOrderStatusValue}}</td>
-                                <td>{{remark}}</td>
-                                <td>{{ownerName}}</td>
                                 <td>
                                     <p class="mn">{{changeOrderConsignInfo.consigneeName}}</p>
                                     <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{changeOrderConsignInfo.consigneePhone}}</p>
@@ -161,20 +115,13 @@
                                             {{/rowActionButtons}}
                                         </ul>
                                     </div>
-
-
-##                                    <div class="btn-group text-right">
-##                                        {{#rowActionButtons}}
-##                                        <a href="${ctx}{{menuUrl}}?no={{changeOrderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-no="{{changeOrderNo}}">{{text}}</a>
-##                                        {{/rowActionButtons}}
-##                                    </div>
                                 </td>
                                 {{/hasRowActionButtons}}
                             </tr>
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="14" class="text-center">无数据</td>
+                                <td valign="top" colspan="9" class="text-center">无数据</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
