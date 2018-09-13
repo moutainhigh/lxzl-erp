@@ -34,8 +34,8 @@
 		<result column="consignee_phone" jdbcType="VARCHAR" property="consigneePhone" />
 		<result column="is_relet_order_replace" jdbcType="INTEGER" property="isReletOrderReplace"/>
 		<result column="relet_order_no" jdbcType="VARCHAR" property="reletOrderNo"/>
-		<collection property="replaceOrderDetailList" resultMap="ReplaceOrderProductDO"/>
-		<collection property="replaceOrderMaterialList" resultMap="ReplaceOrderMaterialDO"/>
+		<collection property="replaceOrderProductDOList" resultMap="ReplaceOrderProductDO"/>
+		<collection property="replaceOrderMaterialDOList" resultMap="ReplaceOrderMaterialDO"/>
 	</resultMap>
 
 	<resultMap id="ReplaceOrderProductDO" type="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO">
