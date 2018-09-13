@@ -72,6 +72,7 @@ public class ReplaceOrder extends BasePO {
 	private String confirmReplaceUserName;   //确认换货人
 	private Integer isReletOrderReplace;   //是否是续租单换货，1是0否
 	private String reletOrderNo;   //续租单编号
+	private String customerName;  //客户名称
 
 
 	public Integer getReplaceOrderId(){
@@ -360,5 +361,13 @@ public class ReplaceOrder extends BasePO {
 
 	public void setReletOrderNo(String reletOrderNo) {
 		this.reletOrderNo = reletOrderNo;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
 	}
 }
