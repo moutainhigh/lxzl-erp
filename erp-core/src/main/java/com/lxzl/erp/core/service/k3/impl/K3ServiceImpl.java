@@ -1099,7 +1099,7 @@ public class K3ServiceImpl implements K3Service {
             }else{
                 serviceResult.setErrorCode(ErrorCode.K3_TEST_MACHINE_ORDER_TURN_RENT_ORDER_ERROR);
                 serviceResult.setResult(responseMap.get("Message").toString());
-//                dingDingSupport.dingDingSendMessage(getErrorMessageForTestMachineOrder(response,order.getOrderNo()));
+                dingDingSupport.dingDingSendMessage(getErrorMessageForTestMachineOrder(response,order.getOrderNo()));
                 return serviceResult;
             }
         }catch (Exception e){
