@@ -19,6 +19,7 @@ import com.lxzl.se.core.service.BaseService;
  */
 public interface UserRoleService extends BaseService {
     boolean isSuperAdmin(Integer userId);
+    boolean isAdmin(Integer userId);
     ServiceResult<String, Boolean> allowAccess(Integer userId, String path);
     ServiceResult<String, Integer> addRole(Role role);
     ServiceResult<String, Integer> updateRole(Role role);

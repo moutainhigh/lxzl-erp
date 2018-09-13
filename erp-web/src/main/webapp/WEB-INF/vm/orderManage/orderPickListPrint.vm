@@ -156,6 +156,12 @@
         <div class="row" style="padding:5px 10px;">
             <div class="col-xs-6">
                 <dl class="dl-horizontal dl-horizontal-rental mbn">
+                    <dt><label>客户名称</label><span class="mr5">：</span></dt>
+                    <dd>{{buyerCustomerName}}&nbsp;</dd>
+                </dl>
+            </div>
+            <div class="col-xs-6">
+                <dl class="dl-horizontal dl-horizontal-rental mbn">
                     <dt><label>交货日期</label><span class="mr5">：</span></dt>
                     <dd>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}&nbsp;</dd>
                 </dl>
@@ -191,6 +197,8 @@
                         <th class="text-center">K3编码</th>
                         <th class="text-center">配置</th>
                         <th class="text-center" style="white-space: nowrap;">数量</th>
+                        <th class="text-center">租期</th>
+                        <th class="text-center">同行调拨</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -202,6 +210,8 @@
                         <td class="text-center">{{k3Number}}</td>
                         <td class="text-center">{{propertiesToStr}}</td>
                         <td class="text-center">{{productCount}}</td>
+                        <td class="text-center">{{rentTimeLength}}{{rentTypeUnit}}</td>
+                        <td class="text-center">{{#boolText}}{{isPeer}}{{/boolText}}</td>
                     </tr>
                     {{/listData}}
                     {{/dataSource}}
@@ -227,6 +237,8 @@
                         <th class="text-center">K3编码</th>
                         <th class="text-center">配置</th>
                         <th class="text-center" style="white-space: nowrap;">数量</th>
+                        <th class="text-center">租期</th>
+                        <th class="text-center">同行调拨</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -238,6 +250,8 @@
                         <td class="text-center">{{k3Number}}</td>
                         <td class="text-center">{{materialTypeStr}}{{#memorysize}}{{#materialInfo}}{{materialCapacityValue}}{{/materialInfo}}{{/memorysize}}</td>
                         <td class="text-center">{{materialCount}}</td>
+                        <td class="text-center">{{rentTimeLength}}{{rentTypeUnit}}</td>
+                        <td class="text-center">{{#boolText}}{{isPeer}}{{/boolText}}</td>
                     </tr>
                     {{/listData}}
                     {{/dataSource}}
@@ -256,7 +270,7 @@
                     <img src="${staticCommon}rental/img/logos/beerLogo.png" class="img-responsive pull-left" alt="凌雄租赁">
                 </div>
                 <div class="print-col" style="line-height:1.2cm;">
-                    <p  class="pn mn text-center printH1"><b>商品配货单</b></p>
+                    <p  class="pn mn text-center printH1"><b>商品备货单</b></p>
                 </div>
                 <div class="print-col text-right">
 ##                    <img src="" class="img-responsive pull-right" id="barcode" alt="凌雄租赁" />

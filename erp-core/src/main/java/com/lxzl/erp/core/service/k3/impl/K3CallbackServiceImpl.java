@@ -351,6 +351,12 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             }
         }
 //        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        //修正续租单，如果有（退货单之后的续租单）
+        ServiceResult<String, BigDecimal> fixResult= statementService.fixReletOrderItemCount(k3ReturnOrderDO);
+        if (!ErrorCode.SUCCESS.equals(fixResult.getErrorCode())) {
+            serviceResult.setErrorCode(fixResult.getErrorCode());
+            return serviceResult;
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
