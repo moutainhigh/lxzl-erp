@@ -19,6 +19,8 @@ public interface StatementOrderCorrectMapper extends BaseMysqlDAO<StatementOrder
     List<StatementOrderCorrectDO> findStatementOrderId(@Param("statementOrderId") Integer statementOrderId);
     List<StatementOrderCorrectDO> findStatementOrderIdAndItemId(@Param("statementOrderId") Integer statementOrderId, @Param("orderReferId") Integer orderReferId, @Param("orderItemId") Integer orderItemId);
 
+	List<StatementOrderCorrectDO> findStatementOrderIdAndItemIdAndReletReferId(@Param("statementOrderId") Integer statementOrderId, @Param("orderReferId") Integer orderReferId, @Param("orderItemId") Integer orderItemId, @Param("reletItemReferId") Integer reletItemReferId);
+
 	StatementOrderCorrectDO findByNo(@Param("statementCorrectNo") String statementCorrectNo);
 
 	List<StatementOrderCorrectDO> findStatementOrderIdAndReferId(@Param("statementOrderId")Integer statementOrderId,@Param("referId")Integer referId);

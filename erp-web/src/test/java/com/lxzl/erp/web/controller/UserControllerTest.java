@@ -43,6 +43,12 @@ public class UserControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void updateUserPassword() throws Exception {
+        User user = new User();
+        user.setUserId(500261);
+        user.setPassword("lxzl123.456");
+
+        TestResult testResult = getJsonTestResult("/user/updatePassword",user);
+        System.err.println(testResult);
     }
 
     @Test

@@ -218,7 +218,7 @@ public class K3OrderConverter implements ConvertK3DataService {
                         formSEOrder.setPayMethodNumber("03");//订单里也要
                     } else if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderProduct.getPayMode())) {
                         formSEOrderEntry.setPayMethodNumber("01");
-                        formSEOrder.setPayMethodNumber("03");//订单里也要
+                        formSEOrder.setPayMethodNumber("01");//订单里也要
                     } else if (OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderProduct.getPayMode())) {
                         formSEOrderEntry.setPayMethodNumber("01");
                         formSEOrder.setPayMethodNumber("01");
