@@ -1,6 +1,7 @@
 package com.lxzl.erp.core.service.statement.impl.support;
 
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.statement.AmountNeedReturn;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
@@ -28,6 +29,7 @@ import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.se.common.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
@@ -55,9 +57,20 @@ public class StatementReplaceOrderSupport {
         if (replaceOrderDO == null) {
             return ErrorCode.CHANGE_ORDER_NOT_EXISTS;
         }
+        AmountNeedReturn amountNeedReturn=createStatement(replaceOrderDO);
+        //退款到账户余额
+        String returnCode = returnAmountToAccount(replaceOrderDO.getCustomerNo(), amountNeedReturn,"换货单：【" + replaceOrderNo + "】退差价");
+        if (!ErrorCode.SUCCESS.equals(returnCode)) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return returnCode;
+        }
+        return returnCode;
+    }
+
+    private AmountNeedReturn createStatement(ReplaceOrderDO replaceOrderDO) {
         OrderDO orderDO = orderMapper.findByOrderIdSimple(replaceOrderDO.getOrderId());
         if (orderDO == null) {
-            return ErrorCode.ORDER_NOT_EXISTS;
+            throw new BusinessException(ErrorCode.ORDER_NOT_EXISTS, ErrorCode.getMessage(ErrorCode.ORDER_NOT_EXISTS));
         }
         //初始化订单项缓存
         Map<Integer, OrderProductDO> orderProductDOMap = new HashMap<>();
@@ -93,7 +106,11 @@ public class StatementReplaceOrderSupport {
         totalReturnRentToAccount = BigDecimalUtil.add(totalReturnRentToAccount, amountNeedReturn.getRentPaidAmount());
         totalReturnDepositToAccount=BigDecimalUtil.add(totalReturnDepositToAccount,amountNeedReturn.getDepositPaidAmount());
         totalReturnRentDepositAccount=BigDecimalUtil.add(totalReturnRentDepositAccount,amountNeedReturn.getRentDepositPaidAmount());
-        //todo 处理物料
+        //处理物料
+        amountNeedReturn=dealReplaceOrderMaterialStatement( replaceOrderDO,  orderDO,  orderMaterialDOMap,  startTime,  endTime,  currentTime,  loginUserId,  changeTime,  buyerCustomerId,  endTimeAfterChange,  changeOrderId, needUpdateStatementOrderDetailList, needUpdateOrderBeforeList, needUpdateStatementOrderMap);
+        totalReturnRentToAccount = BigDecimalUtil.add(totalReturnRentToAccount, amountNeedReturn.getRentPaidAmount());
+        totalReturnDepositToAccount=BigDecimalUtil.add(totalReturnDepositToAccount,amountNeedReturn.getDepositPaidAmount());
+        totalReturnRentDepositAccount=BigDecimalUtil.add(totalReturnRentDepositAccount,amountNeedReturn.getRentDepositPaidAmount());
         //增加换货下单记录，修改结算单总额
         //支付了的直接冲正换货下单记录
         //第一期多的钱不退
@@ -109,10 +126,7 @@ public class StatementReplaceOrderSupport {
         }
         //必须在缓存中结算单更新之后处理新生成的结算单
         new StatementServiceImpl().saveStatementOrder(needUpdateOrderBeforeList, currentTime, loginUserId);
-        //退款
-        CustomerDO customerDO = customerSupport.getCustomerByOrder(orderDO);
-        String payResult=paymentService.returnDepositExpand(customerDO.getCustomerNo(), totalReturnRentToAccount, BigDecimal.ZERO,totalReturnRentDepositAccount, totalReturnDepositToAccount, "换货单：【" + replaceOrderNo + "】退差价");
-        return payResult;
+        return new AmountNeedReturn(totalReturnDepositToAccount,totalReturnRentToAccount,totalReturnRentDepositAccount);
     }
 
     private AmountNeedReturn dealReplaceOrderProductStatement(ReplaceOrderDO replaceOrderDO, OrderDO orderDO, Map<Integer, OrderProductDO> orderProductDOMap, Date startTime, Date endTime, Date currentTime, Integer loginUserId, Date changeTime, Integer buyerCustomerId, Date endTimeAfterChange, Integer changeOrderId, List<StatementOrderDetailDO> needUpdateStatementOrderDetailList, List<StatementOrderDetailDO> needUpdateOrderBeforeList, Map<Integer, StatementOrderDO> needUpdateStatementOrderMap) {
@@ -153,7 +167,6 @@ public class StatementReplaceOrderSupport {
                             generateStatementDetailList.add(statementOrderDetailDO);
                         }
                     }
-                    //处理租金
                     //原被换商品有结算单，则新换货商品与之对齐，否则新商品单独结算
                     if (BigDecimalUtil.compare(oldProduct.getProductAmount(), BigDecimal.ZERO) > 0) {
                         BigDecimal amountPercent = BigDecimalUtil.div(newProduct.getProductUnitAmount(), oldProduct.getProductUnitAmount(), BigDecimalUtil.SCALE);
@@ -172,13 +185,13 @@ public class StatementReplaceOrderSupport {
                                 Integer oldDays = DateUtil.daysBetween(statementOrderDetailDO.getStatementStartTime(), statementOrderDetailDO.getStatementEndTime()) + 1;
                                 Integer nowDays = DateUtil.daysBetween(changeTime, statementOrderDetailDO.getStatementEndTime()) + 1;
                                 BigDecimal timePercent = BigDecimalUtil.div(new BigDecimal(nowDays), new BigDecimal(oldDays), BigDecimalUtil.SCALE);
-                                GenerateRentStatementResult rentStatementResult = generateRentStatement(orderDO.getId(),OrderItemType.ORDER_ITEM_TYPE_PRODUCT,oldProduct.getId(),newProduct.getId(), currentTime, loginUserId, changeTime, buyerCustomerId, generateStatementDetailList, needUpdateStatementOrderMap,  statementOrderDetailDO, timePercent,amountPercent, true);
+                                GenerateRentStatementResult rentStatementResult = generateRentStatement(replaceOrderDO.getId(),orderDO.getId(),OrderItemType.ORDER_ITEM_TYPE_PRODUCT,OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT, oldProduct.getId(),newProduct.getId(), currentTime, loginUserId, changeTime, buyerCustomerId, generateStatementDetailList, needUpdateStatementOrderMap,  statementOrderDetailDO, timePercent,amountPercent, true);
                                 BigDecimal newRentAmount = rentStatementResult.getNewRentAmount();
                                 hasSettleRentAmount = BigDecimalUtil.add(hasSettleRentAmount, newRentAmount);
                             }
                             //完整期
                             else {
-                                GenerateRentStatementResult rentStatementResult = generateRentStatement(orderDO.getId(),OrderItemType.ORDER_ITEM_TYPE_PRODUCT,oldProduct.getId(),newProduct.getId(), currentTime, loginUserId, changeTime, buyerCustomerId, generateStatementDetailList, needUpdateStatementOrderMap, statementOrderDetailDO, BigDecimal.ONE,amountPercent, false);
+                                GenerateRentStatementResult rentStatementResult = generateRentStatement(replaceOrderDO.getId(),orderDO.getId(),OrderItemType.ORDER_ITEM_TYPE_PRODUCT,OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT,oldProduct.getId(),newProduct.getId(), currentTime, loginUserId, changeTime, buyerCustomerId, generateStatementDetailList, needUpdateStatementOrderMap, statementOrderDetailDO, BigDecimal.ONE,amountPercent, false);
                                 BigDecimal newRentAmount = rentStatementResult.getNewRentAmount();
                                 BigDecimal needReturnRentToAccount = rentStatementResult.getNeedReturnRentToAccount();
                                 totalReturnRentToAccount = BigDecimalUtil.add(totalReturnRentToAccount, needReturnRentToAccount);
@@ -189,7 +202,7 @@ public class StatementReplaceOrderSupport {
                         fillGapAmountToLastPhase(needUpdateStatementOrderMap, hasSettleRentAmount, totalAmount, generateStatementDetailList);
                         needUpdateStatementOrderDetailList.addAll(generateStatementDetailList);
                         //新商品项押金
-                        StatementOrderDetailDO depositDetail = statementCommonSupport.buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, newProduct.getOrderId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT, newProduct.getId(), changeTime, changeTime, changeTime, BigDecimal.ZERO, newProduct.getRentDepositAmount(), newProduct.getDepositAmount(), BigDecimal.ZERO, currentTime, loginUserId, null);
+                        StatementOrderDetailDO depositDetail = statementCommonSupport.buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_REPLACE, newProduct.getOrderId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT, newProduct.getId(), changeTime, changeTime, changeTime, BigDecimal.ZERO, newProduct.getRentDepositAmount(), newProduct.getDepositAmount(), BigDecimal.ZERO, currentTime, loginUserId, null);
                         if (depositDetail != null) {
                             depositDetail.setItemName(newProduct.getProductName() + newProduct.getProductSkuName());
                             depositDetail.setSerialNumber(newProduct.getSerialNumber());
@@ -200,15 +213,119 @@ public class StatementReplaceOrderSupport {
                         }
                     } else {
                         Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), orderDO.getRentStartTime());
-                        List<StatementOrderDetailDO> statementDetailDOList = new StatementServiceImpl().generateOrderProductStatement(orderDO.getRentTimeLength(), orderDO.getStatementDate(), currentTime, statementDays, loginUserId, changeTime, buyerCustomerId, newProduct.getOrderId(), newProduct, newProduct.getProductAmount());
-                        if (CollectionUtil.isNotEmpty(statementDetailDOList)) {
-                            needUpdateOrderBeforeList.addAll(statementDetailDOList);
-                        }
+                        List<StatementOrderDetailDO> statementDetailDOList = new StatementServiceImpl().generateOrderProductStatement(newProduct.getRentTimeLength(), orderDO.getStatementDate(), currentTime, statementDays, loginUserId, changeTime, buyerCustomerId, newProduct.getOrderId(), newProduct, newProduct.getProductAmount());
+                        refStatementDetailToReplaceOrder(replaceOrderDO, needUpdateOrderBeforeList, statementDetailDOList);
                     }
                 }
             }
         }
         return new AmountNeedReturn(totalDepositToAccount, totalReturnRentToAccount, totalRentDepositToAccount);
+    }
+
+    private AmountNeedReturn dealReplaceOrderMaterialStatement(ReplaceOrderDO replaceOrderDO, OrderDO orderDO, Map<Integer, OrderMaterialDO> orderMaterialDOMap, Date startTime, Date endTime, Date currentTime, Integer loginUserId, Date changeTime, Integer buyerCustomerId, Date endTimeAfterChange, Integer changeOrderId, List<StatementOrderDetailDO> needUpdateStatementOrderDetailList, List<StatementOrderDetailDO> needUpdateOrderBeforeList, Map<Integer, StatementOrderDO> needUpdateStatementOrderMap) {
+        BigDecimal totalReturnRentToAccount = BigDecimal.ZERO;
+        BigDecimal totalDepositToAccount = BigDecimal.ZERO;
+        BigDecimal totalRentDepositToAccount = BigDecimal.ZERO;
+        if (CollectionUtil.isNotEmpty(replaceOrderDO.getReplaceOrderMaterialDOList())) {
+            for (ReplaceOrderMaterialDO replaceOrderMaterialDO : replaceOrderDO.getReplaceOrderMaterialDOList()) {
+                Integer changeCount = replaceOrderMaterialDO.getReplaceMaterialCount();
+                if (changeCount <= 0) continue;
+                OrderMaterialDO oldMaterial = orderMaterialDOMap.get(replaceOrderMaterialDO.getOldOrderMaterialId());
+                OrderMaterialDO newMaterial = orderMaterialDOMap.get(replaceOrderMaterialDO.getNewOrderMaterialId());
+                //需退押金
+                BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(oldMaterial.getRentDepositAmount(), new BigDecimal(oldMaterial.getMaterialCount()), BigDecimalUtil.SCALE), new BigDecimal(changeCount));
+                BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(oldMaterial.getDepositAmount(), new BigDecimal(oldMaterial.getMaterialCount()), BigDecimalUtil.SCALE), new BigDecimal(changeCount));
+
+                //原订单项关联结算
+                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, replaceOrderMaterialDO.getOldOrderMaterialId());
+
+                if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+                    BigDecimal hasSettleRentAmount = BigDecimal.ZERO;
+                    BigDecimal totalAmount = newMaterial.getMaterialAmount();
+
+                    List<StatementOrderDetailDO> generateStatementDetailList = new ArrayList<>();
+                    //处理押金
+                    for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+                        if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
+                            //押金未支付不允许换货
+                            if (!StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
+                                throw new BusinessException(ErrorCode.DEPOSIT_NOT_PAID_BEFORE_REPLACE_ORDER, ErrorCode.getMessage(ErrorCode.DEPOSIT_NOT_PAID_BEFORE_REPLACE_ORDER));
+                            }
+                            StatementOrderDO statementOrderDO = getStatementOrderFromCatchOrDB(needUpdateStatementOrderMap, statementOrderDetailDO.getStatementOrderId());
+                            //保存退押金记录
+                            BigDecimal realReturnDeposit = saveReturnDepositRecord(currentTime, thisReturnDepositAmount, statementOrderDetailDO, statementOrderDO, OrderType.ORDER_TYPE_REPLACE, changeOrderId, replaceOrderMaterialDO.getId(), loginUserId, changeTime);
+                            totalDepositToAccount = BigDecimalUtil.add(totalDepositToAccount, realReturnDeposit);
+                            BigDecimal realReturnRentDeposit = saveReturnRentDepositRecord(currentTime, thisReturnRentDepositAmount, statementOrderDetailDO, statementOrderDO, OrderType.ORDER_TYPE_REPLACE, changeOrderId, replaceOrderMaterialDO.getId(), loginUserId, changeTime);
+                            totalRentDepositToAccount = BigDecimalUtil.add(realReturnRentDeposit, totalRentDepositToAccount);
+                            generateStatementDetailList.add(statementOrderDetailDO);
+                        }
+                    }
+                    //处理租金
+                    //原被换商品有结算单，则新换货商品与之对齐，否则新商品单独结算
+                    if (BigDecimalUtil.compare(oldMaterial.getMaterialAmount(), BigDecimal.ZERO) > 0) {
+                        BigDecimal amountPercent = BigDecimalUtil.div(newMaterial.getMaterialUnitAmount(), oldMaterial.getMaterialUnitAmount(), BigDecimalUtil.SCALE);
+                        for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+                            //只处理订单租金（根据订单租金生成相应换货结算）
+                            if (!OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetailDO.getOrderType())) continue;
+                            //在换货时间轴外
+                            if (DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(), endTimeAfterChange) <= 0) {
+                                continue;
+                            }
+                            //订单或续租单时间轴之外跳过
+                            if (DateUtil.daysBetween(endTime, statementOrderDetailDO.getStatementStartTime()) > 0 || DateUtil.daysBetween(statementOrderDetailDO.getStatementStartTime(), startTime) > 0)
+                                continue;
+                            //截断期
+                            if (DateUtil.daysBetween(statementOrderDetailDO.getStatementStartTime(), endTimeAfterChange) >= 0) {
+                                Integer oldDays = DateUtil.daysBetween(statementOrderDetailDO.getStatementStartTime(), statementOrderDetailDO.getStatementEndTime()) + 1;
+                                Integer nowDays = DateUtil.daysBetween(changeTime, statementOrderDetailDO.getStatementEndTime()) + 1;
+                                BigDecimal timePercent = BigDecimalUtil.div(new BigDecimal(nowDays), new BigDecimal(oldDays), BigDecimalUtil.SCALE);
+                                GenerateRentStatementResult rentStatementResult = generateRentStatement(replaceOrderDO.getId(), orderDO.getId(),OrderItemType.ORDER_ITEM_TYPE_MATERIAL,OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL,oldMaterial.getId(),newMaterial.getId(), currentTime, loginUserId, changeTime, buyerCustomerId, generateStatementDetailList, needUpdateStatementOrderMap,  statementOrderDetailDO, timePercent,amountPercent, true);
+                                BigDecimal newRentAmount = rentStatementResult.getNewRentAmount();
+                                hasSettleRentAmount = BigDecimalUtil.add(hasSettleRentAmount, newRentAmount);
+                            }
+                            //完整期
+                            else {
+                                GenerateRentStatementResult rentStatementResult = generateRentStatement(replaceOrderDO.getId(),orderDO.getId(),OrderItemType.ORDER_ITEM_TYPE_MATERIAL,OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL,oldMaterial.getId(),newMaterial.getId(), currentTime, loginUserId, changeTime, buyerCustomerId, generateStatementDetailList, needUpdateStatementOrderMap, statementOrderDetailDO, BigDecimal.ONE,amountPercent, false);
+                                BigDecimal newRentAmount = rentStatementResult.getNewRentAmount();
+                                BigDecimal needReturnRentToAccount = rentStatementResult.getNeedReturnRentToAccount();
+                                totalReturnRentToAccount = BigDecimalUtil.add(totalReturnRentToAccount, needReturnRentToAccount);
+                                hasSettleRentAmount = BigDecimalUtil.add(hasSettleRentAmount, newRentAmount);
+                            }
+                        }
+                        //存在的误差归到在最后一期(处理差价在最后一期)
+                        fillGapAmountToLastPhase(needUpdateStatementOrderMap, hasSettleRentAmount, totalAmount, generateStatementDetailList);
+                        needUpdateStatementOrderDetailList.addAll(generateStatementDetailList);
+                        //新商品项押金
+                        StatementOrderDetailDO depositDetail = statementCommonSupport.buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_REPLACE, newMaterial.getOrderId(), OrderItemType.ORDER_ITEM_TYPE_MATERIAL, newMaterial.getId(), changeTime, changeTime, changeTime, BigDecimal.ZERO, newMaterial.getRentDepositAmount(), newMaterial.getDepositAmount(), BigDecimal.ZERO, currentTime, loginUserId, null);
+                        if (depositDetail != null) {
+                            depositDetail.setItemName(newMaterial.getMaterialName());
+                            depositDetail.setSerialNumber(newMaterial.getSerialNumber());
+                            depositDetail.setItemIsNew(newMaterial.getIsNewMaterial());
+                            depositDetail.setStatementDetailPhase(0);
+                            depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
+                            depositDetail.setSourceId(replaceOrderDO.getId());
+                            needUpdateOrderBeforeList.add(depositDetail);
+                        }
+                    } else {
+                        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), orderDO.getRentStartTime());
+                        List<StatementOrderDetailDO> statementDetailDOList = new StatementServiceImpl().generateOrderMaterialStatement(newMaterial.getRentTimeLength(),orderDO.getStatementDate(), currentTime, statementDays, loginUserId, changeTime, buyerCustomerId, newMaterial.getOrderId(), newMaterial, newMaterial.getMaterialAmount());
+                        refStatementDetailToReplaceOrder(replaceOrderDO, needUpdateOrderBeforeList, statementDetailDOList);
+                    }
+                }
+            }
+        }
+        return new AmountNeedReturn(totalDepositToAccount, totalReturnRentToAccount, totalRentDepositToAccount);
+    }
+
+    private void refStatementDetailToReplaceOrder(ReplaceOrderDO replaceOrderDO, List<StatementOrderDetailDO> needUpdateOrderBeforeList, List<StatementOrderDetailDO> statementDetailDOList) {
+        if (CollectionUtil.isNotEmpty(statementDetailDOList)) {
+            //订单类型改为换货单
+            for(StatementOrderDetailDO statementOrderDetailDO:statementDetailDOList){
+                statementOrderDetailDO.setOrderType(OrderType.ORDER_TYPE_REPLACE);
+                statementOrderDetailDO.setSourceId(replaceOrderDO.getId());
+            }
+            needUpdateOrderBeforeList.addAll(statementDetailDOList);
+        }
     }
 
     private void fillGapAmountToLastPhase(Map<Integer, StatementOrderDO> needUpdateStatementOrderMap, BigDecimal hasSettleRentAmount, BigDecimal totalAmount, List<StatementOrderDetailDO> generateStatementDetailList) {
@@ -230,19 +347,19 @@ public class StatementReplaceOrderSupport {
         }
     }
 
-    private GenerateRentStatementResult generateRentStatement(Integer orderId,Integer orderItemType,Integer oldOrderItemId,Integer newOrderItemId , Date currentTime, Integer loginUserId, Date changeTime, Integer buyerCustomerId, List<StatementOrderDetailDO> needUpdateStatementOrderDetailList, Map<Integer, StatementOrderDO> needUpdateStatementOrderMap, StatementOrderDetailDO statementOrderDetailDO, BigDecimal timePercent,BigDecimal amountPercent, boolean isFirstChangePhase) {
+    private GenerateRentStatementResult generateRentStatement(Integer replaceOrderId, Integer orderId,Integer newOrderItemType,Integer oldOrderItemType, Integer oldOrderItemId,Integer newOrderItemId , Date currentTime, Integer loginUserId, Date changeTime, Integer buyerCustomerId, List<StatementOrderDetailDO> needUpdateStatementOrderDetailList, Map<Integer, StatementOrderDO> needUpdateStatementOrderMap, StatementOrderDetailDO statementOrderDetailDO, BigDecimal timePercent,BigDecimal amountPercent, boolean isFirstChangePhase) {
         //Assert.isTrue(BigDecimalUtil.compare(oldProduct.getProductAmount(), BigDecimal.ZERO) != 0, "此方法只默认与原订单结算对齐，原订单项租金必须大于零");
         BigDecimal returnRentToAccount = BigDecimal.ZERO;
         //退货租金
         BigDecimal returnRentAmount = BigDecimalUtil.mul(statementOrderDetailDO.getStatementDetailRentAmount(), timePercent, BigDecimalUtil.STANDARD_SCALE);
-
-        //todo 结算单新增换货单列（处理换货单再换货，部分结换货结算单不能退）
         BigDecimal newRentAmount = BigDecimalUtil.mul(returnRentAmount, amountPercent, BigDecimalUtil.STANDARD_SCALE);
         //新订单商品项结算
-        StatementOrderDetailDO newStatementOrderDetailDO = statementCommonSupport.buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_REPLACE, orderId, orderItemType, newOrderItemId, statementOrderDetailDO.getStatementExpectPayTime(), changeTime, statementOrderDetailDO.getStatementEndTime(), newRentAmount, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId, null);
+        StatementOrderDetailDO newStatementOrderDetailDO = statementCommonSupport.buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_REPLACE, orderId, newOrderItemType, newOrderItemId, statementOrderDetailDO.getStatementExpectPayTime(), changeTime, statementOrderDetailDO.getStatementEndTime(), newRentAmount, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId, null);
+        //todo 一下信息需与订单结算一致
         if (newStatementOrderDetailDO != null) {
             newStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_RENT);
             newStatementOrderDetailDO.setReturnReferId(statementOrderDetailDO.getId());
+            newStatementOrderDetailDO.setSourceId(replaceOrderId);
         }
 
         if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus()) && BigDecimalUtil.compare(returnRentAmount, newRentAmount) > 0) {
@@ -259,10 +376,11 @@ public class StatementReplaceOrderSupport {
         }
 
         //换货单退货结算
-        StatementOrderDetailDO oldStatementOrderDetailDO = statementCommonSupport.buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_REPLACE, orderId, orderItemType, oldOrderItemId, statementOrderDetailDO.getStatementExpectPayTime(), changeTime, statementOrderDetailDO.getStatementEndTime(), BigDecimalUtil.mul(returnRentAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId, statementOrderDetailDO.getReletOrderItemReferId());
+        StatementOrderDetailDO oldStatementOrderDetailDO = statementCommonSupport.buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_REPLACE, orderId, oldOrderItemType, oldOrderItemId, statementOrderDetailDO.getStatementExpectPayTime(), changeTime, statementOrderDetailDO.getStatementEndTime(), BigDecimalUtil.mul(returnRentAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId, statementOrderDetailDO.getReletOrderItemReferId());
         if (oldStatementOrderDetailDO != null) {
             oldStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
             oldStatementOrderDetailDO.setReturnReferId(statementOrderDetailDO.getId());
+            newStatementOrderDetailDO.setSourceId(replaceOrderId);
         }
         needUpdateStatementOrderDetailList.add(oldStatementOrderDetailDO);
         needUpdateStatementOrderDetailList.add(newStatementOrderDetailDO);
@@ -285,8 +403,6 @@ public class StatementReplaceOrderSupport {
             }
         }
         return new GenerateRentStatementResult(returnRentAmount, newRentAmount, returnRentToAccount);
-        //todo 补差价（差价金额很蛋疼）
-        //todo 根据借宿时间判断最后一期（差价补全）
     }
 
 
@@ -335,41 +451,56 @@ public class StatementReplaceOrderSupport {
         }
     }
 
-    class GenerateRentStatementResult {
-        BigDecimal oldRentAmount;
-        BigDecimal newRentAmount;
-        BigDecimal needReturnRentToAccount;
 
-        public GenerateRentStatementResult(BigDecimal oldRentAmount, BigDecimal newRentAmount, BigDecimal needReturnRentToAccount) {
-            this.oldRentAmount = oldRentAmount;
-            this.newRentAmount = newRentAmount;
-            this.needReturnRentToAccount = needReturnRentToAccount;
+    /**
+     * 重算换货单
+     * @param replaceOrderNo
+     * @return
+     */
+    public String reStatementReplaceOrder(String replaceOrderNo){
+        Assert.notNull(replaceOrderNo, "换货单号为空，不能进行结算");
+        //增加换货退货记录，修改结算单总金额
+        ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByOrderNo(replaceOrderNo);
+        if (replaceOrderDO == null) {
+            return ErrorCode.CHANGE_ORDER_NOT_EXISTS;
+        }
+        List<StatementOrderDetailDO> oldStatementOrderDetailDOList=  statementOrderDetailMapper.findByOrderTypeAndSourceId(OrderType.ORDER_TYPE_REPLACE,replaceOrderDO.getId());
+        AmountNeedReturn amountNeedReturn=null;
+        if(CollectionUtil.isNotEmpty(oldStatementOrderDetailDOList)){
+            //清除
+            ServiceResult<String, AmountNeedReturn> result = statementOrderSupport.clearStatement(true, replaceOrderDO.getCustomerNo(), oldStatementOrderDetailDOList);
+            //创建失败回滚
+            if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return result.getErrorCode();
+            }
+            amountNeedReturn=result.getResult();
         }
 
-        public BigDecimal getOldRentAmount() {
-            return oldRentAmount;
+        AmountNeedReturn createReturn=createStatement(replaceOrderDO);
+        if(amountNeedReturn!=null){
+            createReturn.add(amountNeedReturn);
         }
-
-        public void setOldRentAmount(BigDecimal oldRentAmount) {
-            this.oldRentAmount = oldRentAmount;
+        //退款到账户余额
+        String returnCode = returnAmountToAccount(replaceOrderDO.getCustomerNo(), createReturn,"换货单【" + replaceOrderDO.getReplaceOrderNo() + "】补差价");
+        if (!ErrorCode.SUCCESS.equals(returnCode)) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return returnCode;
         }
-
-        public BigDecimal getNewRentAmount() {
-            return newRentAmount;
-        }
-
-        public void setNewRentAmount(BigDecimal newRentAmount) {
-            this.newRentAmount = newRentAmount;
-        }
-
-        public BigDecimal getNeedReturnRentToAccount() {
-            return needReturnRentToAccount;
-        }
-
-        public void setNeedReturnRentToAccount(BigDecimal needReturnRentToAccount) {
-            this.needReturnRentToAccount = needReturnRentToAccount;
-        }
+        return ErrorCode.SUCCESS;
     }
+
+    private String returnAmountToAccount(String customerNo, AmountNeedReturn amountNeedReturn,String remark) {
+        if (amountNeedReturn != null && (BigDecimalUtil.compare(amountNeedReturn.getRentPaidAmount(), BigDecimal.ZERO) != 0 || BigDecimalUtil.compare(amountNeedReturn.getRentDepositPaidAmount(), BigDecimal.ZERO) != 0 || BigDecimalUtil.compare(amountNeedReturn.getDepositPaidAmount(), BigDecimal.ZERO) != 0 || BigDecimalUtil.compare(BigDecimalUtil.addAll(amountNeedReturn.getOtherPaidAmount(), amountNeedReturn.getOverduePaidAmount(), amountNeedReturn.getPenaltyPaidAmount()), BigDecimal.ZERO) != 0)) {
+            String returnCode = paymentService.returnDepositExpand(customerNo, amountNeedReturn.getRentPaidAmount(), BigDecimalUtil.addAll(amountNeedReturn.getOtherPaidAmount(), amountNeedReturn.getOverduePaidAmount(), amountNeedReturn.getPenaltyPaidAmount())
+                    , amountNeedReturn.getRentDepositPaidAmount(), amountNeedReturn.getDepositPaidAmount(), remark);
+            if (!ErrorCode.SUCCESS.equals(returnCode)) {
+                return returnCode;
+            }
+        }
+        return ErrorCode.SUCCESS;
+    }
+
 
     @Autowired
     private ReplaceOrderMapper replaceOrderMapper;
@@ -407,4 +538,70 @@ public class StatementReplaceOrderSupport {
     @Autowired
     private CustomerSupport customerSupport;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    class GenerateRentStatementResult {
+        BigDecimal oldRentAmount;
+        BigDecimal newRentAmount;
+        BigDecimal needReturnRentToAccount;
+
+        public GenerateRentStatementResult(BigDecimal oldRentAmount, BigDecimal newRentAmount, BigDecimal needReturnRentToAccount) {
+            this.oldRentAmount = oldRentAmount;
+            this.newRentAmount = newRentAmount;
+            this.needReturnRentToAccount = needReturnRentToAccount;
+        }
+
+        public BigDecimal getOldRentAmount() {
+            return oldRentAmount;
+        }
+
+        public void setOldRentAmount(BigDecimal oldRentAmount) {
+            this.oldRentAmount = oldRentAmount;
+        }
+
+        public BigDecimal getNewRentAmount() {
+            return newRentAmount;
+        }
+
+        public void setNewRentAmount(BigDecimal newRentAmount) {
+            this.newRentAmount = newRentAmount;
+        }
+
+        public BigDecimal getNeedReturnRentToAccount() {
+            return needReturnRentToAccount;
+        }
+
+        public void setNeedReturnRentToAccount(BigDecimal needReturnRentToAccount) {
+            this.needReturnRentToAccount = needReturnRentToAccount;
+        }
+    }
 }
