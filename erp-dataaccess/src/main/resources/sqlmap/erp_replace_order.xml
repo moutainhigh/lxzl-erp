@@ -128,7 +128,7 @@
 		erom.old_material_entry as material_old_material_entry,erom.new_order_material_id as material_new_order_material_id,erom.rent_type as material_rent_type,erom.rent_time_length as material_rent_time_length,
 		erom.rent_length_type as material_rent_length_type,erom.deposit_cycle as material_deposit_cycle,erom.payment_cycle as material_payment_cycle,erom.pay_mode as material_pay_mode,
 		erom.old_material_unit_amount as material_old_material_unit_amount,erom.material_id as material_material_id,erom.material_name as material_material_name,
-		erom.material_count as material_replace_material_count,erom.material_unit_amount as material_material_unit_amount,erom.rent_deposit_amount as material_rent_deposit_amount,erom.deposit_amount as material_deposit_amount,
+		erom.replace_material_count as material_replace_material_count,erom.material_unit_amount as material_material_unit_amount,erom.rent_deposit_amount as material_rent_deposit_amount,erom.deposit_amount as material_deposit_amount,
 		erom.credit_deposit_amount as material_credit_deposit_amount,erom.is_new_material as material_is_new_material,erom.data_status as material_data_status,erom.remark as material_remark,
 		erom.create_time as material_create_time,erom.create_user as material_create_user,erom.update_time as material_update_time,erom.update_user as material_update_user,
 		erom.real_replace_material_count as material_real_replace_material_count,erom.is_relet_order_replace as material_is_relet_order_replace,erom.relet_order_item_id as material_relet_order_item_id
