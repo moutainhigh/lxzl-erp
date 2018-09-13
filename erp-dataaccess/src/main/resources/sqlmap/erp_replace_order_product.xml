@@ -182,8 +182,9 @@
 			#{replaceOrderProductDO.payMode},#{replaceOrderProductDO.oldProductUnitAmount},#{replaceOrderProductDO.productId},#{replaceOrderProductDO.productName},
 			#{replaceOrderProductDO.productSkuId},#{replaceOrderProductDO.productSkuName},#{replaceOrderProductDO.replaceProductCount},
 			#{replaceOrderProductDO.productUnitAmount},#{replaceOrderProductDO.rentDepositAmount},#{replaceOrderProductDO.depositAmount},#{replaceOrderProductDO.creditDepositAmount},
-			#{replaceOrderProductDO.isNewProduct},#{replaceOrderProductDO.dataStatus},#{replaceOrderProductDO.remark},#{replaceOrderProductDO.realReplaceProductCount},
-			#{replaceOrderProductDO.isReletOrderReplace},#{replaceOrderProductDO.reletOrderItemId})
+			#{replaceOrderProductDO.isNewProduct},#{replaceOrderProductDO.dataStatus},#{replaceOrderProductDO.remark},
+			#{replaceOrderProductDO.createTime},#{replaceOrderProductDO.createUser},#{replaceOrderProductDO.updateTime},#{replaceOrderProductDO.updateUser},
+			#{replaceOrderProductDO.realReplaceProductCount},#{replaceOrderProductDO.isReletOrderReplace},#{replaceOrderProductDO.reletOrderItemId})
 		</foreach>
 	</insert>
 
