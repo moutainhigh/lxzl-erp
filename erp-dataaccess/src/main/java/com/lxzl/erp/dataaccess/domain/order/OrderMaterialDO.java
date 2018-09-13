@@ -31,6 +31,7 @@ public class OrderMaterialDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 	private Integer isItemDelivered;
+	private Integer testMachineOrderMaterialId; //测试机配件项id
 
 	private String serialNumber;        // 序号
 
@@ -277,5 +278,13 @@ public class OrderMaterialDO  extends BaseDO {
 
 	public void setIsItemDelivered(Integer isItemDelivered) {
 		this.isItemDelivered = isItemDelivered;
+	}
+
+	public Integer getTestMachineOrderMaterialId() {
+		return testMachineOrderMaterialId;
+	}
+
+	public void setTestMachineOrderMaterialId(Integer testMachineOrderMaterialId) {
+		this.testMachineOrderMaterialId = testMachineOrderMaterialId;
 	}
 }

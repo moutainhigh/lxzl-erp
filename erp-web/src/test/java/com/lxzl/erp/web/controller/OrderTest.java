@@ -1,6 +1,8 @@
 package com.lxzl.erp.web.controller;
 
+import com.alibaba.dubbo.common.store.support.SimpleDataStore;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
@@ -13,7 +15,9 @@ import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.SimpleFormatter;
 
 /**
  * 描述: 订单测试类
@@ -21,7 +25,7 @@ import java.util.*;
  * @author gaochao
  * @date 2017-11-15 14:14
  */
-public class OrderTest extends ERPTransactionalTest {
+public class OrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void testCancelOrder() throws Exception {
@@ -743,7 +747,67 @@ public class OrderTest extends ERPTransactionalTest {
 
     @Test
     public void testMachineOrderConvertOrderJSON() throws Exception {
-        String str = "{\"buyerCustomerNo\":\"LXCC-0755-20180905-00002\",\"rentStartTime\":1536105600000,\"expectDeliveryTime\":1536019200000,\"buyerRemark\":\"asf\",\"customerConsignId\":\"6583\",\"highTaxRate\":\"10\",\"lowTaxRate\":\"90\",\"deliveryMode\":\"3\",\"rentType\":\"2\",\"rentTimeLength\":\"6\",\"isPeer\":\"0\",\"deliverySubCompanyId\":\"2\",\"orderSellerId\":500383,\"orderSubCompanyId\":2,\"testMachineOrderNo\":\"LXO-20180905-0755-00001\",\"isTurnRentOrder\":0,\"orderProductList\":[{\"serialNumber\":\"exF7pPsm\",\"productSkuId\":1689,\"productUnitAmount\":\"299\",\"productCount\":\"10\",\"rentTimeLength\":\"\",\"insuranceAmount\":\"\",\"isNewProduct\":0,\"depositAmount\":0,\"isItemDelivered\":\"1\",\"orderProductId\":\"4403\"},{\"serialNumber\":\"rIiK0nkl\",\"productSkuId\":1689,\"productUnitAmount\":\"299\",\"productCount\":\"20\",\"rentTimeLength\":\"\",\"insuranceAmount\":\"\",\"isNewProduct\":1,\"depositAmount\":0,\"isItemDelivered\":\"0\",\"orderProductId\":\"\"}],\"orderMaterialList\":[{\"serialNumber\":\"6SgIZxXk\",\"materialNo\":\"LX-IPAD2YC-20180212-00577\",\"materialId\":577,\"materialUnitAmount\":\"20\",\"materialCount\":\"10\",\"productCount\":\"\",\"rentTimeLength\":\"\",\"productUnitAmount\":\"\",\"insuranceAmount\":\"\",\"isNewMaterial\":0,\"depositAmount\":0,\"isItemDelivered\":\"1\",\"orderMaterialId\":\"7045\"}]}";
+        String str = "{\n" +
+                "    \"buyerCustomerNo\": \"LXCC-0755-20180911-00050\",\n" +
+                "    \"rentStartTime\": 1536710400000,\n" +
+                "    \"expectDeliveryTime\": 1536537600000,\n" +
+                "    \"buyerRemark\": \"\",\n" +
+                "    \"customerConsignId\": \"6617\",\n" +
+                "    \"highTaxRate\": \"20\",\n" +
+                "    \"lowTaxRate\": \"80\",\n" +
+                "    \"deliveryMode\": \"1\",\n" +
+                "    \"rentType\": \"2\",\n" +
+                "    \"rentTimeLength\": \"10\",\n" +
+                "    \"isPeer\": \"0\",\n" +
+                "    \"deliverySubCompanyId\": \"2\",\n" +
+                "    \"orderSellerId\": 500383,\n" +
+                "    \"orderSubCompanyId\": 2,\n" +
+                "    \"testMachineOrderNo\": \"LXO-20180911-0755-00064\",\n" +
+                "    \"isTurnRentOrder\": 0,\n" +
+                "    \"orderProductList\": [\n" +
+                "        {\n" +
+                "            \"serialNumber\": \"M8pnmA0I\",\n" +
+                "            \"productSkuId\": 1689,\n" +
+                "            \"productUnitAmount\": \"200\",\n" +
+                "            \"productCount\": \"10\",\n" +
+                "            \"rentTimeLength\": \"\",\n" +
+                "            \"insuranceAmount\": \"\",\n" +
+                "            \"isNewProduct\": 0,\n" +
+                "            \"depositAmount\": 0,\n" +
+                "            \"isItemDelivered\": \"1\",\n" +
+                "            \"testMachineOrderProductId\": \"4444\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"serialNumber\": \"5xIhx67j\",\n" +
+                "            \"productSkuId\": 1715,\n" +
+                "            \"productUnitAmount\": \"200\",\n" +
+                "            \"productCount\": \"10\",\n" +
+                "            \"rentTimeLength\": \"\",\n" +
+                "            \"insuranceAmount\": \"\",\n" +
+                "            \"isNewProduct\": 1,\n" +
+                "            \"depositAmount\": 0,\n" +
+                "            \"isItemDelivered\": \"0\",\n" +
+                "            \"testMachineOrderProductId\": \"\"\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"orderMaterialList\": [\n" +
+                "        {\n" +
+                "            \"serialNumber\": \"B0Ex1kR8\",\n" +
+                "            \"materialNo\": \"LX-LP47X201-20180212-00017\",\n" +
+                "            \"materialId\": 17,\n" +
+                "            \"materialUnitAmount\": \"10\",\n" +
+                "            \"materialCount\": \"100\",\n" +
+                "            \"productCount\": \"\",\n" +
+                "            \"rentTimeLength\": \"\",\n" +
+                "            \"productUnitAmount\": \"\",\n" +
+                "            \"insuranceAmount\": \"\",\n" +
+                "            \"isNewMaterial\": 1,\n" +
+                "            \"depositAmount\": 0,\n" +
+                "            \"isItemDelivered\": \"0\",\n" +
+                "            \"testMachineOrderMaterialId\": \"\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
 
         Order order = JSONUtil.parseObject(str,Order.class);
         TestResult testResult = getJsonTestResult("/order/testMachineOrderConvertOrder", order);
@@ -890,7 +954,7 @@ public class OrderTest extends ERPTransactionalTest {
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
         orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
-        orderProduct.setOrderProductId(14563);
+        orderProduct.setTestMachineOrderProductId(14563);
         orderProduct.setProductSkuId(218);
         orderProduct.setProductCount(2);
         orderProduct.setIsNewProduct(1);
@@ -975,4 +1039,15 @@ public class OrderTest extends ERPTransactionalTest {
         TestResult testResult = getJsonTestResult("/order/updateTestMachineOrderConvertOrder", order);
         System.err.println(testResult);
     }
+
+//    @Test
+//    public void testTime() throws Exception {
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+//
+//        Order order = new Order();
+//        order.setOrderNo("LXO-20180913-0755-00082");
+//        TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
+//
+//        String ssss = "haha ";
+//    }
 }

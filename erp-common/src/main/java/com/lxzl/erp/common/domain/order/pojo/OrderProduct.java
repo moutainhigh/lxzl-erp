@@ -54,6 +54,8 @@ public class OrderProduct extends BasePO {
     @Transient
     private Integer identityNo; // 标识号，只在组合商品业务逻辑处理时使用，不持久化
 
+    private Integer testMachineOrderProductId; //测试机订单商品项id
+
     // 以下为K3的数据字段
     private Integer FEntryID;
     private String productNumber;
@@ -352,4 +354,11 @@ public class OrderProduct extends BasePO {
         this.isItemDelivered = isItemDelivered;
     }
 
+    public Integer getTestMachineOrderProductId() {
+        return testMachineOrderProductId;
+    }
+
+    public void setTestMachineOrderProductId(Integer testMachineOrderProductId) {
+        this.testMachineOrderProductId = testMachineOrderProductId;
+    }
 }
