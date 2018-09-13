@@ -253,6 +253,13 @@ public interface StatementService extends BaseService {
     ServiceResult<String, Boolean> payStatementOrderDetail(List<Integer> mergeStatementItemList);
 
     /**
+     * 查询结算需支付金额
+     * @param mergeStatementItemList
+     * @return
+     */
+    ServiceResult<String, BigDecimal> queryStatementOrderDetailsNeedPay(List<Integer> mergeStatementItemList);
+
+    /**
      * 批量退还应退的押金
      * @param orderNo
      * @return
