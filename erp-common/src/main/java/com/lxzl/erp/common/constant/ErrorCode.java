@@ -1118,6 +1118,10 @@ public class ErrorCode {
     public static final String UPDATE_REPLACE_ORDER_BY_CREATE_USER = "J310000020";//修改换货单只能创建人修改
     public static final String UPDATE_REPLACE_ORDER_STATUS_ERROR = "J310000021";//换货单只有在提交前才能修改
     public static final String REPLACE_ORDER_NO_ERROR = "J310000022";//换货单不存在
+    public static final String CONFIRM_REPLACE_ORDER_NOT_NULL = "J310000023";//确认换货传入的换货单对象不能为空
+    public static final String CONFIRM_REPLACE_ORDER_REPLACE_ORDER_STATUS_ERROR = "J310000024";//只有已发货状态的换货单才能进行确认换货
+    public static final String REAL_REPLACE_PRODUCT_COUNT_MORE_THAN_REPLACE_PRODUCT_COUNT = "J310000025";//确认换货数量大于换货单下单数量
+    public static final String REAL_REPLACE_PRODUCT_COUNT_NOT_NEGATIVE= "J310000026";//确认换货数量不能为负
 
 
     static {
@@ -2216,6 +2220,10 @@ public class ErrorCode {
         MAP.put(UPDATE_REPLACE_ORDER_BY_CREATE_USER, "修改换货单只能创建人修改");
         MAP.put(UPDATE_REPLACE_ORDER_STATUS_ERROR, "换货单只有在提交前才能修改");
         MAP.put(REPLACE_ORDER_NO_ERROR, "换货单不存在");
+        MAP.put(CONFIRM_REPLACE_ORDER_NOT_NULL, "确认换货传入的换货单对象不能为空");
+        MAP.put(CONFIRM_REPLACE_ORDER_REPLACE_ORDER_STATUS_ERROR, "只有已发货状态的换货单才能进行确认换货");
+        MAP.put(REAL_REPLACE_PRODUCT_COUNT_MORE_THAN_REPLACE_PRODUCT_COUNT, "确认换货数量大于换货单下单数量");
+        MAP.put(REAL_REPLACE_PRODUCT_COUNT_NOT_NEGATIVE, "确认换货数量不能为负");
 
         MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
         MAP.put(DEPOSIT_NOT_PAID_BEFORE_REPLACE_ORDER, "换货之前需先支付原订单押金");

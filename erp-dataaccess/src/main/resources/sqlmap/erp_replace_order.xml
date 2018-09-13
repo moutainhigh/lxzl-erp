@@ -34,8 +34,8 @@
 		<result column="consignee_phone" jdbcType="VARCHAR" property="consigneePhone" />
 		<result column="is_relet_order_replace" jdbcType="INTEGER" property="isReletOrderReplace"/>
 		<result column="relet_order_no" jdbcType="VARCHAR" property="reletOrderNo"/>
-		<collection property="replaceOrderDetailList" resultMap="ReplaceOrderProductDO"/>
-		<collection property="replaceOrderMaterialList" resultMap="ReplaceOrderMaterialDO"/>
+		<collection property="replaceOrderProductDOList" resultMap="ReplaceOrderProductDO"/>
+		<collection property="replaceOrderMaterialDOList" resultMap="ReplaceOrderMaterialDO"/>
 	</resultMap>
 
 	<resultMap id="ReplaceOrderProductDO" type="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO">
@@ -116,19 +116,19 @@
 		erop.old_product_entry as product_old_product_entry,erop.new_order_product_id as product_new_order_product_id,erop.rent_type as product_rent_type,erop.rent_time_length as product_rent_time_length,
 		erop.rent_length_type as product_rent_length_type,erop.deposit_cycle as product_deposit_cycle,erop.payment_cycle as product_payment_cycle,
 		erop.pay_mode as product_pay_mode,erop.old_product_unit_amount as product_old_product_unit_amount,erop.product_id as product_product_id,erop.product_name as product_product_name,
-		erop.product_sku_id as product_product_sku_id,erop.product_sku_name as product_product_sku_name,erop.product_count as product_replace_product_count,erop.product_unit_amount as product_product_unit_amount,
+		erop.product_sku_id as product_product_sku_id,erop.product_sku_name as product_product_sku_name,erop.replace_product_count as product_replace_product_count,erop.product_unit_amount as product_product_unit_amount,
 		erop.rent_deposit_amount as product_rent_deposit_amount,erop.deposit_amount as product_deposit_amount,erop.credit_deposit_amount as product_credit_deposit_amount,
 		erop.is_new_product as product_is_new_product,erop.data_status as product_data_status,erop.remark as product_remark,erop.create_time as product_create_time,
 		erop.create_user as product_create_user,erop.update_time as product_update_time,erop.update_user as product_update_user,erop.real_replace_product_count as product_real_replace_product_count,
 		erop.is_relet_order_replace as product_is_relet_order_replace,erop.relet_order_item_id as product_relet_order_item_id
 	</sql>
 
-	<sql id="column_List">
+	<sql id="material_column_List">
 		erom.id as replace_order_material_id,erom.replace_order_id as material_replace_order_id,erom.replace_order_no AS material_replace_order_no,erom.old_order_material_id as material_old_order_material_id,
 		erom.old_material_entry as material_old_material_entry,erom.new_order_material_id as material_new_order_material_id,erom.rent_type as material_rent_type,erom.rent_time_length as material_rent_time_length,
 		erom.rent_length_type as material_rent_length_type,erom.deposit_cycle as material_deposit_cycle,erom.payment_cycle as material_payment_cycle,erom.pay_mode as material_pay_mode,
 		erom.old_material_unit_amount as material_old_material_unit_amount,erom.material_id as material_material_id,erom.material_name as material_material_name,
-		erom.material_count as material_replace_material_count,erom.material_unit_amount as material_material_unit_amount,erom.rent_deposit_amount as material_rent_deposit_amount,erom.deposit_amount as material_deposit_amount,
+		erom.replace_material_count as material_replace_material_count,erom.material_unit_amount as material_material_unit_amount,erom.rent_deposit_amount as material_rent_deposit_amount,erom.deposit_amount as material_deposit_amount,
 		erom.credit_deposit_amount as material_credit_deposit_amount,erom.is_new_material as material_is_new_material,erom.data_status as material_data_status,erom.remark as material_remark,
 		erom.create_time as material_create_time,erom.create_user as material_create_user,erom.update_time as material_update_time,erom.update_user as material_update_user,
 		erom.real_replace_material_count as material_real_replace_material_count,erom.is_relet_order_replace as material_is_relet_order_replace,erom.relet_order_item_id as material_relet_order_item_id
@@ -280,82 +280,10 @@
 
 	<select id="findReplaceOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ero.id) FROM erp_replace_order ero
-		INNER JOIN erp_user eu1 ON eu.id = ero.confirm_replace_user
-		INNER JOIN erp_user eu2 ON eu.id = ero.create_user
-		INNER JOIN erp_user eu3 ON eu.id = ero.update_user
-		<where>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderId != null ">
-				and ero.id = #{maps.replaceOrderQueryParam.replaceOrderId, jdbcType=INTEGER}
-			</if>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.customerNo != null &amp;&amp; maps.replaceOrderQueryParam.customerNo != ''">
-				and ero.customer_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.customerNo}','%' )
-			</if>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderNo != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderNo != ''">
-				and ero.replace_order_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.replaceOrderNo}','%' )
-			</if>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.orderNo != null &amp;&amp; maps.replaceOrderQueryParam.orderNo != ''">
-				and ero.order_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.orderNo}','%' )
-			</if>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceReasonType != null ">
-				and ero.replace_reason_type = #{maps.replaceOrderQueryParam.replaceReasonType, jdbcType=INTEGER}
-			</if>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceMode != null ">
-				and ero.replace_mode = #{maps.replaceOrderQueryParam.replaceMode, jdbcType=INTEGER}
-			</if>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderStatus != null ">
-				and ero.replace_order_status = #{maps.replaceOrderQueryParam.replaceOrderStatus, jdbcType=INTEGER}
-			</if>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.consigneeName != null &amp;&amp; maps.replaceOrderQueryParam.consigneeName != ''">
-				and ero.consignee_name  LIKE CONCAT('%','${maps.replaceOrderQueryParam.consigneeName}','%' )
-			</if>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.createStartTime != null ">
-				<![CDATA[ AND ero.create_time >= #{maps.replaceOrderQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
-			</if>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.createEndTime != null ">
-				<![CDATA[ AND ero.create_time <= #{maps.replaceOrderQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
-			</if>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceStartTime != null ">
-				<![CDATA[ AND ero.replace_time >= #{maps.replaceOrderQueryParam.replaceStartTime,jdbcType=TIMESTAMP} ]]>
-			</if>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceEndTime != null ">
-				<![CDATA[ AND ero.replace_time <= #{maps.replaceOrderQueryParam.replaceEndTime,jdbcType=TIMESTAMP} ]]>
-			</if>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.updateStartTime != null ">
-				<![CDATA[ AND ero.update_time >= #{maps.replaceOrderQueryParam.updateStartTime,jdbcType=TIMESTAMP} ]]>
-			</if>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.updateEndTime != null ">
-				<![CDATA[ AND ero.update_time <= #{maps.replaceOrderQueryParam.updateEndTime,jdbcType=TIMESTAMP} ]]>
-			</if>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceStartTime != null ">
-				<![CDATA[ AND ero.confirm_replace_user >= #{maps.replaceOrderQueryParam.confirmReplaceStartTime,jdbcType=TIMESTAMP} ]]>
-			</if>
-			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceEndTime != null ">
-				<![CDATA[ AND ero.confirm_replace_user <= #{maps.replaceOrderQueryParam.confirmReplaceEndTime,jdbcType=TIMESTAMP} ]]>
-			</if>
-			<if test="maps.replaceOrderQueryParam.confirmReplaceUserName != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceUserName != ''">
-				and eu1.real_name like CONCAT('%','${maps.orderQueryParam.confirmReplaceUserName}','%' )
-			</if>
-			<if test="maps.replaceOrderQueryParam.createUser != null &amp;&amp; maps.replaceOrderQueryParam.createUser != ''">
-				and eu2.real_name like CONCAT('%','${maps.orderQueryParam.createUser}','%' )
-			</if>
-			<if test="maps.replaceOrderQueryParam.updateUser != null &amp;&amp; maps.replaceOrderQueryParam.updateUser != ''">
-				and eu3.real_name like CONCAT('%','${maps.orderQueryParam.updateUser}','%' )
-			</if>
-			<if test="true">
-				AND ero.data_status = 1
-			</if>
-		</where>
-	</select>
-
-	<select id="findReplaceOrderByParams" resultMap="ReplaceOrderDO" parameterType="map">
-		SELECT <include refid="column_List"/>
-		<trim prefix=",">
-			eu1.real_name AS confirmReplaceUserName,eu2.real_name AS createUserName,eu3.real_name AS updateUserName
-		</trim>
-		FROM erp_replace_order ero
-		INNER JOIN erp_user eu1 ON eu.id = ero.confirm_replace_user
-		INNER JOIN erp_user eu2 ON eu.id = ero.create_user
-		INNER JOIN erp_user eu3 ON eu.id = ero.update_user
+		INNER JOIN erp_user eu1 ON eu1.id = ero.confirm_replace_user
+		INNER JOIN erp_user eu2 ON eu2.id = ero.create_user
+		INNER JOIN erp_user eu3 ON eu3.id = ero.update_user
+		INNER JOIN erp_customer ec ON ec.id = ero.customer_id AND ec.data_status = 1
 		<where>
 			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderId != null ">
 				and ero.id = #{maps.replaceOrderQueryParam.replaceOrderId, jdbcType=INTEGER}
@@ -413,6 +341,86 @@
 			</if>
 			<if test="maps.replaceOrderQueryParam.updateUserName != null &amp;&amp; maps.replaceOrderQueryParam.updateUserName != ''">
 				and eu3.real_name like CONCAT('%','${maps.orderQueryParam.updateUserName}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam.customerName != null &amp;&amp; maps.replaceOrderQueryParam.customerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.orderQueryParam.customerName}','%' )
+			</if>
+			<if test="true">
+				AND ero.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="findReplaceOrderByParams" resultMap="ReplaceOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/>
+		<trim prefix=",">
+			eu1.real_name AS confirmReplaceUserName,eu2.real_name AS createUserName,eu3.real_name AS updateUserName
+		</trim>
+		FROM erp_replace_order ero
+		INNER JOIN erp_user eu1 ON eu1.id = ero.confirm_replace_user
+		INNER JOIN erp_user eu2 ON eu2.id = ero.create_user
+		INNER JOIN erp_user eu3 ON eu3.id = ero.update_user
+		INNER JOIN erp_customer ec ON ec.id = ero.customer_id AND ec.data_status = 1
+		<where>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderId != null ">
+				and ero.id = #{maps.replaceOrderQueryParam.replaceOrderId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.customerNo != null &amp;&amp; maps.replaceOrderQueryParam.customerNo != ''">
+				and ero.customer_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.customerNo}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderNo != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderNo != ''">
+				and ero.replace_order_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.replaceOrderNo}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.orderNo != null &amp;&amp; maps.replaceOrderQueryParam.orderNo != ''">
+				and ero.order_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.orderNo}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceReasonType != null ">
+				and ero.replace_reason_type = #{maps.replaceOrderQueryParam.replaceReasonType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceMode != null ">
+				and ero.replace_mode = #{maps.replaceOrderQueryParam.replaceMode, jdbcType=INTEGER}
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderStatus != null ">
+				and ero.replace_order_status = #{maps.replaceOrderQueryParam.replaceOrderStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.consigneeName != null &amp;&amp; maps.replaceOrderQueryParam.consigneeName != ''">
+				and ero.consignee_name  LIKE CONCAT('%','${maps.replaceOrderQueryParam.consigneeName}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND ero.create_time >= #{maps.replaceOrderQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.createEndTime != null ">
+				<![CDATA[ AND ero.create_time <= #{maps.replaceOrderQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceStartTime != null ">
+				<![CDATA[ AND ero.replace_time >= #{maps.replaceOrderQueryParam.replaceStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceEndTime != null ">
+				<![CDATA[ AND ero.replace_time <= #{maps.replaceOrderQueryParam.replaceEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.updateStartTime != null ">
+				<![CDATA[ AND ero.update_time >= #{maps.replaceOrderQueryParam.updateStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.updateEndTime != null ">
+				<![CDATA[ AND ero.update_time <= #{maps.replaceOrderQueryParam.updateEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceStartTime != null ">
+				<![CDATA[ AND ero.confirm_replace_user >= #{maps.replaceOrderQueryParam.confirmReplaceStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceEndTime != null ">
+				<![CDATA[ AND ero.confirm_replace_user <= #{maps.replaceOrderQueryParam.confirmReplaceEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam.confirmReplaceUserName != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceUserName != ''">
+				and eu1.real_name like CONCAT('%','${maps.orderQueryParam.confirmReplaceUserName}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam.createUserName != null &amp;&amp; maps.replaceOrderQueryParam.createUserName != ''">
+				and eu2.real_name like CONCAT('%','${maps.orderQueryParam.createUserName}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam.updateUserName != null &amp;&amp; maps.replaceOrderQueryParam.updateUserName != ''">
+				and eu3.real_name like CONCAT('%','${maps.orderQueryParam.updateUserName}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam.customerName != null &amp;&amp; maps.replaceOrderQueryParam.customerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.orderQueryParam.customerName}','%' )
 			</if>
 			<if test="true">
 				AND ero.data_status = 1

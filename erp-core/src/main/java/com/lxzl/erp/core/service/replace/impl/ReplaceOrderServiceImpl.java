@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
+import com.lxzl.erp.common.domain.replace.ReplaceOrderConfirmChangeParam;
 import com.lxzl.erp.common.domain.replace.ReplaceOrderQueryParam;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderMaterial;
@@ -44,6 +45,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
@@ -59,6 +61,7 @@ import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderProductDO;
 import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
 import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO;
+import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
@@ -275,6 +278,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             replaceOrderProductDO.setUpdateTime(date);
             replaceOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             replaceOrderProductDO.setRealReplaceProductCount(CommonConstant.COMMON_ZERO);
+            replaceOrderProductDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             ReletOrderProductDO reletOrderProductDO = reletOrderProductDOMap.get(replaceOrderProductDO.getOldOrderProductId());
             if (reletOrderProductDO!= null) {
                 replaceOrderProductDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_YES);
@@ -300,6 +304,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             replaceOrderMaterialDO.setUpdateTime(date);
             replaceOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             replaceOrderMaterialDO.setRealReplaceMaterialCount(CommonConstant.COMMON_ZERO);
+            replaceOrderMaterialDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialDOMap.get(replaceOrderMaterialDO.getOldOrderMaterialId());
             if (reletOrderMaterialDO!= null) {
                 replaceOrderMaterialDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_YES);
@@ -665,8 +670,110 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
      * 确认换货
      */
     @Override
-    public ServiceResult<String, String> confirmReplaceOrder(ReplaceOrder replaceOrder) {
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> confirmReplaceOrder(ReplaceOrderConfirmChangeParam replaceOrderConfirmChangeParam) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date date = new Date();
+        if (null == replaceOrderConfirmChangeParam.getReplaceOrder()) {
+            result.setErrorCode(ErrorCode.CONFIRM_REPLACE_ORDER_NOT_NULL);
+            return result;
+        }
+        ReplaceOrder replaceOrder = replaceOrderConfirmChangeParam.getReplaceOrder();
+        ReplaceOrderDO dbReplaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(replaceOrder.getReplaceOrderNo());
+        if (dbReplaceOrderDO == null) {
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_NO_ERROR);
+            return result;
+        }
+        Integer replaceOrderStatus = dbReplaceOrderDO.getReplaceOrderStatus();
+        if (replaceOrderStatus == null || ReplaceOrderStatus.REPLACE_ORDER_STATUS_DELIVERED.equals(replaceOrderStatus)) {
+            result.setErrorCode(ErrorCode.CONFIRM_REPLACE_ORDER_REPLACE_ORDER_STATUS_ERROR);
+            return result;
+        }
+        ReplaceOrderDO replaceOrderDO = ConverterUtil.convert(replaceOrder,ReplaceOrderDO.class);
+        List<ReplaceOrderProductDO> replaceOrderProductDOList = replaceOrderDO.getReplaceOrderProductDOList();
+        List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList = replaceOrderDO.getReplaceOrderMaterialDOList();
+        boolean replaceOrderProductDOListIsNotEmpty = CollectionUtil.isNotEmpty(replaceOrderProductDOList);
+        boolean replaceOrderMaterialDOListIsNotEmpty = CollectionUtil.isNotEmpty(replaceOrderMaterialDOList);
+        if (!replaceOrderProductDOListIsNotEmpty && !replaceOrderMaterialDOListIsNotEmpty) {
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_DETAIL_LIST_NOT_NULL);
+            return result;
+        }
+        Integer totalReplaceProductCount = replaceOrderDO.getTotalReplaceProductCount();
+        Integer totalReplaceMaterialCount = replaceOrderDO.getTotalReplaceMaterialCount();
+        Integer realTotalReplaceProductCount = replaceOrderDO.getRealTotalReplaceProductCount();
+        Integer realTotalReplaceMaterialCount = replaceOrderDO.getRealTotalReplaceMaterialCount();
 
+        if (replaceOrderProductDOListIsNotEmpty) {
+            for (ReplaceOrderProductDO replaceOrderProductDO:replaceOrderProductDOList) {
+                realTotalReplaceProductCount += replaceOrderProductDO.getRealReplaceProductCount();
+                //确认换货数量不能为负
+                if (replaceOrderProductDO.getRealReplaceProductCount()<0) {
+                    result.setErrorCode(ErrorCode.REAL_REPLACE_PRODUCT_COUNT_NOT_NEGATIVE);
+                    return result;
+                }
+                //确认换货数量大于换货单下单数量
+                if (replaceOrderProductDO.getRealReplaceProductCount() > replaceOrderProductDO.getReplaceProductCount()) {
+                    result.setErrorCode(ErrorCode.REAL_REPLACE_PRODUCT_COUNT_MORE_THAN_REPLACE_PRODUCT_COUNT);
+                    return result;
+                }
+                replaceOrderProductDO.setUpdateTime(date);
+                replaceOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+
+            }
+        }
+        if (replaceOrderMaterialDOListIsNotEmpty) {
+            for (ReplaceOrderMaterialDO replaceOrderMaterialDO:replaceOrderMaterialDOList) {
+                realTotalReplaceProductCount += replaceOrderMaterialDO.getRealReplaceMaterialCount();
+                //确认换货数量不能为负
+                if (replaceOrderMaterialDO.getRealReplaceMaterialCount()<0) {
+                    result.setErrorCode(ErrorCode.REAL_REPLACE_PRODUCT_COUNT_NOT_NEGATIVE);
+                    return result;
+                }
+                //确认换货数量大于换货单下单数量
+                if (replaceOrderMaterialDO.getRealReplaceMaterialCount() > replaceOrderMaterialDO.getReplaceMaterialCount()){
+                    result.setErrorCode(ErrorCode.REAL_REPLACE_PRODUCT_COUNT_MORE_THAN_REPLACE_PRODUCT_COUNT);
+                    return result;
+                }
+                replaceOrderMaterialDO.setUpdateTime(date);
+                replaceOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            }
+        }
+        //保存图片
+        if (replaceOrderConfirmChangeParam.getDeliveryNoteCustomerSignImg() != null) {
+            ImageDO deliveryNoteCustomerSignImgDO = imgMysqlMapper.findById(replaceOrderConfirmChangeParam.getDeliveryNoteCustomerSignImg().getImgId());
+            if (deliveryNoteCustomerSignImgDO == null) {
+                result.setErrorCode(ErrorCode.DELIVERY_NOTE_CUSTOMER_SIGN_IMAGE_NOT_EXISTS);
+                return result;
+            }
+            deliveryNoteCustomerSignImgDO.setImgType(ImgType.DELIVERY_NOTE_CUSTOMER_SIGN);
+            deliveryNoteCustomerSignImgDO.setRefId(replaceOrderDO.getId().toString());
+            deliveryNoteCustomerSignImgDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            deliveryNoteCustomerSignImgDO.setUpdateTime(date);
+            imgMysqlMapper.update(deliveryNoteCustomerSignImgDO);
+        }
+        replaceOrderDO.setConfirmReplaceTime(date);
+        replaceOrderDO.setConfirmReplaceUser(userSupport.getCurrentUserId().toString());
+        replaceOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        replaceOrderDO.setUpdateTime(date);
+        replaceOrderDO.setRealTotalReplaceProductCount(realTotalReplaceProductCount);
+        replaceOrderDO.setRealTotalReplaceMaterialCount(realTotalReplaceMaterialCount);
+        //如果换货全部确认不进行重新结算，订单也不用修改，只改换货单状态并保存
+//        if ((totalReplaceProductCount.equals(realTotalReplaceProductCount)) &&
+//                (totalReplaceMaterialCount.equals(realTotalReplaceMaterialCount))) {
+//
+//            replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_CONFIRM);
+//            replaceOrderMapper.update(replaceOrderDO);
+//            if (replaceOrderProductDOListIsNotEmpty) {
+//                replaceOrderProductMapper.updateListForConfirm(replaceOrderProductDOList);
+//            }
+//            if (replaceOrderMaterialDOListIsNotEmpty) {
+//                replaceOrderMaterialMapper.updateListForConfirm(replaceOrderMaterialDOList);
+//            }
+//            result.setErrorCode(ErrorCode.SUCCESS);
+//            result.setResult(replaceOrderDO.getReletOrderNo());
+//            return result;
+//        }
+        //如果不是全部进行换货，需进行重新结算，修改订单，发送K3，只改换货单状态并保存
 
         return null;
     }
@@ -1184,5 +1291,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     private ReplaceOrderProductMapper replaceOrderProductMapper;
     @Autowired
     private ReplaceOrderMaterialMapper replaceOrderMaterialMapper;
+    @Autowired
+    private ImgMysqlMapper imgMysqlMapper;
 
 }

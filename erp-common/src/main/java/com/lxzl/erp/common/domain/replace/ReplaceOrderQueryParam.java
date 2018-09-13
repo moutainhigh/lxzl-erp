@@ -22,6 +22,7 @@ public class ReplaceOrderQueryParam extends BasePageParam {
     private String replaceOrderNo;   //换货编号
     private String orderNo;   //原订单编号
     private String customerNo;   //客户编号
+    private String customerName; //客户名称
     private Integer replaceReasonType;   //换货原因类型,0-升级 ，1-损坏，2-其他
     private Integer replaceMode;   //换货方式，1-上门取件，2邮寄
     private Integer replaceOrderStatus;   //换货订单状态，0-待提交，4-审核中，8-待发货，12-处理中，16-已发货，20-已完成，24-取消
@@ -198,5 +199,13 @@ public class ReplaceOrderQueryParam extends BasePageParam {
 
     public void setConfirmReplaceEndTime(Date confirmReplaceEndTime) {
         this.confirmReplaceEndTime = confirmReplaceEndTime;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 }
