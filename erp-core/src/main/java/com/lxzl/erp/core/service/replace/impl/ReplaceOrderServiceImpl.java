@@ -278,6 +278,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             replaceOrderProductDO.setUpdateTime(date);
             replaceOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             replaceOrderProductDO.setRealReplaceProductCount(CommonConstant.COMMON_ZERO);
+            replaceOrderProductDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             ReletOrderProductDO reletOrderProductDO = reletOrderProductDOMap.get(replaceOrderProductDO.getOldOrderProductId());
             if (reletOrderProductDO!= null) {
                 replaceOrderProductDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_YES);
@@ -303,6 +304,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             replaceOrderMaterialDO.setUpdateTime(date);
             replaceOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             replaceOrderMaterialDO.setRealReplaceMaterialCount(CommonConstant.COMMON_ZERO);
+            replaceOrderMaterialDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialDOMap.get(replaceOrderMaterialDO.getOldOrderMaterialId());
             if (reletOrderMaterialDO!= null) {
                 replaceOrderMaterialDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_YES);
