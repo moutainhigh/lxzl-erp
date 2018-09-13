@@ -116,7 +116,7 @@
 		erop.old_product_entry as product_old_product_entry,erop.new_order_product_id as product_new_order_product_id,erop.rent_type as product_rent_type,erop.rent_time_length as product_rent_time_length,
 		erop.rent_length_type as product_rent_length_type,erop.deposit_cycle as product_deposit_cycle,erop.payment_cycle as product_payment_cycle,
 		erop.pay_mode as product_pay_mode,erop.old_product_unit_amount as product_old_product_unit_amount,erop.product_id as product_product_id,erop.product_name as product_product_name,
-		erop.product_sku_id as product_product_sku_id,erop.product_sku_name as product_product_sku_name,erop.product_count as product_replace_product_count,erop.product_unit_amount as product_product_unit_amount,
+		erop.product_sku_id as product_product_sku_id,erop.product_sku_name as product_product_sku_name,erop.replace_product_count as product_replace_product_count,erop.product_unit_amount as product_product_unit_amount,
 		erop.rent_deposit_amount as product_rent_deposit_amount,erop.deposit_amount as product_deposit_amount,erop.credit_deposit_amount as product_credit_deposit_amount,
 		erop.is_new_product as product_is_new_product,erop.data_status as product_data_status,erop.remark as product_remark,erop.create_time as product_create_time,
 		erop.create_user as product_create_user,erop.update_time as product_update_time,erop.update_user as product_update_user,erop.real_replace_product_count as product_real_replace_product_count,
