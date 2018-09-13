@@ -123,7 +123,7 @@
 		erop.is_relet_order_replace as product_is_relet_order_replace,erop.relet_order_item_id as product_relet_order_item_id
 	</sql>
 
-	<sql id="column_List">
+	<sql id="material_column_List">
 		erom.id as replace_order_material_id,erom.replace_order_id as material_replace_order_id,erom.replace_order_no AS material_replace_order_no,erom.old_order_material_id as material_old_order_material_id,
 		erom.old_material_entry as material_old_material_entry,erom.new_order_material_id as material_new_order_material_id,erom.rent_type as material_rent_type,erom.rent_time_length as material_rent_time_length,
 		erom.rent_length_type as material_rent_length_type,erom.deposit_cycle as material_deposit_cycle,erom.payment_cycle as material_payment_cycle,erom.pay_mode as material_pay_mode,

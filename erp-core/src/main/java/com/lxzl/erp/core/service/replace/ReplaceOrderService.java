@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.replace;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.replace.ReplaceOrderConfirmChangeParam;
 import com.lxzl.erp.common.domain.replace.ReplaceOrderQueryParam;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.se.core.service.BaseService;
@@ -22,7 +23,7 @@ public interface ReplaceOrderService extends BaseService {
 
     ServiceResult<String,ReplaceOrder> queryReplaceOrderByNo(String replaceOrderNo);
 
-    ServiceResult<String,String> confirmReplaceOrder(ReplaceOrder replaceOrder);
+    ServiceResult<String,String> confirmReplaceOrder(ReplaceOrderConfirmChangeParam replaceOrderConfirmChangeParam);
 
     ServiceResult<String,String> replaceOrderDeliveryCallBack(ReplaceOrder replaceOrder);
 }
