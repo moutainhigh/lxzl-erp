@@ -56,6 +56,8 @@ public class OrderMaterial extends BasePO {
 	@Transient
 	private Integer identityNo; // 标识号，只在组合商品业务逻辑处理时使用，不持久化
 
+	private Integer testMachineOrderMaterialId; //测试机配件项id
+
 	// 以下为K3的数据字段
 	private Integer FEntryID;
 	private String productNumber;
@@ -360,5 +362,13 @@ public class OrderMaterial extends BasePO {
 
 	public void setIsItemDelivered(Integer isItemDelivered) {
 		this.isItemDelivered = isItemDelivered;
+	}
+
+	public Integer getTestMachineOrderMaterialId() {
+		return testMachineOrderMaterialId;
+	}
+
+	public void setTestMachineOrderMaterialId(Integer testMachineOrderMaterialId) {
+		this.testMachineOrderMaterialId = testMachineOrderMaterialId;
 	}
 }

@@ -1802,6 +1802,7 @@ public class OrderServiceImpl implements OrderService {
                     return verifyOrderShortRentReceivableResult;
                 }
 
+                //获取订单详细信息，发送给k3
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
                 // 只有审批通过的订单才生成结算单
                 ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createOrderStatement(orderDO.getOrderNo());
@@ -1810,9 +1811,30 @@ public class OrderServiceImpl implements OrderService {
                     return createStatementOrderResult.getErrorCode();
                 }
 
+                orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
+                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_SUCCESS);
+                orderDO.setUpdateTime(currentTime);
+                orderDO.setUpdateUser(loginUser.getUserId().toString());
+                orderMapper.update(orderDO);
+
+                Order order = queryOrderByNo(orderDO.getOrderNo()).getResult();
                 //审核通过后对测试机订单做已经转为租赁单的标记
                 OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(orderDO.getOrderNo());
                 if (orderFromTestMachineDO != null){
+
+                    //由测试机转换为租赁订单给K3传数据
+                    ServiceResult<String, String> serviceResult = k3Service.testMachineOrderTurnRentOrder(order);
+                    if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+                        return serviceResult.getErrorCode();
+                    }
+
+                    //修改原测试机结算
+                    String stopResult=statementOrderSupport.stopTestMachineOrder(orderFromTestMachineDO.getTestMachineOrderNo(),orderDO.getRentStartTime());
+                    if(!ErrorCode.SUCCESS.equals(stopResult)){
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                        return stopResult;
+                    }
+
                     OrderDO testMachineOrderDO = orderMapper.findByNo(orderFromTestMachineDO.getTestMachineOrderNo());
                     testMachineOrderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK); //测试机订单转为新订单后，当新订单通过审核后，将原测试机订单改为已归还状态
                     testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_TWO);
@@ -1822,23 +1844,10 @@ public class OrderServiceImpl implements OrderService {
 
                     //增加测试机已归还时间轴
                     orderTimeAxisSupport.addOrderTimeAxis(testMachineOrderDO.getId(), testMachineOrderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.K3_RETURN_CALLBACK);
-
-                    //修改原测试机结算
-                    String stopResult=statementOrderSupport.stopTestMachineOrder(orderFromTestMachineDO.getTestMachineOrderNo(),orderDO.getRentStartTime());
-                    if(!ErrorCode.SUCCESS.equals(stopResult)){
-                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                        return stopResult;
-                    }
+                }else if(orderFromTestMachineDO == null){
+                    //正常订单给K3传数据
+                    webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD, PostK3Type.POST_K3_TYPE_ORDER, order, true);
                 }
-
-                orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
-                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_SUCCESS);
-                orderDO.setUpdateTime(currentTime);
-                orderDO.setUpdateUser(loginUser.getUserId().toString());
-                orderMapper.update(orderDO);
-                //获取订单详细信息，发送给k3
-                Order order = queryOrderByNo(orderDO.getOrderNo()).getResult();
-                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD, PostK3Type.POST_K3_TYPE_ORDER, order, true);
             } else {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
                 // 如果拒绝，则退还授信额度
@@ -1850,7 +1859,6 @@ public class OrderServiceImpl implements OrderService {
                 orderDO.setUpdateUser(loginUser.getUserId().toString());
                 orderMapper.update(orderDO);
             }
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -4372,7 +4380,7 @@ public class OrderServiceImpl implements OrderService {
         testMachineOrderDO.setUpdateUser(loginUser.getUserId().toString());
         orderMapper.update(testMachineOrderDO);
 
-        /***** 增加的组合商品逻辑 start*******/
+        /***** 增加的组合商品逻辑 start*****/
         saveOrderJointProductInfo(orderDO.getOrderJointProductDOList(), orderDO, loginUser, currentTime);
         /***** 增加的组合商品逻辑 end*******/
         saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
@@ -4417,8 +4425,14 @@ public class OrderServiceImpl implements OrderService {
             Map<Integer,OrderProduct> newOrderProductMap = new HashMap<>();
             for (OrderProduct orderProduct :orderProductList){
                 if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProduct.getIsItemDelivered())){
-                    if (dbOrderProductDOMap.get(orderProduct.getOrderProductId()) != null){
-                        newOrderProductMap.put(orderProduct.getOrderProductId(),orderProduct);
+                    if(CommonConstant.COMMON_CONSTANT_YES.equals(orderAction)){
+                        if (dbOrderProductDOMap.get(orderProduct.getTestMachineOrderProductId()) != null){
+                            newOrderProductMap.put(orderProduct.getTestMachineOrderProductId(),orderProduct);
+                        }
+                    }else{
+                        if (dbOrderProductDOMap.get(orderProduct.getOrderProductId()) != null){
+                            newOrderProductMap.put(orderProduct.getOrderProductId(),orderProduct);
+                        }
                     }
                 }
             }
@@ -4458,9 +4472,16 @@ public class OrderServiceImpl implements OrderService {
             Map<Integer,OrderMaterial> newOrderMaterialMap = new HashMap<>();
             for (OrderMaterial orderMaterial :orderMaterialList){
                 if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterial.getIsItemDelivered())){
-                    if (dbOrderMaterialDOMap.get(orderMaterial.getOrderMaterialId()) != null){
-                        newOrderMaterialMap.put(orderMaterial.getOrderMaterialId(),orderMaterial);
+                    if(CommonConstant.COMMON_CONSTANT_YES.equals(orderAction)){
+                        if (dbOrderMaterialDOMap.get(orderMaterial.getTestMachineOrderMaterialId()) != null){
+                            newOrderMaterialMap.put(orderMaterial.getTestMachineOrderMaterialId(),orderMaterial);
+                        }
+                    }else{
+                        if (dbOrderMaterialDOMap.get(orderMaterial.getOrderMaterialId()) != null){
+                            newOrderMaterialMap.put(orderMaterial.getOrderMaterialId(),orderMaterial);
+                        }
                     }
+
                 }
             }
 

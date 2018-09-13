@@ -302,6 +302,17 @@ public class K3Controller extends BaseController {
         return resultGenerator.generate(serviceResult);
     }
 
+    /**
+     * 推送由测试机订单转为租赁的订单信息给K3
+     * @param order
+     * @return
+     */
+    @RequestMapping(value = "testMachineOrderTurnRentOrder", method = RequestMethod.POST)
+    public Result testMachineOrderTurnRentOrder(@RequestBody com.lxzl.erp.common.domain.order.pojo.Order order ) {
+        ServiceResult<String, String> serviceResult = k3Service.testMachineOrderTurnRentOrder(order);
+        return resultGenerator.generate(serviceResult);
+    }
+
 
     @Autowired
     private ResultGenerator resultGenerator;

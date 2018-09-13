@@ -1105,6 +1105,7 @@ public class ErrorCode {
     public static final String TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_RENT = "J30000016";
     public static final String TEST_MACHINE_ORDER_RENT_START_TIME_ERROR = "J30000017";
     public static final String TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_VERIFIED = "J30000018";
+    public static final String K3_TEST_MACHINE_ORDER_TURN_RENT_ORDER_ERROR = "J30000018";
 
     //Mall
     public static final String MALL_SYSTEM_CONNECT_EXCEPTION = "Mall00001";
@@ -1954,6 +1955,7 @@ public class ErrorCode {
         MAP.put(K3_SEL_STOCK_CUSTOMER_QUERY_COUNT_NOT_NULL_IN_CONFIRM_STOCK, "确认库存时K3库存查询的客户需求数量不能为空");
         MAP.put(K3_SEL_STOCK_CAN_NOT_QUERY_IN_CONFIRM_STOCK, "确认库存时K3库存查询的仓位类型不能选择借出仓和全部仓位");
 
+
         MAP.put(SUCCESS_RELET_ORDER_EXIST, "退货后已成功续租，退货单无法回滚");
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
@@ -2203,6 +2205,7 @@ public class ErrorCode {
         MAP.put(TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_RENT, "转租赁的原测试机订单，不能执行该操作");
         MAP.put(TEST_MACHINE_ORDER_RENT_START_TIME_ERROR, "新订单的起租时间需大于原测试机订单的起租时间，且小于等于原测试机订单结束时间的下一天");
         MAP.put(TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_VERIFIED, "测试机转租赁的新订单，不能执行该操作");
+        MAP.put(K3_TEST_MACHINE_ORDER_TURN_RENT_ORDER_ERROR, "K3推送有测试机转租赁的订单信息失败");
 
         MAP.put(MALL_SYSTEM_CONNECT_EXCEPTION, "连接Mall-App系统异常");
 
