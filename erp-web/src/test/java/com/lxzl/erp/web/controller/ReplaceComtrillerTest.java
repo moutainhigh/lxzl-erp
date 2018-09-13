@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.replace.ReplaceOrderQueryParam;
@@ -29,6 +30,7 @@ public class ReplaceComtrillerTest extends ERPUnTransactionalTest {
         String str = "{\"pageNo\":1,\"pageSize\":15,\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\",\"replaceOrderStatus\":\"\",\"customerName\":\"\",\"customerNo\":\"\",\"replaceOrderNo\":\"\",\"orderNo\":\"\"}";
         ReplaceOrderQueryParam param = FastJsonUtil.toBean(str, ReplaceOrderQueryParam.class);
         TestResult testResult = getJsonTestResult("/replaceOrder/queryAllReplaceOrder", param);
+        System.out.println(JSON.toJSONString(testResult));
 
     }
 }
