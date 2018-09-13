@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.replace.ReplaceOrderConfirmChangeParam;
 import com.lxzl.erp.common.domain.replace.ReplaceOrderQueryParam;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
@@ -98,13 +99,13 @@ public class ReplaceOrderController {
     /**
      * 确认换货
      * @Author : sunzhipeng
-     * @param replaceOrder
+     * @param replaceOrderConfirmChangeParam
      * @param validResult
      * @return
      */
     @RequestMapping(value = "confirmReplaceOrder", method = RequestMethod.POST)
-    public Result confirmReplaceOrder(@RequestBody  ReplaceOrder replaceOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = replaceOrderService.confirmReplaceOrder(replaceOrder);
+    public Result confirmReplaceOrder(@RequestBody ReplaceOrderConfirmChangeParam replaceOrderConfirmChangeParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = replaceOrderService.confirmReplaceOrder(replaceOrderConfirmChangeParam);
         return resultGenerator.generate(serviceResult);
     }
 
