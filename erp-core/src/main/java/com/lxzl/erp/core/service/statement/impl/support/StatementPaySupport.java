@@ -3,16 +3,24 @@ package com.lxzl.erp.core.service.statement.impl.support;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.PayStatus;
+import com.lxzl.erp.common.constant.StatementDetailType;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.statement.AmountHasReturn;
+import com.lxzl.erp.common.domain.statement.AmountNeedPay;
 import com.lxzl.erp.common.util.BigDecimalUtil;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementPayOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectDetailMapper;
+import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementPayOrderDO;
+import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDetailDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -28,6 +36,12 @@ public class StatementPaySupport {
 
     @Autowired
     private GenerateNoSupport generateNoSupport;
+
+    @Autowired
+    private StatementOrderCorrectDetailMapper statementOrderCorrectDetailMapper;
+
+    @Autowired
+    private StatementOrderSupport statementOrderSupport;
 
     /**
      * 保存支付记录，返回支付状态
@@ -104,5 +118,89 @@ public class StatementPaySupport {
 
     public StatementPayOrderDO findByNo(String statementPayOrderNo) {
         return statementPayOrderMapper.findByNo(statementPayOrderNo);
+    }
+
+    /**
+     * 计算订单结算单项实际需支付钱
+     * @param statementOrderDetailDO
+     * @return
+     */
+    public AmountNeedPay calculateStatementItemRealNeedPay(StatementOrderDetailDO statementOrderDetailDO){
+        // 查询有没有冲正业务金额
+        BigDecimal correctBusinessAmount = getStatementItemCorrectAmount(statementOrderDetailDO);
+        //计算已退金额
+        AmountHasReturn amountHasReturn=statementOrderSupport.getStatementItemHasReturn(statementOrderDetailDO);
+        BigDecimal returnStatementAmount = amountHasReturn.getReturnStatementAmount(), returnStatementRentAmount = amountHasReturn.getReturnStatementRentAmount(), returnStatementDepositAmount =amountHasReturn.getReturnStatementDepositAmount(), returnStatementRentDepositAmount = amountHasReturn.getReturnStatementRentDepositAmount();
+
+        //计算需支付金额
+        BigDecimal needStatementDetailOtherPayAmount=BigDecimal.ZERO;
+        BigDecimal noPaidStatementDetailOtherPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailOtherAmount(), statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+        if (BigDecimalUtil.compare(noPaidStatementDetailOtherPayAmount, BigDecimal.ZERO) > 0) {
+            needStatementDetailOtherPayAmount = BigDecimalUtil.sub(noPaidStatementDetailOtherPayAmount, correctBusinessAmount);
+            needStatementDetailOtherPayAmount = BigDecimalUtil.compare(needStatementDetailOtherPayAmount, BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : needStatementDetailOtherPayAmount;
+            statementOrderDetailDO.setStatementDetailOtherPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailOtherPaidAmount(), needStatementDetailOtherPayAmount));
+        }
+
+        BigDecimal noPaidStatementDetailRentPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentAmount(), statementOrderDetailDO.getStatementDetailRentPaidAmount());
+        BigDecimal needStatementDetailRentPayAmount = BigDecimal.ZERO;
+        if (BigDecimalUtil.compare(noPaidStatementDetailRentPayAmount, BigDecimal.ZERO) > 0) {
+            needStatementDetailRentPayAmount = BigDecimalUtil.sub(noPaidStatementDetailRentPayAmount, correctBusinessAmount);
+            needStatementDetailRentPayAmount = BigDecimalUtil.add(needStatementDetailRentPayAmount, returnStatementRentAmount);
+            needStatementDetailRentPayAmount = BigDecimalUtil.compare(needStatementDetailRentPayAmount, BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : needStatementDetailRentPayAmount;
+            statementOrderDetailDO.setStatementDetailRentPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentPaidAmount(), needStatementDetailRentPayAmount));
+        }
+        BigDecimal needStatementDetailRentDepositPayAmount=BigDecimal.ZERO;
+        BigDecimal noPaidStatementDetailRentDepositPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
+        if (BigDecimalUtil.compare(noPaidStatementDetailRentDepositPayAmount, BigDecimal.ZERO) > 0) {
+            needStatementDetailRentDepositPayAmount = BigDecimalUtil.sub(noPaidStatementDetailRentDepositPayAmount, correctBusinessAmount);
+            needStatementDetailRentDepositPayAmount = BigDecimalUtil.add(needStatementDetailRentDepositPayAmount, returnStatementRentDepositAmount);
+            needStatementDetailRentDepositPayAmount = BigDecimalUtil.compare(needStatementDetailRentDepositPayAmount, BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : needStatementDetailRentDepositPayAmount;
+            statementOrderDetailDO.setStatementDetailRentDepositPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), needStatementDetailRentDepositPayAmount));
+        }
+
+        BigDecimal noPaidStatementDetailDepositPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositAmount(), statementOrderDetailDO.getStatementDetailDepositPaidAmount());
+        BigDecimal needStatementDetailDepositPayAmount=BigDecimal.ZERO;
+        if (BigDecimalUtil.compare(noPaidStatementDetailDepositPayAmount, BigDecimal.ZERO) > 0) {
+            needStatementDetailDepositPayAmount = BigDecimalUtil.sub(noPaidStatementDetailDepositPayAmount, correctBusinessAmount);
+            needStatementDetailDepositPayAmount = BigDecimalUtil.add(needStatementDetailDepositPayAmount, returnStatementDepositAmount);
+            needStatementDetailDepositPayAmount = BigDecimalUtil.compare(needStatementDetailDepositPayAmount, BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : needStatementDetailDepositPayAmount;
+            statementOrderDetailDO.setStatementDetailDepositPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), needStatementDetailDepositPayAmount));
+        }
+
+        BigDecimal needStatementDetailOverduePayAmount=BigDecimal.ZERO;
+        BigDecimal noPaidStatementDetailOverduePayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailOverdueAmount(), statementOrderDetailDO.getStatementDetailOverduePaidAmount());
+        if (BigDecimalUtil.compare(noPaidStatementDetailOverduePayAmount, BigDecimal.ZERO) > 0) {
+            // 查询有没有冲正逾期金额
+            BigDecimal correctOverdueAmount = getStatementItemCorrectAmountByType(statementOrderDetailDO);
+            needStatementDetailOverduePayAmount=BigDecimalUtil.compare(noPaidStatementDetailOverduePayAmount, correctOverdueAmount) >= 0?BigDecimalUtil.sub(noPaidStatementDetailOverduePayAmount, correctOverdueAmount):BigDecimal.ZERO;
+            statementOrderDetailDO.setStatementDetailOverduePaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailOverduePaidAmount(), needStatementDetailOverduePayAmount));
+        }
+        return new AmountNeedPay(needStatementDetailDepositPayAmount,needStatementDetailOtherPayAmount,needStatementDetailRentPayAmount,needStatementDetailOverduePayAmount,BigDecimal.ZERO,needStatementDetailRentDepositPayAmount);
+    }
+
+    public BigDecimal getStatementItemCorrectAmountByType(StatementOrderDetailDO statementOrderDetailDO) {
+        List<StatementOrderCorrectDetailDO> statementOrderCorrectOverdueDetailDOList = statementOrderCorrectDetailMapper.findByStatementDetailIdAndType(statementOrderDetailDO.getId(), StatementDetailType.STATEMENT_DETAIL_TYPE_OVERDUE);
+        BigDecimal correctOverdueAmount = BigDecimal.ZERO;
+        if (CollectionUtil.isNotEmpty(statementOrderCorrectOverdueDetailDOList)) {
+            for (StatementOrderCorrectDetailDO statementOrderCorrectDetailDO : statementOrderCorrectOverdueDetailDOList) {
+                if (statementOrderCorrectDetailDO != null && BigDecimalUtil.compare(statementOrderCorrectDetailDO.getStatementCorrectAmount(), BigDecimal.ZERO) > 0) {
+                    correctOverdueAmount = statementOrderCorrectDetailDO.getStatementCorrectAmount();
+                }
+            }
+        }
+        return correctOverdueAmount;
+    }
+
+    public  BigDecimal getStatementItemCorrectAmount(StatementOrderDetailDO statementOrderDetailDO) {
+        List<StatementOrderCorrectDetailDO> statementOrderCorrectDetailDOList = statementOrderCorrectDetailMapper.findByStatementDetailIdAndType(statementOrderDetailDO.getId(), statementOrderDetailDO.getStatementDetailType());
+        BigDecimal correctBusinessAmount = BigDecimal.ZERO;
+        if (CollectionUtil.isNotEmpty(statementOrderCorrectDetailDOList)) {
+            for (StatementOrderCorrectDetailDO statementOrderCorrectDetailDO : statementOrderCorrectDetailDOList) {
+                if (statementOrderCorrectDetailDO != null && BigDecimalUtil.compare(statementOrderCorrectDetailDO.getStatementCorrectAmount(), BigDecimal.ZERO) > 0) {
+                    correctBusinessAmount = statementOrderCorrectDetailDO.getStatementCorrectAmount();
+                }
+            }
+        }
+        return correctBusinessAmount;
     }
 }
