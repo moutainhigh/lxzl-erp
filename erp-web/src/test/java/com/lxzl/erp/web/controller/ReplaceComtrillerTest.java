@@ -34,4 +34,14 @@ public class ReplaceComtrillerTest extends ERPUnTransactionalTest {
         System.out.println(JSON.toJSONString(testResult));
 
     }
+
+    @Test
+    public void testUpdateJSON() throws Exception {
+        String str = "{\"replaceOrderId\":5,\"replaceOrderNo\":\"LXREO20180914111048191\",\"orderId\":3002932,\"orderNo\":\"LXO-20180817-1000-00039\",\"customerId\":705743,\"customerNo\":\"LXCC-1000-20180817-00049\",\"address\":\"湖北省武汉市洪山区你家大门口\",\"logisticsCost\":\"200\",\"serviceCost\":\"200\",\"repairCost\":\"200\",\"replaceReasonType\":\"0\",\"replaceTime\":1537228800000,\"replaceMode\":\"2\",\"remark\":\"\",\"consigneeName\":\"咩咩\",\"consigneePhone\":\"18566324590\",\"replaceOrderProductList\":[{\"oldOrderProductId\":4312,\"oldProductEntry\":4312,\"rentType\":1,\"rentTimeLength\":15,\"rentLengthType\":1,\"depositCycle\":0,\"payMode\":1,\"paymentCycle\":0,\"oldProductUnitAmount\":10,\"depositAmount\":100,\"productId\":2000439,\"productName\":\"苹果IPADPRO-16G\",\"productSkuId\":1525,\"productSkuName\":\"CPU:双核/内存:16G/尺寸:9.7\",\"replaceProductCount\":1,\"productUnitAmount\":210,\"isNewProduct\":1,\"remark\":\"\"}]}";
+
+        ReplaceOrder replaceOrder = FastJsonUtil.toBean(str, ReplaceOrder.class);
+        TestResult testResult = getJsonTestResult("/replaceOrder/update", replaceOrder);
+        System.out.println(JSON.toJSONString(testResult));
+
+    }
 }

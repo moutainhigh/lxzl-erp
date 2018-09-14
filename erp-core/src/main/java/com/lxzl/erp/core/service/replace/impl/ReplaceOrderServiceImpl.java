@@ -342,7 +342,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             return serviceResult;
         }
         ReplaceOrderDO dbreplaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(replaceOrder.getReplaceOrderNo());
-        if (dbreplaceOrderDO != null) {
+        if (dbreplaceOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.REPLACE_ORDER_ERROR);
             return serviceResult;
         }
