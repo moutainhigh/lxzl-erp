@@ -77,7 +77,6 @@
 		<result column="product_real_replace_product_count" jdbcType="INTEGER" property="realReplaceProductCount" />
 		<result column="product_is_relet_order_replace" jdbcType="INTEGER" property="isReletOrderReplace" />
 		<result column="product_relet_order_item_id" jdbcType="INTEGER" property="reletOrderItemId" />
-
 		<result column="product_old_product_id" jdbcType="INTEGER" property="oldProductId" />
 		<result column="product_old_product_name" jdbcType="VARCHAR" property="oldProductName" />
 		<result column="product_old_product_sku_id" jdbcType="INTEGER" property="oldProductSkuId" />

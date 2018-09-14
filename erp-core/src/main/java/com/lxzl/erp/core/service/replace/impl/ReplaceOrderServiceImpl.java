@@ -270,7 +270,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         List<ReplaceOrderProductDO> saveReplaceOrderProductDOList = new ArrayList<>();
         for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderProductDOList) {
             OrderProductDO orderProductDO = orderProductDOMap.get(replaceOrderProductDO.getOldOrderProductId());
-            replaceOrderProductDO.setOldProductEntry(orderProductDO.getFEntryID());
             replaceOrderProductDO.setOldProductUnitAmount(orderProductDO.getProductUnitAmount());
             replaceOrderProductDO.setReplaceOrderId(replaceOrderDO.getId());
             replaceOrderProductDO.setReplaceOrderNo(replaceOrderDO.getReplaceOrderNo());
@@ -296,7 +295,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         List<ReplaceOrderMaterialDO> saveReplaceOrderMaterialDOList = new ArrayList<>();
         for (ReplaceOrderMaterialDO replaceOrderMaterialDO : replaceOrderMaterialDOList) {
             OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(replaceOrderMaterialDO.getOldOrderMaterialId());
-            replaceOrderMaterialDO.setOldMaterialEntry(orderMaterialDO.getFEntryID());
             replaceOrderMaterialDO.setOldMaterialUnitAmount(orderMaterialDO.getMaterialUnitAmount());
             replaceOrderMaterialDO.setReplaceOrderId(replaceOrderDO.getId());
             replaceOrderMaterialDO.setReplaceOrderNo(replaceOrderDO.getReplaceOrderNo());
@@ -1120,6 +1118,12 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 if (orderProductDO == null) {
                     throw new BusinessException(ErrorCode.ORDER_PRODUCT_NOT_EXISTS);
                 }
+                ServiceResult<String, Product> oldproductServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
+                if (!ErrorCode.SUCCESS.equals(oldproductServiceResult.getErrorCode())) {
+                    throw new BusinessException(oldproductServiceResult.getErrorCode());
+                }
+                Product oldProduct = oldproductServiceResult.getResult();
+
 
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(replaceOrderProductDO.getProductSkuId());
                 if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
@@ -1168,7 +1172,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 replaceOrderProductDO.setOldProductName(orderProductDO.getProductName());
                 replaceOrderProductDO.setOldProductSkuId(orderProductDO.getProductSkuId());
                 replaceOrderProductDO.setOldProductSkuName(orderProductDO.getProductSkuName());
-                replaceOrderProductDO.setOldProductNumber(orderProductDO.getProductNumber());
+                replaceOrderProductDO.setOldProductNumber(oldProduct.getK3ProductNo());
                 replaceOrderProductDO.setOldIsNewProduct(orderProductDO.getIsNewProduct());
                 replaceOrderProductDO.setProductNumber(product.getK3ProductNo());
                 replaceOrderProductDO.setOldRentingProductCount(orderProductDO.getRentingProductCount());
