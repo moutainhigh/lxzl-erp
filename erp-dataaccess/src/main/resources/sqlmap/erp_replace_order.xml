@@ -37,6 +37,7 @@
 		<result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
 		<result column="update_user_name" jdbcType="VARCHAR" property="updateUserName"/>
 		<result column="confirm_replace_user_name" jdbcType="VARCHAR" property="confirmReplaceUserName"/>
+		<result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
 		<collection property="replaceOrderProductDOList" resultMap="ReplaceOrderProductDO"/>
 		<collection property="replaceOrderMaterialDOList" resultMap="ReplaceOrderMaterialDO"/>
 	</resultMap>
@@ -366,7 +367,7 @@
 	<select id="findReplaceOrderByParams" resultMap="ReplaceOrderDO" parameterType="map">
 		SELECT <include refid="column_List"/>
 		<trim prefix=",">
-			eu1.real_name AS confirm_replace_user_name,eu2.real_name AS create_user_name,eu3.real_name AS update_user_name
+			eu1.real_name AS confirm_replace_user_name,eu2.real_name AS create_user_name,eu3.real_name AS update_user_name,ec.customer_name AS customer_name
 		</trim>
 		FROM erp_replace_order ero
 		LEFT JOIN erp_user eu1 ON eu1.id = ero.confirm_replace_user
