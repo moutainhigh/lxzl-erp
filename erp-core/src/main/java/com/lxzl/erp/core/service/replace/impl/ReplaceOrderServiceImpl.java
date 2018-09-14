@@ -371,9 +371,12 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 replaceOrderMaterialDO.setUpdateTime(date);
             }
         }
-        replaceOrderProductMapper.updateListForCancel(dbreplaceOrderProductDOList);
-        replaceOrderMaterialMapper.updateListForCancel(dbreplaceOrderMaterialDOList);
-
+        if (CollectionUtil.isNotEmpty(dbreplaceOrderProductDOList)) {
+            replaceOrderProductMapper.updateListForCancel(dbreplaceOrderProductDOList);
+        }
+        if (CollectionUtil.isNotEmpty(dbreplaceOrderMaterialDOList)) {
+            replaceOrderMaterialMapper.updateListForCancel(dbreplaceOrderMaterialDOList);
+        }
 
         ReplaceOrderDO replaceOrderDO = ConverterUtil.convert(replaceOrder, ReplaceOrderDO.class);
         List<ReplaceOrderProductDO> replaceOrderProductDOList = replaceOrderDO.getReplaceOrderProductDOList();
@@ -625,9 +628,14 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             }
         }
         replaceOrderMapper.update(replaceOrderDO);
-        replaceOrderProductMapper.updateListForCancel(replaceOrderProductDOList);
-        replaceOrderMaterialMapper.updateListForCancel(replaceOrderMaterialDOList);
-        return null;
+        if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
+            replaceOrderProductMapper.updateListForCancel(replaceOrderProductDOList);
+        }
+        if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
+            replaceOrderMaterialMapper.updateListForCancel(replaceOrderMaterialDOList);
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
     }
     /**
      * 分页查询换货单
