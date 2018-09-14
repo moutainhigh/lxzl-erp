@@ -132,7 +132,7 @@
                                         <ul class="dropdown-menu pull-right" role="menu">
                                             {{#rowActionButtons}}
                                             <li>
-                                                <a href="${ctx}{{menuUrl}}?no={{replaceOrderNo}}" type="button" class="{{class}}" data-no="{{replaceOrderNo}}">{{text}}</a>
+                                                <a href="${ctx}{{menuUrl}}?no={{replaceOrderNo}}" {{#blank}}target="_blank"{{/blank}} type="button" class="{{class}}" data-no="{{replaceOrderNo}}">{{text}}</a>
                                             </li>
                                             {{/rowActionButtons}}
                                         </ul>

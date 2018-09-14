@@ -102,7 +102,6 @@
                                                 <th>更换数量</th>
                                                 <th>更换商品单价</th>
                                                 <th>备注</th>
-                                                <th class="text-right">操作</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -115,7 +114,7 @@
                                                     <p class="mn mw300">{{productSkuName}}</p> 
                                                 </td>
                                                 <td>￥{{#price}}{{oldProductUnitAmount}}{{/price}}</td>
-                                                <td>{{propertiesToStr}}</td>
+                                                <td>{{oldRentingProductCount}}</td>
                                                 <td>
                                                     <p class="mn mb5">{{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}{{productName}}</p>  
                                                     <p class="mn mw300">{{productSkuName}}</p> 
@@ -123,11 +122,6 @@
                                                 <td>{{replaceProductCount}}</td>
                                                 <td>￥{{#price}}{{productUnitAmount}}{{/price}}</td>
                                                 <td>{{remark}}</td>
-                                                <td class="text-right">
-                                                    <div class="btn-group text-right">
-                                                        <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}" data-isnew="{{isNewProduct}}" data-serialnumber="{{serialNumber}}">删除</a>
-                                                    </div>
-                                                </td>
                                             </tr>
                                             {{/listData}}
                                             {{^listData}}

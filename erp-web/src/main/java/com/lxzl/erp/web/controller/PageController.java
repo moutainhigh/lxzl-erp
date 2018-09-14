@@ -937,6 +937,11 @@ public class PageController extends BaseController {
         return "/changeOrderManage/changeOrderEdit";
     }
 
+    @RequestMapping("/change-order/print")
+    public String changeOrderManagePrint() {
+        return "/changeOrderManage/changeOrderPrint";
+    }
+
     @RequestMapping("/change-order/equiment-list")
     public String changeOrderManageEquimentList() {
         return "/component/changeOrder/equimentList";
