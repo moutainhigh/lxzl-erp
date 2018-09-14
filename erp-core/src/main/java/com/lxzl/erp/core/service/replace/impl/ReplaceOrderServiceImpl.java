@@ -106,6 +106,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             serviceResult.setErrorCode(ErrorCode.REPLACE_ORDER_DETAIL_LIST_NOT_NULL);
             return serviceResult;
         }
+        replaceOrderDO.setCustomerName(customerDO.getCustomerName());
 
         //校验订单编号
         OrderDO orderDO = orderMapper.findByOrderNo(replaceOrderDO.getOrderNo());
@@ -113,7 +114,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
-
+        replaceOrderDO.setDeliverySubCompanyId(orderDO.getDeliverySubCompanyId());
+        replaceOrderDO.setDeliverySubCompanyName(orderDO.getDeliverySubCompanyName());
         //校验换货时间
         Date replaceTime = replaceOrder.getReplaceTime();
         Date rentStartTime = orderDO.getRentStartTime();
@@ -1114,6 +1116,10 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 BigDecimal depositAmount = BigDecimal.ZERO;
                 BigDecimal creditDepositAmount = BigDecimal.ZERO;
                 BigDecimal rentDepositAmount = BigDecimal.ZERO;
+                OrderProductDO orderProductDO = orderProductDOMap.get(replaceOrderProductDO.getOldOrderProductId());
+                if (orderProductDO == null) {
+                    throw new BusinessException(ErrorCode.ORDER_PRODUCT_NOT_EXISTS);
+                }
 
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(replaceOrderProductDO.getProductSkuId());
                 if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
@@ -1147,7 +1153,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                         rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderProductDO.getProductUnitAmount(), new BigDecimal(replaceOrderProductDO.getReplaceProductCount()), 2), new BigDecimal(depositCycle));
                     }
                     creditDepositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(replaceOrderProductDO.getReplaceProductCount()));
-                    OrderProductDO orderProductDO = orderProductDOMap.get(replaceOrderProductDO.getOldOrderProductId());
                     BigDecimal oldSkuPrice= BigDecimalUtil.div(orderProductDO.getCreditDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),4);
                     BigDecimal oldOrderProductCreditDepositAmount = BigDecimalUtil.mul(oldSkuPrice, new BigDecimal(replaceOrderProductDO.getReplaceProductCount()));
                     totalCreditDepositAmount = BigDecimalUtil.sub(totalCreditDepositAmount,oldOrderProductCreditDepositAmount);
@@ -1159,6 +1164,14 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 replaceOrderProductDO.setDepositAmount(depositAmount);
                 replaceOrderProductDO.setCreditDepositAmount(creditDepositAmount);
                 replaceOrderProductDO.setProductSkuName(skuName);
+                replaceOrderProductDO.setOldProductId(orderProductDO.getProductId());
+                replaceOrderProductDO.setOldProductName(orderProductDO.getProductName());
+                replaceOrderProductDO.setOldProductSkuId(orderProductDO.getProductSkuId());
+                replaceOrderProductDO.setOldProductSkuName(orderProductDO.getProductSkuName());
+                replaceOrderProductDO.setOldProductNumber(orderProductDO.getProductNumber());
+                replaceOrderProductDO.setOldIsNewProduct(orderProductDO.getIsNewProduct());
+                replaceOrderProductDO.setProductNumber(product.getK3ProductNo());
+                replaceOrderProductDO.setOldRentingProductCount(orderProductDO.getRentingProductCount());
             }
         }
     }
