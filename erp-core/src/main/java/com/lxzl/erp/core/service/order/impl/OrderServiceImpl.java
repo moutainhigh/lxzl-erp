@@ -2848,6 +2848,7 @@ public class OrderServiceImpl implements OrderService {
             maps.put("start", pageQuery.getStart());
             maps.put("pageSize", pageQuery.getPageSize());
             maps.put("currentUserId", currentUserId);
+            maps.put("deliverySubCompanyId", userSupport.getCurrentUserCompanyId());
             maps.put("warehouseWorkbenchOrderType", WarehouseWorkbenchOrderType.NOT_PRINT_LOG_ODER);
             maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
 

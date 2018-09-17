@@ -25,12 +25,16 @@ public class FinanceStatisticsReturnProductDetail {
     private Integer deliverySubCompanyId;  // 发货分公司
     private String customerNo;             // 客户编号
     private String customerName;           // 客户名称
+    private Integer customerOrigin;       //客户来源
+    private String industry;              //客户行业
+    private String k3CustomerCode;        //客户K3编码
     private Integer rentType;              // 租赁类型
     private Integer rentTimeLength;        // 租赁时长
     private Integer rentLengthType;       // 租赁长短类型
     private Date returnTime;               // 退货时间
     private Date rentStartTime;            // 订单起租时间
     private Date expectReturnTime;         // 订单截止时间
+    private Integer returnReasonType;      // 订单退货原因类型
 
     public String getReturnOrderNo() {
         return returnOrderNo;
@@ -118,6 +122,38 @@ public class FinanceStatisticsReturnProductDetail {
 
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
+    }
+
+    public Integer getCustomerOrigin() {
+        return customerOrigin;
+    }
+
+    public void setCustomerOrigin(Integer customerOrigin) {
+        this.customerOrigin = customerOrigin;
+    }
+
+    public String getIndustry() {
+        return industry;
+    }
+
+    public void setIndustry(String industry) {
+        this.industry = industry;
+    }
+
+    public String getK3CustomerCode() {
+        return k3CustomerCode;
+    }
+
+    public void setK3CustomerCode(String k3CustomerCode) {
+        this.k3CustomerCode = k3CustomerCode;
+    }
+
+    public Integer getReturnReasonType() {
+        return returnReasonType;
+    }
+
+    public void setReturnReasonType(Integer returnReasonType) {
+        this.returnReasonType = returnReasonType;
     }
 
     public Integer getRentType() {

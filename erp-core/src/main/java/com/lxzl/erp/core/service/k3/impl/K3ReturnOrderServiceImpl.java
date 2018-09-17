@@ -533,6 +533,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         //判断是否是仓库工作台
         if(CommonConstant.COMMON_CONSTANT_YES.equals(k3ReturnOrderQueryParam.getIsWarehouseWorkbench())){
             k3ReturnOrderQueryParam.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
+            k3ReturnOrderQueryParam.setDeliverySubCompanyId(userSupport.getCurrentUserCompanyId());
         }
 
         Map<String, Object> maps = new HashMap<>();

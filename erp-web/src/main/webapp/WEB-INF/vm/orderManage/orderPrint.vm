@@ -138,6 +138,13 @@
             padding-right:0 ;
         }
 
+        #remarkWrap {
+            position: absolute;
+            right: 15px;
+            bottom:10px;
+            padding-left: 15px;
+        }
+
     </style>
 
 </head>
@@ -352,6 +359,7 @@
                 </div>
             </div>
 
+            <div id="remarkWrap"><p style="margin-bottom: 0px;">(温馨提示：签收时应当对设备进行验收及清点，签字后视同货物合格<span class="hide" id="remarkText">；在租设备到期后自动续期一年</span>。)</p></div>
             <div class="subpage" id="subpage{{pagerIndex}}"></div>
 
             <div class="printFooter mt5">
@@ -515,7 +523,6 @@
                             <dd class="print-under-line" style="margin-left: 8em !important;"></dd>
                         </dl>
                     </div>
-                    <div class="col-xs-8"><p style="margin-bottom: 0px;">(温馨提示：签收时应当对设备进行验收及清点，签字后视同货物合格)</p></div>
                 </div>
             </div>
             <div class="section">

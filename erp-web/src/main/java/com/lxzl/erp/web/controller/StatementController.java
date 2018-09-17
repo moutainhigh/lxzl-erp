@@ -172,6 +172,12 @@ public class StatementController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "queryStatementOrderDetailsNeedPay", method = RequestMethod.POST)
+    public Result queryStatementOrderDetailsNeedPay(@RequestBody StatementDetailPayParam param, BindingResult validResult) {
+        ServiceResult<String, BigDecimal> serviceResult = statementService.queryStatementOrderDetailsNeedPay(param.getMergeStatementItemList());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "rollbackSuccessReturnOrder", method = RequestMethod.POST)
     public Result rollbackSuccessReturnOrder(@RequestBody K3ReturnOrder param, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = statementService.rollbackSuccessReturnOrder(param.getReturnOrderNo());
