@@ -575,6 +575,11 @@ public class StatementServiceImpl implements StatementService {
                 return result;
             }
         }
+        //测试机单已成功转单，不允许重算
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsTurnRentOrder())){
+            result.setErrorCode(ErrorCode.TEST_MECHANINE_ORDER_HAS_CHANGE_RENT_ORDER);
+            return result;
+        }
 
         //用户手动修改结算日
         if (statementDate != null) {
