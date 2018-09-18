@@ -49,7 +49,7 @@
         //功能事件初始化
         Rental.init();
         Layout.init();
-        AddChangeOrder.init();
+        // AddChangeOrder.init();
 
         //UI效果初始化
         Core.init();
