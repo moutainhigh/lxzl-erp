@@ -12,4 +12,5 @@ public class PostK3Type {
     public static final Integer POST_K3_TYPE_USER = 6;// 推送用户接口
     public static final Integer POST_K3_TYPE_RETURN_ORDER= 7;// 推送退货单接口
     public static final Integer POST_K3_TYPE_CANCEL_ORDER= 8;// 取消订单接口
+    public static final Integer POST_K3_TYPE_TEST_MACHINE_TURN_RENT= 9;// 测试机转租赁接口
 }

@@ -32,13 +32,14 @@ public class OrderMaterial extends BasePO {
 	private Integer paymentCycle;
 	private Integer payMode;
 	private Integer isNewMaterial;
-	private Integer rentingMaterialCount;
+	private Integer rentingMaterialCount; //在租配件总数
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+	private Integer isItemDelivered; //是否已发货，0否1是
 
 	private List<OrderMaterialBulk> orderMaterialBulkList;
 
@@ -54,6 +55,8 @@ public class OrderMaterial extends BasePO {
 	private JointMaterial jointMaterial;
 	@Transient
 	private Integer identityNo; // 标识号，只在组合商品业务逻辑处理时使用，不持久化
+
+	private Integer testMachineOrderMaterialId; //测试机配件项id
 
 	// 以下为K3的数据字段
 	private Integer FEntryID;
@@ -351,5 +354,21 @@ public class OrderMaterial extends BasePO {
 
 	public void setStableMaterialCount(Integer stableMaterialCount) {
 		this.stableMaterialCount = stableMaterialCount;
+	}
+
+	public Integer getIsItemDelivered() {
+		return isItemDelivered;
+	}
+
+	public void setIsItemDelivered(Integer isItemDelivered) {
+		this.isItemDelivered = isItemDelivered;
+	}
+
+	public Integer getTestMachineOrderMaterialId() {
+		return testMachineOrderMaterialId;
+	}
+
+	public void setTestMachineOrderMaterialId(Integer testMachineOrderMaterialId) {
+		this.testMachineOrderMaterialId = testMachineOrderMaterialId;
 	}
 }

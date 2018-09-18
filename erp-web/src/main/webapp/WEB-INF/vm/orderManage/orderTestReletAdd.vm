@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-换货单管理--添加换货单</title>
+    <title>凌雄ERP-订单管理-订单列表-添加订单</title>
     #parse("layout/header.vm")
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
@@ -18,7 +16,7 @@
             #parse("layout/topbar.vm")
             <section id="content" class="animated fadeIn">
                 <form class="" id="addOrderForm">
-                    #parse("component/changeOrder/editChangeOrderContent.vm")
+                    #parse("component/order/orderContent.vm")
                 </form>
             </section>
         </section>
@@ -26,30 +24,28 @@
         #parse("layout/sidebarRight.vm")
     </div>
     #parse("layout/footer.vm")
+
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
-                'manage.change.order.mixin.js',
-                'manage.change.order.add.js',
-                'modal.choose.customer.js',
-                'modal.choose.customer.business.js',
-                'modal.choose.rent.product.js',
+                'api.data.js',
+                'manage.order.mixin.js',
+                'manage.order.test.relet.add.js',
                 'modal.choose.product.js',
-                'modal.choose.can.change.material.js',
                 'modal.choose.material.js',
+                'modal.choose.company.js',
+                'modal.choose.group.product.js',
+                'modal.confirm.stock.js',
                 'manage.order.item.render.js',
                 'manage.order.util.js',
-                'modal.input.address.js',
-                'modal.choose.customer.address.js',
                 'manage.customer.address.js',
                 'manage.customer.address.add.js',
-                'manage.customer.address.edit.js',
-                'modal.choose.user.js');
+                'manage.customer.address.edit.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
         Rental.init();
         Layout.init();
-        // AddChangeOrder.init();
+        AddReletTestOrder.init();
 
         //UI效果初始化
         Core.init();
