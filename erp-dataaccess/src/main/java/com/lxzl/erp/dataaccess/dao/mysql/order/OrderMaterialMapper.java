@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 @Repository
 public interface OrderMaterialMapper extends BaseMysqlDAO<OrderMaterialDO> {
 
@@ -28,4 +30,5 @@ public interface OrderMaterialMapper extends BaseMysqlDAO<OrderMaterialDO> {
     List<OrderMaterialDO> findByOrderIdList(@Param("list") List<Integer> orderIds);
 
     void batchUpdateRentingCount(@Param("list") List<OrderMaterialDO> list);
+    List<OrderMaterialDO> listByOrderIds(@Param(value = "orderIds") Set<Integer> orderIds);
 }

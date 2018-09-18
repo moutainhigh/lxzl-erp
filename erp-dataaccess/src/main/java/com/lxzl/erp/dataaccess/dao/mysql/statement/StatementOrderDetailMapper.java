@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.dao.mysql.statement;
 
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
+import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
+import com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementSummaryDTO;
 import com.lxzl.erp.dataaccess.domain.statement.CheckStatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
@@ -118,4 +120,11 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
     List<StatementOrderDetailDO> findOrderItemStatementByType(@Param("orderItemType")Integer orderItemType,@Param("orderItemReferId")Integer orderItemReferId,@Param("statementDetailType")Integer statementDetailType);
 
     List<StatementOrderDetailDO> findByOrderIdAndStatementDetailType(@Param("orderId") Integer orderId, @Param("orderType") Integer orderType,@Param("statementDetailType") Integer statementDetailType);
+
+
+    List<StatementOrderDetailDO> listByCustomerId(@Param(value = "queryParam") StatementOrderMonthQueryParam queryParam);
+
+    List<StatementOrderDetailDO> listUnRentByOrderIds(@Param(value = "queryParam") StatementOrderMonthQueryParam queryParam);
+
+    CheckStatementSummaryDTO sumStatementDetailAmountByCustomerNo(@Param(value = "queryParam") StatementOrderMonthQueryParam queryParam);
 }
