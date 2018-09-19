@@ -12,7 +12,6 @@ import com.lxzl.erp.common.domain.system.pojo.Image;
 public class ReplaceOrderConfirmChangeParam {
     private ReplaceOrder replaceOrder;
     private Image deliveryNoteCustomerSignImg;//交货单客户签字
-    private Integer changeReasonType;
     private String changeReason;
 
     public ReplaceOrder getReplaceOrder() {
@@ -29,14 +28,6 @@ public class ReplaceOrderConfirmChangeParam {
 
     public void setDeliveryNoteCustomerSignImg(Image deliveryNoteCustomerSignImg) {
         this.deliveryNoteCustomerSignImg = deliveryNoteCustomerSignImg;
-    }
-
-    public Integer getChangeReasonType() {
-        return changeReasonType;
-    }
-
-    public void setChangeReasonType(Integer changeReasonType) {
-        this.changeReasonType = changeReasonType;
     }
 
     public String getChangeReason() {

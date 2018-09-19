@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.replace.ReplaceOrderCommitParam;
 import com.lxzl.erp.common.domain.replace.ReplaceOrderConfirmChangeParam;
 import com.lxzl.erp.common.domain.replace.ReplaceOrderQueryParam;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
@@ -122,4 +123,29 @@ public class ReplaceOrderController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    /**
+     * 提交换货单
+     * @Author : sunzhipeng
+     * @param replaceOrderCommitParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "commitReplaceOrder", method = RequestMethod.POST)
+    public Result commitReplaceOrder(@RequestBody ReplaceOrderCommitParam replaceOrderCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = replaceOrderService.commitReplaceOrder(replaceOrderCommitParam);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 发送换货单到K3
+     * @Author : sunzhipeng
+     * @param replaceOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "sendToK3", method = RequestMethod.POST)
+    public Result sendToK3(@RequestBody ReplaceOrder replaceOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = replaceOrderService.sendReplaceOrderToK3(replaceOrder.getReplaceOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }

@@ -75,6 +75,11 @@ public class ReplaceOrder extends BasePO {
 	private String customerName;  //客户名称
 	private String deliverySubCompanyName;  //发货分公司名称
 	private Integer deliverySubCompanyId;  //发货分公司
+	private Date replaceDeliveryTime;   //换货单发货时间
+	private Date realReplaceTime;   //实际换货时间
+	private BigDecimal oldTotalCreditDepositAmount;   //换货前订单授信押金金额
+	private BigDecimal newTotalCreditDepositAmount;   //换货后订单授信押金金额
+	private BigDecimal updateTotalCreditDepositAmount;   //换货修改授信押金金额
 
 
 	public Integer getReplaceOrderId(){
@@ -387,5 +392,45 @@ public class ReplaceOrder extends BasePO {
 
 	public void setDeliverySubCompanyId(Integer deliverySubCompanyId) {
 		this.deliverySubCompanyId = deliverySubCompanyId;
+	}
+
+	public Date getReplaceDeliveryTime() {
+		return replaceDeliveryTime;
+	}
+
+	public void setReplaceDeliveryTime(Date replaceDeliveryTime) {
+		this.replaceDeliveryTime = replaceDeliveryTime;
+	}
+
+	public Date getRealReplaceTime() {
+		return realReplaceTime;
+	}
+
+	public void setRealReplaceTime(Date realReplaceTime) {
+		this.realReplaceTime = realReplaceTime;
+	}
+
+	public BigDecimal getOldTotalCreditDepositAmount() {
+		return oldTotalCreditDepositAmount;
+	}
+
+	public void setOldTotalCreditDepositAmount(BigDecimal oldTotalCreditDepositAmount) {
+		this.oldTotalCreditDepositAmount = oldTotalCreditDepositAmount;
+	}
+
+	public BigDecimal getNewTotalCreditDepositAmount() {
+		return newTotalCreditDepositAmount;
+	}
+
+	public void setNewTotalCreditDepositAmount(BigDecimal newTotalCreditDepositAmount) {
+		this.newTotalCreditDepositAmount = newTotalCreditDepositAmount;
+	}
+
+	public BigDecimal getUpdateTotalCreditDepositAmount() {
+		return updateTotalCreditDepositAmount;
+	}
+
+	public void setUpdateTotalCreditDepositAmount(BigDecimal updateTotalCreditDepositAmount) {
+		this.updateTotalCreditDepositAmount = updateTotalCreditDepositAmount;
 	}
 }
