@@ -1004,21 +1004,18 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 for (ReplaceOrderProductDO replaceOrderProductDO:replaceOrderProductDOList) {
                     replaceOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     replaceOrderProductDO.setUpdateTime(date);
+                    replaceOrderProductMapper.update(replaceOrderProductDO);
                 }
             }
-            if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
-                for (ReplaceOrderMaterialDO replaceOrderMaterialDO:replaceOrderMaterialDOList) {
-                    replaceOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                    replaceOrderMaterialDO.setUpdateTime(date);
-                }
-            }
+//            if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
+//                for (ReplaceOrderMaterialDO replaceOrderMaterialDO:replaceOrderMaterialDOList) {
+//                    replaceOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+//                    replaceOrderMaterialDO.setUpdateTime(date);
+//                    replaceOrderMaterialMapper.update(replaceOrderMaterialDO);
+//                }
+//            }
             replaceOrderMapper.update(replaceOrderDO);
-            if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
-                replaceOrderProductMapper.updateListForCancel(replaceOrderProductDOList);
-            }
-            if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
-                replaceOrderMaterialMapper.updateListForCancel(replaceOrderMaterialDOList);
-            }
+
             result.setErrorCode(ErrorCode.SUCCESS);
             result.setResult(replaceOrderDO.getReletOrderNo());
         }
