@@ -34,6 +34,7 @@ import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.replace.ReplaceOrderService;
 import com.lxzl.erp.core.service.replace.support.ReplaceOrderSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
+import com.lxzl.erp.core.service.statement.impl.support.StatementReplaceOrderSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
@@ -987,7 +988,12 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 //                replaceOrderMaterialMapper.updateListForConfirm(replaceOrderMaterialDOList);
 //            }
             // TODO: 2018\9\19 0019 换货单结算
-//            StatementReplaceOrderSupport
+            String errorCode = statementReplaceOrderSupport.createStatement(replaceOrderDO.getReplaceOrderNo());
+            if (!ErrorCode.SUCCESS.equals(errorCode)) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                result.setErrorCode(errorCode);
+                return result;
+            }
             result.setErrorCode(ErrorCode.SUCCESS);
             result.setResult(replaceOrderDO.getReletOrderNo());
 
@@ -2174,8 +2180,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     private K3Service k3Service;
     @Autowired
     private ReplaceOrderSupport replaceOrderSupport;
-//    @Autowired
-//    private StatementReplaceOrderSupport statementReplaceOrderSupport;
+    @Autowired
+    private StatementReplaceOrderSupport statementReplaceOrderSupport;
 
 
 }
