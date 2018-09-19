@@ -40,6 +40,11 @@
 		<result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
 		<result column="delivery_sub_company_name" jdbcType="VARCHAR" property="deliverySubCompanyName"/>
 		<result column="delivery_sub_company_id" jdbcType="VARCHAR" property="deliverySubCompanyId"/>
+		<result column="replace_delivery_time" jdbcType="TIMESTAMP" property="replaceDeliveryTime" />
+		<result column="real_replace_time" jdbcType="TIMESTAMP" property="realReplaceTime" />
+		<result column="update_total_credit_deposit_amount" jdbcType="DECIMAL" property="updateTotalCreditDepositAmount" />
+		<result column="old_total_credit_deposit_amount" jdbcType="DECIMAL" property="oldTotalCreditDepositAmount" />
+		<result column="new_total_credit_deposit_amount" jdbcType="DECIMAL" property="newTotalCreditDepositAmount" />
 		<collection property="replaceOrderProductDOList" resultMap="ReplaceOrderProductDO"/>
 		<collection property="replaceOrderMaterialDOList" resultMap="ReplaceOrderMaterialDO"/>
 	</resultMap>
@@ -122,7 +127,7 @@
 
 	<sql id="column_List">
 		ero.id,ero.replace_order_no,ero.order_id,ero.order_no,ero.customer_id,ero.customer_no,ero.replace_time,ero.total_replace_product_count,ero.total_replace_material_count,ero.real_total_replace_product_count,ero.real_total_replace_material_count,ero.service_cost,ero.logistics_cost,ero.repair_cost,ero.replace_reason_type,ero.replace_reason,ero.replace_mode,ero.replace_order_status,ero.data_status,ero.remark,ero.create_time,ero.create_user,ero.update_time,ero.update_user,ero.confirm_replace_time,ero.confirm_replace_user,
-		ero.address,ero.consignee_name,ero.consignee_phone,ero.is_relet_order_replace,ero.relet_order_no,ero.customer_name,ero.delivery_sub_company_name,ero.delivery_sub_company_id
+		ero.address,ero.consignee_name,ero.consignee_phone,ero.is_relet_order_replace,ero.relet_order_no,ero.customer_name,ero.delivery_sub_company_name,ero.delivery_sub_company_id,ero.replace_delivery_time,ero.real_replace_time,ero.update_total_credit_deposit_amount,ero.old_total_credit_deposit_amount,ero.new_total_credit_deposit_amount
 	</sql>
 
 	<sql id="product_column_List">
@@ -266,7 +271,6 @@
 			<if test="reletOrderNo != null">
 				relet_order_no = #{reletOrderNo,jdbcType=VARCHAR},
 			</if>
-
 			<if test="customerName != null">
 				customer_name = #{customerName,jdbcType=VARCHAR},
 			</if>
@@ -275,6 +279,21 @@
 			</if>
 			<if test="deliverySubCompanyId != null">
 				delivery_sub_company_id = #{deliverySubCompanyId,jdbcType=INTEGER},
+			</if>
+			<if test="replaceDeliveryTime != null">
+				replace_delivery_time = #{replaceDeliveryTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="realReplaceTime != null">
+				real_replace_time = #{realReplaceTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTotalCreditDepositAmount != null">
+				update_total_credit_deposit_amount = #{updateTotalCreditDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="oldTotalCreditDepositAmount != null">
+				old_total_credit_deposit_amount = #{oldTotalCreditDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="newTotalCreditDepositAmount != null">
+				new_total_credit_deposit_amount = #{newTotalCreditDepositAmount,jdbcType=DECIMAL},
 			</if>
 		</set>
 	</sql>
@@ -293,7 +312,7 @@
 		FROM erp_replace_order ero
 		LEFT JOIN erp_replace_order_product erop ON ero.id = erop.replace_order_id and erop.data_status = 1
 		LEFT JOIN erp_replace_order_material erom ON ero.id = erom.replace_order_id and erom.data_status = 1
-		where ero.order_no = #{orderNo, jdbcType=VARCHAR} and ero.data_status = 1 and ero.replace_order_status in (0,4)
+		where ero.order_no = #{orderNo, jdbcType=VARCHAR} and ero.data_status = 1 and ero.replace_order_status in (0,4,8,12,16)
 	</select>
 
 	<select id="findByReplaceOrderNo" resultMap="ReplaceOrderDO" parameterType="java.lang.String">

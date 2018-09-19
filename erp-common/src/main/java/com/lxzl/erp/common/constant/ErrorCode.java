@@ -1120,6 +1120,13 @@ public class ErrorCode {
     public static final String CONFIRM_REPLACE_ORDER_REPLACE_ORDER_STATUS_ERROR = "J310000024";//只有已发货状态的换货单才能进行确认换货
     public static final String REAL_REPLACE_PRODUCT_COUNT_MORE_THAN_REPLACE_PRODUCT_COUNT = "J310000025";//确认换货数量大于换货单下单数量
     public static final String REAL_REPLACE_PRODUCT_COUNT_NOT_NEGATIVE= "J310000026";//确认换货数量不能为负
+    public static final String REPLACE_TIME_COUNT_NOT_BEFORE_MONTH_TIME= "J310000027";//换货时间不能再当月时间之前
+    public static final String REPLACE_TIME_MORE_THAN_NOW_TIME_FIFTEEN= "J310000028";//换货时间不能超过当前时间15天以上
+    public static final String REPLACE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN= "J310000029";//只有待提交和已驳回状态的换货单可以提交
+    public static final String REPLACE_ORDER_DETAIL_COMMITTED_NOT_NULL= "J310000030";//换货单商品不能空，需有商品才能提交
+    public static final String REAL_REPLACE_TIME_NOT_NULL= "J310000031";//实际换货时间不能为空
+    public static final String REAL_REPLACE_TIME_MUST_AFTER_REPLACE_DELIVERY_TIME= "J310000032";//实际换货时间不能小于发货时间
+    public static final String REAL_REPLACE_TIME_MUST_BEFORE_CONFIRM_TIME= "J310000033";//实际换货时间不能大于确认换货时间
 
 
     static {
@@ -2222,6 +2229,13 @@ public class ErrorCode {
         MAP.put(CONFIRM_REPLACE_ORDER_REPLACE_ORDER_STATUS_ERROR, "只有已发货状态的换货单才能进行确认换货");
         MAP.put(REAL_REPLACE_PRODUCT_COUNT_MORE_THAN_REPLACE_PRODUCT_COUNT, "确认换货数量大于换货单下单数量");
         MAP.put(REAL_REPLACE_PRODUCT_COUNT_NOT_NEGATIVE, "确认换货数量不能为负");
+        MAP.put(REPLACE_TIME_COUNT_NOT_BEFORE_MONTH_TIME, "换货时间不能再当月时间之前");
+        MAP.put(REPLACE_TIME_MORE_THAN_NOW_TIME_FIFTEEN, "换货时间不能超过当前时间15天以上");
+        MAP.put(REPLACE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交和已驳回状态的换货单可以提交");
+        MAP.put(REPLACE_ORDER_DETAIL_COMMITTED_NOT_NULL, "换货单商品不能空，需有商品才能提交");
+        MAP.put(REAL_REPLACE_TIME_NOT_NULL, "实际换货时间不能为空");
+        MAP.put(REAL_REPLACE_TIME_MUST_AFTER_REPLACE_DELIVERY_TIME, "实际换货时间不能小于发货时间");
+        MAP.put(REAL_REPLACE_TIME_MUST_BEFORE_CONFIRM_TIME, "实际换货时间不能大于确认换货时间");
 
         MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
 

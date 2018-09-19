@@ -13,5 +13,6 @@ public class ReplaceOrderStatus {
     public static final Integer REPLACE_ORDER_STATUS_DELIVERED = 16; // 已发货
     public static final Integer REPLACE_ORDER_STATUS_CONFIRM = 20;   // 已完成（确认换货）
     public static final Integer REPLACE_ORDER_STATUS_CANCEL = 24;        // 取消
+    public static final Integer REPLACE_ORDER_STATUS_BACKED = 28;      //驳回
 
 }

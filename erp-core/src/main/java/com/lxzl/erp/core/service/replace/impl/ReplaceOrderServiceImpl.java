@@ -1,20 +1,30 @@
 package com.lxzl.erp.core.service.replace.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
+import com.lxzl.erp.common.domain.replace.ReplaceOrderCommitParam;
 import com.lxzl.erp.common.domain.replace.ReplaceOrderConfirmChangeParam;
 import com.lxzl.erp.common.domain.replace.ReplaceOrderQueryParam;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderMaterial;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderProduct;
+import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOutStock;
+import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
+import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
+import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
+import com.lxzl.erp.core.service.k3.K3Service;
+import com.lxzl.erp.core.service.k3.PostK3ServiceManager;
+import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.core.service.material.BulkMaterialService;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
@@ -32,6 +42,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderProductEquipment
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
@@ -49,6 +60,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO;
@@ -69,11 +81,16 @@ import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import sun.font.TrueTypeFont;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -114,6 +131,12 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
+        //只有确认收货和部分归还状态的才可以换货
+        if (!OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus()) &&
+                !OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus())) {
+            serviceResult.setErrorCode(ErrorCode.REPLACE_ORDER_STATUS_ERROR);
+            return serviceResult;
+        }
         replaceOrderDO.setDeliverySubCompanyId(orderDO.getDeliverySubCompanyId());
         replaceOrderDO.setDeliverySubCompanyName(orderDO.getDeliverySubCompanyName());
         //校验换货时间
@@ -126,6 +149,13 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         String expectReturnTimeString = simpleDateFormat.format(expectReturnTime);
         //校验换货时间
         if (checkReplaceTime(serviceResult, simpleDateFormat, replaceTimeString, rentStartTimeString, expectReturnTimeString)) {
+            return serviceResult;
+        }
+        //校验换货时间不能再当月之前，不能超过当前时间15天
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+        String monthTimeString = sdf.format(date);
+        String nowTimeString = simpleDateFormat.format(date);
+        if (checkReplaceTimeForNowDay(serviceResult, replaceTime, simpleDateFormat, replaceTimeString, sdf, monthTimeString, nowTimeString)){
             return serviceResult;
         }
 
@@ -162,15 +192,9 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             return serviceResult;
         }
 
-
         List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
         List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
-        //只有确认收货和部分归还状态的才可以换货
-        if (!OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus()) &&
-                !OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus())) {
-            serviceResult.setErrorCode(ErrorCode.REPLACE_ORDER_STATUS_ERROR);
-            return serviceResult;
-        }
+
         //存放原订单商品项和配件项
         Map<Integer,OrderProductDO> orderProductDOMap = new TreeMap<>();
         Map<Integer,OrderMaterialDO> orderMaterialDOMap = new TreeMap<>();
@@ -187,23 +211,29 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
         //获取客户风控信息
         CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(orderDO.getBuyerCustomerId());
-        // 设备信用押金总额
-        BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
+        // 原订单设备信用押金总额
+        BigDecimal oldTotalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
+        // 换货后订单设备信用押金总额
+        BigDecimal newTotalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
+
         // 校验客户风控信息
         verifyCustomerRiskInfo(replaceOrderDO,customerDO,orderDO,customerRiskManagementDO);
         //补全换货商品项信息
-        calculateOrderProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,totalCreditDepositAmount,customerRiskManagementDO);
+        calculateOrderProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
         //补全换货配件项信息
-        calculateOrderMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,totalCreditDepositAmount,customerRiskManagementDO);
+        calculateOrderMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
 
-        if (customerRiskManagementDO == null && BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0) {
+        if (customerRiskManagementDO == null && BigDecimalUtil.compare(newTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_NEED_RISK_INFO);
             return serviceResult;
         }
-        if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0 && BigDecimalUtil.compare(BigDecimalUtil.sub(BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmount(), customerRiskManagementDO.getCreditAmountUsed()), totalCreditDepositAmount), BigDecimal.ZERO) < 0) {
+        if (BigDecimalUtil.compare(newTotalCreditDepositAmount, BigDecimal.ZERO) > 0 && BigDecimalUtil.compare(BigDecimalUtil.sub(BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmount(), customerRiskManagementDO.getCreditAmountUsed()), newTotalCreditDepositAmount), BigDecimal.ZERO) < 0) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW);
             return serviceResult;
         }
+        replaceOrderDO.setOldTotalCreditDepositAmount(oldTotalCreditDepositAmount);
+        replaceOrderDO.setNewTotalCreditDepositAmount(newTotalCreditDepositAmount);
+        replaceOrderDO.setUpdateTotalCreditDepositAmount(BigDecimalUtil.sub(oldTotalCreditDepositAmount,newTotalCreditDepositAmount));
         //校验换货数量
 
         Integer totalReplaceProductCount = 0;
@@ -265,6 +295,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         replaceOrderDO.setUpdateTime(date);
         replaceOrderDO.setConfirmReplaceUser(null);
         replaceOrderDO.setConfirmReplaceTime(null);
+        replaceOrderDO.setReplaceDeliveryTime(null);
+        replaceOrderDO.setRealReplaceTime(null);
         replaceOrderMapper.save(replaceOrderDO);
         //保存换货商品项
         List<ReplaceOrderProductDO> saveReplaceOrderProductDOList = new ArrayList<>();
@@ -412,8 +444,15 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         String replaceTimeString = simpleDateFormat.format(replaceTime);
         String rentStartTimeString = simpleDateFormat.format(rentStartTime);
         String expectReturnTimeString = simpleDateFormat.format(expectReturnTime);
-        //校验换货时间
+        //校验换货时间和起租时间和退货时间
         if (checkReplaceTime(serviceResult, simpleDateFormat, replaceTimeString, rentStartTimeString, expectReturnTimeString)){
+            return serviceResult;
+        }
+        //校验换货时间不能再当月之前，不能超过当前时间15天
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+        String monthTimeString = sdf.format(date);
+        String nowTimeString = simpleDateFormat.format(date);
+        if (checkReplaceTimeForNowDay(serviceResult, replaceTime, simpleDateFormat, replaceTimeString, sdf, monthTimeString, nowTimeString)){
             return serviceResult;
         }
 
@@ -451,23 +490,29 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
         //获取客户风控信息
         CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(orderDO.getBuyerCustomerId());
-        // 设备信用押金总额
-        BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
+        // 原订单设备信用押金总额
+        BigDecimal oldTotalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
+        // 换货后订单设备信用押金总额
+        BigDecimal newTotalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
+
         // 校验客户风控信息
         verifyCustomerRiskInfo(replaceOrderDO,customerDO,orderDO,customerRiskManagementDO);
         //补全换货商品项信息
-        calculateOrderProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,totalCreditDepositAmount,customerRiskManagementDO);
+        calculateOrderProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
         //补全换货配件项信息
-        calculateOrderMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,totalCreditDepositAmount,customerRiskManagementDO);
+        calculateOrderMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
 
-        if (customerRiskManagementDO == null && BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0) {
+        if (customerRiskManagementDO == null && BigDecimalUtil.compare(newTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_NEED_RISK_INFO);
             return serviceResult;
         }
-        if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0 && BigDecimalUtil.compare(BigDecimalUtil.sub(BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmount(), customerRiskManagementDO.getCreditAmountUsed()), totalCreditDepositAmount), BigDecimal.ZERO) < 0) {
+        if (BigDecimalUtil.compare(newTotalCreditDepositAmount, BigDecimal.ZERO) > 0 && BigDecimalUtil.compare(BigDecimalUtil.sub(BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmount(), customerRiskManagementDO.getCreditAmountUsed()), newTotalCreditDepositAmount), BigDecimal.ZERO) < 0) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW);
             return serviceResult;
         }
+        replaceOrderDO.setOldTotalCreditDepositAmount(oldTotalCreditDepositAmount);
+        replaceOrderDO.setNewTotalCreditDepositAmount(newTotalCreditDepositAmount);
+        replaceOrderDO.setUpdateTotalCreditDepositAmount(BigDecimalUtil.sub(oldTotalCreditDepositAmount,newTotalCreditDepositAmount));
 
         //校验换货数量
         //获取总换货商品数和总配件数
@@ -587,6 +632,31 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
+    /*
+     * 校验换货时间不能再当月之前，不能超过当前时间15天
+     */
+    private boolean checkReplaceTimeForNowDay(ServiceResult<String, String> serviceResult, Date replaceTime, SimpleDateFormat simpleDateFormat, String replaceTimeString, SimpleDateFormat sdf, String monthTimeString, String nowTimeString) {
+        try {
+            Date nowTime = simpleDateFormat.parse(nowTimeString);
+            Date monthTime = sdf.parse(monthTimeString);
+            Date replaceTimeDate = simpleDateFormat.parse(replaceTimeString);
+            if (replaceTimeDate.before(nowTime) && replaceTimeDate.before(monthTime)) {
+                serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_COUNT_NOT_BEFORE_MONTH_TIME);
+                return true;
+            }
+            if(replaceTimeDate.after(nowTime) && com.lxzl.erp.common.util.DateUtil.daysBetween(nowTime,replaceTime)>15){
+                serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_MORE_THAN_NOW_TIME_FIFTEEN);
+                return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("【创建换货单,校验换货时间parse出错】", e);
+            serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_PARSE_ERROR);
+            return true;
+        }
+        return false;
+    }
+
     /**
      * 换货取消接口
      */
@@ -692,12 +762,67 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             result.setErrorCode(ErrorCode.REPLACE_ORDER_NO_ERROR);
             return result;
         }
+        Date realReplaceTime = replaceOrder.getRealReplaceTime();
+        if (realReplaceTime == null) {
+            result.setErrorCode(ErrorCode.REAL_REPLACE_TIME_NOT_NULL);
+            return result;
+        }
+        //校验客户编号
+        CustomerDO customerDO = customerMapper.findCustomerPersonByNo(replaceOrder.getCustomerNo());
+        if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        //校验订单编号
+        OrderDO orderDO = orderMapper.findByOrderNo(replaceOrder.getOrderNo());
+        if (orderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
+        List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
+
+        //存放原订单商品项和配件项
+        Map<Integer,OrderProductDO> orderProductDOMap = new TreeMap<>();
+        Map<Integer,OrderMaterialDO> orderMaterialDOMap = new TreeMap<>();
+        if (CollectionUtil.isNotEmpty(orderProductDOList)){
+            for (OrderProductDO orderProductDO : orderProductDOList) {
+                orderProductDOMap.put(orderProductDO.getId(),orderProductDO);
+            }
+        }
+        if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
+            for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+                orderMaterialDOMap.put(orderMaterialDO.getId(),orderMaterialDO);
+            }
+        }
+
+        //校验实际换货时间和起租时间和退货时间
+        Date rentStartTime = orderDO.getRentStartTime();
+        Date expectReturnTime = orderDO.getExpectReturnTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String realReplaceTimeString = simpleDateFormat.format(realReplaceTime);
+        String rentStartTimeString = simpleDateFormat.format(rentStartTime);
+        String expectReturnTimeString = simpleDateFormat.format(expectReturnTime);
+        if (checkReplaceTime(result, simpleDateFormat, realReplaceTimeString, rentStartTimeString, expectReturnTimeString)){
+            return result;
+        }
+
+        //校验实际换货时间和发货时间和确认换货时间
+        Date replaceDeliveryTime = replaceOrder.getReplaceDeliveryTime();
+        String replaceDeliveryTimeString = simpleDateFormat.format(replaceDeliveryTime);
+        String nowTimeString = simpleDateFormat.format(date);
+        if (checkRealReplaceTime(result, simpleDateFormat, realReplaceTimeString, replaceDeliveryTimeString, nowTimeString)){
+            return result;
+        }
+
         Integer replaceOrderStatus = dbReplaceOrderDO.getReplaceOrderStatus();
         if (replaceOrderStatus == null || ReplaceOrderStatus.REPLACE_ORDER_STATUS_DELIVERED.equals(replaceOrderStatus)) {
             result.setErrorCode(ErrorCode.CONFIRM_REPLACE_ORDER_REPLACE_ORDER_STATUS_ERROR);
             return result;
         }
+
         ReplaceOrderDO replaceOrderDO = ConverterUtil.convert(replaceOrder,ReplaceOrderDO.class);
+
         List<ReplaceOrderProductDO> replaceOrderProductDOList = replaceOrderDO.getReplaceOrderProductDOList();
         List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList = replaceOrderDO.getReplaceOrderMaterialDOList();
         boolean replaceOrderProductDOListIsNotEmpty = CollectionUtil.isNotEmpty(replaceOrderProductDOList);
@@ -706,10 +831,18 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             result.setErrorCode(ErrorCode.REPLACE_ORDER_DETAIL_LIST_NOT_NULL);
             return result;
         }
+
+        //获取客户风控信息
+        CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(orderDO.getBuyerCustomerId());
+        // 原订单设备信用押金总额
+        BigDecimal oldTotalCreditDepositAmount = replaceOrderDO.getOldTotalCreditDepositAmount();
+        // 换货后订单设备信用押金总额
+        BigDecimal newTotalCreditDepositAmount = replaceOrderDO.getNewTotalCreditDepositAmount();
+
         Integer totalReplaceProductCount = replaceOrderDO.getTotalReplaceProductCount();
         Integer totalReplaceMaterialCount = replaceOrderDO.getTotalReplaceMaterialCount();
-        Integer realTotalReplaceProductCount = replaceOrderDO.getRealTotalReplaceProductCount();
-        Integer realTotalReplaceMaterialCount = replaceOrderDO.getRealTotalReplaceMaterialCount();
+        Integer realTotalReplaceProductCount = 0;
+        Integer realTotalReplaceMaterialCount = 0;
 
         if (replaceOrderProductDOListIsNotEmpty) {
             for (ReplaceOrderProductDO replaceOrderProductDO:replaceOrderProductDOList) {
@@ -726,9 +859,10 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 }
                 replaceOrderProductDO.setUpdateTime(date);
                 replaceOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-
             }
+            changeReplaceOrderProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
         }
+
         if (replaceOrderMaterialDOListIsNotEmpty) {
             for (ReplaceOrderMaterialDO replaceOrderMaterialDO:replaceOrderMaterialDOList) {
                 realTotalReplaceProductCount += replaceOrderMaterialDO.getRealReplaceMaterialCount();
@@ -745,7 +879,27 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 replaceOrderMaterialDO.setUpdateTime(date);
                 replaceOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             }
+            changeReplaceOrderMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
         }
+
+        BigDecimal totalCreditDepositAmount = BigDecimalUtil.sub(oldTotalCreditDepositAmount,newTotalCreditDepositAmount);
+        BigDecimal updateTotalCreditDepositAmount = replaceOrderDO.getUpdateTotalCreditDepositAmount();
+
+        if (BigDecimalUtil.mul(updateTotalCreditDepositAmount,totalCreditDepositAmount) != BigDecimal.ZERO) {
+            // 返还扣走或者添加的信用额度
+            if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
+                customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), updateTotalCreditDepositAmount, CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+            } else if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) < 0) {
+                customerSupport.addCreditAmountUsed(replaceOrderDO.getCustomerId(), BigDecimalUtil.mul(updateTotalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+            }
+            // 扣除信用额度
+            if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0) {
+                customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.CONFIRM_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+            } else if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) < 0) {
+                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), BigDecimalUtil.mul(totalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.CONFIRM_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+            }
+        }
+
         //保存图片
         if (replaceOrderConfirmChangeParam.getDeliveryNoteCustomerSignImg() != null) {
             ImageDO deliveryNoteCustomerSignImgDO = imgMysqlMapper.findById(replaceOrderConfirmChangeParam.getDeliveryNoteCustomerSignImg().getImgId());
@@ -765,25 +919,130 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         replaceOrderDO.setUpdateTime(date);
         replaceOrderDO.setRealTotalReplaceProductCount(realTotalReplaceProductCount);
         replaceOrderDO.setRealTotalReplaceMaterialCount(realTotalReplaceMaterialCount);
-        //如果换货全部确认不进行重新结算，订单也不用修改，只改换货单状态并保存
-//        if ((totalReplaceProductCount.equals(realTotalReplaceProductCount)) &&
-//                (totalReplaceMaterialCount.equals(realTotalReplaceMaterialCount))) {
-//
-//            replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_CONFIRM);
-//            replaceOrderMapper.update(replaceOrderDO);
-//            if (replaceOrderProductDOListIsNotEmpty) {
-//                replaceOrderProductMapper.updateListForConfirm(replaceOrderProductDOList);
-//            }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd");
+        // 有换货，生成订单
+        if (0 != (realTotalReplaceProductCount+realTotalReplaceMaterialCount)) {
+
+            replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_CONFIRM);
+            replaceOrderMapper.update(replaceOrderDO);
+            if (replaceOrderProductDOListIsNotEmpty) {
+                for (ReplaceOrderProductDO replaceOrderProductDO:replaceOrderProductDOList) {
+                    OrderProductDO orderProductDO = new OrderProductDO();
+                    OrderProductDO oldOrderProductDO = orderProductDOMap.get(replaceOrderProductDO.getOldOrderProductId());
+                    // TODO: 2018\9\18 0018 生成新的订单项
+                    orderProductDO.setOrderId(oldOrderProductDO.getOrderId());
+                    orderProductDO.setRentType(replaceOrderProductDO.getRentType());
+                    orderProductDO.setRentLengthType(replaceOrderProductDO.getRentLengthType());
+                    orderProductDO.setProductId(replaceOrderProductDO.getProductId());
+                    orderProductDO.setProductName(replaceOrderProductDO.getProductName());
+                    orderProductDO.setProductSkuId(replaceOrderProductDO.getProductSkuId());
+                    orderProductDO.setProductSkuName(replaceOrderProductDO.getProductSkuName());
+                    orderProductDO.setProductCount(replaceOrderProductDO.getRealReplaceProductCount());
+                    orderProductDO.setProductUnitAmount(replaceOrderProductDO.getProductUnitAmount());
+                    orderProductDO.setRentDepositAmount(replaceOrderProductDO.getRentDepositAmount());
+                    orderProductDO.setDepositAmount(replaceOrderProductDO.getDepositAmount());
+                    orderProductDO.setCreditDepositAmount(replaceOrderProductDO.getCreditDepositAmount());
+                    orderProductDO.setInsuranceAmount(BigDecimal.ZERO);
+                    orderProductDO.setDepositCycle(replaceOrderProductDO.getDepositCycle());
+                    orderProductDO.setPaymentCycle(replaceOrderProductDO.getPaymentCycle());
+                    orderProductDO.setPayMode(replaceOrderProductDO.getPayMode());
+                    orderProductDO.setIsNewProduct(replaceOrderProductDO.getIsNewProduct());
+                    orderProductDO.setDataStatus(replaceOrderProductDO.getDataStatus());
+                    orderProductDO.setRemark(null);
+                    orderProductDO.setCreateUser(replaceOrderProductDO.getCreateUser());
+                    orderProductDO.setCreateTime(date);
+                    orderProductDO.setUpdateUser(replaceOrderProductDO.getCreateUser());
+                    orderProductDO.setUpdateTime(date);
+                    orderProductDO.setRentingProductCount(replaceOrderProductDO.getRealReplaceProductCount());
+                    orderProductDO.setFEntryID(0);
+                    orderProductDO.setProductNumber(replaceOrderProductDO.getProductNumber());
+                    orderProductDO.setOrderJointProductId(null);
+                    orderProductDO.setJointProductProductId(null);
+                    orderProductDO.setStableProductCount(replaceOrderProductDO.getRealReplaceProductCount());
+//                    orderProductDO.setIsItemDelivered(true);
+//                    orderProductDO.setTestMachineOrderProductId(null);
+                    // TODO: 2018\9\18 0018 设置租赁期限
+                    // TODO: 2018\9\18 0018 设置商品价格
+                    if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
+                        Integer dayRentTimeLength = com.lxzl.erp.common.util.DateUtil.daysBetween(realReplaceTime,expectReturnTime)+1;
+                        orderProductDO.setRentTimeLength(dayRentTimeLength);
+                        orderProductDO.setProductAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getRentTimeLength()), 2), new BigDecimal(orderProductDO.getProductCount())));
+                    }else {
+                        int[] diff = com.lxzl.erp.common.util.DateUtil.getDiff(realReplaceTime,expectReturnTime);
+                        if (diff[1]>0) {
+                            String s = sdf.format(realReplaceTime);
+                            Integer day = Integer.parseInt(s);
+                            //10号之前月份往上取，10号和10号之后取当月
+                            if (day<10) {
+                                diff[1] += 1;
+                            }
+                        }
+                        orderProductDO.setRentTimeLength(diff[1]);
+                        BigDecimal monthProductUnitAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getRentTimeLength()), 2), new BigDecimal(orderProductDO.getProductCount()));
+                        Integer monthDay = com.lxzl.erp.common.util.DateUtil.getActualMaximum(realReplaceTime);
+                        BigDecimal oneDayProductUnitAmount = BigDecimalUtil.div(orderProductDO.getProductUnitAmount(),new BigDecimal(monthDay), 2);
+                        BigDecimal dayProductUnitAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(oneDayProductUnitAmount, new BigDecimal(diff[1]), 2), new BigDecimal(orderProductDO.getProductCount()));
+                        orderProductDO.setProductAmount(BigDecimalUtil.add(monthProductUnitAmount,dayProductUnitAmount));
+                    }
+                    // TODO: 2018\9\18 0018 修改原订单项
+                    oldOrderProductDO.setRentingProductCount(oldOrderProductDO.getRentingProductCount()-orderProductDO.getProductCount());
+                    oldOrderProductDO.setUpdateTime(date);
+                    oldOrderProductDO.setUpdateUser(replaceOrderDO.getUpdateUser());
+                    // TODO: 2018\9\18 0018 保存订单项
+                    orderProductMapper.save(orderProductDO);
+                    // TODO: 2018\9\18 0018 更新订单项
+                    orderProductMapper.update(oldOrderProductDO);
+                    replaceOrderProductDO.setNewOrderProductId(orderProductDO.getId());
+                    //更新换货单项
+                    replaceOrderProductMapper.update(replaceOrderProductDO);
+                }
+            }
 //            if (replaceOrderMaterialDOListIsNotEmpty) {
 //                replaceOrderMaterialMapper.updateListForConfirm(replaceOrderMaterialDOList);
 //            }
-//            result.setErrorCode(ErrorCode.SUCCESS);
-//            result.setResult(replaceOrderDO.getReletOrderNo());
+            // TODO: 2018\9\19 0019 换货单结算
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(replaceOrderDO.getReletOrderNo());
+
+        }else {
+            //没有换货，取消换货单
+            replaceOrderDO.setDataStatus(CommonConstant.COMMON_TWO);
+            replaceOrderDO.setUpdateTime(date);
+            replaceOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
+                for (ReplaceOrderProductDO replaceOrderProductDO:replaceOrderProductDOList) {
+                    replaceOrderProductDO.setDataStatus(CommonConstant.COMMON_TWO);
+                    replaceOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    replaceOrderProductDO.setUpdateTime(date);
+                }
+            }
+            if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
+                for (ReplaceOrderMaterialDO replaceOrderMaterialDO:replaceOrderMaterialDOList) {
+                    replaceOrderMaterialDO.setDataStatus(CommonConstant.COMMON_TWO);
+                    replaceOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    replaceOrderMaterialDO.setUpdateTime(date);
+                }
+            }
+            replaceOrderMapper.update(replaceOrderDO);
+            if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
+                replaceOrderProductMapper.updateListForCancel(replaceOrderProductDOList);
+            }
+            if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
+                replaceOrderMaterialMapper.updateListForCancel(replaceOrderMaterialDOList);
+            }
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(replaceOrderDO.getReletOrderNo());
+        }
+        // TODO: 2018\9\19 0019 发送换货单信息到K3
+//        ServiceResult<String, String> k3ServiceResult = k3Service.confirmOrder(orderConfirmChangeToK3Param);
+//        if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//            result.setErrorCode(k3ServiceResult.getErrorCode(), k3ServiceResult.getFormatArgs());
 //            return result;
 //        }
-        //如果不是全部进行换货，需进行重新结算，修改订单，发送K3，只改换货单状态并保存
 
-        return null;
+        return result;
     }
 
     /**
@@ -804,9 +1063,316 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             return result;
         }
         replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_DELIVERED);
+        replaceOrderDO.setReplaceDeliveryTime(date);
         replaceOrderMapper.update(replaceOrderDO);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    /**
+     * 提交换货单
+     * @Author : sunzhipeng
+     */
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> commitReplaceOrder(ReplaceOrderCommitParam replaceOrderCommitParam) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date now = new Date();
+        ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(replaceOrderCommitParam.getReplaceOrderNo());
+        if (replaceOrderDO == null) {
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_NO_ERROR);
+            return result;
+        } else if (!ReplaceOrderStatus.REPLACE_ORDER_STATUS_WAIT_COMMIT.equals(replaceOrderDO.getReplaceOrderStatus())
+                && !ReplaceOrderStatus.REPLACE_ORDER_STATUS_BACKED.equals(replaceOrderDO.getReplaceOrderStatus())) {
+            //只有待提交和已驳回状态的换货单可以提交
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN);
+            return result;
+        }
+        if (!replaceOrderDO.getCreateUser().equals(userSupport.getCurrentUserId().toString())) {
+            //只有创建换货单本人可以提交
+            result.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
+            return result;
+        }
+        if (CollectionUtil.isEmpty(replaceOrderDO.getReplaceOrderProductDOList())) {
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_DETAIL_COMMITTED_NOT_NULL);
+            return result;
+        }
+        List<ReplaceOrderProductDO> replaceOrderProductDOList = replaceOrderDO.getReplaceOrderProductDOList();
+        List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList = replaceOrderDO.getReplaceOrderMaterialDOList();
+        //校验订单编号
+        OrderDO orderDO = orderMapper.findByOrderNo(replaceOrderDO.getOrderNo());
+        if (orderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        //只有确认收货和部分归还状态的才可以换货
+        if (!OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus()) &&
+                !OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus())) {
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_STATUS_ERROR);
+            return result;
+        }
+        List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
+        List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
+
+        //存放原订单商品项和配件项
+        Map<Integer,OrderProductDO> orderProductDOMap = new TreeMap<>();
+        Map<Integer,OrderMaterialDO> orderMaterialDOMap = new TreeMap<>();
+        if (CollectionUtil.isNotEmpty(orderProductDOList)){
+            for (OrderProductDO orderProductDO : orderProductDOList) {
+                orderProductDOMap.put(orderProductDO.getId(),orderProductDO);
+            }
+        }
+        if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
+            for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+                orderMaterialDOMap.put(orderMaterialDO.getId(),orderMaterialDO);
+            }
+        }
+        //校验换货数量
+        //获取总换货商品数和总配件数
+        Integer totalReplaceProductCount = 0;
+        Integer totalReplaceMaterialCount = 0;
+        for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderProductDOList) {
+            totalReplaceProductCount += replaceOrderProductDO.getReplaceProductCount();
+        }
+        for (ReplaceOrderMaterialDO replaceOrderMaterialDO : replaceOrderMaterialDOList) {
+            totalReplaceMaterialCount += replaceOrderMaterialDO.getReplaceMaterialCount();
+        }
+        //获取换货数量并保存到map
+        Map<Integer, Integer> replaceProductCountMap = new HashMap<>();
+        Map<Integer, Integer> replaceMaterialCountMap = new HashMap<>();
+        saveRepalceCountInMap(replaceOrderProductDOList, replaceOrderMaterialDOList, replaceProductCountMap, replaceMaterialCountMap);
+        //获取在租数量
+        Map<Integer, Integer> rentingProductCountMap = new HashMap<>();
+        Map<Integer, Integer> rentingMaterialCountMap = new HashMap<>();
+        if (CollectionUtil.isNotEmpty(orderProductDOList)) {
+            for (OrderProductDO orderProductDO : orderProductDOList) {
+                rentingProductCountMap.put(orderProductDO.getId(), orderProductDO.getRentingProductCount());
+            }
+        }
+        if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
+            for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+                rentingMaterialCountMap.put(orderMaterialDO.getId(), orderMaterialDO.getRentingMaterialCount());
+            }
+        }
+        //获取该用户未完成的退货、换货
+        Map<Integer, Integer> productCountMap = new HashMap<>();
+        Map<Integer, Integer> materialCountMap = new HashMap<>();
+        List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findByCustomerNo(orderDO.getBuyerCustomerNo());
+        //获取该用户处于待提交、审核中、处理中三种状态的商品或者配件的数量
+        getReturnCount(productCountMap, materialCountMap, k3ReturnOrderDOList);
+        //获取该订单待提交和审核中的换货单，统计换货的商品和配件的数量
+        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(replaceOrderDO.getOrderNo());
+        //将该订单的待提交、审核中两种状态的换货单商品或配件数量保存
+        saveExistedReplaceCount(productCountMap, materialCountMap, replaceOrderDOList);
+
+        //比较设备项
+        if (compareProductCount(result, orderProductDOList, orderProductDOMap, replaceProductCountMap, rentingProductCountMap, productCountMap)){
+            return result;
+        }
+        //比较物料项
+        if (compareMaterialCount(result, orderMaterialDOList, orderMaterialDOMap, replaceMaterialCountMap, rentingMaterialCountMap, materialCountMap)){
+            return result;
+        }
+        //校验客户编号
+        CustomerDO customerDO = customerMapper.findCustomerPersonByNo(replaceOrderDO.getCustomerNo());
+        if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+
+        //获取客户风控信息
+        CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(orderDO.getBuyerCustomerId());
+        // 原设备信用押金总额
+        BigDecimal oldTotalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
+        // 设备信用押金总额
+        BigDecimal newTotalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
+        // 校验客户风控信息
+        verifyCustomerRiskInfo(replaceOrderDO,customerDO,orderDO,customerRiskManagementDO);
+        //获取商品改变设备信用押金总额
+        getTotalCreditDepositAmountForProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
+        //获取配件改变设备信用押金总额
+        getTotalCreditDepositAmountForMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
+
+        if (customerRiskManagementDO == null && BigDecimalUtil.compare(newTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
+            result.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_NEED_RISK_INFO);
+            return result;
+        }
+        if (BigDecimalUtil.compare(newTotalCreditDepositAmount, BigDecimal.ZERO) > 0 && BigDecimalUtil.compare(BigDecimalUtil.sub(BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmount(), customerRiskManagementDO.getCreditAmountUsed()), newTotalCreditDepositAmount), BigDecimal.ZERO) < 0) {
+            result.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW);
+            return result;
+        }
+        BigDecimal totalCreditDepositAmount = BigDecimalUtil.sub(oldTotalCreditDepositAmount,newTotalCreditDepositAmount);
+        //扣除信用额度
+        if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0) {
+            customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.COMMIT_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+        } else if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) < 0) {
+            customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), BigDecimalUtil.mul(totalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.COMMIT_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+        }
+
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_CHANGE);
+        if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
+            result.setErrorCode(needVerifyResult.getErrorCode());
+            return result;
+        } else if (needVerifyResult.getResult()) {
+            if (replaceOrderCommitParam.getVerifyUserId() == null) {
+                result.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
+                return result;
+            }
+            //调用提交审核服务
+            replaceOrderCommitParam.setVerifyMatters("换货单审核事项：1.服务费和运费 2.退还方式 3.商品与配件的换货数量");
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_CHANGE, replaceOrderCommitParam.getReplaceOrderNo(), replaceOrderCommitParam.getVerifyUserId(), replaceOrderCommitParam.getVerifyMatters(), replaceOrderCommitParam.getRemark(), replaceOrderCommitParam.getImgIdList(), null);
+            //修改提交审核状态
+            if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
+                replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_VERIFYING);
+                replaceOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                replaceOrderDO.setUpdateTime(now);
+                replaceOrderMapper.update(replaceOrderDO);
+                return verifyResult;
+            } else {
+                result.setErrorCode(verifyResult.getErrorCode());
+                return result;
+            }
+        } else {
+            replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_PROCESSING);
+            replaceOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            replaceOrderDO.setUpdateTime(now);
+            replaceOrderMapper.update(replaceOrderDO);
+            // TODO: 2018\9\15 0015 发送数据到K3
+//            result = sendReplaceOrderToK3(replaceOrderDO.getReplaceOrderNo());
+//            if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//            }
+            return result;
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public String receiveVerifyResult(boolean verifyResult, String businessNo) {
+        ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(businessNo);
+        try {
+            if (replaceOrderDO != null) {//k3退货单
+                //不是审核中状态的收货单，拒绝处理
+                if (!ReplaceOrderStatus.REPLACE_ORDER_STATUS_VERIFYING.equals(replaceOrderDO.getReplaceOrderStatus())) {
+                    return ErrorCode.BUSINESS_EXCEPTION;
+                }
+                if (verifyResult) {
+                    ServiceResult result = sendReplaceOrderToK3(businessNo);
+                    if (!ErrorCode.SUCCESS.equals(result.getErrorCode().toString())) {
+                        return result.getErrorCode().toString();
+                    }
+                    replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_PROCESSING);
+                } else {
+                    replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_BACKED);
+                    // 返还扣走或者添加的信用额度
+                    BigDecimal totalCreditDepositAmount = replaceOrderDO.getUpdateTotalCreditDepositAmount();
+                    if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0) {
+                        customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                    } else if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) < 0) {
+                        customerSupport.addCreditAmountUsed(replaceOrderDO.getCustomerId(), BigDecimalUtil.mul(totalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                    }
+                }
+                replaceOrderMapper.update(replaceOrderDO);
+                return ErrorCode.SUCCESS;
+            } else {
+                return ErrorCode.BUSINESS_EXCEPTION;
+            }
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            if (replaceOrderDO != null) {
+                logger.error("【换货单审核后，业务处理异常】", e);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                logger.error("【数据已回滚】");
+            }
+            return ErrorCode.BUSINESS_EXCEPTION;
+        }
+    }
+
+    @Override
+    public ServiceResult<String, String> sendReplaceOrderToK3(String replaceOrderNo) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+
+        ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(replaceOrderNo);
+        if (replaceOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(replaceOrderDO.getId(), PostK3Type.POST_K3_TYPE_REPLACE_ORDER);
+        ReplaceOrder replaceOrder = ConverterUtil.convert(replaceOrderDO, ReplaceOrder.class);
+        replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_PROCESSING);
+        replaceOrderDO.setUpdateTime(currentTime);
+        replaceOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        replaceOrderMapper.update(replaceOrderDO);
+        if (k3SendRecordDO == null) {
+            //创建推送记录，此时发送状态失败，接收状态失败
+            k3SendRecordDO = new K3SendRecordDO();
+            k3SendRecordDO.setRecordType(PostK3Type.POST_K3_TYPE_RETURN_ORDER);
+            k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_NO);
+            k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+            k3SendRecordDO.setRecordJson(JSON.toJSONString(replaceOrder));
+            k3SendRecordDO.setSendTime(new Date());
+            k3SendRecordDO.setRecordReferId(replaceOrderDO.getId());
+            k3SendRecordMapper.save(k3SendRecordDO);
+            logger.info("【推送消息】" + JSON.toJSONString(replaceOrder));
+        }
+        //异步向K3推送退货单
+        sendReplaceOrderToK3Asynchronous(replaceOrder, k3SendRecordDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+
+    }
+
+    public void sendReplaceOrderToK3Asynchronous(final ReplaceOrder replaceOrder, final K3SendRecordDO k3SendRecordDO) {
+        threadPoolTaskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                logger.info("【异步向K3推送换货消息，换货单号：" + replaceOrder.getReplaceOrderNo() + "】,发送数据：" + JSON.toJSONString(replaceOrder));
+                sendReplaceOrderToK3Method(replaceOrder, k3SendRecordDO);
+            }
+        });
+    }
+    private String getErrorMessage(com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response, K3SendRecordDO k3SendRecordDO) {
+        StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+        sb.append("向K3推送【换货-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
+        sb.append(JSON.toJSONString(response));
+        return sb.toString();
+    }
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void sendReplaceOrderToK3Method(ReplaceOrder replaceOrder, K3SendRecordDO k3SendRecordDO) {
+        com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response = null;
+        try {
+            ConvertK3DataService convertK3DataService = postK3ServiceManager.getService(PostK3Type.POST_K3_TYPE_REPLACE_ORDER);
+            Object postData = convertK3DataService.getK3PostWebServiceData(null, replaceOrder);
+            IERPService service = new ERPServiceLocator().getBasicHttpBinding_IERPService();
+            response = service.addSEOutstock((FormSEOutStock) postData);
+            //修改推送记录
+            if (response == null) {
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： 换货单号--" + replaceOrder.getReplaceOrderNo() + ",响应结果" + JSON.toJSONString(response));
+                dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
+            } else if (response.getStatus() != 0) {
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： 换货单号--" + replaceOrder.getReplaceOrderNo() + ",响应结果" + JSON.toJSONString(response));
+                dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
+                throw new BusinessException(response.getResult());
+            } else {
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_YES);
+                logger.info("【PUSH DATA TO K3 RESPONSE SUCCESS】 ： 换货单号--" + replaceOrder.getReplaceOrderNo() + ",响应结果" + JSON.toJSONString(response));
+            }
+            k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_YES);
+            k3SendRecordDO.setResponseJson(JSON.toJSONString(response));
+            k3SendRecordMapper.update(k3SendRecordDO);
+        } catch (Exception e) {
+            dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
+            StringWriter exceptionFormat = new StringWriter();
+            e.printStackTrace(new PrintWriter(exceptionFormat, true));
+            logger.error("【换货K3服务异常：换货单号--" + replaceOrder.getReplaceOrderNo() + "】错误原因：" + e);
+            //将K3返回的具体错误信息返回，不返回自己定义的K3退货失败
+            throw new BusinessException(response.getResult());
+        }
     }
     /*
      * 比较物料项
@@ -921,7 +1487,31 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
         return false;
     }
-
+    /*
+     * 校验实际换货时间
+     */
+    private boolean checkRealReplaceTime(ServiceResult<String, String> serviceResult, SimpleDateFormat simpleDateFormat, String realReplaceTimeString, String replaceDeliveryTimeString, String nowTimeString) {
+        try {
+            Date realReplaceTimeDate = simpleDateFormat.parse(realReplaceTimeString);
+            Date replaceDeliveryTimeDate = simpleDateFormat.parse(replaceDeliveryTimeString);
+            Date nowTimeDate = simpleDateFormat.parse(nowTimeString);
+            if (!(realReplaceTimeDate.compareTo(replaceDeliveryTimeDate)>=0)) {
+                //实际换货时间不能小于发货时间
+                serviceResult.setErrorCode(ErrorCode.REAL_REPLACE_TIME_MUST_AFTER_REPLACE_DELIVERY_TIME);
+                return true;
+            } else if (!(realReplaceTimeDate.compareTo(nowTimeDate)<=0)) {
+                //实际换货时间不能大于确认换货时间
+                serviceResult.setErrorCode(ErrorCode.REAL_REPLACE_TIME_MUST_BEFORE_CONFIRM_TIME);
+                return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("【确认换货单,校验换货时间parse出错】", e);
+            serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_PARSE_ERROR);
+            return true;
+        }
+        return false;
+    }
     /*
      * 装配该订单续租单map集合
      */
@@ -1114,7 +1704,9 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
         return false;
     }
-
+    /*
+     * 补全换货商品项信息
+     */
     public void calculateOrderProductInfo(List<ReplaceOrderProductDO> replaceOrderProductDOList,Map<Integer,OrderProductDO> orderProductDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
 
         if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
@@ -1187,7 +1779,9 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             }
         }
     }
-
+    /*
+     * 补全换货配件项信息
+     */
     public void calculateOrderMaterialInfo(List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList,Map<Integer,OrderMaterialDO> orderMaterialDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
         if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
 
@@ -1239,6 +1833,248 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 }
                 replaceOrderMaterialDO.setMaterialId(material.getMaterialId());
                 replaceOrderMaterialDO.setMaterialName(material.getMaterialName());
+                replaceOrderMaterialDO.setRentDepositAmount(rentDepositAmount);
+                replaceOrderMaterialDO.setDepositAmount(depositAmount);
+                replaceOrderMaterialDO.setCreditDepositAmount(creditDepositAmount);
+            }
+        }
+    }
+
+    /*
+     * 获取商品改变设备信用押金总额
+     */
+    public void getTotalCreditDepositAmountForProductInfo(List<ReplaceOrderProductDO> replaceOrderProductDOList,Map<Integer,OrderProductDO> orderProductDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
+
+        if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
+            for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderProductDOList) {
+                BigDecimal depositAmount = BigDecimal.ZERO;
+                BigDecimal creditDepositAmount = BigDecimal.ZERO;
+                BigDecimal rentDepositAmount = BigDecimal.ZERO;
+                OrderProductDO orderProductDO = orderProductDOMap.get(replaceOrderProductDO.getOldOrderProductId());
+                if (orderProductDO == null) {
+                    throw new BusinessException(ErrorCode.ORDER_PRODUCT_NOT_EXISTS);
+                }
+                ServiceResult<String, Product> oldproductServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
+                if (!ErrorCode.SUCCESS.equals(oldproductServiceResult.getErrorCode())) {
+                    throw new BusinessException(oldproductServiceResult.getErrorCode());
+                }
+                Product oldProduct = oldproductServiceResult.getResult();
+
+
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(replaceOrderProductDO.getProductSkuId());
+                if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
+                    throw new BusinessException(productServiceResult.getErrorCode());
+                }
+                Product product = productServiceResult.getResult();
+                ProductSku productSku = CollectionUtil.isNotEmpty(product.getProductSkuList()) ? product.getProductSkuList().get(0) : null;
+                if (productSku == null) {
+                    throw new BusinessException(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                }
+                BigDecimal skuPrice = CommonConstant.COMMON_CONSTANT_YES.equals(replaceOrderProductDO.getIsNewProduct()) ? productSku.getNewSkuPrice() : productSku.getSkuPrice();
+                String skuName = productSku.getSkuName();
+
+                // 小于等于90天的,不走风控，大于90天的，走风控授信
+                if (OrderRentType.RENT_TYPE_DAY.equals(replaceOrderProductDO.getRentType()) && replaceOrderProductDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
+                    if (replaceOrderProductDO.getReplaceProductCount() > 0) {
+                        BigDecimal remainder = replaceOrderProductDO.getDepositAmount().divideAndRemainder(new BigDecimal(replaceOrderProductDO.getReplaceProductCount()))[1];
+                        if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
+                            throw new BusinessException(ErrorCode.ORDER_PRODUCT_DEPOSIT_ERROR);
+                        }
+                    }
+                    depositAmount = replaceOrderProductDO.getDepositAmount();
+                } else if (customerRiskManagementDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
+                    depositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(replaceOrderProductDO.getReplaceProductCount()));
+                } else {
+                    if ((BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) || CommonConstant.COMMON_CONSTANT_YES.equals(replaceOrderProductDO.getIsNewProduct())) {
+                        Integer depositCycle = replaceOrderProductDO.getDepositCycle() <= replaceOrderProductDO.getRentTimeLength() ? replaceOrderProductDO.getDepositCycle() : replaceOrderProductDO.getRentTimeLength();
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderProductDO.getProductUnitAmount(), new BigDecimal(replaceOrderProductDO.getReplaceProductCount()), 2), new BigDecimal(depositCycle));
+                    } else {
+                        Integer depositCycle = replaceOrderProductDO.getDepositCycle() <= replaceOrderProductDO.getRentTimeLength() ? replaceOrderProductDO.getDepositCycle() : replaceOrderProductDO.getRentTimeLength();
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderProductDO.getProductUnitAmount(), new BigDecimal(replaceOrderProductDO.getReplaceProductCount()), 2), new BigDecimal(depositCycle));
+                    }
+                    creditDepositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(replaceOrderProductDO.getReplaceProductCount()));
+                    BigDecimal oldSkuPrice= BigDecimalUtil.div(orderProductDO.getCreditDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),4);
+                    BigDecimal oldOrderProductCreditDepositAmount = BigDecimalUtil.mul(oldSkuPrice, new BigDecimal(replaceOrderProductDO.getReplaceProductCount()));
+                    totalCreditDepositAmount = BigDecimalUtil.sub(totalCreditDepositAmount,oldOrderProductCreditDepositAmount);
+                    totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
+                }
+            }
+        }
+    }
+
+    /*
+     * 获取配件改变设备信用押金总额
+     */
+    public void getTotalCreditDepositAmountForMaterialInfo(List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList,Map<Integer,OrderMaterialDO> orderMaterialDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
+        if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
+
+            for (ReplaceOrderMaterialDO replaceOrderMaterialDO : replaceOrderMaterialDOList) {
+                BigDecimal depositAmount = BigDecimal.ZERO;
+                BigDecimal creditDepositAmount = BigDecimal.ZERO;
+                BigDecimal rentDepositAmount = BigDecimal.ZERO;
+
+                ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(replaceOrderMaterialDO.getMaterialId());
+                if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
+                    throw new BusinessException(materialServiceResult.getErrorCode());
+                }
+                Material material = materialServiceResult.getResult();
+                if (material == null) {
+                    throw new BusinessException(ErrorCode.MATERIAL_NOT_EXISTS);
+                }
+                String materialName = material.getMaterialName();
+                BigDecimal materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(replaceOrderMaterialDO.getIsNewMaterial()) ? material.getNewMaterialPrice() : material.getMaterialPrice();
+
+                // 小于等于90天的,不走风控，大于90天的，走风控授信
+                if (OrderRentType.RENT_TYPE_DAY.equals(replaceOrderMaterialDO.getRentType()) && replaceOrderMaterialDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
+                    if (replaceOrderMaterialDO.getReplaceMaterialCount() > 0) {
+                        BigDecimal remainder = replaceOrderMaterialDO.getDepositAmount().divideAndRemainder(new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()))[1];
+                        if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
+                            throw new BusinessException(ErrorCode.ORDER_MATERIAL_DEPOSIT_ERROR);
+                        }
+                    }
+
+                    depositAmount = replaceOrderMaterialDO.getDepositAmount();
+                } else if (customerRiskManagementDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
+                    depositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()));
+                } else {
+                    if (CommonConstant.COMMON_CONSTANT_YES.equals(replaceOrderMaterialDO.getIsNewMaterial())) {
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()), 2), new BigDecimal(replaceOrderMaterialDO.getDepositCycle()));
+                    } else {
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()), 2), new BigDecimal(replaceOrderMaterialDO.getDepositCycle()));
+                    }
+                    MaterialTypeDO materialTypeDO = materialTypeMapper.findById(material.getMaterialType());
+                    if (materialTypeDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsMainMaterial())) {
+                        creditDepositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()));
+                        totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
+
+                        OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(replaceOrderMaterialDO.getOldOrderMaterialId());
+                        BigDecimal oldSkuPrice= BigDecimalUtil.div(orderMaterialDO.getCreditDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),4);
+                        BigDecimal oldOrderMaterialCreditDepositAmount = BigDecimalUtil.mul(oldSkuPrice, new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()));
+                        totalCreditDepositAmount = BigDecimalUtil.sub(totalCreditDepositAmount,oldOrderMaterialCreditDepositAmount);
+                        totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
+                    }
+                }
+            }
+        }
+    }
+
+    /*
+     * 确认换货没有全部收货时变更换货单商品信息
+     */
+    public void changeReplaceOrderProductInfo(List<ReplaceOrderProductDO> replaceOrderProductDOList,Map<Integer,OrderProductDO> orderProductDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
+
+        if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
+            for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderProductDOList) {
+                BigDecimal depositAmount = BigDecimal.ZERO;
+                BigDecimal creditDepositAmount = BigDecimal.ZERO;
+                BigDecimal rentDepositAmount = BigDecimal.ZERO;
+                OrderProductDO orderProductDO = orderProductDOMap.get(replaceOrderProductDO.getOldOrderProductId());
+                if (orderProductDO == null) {
+                    throw new BusinessException(ErrorCode.ORDER_PRODUCT_NOT_EXISTS);
+                }
+                ServiceResult<String, Product> oldproductServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
+                if (!ErrorCode.SUCCESS.equals(oldproductServiceResult.getErrorCode())) {
+                    throw new BusinessException(oldproductServiceResult.getErrorCode());
+                }
+                Product oldProduct = oldproductServiceResult.getResult();
+
+
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(replaceOrderProductDO.getProductSkuId());
+                if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
+                    throw new BusinessException(productServiceResult.getErrorCode());
+                }
+                Product product = productServiceResult.getResult();
+                ProductSku productSku = CollectionUtil.isNotEmpty(product.getProductSkuList()) ? product.getProductSkuList().get(0) : null;
+                if (productSku == null) {
+                    throw new BusinessException(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                }
+                BigDecimal skuPrice = CommonConstant.COMMON_CONSTANT_YES.equals(replaceOrderProductDO.getIsNewProduct()) ? productSku.getNewSkuPrice() : productSku.getSkuPrice();
+                String skuName = productSku.getSkuName();
+
+                // 小于等于90天的,不走风控，大于90天的，走风控授信
+                if (OrderRentType.RENT_TYPE_DAY.equals(replaceOrderProductDO.getRentType()) && replaceOrderProductDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
+                    if (replaceOrderProductDO.getReplaceProductCount() > 0) {
+                        BigDecimal remainder = replaceOrderProductDO.getDepositAmount().divideAndRemainder(new BigDecimal(replaceOrderProductDO.getReplaceProductCount()))[1];
+                        if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
+                            throw new BusinessException(ErrorCode.ORDER_PRODUCT_DEPOSIT_ERROR);
+                        }
+                    }
+                    depositAmount = replaceOrderProductDO.getDepositAmount();
+                } else if (customerRiskManagementDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
+                    depositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(replaceOrderProductDO.getReplaceProductCount()));
+                } else {
+                    if ((BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) || CommonConstant.COMMON_CONSTANT_YES.equals(replaceOrderProductDO.getIsNewProduct())) {
+                        Integer depositCycle = replaceOrderProductDO.getDepositCycle() <= replaceOrderProductDO.getRentTimeLength() ? replaceOrderProductDO.getDepositCycle() : replaceOrderProductDO.getRentTimeLength();
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderProductDO.getProductUnitAmount(), new BigDecimal(replaceOrderProductDO.getReplaceProductCount()), 2), new BigDecimal(depositCycle));
+                    } else {
+                        Integer depositCycle = replaceOrderProductDO.getDepositCycle() <= replaceOrderProductDO.getRentTimeLength() ? replaceOrderProductDO.getDepositCycle() : replaceOrderProductDO.getRentTimeLength();
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderProductDO.getProductUnitAmount(), new BigDecimal(replaceOrderProductDO.getReplaceProductCount()), 2), new BigDecimal(depositCycle));
+                    }
+                    creditDepositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(replaceOrderProductDO.getReplaceProductCount()));
+                    BigDecimal oldSkuPrice= BigDecimalUtil.div(orderProductDO.getCreditDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),4);
+                    BigDecimal oldOrderProductCreditDepositAmount = BigDecimalUtil.mul(oldSkuPrice, new BigDecimal(replaceOrderProductDO.getReplaceProductCount()));
+                    totalCreditDepositAmount = BigDecimalUtil.sub(totalCreditDepositAmount,oldOrderProductCreditDepositAmount);
+                    totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
+                }
+                replaceOrderProductDO.setRentDepositAmount(rentDepositAmount);
+                replaceOrderProductDO.setDepositAmount(depositAmount);
+                replaceOrderProductDO.setCreditDepositAmount(creditDepositAmount);
+            }
+        }
+    }
+
+    /*
+     * 确认换货没有全部收货时变更换货单配件信息
+     */
+    public void changeReplaceOrderMaterialInfo(List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList,Map<Integer,OrderMaterialDO> orderMaterialDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
+        if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
+
+            for (ReplaceOrderMaterialDO replaceOrderMaterialDO : replaceOrderMaterialDOList) {
+                BigDecimal depositAmount = BigDecimal.ZERO;
+                BigDecimal creditDepositAmount = BigDecimal.ZERO;
+                BigDecimal rentDepositAmount = BigDecimal.ZERO;
+
+                ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(replaceOrderMaterialDO.getMaterialId());
+                if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
+                    throw new BusinessException(materialServiceResult.getErrorCode());
+                }
+                Material material = materialServiceResult.getResult();
+                if (material == null) {
+                    throw new BusinessException(ErrorCode.MATERIAL_NOT_EXISTS);
+                }
+                String materialName = material.getMaterialName();
+                BigDecimal materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(replaceOrderMaterialDO.getIsNewMaterial()) ? material.getNewMaterialPrice() : material.getMaterialPrice();
+
+                // 小于等于90天的,不走风控，大于90天的，走风控授信
+                if (OrderRentType.RENT_TYPE_DAY.equals(replaceOrderMaterialDO.getRentType()) && replaceOrderMaterialDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
+                    if (replaceOrderMaterialDO.getReplaceMaterialCount() > 0) {
+                        BigDecimal remainder = replaceOrderMaterialDO.getDepositAmount().divideAndRemainder(new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()))[1];
+                        if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
+                            throw new BusinessException(ErrorCode.ORDER_MATERIAL_DEPOSIT_ERROR);
+                        }
+                    }
+
+                    depositAmount = replaceOrderMaterialDO.getDepositAmount();
+                } else if (customerRiskManagementDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
+                    depositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()));
+                } else {
+                    if (CommonConstant.COMMON_CONSTANT_YES.equals(replaceOrderMaterialDO.getIsNewMaterial())) {
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()), 2), new BigDecimal(replaceOrderMaterialDO.getDepositCycle()));
+                    } else {
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()), 2), new BigDecimal(replaceOrderMaterialDO.getDepositCycle()));
+                    }
+                    MaterialTypeDO materialTypeDO = materialTypeMapper.findById(material.getMaterialType());
+                    if (materialTypeDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsMainMaterial())) {
+                        creditDepositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()));
+                        totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
+
+                        OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(replaceOrderMaterialDO.getOldOrderMaterialId());
+                        BigDecimal oldSkuPrice= BigDecimalUtil.div(orderMaterialDO.getCreditDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),4);
+                        BigDecimal oldOrderMaterialCreditDepositAmount = BigDecimalUtil.mul(oldSkuPrice, new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()));
+                        totalCreditDepositAmount = BigDecimalUtil.sub(totalCreditDepositAmount,oldOrderMaterialCreditDepositAmount);
+                        totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
+                    }
+                }
                 replaceOrderMaterialDO.setRentDepositAmount(rentDepositAmount);
                 replaceOrderMaterialDO.setDepositAmount(depositAmount);
                 replaceOrderMaterialDO.setCreditDepositAmount(creditDepositAmount);
@@ -1318,5 +2154,16 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     private ReplaceOrderMaterialMapper replaceOrderMaterialMapper;
     @Autowired
     private ImgMysqlMapper imgMysqlMapper;
+    @Autowired
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    @Autowired
+    private K3SendRecordMapper k3SendRecordMapper;
+    @Autowired
+    private PostK3ServiceManager postK3ServiceManager;
+    @Autowired
+    private DingDingSupport dingDingSupport;
+    @Autowired
+    private K3Service k3Service;
+
 
 }
