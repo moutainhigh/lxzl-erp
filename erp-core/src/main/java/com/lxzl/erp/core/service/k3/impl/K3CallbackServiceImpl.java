@@ -274,12 +274,13 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                                 dingDingSupport.dingDingSendMessage(getItemLowZero(orderProductDO.getOrderId(), orderProductDO.getId(), productCount));
                             }else{
                                 if(null!=orderProductDO.getCreditDepositAmount()&&orderProductDO.getCreditDepositAmount().compareTo(BigDecimal.ZERO)==1){
-                                    creditDepositAmount=orderProductDO.getCreditDepositAmount().divide(BigDecimal.valueOf(rentingProductCount)).multiply(BigDecimal.valueOf(k3ReturnOrderDetailDO.getProductCount())).setScale(2,BigDecimal.ROUND_HALF_UP);
+                                    creditDepositAmount=orderProductDO.getCreditDepositAmount().divide(BigDecimal.valueOf(rentingProductCount),2,BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(k3ReturnOrderDetailDO.getProductCount())).setScale(2,BigDecimal.ROUND_HALF_UP);
                                     totalCreditDepositAmount=totalCreditDepositAmount.add(creditDepositAmount);
                                 }
                             }
                             productCount = productCount < 0 ? 0 : productCount;
-                            orderProductDO.setCreditDepositAmount(orderProductDO.getCreditDepositAmount().subtract(creditDepositAmount));
+                            BigDecimal orderProductCreditDepositAmount=orderProductDO.getCreditDepositAmount().subtract(creditDepositAmount);
+                            orderProductDO.setCreditDepositAmount(orderProductCreditDepositAmount.compareTo(BigDecimal.ZERO)==1?orderProductCreditDepositAmount:BigDecimal.ZERO);
                             orderProductDO.setRentingProductCount(productCount);
                             orderProductDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                             orderProductDO.setUpdateTime(now);
@@ -363,15 +364,19 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
                         orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                         orderDO.setUpdateTime(now);
-                        orderDO.setTotalCreditDepositAmount(orderDO.getTotalCreditDepositAmount().subtract(totalCreditDepositAmount));
-                        orderDO.setTotalProductCreditDepositAmount(orderDO.getTotalCreditDepositAmount().subtract(totalCreditDepositAmount));
+                        BigDecimal orderCreditDepositAmount=orderDO.getTotalCreditDepositAmount().subtract(totalCreditDepositAmount);
+                        BigDecimal orderProductCreditDepositAmount=orderDO.getTotalProductCreditDepositAmount().subtract(totalCreditDepositAmount);
+                        orderDO.setTotalCreditDepositAmount(orderCreditDepositAmount.compareTo(BigDecimal.ZERO)==1?orderCreditDepositAmount:BigDecimal.ZERO);
+                        orderDO.setTotalProductCreditDepositAmount(orderProductCreditDepositAmount.compareTo(BigDecimal.ZERO)==1?orderProductCreditDepositAmount:BigDecimal.ZERO);
                         orderMapper.update(orderDO);
                     } else if (orderDO.getTotalProductCount() > totalRentingProductCount || orderDO.getTotalMaterialCount() > totalRentingMaterialCount) {//部分退货
                         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_PART_RETURN);
                         orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                         orderDO.setUpdateTime(now);
-                        orderDO.setTotalCreditDepositAmount(orderDO.getTotalCreditDepositAmount().subtract(totalCreditDepositAmount));
-                        orderDO.setTotalProductCreditDepositAmount(orderDO.getTotalCreditDepositAmount().subtract(totalCreditDepositAmount));
+                        BigDecimal orderCreditDepositAmount=orderDO.getTotalCreditDepositAmount().subtract(totalCreditDepositAmount);
+                        BigDecimal orderProductCreditDepositAmount=orderDO.getTotalProductCreditDepositAmount().subtract(totalCreditDepositAmount);
+                        orderDO.setTotalCreditDepositAmount(orderCreditDepositAmount.compareTo(BigDecimal.ZERO)==1?orderCreditDepositAmount:BigDecimal.ZERO);
+                        orderDO.setTotalProductCreditDepositAmount(orderProductCreditDepositAmount.compareTo(BigDecimal.ZERO)==1?orderProductCreditDepositAmount:BigDecimal.ZERO);
                         orderMapper.update(orderDO);
                     }
                     // 记录订单时间轴
