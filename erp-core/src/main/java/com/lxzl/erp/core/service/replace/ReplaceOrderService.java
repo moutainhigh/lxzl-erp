@@ -32,4 +32,6 @@ public interface ReplaceOrderService  extends VerifyReceiver {
     ServiceResult<String,String> commitReplaceOrder(ReplaceOrderCommitParam replaceOrderCommitParam);
 
     ServiceResult<String,String> sendReplaceOrderToK3(String replaceOrderNo);
+
+    ServiceResult<String,String> sendReplaceOrderInfoToK3(String replaceOrderNo);
 }

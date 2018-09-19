@@ -1078,3 +1078,8 @@ ALTER TABLE `erp_statement_order_return_detail` ADD COLUMN `return_order_detail_
 
 -- 工作流新增字段 V1.0.23-shopping --
 ALTER TABLE erp_workflow_node add `verify_type` INT(11) NOT NULL DEFAULT 1 COMMENT '审核类型:1-本条通过则通过,2-相同审核组的所有2的通过则通过,3-不用获取审核人该条通过直接通过';
+
+
+
+ALTER TABLE erp_statement_order_return_detail add `order_type` INT(11) NOT NULL DEFAULT 4 COMMENT '订单类型:4-退货单,6-换货单';
+ALTER TABLE erp_statement_order_detail add `source_id` int(20) DEFAULT NULL COMMENT '生成结算的目标源id(扩展字段，订单类型为换货单时，此字段保存换货单项id)';

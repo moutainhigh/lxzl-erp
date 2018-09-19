@@ -2,6 +2,7 @@ package com.lxzl.erp.web.service;
 
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
+import com.lxzl.erp.core.service.statement.impl.support.StatementReplaceOrderSupport;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.se.unit.test.BaseUnTransactionalTest;
 import org.junit.Test;
@@ -25,6 +26,9 @@ public class StatementOrderTest  extends BaseUnTransactionalTest {
     @Autowired
     private StatementOrderSupport statementOrderSupport;
 
+    @Autowired
+    private StatementReplaceOrderSupport statementReplaceOrderSupport;
+
     @Test
     public void handleNoPaidStatementOrder(){
         Date currentTime = new Date();
@@ -41,5 +45,11 @@ public class StatementOrderTest  extends BaseUnTransactionalTest {
     public void getOverdueStatementOrderList(){
         List<StatementOrderDO> statementOrderDOList = statementOrderSupport.getOverdueStatementOrderList(731477);
         System.out.println(statementOrderDOList.size());
+    }
+
+    @Test
+    public void createReplaceOrderStatement(){
+        String resultCOde=statementReplaceOrderSupport.createStatement("LXREO20180913164544205");
+        System.out.println(resultCOde);
     }
 }

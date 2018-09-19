@@ -1,10 +1,12 @@
 package com.lxzl.erp.core.service.statement.impl.support;
 
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dingding.DingDingCommonMsg;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.messagethirdchannel.pojo.MessageThirdChannel;
 import com.lxzl.erp.common.domain.statement.AmountHasReturn;
+import com.lxzl.erp.common.domain.statement.AmountNeedReturn;
 import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.util.BigDecimalUtil;
@@ -428,6 +430,80 @@ public class StatementOrderSupport {
         statementOrderMapper.update(statementOrderDO);
     }
 
+    /**
+     * 清除结算信息
+     * @param paid
+     * @param buyerCustomerNo
+     * @param statementOrderDetailDOList
+     * @return 返回需退还账户的金额
+     */
+    public ServiceResult<String, AmountNeedReturn> clearStatement(boolean paid, String buyerCustomerNo, List<StatementOrderDetailDO> statementOrderDetailDOList) {
+        ServiceResult<String, AmountNeedReturn> result = new ServiceResult<>();
+        Map<Integer, StatementOrderDO> statementOrderDOMap = getStatementOrderByDetails(statementOrderDetailDOList);
+        reStatement(new Date(), statementOrderDOMap, statementOrderDetailDOList);
+        //删除相关冲正单
+        clearStatementRefCorrect(statementOrderDetailDOList);
+        if (paid) {
+            //已付设备押金
+            BigDecimal depositPaidAmount = BigDecimal.ZERO;
+            //已付其他费用
+            BigDecimal otherPaidAmount = BigDecimal.ZERO;
+            // 已付租金
+            BigDecimal rentPaidAmount = BigDecimal.ZERO;
+            //已付逾期费用
+            BigDecimal overduePaidAmount = BigDecimal.ZERO;
+            //已付违约金
+            BigDecimal penaltyPaidAmount = BigDecimal.ZERO;
+            //已付租金押金
+            BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
+            for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+                //计算所有已支付金额,由于付款是在冲正后做的，所以此时无需考虑冲正金额
+                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount, BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()));
+                otherPaidAmount = BigDecimalUtil.add(otherPaidAmount, statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount, statementOrderDetailDO.getStatementDetailRentPaidAmount());
+                overduePaidAmount = BigDecimalUtil.add(overduePaidAmount, statementOrderDetailDO.getStatementDetailOverduePaidAmount());
+                penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount, statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
+                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount, BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), statementOrderDetailDO.getStatementDetailRentDepositReturnAmount()));
+            }
+            //处理结算单总状态及已支付金额
+            reStatementPaid(statementOrderDOMap, statementOrderDetailDOList);
+            AmountNeedReturn amountNeedReturn = new AmountNeedReturn();
+            amountNeedReturn.setDepositPaidAmount(depositPaidAmount);
+            amountNeedReturn.setRentDepositPaidAmount(rentDepositPaidAmount);
+            amountNeedReturn.setOtherPaidAmount(otherPaidAmount);
+            amountNeedReturn.setOverduePaidAmount(overduePaidAmount);
+            amountNeedReturn.setPenaltyPaidAmount(penaltyPaidAmount);
+            amountNeedReturn.setRentPaidAmount(rentPaidAmount);
+//            if(BigDecimalUtil.compare(rentPaidAmount,BigDecimal.ZERO)!=0||BigDecimalUtil.compare(rentDepositPaidAmount,BigDecimal.ZERO)!=0||BigDecimalUtil.compare(depositPaidAmount,BigDecimal.ZERO)!=0||BigDecimalUtil.compare(BigDecimalUtil.addAll(otherPaidAmount, overduePaidAmount, penaltyPaidAmount),BigDecimal.ZERO)==0){
+//                String returnCode = paymentService.returnDepositExpand(buyerCustomerNo, rentPaidAmount, BigDecimalUtil.addAll(otherPaidAmount, overduePaidAmount, penaltyPaidAmount)
+//                        , rentDepositPaidAmount, depositPaidAmount, "重算结算单，已支付金额退还到客户余额");
+//                if (!ErrorCode.SUCCESS.equals(returnCode)) {
+//                    result.setErrorCode(returnCode);
+//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                    return result;
+//                }
+//            }
+            result.setResult(amountNeedReturn);
+        } else {
+            //如果未支付，物理删除结算单详情，结算单
+            if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+                statementOrderDetailMapper.realDeleteStatementOrderDetailList(statementOrderDetailDOList);
+            }
+            List<StatementOrderDO> deleteStatementOrderDOList = new ArrayList<>();
+            for (Integer key : statementOrderDOMap.keySet()) {
+                StatementOrderDO statementOrderDO = statementOrderDOMap.get(key);
+                if (CommonConstant.DATA_STATUS_DELETE.equals(statementOrderDO.getDataStatus())) {
+                    deleteStatementOrderDOList.add(statementOrderDO);
+                }
+            }
+            if (CollectionUtil.isNotEmpty(deleteStatementOrderDOList)) {
+                statementOrderMapper.realDeleteStatementOrderList(deleteStatementOrderDOList);
+            }
+
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
 
 
 

@@ -649,6 +649,8 @@ public class ErrorCode {
     public static final String CUSTOMER_STATUS_IS_NOT_PASS = "J500187";
     public static final String CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH = "J500188";
 
+    public static final String DEPOSIT_NOT_PAID_BEFORE_REPLACE_ORDER = "J500189";
+
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
     public static final String MESSAGE_RECEIVER_NOT_NULL = "J600003";
@@ -1127,6 +1129,8 @@ public class ErrorCode {
     public static final String REAL_REPLACE_TIME_NOT_NULL= "J310000031";//实际换货时间不能为空
     public static final String REAL_REPLACE_TIME_MUST_AFTER_REPLACE_DELIVERY_TIME= "J310000032";//实际换货时间不能小于发货时间
     public static final String REAL_REPLACE_TIME_MUST_BEFORE_CONFIRM_TIME= "J310000033";//实际换货时间不能大于确认换货时间
+    public static final String SEND_REPLACE_ORDER_TO_K3_STATUS_ERROR= "J310000034";//换货单状态错误
+    public static final String K3_REPLACE_ORDER_ERROR= "J310000035";//K3换货单推送信息失败,【%s 】
 
 
     static {
@@ -2236,8 +2240,11 @@ public class ErrorCode {
         MAP.put(REAL_REPLACE_TIME_NOT_NULL, "实际换货时间不能为空");
         MAP.put(REAL_REPLACE_TIME_MUST_AFTER_REPLACE_DELIVERY_TIME, "实际换货时间不能小于发货时间");
         MAP.put(REAL_REPLACE_TIME_MUST_BEFORE_CONFIRM_TIME, "实际换货时间不能大于确认换货时间");
+        MAP.put(SEND_REPLACE_ORDER_TO_K3_STATUS_ERROR, "换货单状态错误");
+        MAP.put(K3_REPLACE_ORDER_ERROR, "K3换货单推送信息失败,【%s 】");
 
         MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
+        MAP.put(DEPOSIT_NOT_PAID_BEFORE_REPLACE_ORDER, "换货之前需先支付原订单押金");
 
 
     }
