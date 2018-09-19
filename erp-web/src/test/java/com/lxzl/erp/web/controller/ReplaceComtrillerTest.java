@@ -1,7 +1,9 @@
 package com.lxzl.erp.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.domain.replace.ReplaceOrderQueryParam;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.JSONUtil;
@@ -15,12 +17,31 @@ import org.junit.Test;
 public class ReplaceComtrillerTest extends ERPUnTransactionalTest {
 
     @Test
-    public void testCreateOrderJSON() throws Exception {
-        String str = "{\"orderId\":3003015,\"orderNo\":\"LXO-20180910-1000-00037\",\"customerId\":705765,\"customerNo\":\"LXCC-027-20180824-00071\",\"address\":\"天津市天津和平区123\",\"logisticsCost\":\"200\",\"serviceCost\":\"200\",\"repairCost\":\"200\",\"replaceReasonType\":\"1\",\"replaceTime\":1536969600000,\"replaceMode\":\"1\",\"remark\":\"\",\"consigneeName\":\"收货测试员工\",\"consigneePhone\":\"18566324595\",\"replaceOrderProductList\":[{\"oldOrderProductId\":4415,\"oldProductEntry\":4415,\"rentType\":2,\"rentTimeLength\":6,\"rentLengthType\":2,\"depositCycle\":1,\"payMode\":2,\"paymentCycle\":3,\"oldProductUnitAmount\":149,\"depositAmount\":0,\"productId\":2000003,\"productName\":\"ThinkPad T430\",\"productSkuId\":1054,\"productSkuName\":\"CPU:i5 3代/内存:4G/机械硬盘:500G/固态硬盘:120G/显卡:集显/尺寸:14.1\",\"replaceProductCount\":\"4\",\"productUnitAmount\":\"200\",\"isNewProduct\":1,\"remark\":\"\"}]}";
+    public void testAddJSON() throws Exception {
+        String str = "{\"orderId\":3002932,\"orderNo\":\"LXO-20180817-1000-00039\",\"customerId\":705743,\"customerNo\":\"LXCC-1000-20180817-00049\",\"address\":\"湖北省武汉市洪山区你家大门口\",\"logisticsCost\":\"200\",\"serviceCost\":\"200\",\"repairCost\":\"200\",\"replaceReasonType\":\"0\",\"replaceTime\":1537228800000,\"replaceMode\":\"2\",\"remark\":\"\",\"consigneeName\":\"咩咩\",\"consigneePhone\":\"18566324590\",\"replaceOrderProductList\":[{\"oldOrderProductId\":4312,\"oldProductEntry\":4312,\"rentType\":1,\"rentTimeLength\":15,\"rentLengthType\":1,\"depositCycle\":0,\"payMode\":1,\"paymentCycle\":0,\"oldProductUnitAmount\":10,\"depositAmount\":100,\"productId\":2000439,\"productName\":\"苹果IPADPRO-16G\",\"productSkuId\":1525,\"productSkuName\":\"CPU:双核/内存:16G/尺寸:9.7\",\"replaceProductCount\":\"1\",\"productUnitAmount\":\"210\",\"isNewProduct\":1,\"remark\":\"\"}]}";
 
         ReplaceOrder replaceOrder = FastJsonUtil.toBean(str, ReplaceOrder.class);
         TestResult testResult = getJsonTestResult("/replaceOrder/add", replaceOrder);
+        System.out.println(JSON.toJSONString(testResult));
 
     }
 
+    @Test
+    public void testQueryAllReplaceOrderJSON() throws Exception {
+        String str = "{\"pageNo\":1,\"pageSize\":15,\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\",\"replaceOrderStatus\":\"\",\"customerName\":\"\",\"customerNo\":\"\",\"replaceOrderNo\":\"\",\"orderNo\":\"\"}";
+        ReplaceOrderQueryParam param = FastJsonUtil.toBean(str, ReplaceOrderQueryParam.class);
+        TestResult testResult = getJsonTestResult("/replaceOrder/queryAllReplaceOrder", param);
+        System.out.println(JSON.toJSONString(testResult));
+
+    }
+
+    @Test
+    public void testUpdateJSON() throws Exception {
+        String str = "{\"replaceOrderId\":5,\"replaceOrderNo\":\"LXREO20180914111048191\",\"orderId\":3002932,\"orderNo\":\"LXO-20180817-1000-00039\",\"customerId\":705743,\"customerNo\":\"LXCC-1000-20180817-00049\",\"address\":\"湖北省武汉市洪山区你家大门口\",\"logisticsCost\":\"200\",\"serviceCost\":\"200\",\"repairCost\":\"200\",\"replaceReasonType\":\"0\",\"replaceTime\":1537228800000,\"replaceMode\":\"2\",\"remark\":\"\",\"consigneeName\":\"咩咩\",\"consigneePhone\":\"18566324590\",\"replaceOrderProductList\":[{\"oldOrderProductId\":4312,\"oldProductEntry\":4312,\"rentType\":1,\"rentTimeLength\":15,\"rentLengthType\":1,\"depositCycle\":0,\"payMode\":1,\"paymentCycle\":0,\"oldProductUnitAmount\":10,\"depositAmount\":100,\"productId\":2000439,\"productName\":\"苹果IPADPRO-16G\",\"productSkuId\":1525,\"productSkuName\":\"CPU:双核/内存:16G/尺寸:9.7\",\"replaceProductCount\":1,\"productUnitAmount\":210,\"isNewProduct\":1,\"remark\":\"\"}]}";
+
+        ReplaceOrder replaceOrder = FastJsonUtil.toBean(str, ReplaceOrder.class);
+        TestResult testResult = getJsonTestResult("/replaceOrder/update", replaceOrder);
+        System.out.println(JSON.toJSONString(testResult));
+
+    }
 }

@@ -51,6 +51,15 @@ public class ReplaceOrderProduct extends BasePO {
 	private Integer isReletOrderReplace;   //是否是续租单换货，1是0否
 	private Integer reletOrderItemId;   //续租项ID
 
+	private Integer oldProductId;   //商品ID
+	private String oldProductName;   //商品名称
+	private Integer oldProductSkuId;   //商品SKU ID
+	private String oldProductSkuName;   //商品SKU名称
+	private String oldProductNumber;   //原商品编码
+	private Integer oldIsNewProduct;   //是否是全新机，1是0否
+	private String productNumber;   //原商品编码
+	private Integer oldRentingProductCount;   //原在租商品总数
+
 
 	public Integer getReplaceOrderProductId(){
 		return replaceOrderProductId;
@@ -308,4 +317,67 @@ public class ReplaceOrderProduct extends BasePO {
 		this.reletOrderItemId = reletOrderItemId;
 	}
 
+	public Integer getOldProductId() {
+		return oldProductId;
+	}
+
+	public void setOldProductId(Integer oldProductId) {
+		this.oldProductId = oldProductId;
+	}
+
+	public String getOldProductName() {
+		return oldProductName;
+	}
+
+	public void setOldProductName(String oldProductName) {
+		this.oldProductName = oldProductName;
+	}
+
+	public Integer getOldProductSkuId() {
+		return oldProductSkuId;
+	}
+
+	public void setOldProductSkuId(Integer oldProductSkuId) {
+		this.oldProductSkuId = oldProductSkuId;
+	}
+
+	public String getOldProductSkuName() {
+		return oldProductSkuName;
+	}
+
+	public void setOldProductSkuName(String oldProductSkuName) {
+		this.oldProductSkuName = oldProductSkuName;
+	}
+
+	public String getOldProductNumber() {
+		return oldProductNumber;
+	}
+
+	public void setOldProductNumber(String oldProductNumber) {
+		this.oldProductNumber = oldProductNumber;
+	}
+
+	public Integer getOldIsNewProduct() {
+		return oldIsNewProduct;
+	}
+
+	public void setOldIsNewProduct(Integer oldIsNewProduct) {
+		this.oldIsNewProduct = oldIsNewProduct;
+	}
+
+	public String getProductNumber() {
+		return productNumber;
+	}
+
+	public void setProductNumber(String productNumber) {
+		this.productNumber = productNumber;
+	}
+
+	public Integer getOldRentingProductCount() {
+		return oldRentingProductCount;
+	}
+
+	public void setOldRentingProductCount(Integer oldRentingProductCount) {
+		this.oldRentingProductCount = oldRentingProductCount;
+	}
 }

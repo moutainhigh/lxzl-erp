@@ -34,6 +34,17 @@
 		<result column="consignee_phone" jdbcType="VARCHAR" property="consigneePhone" />
 		<result column="is_relet_order_replace" jdbcType="INTEGER" property="isReletOrderReplace"/>
 		<result column="relet_order_no" jdbcType="VARCHAR" property="reletOrderNo"/>
+		<result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+		<result column="update_user_name" jdbcType="VARCHAR" property="updateUserName"/>
+		<result column="confirm_replace_user_name" jdbcType="VARCHAR" property="confirmReplaceUserName"/>
+		<result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
+		<result column="delivery_sub_company_name" jdbcType="VARCHAR" property="deliverySubCompanyName"/>
+		<result column="delivery_sub_company_id" jdbcType="VARCHAR" property="deliverySubCompanyId"/>
+		<result column="replace_delivery_time" jdbcType="TIMESTAMP" property="replaceDeliveryTime" />
+		<result column="real_replace_time" jdbcType="TIMESTAMP" property="realReplaceTime" />
+		<result column="update_total_credit_deposit_amount" jdbcType="DECIMAL" property="updateTotalCreditDepositAmount" />
+		<result column="old_total_credit_deposit_amount" jdbcType="DECIMAL" property="oldTotalCreditDepositAmount" />
+		<result column="new_total_credit_deposit_amount" jdbcType="DECIMAL" property="newTotalCreditDepositAmount" />
 		<collection property="replaceOrderProductDOList" resultMap="ReplaceOrderProductDO"/>
 		<collection property="replaceOrderMaterialDOList" resultMap="ReplaceOrderMaterialDO"/>
 	</resultMap>
@@ -71,6 +82,14 @@
 		<result column="product_real_replace_product_count" jdbcType="INTEGER" property="realReplaceProductCount" />
 		<result column="product_is_relet_order_replace" jdbcType="INTEGER" property="isReletOrderReplace" />
 		<result column="product_relet_order_item_id" jdbcType="INTEGER" property="reletOrderItemId" />
+		<result column="product_old_product_id" jdbcType="INTEGER" property="oldProductId" />
+		<result column="product_old_product_name" jdbcType="VARCHAR" property="oldProductName" />
+		<result column="product_old_product_sku_id" jdbcType="INTEGER" property="oldProductSkuId" />
+		<result column="product_old_product_sku_name" jdbcType="VARCHAR" property="oldProductSkuName" />
+		<result column="product_old_product_number" jdbcType="VARCHAR" property="oldProductNumber" />
+		<result column="product_old_is_new_product" jdbcType="INTEGER" property="oldIsNewProduct" />
+		<result column="product_product_number" jdbcType="VARCHAR" property="productNumber" />
+		<result column="product_old_renting_product_count" jdbcType="INTEGER" property="oldRentingProductCount" />
 	</resultMap>
 
 	<resultMap id="ReplaceOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderMaterialDO">
@@ -108,7 +127,7 @@
 
 	<sql id="column_List">
 		ero.id,ero.replace_order_no,ero.order_id,ero.order_no,ero.customer_id,ero.customer_no,ero.replace_time,ero.total_replace_product_count,ero.total_replace_material_count,ero.real_total_replace_product_count,ero.real_total_replace_material_count,ero.service_cost,ero.logistics_cost,ero.repair_cost,ero.replace_reason_type,ero.replace_reason,ero.replace_mode,ero.replace_order_status,ero.data_status,ero.remark,ero.create_time,ero.create_user,ero.update_time,ero.update_user,ero.confirm_replace_time,ero.confirm_replace_user,
-		ero.address,ero.consignee_name,ero.consignee_phone,ero.is_relet_order_replace,ero.relet_order_no
+		ero.address,ero.consignee_name,ero.consignee_phone,ero.is_relet_order_replace,ero.relet_order_no,ero.customer_name,ero.delivery_sub_company_name,ero.delivery_sub_company_id,ero.replace_delivery_time,ero.real_replace_time,ero.update_total_credit_deposit_amount,ero.old_total_credit_deposit_amount,ero.new_total_credit_deposit_amount
 	</sql>
 
 	<sql id="product_column_List">
@@ -120,7 +139,9 @@
 		erop.rent_deposit_amount as product_rent_deposit_amount,erop.deposit_amount as product_deposit_amount,erop.credit_deposit_amount as product_credit_deposit_amount,
 		erop.is_new_product as product_is_new_product,erop.data_status as product_data_status,erop.remark as product_remark,erop.create_time as product_create_time,
 		erop.create_user as product_create_user,erop.update_time as product_update_time,erop.update_user as product_update_user,erop.real_replace_product_count as product_real_replace_product_count,
-		erop.is_relet_order_replace as product_is_relet_order_replace,erop.relet_order_item_id as product_relet_order_item_id
+		erop.is_relet_order_replace as product_is_relet_order_replace,erop.relet_order_item_id as product_relet_order_item_id,
+		erop.old_product_id as product_old_product_id,erop.old_product_name as product_old_product_name,erop.old_product_sku_id as product_old_product_sku_id,erop.old_product_sku_name as product_old_product_sku_name,
+		erop.old_product_number as product_old_product_number,erop.old_is_new_product as product_old_is_new_product,erop.product_number as product_product_number,erop.old_renting_product_count as product_old_renting_product_count
 	</sql>
 
 	<sql id="material_column_List">
@@ -250,6 +271,30 @@
 			<if test="reletOrderNo != null">
 				relet_order_no = #{reletOrderNo,jdbcType=VARCHAR},
 			</if>
+			<if test="customerName != null">
+				customer_name = #{customerName,jdbcType=VARCHAR},
+			</if>
+			<if test="deliverySubCompanyName != null">
+				delivery_sub_company_name = #{deliverySubCompanyName,jdbcType=VARCHAR},
+			</if>
+			<if test="deliverySubCompanyId != null">
+				delivery_sub_company_id = #{deliverySubCompanyId,jdbcType=INTEGER},
+			</if>
+			<if test="replaceDeliveryTime != null">
+				replace_delivery_time = #{replaceDeliveryTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="realReplaceTime != null">
+				real_replace_time = #{realReplaceTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTotalCreditDepositAmount != null">
+				update_total_credit_deposit_amount = #{updateTotalCreditDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="oldTotalCreditDepositAmount != null">
+				old_total_credit_deposit_amount = #{oldTotalCreditDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="newTotalCreditDepositAmount != null">
+				new_total_credit_deposit_amount = #{newTotalCreditDepositAmount,jdbcType=DECIMAL},
+			</if>
 		</set>
 	</sql>
 
@@ -267,7 +312,7 @@
 		FROM erp_replace_order ero
 		LEFT JOIN erp_replace_order_product erop ON ero.id = erop.replace_order_id and erop.data_status = 1
 		LEFT JOIN erp_replace_order_material erom ON ero.id = erom.replace_order_id and erom.data_status = 1
-		where ero.order_no = #{orderNo, jdbcType=VARCHAR} and ero.data_status = 1 and ero.replace_order_status in (0,4)
+		where ero.order_no = #{orderNo, jdbcType=VARCHAR} and ero.data_status = 1 and ero.replace_order_status in (0,4,8,12,16)
 	</select>
     <select id="findByReplaceOrderNo" resultMap="ReplaceOrderDO" parameterType="java.lang.String">
 		SELECT<include refid="column_List"/>,<include refid="product_column_List"/>,
@@ -280,10 +325,18 @@
 
 	<select id="findReplaceOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ero.id) FROM erp_replace_order ero
-		INNER JOIN erp_user eu1 ON eu1.id = ero.confirm_replace_user
-		INNER JOIN erp_user eu2 ON eu2.id = ero.create_user
-		INNER JOIN erp_user eu3 ON eu3.id = ero.update_user
-		INNER JOIN erp_customer ec ON ec.id = ero.customer_id AND ec.data_status = 1
+		<if test="maps.replaceOrderQueryParam.confirmReplaceUserName != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceUserName != ''">
+			LEFT JOIN erp_user eu1 ON eu1.id = ero.confirm_replace_user
+		</if>
+		<if test="maps.replaceOrderQueryParam.createUserName != null &amp;&amp; maps.replaceOrderQueryParam.createUserName != ''">
+			LEFT JOIN erp_user eu2 ON eu2.id = ero.create_user
+		</if>
+		<if test="maps.replaceOrderQueryParam.updateUserName != null &amp;&amp; maps.replaceOrderQueryParam.updateUserName != ''">
+			LEFT JOIN erp_user eu3 ON eu3.id = ero.update_user
+		</if>
+		<if test="maps.replaceOrderQueryParam.customerName != null &amp;&amp; maps.replaceOrderQueryParam.customerName != ''">
+			LEFT JOIN erp_customer ec ON ec.id = ero.customer_id
+		</if>
 		<where>
 			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderId != null ">
 				and ero.id = #{maps.replaceOrderQueryParam.replaceOrderId, jdbcType=INTEGER}
@@ -354,13 +407,12 @@
 	<select id="findReplaceOrderByParams" resultMap="ReplaceOrderDO" parameterType="map">
 		SELECT <include refid="column_List"/>
 		<trim prefix=",">
-			eu1.real_name AS confirmReplaceUserName,eu2.real_name AS createUserName,eu3.real_name AS updateUserName
+			eu1.real_name AS confirm_replace_user_name,eu2.real_name AS create_user_name,eu3.real_name AS update_user_name
 		</trim>
 		FROM erp_replace_order ero
-		INNER JOIN erp_user eu1 ON eu1.id = ero.confirm_replace_user
-		INNER JOIN erp_user eu2 ON eu2.id = ero.create_user
-		INNER JOIN erp_user eu3 ON eu3.id = ero.update_user
-		INNER JOIN erp_customer ec ON ec.id = ero.customer_id AND ec.data_status = 1
+		LEFT JOIN erp_user eu1 ON eu1.id = ero.confirm_replace_user
+		LEFT JOIN erp_user eu2 ON eu2.id = ero.create_user
+		LEFT JOIN erp_user eu3 ON eu3.id = ero.update_user
 		<where>
 			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderId != null ">
 				and ero.id = #{maps.replaceOrderQueryParam.replaceOrderId, jdbcType=INTEGER}
