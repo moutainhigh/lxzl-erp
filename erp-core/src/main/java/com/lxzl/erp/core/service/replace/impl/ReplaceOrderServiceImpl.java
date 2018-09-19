@@ -673,13 +673,12 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             serviceResult.setErrorCode(ErrorCode.CANCEL_REPLACE_ORDER_STATUS_ERROR);
             return serviceResult;
         }
-        replaceOrderDO.setDataStatus(CommonConstant.COMMON_TWO);
+        replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_CANCEL);
         replaceOrderDO.setUpdateTime(date);
         replaceOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         List<ReplaceOrderProductDO> replaceOrderProductDOList = replaceOrderDO.getReplaceOrderProductDOList();
         if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
             for (ReplaceOrderProductDO replaceOrderProductDO:replaceOrderProductDOList) {
-                replaceOrderProductDO.setDataStatus(CommonConstant.COMMON_TWO);
                 replaceOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 replaceOrderProductDO.setUpdateTime(date);
             }
@@ -687,7 +686,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList = replaceOrderDO.getReplaceOrderMaterialDOList();
         if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
             for (ReplaceOrderMaterialDO replaceOrderMaterialDO:replaceOrderMaterialDOList) {
-                replaceOrderMaterialDO.setDataStatus(CommonConstant.COMMON_TWO);
                 replaceOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 replaceOrderMaterialDO.setUpdateTime(date);
             }
@@ -999,19 +997,17 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
         }else {
             //没有换货，取消换货单
-            replaceOrderDO.setDataStatus(CommonConstant.COMMON_TWO);
+            replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_CLOSED);
             replaceOrderDO.setUpdateTime(date);
             replaceOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
                 for (ReplaceOrderProductDO replaceOrderProductDO:replaceOrderProductDOList) {
-                    replaceOrderProductDO.setDataStatus(CommonConstant.COMMON_TWO);
                     replaceOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     replaceOrderProductDO.setUpdateTime(date);
                 }
             }
             if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
                 for (ReplaceOrderMaterialDO replaceOrderMaterialDO:replaceOrderMaterialDOList) {
-                    replaceOrderMaterialDO.setDataStatus(CommonConstant.COMMON_TWO);
                     replaceOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     replaceOrderMaterialDO.setUpdateTime(date);
                 }
