@@ -112,7 +112,7 @@
                                                 </td>
                                                 {{#showIsNewCheckBox}}
                                                 <td>
-                                                    <div class="radio-custom pull-left mr10 mb5">
+                                                    <div class="radio-custom pull-left mr10">
                                                         <input type="radio" id="radio-{{skuId}}-1" class="radios oldProduct" name="radio-{{skuId}}">
                                                         <label for="radio-{{skuId}}-1">次新</label>
                                                     </div>

@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.k3.pojo.OrderStatementDateSplit;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
+import com.lxzl.erp.common.domain.statement.StatementDetailPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
@@ -16,10 +17,7 @@ import com.lxzl.erp.common.util.FastJsonUtil;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -216,5 +214,13 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
         K3ReturnOrder param = new K3ReturnOrder();
         param.setReturnOrderNo("LXK3RO20180713161048759");
         TestResult testResult = getJsonTestResult("/statementOrder/rollbackSuccessReturnOrder", param);
+    }
+
+    @Test
+    public void queryStatementOrderDetailsNeedPay() throws Exception {
+        StatementDetailPayParam param = new StatementDetailPayParam();
+        param.setMergeStatementItemList(Arrays.asList(26654));
+        TestResult testResult = getJsonTestResult("/statementOrder/queryStatementOrderDetailsNeedPay", param);
+        System.out.println(testResult);
     }
 }

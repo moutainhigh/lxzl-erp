@@ -33,6 +33,9 @@ public class OrderProductDO extends BaseDO {
     private String remark;
     private Integer isNewProduct;
     private Integer rentingProductCount;        // 在租商品总数
+    private Integer isItemDelivered;    //是否已发货，0否1是
+    private Integer testMachineOrderProductId; //测试机订单商品项id
+
 
     private String serialNumber;        // 序号
 
@@ -287,5 +290,21 @@ public class OrderProductDO extends BaseDO {
 
     public void setStableProductCount(Integer stableProductCount) {
         this.stableProductCount = stableProductCount;
+    }
+
+    public Integer getIsItemDelivered() {
+        return isItemDelivered;
+    }
+
+    public void setIsItemDelivered(Integer isItemDelivered) {
+        this.isItemDelivered = isItemDelivered;
+    }
+
+    public Integer getTestMachineOrderProductId() {
+        return testMachineOrderProductId;
+    }
+
+    public void setTestMachineOrderProductId(Integer testMachineOrderProductId) {
+        this.testMachineOrderProductId = testMachineOrderProductId;
     }
 }
