@@ -1,7 +1,9 @@
 package com.lxzl.erp.core.service.replace.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.K3Config;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.pojo.Material;
@@ -11,20 +13,17 @@ import com.lxzl.erp.common.domain.replace.ReplaceOrderCommitParam;
 import com.lxzl.erp.common.domain.replace.ReplaceOrderConfirmChangeParam;
 import com.lxzl.erp.common.domain.replace.ReplaceOrderQueryParam;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
-import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderMaterial;
-import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderProduct;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOutStock;
-import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
-import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
+import com.lxzl.erp.common.util.http.client.HttpClientUtil;
+import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderOelet;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.k3.PostK3ServiceManager;
-import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.core.service.material.BulkMaterialService;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
@@ -33,6 +32,7 @@ import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.replace.ReplaceOrderService;
+import com.lxzl.erp.core.service.replace.support.ReplaceOrderSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
@@ -51,8 +51,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderProductMapper;
@@ -87,10 +85,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import sun.font.TrueTypeFont;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -901,17 +895,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
 
         //保存图片
-        if (replaceOrderConfirmChangeParam.getDeliveryNoteCustomerSignImg() != null) {
-            ImageDO deliveryNoteCustomerSignImgDO = imgMysqlMapper.findById(replaceOrderConfirmChangeParam.getDeliveryNoteCustomerSignImg().getImgId());
-            if (deliveryNoteCustomerSignImgDO == null) {
-                result.setErrorCode(ErrorCode.DELIVERY_NOTE_CUSTOMER_SIGN_IMAGE_NOT_EXISTS);
-                return result;
-            }
-            deliveryNoteCustomerSignImgDO.setImgType(ImgType.DELIVERY_NOTE_CUSTOMER_SIGN);
-            deliveryNoteCustomerSignImgDO.setRefId(replaceOrderDO.getId().toString());
-            deliveryNoteCustomerSignImgDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            deliveryNoteCustomerSignImgDO.setUpdateTime(date);
-            imgMysqlMapper.update(deliveryNoteCustomerSignImgDO);
+        if (saveImg(replaceOrderConfirmChangeParam, result, date, replaceOrderDO)) {
+            return result;
         }
         replaceOrderDO.setConfirmReplaceTime(date);
         replaceOrderDO.setConfirmReplaceUser(userSupport.getCurrentUserId().toString());
@@ -1002,6 +987,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 //                replaceOrderMaterialMapper.updateListForConfirm(replaceOrderMaterialDOList);
 //            }
             // TODO: 2018\9\19 0019 换货单结算
+//            StatementReplaceOrderSupport
             result.setErrorCode(ErrorCode.SUCCESS);
             result.setResult(replaceOrderDO.getReletOrderNo());
 
@@ -1035,14 +1021,32 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             result.setResult(replaceOrderDO.getReletOrderNo());
         }
         // TODO: 2018\9\19 0019 发送换货单信息到K3
-//        ServiceResult<String, String> k3ServiceResult = k3Service.confirmOrder(orderConfirmChangeToK3Param);
-//        if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
-//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//            result.setErrorCode(k3ServiceResult.getErrorCode(), k3ServiceResult.getFormatArgs());
-//            return result;
-//        }
+        ServiceResult<String, String> k3ServiceResult = sendReplaceOrderInfoToK3(replaceOrderDO.getReplaceOrderNo());
+        if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            result.setErrorCode(k3ServiceResult.getErrorCode(), k3ServiceResult.getFormatArgs());
+            return result;
+        }
 
         return result;
+    }
+    /*
+     *保存图片
+     */
+    private boolean saveImg(ReplaceOrderConfirmChangeParam replaceOrderConfirmChangeParam, ServiceResult<String, String> result, Date date, ReplaceOrderDO replaceOrderDO) {
+        if (replaceOrderConfirmChangeParam.getDeliveryNoteCustomerSignImg() != null) {
+            ImageDO deliveryNoteCustomerSignImgDO = imgMysqlMapper.findById(replaceOrderConfirmChangeParam.getDeliveryNoteCustomerSignImg().getImgId());
+            if (deliveryNoteCustomerSignImgDO == null) {
+                result.setErrorCode(ErrorCode.DELIVERY_NOTE_CUSTOMER_SIGN_IMAGE_NOT_EXISTS);
+                return true;
+            }
+            deliveryNoteCustomerSignImgDO.setImgType(ImgType.DELIVERY_NOTE_CUSTOMER_SIGN);
+            deliveryNoteCustomerSignImgDO.setRefId(replaceOrderDO.getId().toString());
+            deliveryNoteCustomerSignImgDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            deliveryNoteCustomerSignImgDO.setUpdateTime(date);
+            imgMysqlMapper.update(deliveryNoteCustomerSignImgDO);
+        }
+        return false;
     }
 
     /**
@@ -1238,11 +1242,99 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             replaceOrderDO.setUpdateTime(now);
             replaceOrderMapper.update(replaceOrderDO);
             // TODO: 2018\9\15 0015 发送数据到K3
-//            result = sendReplaceOrderToK3(replaceOrderDO.getReplaceOrderNo());
-//            if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
-//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//            }
+            result = sendReplaceOrderInfoToK3(replaceOrderDO.getReplaceOrderNo());
+            if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            }
             return result;
+        }
+    }
+
+    @Override
+    public ServiceResult<String, String> sendReplaceOrderToK3(String replaceOrderNo) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+
+        ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(replaceOrderNo);
+        if (replaceOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(replaceOrderDO.getId(), PostK3Type.POST_K3_TYPE_REPLACE_ORDER);
+        ReplaceOrder replaceOrder = ConverterUtil.convert(replaceOrderDO, ReplaceOrder.class);
+        replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_PROCESSING);
+        replaceOrderDO.setUpdateTime(currentTime);
+        replaceOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        replaceOrderMapper.update(replaceOrderDO);
+        if (k3SendRecordDO == null) {
+            //创建推送记录，此时发送状态失败，接收状态失败
+            k3SendRecordDO = new K3SendRecordDO();
+            k3SendRecordDO.setRecordType(PostK3Type.POST_K3_TYPE_REPLACE_ORDER);
+            k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_NO);
+            k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+            k3SendRecordDO.setRecordJson(JSON.toJSONString(replaceOrder));
+            k3SendRecordDO.setSendTime(new Date());
+            k3SendRecordDO.setRecordReferId(replaceOrderDO.getId());
+            k3SendRecordMapper.save(k3SendRecordDO);
+            logger.info("【推送消息】" + JSON.toJSONString(replaceOrder));
+        }
+        //异步向K3推送退货单
+        replaceOrderSupport.sendReplaceOrderToK3Asynchronous(replaceOrder, k3SendRecordDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> sendReplaceOrderInfoToK3(String replaceOrderNo) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(replaceOrderNo);
+        if (replaceOrderDO == null){
+            serviceResult.setErrorCode(ErrorCode.REPLACE_ORDER_ERROR);
+            return serviceResult;
+        }
+        Map<String, Object> requestData = new HashMap<>();
+        Map responseMap = new HashMap();
+        String response = null;
+        requestData.put("replaceOrder",replaceOrderDO);
+        String requestJson  = JSONObject.toJSONString(requestData);
+        String k3confirmOrderUrl = null;
+        try{
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            if (ReplaceOrderStatus.REPLACE_ORDER_STATUS_PROCESSING.equals(replaceOrderDO.getReplaceOrderStatus())) {
+                k3confirmOrderUrl = K3Config.k3Server + "/DataDelivery/Barter";  //审核通过推送换货单信息
+            } else if (ReplaceOrderStatus.REPLACE_ORDER_STATUS_CONFIRM.equals(replaceOrderDO.getReplaceOrderStatus())) {
+                k3confirmOrderUrl = K3Config.k3Server + "/DataDelivery/ConfirmlBarter";  //确认换货推送换货单信息
+            } else {
+                serviceResult.setErrorCode(ErrorCode.SEND_REPLACE_ORDER_TO_K3_STATUS_ERROR);
+                return serviceResult;
+            }
+            response = HttpClientUtil.post(k3confirmOrderUrl, requestJson, headerBuilder, "UTF-8");
+            responseMap = JSONObject.parseObject(response,HashMap.class);
+            if ("true".equals(responseMap.get("IsSuccess").toString())){
+                serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                serviceResult.setResult(responseMap.get("Message").toString());
+                return serviceResult;
+            }else{
+                StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+                sb.append("向K3推送【换货单-").append(replaceOrderDO.getReplaceOrderNo()).append("】数据失败：");
+                sb.append(responseMap.get("Message").toString());
+                sb.append("\r\n").append("请求参数：").append(requestJson);
+                dingDingSupport.dingDingSendMessage(sb.toString());
+                serviceResult.setErrorCode(ErrorCode.K3_REPLACE_ORDER_ERROR);
+                serviceResult.setResult(responseMap.get("Message").toString());
+                return serviceResult;
+            }
+        }catch (Exception e){
+            logger.error("向K3推送换货单异常：",e);
+            StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+            sb.append("向K3推送【换货单-").append(replaceOrderDO.getReplaceOrderNo()).append("】数据失败：");
+            sb.append(JSON.toJSONString(response));
+            sb.append("\r\n").append("请求参数：").append(requestJson);
+            dingDingSupport.dingDingSendMessage(sb.toString());
+            serviceResult.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+            return serviceResult;
         }
     }
 
@@ -1289,91 +1381,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
     }
 
-    @Override
-    public ServiceResult<String, String> sendReplaceOrderToK3(String replaceOrderNo) {
-        ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = userSupport.getCurrentUser();
-        Date currentTime = new Date();
 
-        ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(replaceOrderNo);
-        if (replaceOrderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
-            return result;
-        }
-        K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(replaceOrderDO.getId(), PostK3Type.POST_K3_TYPE_REPLACE_ORDER);
-        ReplaceOrder replaceOrder = ConverterUtil.convert(replaceOrderDO, ReplaceOrder.class);
-        replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_PROCESSING);
-        replaceOrderDO.setUpdateTime(currentTime);
-        replaceOrderDO.setUpdateUser(loginUser.getUserId().toString());
-        replaceOrderMapper.update(replaceOrderDO);
-        if (k3SendRecordDO == null) {
-            //创建推送记录，此时发送状态失败，接收状态失败
-            k3SendRecordDO = new K3SendRecordDO();
-            k3SendRecordDO.setRecordType(PostK3Type.POST_K3_TYPE_RETURN_ORDER);
-            k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_NO);
-            k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
-            k3SendRecordDO.setRecordJson(JSON.toJSONString(replaceOrder));
-            k3SendRecordDO.setSendTime(new Date());
-            k3SendRecordDO.setRecordReferId(replaceOrderDO.getId());
-            k3SendRecordMapper.save(k3SendRecordDO);
-            logger.info("【推送消息】" + JSON.toJSONString(replaceOrder));
-        }
-        //异步向K3推送退货单
-        sendReplaceOrderToK3Asynchronous(replaceOrder, k3SendRecordDO);
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
-
-    }
-
-    public void sendReplaceOrderToK3Asynchronous(final ReplaceOrder replaceOrder, final K3SendRecordDO k3SendRecordDO) {
-        threadPoolTaskExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                logger.info("【异步向K3推送换货消息，换货单号：" + replaceOrder.getReplaceOrderNo() + "】,发送数据：" + JSON.toJSONString(replaceOrder));
-                sendReplaceOrderToK3Method(replaceOrder, k3SendRecordDO);
-            }
-        });
-    }
-    private String getErrorMessage(com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response, K3SendRecordDO k3SendRecordDO) {
-        StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
-        sb.append("向K3推送【换货-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
-        sb.append(JSON.toJSONString(response));
-        return sb.toString();
-    }
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void sendReplaceOrderToK3Method(ReplaceOrder replaceOrder, K3SendRecordDO k3SendRecordDO) {
-        com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response = null;
-        try {
-            ConvertK3DataService convertK3DataService = postK3ServiceManager.getService(PostK3Type.POST_K3_TYPE_REPLACE_ORDER);
-            Object postData = convertK3DataService.getK3PostWebServiceData(null, replaceOrder);
-            IERPService service = new ERPServiceLocator().getBasicHttpBinding_IERPService();
-            response = service.addSEOutstock((FormSEOutStock) postData);
-            //修改推送记录
-            if (response == null) {
-                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
-                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： 换货单号--" + replaceOrder.getReplaceOrderNo() + ",响应结果" + JSON.toJSONString(response));
-                dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
-            } else if (response.getStatus() != 0) {
-                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
-                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： 换货单号--" + replaceOrder.getReplaceOrderNo() + ",响应结果" + JSON.toJSONString(response));
-                dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
-                throw new BusinessException(response.getResult());
-            } else {
-                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_YES);
-                logger.info("【PUSH DATA TO K3 RESPONSE SUCCESS】 ： 换货单号--" + replaceOrder.getReplaceOrderNo() + ",响应结果" + JSON.toJSONString(response));
-            }
-            k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_YES);
-            k3SendRecordDO.setResponseJson(JSON.toJSONString(response));
-            k3SendRecordMapper.update(k3SendRecordDO);
-        } catch (Exception e) {
-            dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
-            StringWriter exceptionFormat = new StringWriter();
-            e.printStackTrace(new PrintWriter(exceptionFormat, true));
-            logger.error("【换货K3服务异常：换货单号--" + replaceOrder.getReplaceOrderNo() + "】错误原因：" + e);
-            //将K3返回的具体错误信息返回，不返回自己定义的K3退货失败
-            throw new BusinessException(response.getResult());
-        }
-    }
     /*
      * 比较物料项
      */
@@ -2164,6 +2172,10 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     private DingDingSupport dingDingSupport;
     @Autowired
     private K3Service k3Service;
+    @Autowired
+    private ReplaceOrderSupport replaceOrderSupport;
+//    @Autowired
+//    private StatementReplaceOrderSupport statementReplaceOrderSupport;
 
 
 }
