@@ -18,6 +18,7 @@ import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderOelet;
+import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
@@ -967,19 +968,14 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                     }else {
                         int[] diff = com.lxzl.erp.common.util.DateUtil.getDiff(realReplaceTime,expectReturnTime);
                         if (diff[1]>0) {
-                            String s = sdf.format(realReplaceTime);
-                            Integer day = Integer.parseInt(s);
-                            //10号之前月份往上取，10号和10号之后取当月
-                            if (day<10) {
-                                diff[1] += 1;
-                            }
+                            diff[0] += 1;
                         }
-                        orderProductDO.setRentTimeLength(diff[1]);
-                        BigDecimal monthProductUnitAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getRentTimeLength()), 2), new BigDecimal(orderProductDO.getProductCount()));
-                        Integer monthDay = com.lxzl.erp.common.util.DateUtil.getActualMaximum(realReplaceTime);
-                        BigDecimal oneDayProductUnitAmount = BigDecimalUtil.div(orderProductDO.getProductUnitAmount(),new BigDecimal(monthDay), 2);
-                        BigDecimal dayProductUnitAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(oneDayProductUnitAmount, new BigDecimal(diff[1]), 2), new BigDecimal(orderProductDO.getProductCount()));
-                        orderProductDO.setProductAmount(BigDecimalUtil.add(monthProductUnitAmount,dayProductUnitAmount));
+                        if (diff[0] == 0) {
+                            diff[0] += 1;
+                        }
+                        orderProductDO.setRentTimeLength(diff[0]);
+                        BigDecimal productAmount = amountSupport.calculateRentAmount(realReplaceTime,expectReturnTime,orderProductDO.getProductUnitAmount(),orderProductDO.getProductCount());
+                        orderProductDO.setProductAmount(productAmount);
                     }
                     // TODO: 2018\9\18 0018 修改原订单项
                     oldOrderProductDO.setRentingProductCount(oldOrderProductDO.getRentingProductCount()-orderProductDO.getProductCount());
@@ -2192,6 +2188,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     private ReplaceOrderSupport replaceOrderSupport;
     @Autowired
     private StatementReplaceOrderSupport statementReplaceOrderSupport;
+    @Autowired
+    private AmountSupport amountSupport;
 
 
 }
