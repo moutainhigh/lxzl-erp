@@ -800,6 +800,12 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             return result;
         }
 
+        Integer replaceOrderStatus = dbReplaceOrderDO.getReplaceOrderStatus();
+        if (replaceOrderStatus == null || !ReplaceOrderStatus.REPLACE_ORDER_STATUS_DELIVERED.equals(replaceOrderStatus)) {
+            result.setErrorCode(ErrorCode.CONFIRM_REPLACE_ORDER_REPLACE_ORDER_STATUS_ERROR);
+            return result;
+        }
+
         //校验实际换货时间和发货时间和确认换货时间
         Date replaceDeliveryTime = replaceOrder.getReplaceDeliveryTime();
         String replaceDeliveryTimeString = simpleDateFormat.format(replaceDeliveryTime);
@@ -808,11 +814,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             return result;
         }
 
-        Integer replaceOrderStatus = dbReplaceOrderDO.getReplaceOrderStatus();
-        if (replaceOrderStatus == null || ReplaceOrderStatus.REPLACE_ORDER_STATUS_DELIVERED.equals(replaceOrderStatus)) {
-            result.setErrorCode(ErrorCode.CONFIRM_REPLACE_ORDER_REPLACE_ORDER_STATUS_ERROR);
-            return result;
-        }
+
 
         ReplaceOrderDO replaceOrderDO = ConverterUtil.convert(replaceOrder,ReplaceOrderDO.class);
 
