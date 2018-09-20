@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper">
+
+	<resultMap id="ReplaceOrderDO" type="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="replace_order_no" jdbcType="VARCHAR" property="replaceOrderNo" />
+		<result column="order_id" jdbcType="INTEGER" property="orderId" />
+		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
+		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+		<result column="replace_time" jdbcType="TIMESTAMP" property="replaceTime" />
+		<result column="total_replace_product_count" jdbcType="INTEGER" property="totalReplaceProductCount" />
+		<result column="total_replace_material_count" jdbcType="INTEGER" property="totalReplaceMaterialCount" />
+		<result column="real_total_replace_product_count" jdbcType="INTEGER" property="realTotalReplaceProductCount" />
+		<result column="real_total_replace_material_count" jdbcType="INTEGER" property="realTotalReplaceMaterialCount" />
+		<result column="service_cost" jdbcType="DECIMAL" property="serviceCost" />
+		<result column="logistics_cost" jdbcType="DECIMAL" property="logisticsCost" />
+		<result column="repair_cost" jdbcType="DECIMAL" property="repairCost" />
+		<result column="replace_reason_type" jdbcType="INTEGER" property="replaceReasonType" />
+		<result column="replace_reason" jdbcType="VARCHAR" property="replaceReason" />
+		<result column="replace_mode" jdbcType="INTEGER" property="replaceMode" />
+		<result column="replace_order_status" jdbcType="INTEGER" property="replaceOrderStatus" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="confirm_replace_time" jdbcType="TIMESTAMP" property="confirmReplaceTime" />
+		<result column="confirm_replace_user" jdbcType="VARCHAR" property="confirmReplaceUser" />
+		<result column="address" jdbcType="VARCHAR" property="address" />
+		<result column="consignee_name" jdbcType="VARCHAR" property="consigneeName" />
+		<result column="consignee_phone" jdbcType="VARCHAR" property="consigneePhone" />
+		<result column="is_relet_order_replace" jdbcType="INTEGER" property="isReletOrderReplace"/>
+		<result column="relet_order_no" jdbcType="VARCHAR" property="reletOrderNo"/>
+		<result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+		<result column="update_user_name" jdbcType="VARCHAR" property="updateUserName"/>
+		<result column="confirm_replace_user_name" jdbcType="VARCHAR" property="confirmReplaceUserName"/>
+		<result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
+		<result column="delivery_sub_company_name" jdbcType="VARCHAR" property="deliverySubCompanyName"/>
+		<result column="delivery_sub_company_id" jdbcType="VARCHAR" property="deliverySubCompanyId"/>
+		<result column="replace_delivery_time" jdbcType="TIMESTAMP" property="replaceDeliveryTime" />
+		<result column="real_replace_time" jdbcType="TIMESTAMP" property="realReplaceTime" />
+		<result column="update_total_credit_deposit_amount" jdbcType="DECIMAL" property="updateTotalCreditDepositAmount" />
+		<result column="old_total_credit_deposit_amount" jdbcType="DECIMAL" property="oldTotalCreditDepositAmount" />
+		<result column="new_total_credit_deposit_amount" jdbcType="DECIMAL" property="newTotalCreditDepositAmount" />
+		<collection property="replaceOrderProductDOList" resultMap="ReplaceOrderProductDO"/>
+		<collection property="replaceOrderMaterialDOList" resultMap="ReplaceOrderMaterialDO"/>
+	</resultMap>
+
+	<resultMap id="ReplaceOrderProductDO" type="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO">
+		<id column="replace_order_product_id" jdbcType="INTEGER" property="id" />
+		<result column="product_replace_order_id" jdbcType="INTEGER" property="replaceOrderId" />
+		<result column="product_replace_order_no" jdbcType="VARCHAR" property="replaceOrderNo" />
+		<result column="product_old_order_product_id" jdbcType="INTEGER" property="oldOrderProductId" />
+		<result column="product_old_product_entry" jdbcType="INTEGER" property="oldProductEntry" />
+		<result column="product_new_order_product_id" jdbcType="INTEGER" property="newOrderProductId" />
+		<result column="product_rent_type" jdbcType="INTEGER" property="rentType" />
+		<result column="product_rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+		<result column="product_rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+		<result column="product_deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
+		<result column="product_payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="product_pay_mode" jdbcType="INTEGER" property="payMode" />
+		<result column="product_old_product_unit_amount" jdbcType="DECIMAL" property="oldProductUnitAmount" />
+		<result column="product_product_id" jdbcType="INTEGER" property="productId" />
+		<result column="product_product_name" jdbcType="VARCHAR" property="productName" />
+		<result column="product_product_sku_id" jdbcType="INTEGER" property="productSkuId" />
+		<result column="product_product_sku_name" jdbcType="VARCHAR" property="productSkuName" />
+		<result column="product_replace_product_count" jdbcType="INTEGER" property="replaceProductCount" />
+		<result column="product_product_unit_amount" jdbcType="DECIMAL" property="productUnitAmount" />
+		<result column="product_rent_deposit_amount" jdbcType="DECIMAL" property="rentDepositAmount" />
+		<result column="product_deposit_amount" jdbcType="DECIMAL" property="depositAmount" />
+		<result column="product_credit_deposit_amount" jdbcType="DECIMAL" property="creditDepositAmount" />
+		<result column="product_is_new_product" jdbcType="INTEGER" property="isNewProduct" />
+		<result column="product_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="product_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="product_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="product_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="product_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="product_update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="product_real_replace_product_count" jdbcType="INTEGER" property="realReplaceProductCount" />
+		<result column="product_is_relet_order_replace" jdbcType="INTEGER" property="isReletOrderReplace" />
+		<result column="product_relet_order_item_id" jdbcType="INTEGER" property="reletOrderItemId" />
+		<result column="product_old_product_id" jdbcType="INTEGER" property="oldProductId" />
+		<result column="product_old_product_name" jdbcType="VARCHAR" property="oldProductName" />
+		<result column="product_old_product_sku_id" jdbcType="INTEGER" property="oldProductSkuId" />
+		<result column="product_old_product_sku_name" jdbcType="VARCHAR" property="oldProductSkuName" />
+		<result column="product_old_product_number" jdbcType="VARCHAR" property="oldProductNumber" />
+		<result column="product_old_is_new_product" jdbcType="INTEGER" property="oldIsNewProduct" />
+		<result column="product_product_number" jdbcType="VARCHAR" property="productNumber" />
+		<result column="product_old_renting_product_count" jdbcType="INTEGER" property="oldRentingProductCount" />
+	</resultMap>
+
+	<resultMap id="ReplaceOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderMaterialDO">
+		<id column="replace_order_material_id" jdbcType="INTEGER" property="id" />
+		<result column="material_replace_order_id" jdbcType="INTEGER" property="replaceOrderId" />
+		<result column="material_replace_order_no" jdbcType="VARCHAR" property="replaceOrderNo" />
+		<result column="material_old_order_material_id" jdbcType="INTEGER" property="oldOrderMaterialId" />
+		<result column="material_old_material_entry" jdbcType="INTEGER" property="oldMaterialEntry" />
+		<result column="material_new_order_material_id" jdbcType="INTEGER" property="newOrderMaterialId" />
+		<result column="material_rent_type" jdbcType="INTEGER" property="rentType" />
+		<result column="material_rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+		<result column="material_rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+		<result column="material_deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
+		<result column="material_payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="material_pay_mode" jdbcType="INTEGER" property="payMode" />
+		<result column="material_old_material_unit_amount" jdbcType="DECIMAL" property="oldMaterialUnitAmount" />
+		<result column="material_material_id" jdbcType="INTEGER" property="materialId" />
+		<result column="material_material_name" jdbcType="VARCHAR" property="materialName" />
+		<result column="material_replace_material_count" jdbcType="INTEGER" property="replaceMaterialCount" />
+		<result column="material_material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount" />
+		<result column="material_rent_deposit_amount" jdbcType="DECIMAL" property="rentDepositAmount" />
+		<result column="material_deposit_amount" jdbcType="DECIMAL" property="depositAmount" />
+		<result column="material_credit_deposit_amount" jdbcType="DECIMAL" property="creditDepositAmount" />
+		<result column="material_is_new_material" jdbcType="INTEGER" property="isNewMaterial" />
+		<result column="material_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="material_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="material_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="material_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="material_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="material_update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="material_real_replace_material_count" jdbcType="INTEGER" property="realReplaceMaterialCount" />
+		<result column="material_is_relet_order_replace" jdbcType="INTEGER" property="isReletOrderReplace" />
+		<result column="material_relet_order_item_id" jdbcType="INTEGER" property="reletOrderItemId" />
+	</resultMap>
+
+	<sql id="column_List">
+		ero.id,ero.replace_order_no,ero.order_id,ero.order_no,ero.customer_id,ero.customer_no,ero.replace_time,ero.total_replace_product_count,ero.total_replace_material_count,ero.real_total_replace_product_count,ero.real_total_replace_material_count,ero.service_cost,ero.logistics_cost,ero.repair_cost,ero.replace_reason_type,ero.replace_reason,ero.replace_mode,ero.replace_order_status,ero.data_status,ero.remark,ero.create_time,ero.create_user,ero.update_time,ero.update_user,ero.confirm_replace_time,ero.confirm_replace_user,
+		ero.address,ero.consignee_name,ero.consignee_phone,ero.is_relet_order_replace,ero.relet_order_no,ero.customer_name,ero.delivery_sub_company_name,ero.delivery_sub_company_id,ero.replace_delivery_time,ero.real_replace_time,ero.update_total_credit_deposit_amount,ero.old_total_credit_deposit_amount,ero.new_total_credit_deposit_amount
+	</sql>
+
+	<sql id="product_column_List">
+		erop.id as replace_order_product_id,erop.replace_order_id as product_replace_order_id,erop.replace_order_no as product_replace_order_no,erop.old_order_product_id as product_old_order_product_id,
+		erop.old_product_entry as product_old_product_entry,erop.new_order_product_id as product_new_order_product_id,erop.rent_type as product_rent_type,erop.rent_time_length as product_rent_time_length,
+		erop.rent_length_type as product_rent_length_type,erop.deposit_cycle as product_deposit_cycle,erop.payment_cycle as product_payment_cycle,
+		erop.pay_mode as product_pay_mode,erop.old_product_unit_amount as product_old_product_unit_amount,erop.product_id as product_product_id,erop.product_name as product_product_name,
+		erop.product_sku_id as product_product_sku_id,erop.product_sku_name as product_product_sku_name,erop.replace_product_count as product_replace_product_count,erop.product_unit_amount as product_product_unit_amount,
+		erop.rent_deposit_amount as product_rent_deposit_amount,erop.deposit_amount as product_deposit_amount,erop.credit_deposit_amount as product_credit_deposit_amount,
+		erop.is_new_product as product_is_new_product,erop.data_status as product_data_status,erop.remark as product_remark,erop.create_time as product_create_time,
+		erop.create_user as product_create_user,erop.update_time as product_update_time,erop.update_user as product_update_user,erop.real_replace_product_count as product_real_replace_product_count,
+		erop.is_relet_order_replace as product_is_relet_order_replace,erop.relet_order_item_id as product_relet_order_item_id,
+		erop.old_product_id as product_old_product_id,erop.old_product_name as product_old_product_name,erop.old_product_sku_id as product_old_product_sku_id,erop.old_product_sku_name as product_old_product_sku_name,
+		erop.old_product_number as product_old_product_number,erop.old_is_new_product as product_old_is_new_product,erop.product_number as product_product_number,erop.old_renting_product_count as product_old_renting_product_count
+	</sql>
+
+	<sql id="material_column_List">
+		erom.id as replace_order_material_id,erom.replace_order_id as material_replace_order_id,erom.replace_order_no AS material_replace_order_no,erom.old_order_material_id as material_old_order_material_id,
+		erom.old_material_entry as material_old_material_entry,erom.new_order_material_id as material_new_order_material_id,erom.rent_type as material_rent_type,erom.rent_time_length as material_rent_time_length,
+		erom.rent_length_type as material_rent_length_type,erom.deposit_cycle as material_deposit_cycle,erom.payment_cycle as material_payment_cycle,erom.pay_mode as material_pay_mode,
+		erom.old_material_unit_amount as material_old_material_unit_amount,erom.material_id as material_material_id,erom.material_name as material_material_name,
+		erom.replace_material_count as material_replace_material_count,erom.material_unit_amount as material_material_unit_amount,erom.rent_deposit_amount as material_rent_deposit_amount,erom.deposit_amount as material_deposit_amount,
+		erom.credit_deposit_amount as material_credit_deposit_amount,erom.is_new_material as material_is_new_material,erom.data_status as material_data_status,erom.remark as material_remark,
+		erom.create_time as material_create_time,erom.create_user as material_create_user,erom.update_time as material_update_time,erom.update_user as material_update_user,
+		erom.real_replace_material_count as material_real_replace_material_count,erom.is_relet_order_replace as material_is_relet_order_replace,erom.relet_order_item_id as material_relet_order_item_id
+	</sql>
+
+	<select id="findById" resultMap="ReplaceOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_replace_order ero 
+		WHERE ero.id = #{id, jdbcType=INTEGER} AND ero.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ero.id) FROM erp_replace_order ero 
+		<where>
+			<if test="true">
+				AND ero.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="ReplaceOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_replace_order ero 
+		<where>
+			<if test="true">
+				AND ero.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="replaceOrderNo != null">
+				replace_order_no = #{replaceOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderId != null">
+				order_id = #{orderId,jdbcType=INTEGER},
+			</if>
+			<if test="orderNo != null">
+				order_no = #{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="customerId != null">
+				customer_id = #{customerId,jdbcType=INTEGER},
+			</if>
+			<if test="customerNo != null">
+				customer_no = #{customerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="replaceTime != null">
+				replace_time = #{replaceTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="totalReplaceProductCount != null">
+				total_replace_product_count = #{totalReplaceProductCount,jdbcType=INTEGER},
+			</if>
+			<if test="totalReplaceMaterialCount != null">
+				total_replace_material_count = #{totalReplaceMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="realTotalReplaceProductCount != null">
+				real_total_replace_product_count = #{realTotalReplaceProductCount,jdbcType=INTEGER},
+			</if>
+			<if test="realTotalReplaceMaterialCount != null">
+				real_total_replace_material_count = #{realTotalReplaceMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="serviceCost != null">
+				service_cost = #{serviceCost,jdbcType=DECIMAL},
+			</if>
+			<if test="logisticsCost != null">
+				logistics_cost = #{logisticsCost,jdbcType=DECIMAL},
+			</if>
+			<if test="repairCost != null">
+				repair_cost = #{repairCost,jdbcType=DECIMAL},
+			</if>
+			<if test="replaceReasonType != null">
+				replace_reason_type = #{replaceReasonType,jdbcType=INTEGER},
+			</if>
+			<if test="replaceReason != null">
+				replace_reason = #{replaceReason,jdbcType=VARCHAR},
+			</if>
+			<if test="replaceMode != null">
+				replace_mode = #{replaceMode,jdbcType=INTEGER},
+			</if>
+			<if test="replaceOrderStatus != null">
+				replace_order_status = #{replaceOrderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="confirmReplaceTime != null">
+				confirm_replace_time = #{confirmReplaceTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="confirmReplaceUser != null">
+				confirm_replace_user = #{confirmReplaceUser,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeName != null">
+				consignee_name = #{consigneeName,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneePhone != null">
+				consignee_phone = #{consigneePhone,jdbcType=VARCHAR},
+			</if>
+			<if test="isReletOrderReplace != null">
+				is_relet_order_replace = #{isReletOrderReplace,jdbcType=INTEGER},
+			</if>
+			<if test="reletOrderNo != null">
+				relet_order_no = #{reletOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="customerName != null">
+				customer_name = #{customerName,jdbcType=VARCHAR},
+			</if>
+			<if test="deliverySubCompanyName != null">
+				delivery_sub_company_name = #{deliverySubCompanyName,jdbcType=VARCHAR},
+			</if>
+			<if test="deliverySubCompanyId != null">
+				delivery_sub_company_id = #{deliverySubCompanyId,jdbcType=INTEGER},
+			</if>
+			<if test="replaceDeliveryTime != null">
+				replace_delivery_time = #{replaceDeliveryTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="realReplaceTime != null">
+				real_replace_time = #{realReplaceTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTotalCreditDepositAmount != null">
+				update_total_credit_deposit_amount = #{updateTotalCreditDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="oldTotalCreditDepositAmount != null">
+				old_total_credit_deposit_amount = #{oldTotalCreditDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="newTotalCreditDepositAmount != null">
+				new_total_credit_deposit_amount = #{newTotalCreditDepositAmount,jdbcType=DECIMAL},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO">
+		INSERT INTO erp_replace_order <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO">
+		UPDATE erp_replace_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<select id="findByOrderNoForCheck" resultMap="ReplaceOrderDO" parameterType="java.lang.String">
+		SELECT<include refid="column_List"/>,<include refid="product_column_List"/>,
+		<include refid="material_column_List"/>
+		FROM erp_replace_order ero
+		LEFT JOIN erp_replace_order_product erop ON ero.id = erop.replace_order_id and erop.data_status = 1
+		LEFT JOIN erp_replace_order_material erom ON ero.id = erom.replace_order_id and erom.data_status = 1
+		where ero.order_no = #{orderNo, jdbcType=VARCHAR} and ero.data_status = 1 and ero.replace_order_status in (0,4,8,12,16)
+	</select>
+    <select id="findByReplaceOrderNo" resultMap="ReplaceOrderDO" parameterType="java.lang.String">
+		SELECT<include refid="column_List"/>,<include refid="product_column_List"/>,
+		<include refid="material_column_List"/>
+		FROM erp_replace_order ero
+		LEFT JOIN erp_replace_order_product erop ON ero.id = erop.replace_order_id and erop.data_status = 1
+		LEFT JOIN erp_replace_order_material erom ON ero.id = erom.replace_order_id and erom.data_status = 1
+		where ero.replace_order_no = #{replaceOrderNo, jdbcType=VARCHAR} and ero.data_status = 1
+	</select>
+
+	<select id="findReplaceOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ero.id) FROM erp_replace_order ero
+		<if test="maps.replaceOrderQueryParam.confirmReplaceUserName != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceUserName != ''">
+			LEFT JOIN erp_user eu1 ON eu1.id = ero.confirm_replace_user
+		</if>
+		<if test="maps.replaceOrderQueryParam.createUserName != null &amp;&amp; maps.replaceOrderQueryParam.createUserName != ''">
+			LEFT JOIN erp_user eu2 ON eu2.id = ero.create_user
+		</if>
+		<if test="maps.replaceOrderQueryParam.updateUserName != null &amp;&amp; maps.replaceOrderQueryParam.updateUserName != ''">
+			LEFT JOIN erp_user eu3 ON eu3.id = ero.update_user
+		</if>
+		<if test="maps.replaceOrderQueryParam.customerName != null &amp;&amp; maps.replaceOrderQueryParam.customerName != ''">
+			LEFT JOIN erp_customer ec ON ec.id = ero.customer_id
+		</if>
+		<where>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderId != null ">
+				and ero.id = #{maps.replaceOrderQueryParam.replaceOrderId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.customerNo != null &amp;&amp; maps.replaceOrderQueryParam.customerNo != ''">
+				and ero.customer_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.customerNo}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderNo != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderNo != ''">
+				and ero.replace_order_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.replaceOrderNo}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.orderNo != null &amp;&amp; maps.replaceOrderQueryParam.orderNo != ''">
+				and ero.order_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.orderNo}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceReasonType != null ">
+				and ero.replace_reason_type = #{maps.replaceOrderQueryParam.replaceReasonType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceMode != null ">
+				and ero.replace_mode = #{maps.replaceOrderQueryParam.replaceMode, jdbcType=INTEGER}
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderStatus != null ">
+				and ero.replace_order_status = #{maps.replaceOrderQueryParam.replaceOrderStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.consigneeName != null &amp;&amp; maps.replaceOrderQueryParam.consigneeName != ''">
+				and ero.consignee_name  LIKE CONCAT('%','${maps.replaceOrderQueryParam.consigneeName}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND ero.create_time >= #{maps.replaceOrderQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.createEndTime != null ">
+				<![CDATA[ AND ero.create_time <= #{maps.replaceOrderQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceStartTime != null ">
+				<![CDATA[ AND ero.replace_time >= #{maps.replaceOrderQueryParam.replaceStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceEndTime != null ">
+				<![CDATA[ AND ero.replace_time <= #{maps.replaceOrderQueryParam.replaceEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.updateStartTime != null ">
+				<![CDATA[ AND ero.update_time >= #{maps.replaceOrderQueryParam.updateStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.updateEndTime != null ">
+				<![CDATA[ AND ero.update_time <= #{maps.replaceOrderQueryParam.updateEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceStartTime != null ">
+				<![CDATA[ AND ero.confirm_replace_user >= #{maps.replaceOrderQueryParam.confirmReplaceStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceEndTime != null ">
+				<![CDATA[ AND ero.confirm_replace_user <= #{maps.replaceOrderQueryParam.confirmReplaceEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam.confirmReplaceUserName != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceUserName != ''">
+				and eu1.real_name like CONCAT('%','${maps.orderQueryParam.confirmReplaceUserName}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam.createUserName != null &amp;&amp; maps.replaceOrderQueryParam.createUserName != ''">
+				and eu2.real_name like CONCAT('%','${maps.orderQueryParam.createUserName}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam.updateUserName != null &amp;&amp; maps.replaceOrderQueryParam.updateUserName != ''">
+				and eu3.real_name like CONCAT('%','${maps.orderQueryParam.updateUserName}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam.customerName != null &amp;&amp; maps.replaceOrderQueryParam.customerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.orderQueryParam.customerName}','%' )
+			</if>
+			<if test="true">
+				AND ero.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="findReplaceOrderByParams" resultMap="ReplaceOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/>
+		<trim prefix=",">
+			eu1.real_name AS confirm_replace_user_name,eu2.real_name AS create_user_name,eu3.real_name AS update_user_name
+		</trim>
+		FROM erp_replace_order ero
+		LEFT JOIN erp_user eu1 ON eu1.id = ero.confirm_replace_user
+		LEFT JOIN erp_user eu2 ON eu2.id = ero.create_user
+		LEFT JOIN erp_user eu3 ON eu3.id = ero.update_user
+		<where>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderId != null ">
+				and ero.id = #{maps.replaceOrderQueryParam.replaceOrderId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.customerNo != null &amp;&amp; maps.replaceOrderQueryParam.customerNo != ''">
+				and ero.customer_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.customerNo}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderNo != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderNo != ''">
+				and ero.replace_order_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.replaceOrderNo}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.orderNo != null &amp;&amp; maps.replaceOrderQueryParam.orderNo != ''">
+				and ero.order_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.orderNo}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceReasonType != null ">
+				and ero.replace_reason_type = #{maps.replaceOrderQueryParam.replaceReasonType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceMode != null ">
+				and ero.replace_mode = #{maps.replaceOrderQueryParam.replaceMode, jdbcType=INTEGER}
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderStatus != null ">
+				and ero.replace_order_status = #{maps.replaceOrderQueryParam.replaceOrderStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.consigneeName != null &amp;&amp; maps.replaceOrderQueryParam.consigneeName != ''">
+				and ero.consignee_name  LIKE CONCAT('%','${maps.replaceOrderQueryParam.consigneeName}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND ero.create_time >= #{maps.replaceOrderQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.createEndTime != null ">
+				<![CDATA[ AND ero.create_time <= #{maps.replaceOrderQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceStartTime != null ">
+				<![CDATA[ AND ero.replace_time >= #{maps.replaceOrderQueryParam.replaceStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceEndTime != null ">
+				<![CDATA[ AND ero.replace_time <= #{maps.replaceOrderQueryParam.replaceEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.updateStartTime != null ">
+				<![CDATA[ AND ero.update_time >= #{maps.replaceOrderQueryParam.updateStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.updateEndTime != null ">
+				<![CDATA[ AND ero.update_time <= #{maps.replaceOrderQueryParam.updateEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceStartTime != null ">
+				<![CDATA[ AND ero.confirm_replace_user >= #{maps.replaceOrderQueryParam.confirmReplaceStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceEndTime != null ">
+				<![CDATA[ AND ero.confirm_replace_user <= #{maps.replaceOrderQueryParam.confirmReplaceEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam.confirmReplaceUserName != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceUserName != ''">
+				and eu1.real_name like CONCAT('%','${maps.orderQueryParam.confirmReplaceUserName}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam.createUserName != null &amp;&amp; maps.replaceOrderQueryParam.createUserName != ''">
+				and eu2.real_name like CONCAT('%','${maps.orderQueryParam.createUserName}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam.updateUserName != null &amp;&amp; maps.replaceOrderQueryParam.updateUserName != ''">
+				and eu3.real_name like CONCAT('%','${maps.orderQueryParam.updateUserName}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam.customerName != null &amp;&amp; maps.replaceOrderQueryParam.customerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.orderQueryParam.customerName}','%' )
+			</if>
+			<if test="true">
+				AND ero.data_status = 1
+			</if>
+		</where>
+		ORDER BY ero.create_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>	
+
+</mapper>

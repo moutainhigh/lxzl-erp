@@ -48,6 +48,7 @@ public class StatementOrderDetailDO extends BaseDO {
     private BigDecimal statementCouponAmount;   //结算单优惠券优惠总和
 
     private Integer reletOrderItemReferId;  //续租订单项ID  查询时结算单关联续租
+    private Integer sourceId;//次结算单关联目标源id
 
     @Transient
     private Integer rentType;
@@ -456,5 +457,13 @@ public class StatementOrderDetailDO extends BaseDO {
 
     public void setStatementOrderNo(String statementOrderNo) {
         this.statementOrderNo = statementOrderNo;
+    }
+
+    public Integer getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(Integer sourceId) {
+        this.sourceId = sourceId;
     }
 }

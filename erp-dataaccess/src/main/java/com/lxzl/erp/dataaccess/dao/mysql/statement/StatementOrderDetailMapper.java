@@ -121,10 +121,12 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
 
     List<StatementOrderDetailDO> findByOrderIdAndStatementDetailType(@Param("orderId") Integer orderId, @Param("orderType") Integer orderType,@Param("statementDetailType") Integer statementDetailType);
 
-
     List<StatementOrderDetailDO> listByCustomerId(@Param(value = "queryParam") StatementOrderMonthQueryParam queryParam);
 
     List<StatementOrderDetailDO> listUnRentByOrderIds(@Param(value = "queryParam") StatementOrderMonthQueryParam queryParam);
 
     CheckStatementSummaryDTO sumStatementDetailAmountByCustomerNo(@Param(value = "queryParam") StatementOrderMonthQueryParam queryParam);
+
+    List<StatementOrderDetailDO> findByOrderTypeAndSourceId(@Param("orderType") Integer orderType, @Param("sourceId") Integer sourceId);
+
 }

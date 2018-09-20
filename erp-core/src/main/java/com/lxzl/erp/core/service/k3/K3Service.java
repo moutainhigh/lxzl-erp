@@ -90,4 +90,14 @@ public interface K3Service {
      * @return
      */
     ServiceResult<String, List<K3ProductStock>> queryK3Stock(QueryK3StockParam queryK3StockParam);
+
+    /**
+     * 由测试机订单转为租赁订单，审核通过后，传送订单数据给K3
+     * @param order
+     * @return
+     */
+    ServiceResult<String,String> testMachineOrderTurnRentOrder(com.lxzl.erp.common.domain.order.pojo.Order order);
+
+
+
 }

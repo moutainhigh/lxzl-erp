@@ -28,6 +28,8 @@
 		<result column="product_number" property="productNumber"/>
 		<result column="order_joint_product_id" jdbcType="INTEGER" property="orderJointProductId" />
 		<result column="joint_material_id" jdbcType="INTEGER" property="jointMaterialId" />
+		<result column="is_item_delivered" jdbcType="INTEGER" property="isItemDelivered" />
+		<result column="test_machine_order_material_id" jdbcType="INTEGER" property="testMachineOrderMaterialId" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -37,7 +39,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eom.id,eom.order_id,eom.material_id,eom.rent_type as rent_type,eom.rent_time_length as rent_time_length, eom.rent_length_type as rent_length_type, eom.material_name,eom.material_count,eom.material_unit_amount,eom.material_amount,eom.rent_deposit_amount,eom.deposit_amount,eom.credit_deposit_amount,eom.insurance_amount,eom.material_snapshot,eom.deposit_cycle,eom.payment_cycle,eom.pay_mode,eom.is_new_material,eom.renting_material_count,eom.data_status,eom.remark,eom.create_time,eom.create_user,eom.update_time,eom.update_user,eom.FEntry_id as FEntry_id, eom.product_number as product_number,eom.order_joint_product_id as order_joint_product_id,eom.joint_material_id as joint_material_id,eom.stable_material_count as stable_material_count
+		eom.id,eom.order_id,eom.material_id,eom.rent_type as rent_type,eom.rent_time_length as rent_time_length, eom.rent_length_type as rent_length_type, eom.material_name,eom.material_count,eom.material_unit_amount,eom.material_amount,eom.rent_deposit_amount,eom.deposit_amount,eom.credit_deposit_amount,eom.insurance_amount,eom.material_snapshot,eom.deposit_cycle,eom.payment_cycle,eom.pay_mode,eom.is_new_material,eom.renting_material_count,eom.data_status,eom.remark,eom.create_time,eom.create_user,eom.update_time,eom.update_user,eom.FEntry_id as FEntry_id, eom.product_number as product_number,eom.order_joint_product_id as order_joint_product_id,eom.joint_material_id as joint_material_id,eom.stable_material_count as stable_material_count,eom.is_item_delivered as is_item_delivered,eom.test_machine_order_material_id as test_machine_order_material_id
 	</sql>
 
 	<select id="queryLastPrice" resultType="java.util.Map" parameterType="java.util.Map">
@@ -167,6 +169,12 @@
 			<if test="jointMaterialId != null">
 				joint_material_id = #{jointMaterialId, jdbcType=INTEGER},
 			</if>
+			<if test="isItemDelivered != null">
+				is_item_delivered = #{isItemDelivered, jdbcType=INTEGER},
+			</if>
+			<if test="testMachineOrderMaterialId != null">
+				test_machine_order_material_id = #{testMachineOrderMaterialId, jdbcType=INTEGER},
+			</if>
 		</set>
 	</sql>
 
@@ -223,6 +231,7 @@
 			#{item.id,jdbcType=INTEGER}
 		</foreach>
 	</update>
+
 	<select id="listByOrderIds" resultMap="OrderMaterialDO" parameterType="java.util.Set">
 		SELECT
 		<include refid="column_List"/>
@@ -233,4 +242,10 @@
 			#{item}
 		</foreach>
 	</select>
+
+	<select id="findByOrderIdAndIsItemDelivered" resultMap="OrderMaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_order_material eom
+		WHERE eom.order_id = #{orderId, jdbcType=INTEGER} AND eom.is_item_delivered = 1 AND eom.data_status = 1
+	</select>
+
 </mapper>
