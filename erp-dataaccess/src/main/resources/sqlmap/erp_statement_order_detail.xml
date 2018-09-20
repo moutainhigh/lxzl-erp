@@ -1705,7 +1705,7 @@
 
     <select id="listByCustomerId"  parameterType="com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam" resultMap="StatementOrderDetailDO">
         SELECT
-        <include refid="column_List"/>
+        DISTINCT <include refid="column_List"/>
         FROM erp_statement_order_detail esod
         WHERE esod.customer_id = #{queryParam.customerId}
         AND esod.data_status = 1
@@ -1723,7 +1723,7 @@
 
     <select id="listUnRentByOrderIds"  parameterType="com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam" resultMap="StatementOrderDetailDO">
         SELECT
-        <include refid="column_List"/>
+        DISTINCT <include refid="column_List"/>
         FROM erp_statement_order_detail esod
         WHERE esod.customer_id = #{queryParam.customerId}
         AND esod.data_status = 1

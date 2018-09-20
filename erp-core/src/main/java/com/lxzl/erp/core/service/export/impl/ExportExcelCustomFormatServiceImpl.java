@@ -171,7 +171,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         groupCheckStatementDetailsByMonth(monthStatisticsMap, checkStatementDetailDTOS, customerDO, mapContainer);
         logger.info("分组后的数据为：" + JSONObject.toJSONString(monthStatisticsMap));
         // 过滤对账单统计数据
-//        filterStatementStatisticsData(monthStatisticsMap, mapContainer, queryParam);
+        filterStatementStatisticsData(monthStatisticsMap, mapContainer, queryParam);
         // 7：构建统计数据
         buildStatisticsData(monthStatisticsMap, queryParam);
         // 8：导出统计数据
@@ -205,11 +205,13 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
     private ServiceResult<String, List<BaseCheckStatementDetailDTO>> getCheckStatementDetailDatas(StatementOrderMonthQueryParam statementOrderMonthQueryParam) {
         ServiceResult<String, List<BaseCheckStatementDetailDTO>> serviceResult = new ServiceResult<>();
         // 查询该用户退还时间在指定时间段内退货单列表数据
+        //todo 加上已完成sql判断
         List<K3ReturnOrderDO> k3ReturnOrderDOS = k3ReturnOrderMapper.listByMonthQuery(statementOrderMonthQueryParam);
         Set<Integer> returnOrderIds = new LinkedHashSet<>();
         for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOS) {
             returnOrderIds.add(k3ReturnOrderDO.getId());
         }
+        //todo orderIds IS 退货单id
         statementOrderMonthQueryParam.setOrderIds(returnOrderIds);
         // 根据查询条件获取结算单列表数据
         ServiceResult<String, List<BaseCheckStatementDetailDTO>> serviceResultOfCheckStatementDetail = statementService.listCheckStatementDetailDTOByQuery(statementOrderMonthQueryParam);

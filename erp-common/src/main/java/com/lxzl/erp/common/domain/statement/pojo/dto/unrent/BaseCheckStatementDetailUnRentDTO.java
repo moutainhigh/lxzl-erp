@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.statement.pojo.dto.unrent;
 
 import com.lxzl.erp.common.constant.OrderItemType;
+import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.order.pojo.Order;
@@ -58,12 +59,14 @@ public class BaseCheckStatementDetailUnRentDTO extends BaseCheckStatementDetailD
     @Override
     public void mergeToTarget(BaseCheckStatementDetailDTO targetDetail, CheckStatementStatisticsDTO statementStatisticsDTO) {
         // 合并数量
-        targetDetail.setItemCount(this.getItemCount() + targetDetail.getItemCount());
         Long statementExpectPayTime = this.getStatementExpectPayTime().getTime();
-        if (statementStatisticsDTO.getMonthEndTime() >= statementExpectPayTime) {
-            // 合并金额
-            super.mergeAmountToTarget(targetDetail);
-        }
+//        if (statementStatisticsDTO.getMonthEndTime() >= statementExpectPayTime) {
+            if(this.getStatementStartTime().getTime() == targetDetail.getStatementStartTime().getTime() && this.getStatementEndTime().getTime() == targetDetail.getStatementEndTime().getTime()){
+                targetDetail.setItemCount(this.getItemCount() + targetDetail.getItemCount());
+                // 合并金额
+                super.mergeAmountToTarget(targetDetail);
+            }
+//        }
     }
 
     @Override
@@ -79,11 +82,13 @@ public class BaseCheckStatementDetailUnRentDTO extends BaseCheckStatementDetailD
 
     protected String doGetNoThisMonthCacheKey(CheckStatementStatisticsDTO statementStatisticsDTO) {
         String cacheKey = this.getOrderOriginalId() + "_" + this.getOrderItemActualId() + "_" + this.getOrderItemType();
+        if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(super.getPayMode())) {
+            cacheKey = cacheKey + "_" + DateFormatUtils.format(super.getStatementExpectPayTime(), "yyyyMMdd");
+        }
         return cacheKey;
     }
 
     protected String doGetThisMonthCacheKey(CheckStatementStatisticsDTO statementStatisticsDTO) {
-
         String cacheKey = this.getStatementOrderDetailId() + "_" + this.getOrderItemActualId() + "_" + getOrderOriginalItemType(statementStatisticsDTO);
         return cacheKey;
     }

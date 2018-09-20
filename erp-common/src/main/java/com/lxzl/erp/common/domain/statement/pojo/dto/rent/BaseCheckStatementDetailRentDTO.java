@@ -31,7 +31,8 @@ public class BaseCheckStatementDetailRentDTO extends BaseCheckStatementDetailDTO
         if (!(statementStartTimeFlag || statementEndTimeFlag)) {
             return true;
         }
-        if (statementStatisticsDTO.getMonth().equals(DateFormatUtils.format(this.getStatementExpectPayTime(), "yyyy-MM"))) {
+        String month = DateFormatUtils.format(this.getStatementExpectPayTime(), "yyyy-MM");
+        if (statementStatisticsDTO.getMonth().equals(month)) {
             return true;
         }
         return false;
