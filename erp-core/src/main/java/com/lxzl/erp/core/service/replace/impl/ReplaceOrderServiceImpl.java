@@ -576,6 +576,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             replaceOrderProductDO.setReplaceOrderId(replaceOrderDO.getId());
             replaceOrderProductDO.setReplaceOrderNo(replaceOrderDO.getReplaceOrderNo());
             replaceOrderProductDO.setNewOrderProductId(null);
+            replaceOrderProductDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             replaceOrderProductDO.setCreateUser(userSupport.getCurrentUserId().toString());
             replaceOrderProductDO.setCreateTime(date);
             replaceOrderProductDO.setUpdateTime(date);
@@ -602,6 +603,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             replaceOrderMaterialDO.setReplaceOrderId(replaceOrderDO.getId());
             replaceOrderMaterialDO.setReplaceOrderNo(replaceOrderDO.getReplaceOrderNo());
             replaceOrderMaterialDO.setNewOrderMaterialId(null);
+            replaceOrderMaterialDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             replaceOrderMaterialDO.setCreateUser(userSupport.getCurrentUserId().toString());
             replaceOrderMaterialDO.setCreateTime(date);
             replaceOrderMaterialDO.setUpdateTime(date);
