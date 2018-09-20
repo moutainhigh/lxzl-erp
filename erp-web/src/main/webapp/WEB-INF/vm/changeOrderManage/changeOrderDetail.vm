@@ -43,39 +43,21 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <dl class="dl-horizontal">
-<<<<<<< HEAD
                                             <dt class="mb10">客户</dt><dd><a href="{{customerUrl}}" target="_blank">{{customerName}}</a></dd>
                                             <dt class="mb10">客户编号</dt><dd><a href="{{customerUrl}}" target="_blank">{{customerNo}}</a></dd>
                                             <dt class="mb10">联系人</dt><dd>{{consigneeName}}</dd>
                                             <dt class="mb10">联系电话</dt><dd>{{consigneePhone}}</dd>
                                             <dt class="mb10">收货地址</dt><dd>{{address}}</dd>
                                             <dt class="mb10">发货公司</dt><dd>{{deliverySubCompanyName}}</dd>
-=======
-                                            <dt class="mb10">客户</dt><dd>{{customerName}}</dd>
-                                            <dt class="mb10">客户编号</dt><dd>{{customerNo}}</dd>
-                                            <dt class="mb10">联系人</dt><dd>{{changeModeValue}}</dd>
-                                            <dt class="mb10">联系电话</dt><dd>{{changeModeValue}}</dd>
-                                            <dt class="mb10">收货地址</dt><dd>{{consigneeName}}</dd>
-                                            <dt class="mb10">发货公司</dt><dd>{{changeReasonTypeValue}}</dd>
->>>>>>> 535fdda844f3c550722bc907c8e706fd2e7cbcfc
                                         </dl>
                                     </div>
                                     <div class="col-md-4">
                                         <dl class="dl-horizontal">
-<<<<<<< HEAD
                                             <dt class="mb10">换货日期</dt><dd>{{#clockShorTime}}{{replaceTime}}{{/clockShorTime}}&nbsp;</dd>
                                             <dt class="mb10">换货原因</dt><dd>{{changeReasonTypeValue}}</dd>
                                             <dt class="mb10">运费</dt><dd class="text-danger">￥{{#price}}{{logisticsCost}}{{/price}}</dd>
                                             <dt class="mb10">服务费</dt><dd class="text-danger">￥{{#price}}{{serviceCost}}{{/price}}</dd>
                                             <dt class="mb10">维修费</dt><dd class="text-danger">￥{{#price}}{{repairCost}}{{/price}}</dd>
-=======
-                                            <dt class="mb10">换货日期</dt><dd></dd>
-                                            <dt class="mb10">换货方式</dt><dd></dd>
-                                            <dt class="mb10">换货原因</dt><dd>{{isDamageValue}}</dd>
-                                            <dt class="mb10">运费</dt><dd class="text-danger">￥{{#price}}{{serviceCost}}{{/price}}</dd>
-                                            <dt class="mb10">服务费</dt><dd class="text-danger">￥{{#price}}{{damageCost}}{{/price}}</dd>
-                                            <dt class="mb10">维修费</dt><dd class="text-danger">￥{{#price}}{{totalPriceDiff}}{{/price}}</dd>
->>>>>>> 535fdda844f3c550722bc907c8e706fd2e7cbcfc
                                         </dl>
                                     </div>
                                     <div class="col-md-4">
@@ -83,11 +65,7 @@
                                             <dt class="mb10">换货单状态</dt><dd class="{{changeOrderStatusClass}}">{{changeOrderStatusValue}}&nbsp;</dd>
                                             <dt class="mb10">创建人</dt><dd>{{createUserRealName}}&nbsp;</dd>
                                             <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
-<<<<<<< HEAD
                                             <dt class="mb10">换货类型</dt><dd>{{changeModeValue}}&nbsp;</dd>
-=======
-                                            <dt class="mb10">换货类型</dt><dd>{{createUserRealName}}&nbsp;</dd>
->>>>>>> 535fdda844f3c550722bc907c8e706fd2e7cbcfc
                                             <dt class="mb10">备注</dt><dd>{{remark}}</dd>
                                         </dl>
                                     </div>
@@ -95,46 +73,7 @@
                             </div>
                             {{/data}}
                         </script>
-<<<<<<< HEAD
                         <div id="orderBaseInfo"></div>
-=======
-
-                        <div id="orderBaseInfo">
-                                <div class="form-horizontal panel-body bg-light dark br-t-n">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <dl class="dl-horizontal">
-                                                    <dt class="mb10">客户</dt><dd>{{customerName}}</dd>
-                                                    <dt class="mb10">客户编号</dt><dd>{{customerNo}}</dd>
-                                                    <dt class="mb10">联系人</dt><dd>{{changeModeValue}}</dd>
-                                                    <dt class="mb10">联系电话</dt><dd>{{changeModeValue}}</dd>
-                                                    <dt class="mb10">收货地址</dt><dd>{{consigneeName}}</dd>
-                                                    <dt class="mb10">发货公司</dt><dd>{{changeReasonTypeValue}}</dd>
-                                                </dl>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <dl class="dl-horizontal">
-                                                    <dt class="mb10">换货日期</dt><dd></dd>
-                                                    <dt class="mb10">换货方式</dt><dd></dd>
-                                                    <dt class="mb10">换货原因</dt><dd>{{isDamageValue}}</dd>
-                                                    <dt class="mb10">运费</dt><dd class="text-danger">￥{{#price}}{{serviceCost}}{{/price}}</dd>
-                                                    <dt class="mb10">服务费</dt><dd class="text-danger">￥{{#price}}{{damageCost}}{{/price}}</dd>
-                                                    <dt class="mb10">维修费</dt><dd class="text-danger">￥{{#price}}{{totalPriceDiff}}{{/price}}</dd>
-                                                </dl>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <dl class="dl-horizontal">
-                                                    <dt class="mb10">换货单状态</dt><dd class="{{changeOrderStatusClass}}">{{changeOrderStatusValue}}&nbsp;</dd>
-                                                    <dt class="mb10">创建人</dt><dd>{{createUserRealName}}&nbsp;</dd>
-                                                    <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
-                                                    <dt class="mb10">换货类型</dt><dd>{{createUserRealName}}&nbsp;</dd>
-                                                    <dt class="mb10">备注</dt><dd>{{remark}}</dd>
-                                                </dl>
-                                            </div>
-                                        </div>
-                                    </div>
-                        </div>
->>>>>>> 535fdda844f3c550722bc907c8e706fd2e7cbcfc
 
                         <div class="panel-heading">
                             <div class="row">
@@ -249,7 +188,7 @@
         //功能事件初始化
         Rental.init();
         Layout.init();
-        // ChangeOrderDetail.init();
+        ChangeOrderDetail.init();
 
         //UI效果初始化
         Core.init();

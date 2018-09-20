@@ -242,13 +242,13 @@
     <script type="text/html" id="orderBaseInfoTpl">
         {{#order}}
         <div class="row p10">
-            <div class="col-xs-4">
+            <div class="col-xs-5">
                 <dl class="dl-horizontal dl-horizontal-rental mbn">
                     <dt><label>客户名称</label><span class="mr5">：</span></dt>
                     <dd>{{customerName}}&nbsp;</dd>
                 </dl>
             </div>
-            <div class="col-xs-5">
+            <div class="col-xs-4">
                 <dl class="dl-horizontal dl-horizontal-rental mbn">
                     <dt><label>联系人/电话</label><span class="mr5">：</span></dt>
                     <dd>{{consigneeName}} {{consigneePhone}}&nbsp;</dd>
@@ -260,13 +260,13 @@
                     <dd>{{#shortTime}}{{replaceTime}}{{/shortTime}}&nbsp;</dd>
                 </dl>
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-5">
                 <dl class="dl-horizontal dl-horizontal-rental mbn">
                     <dt><label>换货方式</label><span class="mr5">：</span></dt>
                     <dd>{{replaceModeVal}}&nbsp;</dd>
                 </dl>
             </div>
-            <div class="col-xs-8">
+            <div class="col-xs-7">
                 <dl class="dl-horizontal dl-horizontal-rental mbn">
                     <dt><label>换货地址</label><span class="mr5">：</span></dt>
                     <dd>{{address}}&nbsp;</dd>
@@ -275,7 +275,7 @@
             <div class="col-xs-4">
                 <dl class="dl-horizontal dl-horizontal-rental mbn">
                     <dt><label>订单租期</label><span class="mr5">：</span></dt>
-                    <dd>{{consigneePhone}}&nbsp;</dd>
+                    <dd>{{#slashDayTime}}{{orderRentStartTime}}{{/slashDayTime}} 至 {{#slashDayTime}}{{orderExpectReturnTime}}{{/slashDayTime}}&nbsp;</dd>
                 </dl>
             </div>
         </div>
@@ -307,11 +307,11 @@
                     <tr>
                         <td class="text-center" style="padding: 0px 2px;">{{rowNum}}</td>
                         <td class="text-center">{{productName}}({{isNewProductValue}})</td>
-                        <td class="text-center">{{productSkuName}}</td>
+                        <td class="text-center" style="width:300px;">{{productSkuName}}</td>
                         <td class="text-center">￥{{#price}}{{productUnitAmount}}{{/price}}</td>
                         <td class="text-center">￥{{#price}}{{currentSkuPrice}}{{/price}}</td>
-                        <td class="text-center">{{rentTimeLength}}{{rentTypeUnit}}</td>
-                        <td class="text-center">{{productCount}}</td>
+                        <td class="text-center nowrap">{{#shortTime}}{{orderExpectReturnTime}}{{/shortTime}}</td>
+                        <td class="text-center">{{replaceProductCount}}</td>
                     </tr>
                     {{/listData}}
                     {{/dataSource}}
@@ -354,7 +354,7 @@
                     <tr class="bg-light">
                         <th class="text-center nowrap">序号</th>
                         <th class="text-center nowrap">商品名称</th>
-                        <th class="text-center">商品参数</th>
+                        <th class="text-center" style="width:300px;">商品参数</th>
                         <th class="text-center nowrap">单价（元/台）</th>
                         <th class="text-center nowrap">商品价值（元/台）</th>
                         <th class="text-center nowrap">截止租期</th>
@@ -367,11 +367,11 @@
                     <tr>
                         <td class="text-center" style="padding: 0px 2px;">{{rowNum}}</td>
                         <td class="text-center">{{productName}}({{isNewProductValue}})</td>
-                        <td class="text-center">{{productSkuName}}</td>
+                        <td class="text-center" style="width:300px;">{{productSkuName}}</td>
                         <td class="text-center">￥{{#price}}{{oldProductUnitAmount}}{{/price}}</td>
                         <td class="text-center">￥{{#price}}{{currentSkuPrice}}{{/price}}</td>
-                        <td class="text-center">{{rentTimeLength}}{{rentTypeUnit}}</td>
-                        <td class="text-center">{{productCount}}</td>
+                        <td class="text-center nowrap">{{#shortTime}}{{orderExpectReturnTime}}{{/shortTime}}</td>
+                        <td class="text-center">{{oldRentingProductCount}}</td>
                     </tr>
                     {{/listData}}
                     {{/dataSource}}
