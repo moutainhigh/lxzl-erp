@@ -265,7 +265,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         //获取该订单待提交和审核中的换货单，统计换货的商品和配件的数量
         List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(replaceOrder.getOrderNo());
         //将该订单的待提交、审核中两种状态的换货单商品或配件数量保存
-        saveExistedReplaceCount( productCountMap, materialCountMap, replaceOrderDOList);
+        saveExistedReplaceCount( productCountMap, materialCountMap, replaceOrderDOList,replaceOrder.getReplaceOrderNo());
         //比较设备项
         if (compareProductCount(serviceResult, orderProductDOList, orderProductDOMap, replaceProductCountMap, rentingProductCountMap, productCountMap)){
             return serviceResult;
@@ -545,7 +545,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         //获取该订单待提交和审核中的换货单，统计换货的商品和配件的数量
         List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(replaceOrder.getOrderNo());
         //将该订单的待提交、审核中两种状态的换货单商品或配件数量保存
-        saveExistedReplaceCount(productCountMap, materialCountMap, replaceOrderDOList);
+        saveExistedReplaceCount(productCountMap, materialCountMap, replaceOrderDOList,replaceOrder.getReplaceOrderNo());
 
         //比较设备项
         if (compareProductCount(serviceResult, orderProductDOList, orderProductDOMap, replaceProductCountMap, rentingProductCountMap, productCountMap)){
@@ -1170,7 +1170,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         //获取该订单待提交和审核中的换货单，统计换货的商品和配件的数量
         List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(replaceOrderDO.getOrderNo());
         //将该订单的待提交、审核中两种状态的换货单商品或配件数量保存
-        saveExistedReplaceCount(productCountMap, materialCountMap, replaceOrderDOList);
+        saveExistedReplaceCount(productCountMap, materialCountMap, replaceOrderDOList,replaceOrderDO.getReplaceOrderNo());
 
         //比较设备项
         if (compareProductCount(result, orderProductDOList, orderProductDOMap, replaceProductCountMap, rentingProductCountMap, productCountMap)){
@@ -1426,9 +1426,12 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     /*
      * 将该订单的待提交、审核中两种状态的换货单商品或配件数量保存
      */
-    private void saveExistedReplaceCount( Map<Integer, Integer> productCountMap, Map<Integer, Integer> materialCountMap, List<ReplaceOrderDO> replaceOrderDOList) {
+    private void saveExistedReplaceCount( Map<Integer, Integer> productCountMap, Map<Integer, Integer> materialCountMap, List<ReplaceOrderDO> replaceOrderDOList,String replaceOrderNo) {
         if (CollectionUtil.isNotEmpty(replaceOrderDOList)) {
             for (ReplaceOrderDO exReplaceOrderDO:replaceOrderDOList){
+                if (exReplaceOrderDO.getReplaceOrderNo().equals(replaceOrderNo)) {
+                    continue;
+                }
                 List<ReplaceOrderProductDO> exReplaceOrderProductDOList = exReplaceOrderDO.getReplaceOrderProductDOList();
                 List<ReplaceOrderMaterialDO> exReplaceOrderMaterialDOList = exReplaceOrderDO.getReplaceOrderMaterialDOList();
                 if (CollectionUtil.isNotEmpty(exReplaceOrderProductDOList)) {

@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.domain.replace.ReplaceOrderCommitParam;
 import com.lxzl.erp.common.domain.replace.ReplaceOrderConfirmChangeParam;
 import com.lxzl.erp.common.domain.replace.ReplaceOrderQueryParam;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
@@ -52,6 +53,16 @@ public class ReplaceControllerTest extends ERPUnTransactionalTest {
 
         ReplaceOrderConfirmChangeParam param = FastJsonUtil.toBean(str, ReplaceOrderConfirmChangeParam.class);
         TestResult testResult = getJsonTestResult("/replaceOrder/confirmReplaceOrder", param);
+        System.out.println(JSON.toJSONString(testResult));
+
+    }
+
+    @Test
+    public void testCommitReplaceOrderJSON() throws Exception {
+        String str = "{\"replaceOrderNo\":\"LXREO20180920102648238\",\"verifyUserId\":\"500013\",\"commitRemark\":\"sfrtjne\",\"imgIdList\":[5756]}";
+
+        ReplaceOrderCommitParam param = FastJsonUtil.toBean(str, ReplaceOrderCommitParam.class);
+        TestResult testResult = getJsonTestResult("/replaceOrder/commitReplaceOrder", param);
         System.out.println(JSON.toJSONString(testResult));
 
     }
