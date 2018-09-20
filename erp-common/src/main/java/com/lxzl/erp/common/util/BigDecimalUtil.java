@@ -32,6 +32,17 @@ public class BigDecimalUtil {
         }
         return value1.add(value2);
     }
+
+    public static BigDecimal add(BigDecimal ... value1s) {
+        BigDecimal sum=BigDecimal.ZERO;
+        for (BigDecimal value:value1s){
+            if (value == null) {
+                value = new BigDecimal(0);
+            }
+            sum=sum.add(value);
+        }
+       return sum;
+    }
     public static BigDecimal addAll(BigDecimal ... values) {
         BigDecimal result = BigDecimal.ZERO;
         for(BigDecimal value : values){

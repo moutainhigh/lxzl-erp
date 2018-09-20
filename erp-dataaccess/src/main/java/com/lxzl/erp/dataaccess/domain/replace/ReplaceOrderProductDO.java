@@ -45,6 +45,8 @@ public class ReplaceOrderProductDO  extends BaseDO {
 	private Integer oldIsNewProduct;   //是否是全新机，1是0否
 	private String productNumber;   //原商品编码
 	private Integer oldRentingProductCount;   //原在租商品总数
+	private String oldProductSkuSnapshot;   //原商品冗余信息，防止商品修改留存快照
+	private String newProductSkuSnapshot;   //新商品冗余信息，防止商品修改留存快照
 
 	public Integer getId(){
 		return id;
@@ -332,5 +334,21 @@ public class ReplaceOrderProductDO  extends BaseDO {
 
 	public void setOldRentingProductCount(Integer oldRentingProductCount) {
 		this.oldRentingProductCount = oldRentingProductCount;
+	}
+
+	public String getOldProductSkuSnapshot() {
+		return oldProductSkuSnapshot;
+	}
+
+	public void setOldProductSkuSnapshot(String oldProductSkuSnapshot) {
+		this.oldProductSkuSnapshot = oldProductSkuSnapshot;
+	}
+
+	public String getNewProductSkuSnapshot() {
+		return newProductSkuSnapshot;
+	}
+
+	public void setNewProductSkuSnapshot(String newProductSkuSnapshot) {
+		this.newProductSkuSnapshot = newProductSkuSnapshot;
 	}
 }

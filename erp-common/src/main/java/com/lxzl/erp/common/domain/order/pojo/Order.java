@@ -73,6 +73,7 @@ public class Order extends BasePO {
     private Integer dataStatus;
     private String remark;                                      // 备注信息
     private Date createTime;                                    // 订单创建时间
+    private Integer isTurnRentOrder;                            // 是否已经转为租赁单,0-否;1-生成新订单;2-新订单审核通过;。(测试机专用字段)
 
     private Integer customerConsignId;
     private String buyerCustomerNo;                             // 客户编号
@@ -83,6 +84,10 @@ public class Order extends BasePO {
     private Integer isK3Order;                                  // 是否是K3订单，1是0否
     private Integer statementDate;                              //结算时间（天），20和31两种情况，如果为空取系统设定
     private String orderMessage;                                //订单消息
+    private Integer isTestMachineOrder;                         //是否为测试机订单;1-是,0-否
+
+    private String testMachineOrderNo;                         //原测试机订单的编号
+    private String rentOrderNo;                               //转租的新订单编号
 
     private List<OrderProduct> orderProductList;                // 订单商品项
     private List<OrderMaterial> orderMaterialList;              // 订单配件项
@@ -775,4 +780,37 @@ public class Order extends BasePO {
     public void setOrderStatementDateSplit(OrderStatementDateSplit orderStatementDateSplit) {
         this.orderStatementDateSplit = orderStatementDateSplit;
     }
+
+    public String getTestMachineOrderNo() {
+        return testMachineOrderNo;
+    }
+
+    public void setTestMachineOrderNo(String testMachineOrderNo) {
+        this.testMachineOrderNo = testMachineOrderNo;
+    }
+
+    public Integer getIsTurnRentOrder() {
+        return isTurnRentOrder;
+    }
+
+    public void setIsTurnRentOrder(Integer isTurnRentOrder) {
+        this.isTurnRentOrder = isTurnRentOrder;
+    }
+
+    public Integer getIsTestMachineOrder() {
+        return isTestMachineOrder;
+    }
+
+    public void setIsTestMachineOrder(Integer isTestMachineOrder) {
+        this.isTestMachineOrder = isTestMachineOrder;
+    }
+
+    public String getRentOrderNo() {
+        return rentOrderNo;
+    }
+
+    public void setRentOrderNo(String rentOrderNo) {
+        this.rentOrderNo = rentOrderNo;
+    }
+
 }

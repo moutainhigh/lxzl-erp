@@ -227,19 +227,19 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             userId = userDO.getId().toString();
 
         }
-        BigDecimal b = k3ReturnOrder.getEqAmount();
-        if (BigDecimalUtil.compare(b, BigDecimal.ZERO) != 0) {
-            K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
-            CustomerDO customerDO = null;
-            if (k3MappingCustomerDO == null) {
-                customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
-            } else {
-                customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
-            }
-            if (customerDO != null) {
-                customerSupport.subCreditAmountUsed(customerDO.getId(), b,CustomerRiskBusinessType.RETURN_ORDER_TYPE,k3ReturnOrder.getReturnOrderNo(),"");
-            }
-        }
+//        BigDecimal b = k3ReturnOrder.getEqAmount();
+//        if (BigDecimalUtil.compare(b, BigDecimal.ZERO) != 0) {
+//            K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
+//            CustomerDO customerDO = null;
+//            if (k3MappingCustomerDO == null) {
+//                customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
+//            } else {
+//                customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
+//            }
+//            if (customerDO != null) {
+//                customerSupport.subCreditAmountUsed(customerDO.getId(), b,CustomerRiskBusinessType.RETURN_ORDER_TYPE,k3ReturnOrder.getReturnOrderNo(),"");
+//            }
+//        }
 
         Date now = new Date();
         Integer returnOrderStatus = k3ReturnOrder.getReturnOrderStatus() == null ? ReturnOrderStatus.RETURN_ORDER_STATUS_END : k3ReturnOrder.getReturnOrderStatus();
@@ -258,18 +258,29 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             getReturnItemMap(k3ReturnOrderDetailDOList, oldOrderProductDOMap, oldOrderMaterialDOMap, erpOrderProductDOMap, erpOrderMaterialDOMap);
             Set<Integer> set = new HashSet();
             //是否生成退货结算单
-            Boolean isCreateReturnStatement = true;
+            // Boolean isCreateReturnStatement = true;
             if (isHandleRent) {
+                //退授信额度
+                BigDecimal totalCreditDepositAmount=BigDecimal.ZERO;
                 for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList) {
+                    BigDecimal creditDepositAmount=BigDecimal.ZERO;
                     if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())) {
                         //兼容erp订单和k3订单商品项
                         OrderProductDO orderProductDO = productSupport.getOrderProductDO(oldOrderProductDOMap, erpOrderProductDOMap, k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
                         if (orderProductDO != null) {
+                            Integer rentingProductCount=orderProductDO.getRentingProductCount();//实际在租数
                             Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
                             if (productCount < 0) {
                                 dingDingSupport.dingDingSendMessage(getItemLowZero(orderProductDO.getOrderId(), orderProductDO.getId(), productCount));
+                            }else{
+                                if(null!=orderProductDO.getCreditDepositAmount()&&orderProductDO.getCreditDepositAmount().compareTo(BigDecimal.ZERO)==1){
+                                    creditDepositAmount=orderProductDO.getCreditDepositAmount().divide(BigDecimal.valueOf(rentingProductCount),2,BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(k3ReturnOrderDetailDO.getProductCount())).setScale(2,BigDecimal.ROUND_HALF_UP);
+                                    totalCreditDepositAmount=totalCreditDepositAmount.add(creditDepositAmount);
+                                }
                             }
                             productCount = productCount < 0 ? 0 : productCount;
+                            BigDecimal orderProductCreditDepositAmount=orderProductDO.getCreditDepositAmount().subtract(creditDepositAmount);
+                            orderProductDO.setCreditDepositAmount(orderProductCreditDepositAmount.compareTo(BigDecimal.ZERO)==1?orderProductCreditDepositAmount:BigDecimal.ZERO);
                             orderProductDO.setRentingProductCount(productCount);
                             orderProductDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                             orderProductDO.setUpdateTime(now);
@@ -307,6 +318,21 @@ public class K3CallbackServiceImpl implements K3CallbackService {
 
                     }
                 }
+
+                //TODO 更新授信额度
+                if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+                    K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
+                    CustomerDO customerDO = null;
+                    if (k3MappingCustomerDO == null) {
+                        customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
+                    } else {
+                        customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
+                    }
+                    if (customerDO != null) {
+                        customerSupport.subCreditAmountUsed(customerDO.getId(), totalCreditDepositAmount,CustomerRiskBusinessType.RETURN_ORDER_TYPE,k3ReturnOrder.getReturnOrderNo(),"");
+                    }
+                }
+
                 for (Integer orderId : set) {
 
                     Integer totalRentingProductCount = orderProductMapper.findTotalRentingProductCountByOrderId(orderId);
@@ -338,11 +364,19 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
                         orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                         orderDO.setUpdateTime(now);
+                        BigDecimal orderCreditDepositAmount=orderDO.getTotalCreditDepositAmount().subtract(totalCreditDepositAmount);
+                        BigDecimal orderProductCreditDepositAmount=orderDO.getTotalProductCreditDepositAmount().subtract(totalCreditDepositAmount);
+                        orderDO.setTotalCreditDepositAmount(orderCreditDepositAmount.compareTo(BigDecimal.ZERO)==1?orderCreditDepositAmount:BigDecimal.ZERO);
+                        orderDO.setTotalProductCreditDepositAmount(orderProductCreditDepositAmount.compareTo(BigDecimal.ZERO)==1?orderProductCreditDepositAmount:BigDecimal.ZERO);
                         orderMapper.update(orderDO);
                     } else if (orderDO.getTotalProductCount() > totalRentingProductCount || orderDO.getTotalMaterialCount() > totalRentingMaterialCount) {//部分退货
                         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_PART_RETURN);
                         orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                         orderDO.setUpdateTime(now);
+                        BigDecimal orderCreditDepositAmount=orderDO.getTotalCreditDepositAmount().subtract(totalCreditDepositAmount);
+                        BigDecimal orderProductCreditDepositAmount=orderDO.getTotalProductCreditDepositAmount().subtract(totalCreditDepositAmount);
+                        orderDO.setTotalCreditDepositAmount(orderCreditDepositAmount.compareTo(BigDecimal.ZERO)==1?orderCreditDepositAmount:BigDecimal.ZERO);
+                        orderDO.setTotalProductCreditDepositAmount(orderProductCreditDepositAmount.compareTo(BigDecimal.ZERO)==1?orderProductCreditDepositAmount:BigDecimal.ZERO);
                         orderMapper.update(orderDO);
                     }
                     // 记录订单时间轴

@@ -172,6 +172,12 @@
                     <dd>{{deliveryModeValue}}&nbsp;</dd>
                 </dl>
             </div>
+            <div class="col-xs-6">
+                <dl class="dl-horizontal dl-horizontal-rental mbn">
+                    <dt><label>所属区域</label><span class="mr5">：</span></dt>
+                    <dd>{{orderConsignInfo.provinceName}} {{orderConsignInfo.cityName}} {{orderConsignInfo.districtName}}&nbsp;</dd>
+                </dl>
+            </div>
             <div class="col-xs-12">
                 <dl class="dl-horizontal dl-horizontal-rental mbn">
                     <dt><label>备注信息</label><span class="mr5">：</span></dt>
@@ -350,7 +356,7 @@
             </tr>
             </tbody>
         </table>
-        <div style="height:70px; padding-left:10px; border-bottom: 1px solid #666"><b>备注信息：</b>{{remark}}</div>
+        <div style="height:70px; padding-left:10px; border-bottom: 1px solid #666"><b>备注信息：</b>{{orderMessageStr}}</div>
         {{/order}}
     </script>
 

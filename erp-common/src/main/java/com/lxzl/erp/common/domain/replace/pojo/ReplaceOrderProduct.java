@@ -50,7 +50,6 @@ public class ReplaceOrderProduct extends BasePO {
 	private Integer realReplaceProductCount;   //实际换货数量
 	private Integer isReletOrderReplace;   //是否是续租单换货，1是0否
 	private Integer reletOrderItemId;   //续租项ID
-
 	private Integer oldProductId;   //商品ID
 	private String oldProductName;   //商品名称
 	private Integer oldProductSkuId;   //商品SKU ID
@@ -59,6 +58,8 @@ public class ReplaceOrderProduct extends BasePO {
 	private Integer oldIsNewProduct;   //是否是全新机，1是0否
 	private String productNumber;   //原商品编码
 	private Integer oldRentingProductCount;   //原在租商品总数
+	private String oldProductSkuSnapshot;   //原商品冗余信息，防止商品修改留存快照
+	private String newProductSkuSnapshot;   //新商品冗余信息，防止商品修改留存快照
 
 
 	public Integer getReplaceOrderProductId(){
@@ -379,5 +380,21 @@ public class ReplaceOrderProduct extends BasePO {
 
 	public void setOldRentingProductCount(Integer oldRentingProductCount) {
 		this.oldRentingProductCount = oldRentingProductCount;
+	}
+
+	public String getOldProductSkuSnapshot() {
+		return oldProductSkuSnapshot;
+	}
+
+	public void setOldProductSkuSnapshot(String oldProductSkuSnapshot) {
+		this.oldProductSkuSnapshot = oldProductSkuSnapshot;
+	}
+
+	public String getNewProductSkuSnapshot() {
+		return newProductSkuSnapshot;
+	}
+
+	public void setNewProductSkuSnapshot(String newProductSkuSnapshot) {
+		this.newProductSkuSnapshot = newProductSkuSnapshot;
 	}
 }

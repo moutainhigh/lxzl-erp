@@ -1,14 +1,16 @@
 package com.lxzl.erp.web.service;
 
+import com.lxzl.erp.ERPTransactionalTest;
+import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
-import com.lxzl.erp.core.service.statement.impl.support.StatementReplaceOrderSupport;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.se.unit.test.BaseUnTransactionalTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -18,16 +20,13 @@ import java.util.List;
  * @author gaochao
  * @date 2018-01-27 10:19
  */
-public class StatementOrderTest  extends BaseUnTransactionalTest {
+public class StatementOrderTest  extends ERPTransactionalTest {
 
     @Autowired
     private StatementService statementService;
 
     @Autowired
     private StatementOrderSupport statementOrderSupport;
-
-    @Autowired
-    private StatementReplaceOrderSupport statementReplaceOrderSupport;
 
     @Test
     public void handleNoPaidStatementOrder(){
@@ -47,9 +46,11 @@ public class StatementOrderTest  extends BaseUnTransactionalTest {
         System.out.println(statementOrderDOList.size());
     }
 
+
     @Test
-    public void createReplaceOrderStatement(){
-        String resultCOde=statementReplaceOrderSupport.createStatement("LXREO20180913164544205");
-        System.out.println(resultCOde);
+    public void stopTestMachineOrder(){
+        Calendar calendar=Calendar.getInstance();
+        calendar.set(2018,8,7);
+        statementOrderSupport.stopTestMachineOrder("LXO-20180905-0755-00001",calendar.getTime());
     }
 }
