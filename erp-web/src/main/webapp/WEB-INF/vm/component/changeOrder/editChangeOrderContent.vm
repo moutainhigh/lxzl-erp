@@ -183,7 +183,7 @@
                             <td>
                                 <div class="mw200">
                                     <label class="field">
-                                        <input type="text" name="remark" value="" class="remark form-control gui-input" placeholder="备注">
+                                        <input type="text" name="remark" value="{{remark}}" class="remark form-control gui-input" placeholder="备注">
                                     </label>
                                 </div>
                             </td>
