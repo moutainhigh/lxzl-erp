@@ -45,6 +45,11 @@
 		<result column="update_total_credit_deposit_amount" jdbcType="DECIMAL" property="updateTotalCreditDepositAmount" />
 		<result column="old_total_credit_deposit_amount" jdbcType="DECIMAL" property="oldTotalCreditDepositAmount" />
 		<result column="new_total_credit_deposit_amount" jdbcType="DECIMAL" property="newTotalCreditDepositAmount" />
+		<result column="order_seller_id" jdbcType="VARCHAR" property="orderSellerId" />
+		<result column="order_seller_name" jdbcType="VARCHAR" property="orderSellerName" />
+		<result column="order_seller_phone" jdbcType="VARCHAR" property="orderSellerPhone" />
+		<result column="order_rent_start_time" jdbcType="TIMESTAMP" property="orderRentStartTime" />
+		<result column="order_expect_return_time" jdbcType="TIMESTAMP" property="orderExpectReturnTime" />
 		<collection property="replaceOrderProductDOList" resultMap="ReplaceOrderProductDO"/>
 		<collection property="replaceOrderMaterialDOList" resultMap="ReplaceOrderMaterialDO"/>
 	</resultMap>
@@ -90,6 +95,8 @@
 		<result column="product_old_is_new_product" jdbcType="INTEGER" property="oldIsNewProduct" />
 		<result column="product_product_number" jdbcType="VARCHAR" property="productNumber" />
 		<result column="product_old_renting_product_count" jdbcType="INTEGER" property="oldRentingProductCount" />
+		<result column="product_old_product_sku_snapshot" jdbcType="VARCHAR" property="oldProductSkuSnapshot" />
+		<result column="product_new_product_sku_snapshot" jdbcType="VARCHAR" property="newProductSkuSnapshot" />
 	</resultMap>
 
 	<resultMap id="ReplaceOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderMaterialDO">
@@ -128,6 +135,7 @@
 	<sql id="column_List">
 		ero.id,ero.replace_order_no,ero.order_id,ero.order_no,ero.customer_id,ero.customer_no,ero.replace_time,ero.total_replace_product_count,ero.total_replace_material_count,ero.real_total_replace_product_count,ero.real_total_replace_material_count,ero.service_cost,ero.logistics_cost,ero.repair_cost,ero.replace_reason_type,ero.replace_reason,ero.replace_mode,ero.replace_order_status,ero.data_status,ero.remark,ero.create_time,ero.create_user,ero.update_time,ero.update_user,ero.confirm_replace_time,ero.confirm_replace_user,
 		ero.address,ero.consignee_name,ero.consignee_phone,ero.is_relet_order_replace,ero.relet_order_no,ero.customer_name,ero.delivery_sub_company_name,ero.delivery_sub_company_id,ero.replace_delivery_time,ero.real_replace_time,ero.update_total_credit_deposit_amount,ero.old_total_credit_deposit_amount,ero.new_total_credit_deposit_amount
+		ero.order_seller_id,ero.order_seller_name,ero.order_seller_phone,ero.order_rent_start_time,ero.order_expect_return_time
 	</sql>
 
 	<sql id="product_column_List">
@@ -141,7 +149,8 @@
 		erop.create_user as product_create_user,erop.update_time as product_update_time,erop.update_user as product_update_user,erop.real_replace_product_count as product_real_replace_product_count,
 		erop.is_relet_order_replace as product_is_relet_order_replace,erop.relet_order_item_id as product_relet_order_item_id,
 		erop.old_product_id as product_old_product_id,erop.old_product_name as product_old_product_name,erop.old_product_sku_id as product_old_product_sku_id,erop.old_product_sku_name as product_old_product_sku_name,
-		erop.old_product_number as product_old_product_number,erop.old_is_new_product as product_old_is_new_product,erop.product_number as product_product_number,erop.old_renting_product_count as product_old_renting_product_count
+		erop.old_product_number as product_old_product_number,erop.old_is_new_product as product_old_is_new_product,erop.product_number as product_product_number,erop.old_renting_product_count as product_old_renting_product_count,
+		erop.old_product_sku_snapshot as product_old_product_sku_snapshot,erop.new_product_sku_snapshot as product_new_product_sku_snapshot
 	</sql>
 
 	<sql id="material_column_List">
@@ -294,6 +303,21 @@
 			</if>
 			<if test="newTotalCreditDepositAmount != null">
 				new_total_credit_deposit_amount = #{newTotalCreditDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="orderSellerId != null">
+				order_seller_id = #{orderSellerId,jdbcType=VARCHAR},
+			</if>
+			<if test="orderSellerName != null">
+				order_seller_name = #{orderSellerName,jdbcType=VARCHAR},
+			</if>
+			<if test="orderSellerPhone != null">
+				order_seller_phone = #{orderSellerPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="orderRentStartTime != null">
+				order_rent_start_time = #{orderRentStartTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orderExpectReturnTime != null">
+				order_expect_return_time = #{orderExpectReturnTime,jdbcType=TIMESTAMP},
 			</if>
 		</set>
 	</sql>

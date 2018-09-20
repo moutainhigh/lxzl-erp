@@ -292,6 +292,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         replaceOrderDO.setConfirmReplaceTime(null);
         replaceOrderDO.setReplaceDeliveryTime(null);
         replaceOrderDO.setRealReplaceTime(null);
+        replaceOrderDO.setOrderRentStartTime(orderDO.getRentStartTime());
+        replaceOrderDO.setOrderExpectReturnTime(orderDO.getExpectReturnTime());
         replaceOrderMapper.save(replaceOrderDO);
         //保存换货商品项
         List<ReplaceOrderProductDO> saveReplaceOrderProductDOList = new ArrayList<>();
@@ -948,8 +950,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                     orderProductDO.setOrderJointProductId(null);
                     orderProductDO.setJointProductProductId(null);
                     orderProductDO.setStableProductCount(replaceOrderProductDO.getRealReplaceProductCount());
-//                    orderProductDO.setIsItemDelivered(true);
-//                    orderProductDO.setTestMachineOrderProductId(null);
+                    orderProductDO.setProductSkuSnapshot(replaceOrderProductDO.getNewProductSkuSnapshot());
                     // TODO: 2018\9\18 0018 设置租赁期限
                     // TODO: 2018\9\18 0018 设置商品价格
                     if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
@@ -1776,6 +1777,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                     totalCreditDepositAmount = BigDecimalUtil.sub(totalCreditDepositAmount,oldOrderProductCreditDepositAmount);
                     totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                 }
+                replaceOrderProductDO.setOldProductSkuSnapshot(orderProductDO.getProductSkuSnapshot());
+                replaceOrderProductDO.setNewProductSkuSnapshot(FastJsonUtil.toJSONString(product));
                 replaceOrderProductDO.setProductId(product.getProductId());
                 replaceOrderProductDO.setProductName(product.getProductName());
                 replaceOrderProductDO.setRentDepositAmount(rentDepositAmount);
