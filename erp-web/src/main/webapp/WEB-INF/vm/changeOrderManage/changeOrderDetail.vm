@@ -48,7 +48,7 @@
                                             <dt class="mb10">联系人</dt><dd>{{consigneeName}}</dd>
                                             <dt class="mb10">联系电话</dt><dd>{{consigneePhone}}</dd>
                                             <dt class="mb10">收货地址</dt><dd>{{address}}</dd>
-                                            <dt class="mb10">发货公司</dt><dd>{{changeReasonTypeValue}}</dd>
+                                            <dt class="mb10">发货公司</dt><dd>{{deliverySubCompanyName}}</dd>
                                         </dl>
                                     </div>
                                     <div class="col-md-4">

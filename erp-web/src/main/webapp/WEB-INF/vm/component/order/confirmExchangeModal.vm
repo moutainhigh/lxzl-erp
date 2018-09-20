@@ -1,0 +1,106 @@
+<div id="exchangeConfirmModal" class="popup-basic popup-xl admin-form mfp-with-anim ">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i>确认换货</span>
+        </div>
+        <form method="post" id="exchangeForm" description="确认换货">
+            <div class="panel-body p25">
+                <div class="row mn mb15">
+                    <div class="form-group field">
+                        <label for="startAt" class="field-label text-right col-md-2">实际换货时间</label>
+                        <div class="col-md-4">
+                            <div class="input-group date" id="realReplaceTimePicker">
+                                <input type="hidden" name="realReplaceTime" id="realReplaceTime">
+                                <input type="text" readonly="" id="realReplaceTimeInput" data-type="date" class="form-control" autocomplete="off" placeholder="选择时间" style="height:42px;">
+                                <span class="input-group-addon cursor"><i class="fa fa-calendar"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mn mb10">
+                    <p class="mn">
+                        <span class="mr10" style="font-weight:700;">换货核对</span>
+                        <span>（确定换货后，会同步更新相关订单的结算单）</span>
+                    </p>
+                </div>
+                <div class="row mn mb20">
+                    <div class="panel pn mn">
+                        <div class="panel-body pn">
+                            <div class="table-responsive">
+                                <script type="text/html" id="productListTpl">
+                                    <thead>
+                                    <tr class="bg-light">
+                                        <th>订单号</th>
+                                        <th>原商品信息</th>
+                                        <th>更换商品信息</th>
+                                        <th class="text-center nowrap">出库数量</th>
+                                        <th class="nowrap" style="width:220px;">实际换货数量</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {{#dataSource}}
+                                    {{#listData}}
+                                    <tr data-serial="{{serialNumber}}">
+                                        <td>{{orderNo}}</td>
+                                        <td>
+                                            <p class="mn mb5">{{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}{{productName}}</p>  
+                                            <p class="mn mw300">{{productSkuName}}</p> 
+                                        </td>
+                                        <td>
+                                            <p class="mn mb5">{{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}{{productName}}</p>  
+                                            <p class="mn mw300">{{productSkuName}}</p> 
+                                        </td>
+                                        <td class="text-center">{{replaceProductCount}}</td>
+                                        <td>
+                                            <label class="field prepend-icon rentCountIpt mw200">
+                                                <input type="text" name="realReplaceProductCount" value="" class="realReplaceProductCount form-control gui-input pl10" placeholder="{{replaceProductCount}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{replaceProductCount}}";};'/>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    {{/listData}}
+                                    {{^listData}}
+                                    <tr>
+                                        <td valign="top" colspan="15" class="text-center">无商品项</td>
+                                    </tr>
+                                    {{/listData}}
+                                    {{/dataSource}}
+                                    </tbody>
+                                </script>
+                                <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="productListTable"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="replaceReasonRow" class="row mb20 hide">
+                    <div class="col-md-12 mb10"><em class="text-danger">*</em>输入的实际换货数量与出库数量不一致，请说明原因</div>
+                    <div class="col-md-12">
+                        <label for="changeReason" class="field prepend-icon">
+                            <textarea class="gui-textarea" id="changeReason" name="changeReason" placeholder="原因..."></textarea>
+                            <label for="changeReason" class="field-icon"><i class="fa fa-comments"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mb10"><em class="text-danger">*</em>请上传客户签字确认的交货单</div>
+                    <div class="col-md-12">
+                        <div class="tray-bin">
+                            <div class="atl-dropzone dropzoneImg dz-clickable" id="upLoadSignPager">
+                                <div class="dz-default dz-message">
+                                    <span>
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.jpeg|.png，不能超过4M）</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <button type="submit" class="button btn-primary submit-btn">确定</button>
+                <button type="button" class="button btn-default cancelButton">取消</button>
+            </div>
+        </form>
+    </div>
+</div>

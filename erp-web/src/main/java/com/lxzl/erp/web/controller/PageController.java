@@ -1302,6 +1302,12 @@ public class PageController extends BaseController {
         return "/component/order/changePriceModal";
     }
 
+    //确认换货
+    @RequestMapping("/order-manage/confirm-exchange")
+    public String confirmExchangeProductModal() {
+        return "/component/order/confirmExchangeModal";
+    }
+
     //提交审核选择审核人及填写审核备注
     @RequestMapping("/submit-audit/modal")
     public String submitAuditModal() {
