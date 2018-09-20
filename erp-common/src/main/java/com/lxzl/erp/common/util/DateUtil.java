@@ -447,15 +447,22 @@ public class DateUtil {
     }
 
     /**
-     * 通过两个日期获取时间间隔数组（0索引位置为月，1索引位置为日）
+     * <p>
+     * 计算两个日期之间相隔的月天
+     * </p>
+     * <pre>
+     *     所需参数示例及其说明
+     *     参数名称 : 示例值 : 说明 : 是否必须
+     * </pre>
+     * @author daiqi
+     * @date 2018/7/6 11:16
      * @param start
      * @param end
-     * @return
+     * @return int[]  下标为0的为月数 下标为1的为天数
      */
     public static int[] getDiff(Date start, Date end) {
         Calendar startCalendar = Calendar.getInstance();
         startCalendar.setTime(start);
-
         int startYear = startCalendar.get(Calendar.YEAR);
         int startMonth = startCalendar.get(Calendar.MONTH);
         int startDay = startCalendar.get(Calendar.DAY_OF_MONTH);
@@ -475,6 +482,7 @@ public class DateUtil {
         if (dayDiff < 0) {
             Calendar endMinusOneCalendar = Calendar.getInstance();   // end 的上一个月
             endMinusOneCalendar.setTime(endCalendar.getTime());
+            endMinusOneCalendar.add(Calendar.MONTH, -1);
             int monthDays = endMinusOneCalendar.getActualMaximum(Calendar.DATE);  // 该月的天数
 
             dayDiff += monthDays;  // 用上一个月的天数补上这个月差掉的日子
@@ -494,7 +502,6 @@ public class DateUtil {
         diff[1] = dayDiff;
         return diff;
     }
-
     /**
      * 判断当前日期是星期几
      */

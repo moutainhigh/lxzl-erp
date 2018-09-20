@@ -7301,7 +7301,7 @@ public class StatementServiceImpl implements StatementService {
         }
         // 数据为空 数据不存在异常
         if (CollectionUtil.isEmpty(returnServiceResult.getResult())) {
-            returnServiceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
+            returnServiceResult.setErrorCode(ErrorCode.CHECK_SHEET_CHOICE_MONTH_NOT_STATEMENT_ORDER_INFORMATION);
         }
         return returnServiceResult;
     }

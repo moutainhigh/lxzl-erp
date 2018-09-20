@@ -1,8 +1,10 @@
 package com.lxzl.erp.common.domain.statement.pojo.dto.unrent;
 
+import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.domain.statement.pojo.dto.BaseCheckStatementDetailDTO;
 import com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementStatisticsDTO;
 import com.lxzl.erp.common.util.CheckStatementUtil;
+import org.apache.commons.lang.time.DateFormatUtils;
 
 /**
  * 退货结算类---其他类型
@@ -46,6 +48,9 @@ public class CheckStatementDetailUnRentOtherDTO extends BaseCheckStatementDetail
     @Override
     public String doGetNoThisMonthCacheKey(CheckStatementStatisticsDTO statementStatisticsDTO) {
         String cacheKey = this.getStatementOrderDetailId() + "_" + this.getOrderItemActualId() + "_" + super.getOrderItemType();
+        if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(super.getPayMode())) {
+            cacheKey = cacheKey + "_" + DateFormatUtils.format(super.getStatementExpectPayTime(), "yyyyMMdd");
+        }
         return cacheKey;
     }
 
