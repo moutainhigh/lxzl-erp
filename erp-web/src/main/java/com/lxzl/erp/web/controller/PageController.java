@@ -937,6 +937,11 @@ public class PageController extends BaseController {
         return "/changeOrderManage/changeOrderEdit";
     }
 
+    @RequestMapping("/change-order/print")
+    public String changeOrderManagePrint() {
+        return "/changeOrderManage/changeOrderPrint";
+    }
+
     @RequestMapping("/change-order/equiment-list")
     public String changeOrderManageEquimentList() {
         return "/component/changeOrder/equimentList";
@@ -1295,6 +1300,12 @@ public class PageController extends BaseController {
     @RequestMapping("/order-manage/change-price")
     public String changePriceModal() {
         return "/component/order/changePriceModal";
+    }
+
+    //确认换货
+    @RequestMapping("/order-manage/confirm-exchange")
+    public String confirmExchangeProductModal() {
+        return "/component/order/confirmExchangeModal";
     }
 
     //提交审核选择审核人及填写审核备注
