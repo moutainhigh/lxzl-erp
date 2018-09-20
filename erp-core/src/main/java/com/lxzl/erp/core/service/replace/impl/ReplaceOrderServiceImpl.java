@@ -156,10 +156,12 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
         //校验是否在续租单开始之前换货
         ReletOrderDO exReletOrderDO = reletOrderMapper.findRecentlyReletOrderByOrderNo(orderDO.getOrderNo());
-        Date reletTime = exReletOrderDO.getRentStartTime();
-        String reletTimeString = simpleDateFormat.format(reletTime);
-        if (checkReplaceTiamAndReletTime(serviceResult, simpleDateFormat, replaceTimeString, reletTimeString)){
-            return serviceResult;
+        if (exReletOrderDO != null) {
+            Date reletTime = exReletOrderDO.getRentStartTime();
+            String reletTimeString = simpleDateFormat.format(reletTime);
+            if (checkReplaceTiamAndReletTime(serviceResult, simpleDateFormat, replaceTimeString, reletTimeString)){
+                return serviceResult;
+            }
         }
 
         //查出该订单的当期续租单
@@ -567,6 +569,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         replaceOrderDO.setTotalReplaceMaterialCount(totalReplaceMaterialCount);
         replaceOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         replaceOrderDO.setUpdateTime(date);
+        replaceOrderDO.setOrderRentStartTime(orderDO.getRentStartTime());
+        replaceOrderDO.setOrderExpectReturnTime(orderDO.getExpectReturnTime());
         replaceOrderMapper.update(replaceOrderDO);
         //保存换货商品项
         List<ReplaceOrderProductDO> saveReplaceOrderProductDOList = new ArrayList<>();
