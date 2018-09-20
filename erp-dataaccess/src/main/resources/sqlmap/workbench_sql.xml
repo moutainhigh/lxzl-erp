@@ -380,6 +380,7 @@
 			AND ewl.workflow_step > 1
 			AND ewl.data_status = 1
 			AND eo.order_status in(4,8)
+			AND eo.delivery_sub_company_id = #{maps.deliverySubCompanyId,jdbcType=INTEGER}
 			<include refid="permission_sql.order_control"/>
 		</where>) crrentUserAllOrderNo WHERE crrentUserAllOrderNo.oderNo
 		NOT IN (
@@ -461,6 +462,7 @@
 		INNER JOIN erp_customer ec ON ec.customer_no = ekro.k3_customer_no
 		WHERE ekro.return_order_status = 12
 		AND ekro.data_status = 1
+		AND ekro.delivery_sub_company_id = #{maps.deliverySubCompanyId,jdbcType=INTEGER}
 		<include refid="permission_sql.k3_return_order_control"/>
 		)processing_return_oder
 	</sql>

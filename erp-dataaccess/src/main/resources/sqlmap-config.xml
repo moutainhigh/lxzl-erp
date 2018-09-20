@@ -201,7 +201,11 @@
         <mapper resource="sqlmap/erp_return_order_rollback_log.xml" />
 
         <mapper resource="sqlmap/erp_customer_risk_log.xml" />
+
+        <mapper resource="sqlmap/erp_order_from_test_machine.xml" />
+
         <mapper resource="sqlmap/erp_statistics_operate_data.xml" />
+
 
         <mapper resource="sqlmap/erp_replace_order.xml" />
         <mapper resource="sqlmap/erp_replace_order_material.xml" />

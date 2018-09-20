@@ -363,7 +363,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             result.setErrorCode(ErrorCode.USER_NOT_EXISTS);
             return result;
         }
-        if (!userRoleService.isSuperAdmin(loginUser.getUserId()) && !loginUser.getUserId().equals(user.getUserId())) {
+        if (!userRoleService.isSuperAdmin(loginUser.getUserId()) && !userRoleService.isAdmin(loginUser.getUserId()) && !loginUser.getUserId().equals(user.getUserId()) ) {
             result.setErrorCode(ErrorCode.OPERATOR_IS_NOT_YOURSELF);
             return result;
         }

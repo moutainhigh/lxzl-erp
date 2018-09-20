@@ -42,6 +42,17 @@ public class StatementOrderCorrectDO  extends BaseDO {
 	@Transient
 	private String customerNo; //客户编号
 
+	private Integer reletOrderItemReferId;  //续租订单项ID
+
+
+	public Integer getReletOrderItemReferId() {
+		return reletOrderItemReferId;
+	}
+
+	public void setReletOrderItemReferId(Integer reletOrderItemReferId) {
+		this.reletOrderItemReferId = reletOrderItemReferId;
+	}
+
 	public String getCustomerNo() {
 		return customerNo;
 	}

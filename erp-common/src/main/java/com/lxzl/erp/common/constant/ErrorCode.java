@@ -456,6 +456,10 @@ public class ErrorCode {
     public static final String ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400163";
     public static final String RELET_ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT = "J400164";
     public static final String EXPECT_RTURN_TIME_LESS_RETURN_TIME = "J400165";
+    public static final String IS_NOT_TEST_MECHANINE_ORDER = "J400166";
+    public static final String TEST_MECHANINE_ORDER_HAS_RELET = "J400167";
+    public static final String TEST_MECHANINE_ORDER_CHANGE_TIME_ERROR = "J400168";
+    public static final String TEST_MECHANINE_ORDER_HAS_CHANGE_RENT_ORDER = "J400169";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -1084,16 +1088,37 @@ public class ErrorCode {
     public static final String TASK_REQUEST_JSON_NOT_EMPTY = "J290000002";
     public static final String TASK_REQUEST_HAVE_FOR_THIS_USER_ID = "J290000003";
 
+    //测试机
+    public static final String TEST_MACHINE_ORDER_RENT_CONDITION_IS_WRONG = "J30000001";
+    public static final String TEST_MACHINE_ORDER_CUSTOMER_CAN_NOT_UPDATE = "J30000002";
+    public static final String TEST_MACHINE_ORDER_CUSTOMER_CONSIGN_CAN_NOT_UPDATE = "J30000003";
+    public static final String TEST_MACHINE_ORDER_ORDER_SUB_COMPANY_CAN_NOT_UPDATE = "J30000004";
+    public static final String TEST_MACHINE_ORDER_DELIVERY_SUB_COMPANY_CAN_NOT_UPDATE = "J30000005";
+    public static final String TEST_MACHINE_ORDER_PRODUCT_COUNT_CAN_NOT_UPDATE = "J30000006";
+    public static final String TEST_MACHINE_ORDER_PRODUCT_CAN_NOT_UPDATE = "J30000007";
+    public static final String TEST_MACHINE_ORDER_IS_NOT_EXISTS = "J30000008";
+    public static final String TEST_MACHINE_ORDER_PRODUCT_AND_MATERIAL_NOT_NULL = "J30000009";
+    public static final String TEST_MACHINE_ORDER_PRODUCT_UNIT_AMOUNT_CAN_NOT_UPDATE = "J30000010";
+    public static final String TEST_MACHINE_ORDER_MATERIAL_CAN_NOT_UPDATE = "J30000011";
+    public static final String TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE = "J30000012";
+    public static final String TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER = "J30000013";
+    public static final String TEST_MACHINE_ORDER_STATUS_MUST_BE_RENTING_OR_PART_RETURN = "J30000014";
+    public static final String TEST_MACHINE_ORDER_HAD_RELET_CAN_NOT_BE_RENT = "J30000015";
+    public static final String TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_RENT = "J30000016";
+    public static final String TEST_MACHINE_ORDER_RENT_START_TIME_ERROR = "J30000017";
+    public static final String TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_VERIFIED = "J30000018";
+    public static final String K3_TEST_MACHINE_ORDER_TURN_RENT_ORDER_ERROR = "J30000018";
+
     //Mall
     public static final String MALL_SYSTEM_CONNECT_EXCEPTION = "Mall00001";
 
     //经营数据提取
-    public static final String STATISTICAL_STATUS_NOT_NULL = "J300000001";
-    public static final String STATISTICAL_STATUS_DAY_ERROR = "J300000002";
-    public static final String STATISTICAL_STATUS_WEEK_ERROR = "J300000003";
-    public static final String STATISTICAL_STATUS_MONTH_ERROR = "J300000004";
-    public static final String STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR = "J300000005";
-    public static final String STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR = "J300000006";
+    public static final String STATISTICAL_STATUS_NOT_NULL = "J310000001";
+    public static final String STATISTICAL_STATUS_DAY_ERROR = "J310000002";
+    public static final String STATISTICAL_STATUS_WEEK_ERROR = "J310000003";
+    public static final String STATISTICAL_STATUS_MONTH_ERROR = "J310000004";
+    public static final String STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR = "J310000005";
+    public static final String STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR = "J310000006";
 
     //换货
     public static final String REPLACE_TIME_NOT_NULL = "J310000001";//换货时间不能为空
@@ -1732,6 +1757,10 @@ public class ErrorCode {
         MAP.put(ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT, "订单当前状态不允许重算");
         MAP.put(RELET_ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT, "续租单当前状态不允许重算");
         MAP.put(EXPECT_RTURN_TIME_LESS_RETURN_TIME, "所选退货时间为【%s 】，订单【%s 】预计退货时间为【%s 】，所选退货时间不能超过订单预计归还时间,如符合真实情况请尝试【续租】");
+        MAP.put(IS_NOT_TEST_MECHANINE_ORDER, "不是测试机单无法进行终止");
+        MAP.put(TEST_MECHANINE_ORDER_HAS_RELET, "测试机单已续租结算无法终止");
+        MAP.put(TEST_MECHANINE_ORDER_CHANGE_TIME_ERROR, "测试机转单日期必须在测试机单有效期内");
+        MAP.put(TEST_MECHANINE_ORDER_HAS_CHANGE_RENT_ORDER, "已完成转租的测试机单不允许重算");
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
         MAP.put(MESSAGE_RECEIVER_NOT_NULL, "站内信收件人不能为空");
@@ -1966,6 +1995,7 @@ public class ErrorCode {
         MAP.put(K3_SEL_STOCK_CUSTOMER_QUERY_COUNT_NOT_NULL_IN_CONFIRM_STOCK, "确认库存时K3库存查询的客户需求数量不能为空");
         MAP.put(K3_SEL_STOCK_CAN_NOT_QUERY_IN_CONFIRM_STOCK, "确认库存时K3库存查询的仓位类型不能选择借出仓和全部仓位");
 
+
         MAP.put(SUCCESS_RELET_ORDER_EXIST, "退货后已成功续租，退货单无法回滚");
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
@@ -2196,6 +2226,26 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONFIRM_BAD_ACCOUNT_EXIST, "客户为已经为确认坏账状态");
         MAP.put(CUSTOMER_STATUS_IS_NOT_PASS, "客户状态须审核通过，才能使用此功能");
 
+
+        MAP.put(TEST_MACHINE_ORDER_RENT_CONDITION_IS_WRONG, "只有按天租并且租期小于30的订单，才能执行此操作");
+        MAP.put(TEST_MACHINE_ORDER_CUSTOMER_CAN_NOT_UPDATE, "测试机订单的客户不允许修改");
+        MAP.put(TEST_MACHINE_ORDER_CUSTOMER_CONSIGN_CAN_NOT_UPDATE, "测试机订单的客户收货地址不允许修改");
+        MAP.put(TEST_MACHINE_ORDER_ORDER_SUB_COMPANY_CAN_NOT_UPDATE, "测试机的订单所需分公司不允许修改");
+        MAP.put(TEST_MACHINE_ORDER_DELIVERY_SUB_COMPANY_CAN_NOT_UPDATE, "测试机的订单发货分公司不允许修改");
+        MAP.put(TEST_MACHINE_ORDER_PRODUCT_CAN_NOT_UPDATE, "测试机的订单商品项必须存在，并且数量不能修改");
+        MAP.put(TEST_MACHINE_ORDER_IS_NOT_EXISTS, "测试机的订单不存在");
+        MAP.put(TEST_MACHINE_ORDER_PRODUCT_AND_MATERIAL_NOT_NULL, "测试机的订单的商品和配件不能都为空，请检查原样机订单是否有误");
+        MAP.put(TEST_MACHINE_ORDER_PRODUCT_UNIT_AMOUNT_CAN_NOT_UPDATE, "测试机的订单的商品项的商品单价不允许修改");
+        MAP.put(TEST_MACHINE_ORDER_PRODUCT_COUNT_CAN_NOT_UPDATE, "测试机的订单的商品项的商品数量不允许修改");
+        MAP.put(TEST_MACHINE_ORDER_MATERIAL_COUNT_CAN_NOT_UPDATE, "测试机的订单的配件项的配件数量不允许修改");
+        MAP.put(TEST_MACHINE_ORDER_MATERIAL_CAN_NOT_UPDATE, "测试机的订单配件项必须存在，并且数量不能修改");
+        MAP.put(TEST_MACHINE_ORDER_HAD_TURN_RENT_ORDER, "测试样的订单已经转为新订单，如需进行此操作请取消已经转变的订单");
+        MAP.put(TEST_MACHINE_ORDER_STATUS_MUST_BE_RENTING_OR_PART_RETURN, "只有租赁中和部分退货的测试机订单才能转为租赁订单");
+        MAP.put(TEST_MACHINE_ORDER_HAD_RELET_CAN_NOT_BE_RENT, "已经有续租的订单，不能执行该操作");
+        MAP.put(TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_RENT, "转租赁的原测试机订单，不能执行该操作");
+        MAP.put(TEST_MACHINE_ORDER_RENT_START_TIME_ERROR, "新订单的起租时间需大于原测试机订单的起租时间，且小于等于原测试机订单结束时间的下一天");
+        MAP.put(TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_VERIFIED, "测试机转租赁的新订单，不能执行该操作");
+        MAP.put(K3_TEST_MACHINE_ORDER_TURN_RENT_ORDER_ERROR, "K3推送有测试机转租赁的订单信息失败");
 
         MAP.put(MALL_SYSTEM_CONNECT_EXCEPTION, "连接Mall-App系统异常");
 

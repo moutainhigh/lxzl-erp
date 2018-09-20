@@ -31,7 +31,9 @@
                 <td>{{materialTypeStr}}</td>
                 <td>{{brandName}}</td>
                 <td>
-                    <p class="mn"><span class="badge {{isNewMaterialBadgeClass}} mr5">{{#isNewValue}}{{isNewMaterial}}{{/isNewValue}}</span>{{materialName}}</p>
+                    <p class="mn">
+                        <span class="badge {{isNewMaterialBadgeClass}} mr5">{{#isNewValue}}{{isNewMaterial}}{{/isNewValue}}{{#isTestMachine}}、无需发货{{/isTestMachine}}</span>{{materialName}}
+                    </p>
                     {{#showK3MaterialNo}}{{#k3MaterialNo}}<p class="mn mt10"><span class="badge badge-default mr5">K3编码</span>{{k3MaterialNo}}</p>{{/k3MaterialNo}}{{/showK3MaterialNo}}
                 </td>
                 <td>￥{{currentMaterialPrice}}</td>

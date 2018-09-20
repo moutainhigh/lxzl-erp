@@ -20,6 +20,7 @@ public class CommonConstant {
 
     public static final String UPLOAD_USER = "admin";
     public static final String ADMIN_REAL_NAME = "管理员";
+    public static final Integer ADMIN_ID = 600007;
 
     public static final Integer SUPER_MENU_ID = 200000;
     public static final Integer SUPER_DATA_DICTIONARY_ID = 300000;
@@ -56,6 +57,7 @@ public class CommonConstant {
     public static final Integer ORDER_NEED_VERIFY_MONTHS = 3;
     public static final Integer ORDER_NEED_VERIFY_PRODUCT_COUNT = 100;
     public static final BigDecimal ORDER_NEED_VERIFY_PRODUCT_AMOUNT = new BigDecimal(200000);
+    public static final Integer ORDER_TEST_MACHINE_RENT_TIME = 30;
 
     public static final Integer COMMON_ZERO = 0;
     public static final Integer COMMON_ONE = 1;

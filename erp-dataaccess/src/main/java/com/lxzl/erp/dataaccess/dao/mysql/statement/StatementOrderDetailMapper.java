@@ -43,7 +43,7 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
 
     BigDecimal queryAllRentIncomeForHome(@Param("maps") Map<String, Object> paramMap);
 
-    List<StatementOrderDetailDO> findByStatementOrderIdAndItemReferId(@Param("itemReferId") Integer itemReferId, @Param("statementOrderId") Integer statementOrderId);
+    List<StatementOrderDetailDO> findByStatementOrderIdAndItemReferId(@Param("itemReferId") Integer itemReferId, @Param("statementOrderId") Integer statementOrderId, @Param("reletItemReferId") Integer reletItemReferId);
 
     Integer batchUpdate(@Param("list") List<StatementOrderDetailDO> list);
 

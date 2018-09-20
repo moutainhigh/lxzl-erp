@@ -3,7 +3,7 @@ package com.lxzl.erp.core.service.k3.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
+import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.K3Config;
 import com.lxzl.erp.common.domain.Page;
@@ -23,11 +23,9 @@ import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.ChangeOrderItemParam;
 import com.lxzl.erp.common.domain.order.OrderConfirmChangeToK3Param;
 import com.lxzl.erp.common.domain.product.pojo.Product;
+import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.common.util.FastJsonUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.*;
@@ -44,20 +42,14 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderConsignInfoMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
+import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderMaterialDO;
@@ -67,7 +59,6 @@ import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
-import org.apache.avro.generic.GenericData;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +69,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -1084,6 +1077,320 @@ public class K3ServiceImpl implements K3Service {
         return serviceResult;
     }
 
+    @Override
+    public ServiceResult<String,String> testMachineOrderTurnRentOrder(com.lxzl.erp.common.domain.order.pojo.Order order) {
+        ServiceResult<String,String> serviceResult = new ServiceResult<>();
+
+        String response = null;
+        Object postData = null;
+        Map<String,Object> responseMap = new HashMap();
+        try {
+            postData = getTestMachineOrderToK3Param(order,PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD);
+            String requestJson  = JSONObject.toJSONString(postData);
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String k3confirmOrderUrl = K3Config.k3Server + "/DataDelivery/ExchangeGoods";  //传递由测试机订单转租赁的订单信息给K3
+            response = HttpClientUtil.post(k3confirmOrderUrl, requestJson, headerBuilder, "UTF-8");
+            responseMap = JSONObject.parseObject(response,HashMap.class);
+            if ("true".equals(responseMap.get("IsSuccess").toString())){
+                serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                serviceResult.setResult(responseMap.get("Message").toString());
+                return serviceResult;
+            }else{
+                serviceResult.setErrorCode(ErrorCode.K3_TEST_MACHINE_ORDER_TURN_RENT_ORDER_ERROR);
+                serviceResult.setResult(responseMap.get("Message").toString());
+                dingDingSupport.dingDingSendMessage(getErrorMessageForTestMachineOrder(response,order.getOrderNo()));
+                return serviceResult;
+            }
+        }catch (Exception e){
+            StringWriter errorInfo = new StringWriter();
+            e.printStackTrace(new PrintWriter(errorInfo, true));
+            dingDingSupport.dingDingSendMessage(errorInfo.toString());
+            serviceResult.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+            return serviceResult;
+        }
+    }
+
+    private String getErrorMessageForTestMachineOrder(String response, String orderNo) {
+        StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+        sb.append("向K3推送【由测试机订单转租赁的订单-").append(orderNo).append("】数据失败：");
+        sb.append(JSON.toJSONString(response));
+        return sb.toString();
+    }
+
+    private Object getTestMachineOrderToK3Param(com.lxzl.erp.common.domain.order.pojo.Order erpOrder,Integer postK3OperatorType) {
+        DataDeliveryOrder dataDeliveryOrder = new DataDeliveryOrder();
+
+        if (PostK3OperatorType.POST_K3_OPERATOR_TYPE_UPDATE.equals(postK3OperatorType)) {
+            dataDeliveryOrder.setIsReplace(true);// 是否覆盖
+        } else if (PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD.equals(postK3OperatorType)) {
+            dataDeliveryOrder.setIsReplace(false);
+        }
+
+        K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByErpCode(erpOrder.getBuyerCustomerNo());
+        if (k3MappingCustomerDO == null) {
+            throw new BusinessException("需要先同步客户信息");
+        }
+
+        dataDeliveryOrder.setCustNumber(k3MappingCustomerDO.getK3CustomerCode());// 客户代码
+        dataDeliveryOrder.setCustName(k3MappingCustomerDO.getCustomerName());// 客户名称
+        dataDeliveryOrder.setBillNO(erpOrder.getOrderNo());// 单据编号
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        dataDeliveryOrder.setDate(sdf.format(erpOrder.getCreateTime()));// 日期
+
+        String fetchStyleNumber = null;
+        if (DeliveryMode.DELIVERY_MODE_EXPRESS.equals(erpOrder.getDeliveryMode())) {
+            fetchStyleNumber = "FJH03";
+        } else if (DeliveryMode.DELIVERY_MODE_SINCE.equals(erpOrder.getDeliveryMode())) {
+            fetchStyleNumber = "FJH01";
+        } else if (DeliveryMode.DELIVERY_MODE_LX_EXPRESS.equals(erpOrder.getDeliveryMode())) {
+            fetchStyleNumber = "FJH02";
+        }
+        dataDeliveryOrder.setFetchStyleNumber(fetchStyleNumber);// 交货方式  FJH01 客户自提 FJH02 送货上门 FJH03 物流发货
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(erpOrder.getOrderSubCompanyId());//所属分公司
+        SubCompanyDO deliverySubCompanyDO = subCompanyMapper.findById(erpOrder.getDeliverySubCompanyId());//发货分公司
+        SubCompanyDO orderSubCompanyDO = subCompanyMapper.findById(erpOrder.getOrderSubCompanyId());//如果是电销则为线上（XX）类型
+        K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByErpCode(subCompanyDO.getSubCompanyCode());
+        K3MappingSubCompanyDO k3MappingDeliverySubCompanyDO = k3MappingSubCompanyMapper.findByErpCode(deliverySubCompanyDO.getSubCompanyCode());
+        dataDeliveryOrder.setDeptNumber(k3MappingSubCompanyDO.getK3SubCompanyCode() + ".06");// 部门代码
+        dataDeliveryOrder.setDeptName(k3MappingSubCompanyDO.getSubCompanyName() + "-" + "租赁业务部");
+        Integer subCompanyId = userSupport.getCompanyIdByUser(erpOrder.getOrderSellerId());
+        SubCompanyDO sellerSubCompanyDO = subCompanyMapper.findById(subCompanyId);
+        String empNumber = k3Support.getK3CityCode(sellerSubCompanyDO.getSubCompanyCode()) + "." + erpOrder.getOrderSellerId();
+        dataDeliveryOrder.setEmpNumber(k3Support.getK3UserCode(erpOrder.getOrderSellerId()));// 业务员代码
+        dataDeliveryOrder.setEmpName(erpOrder.getOrderSellerName());// 业务员名称
+        dataDeliveryOrder.setBillerName(erpOrder.getCreateUserRealName());// 制单人
+        //主管用业务员代替
+        dataDeliveryOrder.setManagerNumber(empNumber);//  主管代码
+        dataDeliveryOrder.setManagerName(erpOrder.getOrderSellerName());//  主管名称
+        //取待发货状态的订单的时间轴节点
+        List<OrderTimeAxisDO> orderTimeAxisDOList = orderTimeAxisMapper.findByOrderId(erpOrder.getOrderId());
+        if (CollectionUtil.isNotEmpty(orderTimeAxisDOList)) {
+            for (OrderTimeAxisDO orderTimeAxisDO : orderTimeAxisDOList) {
+                if (OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderTimeAxisDO.getOrderStatus())) {
+                    dataDeliveryOrder.setCheckDate(sdf.format(orderTimeAxisDO.getCreateTime()));// 审核日期
+                    User user = CommonCache.userMap.get(Integer.parseInt(String.valueOf(orderTimeAxisDO.getCreateUser())));
+                    dataDeliveryOrder.setCheckerName(user.getRealName());// 审核人
+                }
+            }
+        }
+        String remark = erpOrder.getBuyerRemark() == null ? "" : erpOrder.getBuyerRemark();
+        dataDeliveryOrder.setExplanation(remark);// 摘要
+        dataDeliveryOrder.setWillSendDate(sdf.format(erpOrder.getExpectDeliveryTime()));//交货日期
+        if (RentLengthType.RENT_LENGTH_TYPE_LONG == erpOrder.getRentLengthType()) {
+            dataDeliveryOrder.setOrderTypeNumber("L");
+        } else if (OrderRentType.RENT_TYPE_DAY.equals(erpOrder.getRentType())) {
+            dataDeliveryOrder.setOrderTypeNumber("R");// 订单类型 L	长租  R	短短租(天) X	销售   D	短租
+        } else {
+            dataDeliveryOrder.setOrderTypeNumber("D");
+        }
+        dataDeliveryOrder.setBusinessTypeNumber("ZY");// 经营类型  ZY	经营性租赁 RZ 融资性租赁
+        if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(orderSubCompanyDO.getId())||
+                CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(orderSubCompanyDO.getId())) {
+            dataDeliveryOrder.setOrderFromNumber("XS");// 订单来源 XS	线上 XX 线下
+        } else {
+            dataDeliveryOrder.setOrderFromNumber("XX");
+        }
+
+        dataDeliveryOrder.setDeliveryName(erpOrder.getOrderConsignInfo().getConsigneeName());// 提货人
+
+        String provinceName = erpOrder.getOrderConsignInfo().getProvinceName() == null ? "" : erpOrder.getOrderConsignInfo().getProvinceName() + " ";
+        String cityName = erpOrder.getOrderConsignInfo().getCityName() == null ? "" : erpOrder.getOrderConsignInfo().getCityName() + " ";
+        String districtName = erpOrder.getOrderConsignInfo().getDistrictName() == null ? "" : erpOrder.getOrderConsignInfo().getDistrictName() + " ";
+        String address = erpOrder.getOrderConsignInfo().getAddress() == null ? "" : erpOrder.getOrderConsignInfo().getAddress();
+        address = provinceName + cityName + districtName + address;
+        dataDeliveryOrder.setDeliveryAddress(address);// 交货地址
+        dataDeliveryOrder.setDeliverPhone(erpOrder.getOrderConsignInfo().getConsigneePhone());// 收货人电话
+        dataDeliveryOrder.setCompanyNumber(k3MappingSubCompanyDO.getK3SubCompanyCode());//所属分公司
+        dataDeliveryOrder.setStatementDate(erpOrder.getStatementDate());//结算日
+        //发货分公司
+        if(erpOrder.getDeliverySubCompanyId()!=null&&erpOrder.getDeliverySubCompanyId()!=0&&k3MappingDeliverySubCompanyDO!=null){
+            dataDeliveryOrder.setExecuteCompanyNumber(k3MappingDeliverySubCompanyDO.getK3SubCompanyCode()); //执行分公司
+        }
+        dataDeliveryOrder.setAreaPS("租赁");// 销售/租赁
+        //对账部门代码填写订单部门
+        dataDeliveryOrder.setAcctDeptNumber(dataDeliveryOrder.getDeptNumber());// 对账部门代码
+        dataDeliveryOrder.setAcctDeptName(dataDeliveryOrder.getDeptName());// 对账部门
+        if (erpOrder.getHighTaxRate() != null && erpOrder.getHighTaxRate() > 0) {
+            dataDeliveryOrder.setInvoiceType("01");// 01:专票/02:普票/03:收据
+        } else {
+            dataDeliveryOrder.setInvoiceType("02");
+        }
+
+        int orderProductSize = CollectionUtil.isNotEmpty(erpOrder.getOrderProductList()) ? erpOrder.getOrderProductList().size() : 0;
+        int orderMaterialSize = CollectionUtil.isNotEmpty(erpOrder.getOrderMaterialList()) ? erpOrder.getOrderMaterialList().size() : 0;
+        int size = orderProductSize + orderMaterialSize;
+        int index = 0;
+        if (size > 0) {
+            String startTime = sdf.format(erpOrder.getRentStartTime());
+            String endTime = sdf.format(erpOrder.getExpectReturnTime());
+            List<DataDeliveryOrderEntry> list = new ArrayList<>();
+            if (CollectionUtil.isNotEmpty(erpOrder.getOrderProductList())) {
+                for (com.lxzl.erp.common.domain.order.pojo.OrderProduct orderProduct : erpOrder.getOrderProductList()) {
+                    Product product = JSON.parseObject(orderProduct.getProductSkuSnapshot(), Product.class);
+                    ProductDO productDO = productMapper.findByProductId(orderProduct.getProductId()); //目前从DO里面取编码等，从快照里面取sku
+                    K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(productDO.getCategoryId().toString());
+                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(productDO.getBrandId().toString());
+
+//                    FormICItem formICItem = new FormICItem();
+//                    formICItem.setModel(productDO.getProductModel());//型号名称
+//                    formICItem.setName(productDO.getProductName());//商品名称
+                    String number = "";
+                    if (StringUtil.isNotEmpty(productDO.getK3ProductNo())) {
+                        number = productDO.getK3ProductNo();
+                    } else {
+                        number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + productDO.getProductModel();
+                    }
+
+                    if (CommonConstant.COMMON_CONSTANT_YES.equals(erpOrder.getIsPeer())) {
+                        number = "90" + number.substring(2, number.length());
+                    }
+                    DataDeliveryOrderEntry dataDeliveryOrderEntry = new DataDeliveryOrderEntry();
+
+                    dataDeliveryOrderEntry.setOrderItemId(orderProduct.getOrderProductId());
+                    dataDeliveryOrderEntry.setNumber(number);//  设备代码
+                    dataDeliveryOrderEntry.setName(product.getProductName());//  设备名称
+                    dataDeliveryOrderEntry.setQty(new BigDecimal(orderProduct.getProductCount()));// 数量
+                    dataDeliveryOrderEntry.setLeaseMonthCount(new BigDecimal(orderProduct.getRentTimeLength()));//  租赁月数
+                    dataDeliveryOrderEntry.setPrice(orderProduct.getProductUnitAmount());//  含税单价
+                    //计算平均税率
+                    BigDecimal rate = BigDecimalUtil.add(BigDecimalUtil.mul(new BigDecimal(erpOrder.getHighTaxRate()), new BigDecimal(0.17d)), BigDecimalUtil.mul(new BigDecimal(erpOrder.getLowTaxRate()), new BigDecimal(0.06d)));
+                    rate = rate.setScale(2, BigDecimal.ROUND_HALF_UP);
+                    dataDeliveryOrderEntry.setAddRate(rate);//  税率
+                    dataDeliveryOrderEntry.setAmount(orderProduct.getProductAmount());//  含税租赁金额
+
+                    dataDeliveryOrderEntry.setDate(startTime);//  租赁开始日期
+                    dataDeliveryOrderEntry.setEndDate(endTime);//  租赁截止日期
+                    dataDeliveryOrderEntry.setYJMonthCount(new BigDecimal(orderProduct.getDepositCycle()));//  押金月数
+                    dataDeliveryOrderEntry.setSFMonthCount(new BigDecimal(orderProduct.getPaymentCycle()));//  首付月数
+                    dataDeliveryOrderEntry.setPayMonthCount(new BigDecimal(orderProduct.getPaymentCycle()));// 付款月数
+                    dataDeliveryOrderEntry.setSFAmount(orderProduct.getFirstNeedPayRentAmount());//  首付租金
+                    //暂时与设备配置名称用一个值
+                    dataDeliveryOrderEntry.setEQConfigNumber(orderProduct.getProductSkuName());//  设备配置代码
+//                    dataDeliveryOrderEntry.setEQConfigName(orderProduct.getProductSkuName());//  设备配置名称
+                    dataDeliveryOrderEntry.setStartDate(startTime);//  起算日期
+                    dataDeliveryOrderEntry.setYJAmount(orderProduct.getRentDepositAmount());//  租金押金金额
+                    dataDeliveryOrderEntry.setEQYJAmount(orderProduct.getDepositAmount());//  设备押金金额
+                    dataDeliveryOrderEntry.setPayAmountTotal(orderProduct.getFirstNeedPayAmount());//首付合计
+                    ProductSku productSku = product.getProductSkuList().get(0);
+                    dataDeliveryOrderEntry.setEQPrice(productSku.getSkuPrice());//  单台设备价值
+                    dataDeliveryOrderEntry.setEQAmount(BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProduct.getProductCount())));//  设备价值
+                    dataDeliveryOrderEntry.setSupplyNumber("");//  同行供应商
+                    dataDeliveryOrderEntry.setOrderItemId(orderProduct.getOrderProductId());
+                    if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderProduct.getPayMode())) {
+                        dataDeliveryOrderEntry.setPayMethodNumber("03");//  01	先付后用 02	先付后用(货到付款) 03	先用后付
+                        dataDeliveryOrder.setPayMethodNumber("03");//订单里也要
+                    } else if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderProduct.getPayMode())) {
+                        dataDeliveryOrderEntry.setPayMethodNumber("01");
+                        dataDeliveryOrder.setPayMethodNumber("03");//订单里也要
+                    } else if (OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderProduct.getPayMode())) {
+                        dataDeliveryOrderEntry.setPayMethodNumber("01");
+                        dataDeliveryOrder.setPayMethodNumber("01");
+                    }
+
+                    if (OrderRentType.RENT_TYPE_DAY.equals(orderProduct.getRentType())) {
+                        dataDeliveryOrderEntry.setStdPrice(productSku.getDayRentPrice());//  设备标准租金
+                    } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderProduct.getRentType())) {
+                        dataDeliveryOrderEntry.setStdPrice(productSku.getMonthRentPrice());//  设备标准租金
+                    }
+                    if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProduct.getIsNewProduct())) {
+                        dataDeliveryOrderEntry.setEQType("N");//  新旧属性 N	新   O 次新 （字母）
+                    } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderProduct.getIsNewProduct())) {
+                        dataDeliveryOrderEntry.setEQType("O");
+                    }
+                    if (StringUtil.isEmpty(orderProduct.getRemark())) {
+                        dataDeliveryOrderEntry.setNote("无");//  备注
+                    } else {
+                        dataDeliveryOrderEntry.setNote(orderProduct.getRemark());//  备注
+                    }
+                    dataDeliveryOrderEntry.setOriginalFBillNo(erpOrder.getTestMachineOrderNo());//原测试机订单号
+                    if (erpOrder.getTestMachineOrderNo() != null && orderProduct.getTestMachineOrderProductId() != null) {
+                        dataDeliveryOrderEntry.setOriginalFEntryId(orderProduct.getTestMachineOrderProductId());
+                        dataDeliveryOrderEntry.setTransferQty(new BigDecimal(orderProduct.getProductCount()));
+                    }
+                    list.add(dataDeliveryOrderEntry);
+                }
+            }
+            if (CollectionUtil.isNotEmpty(erpOrder.getOrderMaterialList())) {
+                for (com.lxzl.erp.common.domain.order.pojo.OrderMaterial orderMaterial : erpOrder.getOrderMaterialList()) {
+                    MaterialDO materialDO = materialMapper.findById(orderMaterial.getMaterialId());
+                    K3MappingMaterialTypeDO k3MappingMaterialTypeDO = k3MappingMaterialTypeMapper.findByErpCode(materialDO.getMaterialType().toString());
+                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(materialDO.getBrandId().toString());
+                    String number = "";
+                    if (StringUtil.isNotEmpty(materialDO.getK3MaterialNo())) {
+                        number = materialDO.getK3MaterialNo();
+                    } else {
+                        number = "20." + k3MappingMaterialTypeDO.getK3MaterialTypeCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + materialDO.getMaterialModel();
+                    }
+                    DataDeliveryOrderEntry dataDeliveryOrderEntry = new DataDeliveryOrderEntry();
+
+                    dataDeliveryOrderEntry.setOrderItemId(orderMaterial.getOrderMaterialId());//ERP ID号
+                    dataDeliveryOrderEntry.setNumber(number);//  设备代码
+                    dataDeliveryOrderEntry.setName(materialDO.getMaterialName());//  设备名称
+                    dataDeliveryOrderEntry.setQty(new BigDecimal(orderMaterial.getMaterialCount()));// 数量
+                    dataDeliveryOrderEntry.setLeaseMonthCount(new BigDecimal(orderMaterial.getRentTimeLength()));//  租赁月数
+                    dataDeliveryOrderEntry.setPrice(orderMaterial.getMaterialUnitAmount());//  含税单价
+                    //计算平均税率
+                    BigDecimal rate = BigDecimalUtil.add(BigDecimalUtil.mul(new BigDecimal(erpOrder.getHighTaxRate()), new BigDecimal(0.17d)), BigDecimalUtil.mul(new BigDecimal(erpOrder.getLowTaxRate()), new BigDecimal(0.06d)));
+
+                    dataDeliveryOrderEntry.setAmount(orderMaterial.getMaterialAmount());//  含税租赁金额
+                    dataDeliveryOrderEntry.setDate(startTime);//  租赁开始日期
+                    dataDeliveryOrderEntry.setEndDate(endTime);//  租赁截止日期
+                    dataDeliveryOrderEntry.setYJMonthCount(new BigDecimal(orderMaterial.getDepositCycle()));//  押金月数
+                    dataDeliveryOrderEntry.setSFMonthCount(new BigDecimal(orderMaterial.getPaymentCycle()));//  首付月数
+                    dataDeliveryOrderEntry.setPayMonthCount(new BigDecimal(orderMaterial.getPaymentCycle()));// 付款月数
+                    dataDeliveryOrderEntry.setSFAmount(orderMaterial.getFirstNeedPayRentAmount());//  首付租金
+                    dataDeliveryOrderEntry.setEQConfigNumber("");//  设备配置代码
+//                    dataDeliveryOrderEntry.setEQConfigName("");//  设备配置名称
+                    dataDeliveryOrderEntry.setStartDate(startTime);//  起算日期
+                    dataDeliveryOrderEntry.setYJAmount(orderMaterial.getRentDepositAmount());//  租金押金金额
+                    dataDeliveryOrderEntry.setEQYJAmount(orderMaterial.getDepositAmount());//设备押金金额
+                    dataDeliveryOrderEntry.setPayAmountTotal(BigDecimalUtil.addAll(orderMaterial.getFirstNeedPayAmount()));// 首付合计
+                    rate = rate.setScale(2, BigDecimal.ROUND_HALF_UP);
+                    dataDeliveryOrderEntry.setAddRate(rate);//  税率
+                    dataDeliveryOrderEntry.setEQPrice(materialDO.getMaterialPrice());//  单台设备价值
+                    dataDeliveryOrderEntry.setEQAmount(BigDecimalUtil.mul(new BigDecimal(orderMaterial.getMaterialCount()), materialDO.getMaterialPrice()));//  设备价值
+                    dataDeliveryOrderEntry.setSupplyNumber("");//  同行供应商
+                    dataDeliveryOrderEntry.setOrderItemId(orderMaterial.getOrderMaterialId());
+                    if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderMaterial.getPayMode())) {
+                        dataDeliveryOrderEntry.setPayMethodNumber("03");//  01	先付后用 02	先付后用(货到付款) 03	先用后付
+                        dataDeliveryOrder.setPayMethodNumber("03");//订单里也要
+                    } else if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderMaterial.getPayMode())) {
+                        dataDeliveryOrderEntry.setPayMethodNumber("01");
+                        dataDeliveryOrder.setPayMethodNumber("01");//订单里也要
+                    } else if (OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderMaterial.getPayMode())) {
+                        dataDeliveryOrderEntry.setPayMethodNumber("01");
+                        dataDeliveryOrder.setPayMethodNumber("01");
+                    }
+                    if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterial.getRentType())) {
+                        dataDeliveryOrderEntry.setStdPrice(materialDO.getDayRentPrice());//  设备标准租金
+                    } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterial.getRentType())) {
+                        dataDeliveryOrderEntry.setStdPrice(materialDO.getMonthRentPrice());//  设备标准租金
+                    }
+                    if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterial.getIsNewMaterial())) {
+                        dataDeliveryOrderEntry.setEQType("N");//  新旧属性 N	新   O 次新 （字母）
+                    } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderMaterial.getIsNewMaterial())) {
+                        dataDeliveryOrderEntry.setEQType("O");
+                    }
+                    if (StringUtil.isEmpty(orderMaterial.getRemark())) {
+                        dataDeliveryOrderEntry.setNote("无");//  备注
+                    } else {
+                        dataDeliveryOrderEntry.setNote(orderMaterial.getRemark());//  备注
+                    }
+                    dataDeliveryOrderEntry.setOriginalFBillNo(erpOrder.getTestMachineOrderNo()); //测试机订单号
+
+                    if (erpOrder.getTestMachineOrderNo() != null && orderMaterial.getTestMachineOrderMaterialId() != null){
+                        dataDeliveryOrderEntry.setOriginalFEntryId(orderMaterial.getTestMachineOrderMaterialId());//测试机订单行号
+                        dataDeliveryOrderEntry.setTransferQty(new BigDecimal(orderMaterial.getMaterialCount()));//测试机明细原数量
+                    }
+                    list.add(dataDeliveryOrderEntry);
+                }
+            }
+            dataDeliveryOrder.setEntrys(list);
+        }
+        return dataDeliveryOrder;
+    }
+
     @Autowired
     private K3MappingBrandMapper k3MappingBrandMapper;
 
@@ -1150,4 +1457,9 @@ public class K3ServiceImpl implements K3Service {
     @Autowired
     private K3Support k3Support;
 
+    @Autowired
+    private OrderTimeAxisMapper orderTimeAxisMapper;
+
+    @Autowired
+    private K3MappingMaterialTypeMapper k3MappingMaterialTypeMapper;
 }
