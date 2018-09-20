@@ -54,6 +54,11 @@ public class ReplaceOrderDO  extends BaseDO {
 	private BigDecimal oldTotalCreditDepositAmount;   //换货前订单授信押金金额
 	private BigDecimal newTotalCreditDepositAmount;   //换货后订单授信押金金额
 	private BigDecimal updateTotalCreditDepositAmount;   //换货修改授信押金金额
+	private String orderSellerId;//订单业务员ID
+	private String orderSellerName;//订单业务员姓名
+	private String orderSellerPhone;//订单业务员手机号
+	private Date orderRentStartTime;   //订单起租时间
+	private Date orderExpectReturnTime;   //订单预计归还时间
 
 	public Integer getId(){
 		return id;
@@ -373,5 +378,45 @@ public class ReplaceOrderDO  extends BaseDO {
 
 	public void setUpdateTotalCreditDepositAmount(BigDecimal updateTotalCreditDepositAmount) {
 		this.updateTotalCreditDepositAmount = updateTotalCreditDepositAmount;
+	}
+
+	public String getOrderSellerId() {
+		return orderSellerId;
+	}
+
+	public void setOrderSellerId(String orderSellerId) {
+		this.orderSellerId = orderSellerId;
+	}
+
+	public String getOrderSellerName() {
+		return orderSellerName;
+	}
+
+	public void setOrderSellerName(String orderSellerName) {
+		this.orderSellerName = orderSellerName;
+	}
+
+	public String getOrderSellerPhone() {
+		return orderSellerPhone;
+	}
+
+	public void setOrderSellerPhone(String orderSellerPhone) {
+		this.orderSellerPhone = orderSellerPhone;
+	}
+
+	public Date getOrderRentStartTime() {
+		return orderRentStartTime;
+	}
+
+	public void setOrderRentStartTime(Date orderRentStartTime) {
+		this.orderRentStartTime = orderRentStartTime;
+	}
+
+	public Date getOrderExpectReturnTime() {
+		return orderExpectReturnTime;
+	}
+
+	public void setOrderExpectReturnTime(Date orderExpectReturnTime) {
+		this.orderExpectReturnTime = orderExpectReturnTime;
 	}
 }
