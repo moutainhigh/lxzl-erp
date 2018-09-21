@@ -9,6 +9,8 @@ import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.core.service.VerifyReceiver;
 import com.lxzl.se.core.service.BaseService;
 
+import java.util.List;
+
 /**
  * @Author: Sunzhipeng
  * @Description:
@@ -34,4 +36,6 @@ public interface ReplaceOrderService  extends VerifyReceiver {
     ServiceResult<String,String> sendReplaceOrderToK3(String replaceOrderNo);
 
     ServiceResult<String,String> sendReplaceOrderInfoToK3(String replaceOrderNo);
+
+    ServiceResult<String,List<ReplaceOrder>> queryReplaceOrderListForOrderNo(String orderNo);
 }

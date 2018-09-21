@@ -1032,7 +1032,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             result.setErrorCode(k3ServiceResult.getErrorCode(), k3ServiceResult.getFormatArgs());
-            return result;
         }
 
         return result;
@@ -1252,6 +1251,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             result = sendReplaceOrderInfoToK3(replaceOrderDO.getReplaceOrderNo());
             if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                result.setErrorCode(result.getErrorCode(), result.getFormatArgs());
             }
             return result;
         }
@@ -1339,7 +1339,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 sb.append(responseMap.get("Message").toString());
                 sb.append("\r\n").append("请求参数：").append(requestJson);
                 dingDingSupport.dingDingSendMessage(sb.toString());
-                serviceResult.setErrorCode(ErrorCode.K3_REPLACE_ORDER_ERROR);
+                serviceResult.setErrorCode(ErrorCode.K3_REPLACE_ORDER_ERROR,responseMap.get("Message").toString());
                 serviceResult.setResult(responseMap.get("Message").toString());
                 return serviceResult;
             }
@@ -1353,6 +1353,19 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             serviceResult.setErrorCode(ErrorCode.K3_SERVER_ERROR);
             return serviceResult;
         }
+    }
+
+    @Override
+    public ServiceResult<String, List<ReplaceOrder>> queryReplaceOrderListForOrderNo(String orderNo) {
+        ServiceResult<String, List<ReplaceOrder>> result = new ServiceResult<>();
+        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForOrderDetail(orderNo);
+        List<ReplaceOrder> replaceOrderList = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(replaceOrderDOList)) {
+            replaceOrderList = ConverterUtil.convertList(replaceOrderDOList,ReplaceOrder.class);
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(replaceOrderList);
+        return result;
     }
 
     @Override

@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.List;
+
 /**
  * @Author: Sunzhipeng
  * @Description:
@@ -158,6 +160,18 @@ public class ReplaceOrderController {
     @RequestMapping(value = "sendReplaceOrderToK3", method = RequestMethod.POST)
     public Result sendReplaceOrderInfoToK3(@RequestBody ReplaceOrder replaceOrder, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = replaceOrderService.sendReplaceOrderInfoToK3(replaceOrder.getReplaceOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 通过订单编号查询换货单列表
+     * @param replaceOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "queryReplaceOrderListForOrderNo", method = RequestMethod.POST)
+    public Result queryReplaceOrderListForOrderNo(@RequestBody ReplaceOrder replaceOrder, BindingResult validResult) {
+        ServiceResult<String, List<ReplaceOrder>> serviceResult = replaceOrderService.queryReplaceOrderListForOrderNo(replaceOrder.getOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }
