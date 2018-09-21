@@ -123,7 +123,7 @@
                                     <a href="#reletOrderList" data-toggle="tab">续租单（共<span id="orderReletCount"></span>个）</a>
                                 </li>
                                 <li>
-                                    <a href="#changeOrderList" data-toggle="tab">换货单（共<span id="changeOrderCount"></span>个）</a>
+                                    <a href="#changeOrderList" data-toggle="tab">换货单（共<span id="changeOrderCount">0</span>个）</a>
                                 </li>
                                 <li>
                                     <a href="#orderPrintList" data-toggle="tab">打印记录（共<span id="printRecordCount">0</span>次）</a>
