@@ -1303,6 +1303,14 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         Map<String, Object> requestData = new HashMap<>();
         Map responseMap = new HashMap();
         String response = null;
+        List<ReplaceOrderProductDO> replaceOrderProductDOList = replaceOrderDO.getReplaceOrderProductDOList();
+        if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
+            for (ReplaceOrderProductDO replaceOrderProductDO:replaceOrderProductDOList){
+                replaceOrderProductDO.setOldProductSkuSnapshot(null);
+                replaceOrderProductDO.setNewProductSkuSnapshot(null);
+            }
+        }
+
         requestData.put("replaceOrder",replaceOrderDO);
         String requestJson  = JSONObject.toJSONString(requestData);
         String k3confirmOrderUrl = null;
@@ -1358,11 +1366,14 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                     return ErrorCode.BUSINESS_EXCEPTION;
                 }
                 if (verifyResult) {
+                    replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_PROCESSING);
+                    replaceOrderMapper.update(replaceOrderDO);
                     ServiceResult result = sendReplaceOrderInfoToK3(replaceOrderDO.getReplaceOrderNo());
                     if (!ErrorCode.SUCCESS.equals(result.getErrorCode().toString())) {
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                         return result.getErrorCode().toString();
                     }
-                    replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_PROCESSING);
+
                 } else {
                     replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_BACKED);
                     // 返还扣走或者添加的信用额度
