@@ -1734,9 +1734,15 @@
         <if test="queryParam.queryOrderType != null">
             AND esod.order_type = #{queryParam.queryOrderType, jdbcType=INTEGER}
         </if>
-        <if test="queryParam.orderIds != null and queryParam.orderIds.size() > 0">
+        <if test="queryParam.queryOrderType == 4 and queryParam.orderIds != null and queryParam.orderIds.size() > 0">
             AND esod.order_id in
             <foreach collection="queryParam.orderIds" item="item" index="index" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="queryParam.queryOrderType == 6 and queryParam.replaceOrderIds != null and queryParam.replaceOrderIds.size() > 0">
+            AND esod.order_id in
+            <foreach collection="queryParam.replaceOrderIds" item="item" index="index" separator="," open="(" close=")">
                 #{item}
             </foreach>
         </if>
@@ -1754,7 +1760,7 @@
         </if>
         AND esod.statement_start_time <![CDATA[ < ]]> #{queryParam.statementOrderStartTime}
     </select>
-    
+
     <select id="findByOrderTypeAndSourceId" resultMap="CheckStatementOrderDetailDO">
         SELECT
         <include refid="column_List"/>

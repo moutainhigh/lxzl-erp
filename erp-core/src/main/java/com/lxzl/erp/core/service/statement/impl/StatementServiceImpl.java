@@ -82,6 +82,7 @@ import com.lxzl.erp.dataaccess.domain.statement.*;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDO;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDetailDO;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
+import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import com.lxzl.se.dataaccess.mysql.source.interceptor.SqlLogInterceptor;
@@ -7200,24 +7201,34 @@ public class StatementServiceImpl implements StatementService {
             returnServiceResult.setErrorCode(serviceResultListRentByCustomerId.getErrorCode());
             return returnServiceResult;
         }
-        if (serviceResultListRentByCustomerId.getResult() != null) {
+        if(CollectionUtil.isNotEmpty(serviceResultListRentByCustomerId.getResult())){
             returnServiceResult.getResult().addAll(serviceResultListRentByCustomerId.getResult());
         }
+
         // 获取订单类型为退货类型的结算数据列表
-        ServiceResult<String, List<BaseCheckStatementDetailDTO>> serviceResultListUnRentByOrderIds = listUnRentByOrderIds(statementOrderMonthQueryParam);
-        if (!ErrorCode.SUCCESS.equals(serviceResultListUnRentByOrderIds.getErrorCode())) {
-            returnServiceResult.setErrorCode(serviceResultListUnRentByOrderIds.getErrorCode());
-            return returnServiceResult;
-        }
-        if (serviceResultListUnRentByOrderIds.getResult() != null) {
-            returnServiceResult.getResult().addAll(serviceResultListUnRentByOrderIds.getResult());
-        }
+        addReturnServiceResult(returnServiceResult,statementOrderMonthQueryParam,OrderType.ORDER_TYPE_RETURN);
+
+        // todo 获取订单类型为换货类型的结算数据列表  类型抽出来set
+        addReturnServiceResult(returnServiceResult,statementOrderMonthQueryParam,OrderType.ORDER_TYPE_REPLACE);
+
         // 数据为空 数据不存在异常
         if (CollectionUtil.isEmpty(returnServiceResult.getResult())) {
             returnServiceResult.setErrorCode(ErrorCode.CHECK_SHEET_CHOICE_MONTH_NOT_STATEMENT_ORDER_INFORMATION);
         }
         return returnServiceResult;
     }
+
+    public void addReturnServiceResult (ServiceResult<String, List<BaseCheckStatementDetailDTO>> returnServiceResult,StatementOrderMonthQueryParam statementOrderMonthQueryParam,Integer orderType){
+        statementOrderMonthQueryParam.setQueryOrderType(orderType);
+        ServiceResult<String, List<BaseCheckStatementDetailDTO>> stringListServiceResult = listUnRentByOrderIds(statementOrderMonthQueryParam);
+        if (!ErrorCode.SUCCESS.equals(stringListServiceResult.getErrorCode())) {
+            throw new BusinessException(stringListServiceResult.getErrorCode(),ErrorCode.getMessage(stringListServiceResult.getErrorCode()));
+        }
+        if(CollectionUtil.isNotEmpty(stringListServiceResult.getResult())){
+            returnServiceResult.getResult().addAll(stringListServiceResult.getResult());
+        }
+    }
+
     public ServiceResult<String, List<BaseCheckStatementDetailDTO>> listRentByCustomerId(StatementOrderMonthQueryParam statementOrderMonthQueryParam) {
         ServiceResult<String, List<BaseCheckStatementDetailDTO>> serviceResult = verifyListByCustomerId(statementOrderMonthQueryParam);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -7242,7 +7253,6 @@ public class StatementServiceImpl implements StatementService {
         ServiceResult<String, List<BaseCheckStatementDetailDTO>> serviceResult = new ServiceResult<>();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         StatementOrderMonthQueryParam orderMonthQueryParamClone = statementOrderMonthQueryParam.clone();
-        orderMonthQueryParamClone.setQueryOrderType(OrderType.ORDER_TYPE_RETURN);
         List<StatementOrderDetailDO> statementOrderDetailDOS = statementOrderDetailMapper.listUnRentByOrderIds(orderMonthQueryParamClone);
 
         if (CollectionUtil.isEmpty(statementOrderDetailDOS)) {
@@ -7271,7 +7281,12 @@ public class StatementServiceImpl implements StatementService {
         // 租赁
         if (OrderType.ORDER_TYPE_ORDER.equals(orderType)) {
             return getRentClassByCondition(statementOrderDetailDO);
+            // 退货
         } else if (OrderType.ORDER_TYPE_RETURN.equals(orderType)) {
+            return getUnRentClassByCondition(statementOrderDetailDO);
+            // 换货
+        } else if (OrderType.ORDER_TYPE_REPLACE.equals(orderType)) {
+            //todo 目前还不知道换货 应该是建立订单退货单 建立class文件
             return getUnRentClassByCondition(statementOrderDetailDO);
         }
         return retClass;

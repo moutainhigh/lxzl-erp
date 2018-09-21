@@ -16,7 +16,9 @@ import com.lxzl.erp.common.domain.statement.pojo.dto.BaseCheckStatementDetailDTO
 import com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementSummaryDTO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
+import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.se.core.service.BaseService;
 
 import java.math.BigDecimal;
@@ -280,6 +282,8 @@ public interface StatementService extends BaseService {
      * @param k3ReturnOrderDO
      */
     public ServiceResult<String, BigDecimal> fixReletOrderItemCount(K3ReturnOrderDO k3ReturnOrderDO);
+    void saveStatementOrder(List<StatementOrderDetailDO> addStatementOrderDetailDOList, Date currentTime, Integer loginUserId);
+    List<StatementOrderDetailDO> generateOrderProductStatement(Integer rentTimeLength, Integer statementMode, Date currentTime, Integer statementDays, Integer loginUserId, Date rentStartTime, Integer buyerCustomerId, Integer orderId, OrderProductDO orderProductDO, BigDecimal itemAllAmount);
 
     /**
      * <p>
@@ -318,4 +322,5 @@ public interface StatementService extends BaseService {
      * @date 2018/7/5 13:35
      */
     CheckStatementSummaryDTO sumStatementDetailAmountByCustomerNo(StatementOrderMonthQueryParam statementOrderMonthQueryParam);
+
 }

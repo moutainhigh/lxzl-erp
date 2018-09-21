@@ -38,6 +38,9 @@ public class StatementOrderMonthQueryParam extends BasePageParam {
     private Set<Integer> orderIds;
     private Integer queryOrderType;
 
+    /** 换货单id列表 */
+    private Set<Integer> replaceOrderIds;
+
     public Integer getSubCompanyId() {
         return subCompanyId;
     }
@@ -160,4 +163,8 @@ public class StatementOrderMonthQueryParam extends BasePageParam {
     public void setQueryOrderType(Integer queryOrderType) {
         this.queryOrderType = queryOrderType;
     }
+
+    public Set<Integer> getReplaceOrderIds() { return replaceOrderIds; }
+
+    public void setReplaceOrderIds(Set<Integer> replaceOrderIds) { this.replaceOrderIds = replaceOrderIds; }
 }
