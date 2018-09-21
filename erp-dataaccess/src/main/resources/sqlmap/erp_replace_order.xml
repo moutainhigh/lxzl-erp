@@ -514,4 +514,16 @@
 		LEFT JOIN erp_replace_order_material erom ON ero.id = erom.replace_order_id and erom.data_status = 1
 		where ero.order_no = #{orderNo, jdbcType=VARCHAR} and ero.data_status = 1
 	</select>
+
+	<select id="listByMonthQuery" parameterType="com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam" resultMap="ReplaceOrderDO">
+		SELECT
+		<include refid="column_List"/>
+		FROM erp_replace_order ero
+		WHERE ero.customer_no = #{queryParam.statementOrderCustomerNo}
+		AND ero.data_status = 1 AND ero.replace_order_status = 20
+		AND
+		(
+		ero.confirm_replace_time BETWEEN #{queryParam.statementOrderStartTime} AND #{queryParam.statementOrderEndTimeAddOne}
+		)
+	</select>
 </mapper>
