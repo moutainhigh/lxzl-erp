@@ -1,6 +1,8 @@
 package com.lxzl.erp.web.controller;
 
+import com.alibaba.dubbo.common.store.support.SimpleDataStore;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
@@ -13,7 +15,9 @@ import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.SimpleFormatter;
 
 /**
  * 描述: 订单测试类
@@ -28,7 +32,6 @@ public class OrderTest extends ERPUnTransactionalTest {
         Order order = new Order();
         order.setOrderNo("LXO-20180308-1000-00056");
         TestResult testResult = getJsonTestResult("/order/cancel", order);
-
     }
 
     @Test
@@ -92,11 +95,11 @@ public class OrderTest extends ERPUnTransactionalTest {
         order.setBuyerRemark("2018.3.22 18:52 测试");
         order.setRentStartTime(new Date());
         order.setExpectDeliveryTime(new Date());
-        order.setOrderSubCompanyId(3);
+        order.setOrderSubCompanyId(8);
         order.setDeliverySubCompanyId(1);
 
-        order.setRentType(OrderRentType.RENT_TYPE_MONTH);
-        order.setRentTimeLength(6);
+        order.setRentType(OrderRentType.RENT_TYPE_DAY);
+        order.setRentTimeLength(20);
 
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
@@ -112,17 +115,17 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderProduct.setDepositAmount(new BigDecimal(100.00));
         orderProductList.add(orderProduct);
 
-        OrderProduct orderProduct1 = new OrderProduct();
-        orderProduct1.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
-        orderProduct1.setProductSkuId(218);
-        orderProduct1.setProductCount(5);
-        orderProduct1.setIsNewProduct(0);
-        orderProduct1.setInsuranceAmount(new BigDecimal(33.33333));
-        orderProduct1.setProductUnitAmount(new BigDecimal(33.33333));
-        orderProduct1.setInsuranceAmount(new BigDecimal(33.33333));
-        orderProduct1.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
-        orderProduct1.setDepositAmount(new BigDecimal(600.0));
-        orderProductList.add(orderProduct1);
+//        OrderProduct orderProduct1 = new OrderProduct();
+//        orderProduct1.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+//        orderProduct1.setProductSkuId(218);
+//        orderProduct1.setProductCount(5);
+//        orderProduct1.setIsNewProduct(0);
+//        orderProduct1.setInsuranceAmount(new BigDecimal(33.33333));
+//        orderProduct1.setProductUnitAmount(new BigDecimal(33.33333));
+//        orderProduct1.setInsuranceAmount(new BigDecimal(33.33333));
+//        orderProduct1.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+//        orderProduct1.setDepositAmount(new BigDecimal(600.0));
+//        orderProductList.add(orderProduct1);
 
 //        OrderProduct orderProduct2 = new OrderProduct();
 //        orderProduct2.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
@@ -144,7 +147,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderMaterial.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
         orderMaterial.setMaterialId(40);
         orderMaterial.setMaterialCount(3);
-        orderMaterial.setIsNewMaterial(1);
+        orderMaterial.setIsNewMaterial(0);
         orderMaterial.setInsuranceAmount(new BigDecimal(600.0));
         orderMaterial.setMaterialUnitAmount(new BigDecimal(600.0));
         orderMaterial.setInsuranceAmount(new BigDecimal(600.0));
@@ -152,17 +155,17 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderMaterial.setDepositAmount(new BigDecimal("30"));
         orderMaterialList.add(orderMaterial);
 
-        OrderMaterial orderMaterial1 = new OrderMaterial();
-        orderMaterial1.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
-        orderMaterial1.setMaterialId(40);
-        orderMaterial1.setMaterialCount(3);
-        orderMaterial1.setIsNewMaterial(0);
-        orderMaterial1.setInsuranceAmount(new BigDecimal(600.0));
-        orderMaterial1.setMaterialUnitAmount(new BigDecimal(600.0));
-        orderMaterial1.setInsuranceAmount(new BigDecimal(600.0));
-        orderMaterial1.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
-        orderMaterial1.setDepositAmount(new BigDecimal("30"));
-        orderMaterialList.add(orderMaterial1);
+//        OrderMaterial orderMaterial1 = new OrderMaterial();
+//        orderMaterial1.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+//        orderMaterial1.setMaterialId(40);
+//        orderMaterial1.setMaterialCount(3);
+//        orderMaterial1.setIsNewMaterial(0);
+//        orderMaterial1.setInsuranceAmount(new BigDecimal(600.0));
+//        orderMaterial1.setMaterialUnitAmount(new BigDecimal(600.0));
+//        orderMaterial1.setInsuranceAmount(new BigDecimal(600.0));
+//        orderMaterial1.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+//        orderMaterial1.setDepositAmount(new BigDecimal("30"));
+//        orderMaterialList.add(orderMaterial1);
 
 //        OrderMaterial orderMaterial2 = new OrderMaterial();
 //        orderMaterial2.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
@@ -178,8 +181,8 @@ public class OrderTest extends ERPUnTransactionalTest {
 
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerNo("LXCC-0755-20180112-00002");
-        order.setCustomerConsignId(5445);
+        order.setBuyerCustomerNo("LXCC-027-20180824-00067");
+        order.setCustomerConsignId(6558);
         order.setRentStartTime(new Date());
         order.setIsPeer(0);
 
@@ -453,8 +456,8 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         OrderCommitParam order = new OrderCommitParam();
-        order.setOrderNo("LXO-20180821-1000-00003");
-        order.setVerifyUser(500013);//审核人
+        order.setOrderNo("LXO-20180904-021-00005");
+        order.setVerifyUser(500359);//审核人
         List<Integer> imageList = new ArrayList<>();
         imageList.add(1818);
         order.setImgIdList(imageList);
@@ -566,19 +569,15 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         
-        Date now = new Date();
-        now.getTime();
-
-
         Order order = new Order();
-        order.setOrderNo("LXO-20180709-0755-00047");
+        order.setOrderNo("LXO-20180903-025-00010");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
     }
 
     @Test
     public void queryOrderByNoNew() throws Exception {
         Order order = new Order();
-        order.setOrderNo("LXO-20180627-027-00164");
+        order.setOrderNo("LXO-20180905-027-00030");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNoNew", order);
     }
 
@@ -745,4 +744,310 @@ public class OrderTest extends ERPUnTransactionalTest {
 
         TestResult testResult = getJsonTestResult("/order/supperUserChangeOrder", orderConfirmChangeParam);
     }
+
+    @Test
+    public void testMachineOrderConvertOrderJSON() throws Exception {
+        String str = "{\n" +
+                "    \"buyerCustomerNo\": \"LXCC-0755-20180911-00050\",\n" +
+                "    \"rentStartTime\": 1536710400000,\n" +
+                "    \"expectDeliveryTime\": 1536537600000,\n" +
+                "    \"buyerRemark\": \"\",\n" +
+                "    \"customerConsignId\": \"6617\",\n" +
+                "    \"highTaxRate\": \"20\",\n" +
+                "    \"lowTaxRate\": \"80\",\n" +
+                "    \"deliveryMode\": \"1\",\n" +
+                "    \"rentType\": \"2\",\n" +
+                "    \"rentTimeLength\": \"10\",\n" +
+                "    \"isPeer\": \"0\",\n" +
+                "    \"deliverySubCompanyId\": \"2\",\n" +
+                "    \"orderSellerId\": 500383,\n" +
+                "    \"orderSubCompanyId\": 2,\n" +
+                "    \"testMachineOrderNo\": \"LXO-20180911-0755-00064\",\n" +
+                "    \"isTurnRentOrder\": 0,\n" +
+                "    \"orderProductList\": [\n" +
+                "        {\n" +
+                "            \"serialNumber\": \"M8pnmA0I\",\n" +
+                "            \"productSkuId\": 1689,\n" +
+                "            \"productUnitAmount\": \"200\",\n" +
+                "            \"productCount\": \"10\",\n" +
+                "            \"rentTimeLength\": \"\",\n" +
+                "            \"insuranceAmount\": \"\",\n" +
+                "            \"isNewProduct\": 0,\n" +
+                "            \"depositAmount\": 0,\n" +
+                "            \"isItemDelivered\": \"1\",\n" +
+                "            \"testMachineOrderProductId\": \"4444\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"serialNumber\": \"5xIhx67j\",\n" +
+                "            \"productSkuId\": 1715,\n" +
+                "            \"productUnitAmount\": \"200\",\n" +
+                "            \"productCount\": \"10\",\n" +
+                "            \"rentTimeLength\": \"\",\n" +
+                "            \"insuranceAmount\": \"\",\n" +
+                "            \"isNewProduct\": 1,\n" +
+                "            \"depositAmount\": 0,\n" +
+                "            \"isItemDelivered\": \"0\",\n" +
+                "            \"testMachineOrderProductId\": \"\"\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"orderMaterialList\": [\n" +
+                "        {\n" +
+                "            \"serialNumber\": \"B0Ex1kR8\",\n" +
+                "            \"materialNo\": \"LX-LP47X201-20180212-00017\",\n" +
+                "            \"materialId\": 17,\n" +
+                "            \"materialUnitAmount\": \"10\",\n" +
+                "            \"materialCount\": \"100\",\n" +
+                "            \"productCount\": \"\",\n" +
+                "            \"rentTimeLength\": \"\",\n" +
+                "            \"productUnitAmount\": \"\",\n" +
+                "            \"insuranceAmount\": \"\",\n" +
+                "            \"isNewMaterial\": 1,\n" +
+                "            \"depositAmount\": 0,\n" +
+                "            \"isItemDelivered\": \"0\",\n" +
+                "            \"testMachineOrderMaterialId\": \"\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+
+        Order order = JSONUtil.parseObject(str,Order.class);
+        TestResult testResult = getJsonTestResult("/order/testMachineOrderConvertOrder", order);
+        System.err.println(testResult);
+    }
+
+    @Test
+    public void updateOrderNewJSON() throws Exception {
+        String str = "{\"orderNo\":\"LXO-20180905-027-00029\",\"buyerCustomerNo\":\"LXCC-027-20180724-00095\",\"rentStartTime\":1536105600000,\"expectDeliveryTime\":1536105600000,\"buyerRemark\":\"\",\"customerConsignId\":\"6477\",\"highTaxRate\":\"80\",\"lowTaxRate\":\"20\",\"deliveryMode\":\"3\",\"rentType\":\"2\",\"rentTimeLength\":\"12\",\"isPeer\":\"0\",\"deliverySubCompanyId\":\"8\",\"orderProductList\":[{\"serialNumber\":\"80Mb7FRo\",\"productId\":2000577,\"productSkuId\":1689,\"productUnitAmount\":\"10\",\"productCount\":\"5\",\"rentTimeLength\":\"\",\"insuranceAmount\":\"\",\"isNewProduct\":0,\"depositAmount\":0},{\"serialNumber\":\"HbSudGU0\",\"productId\":2000690,\"productSkuId\":1719,\"productUnitAmount\":\"50\",\"productCount\":\"20\",\"rentTimeLength\":\"\",\"insuranceAmount\":\"\",\"isNewProduct\":0,\"depositAmount\":0}],\"orderMaterialList\":[{\"serialNumber\":\"wnY0HrTF\",\"materialNo\":\"LX-IPAD2YC-20180212-00577\",\"materialId\":577,\"materialUnitAmount\":\"10\",\"materialCount\":\"5\",\"productCount\":\"\",\"rentTimeLength\":\"\",\"productUnitAmount\":\"\",\"insuranceAmount\":\"\",\"isNewMaterial\":0,\"depositAmount\":0},{\"serialNumber\":\"Osyz94JD\",\"materialNo\":\"LX-LP29X220-20180212-00015\",\"materialId\":15,\"materialUnitAmount\":\"10\",\"materialCount\":\"20\",\"productCount\":\"\",\"rentTimeLength\":\"\",\"productUnitAmount\":\"\",\"insuranceAmount\":\"\",\"isNewMaterial\":0,\"depositAmount\":0}]}";
+
+        Order order = JSONUtil.parseObject(str,Order.class);
+        TestResult testResult = getJsonTestResult("/order/updateNew", order);
+        System.err.println(testResult);
+    }
+    @Test
+    public void testMachineOrderConvertOrder() throws Exception {
+        Order order = new Order();
+        order.setTestMachineOrderNo("LXO-20180904-027-00004");
+        order.setDeliveryMode(DeliveryMode.DELIVERY_MODE_EXPRESS);
+        order.setLogisticsAmount(new BigDecimal(12));
+        order.setBuyerRemark("2018.3.22 18:52 测试");
+        order.setRentStartTime(new Date());
+        order.setExpectDeliveryTime(new Date());
+        order.setOrderSubCompanyId(3);
+        order.setDeliverySubCompanyId(1);
+
+        order.setRentType(OrderRentType.RENT_TYPE_MONTH);
+        order.setRentTimeLength(6);
+
+        List<OrderProduct> orderProductList = new ArrayList<>();
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setOrderProductId(4363);
+        orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+        orderProduct.setProductId(2000018);
+        orderProduct.setProductSkuId(218);
+        orderProduct.setProductCount(2);
+        orderProduct.setIsNewProduct(1);
+//        orderProduct.setInsuranceAmount(new BigDecimal(33.33333));
+        orderProduct.setProductUnitAmount(new BigDecimal(16.66666));
+        orderProduct.setInsuranceAmount(new BigDecimal(33.33333));
+        orderProduct.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderProduct.setDepositAmount(new BigDecimal(100.00));
+        orderProduct.setIsItemDelivered(1);
+        orderProductList.add(orderProduct);
+
+        OrderProduct orderProduct1 = new OrderProduct();
+        orderProduct1.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+        orderProduct1.setProductSkuId(218);
+        orderProduct1.setProductCount(5);
+        orderProduct1.setIsNewProduct(1);
+        orderProduct1.setInsuranceAmount(new BigDecimal(33.33333));
+        orderProduct1.setProductUnitAmount(new BigDecimal(33.33333));
+        orderProduct1.setInsuranceAmount(new BigDecimal(33.33333));
+        orderProduct1.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderProduct1.setDepositAmount(new BigDecimal(600.0));
+        orderProductList.add(orderProduct1);
+
+//        OrderProduct orderProduct2 = new OrderProduct();
+//        orderProduct2.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+//        orderProduct2.setProductSkuId(218);
+//        orderProduct2.setProductCount(5);
+//        orderProduct2.setIsNewProduct(1);
+//        orderProduct2.setInsuranceAmount(new BigDecimal(600.0));
+//        orderProduct2.setProductUnitAmount(new BigDecimal(600.0));
+//        orderProduct2.setInsuranceAmount(new BigDecimal(600.0));
+//        orderProduct2.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+//        orderProduct2.setDepositAmount(new BigDecimal(600.0));
+//        orderProductList.add(orderProduct2);
+
+        order.setOrderProductList(orderProductList);
+
+        List<OrderMaterial> orderMaterialList = new ArrayList<>();
+
+        OrderMaterial orderMaterial = new OrderMaterial();
+        orderMaterial.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+        orderMaterial.setOrderMaterialId(7068);
+        orderMaterial.setMaterialId(40);
+        orderMaterial.setMaterialCount(3);
+        orderMaterial.setIsNewMaterial(1);
+        orderMaterial.setInsuranceAmount(new BigDecimal(600.0));
+        orderMaterial.setMaterialUnitAmount(new BigDecimal(600.0));
+        orderMaterial.setInsuranceAmount(new BigDecimal(600.0));
+        orderMaterial.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderMaterial.setDepositAmount(new BigDecimal("30"));
+        orderMaterial.setIsItemDelivered(1);
+        orderMaterialList.add(orderMaterial);
+
+        OrderMaterial orderMaterial1 = new OrderMaterial();
+        orderMaterial1.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+        orderMaterial1.setMaterialId(40);
+        orderMaterial1.setMaterialCount(3);
+        orderMaterial1.setIsNewMaterial(0);
+        orderMaterial1.setInsuranceAmount(new BigDecimal(600.0));
+        orderMaterial1.setMaterialUnitAmount(new BigDecimal(600.0));
+        orderMaterial1.setInsuranceAmount(new BigDecimal(600.0));
+        orderMaterial1.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderMaterial1.setDepositAmount(new BigDecimal("30"));
+        orderMaterialList.add(orderMaterial1);
+
+//        OrderMaterial orderMaterial2 = new OrderMaterial();
+//        orderMaterial2.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+//        orderMaterial2.setMaterialId(40);
+//        orderMaterial2.setMaterialCount(3);
+//        orderMaterial2.setIsNewMaterial(1);
+//        orderMaterial2.setInsuranceAmount(new BigDecimal(600.0));
+//        orderMaterial2.setMaterialUnitAmount(new BigDecimal(600.0));
+//        orderMaterial2.setInsuranceAmount(new BigDecimal(600.0));
+//        orderMaterial2.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+//        orderMaterial2.setDepositAmount(new BigDecimal("30"));
+//        orderMaterialList.add(orderMaterial2);
+
+        order.setOrderMaterialList(orderMaterialList);
+
+        order.setBuyerCustomerNo("LXCC-027-20180824-00067");
+        order.setCustomerConsignId(6558);
+        order.setRentStartTime(new Date());
+        order.setIsPeer(0);
+
+        TestResult testResult = getJsonTestResult("/order/testMachineOrderConvertOrder", order);
+        System.err.println(testResult);
+    }
+
+
+    @Test
+    public void updateTestMachineOrderConvertOrder() throws Exception {
+        Order order = new Order();
+
+        order.setOrderNo("LXO-20180903-021-00024");
+        order.setBuyerCustomerNo("LXCC-1000-20180831-00003");
+        order.setCustomerConsignId(6762);
+        order.setRentStartTime(new Date());
+        order.setIsPeer(0);
+        order.setDeliveryMode(DeliveryMode.DELIVERY_MODE_EXPRESS);
+        order.setLogisticsAmount(new BigDecimal(12));
+        order.setBuyerRemark("2018.3.21 14:52 测试");
+        order.setRentStartTime(new Date());
+        order.setExpectDeliveryTime(new Date());
+        order.setOrderSubCompanyId(1);
+        order.setDeliverySubCompanyId(1);
+
+        order.setRentType(OrderRentType.RENT_TYPE_MONTH);
+        order.setRentTimeLength(20);
+
+        List<OrderProduct> orderProductList = new ArrayList<>();
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+        orderProduct.setTestMachineOrderProductId(14563);
+        orderProduct.setProductSkuId(218);
+        orderProduct.setProductCount(2);
+        orderProduct.setIsNewProduct(1);
+        orderProduct.setInsuranceAmount(new BigDecimal(1000.0));
+        orderProduct.setProductUnitAmount(new BigDecimal(1000.0));
+        orderProduct.setInsuranceAmount(new BigDecimal(1000.0));
+        orderProduct.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderProduct.setDepositAmount(new BigDecimal(1000.0));
+        orderProduct.setIsItemDelivered(1);
+        orderProductList.add(orderProduct);
+
+        OrderProduct orderProduct1 = new OrderProduct();
+        orderProduct1.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+        orderProduct1.setOrderProductId(14564);
+        orderProduct1.setProductSkuId(218);
+        orderProduct1.setProductCount(5);
+        orderProduct1.setIsNewProduct(0);
+        orderProduct1.setInsuranceAmount(new BigDecimal(1000.0));
+        orderProduct1.setProductUnitAmount(new BigDecimal(1000.0));
+        orderProduct1.setInsuranceAmount(new BigDecimal(1000.0));
+        orderProduct1.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderProduct1.setDepositAmount(new BigDecimal(1000.0));
+        orderProductList.add(orderProduct1);
+
+//        OrderProduct orderProduct2 = new OrderProduct();
+//        orderProduct2.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+//        orderProduct2.setProductSkuId(216);
+//        orderProduct2.setProductCount(4);
+//        orderProduct2.setIsNewProduct(1);
+//        orderProduct2.setInsuranceAmount(new BigDecimal(1000.0));
+//        orderProduct2.setProductUnitAmount(new BigDecimal(1000.0));
+//        orderProduct2.setInsuranceAmount(new BigDecimal(1000.0));
+//        orderProduct2.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+//        orderProduct2.setDepositAmount(new BigDecimal(1000.0));
+//        orderProductList.add(orderProduct2);
+
+        order.setOrderProductList(orderProductList);
+
+        List<OrderMaterial> orderMaterialList = new ArrayList<>();
+
+        OrderMaterial orderMaterial = new OrderMaterial();
+        orderMaterial.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+        orderMaterial.setOrderMaterialId(4392);
+        orderMaterial.setMaterialId(40);
+        orderMaterial.setMaterialCount(3);
+        orderMaterial.setIsNewMaterial(1);
+        orderMaterial.setInsuranceAmount(new BigDecimal(100.0));
+        orderMaterial.setMaterialUnitAmount(new BigDecimal(100.0));
+        orderMaterial.setInsuranceAmount(new BigDecimal(100.0));
+        orderMaterial.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderMaterial.setDepositAmount(new BigDecimal(30.0));
+        orderMaterial.setIsItemDelivered(1);
+        orderMaterialList.add(orderMaterial);
+
+        OrderMaterial orderMaterial1 = new OrderMaterial();
+        orderMaterial1.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+        orderMaterial1.setOrderMaterialId(4393);
+        orderMaterial1.setMaterialId(40);
+        orderMaterial1.setMaterialCount(2);
+        orderMaterial1.setIsNewMaterial(0);
+        orderMaterial1.setInsuranceAmount(new BigDecimal(100.0));
+        orderMaterial1.setMaterialUnitAmount(new BigDecimal(100.0));
+        orderMaterial1.setInsuranceAmount(new BigDecimal(100.0));
+        orderMaterial1.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderMaterial1.setDepositAmount(new BigDecimal(30.0));
+        orderMaterialList.add(orderMaterial1);
+
+//        OrderMaterial orderMaterial2 = new OrderMaterial();
+//        orderMaterial2.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+//        orderMaterial2.setMaterialId(40);
+//        orderMaterial2.setMaterialCount(5);
+//        orderMaterial2.setIsNewMaterial(1);
+//        orderMaterial2.setInsuranceAmount(new BigDecimal(100.0));
+//        orderMaterial2.setMaterialUnitAmount(new BigDecimal(100.0));
+//        orderMaterial2.setInsuranceAmount(new BigDecimal(100.0));
+//        orderMaterial2.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+//        orderMaterial2.setDepositAmount(new BigDecimal(30.0));
+//        orderMaterialList.add(orderMaterial2);
+
+        order.setOrderMaterialList(orderMaterialList);
+
+        TestResult testResult = getJsonTestResult("/order/updateTestMachineOrderConvertOrder", order);
+        System.err.println(testResult);
+    }
+
+//    @Test
+//    public void testTime() throws Exception {
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+//
+//        Order order = new Order();
+//        order.setOrderNo("LXO-20180913-0755-00082");
+//        TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
+//
+//        String ssss = "haha ";
+//    }
 }

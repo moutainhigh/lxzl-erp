@@ -35,7 +35,6 @@
 		<result column="real_replace_product_count" jdbcType="INTEGER" property="realReplaceProductCount" />
 		<result column="is_relet_order_replace" jdbcType="INTEGER" property="isReletOrderReplace" />
 		<result column="relet_order_item_id" jdbcType="INTEGER" property="reletOrderItemId" />
-
 		<result column="old_product_id" jdbcType="INTEGER" property="oldProductId" />
 		<result column="old_product_name" jdbcType="VARCHAR" property="oldProductName" />
 		<result column="old_product_sku_id" jdbcType="INTEGER" property="oldProductSkuId" />
@@ -44,11 +43,13 @@
 		<result column="old_is_new_product" jdbcType="INTEGER" property="oldIsNewProduct" />
 		<result column="product_number" jdbcType="VARCHAR" property="productNumber" />
 		<result column="old_renting_product_count" jdbcType="INTEGER" property="oldRentingProductCount" />
+		<result column="old_product_sku_snapshot" jdbcType="VARCHAR" property="oldProductSkuSnapshot" />
+		<result column="new_product_sku_snapshot" jdbcType="VARCHAR" property="newProductSkuSnapshot" />
 	</resultMap>
 
 	<sql id="column_List">
 		erop.id,erop.replace_order_id,erop.replace_order_no,erop.old_order_product_id,erop.old_product_entry,erop.new_order_product_id,erop.rent_type,erop.rent_time_length,erop.rent_length_type,erop.deposit_cycle,erop.payment_cycle,erop.pay_mode,erop.old_product_unit_amount,erop.product_id,erop.product_name,erop.product_sku_id,erop.product_sku_name,erop.replace_product_count,erop.product_unit_amount,erop.rent_deposit_amount,erop.deposit_amount,erop.credit_deposit_amount,erop.is_new_product,erop.data_status,erop.remark,erop.create_time,erop.create_user,erop.update_time,erop.update_user,erop.real_replace_product_count,erop.is_relet_order_replace,erop.relet_order_item_id,
-		erop.old_product_id,erop.old_product_name,erop.old_product_sku_id,erop.old_product_sku_name,erop.old_product_number,erop.old_is_new_product,erop.product_number,erop.old_renting_product_count
+		erop.old_product_id,erop.old_product_name,erop.old_product_sku_id,erop.old_product_sku_name,erop.old_product_number,erop.old_is_new_product,erop.product_number,erop.old_renting_product_count,erop.old_product_sku_snapshot,erop.new_product_sku_snapshot
 	</sql>
 
 	<select id="findById" resultMap="ReplaceOrderProductDO" parameterType="java.lang.Integer">
@@ -194,6 +195,12 @@
 			<if test="oldRentingProductCount != null">
 				old_renting_product_count = #{oldRentingProductCount,jdbcType=INTEGER},
 			</if>
+			<if test="oldProductSkuSnapshot != null">
+				old_product_sku_snapshot = #{oldProductSkuSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="newProductSkuSnapshot != null">
+				new_product_sku_snapshot = #{newProductSkuSnapshot,jdbcType=VARCHAR},
+			</if>
 		</set>
 	</sql>
 
@@ -207,7 +214,8 @@
 	<insert id="saveList" parameterType="java.util.ArrayList" >
 		INSERT INTO erp_replace_order_product (replace_order_id,replace_order_no,old_order_product_id,old_product_entry,new_order_product_id,rent_type,rent_time_length,rent_length_type,deposit_cycle,payment_cycle,pay_mode,
 		old_product_unit_amount,product_id,product_name,product_sku_id,product_sku_name,replace_product_count,product_unit_amount,rent_deposit_amount,deposit_amount,credit_deposit_amount,is_new_product,data_status,remark,create_time,
-		create_user,update_time,update_user,real_replace_product_count,is_relet_order_replace,relet_order_item_id,old_product_id,old_product_name,old_product_sku_id,old_product_sku_name,old_product_number,old_is_new_product,product_number,old_renting_product_count)
+		create_user,update_time,update_user,real_replace_product_count,is_relet_order_replace,relet_order_item_id,old_product_id,old_product_name,old_product_sku_id,old_product_sku_name,old_product_number,old_is_new_product,product_number,old_renting_product_count,
+		old_product_sku_snapshot,new_product_sku_snapshot)
 		values
 		<foreach collection="list" item="replaceOrderProductDO" separator="," >
 			(#{replaceOrderProductDO.replaceOrderId}, #{replaceOrderProductDO.replaceOrderNo},#{replaceOrderProductDO.oldOrderProductId},
@@ -221,7 +229,7 @@
 			#{replaceOrderProductDO.realReplaceProductCount},#{replaceOrderProductDO.isReletOrderReplace},#{replaceOrderProductDO.reletOrderItemId},
 			#{replaceOrderProductDO.oldProductId},#{replaceOrderProductDO.oldProductName},#{replaceOrderProductDO.oldProductSkuId},
 			#{replaceOrderProductDO.oldProductSkuName},#{replaceOrderProductDO.oldProductNumber},#{replaceOrderProductDO.oldIsNewProduct},
-			#{replaceOrderProductDO.productNumber},#{replaceOrderProductDO.oldRentingProductCount})
+			#{replaceOrderProductDO.productNumber},#{replaceOrderProductDO.oldRentingProductCount},#{replaceOrderProductDO.oldProductSkuSnapshot},#{replaceOrderProductDO.newProductSkuSnapshot})
 		</foreach>
 	</insert>
 

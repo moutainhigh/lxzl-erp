@@ -148,4 +148,16 @@ public class ReplaceOrderController {
         ServiceResult<String, String> serviceResult = replaceOrderService.sendReplaceOrderToK3(replaceOrder.getReplaceOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+    /**
+     * 发送换货单到K3
+     * @Author : sunzhipeng
+     * @param replaceOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "sendReplaceOrderToK3", method = RequestMethod.POST)
+    public Result sendReplaceOrderInfoToK3(@RequestBody ReplaceOrder replaceOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = replaceOrderService.sendReplaceOrderInfoToK3(replaceOrder.getReplaceOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }
