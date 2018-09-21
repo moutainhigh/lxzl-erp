@@ -108,7 +108,7 @@
                                             {{#dataSource}}
                                             {{#listData}}
                                             <tr class="productRow skuRow" productRowKey="{{productId}}">
-                                                <td><a href="{{customerUrl}}" target="_blank">{{orderNo}}</a></td>
+                                                <td><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></td>
                                                 <td>
                                                     <p class="mn mb5">{{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}{{productName}}</p>  
                                                     <p class="mn mw300">{{productSkuName}}</p> 

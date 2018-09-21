@@ -3,7 +3,7 @@
         <span class="panel-title">基本信息</span>
     </div>
     <div class="form-horizontal panel-body bg-light dark">
-        <div class="section row">
+        <div class="section row replaceSection">
             <div class="col-md-1"></div>
             <div class="col-md-6">
 
@@ -75,19 +75,19 @@
                 </div>
 
                 <div class="form-group field">
-                    <label class="col-md-2 control-label">运费</label>
+                    <label class="col-md-2 control-label"><em class="text-danger">*</em>运费</label>
                     <div class="col-md-2" style="padding-right:0;">
                         <div class="input-group">
                             <input id="logisticsCost" name="logisticsCost" class="form-control required" type="text" placeholder="请输入运费" />
                         </div>
                     </div>
-                    <label class="col-md-2 control-label">服务费</label>
+                    <label class="col-md-2 control-label"><em class="text-danger">*</em>服务费</label>
                     <div class="col-md-2">
                         <div class="input-group" style="padding-right:0;">
                             <input id="serviceCost" name="serviceCost" class="form-control required" type="text" placeholder="请输入服务费" />
                         </div>
                     </div>
-                    <label class="col-md-2 control-label">维修费</label>
+                    <label class="col-md-2 control-label"><em class="text-danger">*</em>维修费</label>
                     <div class="col-md-2">
                         <div class="input-group">
                             <input id="repairCost" name="repairCost" class="form-control required" type="text" placeholder="请输入维修费" />
