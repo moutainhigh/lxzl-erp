@@ -66,4 +66,13 @@ public class ReplaceControllerTest extends ERPUnTransactionalTest {
         System.out.println(JSON.toJSONString(testResult));
 
     }
+
+    @Test
+    public void testCancelJSON() throws Exception {
+        String str = "{\"replaceOrderNo\":\"LXREO20180921101529194\"}";
+        ReplaceOrder replaceOrder = FastJsonUtil.toBean(str, ReplaceOrder.class);
+        TestResult testResult = getJsonTestResult("/replaceOrder/cancel", replaceOrder);
+        System.out.println(JSON.toJSONString(testResult));
+
+    }
 }
