@@ -4040,8 +4040,6 @@ public class OrderServiceImpl implements OrderService {
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else {
                     rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount()), 2), new BigDecimal(orderProductDO.getDepositCycle()));
-                    totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
-                    creditDepositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(orderProductDO.getProductCount()));
                     totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                     creditDepositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(orderProductDO.getProductCount()));
                     totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
