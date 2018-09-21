@@ -639,7 +639,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
-    /*
+    /**
      * 校验换货时间不能再当月之前，不能超过当前时间15天
      */
     private boolean checkReplaceTimeForNowDay(ServiceResult<String, String> serviceResult, Date replaceTime, SimpleDateFormat simpleDateFormat, String replaceTimeString, SimpleDateFormat sdf, String monthTimeString, String nowTimeString) {
@@ -673,7 +673,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         ServiceResult serviceResult = new ServiceResult();
         Date date = new Date();
         ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(replaceOrder.getReplaceOrderNo());
-        if (replaceOrderDO != null) {
+        if (replaceOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.REPLACE_ORDER_ERROR);
             return serviceResult;
         }
@@ -892,7 +892,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         BigDecimal totalCreditDepositAmount = BigDecimalUtil.sub(oldTotalCreditDepositAmount,newTotalCreditDepositAmount);
         BigDecimal updateTotalCreditDepositAmount = replaceOrderDO.getUpdateTotalCreditDepositAmount();
 
-        if (BigDecimalUtil.mul(updateTotalCreditDepositAmount,totalCreditDepositAmount) != BigDecimal.ZERO) {
+        if (BigDecimalUtil.compare(BigDecimalUtil.mul(updateTotalCreditDepositAmount,totalCreditDepositAmount), BigDecimal.ZERO) != 0) {
             // 返还扣走或者添加的信用额度
             if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
                 customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), updateTotalCreditDepositAmount, CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
@@ -1037,7 +1037,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
         return result;
     }
-    /*
+    /**
      *保存图片
      */
     private boolean saveImg(ReplaceOrderConfirmChangeParam replaceOrderConfirmChangeParam, ServiceResult<String, String> result, Date date, ReplaceOrderDO replaceOrderDO) {
@@ -1310,9 +1310,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
             if (ReplaceOrderStatus.REPLACE_ORDER_STATUS_PROCESSING.equals(replaceOrderDO.getReplaceOrderStatus())) {
-                k3confirmOrderUrl = K3Config.k3Server + "/DataDelivery/Barter";  //审核通过推送换货单信息
+                //审核通过推送换货单信息
+                k3confirmOrderUrl = K3Config.k3Server + "/DataDelivery/Barter";
             } else if (ReplaceOrderStatus.REPLACE_ORDER_STATUS_CONFIRM.equals(replaceOrderDO.getReplaceOrderStatus())) {
-                k3confirmOrderUrl = K3Config.k3Server + "/DataDelivery/ConfirmlBarter";  //确认换货推送换货单信息
+                //确认换货推送换货单信息
+                k3confirmOrderUrl = K3Config.k3Server + "/DataDelivery/ConfirmlBarter";
             } else {
                 serviceResult.setErrorCode(ErrorCode.SEND_REPLACE_ORDER_TO_K3_STATUS_ERROR);
                 return serviceResult;
@@ -1350,7 +1352,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(businessNo);
         try {
-            if (replaceOrderDO != null) {//k3退货单
+            if (replaceOrderDO != null) {
                 //不是审核中状态的收货单，拒绝处理
                 if (!ReplaceOrderStatus.REPLACE_ORDER_STATUS_VERIFYING.equals(replaceOrderDO.getReplaceOrderStatus())) {
                     return ErrorCode.BUSINESS_EXCEPTION;
@@ -1389,15 +1391,18 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     }
 
 
-    /*
+    /**
      * 比较物料项
      */
     private boolean compareMaterialCount(ServiceResult<String, String> serviceResult, List<OrderMaterialDO> orderMaterialDOList, Map<Integer, OrderMaterialDO> orderMaterialDOMap, Map<Integer, Integer> replaceMaterialCountMap, Map<Integer, Integer> rentingMaterialCountMap, Map<Integer, Integer> materialCountMap) {
         for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
             orderMaterialDOMap.put(orderMaterialDO.getId(),orderMaterialDO);
-            Integer rentingMaterialCount = rentingMaterialCountMap.get(orderMaterialDO.getId()) == null ? 0 : rentingMaterialCountMap.get(orderMaterialDO.getId());//在租数
-            Integer processMaterialCount = materialCountMap.get(orderMaterialDO.getId()) == null ? 0 : materialCountMap.get(orderMaterialDO.getId()); //待提交、处理中和审核中数量
-            Integer replaceMaterialCount = replaceMaterialCountMap.get(orderMaterialDO.getId()) == null ? 0 : replaceMaterialCountMap.get(orderMaterialDO.getId()); //换货数量
+            //在租数
+            Integer rentingMaterialCount = rentingMaterialCountMap.get(orderMaterialDO.getId()) == null ? 0 : rentingMaterialCountMap.get(orderMaterialDO.getId());
+            //待提交、处理中和审核中数量
+            Integer processMaterialCount = materialCountMap.get(orderMaterialDO.getId()) == null ? 0 : materialCountMap.get(orderMaterialDO.getId());
+            //换货数量
+            Integer replaceMaterialCount = replaceMaterialCountMap.get(orderMaterialDO.getId()) == null ? 0 : replaceMaterialCountMap.get(orderMaterialDO.getId());
             //可换数量=在租数-待提交、处理中和审核中数量（包含退货和换货）
             Integer canReturnMaterialCount = rentingMaterialCount - processMaterialCount;
             if (replaceMaterialCount > canReturnMaterialCount) {
@@ -1408,15 +1413,18 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         return false;
     }
 
-    /*
+    /**
      * 比较设备项
      */
     private boolean compareProductCount(ServiceResult<String, String> serviceResult, List<OrderProductDO> orderProductDOList, Map<Integer, OrderProductDO> orderProductDOMap, Map<Integer, Integer> replaceProductCountMap, Map<Integer, Integer> rentingProductCountMap, Map<Integer, Integer> productCountMap) {
         for (OrderProductDO orderProductDO : orderProductDOList) {
             orderProductDOMap.put(orderProductDO.getId(),orderProductDO);
-            Integer rentingProductCount = rentingProductCountMap.get(orderProductDO.getId()) == null ? 0 : rentingProductCountMap.get(orderProductDO.getId());//在租数
-            Integer processProductCount = productCountMap.get(orderProductDO.getId()) == null ? 0 : productCountMap.get(orderProductDO.getId()); //待提交、处理中和审核中数量
-            Integer replaceProductCount = replaceProductCountMap.get(orderProductDO.getId()) == null ? 0 : replaceProductCountMap.get(orderProductDO.getId()); //换货数量
+            //在租数
+            Integer rentingProductCount = rentingProductCountMap.get(orderProductDO.getId()) == null ? 0 : rentingProductCountMap.get(orderProductDO.getId());
+            //待提交、处理中和审核中数量
+            Integer processProductCount = productCountMap.get(orderProductDO.getId()) == null ? 0 : productCountMap.get(orderProductDO.getId());
+            //换货数量
+            Integer replaceProductCount = replaceProductCountMap.get(orderProductDO.getId()) == null ? 0 : replaceProductCountMap.get(orderProductDO.getId());
             //可换数量=在租数-待提交、处理中和审核中数量（包含退货和换货）
             Integer canReturnProductCount = rentingProductCount - processProductCount;
             if (replaceProductCount > canReturnProductCount) {
@@ -1427,7 +1435,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         return false;
     }
 
-    /*
+    /**
      * 将该订单的待提交、审核中两种状态的换货单商品或配件数量保存
      */
     private void saveExistedReplaceCount( Map<Integer, Integer> productCountMap, Map<Integer, Integer> materialCountMap, List<ReplaceOrderDO> replaceOrderDOList,String replaceOrderNo) {
@@ -1462,7 +1470,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
     }
 
-    /*
+    /**
      * 校验是否在续租单开始之前换货
      */
     private boolean checkReplaceTiamAndReletTime(ServiceResult<String, String> serviceResult, SimpleDateFormat simpleDateFormat, String replaceTimeString, String reletTimeString) {
@@ -1482,7 +1490,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         return false;
     }
 
-    /*
+    /**
      * 校验换货时间
      */
     private boolean checkReplaceTime(ServiceResult<String, String> serviceResult, SimpleDateFormat simpleDateFormat, String replaceTimeString, String rentStartTimeString, String expectReturnTimeString) {
@@ -1505,7 +1513,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
         return false;
     }
-    /*
+    /**
      * 校验实际换货时间
      */
     private boolean checkRealReplaceTime(ServiceResult<String, String> serviceResult, SimpleDateFormat simpleDateFormat, String realReplaceTimeString, String replaceDeliveryTimeString, String nowTimeString) {
@@ -1530,7 +1538,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
         return false;
     }
-    /*
+    /**
      * 装配该订单续租单map集合
      */
     private void assemblyReletOrder(Map<Integer, ReletOrderProductDO> reletOrderProductDOMap, Map<Integer, ReletOrderMaterialDO> reletOrderMaterialDOMap, ReletOrderDO reletOrderDO) {
@@ -1549,7 +1557,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             }
         }
     }
-    /*
+    /**
      * 获取换货数量并保存到map
      */
     private void saveRepalceCountInMap(List<ReplaceOrderProductDO> replaceOrderProductDOList, List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList, Map<Integer, Integer> replaceProductCountMap, Map<Integer, Integer> replaceMaterialCountMap) {
@@ -1572,7 +1580,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     }
 
 
-    /*
+    /**
      * 获取该用户处于待提交、审核中、处理中三种状态的商品或者配件的数量
      */
     private void getReturnCount(Map<Integer, Integer> productCountMap, Map<Integer, Integer> materialCountMap, List<K3ReturnOrderDO> k3ReturnOrderDOList) {
@@ -1588,7 +1596,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             }
         }
     }
-    /*
+    /**
      * 获取商品和配件的退货数量和存入集合中
      */
     private void getProductAndMaterialReturnCount(Map<Integer, Integer> productCountMap, Map<Integer, Integer> materialCountMap, List<K3ReturnOrderDetailDO> dBK3ReturnOrderDetailDOList) {
@@ -1615,7 +1623,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             }
         }
     }
-    /*
+    /**
      * 创建换货单校验风控信息
      */
     public void verifyCustomerRiskInfo(ReplaceOrderDO replaceOrderDO,CustomerDO customerDO,OrderDO orderDO,CustomerRiskManagementDO customerRiskManagementDO) {
@@ -1722,7 +1730,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
         return false;
     }
-    /*
+    /**
      * 补全换货商品项信息
      */
     public void calculateOrderProductInfo(List<ReplaceOrderProductDO> replaceOrderProductDOList,Map<Integer,OrderProductDO> orderProductDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
@@ -1799,7 +1807,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             }
         }
     }
-    /*
+    /**
      * 补全换货配件项信息
      */
     public void calculateOrderMaterialInfo(List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList,Map<Integer,OrderMaterialDO> orderMaterialDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
@@ -1860,7 +1868,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
     }
 
-    /*
+    /**
      * 获取商品改变设备信用押金总额
      */
     public void getTotalCreditDepositAmountForProductInfo(List<ReplaceOrderProductDO> replaceOrderProductDOList,Map<Integer,OrderProductDO> orderProductDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
@@ -1922,7 +1930,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
     }
 
-    /*
+    /**
      * 获取配件改变设备信用押金总额
      */
     public void getTotalCreditDepositAmountForMaterialInfo(List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList,Map<Integer,OrderMaterialDO> orderMaterialDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
@@ -1978,7 +1986,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
     }
 
-    /*
+    /**
      * 确认换货没有全部收货时变更换货单商品信息
      */
     public void changeReplaceOrderProductInfo(List<ReplaceOrderProductDO> replaceOrderProductDOList,Map<Integer,OrderProductDO> orderProductDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
@@ -2043,7 +2051,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
     }
 
-    /*
+    /**
      * 确认换货没有全部收货时变更换货单配件信息
      */
     public void changeReplaceOrderMaterialInfo(List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList,Map<Integer,OrderMaterialDO> orderMaterialDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
