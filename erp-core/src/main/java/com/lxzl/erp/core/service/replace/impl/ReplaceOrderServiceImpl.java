@@ -1358,7 +1358,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                     return ErrorCode.BUSINESS_EXCEPTION;
                 }
                 if (verifyResult) {
-                    ServiceResult result = sendReplaceOrderToK3(businessNo);
+                    ServiceResult result = sendReplaceOrderInfoToK3(replaceOrderDO.getReplaceOrderNo());
                     if (!ErrorCode.SUCCESS.equals(result.getErrorCode().toString())) {
                         return result.getErrorCode().toString();
                     }
