@@ -6,6 +6,8 @@ import com.lxzl.erp.common.domain.statement.pojo.dto.BaseCheckStatementDetailDTO
 import com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementStatisticsDTO;
 import org.apache.commons.lang.time.DateFormatUtils;
 
+import java.util.Date;
+
 /**
  * @author daiqi
  * @create 2018-07-09 9:32
@@ -25,6 +27,20 @@ public class CheckStatementDetailUnRentDTO extends BaseCheckStatementDetailUnRen
             cacheKey = cacheKey + "_" + DateFormatUtils.format(super.getStatementExpectPayTime(), "yyyyMMdd");
         }
         return cacheKey;
+    }
+
+    public boolean checkIsAddTheMonth(CheckStatementStatisticsDTO statementStatisticsDTO, Date returnTime, Date statementStartTime){
+        String returnTimeStr = DateFormatUtils.format(returnTime, "yyyy-MM");
+        if (statementStatisticsDTO.getMonth().equals(returnTimeStr)) {
+            if (this.getStatementExpectPayTime() == null) {
+                return true;
+            }
+            if(DateFormatUtils.format(statementStartTime, "yyyy-MM").equals(returnTimeStr)){
+                return true;
+            }
+            return false;
+        }
+        return super.isAddTheMonth(statementStatisticsDTO);
     }
 
 }

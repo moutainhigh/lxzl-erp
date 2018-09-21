@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.statement.pojo.dto.unrent;
 
 import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.constant.SortOrderItemType;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
@@ -41,14 +42,7 @@ public class CheckStatementDetailUnRentProductDTO extends CheckStatementDetailUn
 
     @Override
     public boolean isAddTheMonth(CheckStatementStatisticsDTO statementStatisticsDTO) {
-        String returnTimeStr = DateFormatUtils.format(this.getReturnTime(), "yyyy-MM");
-        if (statementStatisticsDTO.getMonth().equals(returnTimeStr)) {
-            if (this.getStatementExpectPayTime() == null) {
-                return true;
-            }
-            return false;
-        }
-        return super.isAddTheMonth(statementStatisticsDTO);
+        return checkIsAddTheMonth(statementStatisticsDTO,this.getReturnTime(),this.getStatementStartTime());
     }
     @Override
     public Integer getSortItemType() {
