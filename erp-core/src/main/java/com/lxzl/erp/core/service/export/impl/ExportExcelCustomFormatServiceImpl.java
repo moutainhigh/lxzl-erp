@@ -24,11 +24,9 @@ import com.lxzl.erp.common.domain.statement.pojo.dto.rent.CheckStatementDetailRe
 import com.lxzl.erp.common.domain.statement.pojo.dto.unrent.*;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.DateUtil;
-import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.export.*;
 import com.lxzl.erp.core.service.export.impl.support.ExcelExportSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
-import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
@@ -41,8 +39,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderProductMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3OrderStatementConfigDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
@@ -53,23 +49,15 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.tools.zip.ZipEntry;
-import org.apache.tools.zip.ZipOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -84,27 +72,10 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
     private StatementService statementService;
 
     @Autowired
-    private ExcelExportService excelExportService;
-    @Autowired
     private OrderMapper orderMapper;
 
     @Autowired
-    private AmountExcelExportView amountExcelExportView;
-
-    @Autowired
-    private DingDingSupport dingDingSupport;
-
-    @Autowired
-    private StatementOrderMapper statementOrderMapper;
-
-    @Autowired
-    private PermissionSupport permissionSupport;
-
-    @Autowired
     private K3ReturnOrderMapper k3ReturnOrderMapper;
-
-    @Autowired
-    private StatementOrderCorrectMapper statementOrderCorrectMapper;
 
     @Autowired
     private OrderProductMapper orderProductMapper;
@@ -123,14 +94,19 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
     @Autowired
     private ReletOrderProductMapper reletOrderProductMapper;
+
     @Autowired
     private CustomerMapper customerMapper;
-    @Autowired
-    private K3OrderStatementConfigMapper k3OrderStatementConfigMapper;
+
     @Autowired
     private ProductSupport productSupport;
+
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private K3OrderStatementConfigMapper k3OrderStatementConfigMapper;
+
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
@@ -171,7 +147,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         groupCheckStatementDetailsByMonth(monthStatisticsMap, checkStatementDetailDTOS, customerDO, mapContainer);
         logger.info("分组后的数据为：" + JSONObject.toJSONString(monthStatisticsMap));
         // 过滤对账单统计数据
-        filterStatementStatisticsData(monthStatisticsMap, mapContainer, queryParam);
+//        filterStatementStatisticsData(monthStatisticsMap, mapContainer, queryParam);
         // 7：构建统计数据
         buildStatisticsData(monthStatisticsMap, queryParam);
         // 8：导出统计数据
@@ -367,9 +343,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                     statementStatisticsDTO.addCheckStatementDetailDTO(checkStatementDetailDTO.clone());
                 }
             }
-
         }
-
     }
 
     private void addReturnOrderData(CheckStatementStatisticsDTO statementStatisticsDTO, Map<String, List<BaseCheckStatementDetailDTO>> orderNoDetailsMap) {
@@ -413,7 +387,6 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         }
     }
 
-
     private void createAndAddUnRentOrdersByReturnTime(CheckStatementMapContainer mapContainer, CheckStatementStatisticsDTO statisticsDTO, List<BaseCheckStatementDetailDTO> checkStatementDetailDTOS) {
         Map<Integer, K3ReturnOrder> k3ReturnOrderMap = mapContainer.getIdK3ReturnOrderMap();
         Map<Integer, OrderProduct> orderProductMap = mapContainer.getIdOrderProductMap();
@@ -424,6 +397,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             if (order == null) {
                 continue;
             }
+
             String returnTimeMonthStr = DateFormatUtils.format(k3ReturnOrderMap.get(k3ReturnOrderDetail.getReturnOrderId()).getReturnTime(), "yyyy-MM");
             if (!returnTimeMonthStr.equals(statisticsDTO.getMonth())) {
                 continue;
@@ -435,8 +409,10 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                     continue;
                 }
                 boolean isReletReturnOrder = false;
+                BaseCheckStatementDetailDTO baseCheckStatementDetailDTO = null;
                 for (BaseCheckStatementDetailDTO statementDetailDTO : checkStatementDetailDTOS) {
                     boolean isReletReturnOrderTemp = k3ReturnOrderDetail.getK3ReturnOrderDetailId().equals(statementDetailDTO.getOrderItemReferId());
+                    baseCheckStatementDetailDTO = statementDetailDTO;
                     if (statementDetailDTO instanceof CheckStatementDetailUnRentReletProductDTO && isReletReturnOrderTemp) {
                         isReletReturnOrder = true;
                         break;
@@ -445,7 +421,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 if (isReletReturnOrder) {
                     continue;
                 }
-                statisticsDTO.addCheckStatementDetailDTO(createReturnProductStatementDTO(k3ReturnOrderDetail, orderProduct, order, mapContainer));
+                statisticsDTO.addCheckStatementDetailDTO(createReturnProductStatementDTO(k3ReturnOrderDetail, orderProduct, order, mapContainer,baseCheckStatementDetailDTO));
             } else if (productSupport.isMaterial(k3ReturnOrderDetail.getProductNo())) {
                 OrderMaterial orderMaterial = orderMaterialMap.get(Integer.valueOf(k3ReturnOrderDetail.getOrderItemId()));
                 BigDecimal unitAmount = orderMaterial.getMaterialUnitAmount();
@@ -453,8 +429,10 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                     continue;
                 }
                 boolean isReletReturnOrder = false;
+                BaseCheckStatementDetailDTO baseCheckStatementDetailDTO = null;
                 for (BaseCheckStatementDetailDTO statementDetailDTO : checkStatementDetailDTOS) {
                     boolean isReletReturnOrderTemp = k3ReturnOrderDetail.getK3ReturnOrderDetailId().equals(statementDetailDTO.getOrderItemReferId());
+                    baseCheckStatementDetailDTO = statementDetailDTO;
                     if (statementDetailDTO instanceof CheckStatementDetailUnRentReletMaterialDTO && isReletReturnOrderTemp) {
                         isReletReturnOrder = true;
                         break;
@@ -463,7 +441,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 if (isReletReturnOrder) {
                     continue;
                 }
-                statisticsDTO.addCheckStatementDetailDTO(createReturnMaterialStatementData(k3ReturnOrderDetail, orderMaterial, order, mapContainer));
+                statisticsDTO.addCheckStatementDetailDTO(createReturnMaterialStatementData(k3ReturnOrderDetail, orderMaterial, order, mapContainer,baseCheckStatementDetailDTO));
             }
 
         }
@@ -486,7 +464,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                         continue;
                     }
                     if (order.getOrderId().equals(orderProduct.getOrderId())) {
-                        BaseCheckStatementDetailDTO checkStatementDetailDTO = createReturnProductStatementDTO(k3ReturnOrderDetail, orderProduct, order, mapContainer);
+                        BaseCheckStatementDetailDTO checkStatementDetailDTO = createReturnProductStatementDTO(k3ReturnOrderDetail, orderProduct, order, mapContainer,null);
                         itemIdAndItemType.put(itemIdAndItemTypeKey, checkStatementDetailDTO);
                         checkStatementDetailDTOS.add(checkStatementDetailDTO);
                     }
@@ -532,7 +510,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
     /**
      * 创建退货商品对账单数据传输对象
      */
-    private BaseCheckStatementDetailDTO createReturnProductStatementDTO(K3ReturnOrderDetail k3ReturnOrderDetail, OrderProduct orderProduct, Order order, CheckStatementMapContainer mapContainer) {
+    private BaseCheckStatementDetailDTO createReturnProductStatementDTO(K3ReturnOrderDetail k3ReturnOrderDetail, OrderProduct orderProduct, Order order, CheckStatementMapContainer mapContainer,BaseCheckStatementDetailDTO statementDetailDTO) {
         BaseCheckStatementDetailDTO checkStatementDetailDTO = new CheckStatementDetailUnRentProductDTO();
         setStatementOrderProductData(checkStatementDetailDTO, orderProduct);
         checkStatementDetailDTO.setItemCount(CommonConstant.COMMON_ZERO - k3ReturnOrderDetail.getRealProductCount());
@@ -549,7 +527,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
     /**
      * 创建退货配件对账单数据传输对象
      */
-    private BaseCheckStatementDetailDTO createReturnMaterialStatementData(K3ReturnOrderDetail k3ReturnOrderDetail, OrderMaterial orderMaterial, Order order, CheckStatementMapContainer mapContainer) {
+    private BaseCheckStatementDetailDTO createReturnMaterialStatementData(K3ReturnOrderDetail k3ReturnOrderDetail, OrderMaterial orderMaterial, Order order, CheckStatementMapContainer mapContainer,BaseCheckStatementDetailDTO statementDetailDTO) {
         BaseCheckStatementDetailDTO checkStatementDetailDTO = new CheckStatementDetailUnRentMaterialDTO();
         setStatementOrderMaterialData(checkStatementDetailDTO, orderMaterial);
         checkStatementDetailDTO.setItemCount(CommonConstant.COMMON_ZERO - k3ReturnOrderDetail.getRealProductCount());
@@ -570,6 +548,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         checkStatementDetailDTO.setReturnTime(k3ReturnOrder.getReturnTime());
         checkStatementDetailDTO.setReturnReasonType(k3ReturnOrder.getReturnReasonType());
         checkStatementDetailDTO.setReturnOrderNo(k3ReturnOrder.getReturnOrderNo());
+        checkStatementDetailDTO.setOrderItemReferId(k3ReturnOrderDetail.getK3ReturnOrderDetailId());
     }
 
 
@@ -737,12 +716,36 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
      */
     private List<BaseCheckStatementDetailDTO> buildNewStatementDetailDTOs(CheckStatementStatisticsDTO statementStatisticsDTO, Map<String, BaseCheckStatementDetailDTO> orderIdAndOrderItemIdMap) {
         List<BaseCheckStatementDetailDTO> checkStatementDetailDTONew = Lists.newArrayList();
+
+        //构造 退货单号相同两笔以上数据
+        Map<Integer,List<BaseCheckStatementDetailDTO>> map = new HashMap<>();
+        for (BaseCheckStatementDetailDTO detailDTO : orderIdAndOrderItemIdMap.values()) {
+            if(detailDTO.getReturnOrderNo() != null){
+                if(map.get(detailDTO.getOrderItemReferId()) == null){
+                    List<BaseCheckStatementDetailDTO> list = new ArrayList<>();
+                    list.add(detailDTO);
+                    map.put(detailDTO.getOrderItemReferId(),list);
+                }else {
+                    List<BaseCheckStatementDetailDTO> list = map.get(detailDTO.getOrderItemReferId());
+                    list.add(detailDTO);
+                    map.put(detailDTO.getOrderItemReferId(),list);
+                }
+            }
+        }
+
         for (BaseCheckStatementDetailDTO detailDTO : orderIdAndOrderItemIdMap.values()) {
             if (!detailDTO.isShowTheMonth(statementStatisticsDTO)) {
                 continue;
             }
             Date statementExpectPayTime = detailDTO.getStatementExpectPayTime();
-            // 构建月应付金额
+
+            if(map.size() > CommonConstant.COMMON_ZERO){
+                if(CollectionUtil.isNotEmpty(map.get(detailDTO.getOrderItemReferId()))){
+                    if(map.get(detailDTO.getOrderItemReferId()).size() > 1 && BigDecimalUtil.compare(detailDTO.getStatementDetailAmount(), BigDecimal.ZERO) == 0){
+                        continue;
+                    }
+                }
+            }
             detailDTO.buildMonthAmount(statementExpectPayTime, statementStatisticsDTO).build();
             statementStatisticsDTO.getCheckStatementSummaryDTO().buildMonthAmount(detailDTO);
             checkStatementDetailDTONew.add(detailDTO);
@@ -1027,6 +1030,4 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         }
         return "";
     }
-
-
 }
