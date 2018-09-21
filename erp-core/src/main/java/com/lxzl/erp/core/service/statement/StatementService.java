@@ -13,7 +13,9 @@ import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.CheckStatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
+import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.se.core.service.BaseService;
 
 import java.math.BigDecimal;
@@ -264,4 +266,8 @@ public interface StatementService extends BaseService {
      * @return
      */
     ServiceResult<String,String> rollbackSuccessReturnOrder(String returnOrderNo);
+
+    void saveStatementOrder(List<StatementOrderDetailDO> addStatementOrderDetailDOList, Date currentTime, Integer loginUserId);
+    List<StatementOrderDetailDO> generateOrderProductStatement(Integer rentTimeLength, Integer statementMode, Date currentTime, Integer statementDays, Integer loginUserId, Date rentStartTime, Integer buyerCustomerId, Integer orderId, OrderProductDO orderProductDO, BigDecimal itemAllAmount);
+
 }
