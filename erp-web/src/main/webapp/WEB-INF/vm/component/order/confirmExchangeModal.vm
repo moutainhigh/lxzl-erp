@@ -53,7 +53,7 @@
                                         <td class="text-center">{{replaceProductCount}}</td>
                                         <td>
                                             <label class="field prepend-icon rentCountIpt mw200">
-                                                <input type="text" name="realReplaceProductCount" value="" class="realReplaceProductCount form-control gui-input pl10" placeholder="{{replaceProductCount}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{replaceProductCount}}";};'/>
+                                                <input type="text" name="realReplaceProductCount" value="{{realReplaceProductCount}}" class="realReplaceProductCount form-control gui-input pl10" placeholder=""  onfocus='this.value="";this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{replaceProductCount}}";};'/>
                                             </label>
                                         </td>
                                     </tr>

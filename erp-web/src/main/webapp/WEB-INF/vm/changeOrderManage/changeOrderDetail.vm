@@ -49,6 +49,7 @@
                                             <dt class="mb10">联系电话</dt><dd>{{consigneePhone}}</dd>
                                             <dt class="mb10">收货地址</dt><dd>{{address}}</dd>
                                             <dt class="mb10">发货公司</dt><dd>{{deliverySubCompanyName}}</dd>
+                                            <dt class="mb10">发货日期</dt><dd>{{#clockShorTime}}{{replaceDeliveryTime}}{{/clockShorTime}}</dd>
                                         </dl>
                                     </div>
                                     <div class="col-md-4">
@@ -182,6 +183,7 @@
         management_load_script('${staticManagement}/js',
                 'manage.change.order.handle.mixin.js',
                 'manage.change.order.detail.js',
+                'manage.confirm.exchange.js',
                 'modal.input.js');
     </script>
     <script type="text/javascript">
