@@ -20,7 +20,7 @@
                     <tbody>
                     {{#dataSource}}
                     {{#listData}}
-                    <tr data-id="{{productId}}" data-isnew="{{isNewProduct}}" data-entry="{{fEntryID}}">
+                    <tr data-serial="{{serialNumber}}">
                         <td>
                             {{#canReplace}}
                             <label class="option block mn">
