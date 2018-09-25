@@ -1725,9 +1725,9 @@ public class CustomerServiceImpl implements CustomerService {
             customerRiskManagementDO.setCustomerId(customerDO.getId());
             customerRiskManagementDO.setRemark(customerRiskManagement.getRemark());
             customerRiskManagementDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            //customerRiskManagementDO.setCreateTime(now);
+            customerRiskManagementDO.setCreateTime(now);
             customerRiskManagementDO.setUpdateTime(now);
-            //customerRiskManagementDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            customerRiskManagementDO.setCreateUser(userSupport.getCurrentUserId().toString());
             customerRiskManagementDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             customerSupport.saveCustomerRiskLog(customerDO.getId(), null, customerRiskManagement.getCreditAmount(), CustomerRiskBusinessType.CUSTOMER_RISK_TYPE, null, null);
             customerRiskManagementMapper.save(customerRiskManagementDO);
@@ -1745,9 +1745,9 @@ public class CustomerServiceImpl implements CustomerService {
             customerRiskManagementDOForUpdate.setId(customerDO.getCustomerRiskManagementDO().getId());
             customerRiskManagementDOForUpdate.setRemark(customerRiskManagement.getRemark());
             customerRiskManagementDOForUpdate.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            customerRiskManagementDOForUpdate.setCreateTime(now);
+            //customerRiskManagementDOForUpdate.setCreateTime(now);
             customerRiskManagementDOForUpdate.setUpdateTime(now);
-            customerRiskManagementDOForUpdate.setCreateUser(userSupport.getCurrentUserId().toString());
+            //customerRiskManagementDOForUpdate.setCreateUser(userSupport.getCurrentUserId().toString());
             customerRiskManagementDOForUpdate.setUpdateUser(userSupport.getCurrentUserId().toString());
             customerSupport.saveCustomerRiskLog(customerDO.getId(), null, customerRiskManagement.getCreditAmount(), CustomerRiskBusinessType.CUSTOMER_RISK_TYPE, null, null);
             customerRiskManagementMapper.update(customerRiskManagementDOForUpdate);
