@@ -17,4 +17,5 @@ public class CustomerRiskBusinessType {
     public static final Integer COMMIT_REPLACE_ORDER_TYPE = 9;//9提交换货单
     public static final Integer CONFIRM_REPLACE_ORDER_TYPE = 10;//10确认换货单
     public static final Integer BACKED_REPLACE_ORDER_TYPE = 11;//11驳回换货单
+    public static final Integer CANCEL_REPLACE_ORDER_TYPE = 12;//12取消换货单
 }
