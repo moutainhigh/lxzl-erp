@@ -359,7 +359,7 @@
 			LEFT JOIN erp_user eu3 ON eu3.id = ero.update_user
 		</if>
 		<if test="maps.replaceOrderQueryParam.customerName != null &amp;&amp; maps.replaceOrderQueryParam.customerName != ''">
-			LEFT JOIN erp_customer ec ON ec.id = ero.customer_id
+			LEFT JOIN erp_customer ec ON ec.id = ero.customer_id AND ec.data_status = 1
 		</if>
 		<where>
 			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderId != null ">
@@ -411,16 +411,16 @@
 				<![CDATA[ AND ero.confirm_replace_user <= #{maps.replaceOrderQueryParam.confirmReplaceEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.replaceOrderQueryParam.confirmReplaceUserName != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceUserName != ''">
-				and eu1.real_name like CONCAT('%','${maps.orderQueryParam.confirmReplaceUserName}','%' )
+				and eu1.real_name like CONCAT('%','${maps.replaceOrderQueryParam.confirmReplaceUserName}','%' )
 			</if>
 			<if test="maps.replaceOrderQueryParam.createUserName != null &amp;&amp; maps.replaceOrderQueryParam.createUserName != ''">
-				and eu2.real_name like CONCAT('%','${maps.orderQueryParam.createUserName}','%' )
+				and eu2.real_name like CONCAT('%','${maps.replaceOrderQueryParam.createUserName}','%' )
 			</if>
 			<if test="maps.replaceOrderQueryParam.updateUserName != null &amp;&amp; maps.replaceOrderQueryParam.updateUserName != ''">
-				and eu3.real_name like CONCAT('%','${maps.orderQueryParam.updateUserName}','%' )
+				and eu3.real_name like CONCAT('%','${maps.replaceOrderQueryParam.updateUserName}','%' )
 			</if>
 			<if test="maps.replaceOrderQueryParam.customerName != null &amp;&amp; maps.replaceOrderQueryParam.customerName != ''">
-				and ec.customer_name like CONCAT('%','${maps.orderQueryParam.customerName}','%' )
+				and ec.customer_name like CONCAT('%','${maps.replaceOrderQueryParam.customerName}','%' )
 			</if>
 			<if test="true">
 				AND ero.data_status = 1
@@ -437,6 +437,7 @@
 		LEFT JOIN erp_user eu1 ON eu1.id = ero.confirm_replace_user
 		LEFT JOIN erp_user eu2 ON eu2.id = ero.create_user
 		LEFT JOIN erp_user eu3 ON eu3.id = ero.update_user
+		LEFT JOIN erp_customer ec ON ec.id = ero.customer_id AND ec.data_status = 1
 		<where>
 			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.replaceOrderId != null ">
 				and ero.id = #{maps.replaceOrderQueryParam.replaceOrderId, jdbcType=INTEGER}
@@ -487,16 +488,16 @@
 				<![CDATA[ AND ero.confirm_replace_user <= #{maps.replaceOrderQueryParam.confirmReplaceEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.replaceOrderQueryParam.confirmReplaceUserName != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceUserName != ''">
-				and eu1.real_name like CONCAT('%','${maps.orderQueryParam.confirmReplaceUserName}','%' )
+				and eu1.real_name like CONCAT('%','${maps.replaceOrderQueryParam.confirmReplaceUserName}','%' )
 			</if>
 			<if test="maps.replaceOrderQueryParam.createUserName != null &amp;&amp; maps.replaceOrderQueryParam.createUserName != ''">
-				and eu2.real_name like CONCAT('%','${maps.orderQueryParam.createUserName}','%' )
+				and eu2.real_name like CONCAT('%','${maps.replaceOrderQueryParam.createUserName}','%' )
 			</if>
 			<if test="maps.replaceOrderQueryParam.updateUserName != null &amp;&amp; maps.replaceOrderQueryParam.updateUserName != ''">
-				and eu3.real_name like CONCAT('%','${maps.orderQueryParam.updateUserName}','%' )
+				and eu3.real_name like CONCAT('%','${maps.replaceOrderQueryParam.updateUserName}','%' )
 			</if>
 			<if test="maps.replaceOrderQueryParam.customerName != null &amp;&amp; maps.replaceOrderQueryParam.customerName != ''">
-				and ec.customer_name like CONCAT('%','${maps.orderQueryParam.customerName}','%' )
+				and ec.customer_name like CONCAT('%','${maps.replaceOrderQueryParam.customerName}','%' )
 			</if>
 			<if test="true">
 				AND ero.data_status = 1

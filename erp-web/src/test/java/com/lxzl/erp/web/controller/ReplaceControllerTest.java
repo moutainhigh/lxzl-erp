@@ -30,7 +30,8 @@ public class ReplaceControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void testQueryAllReplaceOrderJSON() throws Exception {
-        String str = "{\"pageNo\":1,\"pageSize\":15,\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\",\"replaceOrderStatus\":\"\",\"customerName\":\"\",\"customerNo\":\"\",\"replaceOrderNo\":\"\",\"orderNo\":\"\"}";
+        String str = "{\"pageNo\":1,\"pageSize\":15,\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\",\"replaceOrderStatus\":\"20\",\"customerName\":\"测试退货导四号\",\"customerNo\":\"\",\"replaceOrderNo\":\"\",\"orderNo\":\"\"}";
+
         ReplaceOrderQueryParam param = FastJsonUtil.toBean(str, ReplaceOrderQueryParam.class);
         TestResult testResult = getJsonTestResult("/replaceOrder/queryAllReplaceOrder", param);
         System.out.println(JSON.toJSONString(testResult));
