@@ -3841,3 +3841,48 @@ CREATE TABLE `erp_bank_slip_detail_manual_claim_and_localization_config` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='银行对公流水明细手动认领和属地化表';
+
+DROP TABLE IF EXISTS `erp_return_order_rollback_log`;
+CREATE TABLE `erp_return_order_rollback_log` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `return_order_no` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '退货单编号',
+  `return_order_id` int(20) NOT NULL COMMENT '退货单ID',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '添加人',
+  PRIMARY KEY (`id`),
+  KEY `return_order_id_key` (`return_order_id`),
+  KEY `return_order_no_key` (`return_order_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='退货单回滚操作日志';
+
+
+DROP TABLE IF EXISTS `erp_customer_risk_log`;
+CREATE TABLE `erp_customer_risk_log` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+`customer_id` int(20) NOT NULL COMMENT '客户ID',
+`manage_customer_id` int(20) DEFAULT NULL COMMENT '关联客户ID',
+`old_credit_amount` decimal(15,5) NOT NULL DEFAULT '0.00000' COMMENT '原授信额度',
+  `old_credit_amount_used` decimal(15,5) NOT NULL DEFAULT '0.00000' COMMENT '原已用授信额度',
+`new_credit_amount` decimal(15,5) NOT NULL DEFAULT '0.00000' COMMENT '现授信额度',
+  `new_credit_amount_used` decimal(15,5) NOT NULL DEFAULT '0.00000' COMMENT '现已用授信额度',
+  `order_no` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '订单编号',
+`business_type` int(11) DEFAULT NULL COMMENT '操作业务编码',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '添加人',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `business_type` (`business_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='客户授信变更日志';
+
+DROP TABLE if exists `erp_order_from_test_machine`;
+CREATE TABLE `erp_order_from_test_machine` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `test_machine_order_no` varchar(100) NOT NULL COMMENT '原测试机订单编号',
+  `order_no` varchar(100) NOT NULL COMMENT '转租后的订单编号',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='测试机转租赁记录';
