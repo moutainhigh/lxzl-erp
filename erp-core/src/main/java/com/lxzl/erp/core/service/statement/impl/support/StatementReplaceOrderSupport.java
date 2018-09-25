@@ -226,6 +226,7 @@ public class StatementReplaceOrderSupport {
                             depositDetail.setItemIsNew(newProduct.getIsNewProduct());
                             depositDetail.setStatementDetailPhase(0);
                             depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
+                            depositDetail.setSourceId(replaceOrderDO.getId());
                             needUpdateOrderBeforeList.add(depositDetail);
                         }
                     } else {
