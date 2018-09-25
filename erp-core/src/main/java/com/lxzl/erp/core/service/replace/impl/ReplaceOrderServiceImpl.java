@@ -87,6 +87,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
+import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -1061,6 +1063,12 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
      */
     @Override
     public ServiceResult<String, String> replaceOrderDeliveryCallBack(ReplaceOrder replaceOrder) {
+        // 回调时不需要登陆，这里设置user为super user
+        if (userSupport.getCurrentUser() == null) {
+            User superUser = new User();
+            superUser.setUserId(CommonConstant.SUPER_USER_ID);
+            httpSession.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, superUser);
+        }
         ServiceResult<String, String> result = new ServiceResult<>();
         Date date = new Date();
         if (StringUtil.isEmpty(replaceOrder.getReplaceOrderNo())) {
@@ -2222,6 +2230,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     private StatementReplaceOrderSupport statementReplaceOrderSupport;
     @Autowired
     private AmountSupport amountSupport;
+    @Autowired
+    private HttpSession httpSession;
 
 
 }
