@@ -1725,9 +1725,9 @@ public class CustomerServiceImpl implements CustomerService {
             customerRiskManagementDO.setCustomerId(customerDO.getId());
             customerRiskManagementDO.setRemark(customerRiskManagement.getRemark());
             customerRiskManagementDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            customerRiskManagementDO.setCreateTime(now);
+            //customerRiskManagementDO.setCreateTime(now);
             customerRiskManagementDO.setUpdateTime(now);
-            customerRiskManagementDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            //customerRiskManagementDO.setCreateUser(userSupport.getCurrentUserId().toString());
             customerRiskManagementDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             customerSupport.saveCustomerRiskLog(customerDO.getId(), null, customerRiskManagement.getCreditAmount(), CustomerRiskBusinessType.CUSTOMER_RISK_TYPE, null, null);
             customerRiskManagementMapper.save(customerRiskManagementDO);
