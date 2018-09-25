@@ -80,6 +80,7 @@ import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -1080,6 +1081,20 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             result.setErrorCode(ErrorCode.REPLACE_ORDER_NO_ERROR);
             return result;
         }
+        // 处理类内service调用
+        ReplaceOrderService replaceOrderService = (ReplaceOrderService) AopContext.currentProxy();
+        ServiceResult<String, String> serviceResult = replaceOrderService.replaceOrderDeliveryCallBackDetail(replaceOrder, replaceOrderDO);
+        if (ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            result.setErrorCode(ErrorCode.SUCCESS);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> replaceOrderDeliveryCallBackDetail(ReplaceOrder replaceOrder,ReplaceOrderDO replaceOrderDO) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date date = new Date();
         replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_DELIVERED);
         replaceOrderDO.setReplaceDeliveryTime(date);
         replaceOrderMapper.update(replaceOrderDO);
@@ -1375,6 +1390,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         result.setResult(replaceOrderList);
         return result;
     }
+
+
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
