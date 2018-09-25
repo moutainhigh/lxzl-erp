@@ -67,6 +67,7 @@
         <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
 
         <result column="statement_order_no" jdbcType="VARCHAR" property="statementOrderNo"/>
+        <result column="source_id" jdbcType="INTEGER" property="sourceId"/>
     </resultMap>
 
     <resultMap id="FinanceStatementOrderPayDetail" type="com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail">
@@ -131,7 +132,6 @@
         <result column="orderRentTimeLength" jdbcType="INTEGER" property="orderRentTimeLength" />
         <result column="isNew" jdbcType="INTEGER" property="isNew" />
         <result column="relet_order_item_refer_id" jdbcType="INTEGER" property="reletOrderItemReferId"/>
-        <result column="source_id" jdbcType="INTEGER" property="sourceId"/>
     </resultMap>
 
 

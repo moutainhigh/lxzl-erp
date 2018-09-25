@@ -50,6 +50,8 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMaterialBulkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderProductEquipmentMapper;
@@ -71,6 +73,8 @@ import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderProductDO;
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderMaterialDO;
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO;
 import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderMaterialBulkDO;
 import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderProductEquipmentDO;
@@ -1721,6 +1725,32 @@ public class StatementServiceImpl implements StatementService {
                         }
                     }
                 }
+                if (OrderType.ORDER_TYPE_REPLACE.equals(statementOrderDetail.getOrderType())) {
+                    //为订单商品时
+                    if (Arrays.asList(OrderItemType.ORDER_ITEM_TYPE_PRODUCT,OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT).contains(statementOrderDetail.getOrderItemType())) {
+                        OrderProductDO orderProductDO = orderProductMapper.findById(statementOrderDetail.getOrderItemReferId());
+                        if (orderProductDO != null) {
+                            Integer productId = orderProductDO.getProductId();
+                            Integer isNewProduct = orderProductDO.getIsNewProduct();
+                            key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType() + "-" + statementOrderDetail.getOrderItemReferId() + "-" + statementOrderDetail.getReletOrderItemReferId();
+                        }
+                    }
+                    //为订单物料时
+                    if (Arrays.asList(OrderItemType.ORDER_ITEM_TYPE_MATERIAL,OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL).contains(statementOrderDetail.getOrderItemType())) {
+                        OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(statementOrderDetail.getOrderItemReferId());
+                        if (orderMaterialDO != null) {
+                            Integer materialId = orderMaterialDO.getMaterialId();
+                            Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
+                            key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType() + "-" + statementOrderDetail.getOrderItemReferId() + "-" + statementOrderDetail.getReletOrderItemReferId();
+                        }
+                    }
+                    //为订单其他时
+                    if (OrderItemType.ORDER_ITEM_TYPE_OTHER.equals(statementOrderDetail.getOrderItemType())) {
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType() + "-" + statementOrderDetail.getOrderItemReferId() + "-" + statementOrderDetail.getReletOrderItemReferId();
+                        hashMap.put(key, statementOrderDetail);
+                        continue;
+                    }
+                }
                 //各商品物料
                 StatementOrderDetail newStatementOrderDetail = hashMap.get(key);
                 if (newStatementOrderDetail != null) {
@@ -2023,6 +2053,54 @@ public class StatementServiceImpl implements StatementService {
                     }
                 }
             }
+        }
+        //换货单处理逻辑
+        if (OrderType.ORDER_TYPE_REPLACE.equals(statementOrderDetail.getOrderType())) {
+            orderDO = orderDO == null ? orderMapper.findByOrderIdSimple(statementOrderDetail.getOrderId()) : orderDO;
+            if (orderDO != null) {
+                statementOrderDetail.setOrderNo(orderDO.getOrderNo());
+
+                if(OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType())){
+                    ReplaceOrderProductDO replaceOrderProductDO= replaceOrderProductMapper.findByOldProductIdAndRepalceId(statementOrderDetail.getOrderItemReferId(),statementOrderDetail.getSourceId());
+                    statementOrderDetail.setItemCount(replaceOrderProductDO.getRealReplaceProductCount());
+                    if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
+                        for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                            if (statementOrderDetail.getOrderItemReferId().equals(orderProductDO.getId())) {
+                                statementOrderDetail.setItemName(orderProductDO.getProductName() + orderProductDO.getProductSkuName());
+                                statementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
+                                statementOrderDetail.setItemRentType(orderProductDO.getRentType());
+                                break;
+                            }
+                        }
+                    }
+                }else if(OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(statementOrderDetail.getOrderItemType())){
+                    ReplaceOrderMaterialDO replaceOrderProductDO= replaceOrderMaterialMapper.findByOldMaterialIdAndReplaceId(statementOrderDetail.getOrderItemReferId(),statementOrderDetail.getSourceId());
+                    statementOrderDetail.setItemCount(replaceOrderProductDO.getRealReplaceMaterialCount());
+                    if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
+                        for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
+                            if (statementOrderDetail.getOrderItemReferId().equals(orderMaterialDO.getId())) {
+                                statementOrderDetail.setItemName(orderMaterialDO.getMaterialName());
+                                statementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
+                                statementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
+                                break;
+                            }
+                        }
+                    }
+                }else if(OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType())){
+                    ReplaceOrderProductDO replaceOrderProductDO= replaceOrderProductMapper.findByNewProductIdAndRepalceId(statementOrderDetail.getOrderItemReferId(),statementOrderDetail.getSourceId());
+                    statementOrderDetail.setItemName(replaceOrderProductDO.getProductName() + replaceOrderProductDO.getProductSkuName());
+                    statementOrderDetail.setItemCount(replaceOrderProductDO.getRealReplaceProductCount());
+                    statementOrderDetail.setUnitAmount(replaceOrderProductDO.getProductUnitAmount());
+                    statementOrderDetail.setItemRentType(replaceOrderProductDO.getRentType());
+                }else if(OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType())){
+                    ReplaceOrderMaterialDO replaceOrderMaterialDO= replaceOrderMaterialMapper.findByNewMaterialIdAndReplaceId(statementOrderDetail.getOrderItemReferId(),statementOrderDetail.getSourceId());
+                    statementOrderDetail.setItemName(replaceOrderMaterialDO.getMaterialName());
+                    statementOrderDetail.setItemCount(replaceOrderMaterialDO.getRealReplaceMaterialCount());
+                    statementOrderDetail.setUnitAmount(replaceOrderMaterialDO.getMaterialUnitAmount());
+                    statementOrderDetail.setItemRentType(replaceOrderMaterialDO.getRentType());
+                }
+            }
+
         }
     }
 
@@ -8069,5 +8147,9 @@ public class StatementServiceImpl implements StatementService {
     private CustomerSupport customerSupport;
     @Autowired
     private StatementCommonSupport statementCommonSupport;
+    @Autowired
+    private ReplaceOrderMaterialMapper replaceOrderMaterialMapper;
+    @Autowired
+    private ReplaceOrderProductMapper replaceOrderProductMapper;
 
 }
