@@ -45,6 +45,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
@@ -55,6 +56,9 @@ import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderMaterialDO;
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
@@ -1574,6 +1578,12 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         //获取该用户处于待提交、审核中、处理中三种状态的商品或者配件的数量
         getReturnCount(productCountMap, materialCountMap, k3ReturnOrderDOList);
 
+        //获取该订单待提交和审核中的换货单，统计换货的商品和配件的数量
+        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(orderDO.getOrderNo());
+
+        //将该订单的待提交、审核中两种状态的换货单商品或配件数量保存
+        saveExistedReplaceCount( productCountMap, materialCountMap, replaceOrderDOList,null);
+
         //比较设备项
         List<OrderProduct> orderProductList = order.getOrderProductList();
         for (OrderProduct orderProduct : orderProductList) {
@@ -2146,6 +2156,40 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         sb.append(JSON.toJSONString(response));
         return sb.toString();
     }
+    /**
+     * 将该订单的待提交、审核中两种状态的换货单商品或配件数量保存
+     */
+    private void saveExistedReplaceCount( Map<Integer, Integer> productCountMap, Map<Integer, Integer> materialCountMap, List<ReplaceOrderDO> replaceOrderDOList,String replaceOrderNo) {
+        if (CollectionUtil.isNotEmpty(replaceOrderDOList)) {
+            for (ReplaceOrderDO exReplaceOrderDO:replaceOrderDOList){
+                if (exReplaceOrderDO.getReplaceOrderNo().equals(replaceOrderNo)) {
+                    continue;
+                }
+                List<ReplaceOrderProductDO> exReplaceOrderProductDOList = exReplaceOrderDO.getReplaceOrderProductDOList();
+                List<ReplaceOrderMaterialDO> exReplaceOrderMaterialDOList = exReplaceOrderDO.getReplaceOrderMaterialDOList();
+                if (CollectionUtil.isNotEmpty(exReplaceOrderProductDOList)) {
+                    for (ReplaceOrderProductDO replaceOrderProductDO:exReplaceOrderProductDOList) {
+                        if (!productCountMap.containsKey(replaceOrderProductDO.getOldOrderProductId())) {
+                            productCountMap.put(replaceOrderProductDO.getOldOrderProductId(), replaceOrderProductDO.getReplaceProductCount());
+                        }else {
+                            Integer productCount = replaceOrderProductDO.getReplaceProductCount() + productCountMap.get(replaceOrderProductDO.getOldOrderProductId());
+                            productCountMap.put(replaceOrderProductDO.getOldOrderProductId(), productCount);
+                        }
+                    }
+                }
+                if (CollectionUtil.isNotEmpty(exReplaceOrderMaterialDOList)) {
+                    for (ReplaceOrderMaterialDO replaceOrderMaterialDO:exReplaceOrderMaterialDOList) {
+                        if (!materialCountMap.containsKey(replaceOrderMaterialDO.getOldOrderMaterialId())) {
+                            materialCountMap.put(replaceOrderMaterialDO.getOldOrderMaterialId(), replaceOrderMaterialDO.getReplaceMaterialCount());
+                        }else {
+                            Integer materialCount = replaceOrderMaterialDO.getReplaceMaterialCount() + materialCountMap.get(replaceOrderMaterialDO.getOldOrderMaterialId());
+                            materialCountMap.put(replaceOrderMaterialDO.getOldOrderMaterialId(), materialCount);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 
     @Autowired
@@ -2208,5 +2252,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
     @Autowired
     private CustomerMapper customerMapper;
+    @Autowired
+    private ReplaceOrderMapper replaceOrderMapper;
 
 }
