@@ -30,8 +30,6 @@ public interface ReplaceOrderService  extends VerifyReceiver {
 
     ServiceResult<String,String> confirmReplaceOrder(ReplaceOrderConfirmChangeParam replaceOrderConfirmChangeParam);
 
-//    ServiceResult<String,String> replaceOrderDeliveryCallBack(ReplaceOrder replaceOrder);
-
     ServiceResult<String,String> commitReplaceOrder(ReplaceOrderCommitParam replaceOrderCommitParam);
 
     ServiceResult<String,String> sendReplaceOrderToK3(String replaceOrderNo);
@@ -40,5 +38,4 @@ public interface ReplaceOrderService  extends VerifyReceiver {
 
     ServiceResult<String,List<ReplaceOrder>> queryReplaceOrderListForOrderNo(String orderNo);
 
-//    ServiceResult<String,String> replaceOrderDeliveryCallBackDetail(ReplaceOrder replaceOrder, ReplaceOrderDO replaceOrderDO);
 }
