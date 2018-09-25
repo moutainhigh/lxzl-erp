@@ -515,4 +515,13 @@
 		LEFT JOIN erp_replace_order_material erom ON ero.id = erom.replace_order_id and erom.data_status = 1
 		where ero.order_no = #{orderNo, jdbcType=VARCHAR} and ero.data_status = 1
 	</select>
+
+	<select id="findByCustomerNoForCheck" resultMap="ReplaceOrderDO" parameterType="java.lang.String">
+		SELECT<include refid="column_List"/>,<include refid="product_column_List"/>,
+		<include refid="material_column_List"/>
+		FROM erp_replace_order ero
+		LEFT JOIN erp_replace_order_product erop ON ero.id = erop.replace_order_id and erop.data_status = 1
+		LEFT JOIN erp_replace_order_material erom ON ero.id = erom.replace_order_id and erom.data_status = 1
+		where ero.customer_no = #{customerNo, jdbcType=VARCHAR} and ero.data_status = 1 and ero.replace_order_status in (0,4,8,12,16,28)
+	</select>
 </mapper>
