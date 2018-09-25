@@ -6,6 +6,7 @@ import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderMaterialDO;import org.
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public interface ReplaceOrderMaterialMapper extends BaseMysqlDAO<ReplaceOrderMaterialDO> {
@@ -17,4 +18,10 @@ public interface ReplaceOrderMaterialMapper extends BaseMysqlDAO<ReplaceOrderMat
     void saveList(@Param("list") List<ReplaceOrderProductDO> saveReplaceOrderProductDOList);
 
     void updateListForCancel(@Param("replaceOrderMaterialDOList") List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList);
+
+    ReplaceOrderMaterialDO findByOldMaterialIdAndReplaceId(@Param("oldOrderMaterialId") Integer oldOrderMaterialId,@Param("replaceOrderId") Integer replaceOrderId);
+
+    ReplaceOrderMaterialDO findByNewMaterialIdAndReplaceId(@Param("newOrderMaterialId") Integer oldOrderMaterialId,@Param("replaceOrderId") Integer replaceOrderId);
+
+    List<ReplaceOrderMaterialDO> listByOrderIds(@Param(value = "orderIds") Set<Integer> orderIds);
 }

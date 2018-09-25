@@ -22,4 +22,12 @@ public class SortOrderItemType {
     public static final Integer MATERIAL_RELET = 7;
     /** 排序订单项类型---配件---续租退货 */
     public static final Integer MATERIAL_RELET_RETURN = 8;
+    /** 排序订单项类型---商品---换货 */
+    public static final Integer PRODUCT_REPLACE = 9;
+    /** 排序订单项类型---商品---换货退货 */
+    public static final Integer PRODUCT_REPLACE_RETURN = 10;
+    /** 排序订单项类型---配件---换货 */
+    public static final Integer MATERIAL_REPLACE = 11;
+    /** 排序订单项类型---配件---换货退货 */
+    public static final Integer MATERIAL_REPLACE_RETURN = 12;
 }

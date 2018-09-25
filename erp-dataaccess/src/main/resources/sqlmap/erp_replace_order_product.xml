@@ -259,4 +259,25 @@
 			#{replaceOrderProductDO.id,jdbcType=INTEGER}
 		</foreach>
 	</update>
+
+	<select id="findByOldProductIdAndRepalceId" resultMap="ReplaceOrderProductDO">
+		SELECT <include refid="column_List"/> FROM erp_replace_order_product erop
+		WHERE erop.old_order_product_id = #{oldProductId, jdbcType=INTEGER} AND erop.replace_order_id = #{replaceOrderId, jdbcType=INTEGER} AND erop.data_status = 1
+	</select>
+
+	<select id="findByNewProductIdAndRepalceId" resultMap="ReplaceOrderProductDO">
+		SELECT <include refid="column_List"/> FROM erp_replace_order_product erop
+		WHERE erop.new_order_product_id = #{newProductId, jdbcType=INTEGER} AND erop.replace_order_id = #{replaceOrderId, jdbcType=INTEGER} AND erop.data_status = 1
+	</select>
+
+	<select id="listByOrderIds" resultMap="ReplaceOrderProductDO" parameterType="java.util.Set">
+		SELECT
+		<include refid="column_List"/>
+		FROM erp_replace_order_product erop
+		WHERE erop.data_status = 1
+		AND erop.replace_order_id in
+		<foreach collection="orderIds" item="item" index="index" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+	</select>
 </mapper>

@@ -246,6 +246,12 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findByCustomerNo(k3ReturnOrderDO.getK3CustomerNo());
         //获取该用户处于待提交、审核中、处理中三种状态的商品或者配件的数量
         getReturnCount(productCountMap, materialCountMap, k3ReturnOrderDOList);
+
+        //获取该订单待提交和审核中的换货单，统计换货的商品和配件的数量
+        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByCustomerNoForCheck(k3ReturnOrderDO.getK3CustomerNo());
+
+        //将该订单的待提交、审核中两种状态的换货单商品或配件数量保存
+        saveExistedReplaceCount( productCountMap, materialCountMap, replaceOrderDOList,null);
         //比较设备项
         if (compareReturnProductCount(result, rentingProductCountMap, nowProductCountMap, productCountMap))
             return result;
@@ -730,6 +736,12 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         //获取该用户处于待提交、审核中、处理中三种状态的商品或者配件的数量
         getReturnCount(productCountMap, materialCountMap, k3ReturnOrderDOList);
 
+        //获取该订单待提交和审核中的换货单，统计换货的商品和配件的数量
+        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByCustomerNoForCheck(k3ReturnOrderDO.getK3CustomerNo());
+
+        //将该订单的待提交、审核中两种状态的换货单商品或配件数量保存
+        saveExistedReplaceCount( productCountMap, materialCountMap, replaceOrderDOList,null);
+
         //比较设备项
         if (commitVerifyReturnProductCount(result, rentingProductCountMap, nowProductCountMap, productCountMap))
             return result;
@@ -1184,6 +1196,12 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findByCustomerNo(k3ReturnOrderDO.getK3CustomerNo());
         //获取该用户处于待提交、审核中、处理中三种状态的商品或者配件的数量
         getReturnCount(productCountMap, materialCountMap, k3ReturnOrderDOList);
+
+        //获取该订单待提交和审核中的换货单，统计换货的商品和配件的数量
+        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByCustomerNoForCheck(k3ReturnOrderDO.getK3CustomerNo());
+
+        //将该订单的待提交、审核中两种状态的换货单商品或配件数量保存
+        saveExistedReplaceCount( productCountMap, materialCountMap, replaceOrderDOList,null);
 
         //比较设备项
         if (compareReturnProductCount(result, rentingProductCountMap, nowProductCountMap, productCountMap))

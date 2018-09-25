@@ -15,6 +15,9 @@ import com.lxzl.erp.common.domain.payment.CustomerAccountLogParam;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderMaterial;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderProduct;
+import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
+import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderMaterial;
+import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderProduct;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.dto.BaseCheckStatementDetailDTO;
 import com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementMapContainer;
@@ -40,6 +43,8 @@ import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderProductMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3OrderStatementConfigDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
@@ -111,6 +116,12 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
     @Autowired
     private ReplaceOrderMapper replaceOrderMapper;
+
+    @Autowired
+    private ReplaceOrderProductMapper replaceOrderProductMapper;
+
+    @Autowired
+    private ReplaceOrderMaterialMapper replaceOrderMaterialMapper;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -191,17 +202,10 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOS) {
             returnOrderIds.add(k3ReturnOrderDO.getId());
         }
-        // 查询该用户确认换货时间在指定时间段内换货单列表数据
-        List<ReplaceOrderDO> replaceOrderDOS = replaceOrderMapper.listByMonthQuery(statementOrderMonthQueryParam);
-        Set<Integer> replaceOrderIds = new LinkedHashSet<>();
-        for (ReplaceOrderDO replaceOrderDO : replaceOrderDOS) {
-            replaceOrderIds.add(replaceOrderDO.getId());
-        }
 
         //orderIds IS 退货单id
         statementOrderMonthQueryParam.setOrderIds(returnOrderIds);
-        //replaceOrderIds is 换货单id
-        statementOrderMonthQueryParam.setReplaceOrderIds(replaceOrderIds);
+
         // 根据查询条件获取结算单列表数据
         ServiceResult<String, List<BaseCheckStatementDetailDTO>> serviceResultOfCheckStatementDetail = statementService.listCheckStatementDetailDTOByQuery(statementOrderMonthQueryParam);
         if (!Objects.equals(serviceResultOfCheckStatementDetail.getErrorCode(), ErrorCode.SUCCESS)) {
@@ -227,6 +231,10 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         buildRentOrderItem(orderIds, mapContainer);
         // 构建续租订单相关数据
         buildReletOrder(orderIds, mapContainer);
+        // todo 构建换货单相关数据
+        Set<Integer> replaceOrderIds = orderIdsUseOrderTypeGroup.get(OrderType.ORDER_TYPE_REPLACE);
+        buildReplaceOrder(replaceOrderIds, mapContainer);
+
         for (BaseCheckStatementDetailDTO checkStatementDetailDTO : checkStatementDetailDTOS) {
             checkStatementDetailDTO.mapContainer(mapContainer).build();
         }
@@ -305,16 +313,34 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
     }
 
     /**
+     * 构建换货订单数据
+     */
+    private void buildReplaceOrder(Set<Integer> orderIds, CheckStatementMapContainer mapContainer) {
+        List<ReplaceOrder> replaceOrders = ConverterUtil.convertList(replaceOrderMapper.listByOrderIds(orderIds), ReplaceOrder.class);
+        List<ReplaceOrderProduct> replaceOrderProducts = ConverterUtil.convertList(replaceOrderProductMapper.listByOrderIds(orderIds), ReplaceOrderProduct.class);
+        List<ReplaceOrderMaterial> replaceOrderMaterials = ConverterUtil.convertList(replaceOrderMaterialMapper.listByOrderIds(orderIds), ReplaceOrderMaterial.class);
+        mapContainer
+                .idReplaceOrderMap(replaceOrders)
+                .idReplaceOrderProductMap(replaceOrderProducts)
+                .idReplaceOrderMaterialMap(replaceOrderMaterials);
+    }
+
+    /**
      * 获取根据订单类型分组的订单id列表或者退货单id列表
      */
     private Map<Integer, Set<Integer>> getOrderIdsUseOrderTypeGroupNew(List<BaseCheckStatementDetailDTO> checkStatementDetailDTOS) {
         Map<Integer, Set<Integer>> orderIdsUserOrderTypeGroup = Maps.newHashMap();
         orderIdsUserOrderTypeGroup.put(OrderType.ORDER_TYPE_ORDER, new HashSet<Integer>());
         orderIdsUserOrderTypeGroup.put(OrderType.ORDER_TYPE_RETURN, new HashSet<Integer>());
+        orderIdsUserOrderTypeGroup.put(OrderType.ORDER_TYPE_REPLACE, new HashSet<Integer>());
         for (BaseCheckStatementDetailDTO checkStatementDetailDTO : checkStatementDetailDTOS) {
             Integer orderType = checkStatementDetailDTO.getOrderType();
             if (orderIdsUserOrderTypeGroup.containsKey(orderType)) {
-                orderIdsUserOrderTypeGroup.get(orderType).add(checkStatementDetailDTO.getOrderId());
+                if(OrderType.ORDER_TYPE_REPLACE.equals(orderType)){
+                    orderIdsUserOrderTypeGroup.get(orderType).add(checkStatementDetailDTO.getSourceId());
+                }else {
+                    orderIdsUserOrderTypeGroup.get(orderType).add(checkStatementDetailDTO.getOrderId());
+                }
             }
         }
         return orderIdsUserOrderTypeGroup;

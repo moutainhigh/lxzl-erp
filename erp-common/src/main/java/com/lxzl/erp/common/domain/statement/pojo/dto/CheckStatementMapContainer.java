@@ -8,6 +8,9 @@ import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderMaterial;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderProduct;
+import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
+import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderMaterial;
+import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderProduct;
 import com.lxzl.erp.common.util.ListUtil;
 
 import java.util.HashMap;
@@ -27,6 +30,9 @@ public class CheckStatementMapContainer {
     private Map<Integer, ReletOrder> idReletOrderMap;
     private Map<Integer, ReletOrderProduct> idReletOrderProductMap;
     private Map<Integer, ReletOrderMaterial> idReletOrderMaterialMap;
+    private Map<Integer, ReplaceOrder> idReplaceOrderMap;
+    private Map<Integer, ReplaceOrderProduct> idReplaceOrderProductMap;
+    private Map<Integer, ReplaceOrderMaterial> idReplaceOrderMaterialMap;
     private Map<String, Order> noOrderMap;
 
     public Map<Integer, Order> getIdOrderMap() {
@@ -59,6 +65,30 @@ public class CheckStatementMapContainer {
 
     public Map<Integer, ReletOrderMaterial> getIdReletOrderMaterialMap() {
         return idReletOrderMaterialMap;
+    }
+
+    public Map<Integer, ReplaceOrderProduct> getIdReplaceOrderProductMap() {
+        return idReplaceOrderProductMap;
+    }
+
+    public void setIdReplaceOrderProductMap(Map<Integer, ReplaceOrderProduct> idReplaceOrderProductMap) {
+        this.idReplaceOrderProductMap = idReplaceOrderProductMap;
+    }
+
+    public Map<Integer, ReplaceOrderMaterial> getIdReplaceOrderMaterialMap() {
+        return idReplaceOrderMaterialMap;
+    }
+
+    public void setIdReplaceOrderMaterialMap(Map<Integer, ReplaceOrderMaterial> idReplaceOrderMaterialMap) {
+        this.idReplaceOrderMaterialMap = idReplaceOrderMaterialMap;
+    }
+
+    public Map<Integer, ReplaceOrder> getIdReplaceOrderMap() {
+        return idReplaceOrderMap;
+    }
+
+    public void setIdReplaceOrderMap(Map<Integer, ReplaceOrder> idReplaceOrderMap) {
+        this.idReplaceOrderMap = idReplaceOrderMap;
     }
 
     public Map<String, Order> getNoOrderMap() {
@@ -196,6 +226,21 @@ public class CheckStatementMapContainer {
 
     public CheckStatementMapContainer idReletOrderMaterialMap(List<ReletOrderMaterial> reletOrderMaterialS) {
         this.idReletOrderMaterialMap = ListUtil.listToMap(reletOrderMaterialS, "reletOrderMaterialId");
+        return this;
+    }
+
+    public CheckStatementMapContainer idReplaceOrderMap(List<ReplaceOrder> replaceOrders) {
+        this.idReplaceOrderMap = ListUtil.listToMap(replaceOrders, "replaceOrderId");
+        return this;
+    }
+
+    public CheckStatementMapContainer idReplaceOrderProductMap(List<ReplaceOrderProduct> replaceOrderProducts) {
+        this.idReplaceOrderProductMap = ListUtil.listToMap(replaceOrderProducts, "replaceOrderProductId");
+        return this;
+    }
+
+    public CheckStatementMapContainer idReplaceOrderMaterialMap(List<ReplaceOrderMaterial> replaceOrderMaterials) {
+        this.idReplaceOrderMaterialMap = ListUtil.listToMap(replaceOrderMaterials, "replaceOrderMaterialId");
         return this;
     }
 

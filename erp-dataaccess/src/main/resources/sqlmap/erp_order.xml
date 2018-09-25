@@ -2374,9 +2374,9 @@
         FROM erp_order eo
         WHERE eo.buyer_customer_id = #{queryParam.customerId}
         AND eo.data_status = 1
-        <if test="queryParam.queryOrderType != null">
-            AND eo.order_type = #{queryParam.queryOrderType}
-        </if>
+        <!--<if test="queryParam.queryOrderType != null">-->
+            <!--AND eo.order_type = #{queryParam.queryOrderType}-->
+        <!--</if>-->
         AND NOT
         (
         eo.rent_start_time <![CDATA[ > ]]> #{queryParam.statementOrderEndTimeAddOne}

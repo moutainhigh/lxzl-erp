@@ -12,6 +12,9 @@ import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderMaterial;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderProduct;
+import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
+import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderMaterial;
+import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderProduct;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CheckStatementUtil;
 import com.lxzl.erp.common.util.DateUtil;
@@ -298,6 +301,11 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
      */
     private Integer orderItemActualId;
 
+    /**
+     * 换货单id
+     */
+    private Integer sourceId;
+
     public Integer getSortItemType() {
         return 0;
     }
@@ -440,6 +448,19 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
 
     public ReletOrderMaterial getReletOrderMaterialById(Integer id) {
         return this.mapContainer.getIdReletOrderMaterialMap().get(id);
+    }
+
+    public ReplaceOrder getReplaceOrderId(Integer id) {
+        Map<Integer, ReplaceOrder> replaceOrderMap = this.mapContainer.getIdReplaceOrderMap();
+        return replaceOrderMap.get(id);
+    }
+
+    public ReplaceOrderProduct getReplaceOrderProductById(Integer id) {
+        return this.mapContainer.getIdReplaceOrderProductMap().get(id);
+    }
+
+    public ReplaceOrderMaterial getReplaceOrderMaterialById(Integer id) {
+        return this.mapContainer.getIdReplaceOrderMaterialMap().get(id);
     }
 
     public BaseCheckStatementDetailDTO clone() {
@@ -1360,5 +1381,13 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
 
     public void setReturnReasonType(Integer returnReasonType) {
         this.returnReasonType = returnReasonType;
+    }
+
+    public Integer getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(Integer sourceId) {
+        this.sourceId = sourceId;
     }
 }
