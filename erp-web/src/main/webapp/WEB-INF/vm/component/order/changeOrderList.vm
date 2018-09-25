@@ -17,12 +17,12 @@
             {{#dataSource}}
             {{#listData}}
             <tr>  
-                <td class="nowrap"><a href="{{detailUrl}}" target="_blank">{{reletOrderNo}}</a></td>
-                <td class="nowrap">{{#clockShorTime}}{{rentStartTime}}{{/clockShorTime}}</td>
+                <td class="nowrap"><a href="{{detailUrl}}" target="_blank">{{replaceOrderNo}}</a></td>
+                <td class="nowrap">{{rentStartTime}}</td>
                 <td class="nowrap">{{#clockShorTime}}{{expectReturnTime}}{{/clockShorTime}}</td>
                 <td class="nowrap">{{#rentTypeByMonth}}{{statementDateValue}}{{/rentTypeByMonth}}</td>
                 <td class="nowrap">{{totalProductCount}}</td>
-                <td class="nowrap">￥{{#price}}{{totalProductAmount}}{{/price}}</td>
+                <td class="nowrap">{{totalProductAmount}}</td>
                 <td class="nowrap">{{totalMaterialCount}}</td>
                 <td class="nowrap">{{totalMaterialCount}}</td>
             </tr>

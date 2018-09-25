@@ -15,6 +15,8 @@
                                 <span class="input-group-addon cursor"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
+                        <label class="field-label text-right col-md-2">发货时间</label>
+                        <div class="col-md-4" id="replaceDeliveryTime" style="line-height:42px;"></div>
                     </div>
                 </div>
                 <div class="row mn mb10">
@@ -53,7 +55,7 @@
                                         <td class="text-center">{{replaceProductCount}}</td>
                                         <td>
                                             <label class="field prepend-icon rentCountIpt mw200">
-                                                <input type="text" name="realReplaceProductCount" value="" class="realReplaceProductCount form-control gui-input pl10" placeholder="{{replaceProductCount}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{replaceProductCount}}";};'/>
+                                                <input type="text" name="realReplaceProductCount" value="{{realReplaceProductCount}}" class="realReplaceProductCount form-control gui-input pl10" placeholder=""  onfocus='this.value="";this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{replaceProductCount}}";};'/>
                                             </label>
                                         </td>
                                     </tr>
