@@ -80,6 +80,7 @@ import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -1057,35 +1058,49 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         return false;
     }
 
-    /**
-     * 换货单发货回调
-     * @Author : sunzhipeng
-     */
-    @Override
-    public ServiceResult<String, String> replaceOrderDeliveryCallBack(ReplaceOrder replaceOrder) {
-        // 回调时不需要登陆，这里设置user为super user
-        if (userSupport.getCurrentUser() == null) {
-            User superUser = new User();
-            superUser.setUserId(CommonConstant.SUPER_USER_ID);
-            httpSession.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, superUser);
-        }
-        ServiceResult<String, String> result = new ServiceResult<>();
-        Date date = new Date();
-        if (StringUtil.isEmpty(replaceOrder.getReplaceOrderNo())) {
-            result.setErrorCode(ErrorCode.REPLACE_ORDER_NO_NOT_NULL);
-            return result;
-        }
-        ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(replaceOrder.getReplaceOrderNo());
-        if (replaceOrderDO == null) {
-            result.setErrorCode(ErrorCode.REPLACE_ORDER_NO_ERROR);
-            return result;
-        }
-        replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_DELIVERED);
-        replaceOrderDO.setReplaceDeliveryTime(date);
-        replaceOrderMapper.update(replaceOrderDO);
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
-    }
+//    /**
+//     * 换货单发货回调
+//     * @Author : sunzhipeng
+//     */
+//    @Override
+//    public ServiceResult<String, String> replaceOrderDeliveryCallBack(ReplaceOrder replaceOrder) {
+//        // 回调时不需要登陆，这里设置user为super user
+//        if (userSupport.getCurrentUser() == null) {
+//            User superUser = new User();
+//            superUser.setUserId(CommonConstant.SUPER_USER_ID);
+//            httpSession.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, superUser);
+//        }
+//        ServiceResult<String, String> result = new ServiceResult<>();
+//        Date date = new Date();
+//        if (StringUtil.isEmpty(replaceOrder.getReplaceOrderNo())) {
+//            result.setErrorCode(ErrorCode.REPLACE_ORDER_NO_NOT_NULL);
+//            return result;
+//        }
+//        ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(replaceOrder.getReplaceOrderNo());
+//        if (replaceOrderDO == null) {
+//            result.setErrorCode(ErrorCode.REPLACE_ORDER_NO_ERROR);
+//            return result;
+//        }
+//        // 处理类内service调用
+//        ReplaceOrderService replaceOrderService = (ReplaceOrderService) AopContext.currentProxy();
+//        ServiceResult<String, String> serviceResult = replaceOrderService.replaceOrderDeliveryCallBackDetail(replaceOrder, replaceOrderDO);
+//        if (ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+//            result.setErrorCode(ErrorCode.SUCCESS);
+//        }
+//
+//        return result;
+//    }
+
+//    @Override
+//    public ServiceResult<String, String> replaceOrderDeliveryCallBackDetail(ReplaceOrder replaceOrder,ReplaceOrderDO replaceOrderDO) {
+//        ServiceResult<String, String> result = new ServiceResult<>();
+//        Date date = new Date();
+//        replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_DELIVERED);
+//        replaceOrderDO.setReplaceDeliveryTime(date);
+//        replaceOrderMapper.update(replaceOrderDO);
+//        result.setErrorCode(ErrorCode.SUCCESS);
+//        return result;
+//    }
 
     /**
      * 提交换货单
@@ -1375,6 +1390,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         result.setResult(replaceOrderList);
         return result;
     }
+
+
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)

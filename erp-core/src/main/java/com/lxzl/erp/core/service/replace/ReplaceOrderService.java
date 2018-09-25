@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.replace.ReplaceOrderConfirmChangeParam;
 import com.lxzl.erp.common.domain.replace.ReplaceOrderQueryParam;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.core.service.VerifyReceiver;
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
 import com.lxzl.se.core.service.BaseService;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public interface ReplaceOrderService  extends VerifyReceiver {
 
     ServiceResult<String,String> confirmReplaceOrder(ReplaceOrderConfirmChangeParam replaceOrderConfirmChangeParam);
 
-    ServiceResult<String,String> replaceOrderDeliveryCallBack(ReplaceOrder replaceOrder);
+//    ServiceResult<String,String> replaceOrderDeliveryCallBack(ReplaceOrder replaceOrder);
 
     ServiceResult<String,String> commitReplaceOrder(ReplaceOrderCommitParam replaceOrderCommitParam);
 
@@ -38,4 +39,6 @@ public interface ReplaceOrderService  extends VerifyReceiver {
     ServiceResult<String,String> sendReplaceOrderInfoToK3(String replaceOrderNo);
 
     ServiceResult<String,List<ReplaceOrder>> queryReplaceOrderListForOrderNo(String orderNo);
+
+//    ServiceResult<String,String> replaceOrderDeliveryCallBackDetail(ReplaceOrder replaceOrder, ReplaceOrderDO replaceOrderDO);
 }

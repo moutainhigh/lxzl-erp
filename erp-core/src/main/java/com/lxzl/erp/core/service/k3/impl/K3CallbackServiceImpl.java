@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrder;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrderMaterial;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrderProduct;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
+import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
@@ -33,6 +34,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
@@ -46,6 +48,7 @@ import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
 import org.slf4j.Logger;
@@ -431,6 +434,33 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         return serviceResult;
     }
 
+    @Override
+    public ServiceResult<String, String> replaceOrderDeliveryCallBack(ReplaceOrder replaceOrder) {
+        // 回调时不需要登陆，这里设置user为super user
+        if (userSupport.getCurrentUser() == null) {
+            User superUser = new User();
+            superUser.setUserId(CommonConstant.SUPER_USER_ID);
+            httpSession.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, superUser);
+        }
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date date = new Date();
+        if (StringUtil.isEmpty(replaceOrder.getReplaceOrderNo())) {
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_NO_NOT_NULL);
+            return result;
+        }
+        ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(replaceOrder.getReplaceOrderNo());
+        if (replaceOrderDO == null) {
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_NO_ERROR);
+            return result;
+        }
+
+        replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_DELIVERED);
+        replaceOrderDO.setReplaceDeliveryTime(date);
+        replaceOrderMapper.update(replaceOrderDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
     private void getReturnItemMap(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList, Map<String, OrderProductDO> oldOrderProductDOMap, Map<String, OrderMaterialDO> oldOrderMaterialDOMap, Map<String, OrderProductDO> erpOrderProductDOMap, Map<String, OrderMaterialDO> erpOrderMaterialDOMap) {
         //找到退货单涉及到所有订单
         List<String> allOrderNoList = new ArrayList<>();
@@ -570,4 +600,6 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     private HttpSession httpSession;
     @Autowired
     private UserSupport userSupport;
+    @Autowired
+    private ReplaceOrderMapper replaceOrderMapper;
 }
