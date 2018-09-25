@@ -206,4 +206,14 @@
 			#{replaceOrderMaterialDO.id,jdbcType=INTEGER}
 		</foreach>
 	</update>
+
+	<select id="findByOldMaterialIdAndReplaceId" resultMap="ReplaceOrderMaterialDO" >
+		SELECT <include refid="column_List"/> FROM erp_replace_order_material erom
+		WHERE erom.old_order_material_id = #{oldOrderMaterialId, jdbcType=INTEGER} AND erom.replace_order_id = #{replaceOrderId, jdbcType=INTEGER} AND erom.data_status = 1
+	</select>
+
+	<select id="findByNewMaterialIdAndReplaceId" resultMap="ReplaceOrderMaterialDO" >
+		SELECT <include refid="column_List"/> FROM erp_replace_order_material erom
+		WHERE erom.new_order_material_id = #{newOrderMaterialId, jdbcType=INTEGER} AND erom.replace_order_id = #{replaceOrderId, jdbcType=INTEGER} AND erom.data_status = 1
+	</select>
 </mapper>

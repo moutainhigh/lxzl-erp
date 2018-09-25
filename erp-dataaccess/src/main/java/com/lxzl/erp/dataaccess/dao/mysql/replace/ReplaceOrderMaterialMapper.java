@@ -17,4 +17,8 @@ public interface ReplaceOrderMaterialMapper extends BaseMysqlDAO<ReplaceOrderMat
     void saveList(@Param("list") List<ReplaceOrderProductDO> saveReplaceOrderProductDOList);
 
     void updateListForCancel(@Param("replaceOrderMaterialDOList") List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList);
+
+    ReplaceOrderMaterialDO findByOldMaterialIdAndReplaceId(@Param("oldOrderMaterialId") Integer oldOrderMaterialId,@Param("replaceOrderId") Integer replaceOrderId);
+
+    ReplaceOrderMaterialDO findByNewMaterialIdAndReplaceId(@Param("newOrderMaterialId") Integer oldOrderMaterialId,@Param("replaceOrderId") Integer replaceOrderId);
 }

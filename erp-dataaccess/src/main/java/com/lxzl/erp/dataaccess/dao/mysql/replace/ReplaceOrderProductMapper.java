@@ -16,4 +16,7 @@ public interface ReplaceOrderProductMapper extends BaseMysqlDAO<ReplaceOrderProd
     void saveList(@Param("list") List<ReplaceOrderProductDO> saveReplaceOrderProductDOList);
 
     void updateListForCancel(@Param("replaceOrderProductDOList") List<ReplaceOrderProductDO> replaceOrderProductDOList);
+
+    ReplaceOrderProductDO findByOldProductIdAndRepalceId(@Param("oldProductId")Integer oldProductId,@Param("replaceOrderId")Integer replaceOrderId);
+    ReplaceOrderProductDO findByNewProductIdAndRepalceId(@Param("newProductId")Integer oldProductId,@Param("replaceOrderId")Integer replaceOrderId);
 }

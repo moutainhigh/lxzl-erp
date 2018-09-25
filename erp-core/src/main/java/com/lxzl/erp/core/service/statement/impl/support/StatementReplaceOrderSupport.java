@@ -35,6 +35,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -118,6 +119,16 @@ public class StatementReplaceOrderSupport {
         //第一期多的钱不退
         //押金（增加退押金记录，增加新商品项需缴押金；计算差价）
 
+        // 其他的费用 包括服务费等费用
+        BigDecimal otherAmount = BigDecimalUtil.add(replaceOrderDO.getLogisticsCost(), replaceOrderDO.getRepairCost(),replaceOrderDO.getServiceCost());
+        if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
+            // 如果没有处理完差价，统一当天交钱
+            StatementOrderDetailDO thisStatementOrderDetailDO = statementCommonSupport.buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_REPLACE, replaceOrderDO.getOrderId(), OrderItemType.ORDER_ITEM_TYPE_OTHER, BigInteger.ZERO.intValue(), changeTime, changeTime, changeTime, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUserId, null);
+            if (thisStatementOrderDetailDO != null) {
+                thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OTHER);
+                needUpdateOrderBeforeList.add(thisStatementOrderDetailDO);
+            }
+        }
         //更新到库
         if (CollectionUtil.isNotEmpty(needUpdateStatementOrderDetailList)) {
             List<StatementOrderDetailDO> insertList = new ArrayList<>();
@@ -195,7 +206,7 @@ public class StatementReplaceOrderSupport {
                                 continue;
                             }
                             //订单或续租单时间轴之外跳过
-                            if (DateUtil.daysBetween(endTime, statementOrderDetailDO.getStatementStartTime()) > 0 || DateUtil.daysBetween(statementOrderDetailDO.getStatementStartTime(), startTime) > 0)
+                            if (DateUtil.daysBetween(endTime, statementOrderDetailDO.getStatementStartTime()) > 0 || DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(), startTime) > 0)
                                 continue;
                             //截断期
                             if (DateUtil.daysBetween(statementOrderDetailDO.getStatementStartTime(), endTimeAfterChange) >= 0) {
@@ -226,6 +237,7 @@ public class StatementReplaceOrderSupport {
                             depositDetail.setItemIsNew(newProduct.getIsNewProduct());
                             depositDetail.setStatementDetailPhase(0);
                             depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
+                            depositDetail.setSourceId(replaceOrderDO.getId());
                             needUpdateOrderBeforeList.add(depositDetail);
                         }
                     } else {
