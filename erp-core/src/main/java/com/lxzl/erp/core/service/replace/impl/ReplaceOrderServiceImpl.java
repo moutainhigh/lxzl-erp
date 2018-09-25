@@ -684,34 +684,36 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             serviceResult.setErrorCode(ErrorCode.CANCEL_REPLACE_ORDER_BY_CREATE_USER);
             return serviceResult;
         }
-        if (!ReplaceOrderStatus.REPLACE_ORDER_STATUS_WAIT_COMMIT.equals(replaceOrderDO.getReplaceOrderStatus())) {
+        if (!ReplaceOrderStatus.REPLACE_ORDER_STATUS_WAIT_COMMIT.equals(replaceOrderDO.getReplaceOrderStatus()) &&
+                !ReplaceOrderStatus.REPLACE_ORDER_STATUS_VERIFYING.equals(replaceOrderDO.getReplaceOrderStatus()) &&
+                !ReplaceOrderStatus.REPLACE_ORDER_STATUS_BACKED.equals(replaceOrderDO.getReplaceOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.CANCEL_REPLACE_ORDER_STATUS_ERROR);
             return serviceResult;
+        }
+        //判断状态审核中执行工作流取消审核
+        if (ReplaceOrderStatus.REPLACE_ORDER_STATUS_VERIFYING.equals(replaceOrderDO.getReplaceOrderStatus())) {
+            ServiceResult<String, String> cancelWorkFlowResult = workflowService.cancelWorkFlow(WorkflowType.WORKFLOW_TYPE_CHANGE, replaceOrderDO.getReplaceOrderNo());
+            if (!ErrorCode.SUCCESS.equals(cancelWorkFlowResult.getErrorCode())) {
+                serviceResult.setErrorCode(cancelWorkFlowResult.getErrorCode());
+                return serviceResult;
+            }
+        }
+        // 审核中或者已驳回的换货单取消要返还扣走或者添加的信用额度
+        if (ReplaceOrderStatus.REPLACE_ORDER_STATUS_VERIFYING.equals(replaceOrderDO.getReplaceOrderStatus()) ||
+                ReplaceOrderStatus.REPLACE_ORDER_STATUS_BACKED.equals(replaceOrderDO.getReplaceOrderStatus())) {
+            BigDecimal updateTotalCreditDepositAmount = replaceOrderDO.getUpdateTotalCreditDepositAmount();
+            if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+                if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
+                    customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), updateTotalCreditDepositAmount, CustomerRiskBusinessType.CANCEL_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                } else if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) < 0) {
+                    customerSupport.addCreditAmountUsed(replaceOrderDO.getCustomerId(), BigDecimalUtil.mul(updateTotalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.CANCEL_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                }
+            }
         }
         replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_CANCEL);
         replaceOrderDO.setUpdateTime(date);
         replaceOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        List<ReplaceOrderProductDO> replaceOrderProductDOList = replaceOrderDO.getReplaceOrderProductDOList();
-        if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
-            for (ReplaceOrderProductDO replaceOrderProductDO:replaceOrderProductDOList) {
-                replaceOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                replaceOrderProductDO.setUpdateTime(date);
-            }
-        }
-        List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList = replaceOrderDO.getReplaceOrderMaterialDOList();
-        if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
-            for (ReplaceOrderMaterialDO replaceOrderMaterialDO:replaceOrderMaterialDOList) {
-                replaceOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                replaceOrderMaterialDO.setUpdateTime(date);
-            }
-        }
         replaceOrderMapper.update(replaceOrderDO);
-        if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
-            replaceOrderProductMapper.updateListForCancel(replaceOrderProductDOList);
-        }
-        if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
-            replaceOrderMaterialMapper.updateListForCancel(replaceOrderMaterialDOList);
-        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
