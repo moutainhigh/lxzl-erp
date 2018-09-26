@@ -1490,7 +1490,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         try {
             Date replaceTimeDate = simpleDateFormat.parse(replaceTimeString);
             Date reletTimeDate = simpleDateFormat.parse(reletTimeString);
-            if (!(replaceTimeDate.compareTo(reletTimeDate)>0)) {
+            if (!(replaceTimeDate.compareTo(reletTimeDate)>=0)) {
                 serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_BEFORE_RELET_TIME);
                 return true;
             }
