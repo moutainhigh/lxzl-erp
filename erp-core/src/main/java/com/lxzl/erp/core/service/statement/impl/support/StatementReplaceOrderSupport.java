@@ -161,7 +161,7 @@ public class StatementReplaceOrderSupport {
         BigDecimal totalRentDepositToAccount = BigDecimal.ZERO;
         if (CollectionUtil.isNotEmpty(replaceOrderDO.getReplaceOrderProductDOList())) {
             for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderDO.getReplaceOrderProductDOList()) {
-                Integer changeCount = replaceOrderProductDO.getReplaceProductCount();
+                Integer changeCount = replaceOrderProductDO.getRealReplaceProductCount();
                 if (changeCount <= 0) continue;
                 OrderProductDO oldProduct = orderProductDOMap.get(replaceOrderProductDO.getOldOrderProductId());
                 OrderProductDO newProduct = orderProductDOMap.get(replaceOrderProductDO.getNewOrderProductId());
@@ -257,7 +257,7 @@ public class StatementReplaceOrderSupport {
         BigDecimal totalRentDepositToAccount = BigDecimal.ZERO;
         if (CollectionUtil.isNotEmpty(replaceOrderDO.getReplaceOrderMaterialDOList())) {
             for (ReplaceOrderMaterialDO replaceOrderMaterialDO : replaceOrderDO.getReplaceOrderMaterialDOList()) {
-                Integer changeCount = replaceOrderMaterialDO.getReplaceMaterialCount();
+                Integer changeCount = replaceOrderMaterialDO.getRealReplaceMaterialCount();
                 if (changeCount <= 0) continue;
                 OrderMaterialDO oldMaterial = orderMaterialDOMap.get(replaceOrderMaterialDO.getOldOrderMaterialId());
                 OrderMaterialDO newMaterial = orderMaterialDOMap.get(replaceOrderMaterialDO.getNewOrderMaterialId());
@@ -429,6 +429,7 @@ public class StatementReplaceOrderSupport {
             oldStatementOrderDetailDO.setSourceId(replaceOrderId);
             needUpdateStatementOrderDetailList.add(oldStatementOrderDetailDO);
             oldStatementOrderDetailDO.setStatementOrderId(statementOrderDetailDO.getStatementOrderId());
+            oldStatementOrderDetailDO.setReturnReferId(statementOrderDetailDO.getId());
         }
 
         //新增租金
