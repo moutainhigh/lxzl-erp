@@ -516,4 +516,36 @@
 			</if>
 		</if>
 	</sql>
+	<sql id="replace_order_control">
+		<if test="maps.permissionParam!=null">
+			AND
+			(
+			1=1
+			<if test="maps.permissionParam.permissionSubCompanyIdForDelivery!= null &amp;&amp; maps.permissionParam.permissionUserIdList!= null">
+				AND (ero.delivery_sub_company_id = #{maps.permissionParam.permissionSubCompanyIdForDelivery} OR
+				ero.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.owner in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				)
+			</if>
+			<if test="maps.permissionParam.permissionSubCompanyIdForDelivery!= null &amp;&amp; maps.permissionParam.permissionUserIdList== null">
+				AND ero.delivery_sub_company_id = #{maps.permissionParam.permissionSubCompanyIdForDelivery}
+			</if>
+			<if test="maps.permissionParam.permissionSubCompanyIdForDelivery== null &amp;&amp; maps.permissionParam.permissionUserIdList!= null">
+				AND ero.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			)
+		</if>
+	</sql>
 </mapper>

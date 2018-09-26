@@ -729,7 +729,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("replaceOrderQueryParam", param);
-//        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER,PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_WAREHOUSE));
+        //权限
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER,PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_WAREHOUSE));
         Integer totalCount = replaceOrderMapper.findReplaceOrderCountByParams(maps);
         List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findReplaceOrderByParams(maps);
         List<ReplaceOrder> replaceOrderList = ConverterUtil.convertList(replaceOrderDOList, ReplaceOrder.class);
@@ -1010,7 +1011,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             result.setResult(replaceOrderDO.getReletOrderNo());
 
         }else {
-            //没有换货，取消换货单
+            //没有换货，关闭换货单
             replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_CLOSED);
             replaceOrderDO.setUpdateTime(date);
             replaceOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -1489,7 +1490,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         try {
             Date replaceTimeDate = simpleDateFormat.parse(replaceTimeString);
             Date reletTimeDate = simpleDateFormat.parse(reletTimeString);
-            if (!(replaceTimeDate.compareTo(reletTimeDate)>0)) {
+            if (!(replaceTimeDate.compareTo(reletTimeDate)>=0)) {
                 serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_BEFORE_RELET_TIME);
                 return true;
             }
