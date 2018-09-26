@@ -19,7 +19,7 @@ public class PrintLog extends BasePO {
 	@NotBlank(message = ErrorCode.PRINT_LOG_REFER_NO_NOT_NULL,groups = {AddGroup.class})
 	private String referNo;   //关联NO
 	@NotNull(message = ErrorCode.PRINT_LOG_REFER_TYPE_NOT_NULL,groups = {AddGroup.class})
-	@In(value = {PrintLogReferType.ORDER_TYPE_CHANGE,PrintLogReferType.ORDER_TYPE_RETURN},message = ErrorCode.PRINT_LOG_REFER_TYPE_ERROR,groups = {AddGroup.class})
+	@In(value = {PrintLogReferType.ORDER_TYPE_CHANGE,PrintLogReferType.ORDER_TYPE_RETURN,PrintLogReferType.ORDER_TYPE_REPLACE},message = ErrorCode.PRINT_LOG_REFER_TYPE_ERROR,groups = {AddGroup.class})
 	private Integer referType;   //关联项类型，1-交货单,2-退货单
 	private Integer printCount;   //打印次数
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除

@@ -177,11 +177,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         replaceOrderDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_NO);
         replaceOrderDO.setReletOrderNo(null);
         for(ReletOrderDO reletOrderDO:reletOrderDOList) {
-            if (com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getExpectReturnTime()) < 0) {
+            if (com.lxzl.erp.common.util.DateUtil.daysBetween(reletOrderDO.getExpectReturnTime(),replaceTime) < 0) {
                 list.add(reletOrderDO);
             }
-            if (com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getRentStartTime()) >= 0 &&
-                    com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getExpectReturnTime()) < 0 ) {
+            if (com.lxzl.erp.common.util.DateUtil.daysBetween(reletOrderDO.getRentStartTime(),replaceTime) >= 0 &&
+                    com.lxzl.erp.common.util.DateUtil.daysBetween(reletOrderDO.getExpectReturnTime(),replaceTime) < 0 ) {
                 //装配该订单续租单map集合
                 assemblyReletOrder(reletOrderProductDOMap, reletOrderMaterialDOMap, reletOrderDO);
                 replaceOrderDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_YES);
@@ -478,11 +478,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         replaceOrderDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_NO);
         replaceOrderDO.setReletOrderNo(null);
         for(ReletOrderDO reletOrderDO:reletOrderDOList) {
-            if (com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getExpectReturnTime()) < 0) {
+            if (com.lxzl.erp.common.util.DateUtil.daysBetween(reletOrderDO.getExpectReturnTime(),replaceTime) < 0) {
                 list.add(reletOrderDO);
             }
-            if (com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getRentStartTime()) >= 0 &&
-                    com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getExpectReturnTime()) < 0 ) {
+            if (com.lxzl.erp.common.util.DateUtil.daysBetween(reletOrderDO.getRentStartTime(),replaceTime) >= 0 &&
+                    com.lxzl.erp.common.util.DateUtil.daysBetween(reletOrderDO.getExpectReturnTime(),replaceTime) < 0 ) {
                 //装配该订单续租单map集合
                 assemblyReletOrder(reletOrderProductDOMap, reletOrderMaterialDOMap, reletOrderDO);
                 replaceOrderDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_YES);
@@ -654,6 +654,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_COUNT_NOT_BEFORE_MONTH_TIME);
                 return true;
             }
+            Integer x = com.lxzl.erp.common.util.DateUtil.daysBetween(nowTime,replaceTime);
             if(replaceTimeDate.after(nowTime) && com.lxzl.erp.common.util.DateUtil.daysBetween(nowTime,replaceTime)>15){
                 serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_MORE_THAN_NOW_TIME_FIFTEEN);
                 return true;
