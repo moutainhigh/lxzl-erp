@@ -92,7 +92,7 @@ public class StatementReplaceOrderSupport {
 
         Date currentTime = new Date();
         Integer loginUserId = userSupport.getCurrentUserId() == null ? CommonConstant.SUPER_USER_ID : userSupport.getCurrentUserId();
-        Date changeTime = replaceOrderDO.getReplaceTime();
+        Date changeTime = replaceOrderDO.getRealReplaceTime();
         Integer buyerCustomerId = replaceOrderDO.getCustomerId();
         //换货前一天原单结束
         Date endTimeAfterChange = DateUtil.getDayByOffset(changeTime, -1);
@@ -126,6 +126,7 @@ public class StatementReplaceOrderSupport {
             StatementOrderDetailDO thisStatementOrderDetailDO = statementCommonSupport.buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_REPLACE, replaceOrderDO.getOrderId(), OrderItemType.ORDER_ITEM_TYPE_OTHER, BigInteger.ZERO.intValue(), changeTime, changeTime, changeTime, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUserId, null);
             if (thisStatementOrderDetailDO != null) {
                 thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OTHER);
+                thisStatementOrderDetailDO.setSourceId(replaceOrderDO.getId());
                 needUpdateOrderBeforeList.add(thisStatementOrderDetailDO);
             }
         }
