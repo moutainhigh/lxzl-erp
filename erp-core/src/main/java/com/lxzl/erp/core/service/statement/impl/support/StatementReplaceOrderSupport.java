@@ -195,6 +195,7 @@ public class StatementReplaceOrderSupport {
                     }
                     //原被换商品有结算单，则新换货商品与之对齐，否则新商品单独结算
                     if (BigDecimalUtil.compare(oldProduct.getProductAmount(), BigDecimal.ZERO) > 0) {
+                        BigDecimal countPercent=BigDecimalUtil.div(new BigDecimal(changeCount), new BigDecimal(oldProduct.getProductCount()), BigDecimalUtil.SCALE);
                         BigDecimal amountPercent = BigDecimalUtil.div(newProduct.getProductUnitAmount(), oldProduct.getProductUnitAmount(), BigDecimalUtil.SCALE);
                         for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
                             //只处理订单租金（根据订单租金生成相应换货结算）
@@ -213,13 +214,13 @@ public class StatementReplaceOrderSupport {
                                 Integer oldDays = DateUtil.daysBetween(statementOrderDetailDO.getStatementStartTime(), statementOrderDetailDO.getStatementEndTime()) + 1;
                                 Integer nowDays = DateUtil.daysBetween(changeTime, statementOrderDetailDO.getStatementEndTime()) + 1;
                                 BigDecimal timePercent = BigDecimalUtil.div(new BigDecimal(nowDays), new BigDecimal(oldDays), BigDecimalUtil.SCALE);
-                                GenerateRentStatementResult rentStatementResult = generateRentStatement(replaceOrderDO.getId(), orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT, OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT, oldProduct.getId(), newProduct.getId(), currentTime, loginUserId, changeTime, buyerCustomerId, generateStatementDetailList, needUpdateStatementOrderMap, statementOrderDetailDO, timePercent, amountPercent, true, oldProduct.getSerialNumber(), newProduct.getSerialNumber(), oldProduct.getProductName() + oldProduct.getProductSkuName(), newProduct.getProductName() + newProduct.getProductSkuName(), oldProduct.getIsNewProduct(), newProduct.getIsNewProduct(), statementOrderDetailDO.getStatementDetailPhase());
+                                GenerateRentStatementResult rentStatementResult = generateRentStatement(replaceOrderDO.getId(), orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT, OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT, oldProduct.getId(), newProduct.getId(), currentTime, loginUserId, changeTime, buyerCustomerId, generateStatementDetailList, needUpdateStatementOrderMap, statementOrderDetailDO, timePercent, amountPercent,countPercent, true, oldProduct.getSerialNumber(), newProduct.getSerialNumber(), oldProduct.getProductName() + oldProduct.getProductSkuName(), newProduct.getProductName() + newProduct.getProductSkuName(), oldProduct.getIsNewProduct(), newProduct.getIsNewProduct(), statementOrderDetailDO.getStatementDetailPhase());
                                 BigDecimal newRentAmount = rentStatementResult.getNewRentAmount();
                                 hasSettleRentAmount = BigDecimalUtil.add(hasSettleRentAmount, newRentAmount);
                             }
                             //完整期
                             else {
-                                GenerateRentStatementResult rentStatementResult = generateRentStatement(replaceOrderDO.getId(), orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT, OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT, oldProduct.getId(), newProduct.getId(), currentTime, loginUserId, changeTime, buyerCustomerId, generateStatementDetailList, needUpdateStatementOrderMap, statementOrderDetailDO, BigDecimal.ONE, amountPercent, false, oldProduct.getSerialNumber(), newProduct.getSerialNumber(), oldProduct.getProductName() + oldProduct.getProductSkuName(), newProduct.getProductName() + newProduct.getProductSkuName(), oldProduct.getIsNewProduct(), newProduct.getIsNewProduct(), statementOrderDetailDO.getStatementDetailPhase());
+                                GenerateRentStatementResult rentStatementResult = generateRentStatement(replaceOrderDO.getId(), orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT, OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT, oldProduct.getId(), newProduct.getId(), currentTime, loginUserId, changeTime, buyerCustomerId, generateStatementDetailList, needUpdateStatementOrderMap, statementOrderDetailDO, BigDecimal.ONE, amountPercent, countPercent,false, oldProduct.getSerialNumber(), newProduct.getSerialNumber(), oldProduct.getProductName() + oldProduct.getProductSkuName(), newProduct.getProductName() + newProduct.getProductSkuName(), oldProduct.getIsNewProduct(), newProduct.getIsNewProduct(), statementOrderDetailDO.getStatementDetailPhase());
                                 BigDecimal newRentAmount = rentStatementResult.getNewRentAmount();
                                 BigDecimal needReturnRentToAccount = rentStatementResult.getNeedReturnRentToAccount();
                                 totalReturnRentToAccount = BigDecimalUtil.add(totalReturnRentToAccount, needReturnRentToAccount);
@@ -292,6 +293,7 @@ public class StatementReplaceOrderSupport {
                     //处理租金
                     //原被换商品有结算单，则新换货商品与之对齐，否则新商品单独结算
                     if (BigDecimalUtil.compare(oldMaterial.getMaterialAmount(), BigDecimal.ZERO) > 0) {
+                        BigDecimal countPercent = BigDecimalUtil.div(new BigDecimal(changeCount), new BigDecimal(oldMaterial.getMaterialCount()), BigDecimalUtil.SCALE);
                         BigDecimal amountPercent = BigDecimalUtil.div(newMaterial.getMaterialUnitAmount(), oldMaterial.getMaterialUnitAmount(), BigDecimalUtil.SCALE);
                         for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
                             //只处理订单租金（根据订单租金生成相应换货结算）
@@ -308,13 +310,13 @@ public class StatementReplaceOrderSupport {
                                 Integer oldDays = DateUtil.daysBetween(statementOrderDetailDO.getStatementStartTime(), statementOrderDetailDO.getStatementEndTime()) + 1;
                                 Integer nowDays = DateUtil.daysBetween(changeTime, statementOrderDetailDO.getStatementEndTime()) + 1;
                                 BigDecimal timePercent = BigDecimalUtil.div(new BigDecimal(nowDays), new BigDecimal(oldDays), BigDecimalUtil.SCALE);
-                                GenerateRentStatementResult rentStatementResult = generateRentStatement(replaceOrderDO.getId(), orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_MATERIAL, OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL, oldMaterial.getId(), newMaterial.getId(), currentTime, loginUserId, changeTime, buyerCustomerId, generateStatementDetailList, needUpdateStatementOrderMap, statementOrderDetailDO, timePercent, amountPercent, true, oldMaterial.getSerialNumber(), newMaterial.getSerialNumber(), oldMaterial.getMaterialName(), newMaterial.getMaterialName(), oldMaterial.getIsNewMaterial(), newMaterial.getIsNewMaterial(), statementOrderDetailDO.getStatementDetailPhase());
+                                GenerateRentStatementResult rentStatementResult = generateRentStatement(replaceOrderDO.getId(), orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_MATERIAL, OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL, oldMaterial.getId(), newMaterial.getId(), currentTime, loginUserId, changeTime, buyerCustomerId, generateStatementDetailList, needUpdateStatementOrderMap, statementOrderDetailDO, timePercent, amountPercent,countPercent, true, oldMaterial.getSerialNumber(), newMaterial.getSerialNumber(), oldMaterial.getMaterialName(), newMaterial.getMaterialName(), oldMaterial.getIsNewMaterial(), newMaterial.getIsNewMaterial(), statementOrderDetailDO.getStatementDetailPhase());
                                 BigDecimal newRentAmount = rentStatementResult.getNewRentAmount();
                                 hasSettleRentAmount = BigDecimalUtil.add(hasSettleRentAmount, newRentAmount);
                             }
                             //完整期
                             else {
-                                GenerateRentStatementResult rentStatementResult = generateRentStatement(replaceOrderDO.getId(), orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_MATERIAL, OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL, oldMaterial.getId(), newMaterial.getId(), currentTime, loginUserId, changeTime, buyerCustomerId, generateStatementDetailList, needUpdateStatementOrderMap, statementOrderDetailDO, BigDecimal.ONE, amountPercent, false, oldMaterial.getSerialNumber(), newMaterial.getSerialNumber(), oldMaterial.getMaterialName(), newMaterial.getMaterialName(), oldMaterial.getIsNewMaterial(), newMaterial.getIsNewMaterial(), statementOrderDetailDO.getStatementDetailPhase());
+                                GenerateRentStatementResult rentStatementResult = generateRentStatement(replaceOrderDO.getId(), orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_MATERIAL, OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL, oldMaterial.getId(), newMaterial.getId(), currentTime, loginUserId, changeTime, buyerCustomerId, generateStatementDetailList, needUpdateStatementOrderMap, statementOrderDetailDO, BigDecimal.ONE, amountPercent,countPercent, false, oldMaterial.getSerialNumber(), newMaterial.getSerialNumber(), oldMaterial.getMaterialName(), newMaterial.getMaterialName(), oldMaterial.getIsNewMaterial(), newMaterial.getIsNewMaterial(), statementOrderDetailDO.getStatementDetailPhase());
                                 BigDecimal newRentAmount = rentStatementResult.getNewRentAmount();
                                 BigDecimal needReturnRentToAccount = rentStatementResult.getNeedReturnRentToAccount();
                                 totalReturnRentToAccount = BigDecimalUtil.add(totalReturnRentToAccount, needReturnRentToAccount);
@@ -385,11 +387,11 @@ public class StatementReplaceOrderSupport {
         return null;
     }
 
-    private GenerateRentStatementResult generateRentStatement(Integer replaceOrderId, Integer orderId, Integer newOrderItemType, Integer oldOrderItemType, Integer oldOrderItemId, Integer newOrderItemId, Date currentTime, Integer loginUserId, Date changeTime, Integer buyerCustomerId, List<StatementOrderDetailDO> needUpdateStatementOrderDetailList, Map<Integer, StatementOrderDO> needUpdateStatementOrderMap, StatementOrderDetailDO statementOrderDetailDO, BigDecimal timePercent, BigDecimal amountPercent, boolean isFirstChangePhase, String oldOrderItemSerialNumber, String newOrderItemSerialNumber, String oldOrderItemName, String newOrderItemName, Integer oldOrderItemIsNew, Integer newOrderItemIsNew, Integer phase) {
+    private GenerateRentStatementResult generateRentStatement(Integer replaceOrderId, Integer orderId, Integer newOrderItemType, Integer oldOrderItemType, Integer oldOrderItemId, Integer newOrderItemId, Date currentTime, Integer loginUserId, Date changeTime, Integer buyerCustomerId, List<StatementOrderDetailDO> needUpdateStatementOrderDetailList, Map<Integer, StatementOrderDO> needUpdateStatementOrderMap, StatementOrderDetailDO statementOrderDetailDO, BigDecimal timePercent, BigDecimal amountPercent,BigDecimal changeCountPercent, boolean isFirstChangePhase, String oldOrderItemSerialNumber, String newOrderItemSerialNumber, String oldOrderItemName, String newOrderItemName, Integer oldOrderItemIsNew, Integer newOrderItemIsNew, Integer phase) {
         //Assert.isTrue(BigDecimalUtil.compare(oldProduct.getProductAmount(), BigDecimal.ZERO) != 0, "此方法只默认与原订单结算对齐，原订单项租金必须大于零");
         BigDecimal returnRentToAccount = BigDecimal.ZERO;
         //退货租金
-        BigDecimal returnRentAmount = BigDecimalUtil.mul(statementOrderDetailDO.getStatementDetailRentAmount(), timePercent, BigDecimalUtil.STANDARD_SCALE);
+        BigDecimal returnRentAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(statementOrderDetailDO.getStatementDetailRentAmount(), timePercent),changeCountPercent, BigDecimalUtil.STANDARD_SCALE);
         BigDecimal newRentAmount = BigDecimalUtil.mul(returnRentAmount, amountPercent, BigDecimalUtil.STANDARD_SCALE);
         //新订单商品项结算
         StatementOrderDetailDO newStatementOrderDetailDO = statementCommonSupport.buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_REPLACE, orderId, newOrderItemType, newOrderItemId, statementOrderDetailDO.getStatementExpectPayTime(), changeTime, statementOrderDetailDO.getStatementEndTime(), newRentAmount, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId, null);
