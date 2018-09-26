@@ -82,9 +82,9 @@
                                     <li class="active">
                                         <a href="#replaceOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
                                     </li>
-##                                    <li>
-##                                        <a href="#printRecordItems" data-toggle="tab">打印记录（共<span id="printRecordCount">0</span>次）</a>
-##                                    </li>
+                                    <li>
+                                        <a href="#orderPrintList" data-toggle="tab">打印记录（共<span id="printRecordCount">0</span>次）</a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -136,34 +136,41 @@
                                         <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                                     </div>
                                 </div>
-##                                <div id="printRecordItems" class="tab-pane">
-##                                    <div class="table-responsive">
-##                                        <script type="text/html" id="printRecordListTpl">
-##                                            <thead>
-##                                            <tr>
-##                                                <th>打印人</th>
-##                                                <th>打印时间</th>
-##                                                <th>打印类型</th>
-##                                            </tr>
-##                                            </thead>
-##                                            <tbody>
-##                                            {{#dataSource}}
-##                                            {{#listData}}
-##                                            <tr class="materialRow">
-##                                                <td>{{materialName}}</td>
-##                                                <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
-##                                                <td>{{materialTypeStr}}</td>
-##                                            </tr>
-##                                            <tr>
-##                                                <td valign="top" colspan="3" class="text-center">没有选择配件</td>
-##                                            </tr>
-##                                            {{/listData}}
-##                                            {{/dataSource}}
-##                                            </tbody>
-##                                        </script>
-##                                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="printRecordTable"></table>
-##                                    </div>
-##                                </div>
+                                <div id="orderPrintList" class="tab-pane">
+                                    <div class="table-responsive">
+                                        <script type="text/html" id="printRecordTpl">
+                                            <thead>
+                                            <tr class="bg-light">
+                                                <th class="">打印人</th>
+                                                <th class="">打印时间</th>
+                                                <th class="">打印单据类型</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{#dataSource}}
+                                            {{#listData}}
+                                            <tr>
+                                                <td>{{createUserRealName}}</td>
+                                                <td>{{#clockTime}}{{createTime}}{{/clockTime}}</td>
+                                                <td>{{referTypeVal}}</td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{^listData}}
+                                            <tr>
+                                                <td valign="top" colspan="3" class="text-center">没有查询到打印记录</td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{/dataSource}}
+                                            </tbody>
+                                        </script>
+                                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="printRecordTable"></table>
+                                    </div>
+                                    <div class="row br-t" style="margin:0;">
+                                        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                                            #parse("component/pager.vm")
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -184,6 +191,7 @@
                 'manage.change.order.handle.mixin.js',
                 'manage.change.order.detail.js',
                 'manage.confirm.exchange.js',
+                'manage.order.print.record.js',
                 'modal.input.js');
     </script>
     <script type="text/javascript">
