@@ -153,13 +153,13 @@ public class ReplaceOrderController {
 
     /**
      * 通过订单编号查询换货单列表
-     * @param replaceOrder
+     * @param param
      * @param validResult
      * @return
      */
     @RequestMapping(value = "queryReplaceOrderListForOrderNo", method = RequestMethod.POST)
-    public Result queryReplaceOrderListForOrderNo(@RequestBody ReplaceOrder replaceOrder, BindingResult validResult) {
-        ServiceResult<String, List<ReplaceOrder>> serviceResult = replaceOrderService.queryReplaceOrderListForOrderNo(replaceOrder.getOrderNo());
+    public Result queryReplaceOrderListForOrderNo(@RequestBody ReplaceOrderQueryParam param, BindingResult validResult) {
+        ServiceResult<String,  Page<ReplaceOrder>> serviceResult = replaceOrderService.queryReplaceOrderListForOrderNo(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }
