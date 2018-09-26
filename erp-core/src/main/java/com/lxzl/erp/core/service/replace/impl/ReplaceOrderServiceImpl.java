@@ -1337,15 +1337,19 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     }
 
     @Override
-    public ServiceResult<String, List<ReplaceOrder>> queryReplaceOrderListForOrderNo(String orderNo) {
-        ServiceResult<String, List<ReplaceOrder>> result = new ServiceResult<>();
-        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForOrderDetail(orderNo);
-        List<ReplaceOrder> replaceOrderList = new ArrayList<>();
-        if (CollectionUtil.isNotEmpty(replaceOrderDOList)) {
-            replaceOrderList = ConverterUtil.convertList(replaceOrderDOList,ReplaceOrder.class);
-        }
+    public ServiceResult<String,  Page<ReplaceOrder>> queryReplaceOrderListForOrderNo(ReplaceOrderQueryParam param) {
+        ServiceResult<String, Page<ReplaceOrder>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(param.getPageNo(), param.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("replaceOrderQueryParam", param);
+        Integer totalCount = replaceOrderMapper.findReplaceOrderCountByParams(maps);
+        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findReplaceOrderByParams(maps);
+        List<ReplaceOrder> replaceOrderList = ConverterUtil.convertList(replaceOrderDOList, ReplaceOrder.class);
+        Page<ReplaceOrder> page = new Page<>(replaceOrderList, totalCount, param.getPageNo(), param.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(replaceOrderList);
+        result.setResult(page);
         return result;
     }
 

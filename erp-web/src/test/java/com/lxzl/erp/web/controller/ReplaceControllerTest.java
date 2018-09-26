@@ -20,7 +20,7 @@ public class ReplaceControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void testAddJSON() throws Exception {
-        String str = "{\"orderId\":3002932,\"orderNo\":\"LXO-20180817-1000-00039\",\"customerId\":705743,\"customerNo\":\"LXCC-1000-20180817-00049\",\"address\":\"湖北省武汉市洪山区你家大门口\",\"logisticsCost\":\"200\",\"serviceCost\":\"200\",\"repairCost\":\"200\",\"replaceReasonType\":\"0\",\"replaceTime\":1537228800000,\"replaceMode\":\"2\",\"remark\":\"\",\"consigneeName\":\"咩咩\",\"consigneePhone\":\"18566324590\",\"replaceOrderProductList\":[{\"oldOrderProductId\":4312,\"oldProductEntry\":4312,\"rentType\":1,\"rentTimeLength\":15,\"rentLengthType\":1,\"depositCycle\":0,\"payMode\":1,\"paymentCycle\":0,\"oldProductUnitAmount\":10,\"depositAmount\":100,\"productId\":2000439,\"productName\":\"苹果IPADPRO-16G\",\"productSkuId\":1525,\"productSkuName\":\"CPU:双核/内存:16G/尺寸:9.7\",\"replaceProductCount\":\"1\",\"productUnitAmount\":\"210\",\"isNewProduct\":1,\"remark\":\"\"}]}";
+        String str = "{\"orderId\":3003050,\"orderNo\":\"LXO-20180912-027-00071\",\"customerId\":705775,\"customerNo\":\"LXCC-027-20180904-00008\",\"address\":\"湖北省武汉市洪山区你家大门口\",\"orderSellerId\":500355,\"orderSellerName\":\"刘君诚\",\"orderSellerPhone\":\"13618654585\",\"logisticsCost\":\"100\",\"serviceCost\":\"100\",\"repairCost\":\"100\",\"replaceReasonType\":\"0\",\"replaceTime\":1537920000000,\"replaceMode\":\"1\",\"remark\":\"333\",\"consigneeName\":\"咩咩\",\"consigneePhone\":\"18566324590\",\"replaceOrderProductList\":[{\"oldOrderProductId\":4456,\"oldProductEntry\":4456,\"rentType\":2,\"rentTimeLength\":3,\"rentLengthType\":1,\"depositCycle\":1,\"payMode\":1,\"paymentCycle\":1,\"oldProductUnitAmount\":100,\"depositAmount\":0,\"productId\":2000577,\"productName\":\"苹果IPADPRO-64G\",\"productSkuId\":1689,\"productSkuName\":\"CPU:双核/内存:64G/颜色:银色/尺寸:12.9\",\"replaceProductCount\":\"1\",\"productUnitAmount\":\"170\",\"isNewProduct\":0,\"remark\":\"444\"}]}";
 
         ReplaceOrder replaceOrder = FastJsonUtil.toBean(str, ReplaceOrder.class);
         TestResult testResult = getJsonTestResult("/replaceOrder/add", replaceOrder);
@@ -79,9 +79,9 @@ public class ReplaceControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void testQueryReplaceOrderListForOrderNo() throws Exception {
-        ReplaceOrder replaceOrder = new ReplaceOrder();
-        replaceOrder.setOrderNo("LXO-20180920-0755-00136");
-        TestResult testResult = getJsonTestResult("/replaceOrder/queryReplaceOrderListForOrderNo", replaceOrder);
+        ReplaceOrderQueryParam param = new ReplaceOrderQueryParam();
+        param.setOrderNo("LXO-20180926-0755-00165");
+        TestResult testResult = getJsonTestResult("/replaceOrder/queryReplaceOrderListForOrderNo", param);
         System.out.println(JSON.toJSONString(testResult));
 
     }
