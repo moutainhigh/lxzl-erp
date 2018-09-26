@@ -530,8 +530,8 @@
 		<include refid="column_List"/>
 		FROM erp_replace_order ero
 		WHERE ero.data_status = 1
-		AND ero.id in
-		<foreach collection="orderIds" item="item" index="index" separator="," open="(" close=")">
+		AND ero.order_id in
+		<foreach collection="ids" item="item" index="index" separator="," open="(" close=")">
 			#{item}
 		</foreach>
 	</select>

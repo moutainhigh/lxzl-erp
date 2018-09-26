@@ -3,6 +3,7 @@ package com.lxzl.erp.common.util;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.statement.pojo.dto.BaseCheckStatementDetailDTO;
 import com.lxzl.erp.common.domain.statement.pojo.dto.rent.BaseCheckStatementDetailRentDTO;
+import com.lxzl.erp.common.domain.statement.pojo.dto.replaceRent.BaseCheckStatementDetailReplaceDTO;
 import com.lxzl.erp.common.domain.statement.pojo.dto.unrent.BaseCheckStatementDetailUnRentDTO;
 import org.apache.commons.lang.time.DateFormatUtils;
 
@@ -26,6 +27,8 @@ public class CheckStatementUtil {
             return "续租";
         } else if (OrderType.ORDER_TYPE_RELET_RETURN.equals(orderType)) {
             return "续租退货";
+        } else if (OrderType.ORDER_TYPE_REPLACE.equals(orderType)) {
+            return "换货";
         }
         return PLACEHOLDER_DEFAULT;
     }
@@ -145,6 +148,16 @@ public class CheckStatementUtil {
             return false;
         }
         if (checkStatementDetailDTO instanceof BaseCheckStatementDetailRentDTO) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isReplaceOrder(BaseCheckStatementDetailDTO checkStatementDetailDTO) {
+        if (checkStatementDetailDTO == null) {
+            return false;
+        }
+        if (checkStatementDetailDTO instanceof BaseCheckStatementDetailReplaceDTO) {
             return true;
         }
         return false;

@@ -306,6 +306,11 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
      */
     private Integer sourceId;
 
+    /**
+     * 换货单项id
+     */
+    private Integer replaceItemId;
+
     public Integer getSortItemType() {
         return 0;
     }
@@ -1390,4 +1395,13 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
     public void setSourceId(Integer sourceId) {
         this.sourceId = sourceId;
     }
+
+    public Integer getReplaceItemId() {
+        return replaceItemId;
+    }
+
+    public void setReplaceItemId(Integer replaceItemId) {
+        this.replaceItemId = replaceItemId;
+    }
+
 }

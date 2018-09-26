@@ -177,11 +177,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         replaceOrderDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_NO);
         replaceOrderDO.setReletOrderNo(null);
         for(ReletOrderDO reletOrderDO:reletOrderDOList) {
-            if (com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getExpectReturnTime()) < 0) {
+            if (com.lxzl.erp.common.util.DateUtil.daysBetween(reletOrderDO.getExpectReturnTime(),replaceTime) < 0) {
                 list.add(reletOrderDO);
             }
-            if (com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getRentStartTime()) >= 0 &&
-                    com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getExpectReturnTime()) < 0 ) {
+            if (com.lxzl.erp.common.util.DateUtil.daysBetween(reletOrderDO.getRentStartTime(),replaceTime) >= 0 &&
+                    com.lxzl.erp.common.util.DateUtil.daysBetween(reletOrderDO.getExpectReturnTime(),replaceTime) < 0 ) {
                 //装配该订单续租单map集合
                 assemblyReletOrder(reletOrderProductDOMap, reletOrderMaterialDOMap, reletOrderDO);
                 replaceOrderDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_YES);
@@ -478,11 +478,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         replaceOrderDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_NO);
         replaceOrderDO.setReletOrderNo(null);
         for(ReletOrderDO reletOrderDO:reletOrderDOList) {
-            if (com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getExpectReturnTime()) < 0) {
+            if (com.lxzl.erp.common.util.DateUtil.daysBetween(reletOrderDO.getExpectReturnTime(),replaceTime) < 0) {
                 list.add(reletOrderDO);
             }
-            if (com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getRentStartTime()) >= 0 &&
-                    com.lxzl.erp.common.util.DateUtil.daysBetween(replaceTime, reletOrderDO.getExpectReturnTime()) < 0 ) {
+            if (com.lxzl.erp.common.util.DateUtil.daysBetween(reletOrderDO.getRentStartTime(),replaceTime) >= 0 &&
+                    com.lxzl.erp.common.util.DateUtil.daysBetween(reletOrderDO.getExpectReturnTime(),replaceTime) < 0 ) {
                 //装配该订单续租单map集合
                 assemblyReletOrder(reletOrderProductDOMap, reletOrderMaterialDOMap, reletOrderDO);
                 replaceOrderDO.setIsReletOrderReplace(CommonConstant.COMMON_CONSTANT_YES);
@@ -654,6 +654,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_COUNT_NOT_BEFORE_MONTH_TIME);
                 return true;
             }
+            Integer x = com.lxzl.erp.common.util.DateUtil.daysBetween(nowTime,replaceTime);
             if(replaceTimeDate.after(nowTime) && com.lxzl.erp.common.util.DateUtil.daysBetween(nowTime,replaceTime)>15){
                 serviceResult.setErrorCode(ErrorCode.REPLACE_TIME_MORE_THAN_NOW_TIME_FIFTEEN);
                 return true;
@@ -1308,22 +1309,25 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 serviceResult.setErrorCode(ErrorCode.SEND_REPLACE_ORDER_TO_K3_STATUS_ERROR);
                 return serviceResult;
             }
-            response = HttpClientUtil.post(k3confirmOrderUrl, requestJson, headerBuilder, "UTF-8");
-            responseMap = JSONObject.parseObject(response,HashMap.class);
-            if ("true".equals(responseMap.get("IsSuccess").toString())){
-                serviceResult.setErrorCode(ErrorCode.SUCCESS);
-                serviceResult.setResult(responseMap.get("Message").toString());
-                return serviceResult;
-            }else{
-                StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
-                sb.append("向K3推送【换货单-").append(replaceOrderDO.getReplaceOrderNo()).append("】数据失败：");
-                sb.append(responseMap.get("Message").toString());
-                sb.append("\r\n").append("请求参数：").append(requestJson);
-                dingDingSupport.dingDingSendMessage(sb.toString());
-                serviceResult.setErrorCode(ErrorCode.K3_REPLACE_ORDER_ERROR,responseMap.get("Message").toString());
-                serviceResult.setResult(responseMap.get("Message").toString());
-                return serviceResult;
-            }
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+//            serviceResult.setResult(responseMap.get("Message").toString());
+            return serviceResult;
+//            response = HttpClientUtil.post(k3confirmOrderUrl, requestJson, headerBuilder, "UTF-8");
+//            responseMap = JSONObject.parseObject(response,HashMap.class);
+//            if ("true".equals(responseMap.get("IsSuccess").toString())){
+//                serviceResult.setErrorCode(ErrorCode.SUCCESS);
+//                serviceResult.setResult(responseMap.get("Message").toString());
+//                return serviceResult;
+//            }else{
+//                StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+//                sb.append("向K3推送【换货单-").append(replaceOrderDO.getReplaceOrderNo()).append("】数据失败：");
+//                sb.append(responseMap.get("Message").toString());
+//                sb.append("\r\n").append("请求参数：").append(requestJson);
+//                dingDingSupport.dingDingSendMessage(sb.toString());
+//                serviceResult.setErrorCode(ErrorCode.K3_REPLACE_ORDER_ERROR,responseMap.get("Message").toString());
+//                serviceResult.setResult(responseMap.get("Message").toString());
+//                return serviceResult;
+//            }
         }catch (Exception e){
             logger.error("向K3推送换货单异常：",e);
             StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
@@ -1337,15 +1341,19 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     }
 
     @Override
-    public ServiceResult<String, List<ReplaceOrder>> queryReplaceOrderListForOrderNo(String orderNo) {
-        ServiceResult<String, List<ReplaceOrder>> result = new ServiceResult<>();
-        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForOrderDetail(orderNo);
-        List<ReplaceOrder> replaceOrderList = new ArrayList<>();
-        if (CollectionUtil.isNotEmpty(replaceOrderDOList)) {
-            replaceOrderList = ConverterUtil.convertList(replaceOrderDOList,ReplaceOrder.class);
-        }
+    public ServiceResult<String,  Page<ReplaceOrder>> queryReplaceOrderListForOrderNo(ReplaceOrderQueryParam param) {
+        ServiceResult<String, Page<ReplaceOrder>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(param.getPageNo(), param.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("replaceOrderQueryParam", param);
+        Integer totalCount = replaceOrderMapper.findReplaceOrderCountByParams(maps);
+        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findReplaceOrderByParams(maps);
+        List<ReplaceOrder> replaceOrderList = ConverterUtil.convertList(replaceOrderDOList, ReplaceOrder.class);
+        Page<ReplaceOrder> page = new Page<>(replaceOrderList, totalCount, param.getPageNo(), param.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(replaceOrderList);
+        result.setResult(page);
         return result;
     }
 

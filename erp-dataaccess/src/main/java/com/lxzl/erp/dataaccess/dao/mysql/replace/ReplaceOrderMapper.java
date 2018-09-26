@@ -27,6 +27,6 @@ public interface ReplaceOrderMapper extends BaseMysqlDAO<ReplaceOrderDO> {
 
     List<ReplaceOrderDO> findByCustomerNoForCheck(@Param("customerNo") String customerNo);
 
-    List<ReplaceOrderDO> listByOrderIds(@Param(value = "orderIds") Set<Integer> orderIds);
+    List<ReplaceOrderDO> listByOrderIds(@Param("ids") Set<Integer> orderIds);
 
 }

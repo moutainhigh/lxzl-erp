@@ -36,6 +36,6 @@ public interface ReplaceOrderService  extends VerifyReceiver {
 
     ServiceResult<String,String> sendReplaceOrderInfoToK3(String replaceOrderNo);
 
-    ServiceResult<String,List<ReplaceOrder>> queryReplaceOrderListForOrderNo(String orderNo);
+    ServiceResult<String, Page<ReplaceOrder>> queryReplaceOrderListForOrderNo(ReplaceOrderQueryParam param);
 
 }

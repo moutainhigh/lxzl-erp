@@ -715,8 +715,8 @@ public class ExcelExportConfigGroup {
 
                         return "";
                     }
-                })).addConfig(new ColConfig("k3ReturnOrderDONo", " 退租订单号", 9))
-                .addConfig(new ColConfig("returnReasonType", " 退货原因", 9))
+                })).addConfig(new ColConfig("k3ReturnOrderDONo", " 退换订单号", 9))
+                .addConfig(new ColConfig("returnReasonType", " 退换货原因", 9))
                 .addConfig(new ColConfig("statementCorrectNo", " 冲正订单号", 9))
                 .addConfig(new ColConfig("statementCorrectReason", " 冲正原因", 9));
     }
@@ -763,8 +763,8 @@ public class ExcelExportConfigGroup {
                 .addConfig(new ColConfig("statementExpectPayTime", " 本期应付日期", 8, HSSFColor.TAN.index,  DateExcelExportView.getInstance()))
                 .addConfig(new ColConfig("monthPayableAmount", " 本月应付金额", 10, HSSFColor.GOLD.index,  AmountExcelExportView.getInstance()))
                 .addConfig(new ColConfig("statementDetailStatus", " 状态", 6))
-                .addConfig(new ColConfig("k3ReturnOrderDONo", " 退租订单号", 9))
-                .addConfig(new ColConfig("returnReasonType", " 退货原因", 9))
+                .addConfig(new ColConfig("k3ReturnOrderDONo", " 退换订单号", 9))
+                .addConfig(new ColConfig("returnReasonType", " 退换货原因", 9))
                 .addConfig(new ColConfig("statementCorrectNo", " 冲正订单号", 9))
                 .addConfig(new ColConfig("statementCorrectReason", " 冲正原因", 9));
     }
