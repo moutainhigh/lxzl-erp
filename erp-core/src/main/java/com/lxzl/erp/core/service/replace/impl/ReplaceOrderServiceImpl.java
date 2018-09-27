@@ -825,11 +825,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             return result;
         }
 
-        //校验实际换货时间和发货时间和确认换货时间
-        Date replaceDeliveryTime = replaceOrder.getReplaceDeliveryTime();
-        String replaceDeliveryTimeString = simpleDateFormat.format(replaceDeliveryTime);
+        //校验实际换货时间和预计换货时间与当前时间
+        Date replaceTime = replaceOrder.getReplaceTime();
+        String replaceTimeString = simpleDateFormat.format(replaceTime);
         String nowTimeString = simpleDateFormat.format(date);
-        if (checkRealReplaceTime(result, simpleDateFormat, realReplaceTimeString, replaceDeliveryTimeString, nowTimeString)){
+        if (checkRealReplaceTime(result, simpleDateFormat, realReplaceTimeString, replaceTimeString, nowTimeString)){
             return result;
         }
 
@@ -1528,17 +1528,17 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     /**
      * 校验实际换货时间
      */
-    private boolean checkRealReplaceTime(ServiceResult<String, String> serviceResult, SimpleDateFormat simpleDateFormat, String realReplaceTimeString, String replaceDeliveryTimeString, String nowTimeString) {
+    private boolean checkRealReplaceTime(ServiceResult<String, String> serviceResult, SimpleDateFormat simpleDateFormat, String realReplaceTimeString, String replaceTimeString, String nowTimeString) {
         try {
             Date realReplaceTimeDate = simpleDateFormat.parse(realReplaceTimeString);
-            Date replaceDeliveryTimeDate = simpleDateFormat.parse(replaceDeliveryTimeString);
+            Date replaceTimeDate = simpleDateFormat.parse(replaceTimeString);
             Date nowTimeDate = simpleDateFormat.parse(nowTimeString);
-            if (!(realReplaceTimeDate.compareTo(replaceDeliveryTimeDate)>=0)) {
-                //实际换货时间不能小于发货时间
-                serviceResult.setErrorCode(ErrorCode.REAL_REPLACE_TIME_MUST_AFTER_REPLACE_DELIVERY_TIME);
+            if (realReplaceTimeDate.compareTo(replaceTimeDate)<0) {
+                //实际换货时间不能小于预计换货时间
+                serviceResult.setErrorCode(ErrorCode.REAL_REPLACE_TIME_MUST_AFTER_REPLACE_TIME);
                 return true;
-            } else if (!(realReplaceTimeDate.compareTo(nowTimeDate)<=0)) {
-                //实际换货时间不能大于确认换货时间
+            } else if (realReplaceTimeDate.compareTo(nowTimeDate)>0) {
+                //实际换货时间不能大于当前时间
                 serviceResult.setErrorCode(ErrorCode.REAL_REPLACE_TIME_MUST_BEFORE_CONFIRM_TIME);
                 return true;
             }
