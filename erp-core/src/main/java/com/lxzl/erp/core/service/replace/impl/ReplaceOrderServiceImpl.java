@@ -833,8 +833,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             return result;
         }
 
-
-
         ReplaceOrderDO replaceOrderDO = ConverterUtil.convert(replaceOrder,ReplaceOrderDO.class);
 
         List<ReplaceOrderProductDO> replaceOrderProductDOList = replaceOrderDO.getReplaceOrderProductDOList();
@@ -954,9 +952,9 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                     orderProductDO.setDepositAmount(replaceOrderProductDO.getDepositAmount());
                     orderProductDO.setCreditDepositAmount(replaceOrderProductDO.getCreditDepositAmount());
                     orderProductDO.setInsuranceAmount(BigDecimal.ZERO);
-                    orderProductDO.setDepositCycle(replaceOrderProductDO.getDepositCycle());
-                    orderProductDO.setPaymentCycle(replaceOrderProductDO.getPaymentCycle());
-                    orderProductDO.setPayMode(replaceOrderProductDO.getPayMode());
+//                    orderProductDO.setDepositCycle(replaceOrderProductDO.getDepositCycle());
+//                    orderProductDO.setPaymentCycle(replaceOrderProductDO.getPaymentCycle());
+//                    orderProductDO.setPayMode(replaceOrderProductDO.getPayMode());
                     orderProductDO.setIsNewProduct(replaceOrderProductDO.getIsNewProduct());
                     orderProductDO.setDataStatus(replaceOrderProductDO.getDataStatus());
                     orderProductDO.setRemark(null);
@@ -995,13 +993,21 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                     oldOrderProductDO.setUpdateUser(replaceOrderDO.getUpdateUser());
                     // TODO: 2018\9\18 0018 保存订单项
                     orderProductMapper.save(orderProductDO);
+                    orderProductDOList.add(oldOrderProductDO);
                     // TODO: 2018\9\18 0018 更新订单项
                     orderProductMapper.update(oldOrderProductDO);
                     replaceOrderProductDO.setNewOrderProductId(orderProductDO.getId());
                     //更新换货单项
                     replaceOrderProductMapper.update(replaceOrderProductDO);
                 }
+                //设置押金期数、付款期数、支付方式
+                orderService.verifyCustomerRiskInfo(orderDO);
+                for (OrderProductDO orderProductDO:orderProductDOList) {
+                    orderProductMapper.update(orderProductDO);
+                }
             }
+
+
 //            if (replaceOrderMaterialDOListIsNotEmpty) {
 //                replaceOrderMaterialMapper.updateListForConfirm(replaceOrderMaterialDOList);
 //            }
@@ -2007,6 +2013,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
         return totalCreditDepositAmount;
     }
+
+
 
     @Autowired
     private ReplaceOrderMapper replaceOrderMapper;
