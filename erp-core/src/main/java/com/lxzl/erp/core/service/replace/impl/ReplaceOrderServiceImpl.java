@@ -760,10 +760,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 serviceResult.setErrorCode(cancelWorkFlowResult.getErrorCode());
                 return serviceResult;
             }
-        }
-        // 审核中或者已驳回的换货单取消要返还扣走或者添加的信用额度
-        if (ReplaceOrderStatus.REPLACE_ORDER_STATUS_VERIFYING.equals(replaceOrderDO.getReplaceOrderStatus()) ||
-                ReplaceOrderStatus.REPLACE_ORDER_STATUS_BACKED.equals(replaceOrderDO.getReplaceOrderStatus())) {
+            // 审核中或者的换货单取消要返还扣走或者添加的信用额度
             BigDecimal updateTotalCreditDepositAmount = replaceOrderDO.getUpdateTotalCreditDepositAmount();
             if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) != 0) {
                 if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
@@ -773,6 +770,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 }
             }
         }
+        
         replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_CANCEL);
         replaceOrderDO.setUpdateTime(date);
         replaceOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
