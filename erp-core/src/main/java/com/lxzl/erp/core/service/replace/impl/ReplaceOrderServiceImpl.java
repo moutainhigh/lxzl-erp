@@ -122,6 +122,10 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             serviceResult.setErrorCode(ErrorCode.REPLACE_ORDER_DETAIL_LIST_NOT_NULL);
             return serviceResult;
         }
+        //校验换货项（新的不能换，普通和苹果不能互换）
+        if (checkProductIsNewAndIsApple(serviceResult, replaceOrderProductDOList)){
+            return serviceResult;
+        }
         replaceOrderDO.setCustomerName(customerDO.getCustomerName());
 
         //校验订单编号
@@ -361,6 +365,59 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         return serviceResult;
     }
 
+    /**
+     * 校验换货项（新的不能换，普通和苹果不能互换）
+     * @param serviceResult
+     * @param replaceOrderProductDOList
+     * @return
+     */
+    private boolean checkProductIsNewAndIsApple(ServiceResult<String, String> serviceResult, List<ReplaceOrderProductDO> replaceOrderProductDOList) {
+        if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
+            for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderProductDOList) {
+                Integer oldIsNewProduct = replaceOrderProductDO.getOldIsNewProduct();
+                Integer isNewProduct = replaceOrderProductDO.getIsNewProduct();
+                //换货商品或被换商品新旧属性不能为空
+                if(oldIsNewProduct == null || isNewProduct == null){
+                    serviceResult.setErrorCode(ErrorCode.REPLACE_ORDER_IS_NEW_PRODUCT_NOT_NULL);
+                    return true;
+                }
+                //全新商不能换货或被换，只能选择次新商品进行换货操作
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(oldIsNewProduct) ||
+                        CommonConstant.COMMON_CONSTANT_YES.equals(isNewProduct)) {
+                    serviceResult.setErrorCode(ErrorCode.REPLACE_ORDER_PRODUCT_NOT_NEW);
+                    return true;
+                }
+                //判断原商品是否是苹果机
+                ServiceResult<String, Product> oldProductServiceResult = productService.queryProductBySkuId(replaceOrderProductDO.getOldProductSkuId());
+                if (!oldProductServiceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                    serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                    return true;
+                }
+                Product oldProduct = oldProductServiceResult.getResult();
+                boolean oldProductIsApple = BrandId.BRAND_ID_APPLE.equals(oldProduct.getBrandId());
+
+                //判断新商品是否是苹果机
+                ServiceResult<String, Product> newProductServiceResult = productService.queryProductBySkuId(replaceOrderProductDO.getProductSkuId());
+                if (!newProductServiceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                    serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                    return true;
+                }
+                Product newProduct = newProductServiceResult.getResult();
+                boolean newProductIsApple = BrandId.BRAND_ID_APPLE.equals(newProduct.getBrandId());
+                //苹果商品只能更换苹果商品
+                if (oldProductIsApple && !newProductIsApple) {
+                    serviceResult.setErrorCode(ErrorCode.APPLE_NOT_REPLACE_OTHER);
+                    return true;
+                } else if (!oldProductIsApple && newProductIsApple) {
+                    //非苹果商品不能更换苹果商品
+                    serviceResult.setErrorCode(ErrorCode.OTHER_NOT_REPLACE_APPLE);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     /**
      * 修改换货单
@@ -456,6 +513,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         String monthTimeString = sdf.format(date);
         String nowTimeString = simpleDateFormat.format(date);
         if (checkReplaceTimeForNowDay(serviceResult, replaceTime, simpleDateFormat, replaceTimeString, sdf, monthTimeString, nowTimeString)){
+            return serviceResult;
+        }
+
+        //校验换货项（新的不能换，普通和苹果不能互换）
+        if (checkProductIsNewAndIsApple(serviceResult, replaceOrderProductDOList)){
             return serviceResult;
         }
 
@@ -698,10 +760,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 serviceResult.setErrorCode(cancelWorkFlowResult.getErrorCode());
                 return serviceResult;
             }
-        }
-        // 审核中或者已驳回的换货单取消要返还扣走或者添加的信用额度
-        if (ReplaceOrderStatus.REPLACE_ORDER_STATUS_VERIFYING.equals(replaceOrderDO.getReplaceOrderStatus()) ||
-                ReplaceOrderStatus.REPLACE_ORDER_STATUS_BACKED.equals(replaceOrderDO.getReplaceOrderStatus())) {
+            // 审核中或者的换货单取消要返还扣走或者添加的信用额度
             BigDecimal updateTotalCreditDepositAmount = replaceOrderDO.getUpdateTotalCreditDepositAmount();
             if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) != 0) {
                 if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
@@ -711,6 +770,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 }
             }
         }
+        
         replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_CANCEL);
         replaceOrderDO.setUpdateTime(date);
         replaceOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -833,8 +893,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 //            return result;
 //        }
 
-
-
         ReplaceOrderDO replaceOrderDO = ConverterUtil.convert(replaceOrder,ReplaceOrderDO.class);
 
         List<ReplaceOrderProductDO> replaceOrderProductDOList = replaceOrderDO.getReplaceOrderProductDOList();
@@ -851,7 +909,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         // 原订单设备信用押金总额
         BigDecimal oldTotalCreditDepositAmount = replaceOrderDO.getOldTotalCreditDepositAmount();
         // 换货后订单设备信用押金总额
-        BigDecimal newTotalCreditDepositAmount = replaceOrderDO.getNewTotalCreditDepositAmount();
+        BigDecimal newTotalCreditDepositAmount = replaceOrderDO.getOldTotalCreditDepositAmount();
 
         Integer totalReplaceProductCount = replaceOrderDO.getTotalReplaceProductCount();
         Integer totalReplaceMaterialCount = replaceOrderDO.getTotalReplaceMaterialCount();
@@ -898,19 +956,15 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
         BigDecimal totalCreditDepositAmount = BigDecimalUtil.sub(oldTotalCreditDepositAmount,newTotalCreditDepositAmount);
         BigDecimal updateTotalCreditDepositAmount = replaceOrderDO.getUpdateTotalCreditDepositAmount();
-
-        if (BigDecimalUtil.compare(BigDecimalUtil.mul(updateTotalCreditDepositAmount,totalCreditDepositAmount), BigDecimal.ZERO) != 0) {
-            // 返还扣走或者添加的信用额度
-            if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
-                customerSupport.addCreditAmountUsed(replaceOrderDO.getCustomerId(), updateTotalCreditDepositAmount, CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+        BigDecimal changeTotalCreditDepositAmount = BigDecimalUtil.sub(updateTotalCreditDepositAmount,totalCreditDepositAmount);
+        if (BigDecimalUtil.compare(changeTotalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+            replaceOrderDO.setNewTotalCreditDepositAmount(newTotalCreditDepositAmount);
+            replaceOrderDO.setUpdateTotalCreditDepositAmount(totalCreditDepositAmount);
+            //未全部收货变更授信额度
+            if (BigDecimalUtil.compare(changeTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
+                customerSupport.addCreditAmountUsed(replaceOrderDO.getCustomerId(), changeTotalCreditDepositAmount, CustomerRiskBusinessType.CONFIRM_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
             } else if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) < 0) {
-                customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), BigDecimalUtil.mul(updateTotalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
-            }
-            // 扣除信用额度
-            if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0) {
-                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.CONFIRM_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
-            } else if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) < 0) {
-                customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), BigDecimalUtil.mul(totalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.CONFIRM_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), BigDecimalUtil.mul(changeTotalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.CONFIRM_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
             }
         }
         //更新订单授信押金金额，商品授信押金金额
@@ -1302,7 +1356,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             if (ReplaceOrderStatus.REPLACE_ORDER_STATUS_PROCESSING.equals(replaceOrderDO.getReplaceOrderStatus())) {
                 //审核通过推送换货单信息
                 k3confirmOrderUrl = K3Config.k3Server + "/DataDelivery/Barter";
-            } else if (ReplaceOrderStatus.REPLACE_ORDER_STATUS_CONFIRM.equals(replaceOrderDO.getReplaceOrderStatus())) {
+            } else if (ReplaceOrderStatus.REPLACE_ORDER_STATUS_CONFIRM.equals(replaceOrderDO.getReplaceOrderStatus()) ||
+                    ReplaceOrderStatus.REPLACE_ORDER_STATUS_CLOSED.equals(replaceOrderDO.getReplaceOrderStatus())) {
                 //确认换货推送换货单信息
                 k3confirmOrderUrl = K3Config.k3Server + "/DataDelivery/ConfirmlBarter";
             } else {
@@ -1381,11 +1436,13 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 } else {
                     replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_BACKED);
                     // 返还扣走或者添加的信用额度
-                    BigDecimal totalCreditDepositAmount = replaceOrderDO.getUpdateTotalCreditDepositAmount();
-                    if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0) {
-                        customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
-                    } else if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) < 0) {
-                        customerSupport.addCreditAmountUsed(replaceOrderDO.getCustomerId(), BigDecimalUtil.mul(totalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                    BigDecimal updateTotalCreditDepositAmount = replaceOrderDO.getUpdateTotalCreditDepositAmount();
+                    if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+                        if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
+                            customerSupport.addCreditAmountUsed(replaceOrderDO.getCustomerId(), updateTotalCreditDepositAmount, CustomerRiskBusinessType.CANCEL_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                        } else if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) < 0) {
+                            customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), BigDecimalUtil.mul(updateTotalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.CANCEL_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                        }
                     }
                 }
                 replaceOrderMapper.update(replaceOrderDO);
