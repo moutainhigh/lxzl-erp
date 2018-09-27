@@ -142,7 +142,7 @@ public class StatementReplaceOrderSupport {
             }
             if (CollectionUtil.isNotEmpty(updateList)) {
                 SqlLogInterceptor.setExecuteSql("skip print peerDeploymentOrderProductEquipmentMapper.saveList  sql ......");
-                statementOrderDetailMapper.batchUpdate(needUpdateOrderBeforeList);
+                statementOrderDetailMapper.batchUpdate(updateList);
             }
             if (CollectionUtil.isNotEmpty(insertList)) {
                 SqlLogInterceptor.setExecuteSql("skip print peerDeploymentOrderProductEquipmentMapper.saveList  sql ......");
@@ -443,6 +443,8 @@ public class StatementReplaceOrderSupport {
                 statementOrderDO.setStatementRentPaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentPaidAmount(), returnRentToAccount));
                 statementOrderDO.setStatementPaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementPaidAmount(), returnRentToAccount));
             }
+            //已经完全冲正
+            newStatementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
         }
 
         //换货单退货结算
