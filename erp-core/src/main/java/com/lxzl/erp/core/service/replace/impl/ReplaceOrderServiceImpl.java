@@ -220,9 +220,9 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         // 校验客户风控信息
         verifyCustomerRiskInfo(replaceOrderDO,customerDO,orderDO,customerRiskManagementDO);
         //补全换货商品项信息
-        calculateOrderProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
+        newTotalCreditDepositAmount = calculateOrderProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
         //补全换货配件项信息
-        calculateOrderMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
+        newTotalCreditDepositAmount = calculateOrderMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
 
         if (customerRiskManagementDO == null && BigDecimalUtil.compare(newTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_NEED_RISK_INFO);
@@ -504,9 +504,9 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         // 校验客户风控信息
         verifyCustomerRiskInfo(replaceOrderDO,customerDO,orderDO,customerRiskManagementDO);
         //补全换货商品项信息
-        calculateOrderProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
+        newTotalCreditDepositAmount = calculateOrderProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
         //补全换货配件项信息
-        calculateOrderMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
+        newTotalCreditDepositAmount = calculateOrderMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
 
         if (customerRiskManagementDO == null && BigDecimalUtil.compare(newTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_NEED_RISK_INFO);
@@ -705,9 +705,9 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             BigDecimal updateTotalCreditDepositAmount = replaceOrderDO.getUpdateTotalCreditDepositAmount();
             if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) != 0) {
                 if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
-                    customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), updateTotalCreditDepositAmount, CustomerRiskBusinessType.CANCEL_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                    customerSupport.addCreditAmountUsed(replaceOrderDO.getCustomerId(), updateTotalCreditDepositAmount, CustomerRiskBusinessType.CANCEL_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
                 } else if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) < 0) {
-                    customerSupport.addCreditAmountUsed(replaceOrderDO.getCustomerId(), BigDecimalUtil.mul(updateTotalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.CANCEL_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                    customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), BigDecimalUtil.mul(updateTotalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.CANCEL_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
                 }
             }
         }
@@ -874,7 +874,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 replaceOrderProductDO.setUpdateTime(date);
                 replaceOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             }
-            changeReplaceOrderProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
+            newTotalCreditDepositAmount = changeReplaceOrderProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
         }
 
         if (replaceOrderMaterialDOListIsNotEmpty) {
@@ -893,7 +893,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 replaceOrderMaterialDO.setUpdateTime(date);
                 replaceOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             }
-            changeReplaceOrderMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
+            newTotalCreditDepositAmount = changeReplaceOrderMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
         }
 
         BigDecimal totalCreditDepositAmount = BigDecimalUtil.sub(oldTotalCreditDepositAmount,newTotalCreditDepositAmount);
@@ -902,15 +902,15 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         if (BigDecimalUtil.compare(BigDecimalUtil.mul(updateTotalCreditDepositAmount,totalCreditDepositAmount), BigDecimal.ZERO) != 0) {
             // 返还扣走或者添加的信用额度
             if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
-                customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), updateTotalCreditDepositAmount, CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                customerSupport.addCreditAmountUsed(replaceOrderDO.getCustomerId(), updateTotalCreditDepositAmount, CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
             } else if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) < 0) {
-                customerSupport.addCreditAmountUsed(replaceOrderDO.getCustomerId(), BigDecimalUtil.mul(updateTotalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), BigDecimalUtil.mul(updateTotalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
             }
             // 扣除信用额度
             if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0) {
-                customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.CONFIRM_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.CONFIRM_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
             } else if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) < 0) {
-                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), BigDecimalUtil.mul(totalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.CONFIRM_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), BigDecimalUtil.mul(totalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.CONFIRM_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
             }
         }
 
@@ -1182,9 +1182,9 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         // 校验客户风控信息
         verifyCustomerRiskInfo(replaceOrderDO,customerDO,orderDO,customerRiskManagementDO);
         //获取商品改变设备信用押金总额
-        getTotalCreditDepositAmountForProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
+        newTotalCreditDepositAmount = getTotalCreditDepositAmountForProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
         //获取配件改变设备信用押金总额
-        getTotalCreditDepositAmountForMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
+        newTotalCreditDepositAmount = getTotalCreditDepositAmountForMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
 
         if (customerRiskManagementDO == null && BigDecimalUtil.compare(newTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
             result.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_NEED_RISK_INFO);
@@ -1197,9 +1197,9 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         BigDecimal totalCreditDepositAmount = BigDecimalUtil.sub(oldTotalCreditDepositAmount,newTotalCreditDepositAmount);
         //扣除信用额度
         if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0) {
-            customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.COMMIT_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+            customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.COMMIT_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
         } else if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) < 0) {
-            customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), BigDecimalUtil.mul(totalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.COMMIT_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+            customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), BigDecimalUtil.mul(totalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.COMMIT_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
         }
 
         ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_CHANGE);
@@ -1746,7 +1746,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     /**
      * 补全换货商品项信息
      */
-    public void calculateOrderProductInfo(List<ReplaceOrderProductDO> replaceOrderProductDOList,Map<Integer,OrderProductDO> orderProductDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
+    public BigDecimal calculateOrderProductInfo(List<ReplaceOrderProductDO> replaceOrderProductDOList,Map<Integer,OrderProductDO> orderProductDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
 
         if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
             for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderProductDOList) {
@@ -1819,11 +1819,12 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 replaceOrderProductDO.setOldRentingProductCount(orderProductDO.getRentingProductCount());
             }
         }
+        return totalCreditDepositAmount;
     }
     /**
      * 补全换货配件项信息
      */
-    public void calculateOrderMaterialInfo(List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList,Map<Integer,OrderMaterialDO> orderMaterialDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
+    public BigDecimal calculateOrderMaterialInfo(List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList,Map<Integer,OrderMaterialDO> orderMaterialDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
         if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
 
             for (ReplaceOrderMaterialDO replaceOrderMaterialDO : replaceOrderMaterialDOList) {
@@ -1879,12 +1880,13 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 replaceOrderMaterialDO.setCreditDepositAmount(creditDepositAmount);
             }
         }
+        return totalCreditDepositAmount;
     }
 
     /**
      * 获取商品改变设备信用押金总额
      */
-    public void getTotalCreditDepositAmountForProductInfo(List<ReplaceOrderProductDO> replaceOrderProductDOList,Map<Integer,OrderProductDO> orderProductDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
+    public BigDecimal getTotalCreditDepositAmountForProductInfo(List<ReplaceOrderProductDO> replaceOrderProductDOList,Map<Integer,OrderProductDO> orderProductDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
 
         if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
             for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderProductDOList) {
@@ -1941,12 +1943,13 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 }
             }
         }
+        return totalCreditDepositAmount;
     }
 
     /**
      * 获取配件改变设备信用押金总额
      */
-    public void getTotalCreditDepositAmountForMaterialInfo(List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList,Map<Integer,OrderMaterialDO> orderMaterialDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
+    public BigDecimal getTotalCreditDepositAmountForMaterialInfo(List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList,Map<Integer,OrderMaterialDO> orderMaterialDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
         if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
 
             for (ReplaceOrderMaterialDO replaceOrderMaterialDO : replaceOrderMaterialDOList) {
@@ -1997,12 +2000,13 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 }
             }
         }
+        return totalCreditDepositAmount;
     }
 
     /**
      * 确认换货没有全部收货时变更换货单商品信息
      */
-    public void changeReplaceOrderProductInfo(List<ReplaceOrderProductDO> replaceOrderProductDOList,Map<Integer,OrderProductDO> orderProductDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
+    public BigDecimal changeReplaceOrderProductInfo(List<ReplaceOrderProductDO> replaceOrderProductDOList,Map<Integer,OrderProductDO> orderProductDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
 
         if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
             for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderProductDOList) {
@@ -2062,12 +2066,13 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 replaceOrderProductDO.setCreditDepositAmount(creditDepositAmount);
             }
         }
+        return totalCreditDepositAmount;
     }
 
     /**
      * 确认换货没有全部收货时变更换货单配件信息
      */
-    public void changeReplaceOrderMaterialInfo(List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList,Map<Integer,OrderMaterialDO> orderMaterialDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
+    public BigDecimal changeReplaceOrderMaterialInfo(List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList,Map<Integer,OrderMaterialDO> orderMaterialDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
         if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
 
             for (ReplaceOrderMaterialDO replaceOrderMaterialDO : replaceOrderMaterialDOList) {
@@ -2121,6 +2126,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 replaceOrderMaterialDO.setCreditDepositAmount(creditDepositAmount);
             }
         }
+        return totalCreditDepositAmount;
     }
 
     @Autowired
