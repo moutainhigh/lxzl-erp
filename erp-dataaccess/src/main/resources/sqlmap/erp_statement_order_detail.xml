@@ -210,6 +210,15 @@
         ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC,esod.statement_order_id ASC
     </select>
 
+    <select id="findByOrderItemTypeAndIdIngnoreOrderType" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_statement_order_detail esod
+        WHERE esod.order_item_type = #{orderItemType, jdbcType=INTEGER} AND esod.order_item_refer_id =
+        #{orderItemId, jdbcType=INTEGER} AND esod.data_status = 1
+        ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC,esod.statement_order_id ASC
+    </select>
+
     <select id="findByOrderTypeAndId" resultMap="StatementOrderDetailDO">
         SELECT
         <include refid="column_List"/>
@@ -1707,7 +1716,7 @@
         esod.data_status = 1
     </select>
 
-    <select id="findByOrderTypeAndSourceId" resultMap="CheckStatementOrderDetailDO">
+    <select id="findByOrderTypeAndSourceId" resultMap="StatementOrderDetailDO">
         SELECT
         <include refid="column_List"/>
         FROM erp_statement_order_detail esod

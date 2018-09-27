@@ -11,6 +11,9 @@ import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @Author: Sunzhipeng
  * @Description:
@@ -20,7 +23,7 @@ public class ReplaceControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void testAddJSON() throws Exception {
-        String str = "{\"orderId\":3003050,\"orderNo\":\"LXO-20180912-027-00071\",\"customerId\":705775,\"customerNo\":\"LXCC-027-20180904-00008\",\"address\":\"湖北省武汉市洪山区你家大门口\",\"orderSellerId\":500355,\"orderSellerName\":\"刘君诚\",\"orderSellerPhone\":\"13618654585\",\"logisticsCost\":\"100\",\"serviceCost\":\"100\",\"repairCost\":\"100\",\"replaceReasonType\":\"0\",\"replaceTime\":1537920000000,\"replaceMode\":\"1\",\"remark\":\"333\",\"consigneeName\":\"咩咩\",\"consigneePhone\":\"18566324590\",\"replaceOrderProductList\":[{\"oldOrderProductId\":4456,\"oldProductEntry\":4456,\"rentType\":2,\"rentTimeLength\":3,\"rentLengthType\":1,\"depositCycle\":1,\"payMode\":1,\"paymentCycle\":1,\"oldProductUnitAmount\":100,\"depositAmount\":0,\"productId\":2000577,\"productName\":\"苹果IPADPRO-64G\",\"productSkuId\":1689,\"productSkuName\":\"CPU:双核/内存:64G/颜色:银色/尺寸:12.9\",\"replaceProductCount\":\"1\",\"productUnitAmount\":\"170\",\"isNewProduct\":0,\"remark\":\"444\"}]}";
+        String str = "{\"orderId\":3003158,\"orderNo\":\"LXO-20180927-0755-00179\",\"customerId\":705888,\"customerNo\":\"LXCC-0755-20180925-00113\",\"address\":\"湖北省武汉市洪山区你家门口常打开\",\"orderSellerId\":500383,\"orderSellerName\":\"黄龙\",\"orderSellerPhone\":\"17620469420\",\"logisticsCost\":\"100\",\"serviceCost\":\"100\",\"repairCost\":\"100\",\"replaceReasonType\":\"0\",\"replaceTime\":1538006400000,\"replaceMode\":\"1\",\"remark\":\"\",\"consigneeName\":\"羊驼\",\"consigneePhone\":\"18566324590\",\"replaceOrderProductList\":[{\"oldOrderProductId\":4641,\"oldProductEntry\":4641,\"rentType\":2,\"rentTimeLength\":3,\"rentLengthType\":1,\"depositCycle\":2,\"payMode\":1,\"paymentCycle\":1,\"oldProductUnitAmount\":100,\"depositAmount\":0,\"productId\":2000211,\"productName\":\"ThinkPadT430U\",\"productSkuId\":1064,\"productSkuName\":\"CPU:i5 3代/内存:8G/机械硬盘:320G/显卡:独显/尺寸:14.1\",\"replaceProductCount\":\"1\",\"productUnitAmount\":\"200\",\"isNewProduct\":1,\"remark\":\"\"}]}";
 
         ReplaceOrder replaceOrder = FastJsonUtil.toBean(str, ReplaceOrder.class);
         TestResult testResult = getJsonTestResult("/replaceOrder/add", replaceOrder);
@@ -82,6 +85,19 @@ public class ReplaceControllerTest extends ERPUnTransactionalTest {
         ReplaceOrderQueryParam param = new ReplaceOrderQueryParam();
         param.setOrderNo("LXO-20180926-0755-00165");
         TestResult testResult = getJsonTestResult("/replaceOrder/queryReplaceOrderListForOrderNo", param);
+        System.out.println(JSON.toJSONString(testResult));
+
+    }
+
+    @Test
+    public void testCommitReplaceOrder() throws Exception {
+        ReplaceOrderCommitParam param = new ReplaceOrderCommitParam();
+        param.setReplaceOrderNo("LXREO20180926205442570");
+        param.setVerifyUserId(500051);
+        List<Integer> imageList = new ArrayList<>();
+        imageList.add(1818);
+        param.setImgIdList(imageList);
+        TestResult testResult = getJsonTestResult("/replaceOrder/commitReplaceOrder", param);
         System.out.println(JSON.toJSONString(testResult));
 
     }
