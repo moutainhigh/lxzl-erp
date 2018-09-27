@@ -1822,6 +1822,10 @@ public class StatementServiceImpl implements StatementService {
         //存放退货结算单商品、配件项
         Map<Integer, List<StatementOrderDetail>> returnOrderProudctAndMaterialMap = new HashMap<>();
         for (StatementOrderDetail statementOrderDetail : statementOrderDetailList) {
+            if(OrderType.ORDER_TYPE_REPLACE.equals(statementOrderDetail.getOrderType())){
+                allList.add(statementOrderDetail);
+                continue;
+            }
             if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
                 notReturnOrderMap.put(statementOrderDetail.getStatementOrderDetailId(), statementOrderDetail);
             } else {
