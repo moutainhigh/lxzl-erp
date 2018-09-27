@@ -1152,8 +1152,8 @@ public class ErrorCode {
     public static final String REPLACE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN= "J310000029";//只有待提交和已驳回状态的换货单可以提交
     public static final String REPLACE_ORDER_DETAIL_COMMITTED_NOT_NULL= "J310000030";//换货单商品不能空，需有商品才能提交
     public static final String REAL_REPLACE_TIME_NOT_NULL= "J310000031";//实际换货时间不能为空
-    public static final String REAL_REPLACE_TIME_MUST_AFTER_REPLACE_DELIVERY_TIME= "J310000032";//实际换货时间不能小于发货时间
-    public static final String REAL_REPLACE_TIME_MUST_BEFORE_CONFIRM_TIME= "J310000033";//实际换货时间不能大于确认换货时间
+    public static final String REAL_REPLACE_TIME_MUST_AFTER_REPLACE_TIME= "J310000032";//实际换货时间不能小于预计换货时间
+    public static final String REAL_REPLACE_TIME_MUST_BEFORE_CONFIRM_TIME= "J310000033";//实际换货时间不能大于当前时间
     public static final String SEND_REPLACE_ORDER_TO_K3_STATUS_ERROR= "J310000034";//换货单状态错误
     public static final String K3_REPLACE_ORDER_ERROR= "J310000035";//K3换货单推送信息失败,【%s 】
 
@@ -2288,8 +2288,8 @@ public class ErrorCode {
         MAP.put(REPLACE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交和已驳回状态的换货单可以提交");
         MAP.put(REPLACE_ORDER_DETAIL_COMMITTED_NOT_NULL, "换货单商品不能空，需有商品才能提交");
         MAP.put(REAL_REPLACE_TIME_NOT_NULL, "实际换货时间不能为空");
-        MAP.put(REAL_REPLACE_TIME_MUST_AFTER_REPLACE_DELIVERY_TIME, "实际换货时间不能小于发货时间");
-        MAP.put(REAL_REPLACE_TIME_MUST_BEFORE_CONFIRM_TIME, "实际换货时间不能大于确认换货时间");
+        MAP.put(REAL_REPLACE_TIME_MUST_AFTER_REPLACE_TIME, "实际换货时间不能小于预计换货时间");
+        MAP.put(REAL_REPLACE_TIME_MUST_BEFORE_CONFIRM_TIME, "实际换货时间不能大于当前时间");
         MAP.put(SEND_REPLACE_ORDER_TO_K3_STATUS_ERROR, "换货单状态错误");
         MAP.put(K3_REPLACE_ORDER_ERROR, "K3换货单推送信息失败,【%s 】");
 
