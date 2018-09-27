@@ -122,6 +122,10 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             serviceResult.setErrorCode(ErrorCode.REPLACE_ORDER_DETAIL_LIST_NOT_NULL);
             return serviceResult;
         }
+        //校验换货项（新的不能换，普通和苹果不能互换）
+        if (checkProductIsNewAndIsApple(serviceResult, replaceOrderProductDOList)){
+            return serviceResult;
+        }
         replaceOrderDO.setCustomerName(customerDO.getCustomerName());
 
         //校验订单编号
@@ -361,6 +365,59 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         return serviceResult;
     }
 
+    /**
+     * 校验换货项（新的不能换，普通和苹果不能互换）
+     * @param serviceResult
+     * @param replaceOrderProductDOList
+     * @return
+     */
+    private boolean checkProductIsNewAndIsApple(ServiceResult<String, String> serviceResult, List<ReplaceOrderProductDO> replaceOrderProductDOList) {
+        if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
+            for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderProductDOList) {
+                Integer oldIsNewProduct = replaceOrderProductDO.getOldIsNewProduct();
+                Integer isNewProduct = replaceOrderProductDO.getIsNewProduct();
+                //换货商品或被换商品新旧属性不能为空
+                if(oldIsNewProduct == null || isNewProduct == null){
+                    serviceResult.setErrorCode(ErrorCode.REPLACE_ORDER_IS_NEW_PRODUCT_NOT_NULL);
+                    return true;
+                }
+                //全新商不能换货或被换，只能选择次新商品进行换货操作
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(oldIsNewProduct) ||
+                        CommonConstant.COMMON_CONSTANT_YES.equals(isNewProduct)) {
+                    serviceResult.setErrorCode(ErrorCode.REPLACE_ORDER_PRODUCT_NOT_NEW);
+                    return true;
+                }
+                //判断原商品是否是苹果机
+                ServiceResult<String, Product> oldProductServiceResult = productService.queryProductBySkuId(replaceOrderProductDO.getOldProductSkuId());
+                if (!oldProductServiceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                    serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                    return true;
+                }
+                Product oldProduct = oldProductServiceResult.getResult();
+                boolean oldProductIsApple = BrandId.BRAND_ID_APPLE.equals(oldProduct.getBrandId());
+
+                //判断新商品是否是苹果机
+                ServiceResult<String, Product> newProductServiceResult = productService.queryProductBySkuId(replaceOrderProductDO.getProductSkuId());
+                if (!newProductServiceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                    serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                    return true;
+                }
+                Product newProduct = newProductServiceResult.getResult();
+                boolean newProductIsApple = BrandId.BRAND_ID_APPLE.equals(newProduct.getBrandId());
+                //苹果商品只能更换苹果商品
+                if (oldProductIsApple && !newProductIsApple) {
+                    serviceResult.setErrorCode(ErrorCode.APPLE_NOT_REPLACE_OTHER);
+                    return true;
+                } else if (!oldProductIsApple && newProductIsApple) {
+                    //非苹果商品不能更换苹果商品
+                    serviceResult.setErrorCode(ErrorCode.OTHER_NOT_REPLACE_APPLE);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     /**
      * 修改换货单
@@ -456,6 +513,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         String monthTimeString = sdf.format(date);
         String nowTimeString = simpleDateFormat.format(date);
         if (checkReplaceTimeForNowDay(serviceResult, replaceTime, simpleDateFormat, replaceTimeString, sdf, monthTimeString, nowTimeString)){
+            return serviceResult;
+        }
+
+        //校验换货项（新的不能换，普通和苹果不能互换）
+        if (checkProductIsNewAndIsApple(serviceResult, replaceOrderProductDOList)){
             return serviceResult;
         }
 
@@ -832,8 +894,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         if (checkRealReplaceTime(result, simpleDateFormat, realReplaceTimeString, replaceTimeString, nowTimeString)){
             return result;
         }
-
-
 
         ReplaceOrderDO replaceOrderDO = ConverterUtil.convert(replaceOrder,ReplaceOrderDO.class);
 
