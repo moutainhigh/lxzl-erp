@@ -11,6 +11,9 @@ import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @Author: Sunzhipeng
  * @Description:
@@ -82,6 +85,19 @@ public class ReplaceControllerTest extends ERPUnTransactionalTest {
         ReplaceOrderQueryParam param = new ReplaceOrderQueryParam();
         param.setOrderNo("LXO-20180926-0755-00165");
         TestResult testResult = getJsonTestResult("/replaceOrder/queryReplaceOrderListForOrderNo", param);
+        System.out.println(JSON.toJSONString(testResult));
+
+    }
+
+    @Test
+    public void testCommitReplaceOrder() throws Exception {
+        ReplaceOrderCommitParam param = new ReplaceOrderCommitParam();
+        param.setReplaceOrderNo("LXREO20180926205442570");
+        param.setVerifyUserId(500051);
+        List<Integer> imageList = new ArrayList<>();
+        imageList.add(1818);
+        param.setImgIdList(imageList);
+        TestResult testResult = getJsonTestResult("/replaceOrder/commitReplaceOrder", param);
         System.out.println(JSON.toJSONString(testResult));
 
     }
