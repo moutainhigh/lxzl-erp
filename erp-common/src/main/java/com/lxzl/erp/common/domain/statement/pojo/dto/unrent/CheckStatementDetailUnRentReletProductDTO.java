@@ -57,4 +57,9 @@ public class CheckStatementDetailUnRentReletProductDTO extends CheckStatementDet
         return SortOrderItemType.PRODUCT_RELET_RETURN;
     }
 
+    @Override
+    public boolean isAddTheMonth(CheckStatementStatisticsDTO statementStatisticsDTO) {
+        return checkIsAddTheMonth(statementStatisticsDTO,this.getReturnTime(),this.getStatementStartTime());
+    }
+
 }

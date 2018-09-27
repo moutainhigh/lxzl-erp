@@ -204,10 +204,16 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOS) {
             returnOrderIds.add(k3ReturnOrderDO.getId());
         }
-
+        // 查询该用户确认换货时间在指定时间段内换货单列表数据
+        List<ReplaceOrderDO> replaceOrderDOS = replaceOrderMapper.listByMonthQuery(statementOrderMonthQueryParam);
+        Set<Integer> replaceOrderIds = new LinkedHashSet<>();
+        for (ReplaceOrderDO replaceOrderDO : replaceOrderDOS) {
+            replaceOrderIds.add(replaceOrderDO.getId());
+        }
         //orderIds IS 退货单id
         statementOrderMonthQueryParam.setOrderIds(returnOrderIds);
-
+        //replaceOrderIds is 换货单id
+        statementOrderMonthQueryParam.setReplaceOrderIds(replaceOrderIds);
         // 根据查询条件获取结算单列表数据
         ServiceResult<String, List<BaseCheckStatementDetailDTO>> serviceResultOfCheckStatementDetail = statementService.listCheckStatementDetailDTOByQuery(statementOrderMonthQueryParam);
         if (!Objects.equals(serviceResultOfCheckStatementDetail.getErrorCode(), ErrorCode.SUCCESS)) {
@@ -418,7 +424,8 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             statementStatisticsDTO.setCustomerName(customerDO.getCustomerName());
             // 根据退货时间创建并新增退货订单数据
             createAndAddUnRentOrdersByReturnTime(mapContainer, statementStatisticsDTO, checkStatementDetailDTOS);
-            // TODO 根据换货时间创建并新增退换货数据
+            // TODO 根据换货时间创建并新增换货数据
+            createReplaceOrdersByReturnTime(mapContainer, statementStatisticsDTO, checkStatementDetailDTOS);
             // 处理租赁、续租结算单
             for (BaseCheckStatementDetailDTO checkStatementDetailDTO : checkStatementDetailDTOS) {
                 if (checkStatementDetailDTO.isAddTheMonth(statementStatisticsDTO)) {
@@ -531,32 +538,45 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
     private void createReplaceOrdersByReturnTime(CheckStatementMapContainer mapContainer, CheckStatementStatisticsDTO statisticsDTO, List<BaseCheckStatementDetailDTO> checkStatementDetailDTOS){
         Map<Integer, ReplaceOrder> replaceOrderMap = mapContainer.getIdReplaceOrderMap();
-        Map<Integer, ReplaceOrderProduct> replaceOrderProductMap = mapContainer.getIdReplaceOrderProductMap();
         Map<Integer, ReplaceOrderMaterial> replaceOrderMaterialMap = mapContainer.getIdReplaceOrderMaterialMap();
         Map<Integer, OrderProduct> orderProductMap = mapContainer.getIdOrderProductMap();
         Map<Integer, OrderMaterial> orderMaterialMap = mapContainer.getIdOrderMaterialMap();
+        Map<String, Order> orderMap = mapContainer.getNoOrderMap();
         for (ReplaceOrderProduct replaceOrderProduct : mapContainer.getIdReplaceOrderProductMap().values()) {
+            ReplaceOrder replaceOrder = replaceOrderMap.get(replaceOrderProduct.getReplaceOrderId());
+            if (replaceOrder == null) {
+                continue;
+            }
 
             String returnTimeMonthStr = DateFormatUtils.format(replaceOrderMap.get(replaceOrderProduct.getReplaceOrderId()).getRealReplaceTime(), "yyyy-MM");
             if (!returnTimeMonthStr.equals(statisticsDTO.getMonth())) {
                 continue;
             }
+
+            Order order = orderMap.get(replaceOrder.getOrderNo());
+            if (order == null) {
+                continue;
+            }
+
             BigDecimal unitAmount = replaceOrderProduct.getProductUnitAmount();
             if (unitAmount == null || BigDecimal.ZERO.compareTo(unitAmount) == 0) {
                 continue;
             }
             boolean isReplaceOrder = false;
             BaseCheckStatementDetailDTO baseCheckStatementDetailDTO = null;
+            OrderProduct orderProduct = null;
             for (BaseCheckStatementDetailDTO statementDetailDTO : checkStatementDetailDTOS) {
                 boolean isReplaceOrderTemp = replaceOrderProduct.getReplaceOrderProductId().equals(statementDetailDTO.getReplaceItemId());
                 baseCheckStatementDetailDTO = statementDetailDTO;
-                if (statementDetailDTO instanceof CheckStatementDetailReplaceProductDTO && isReplaceOrderTemp) {
-//                    statisticsDTO.addCheckStatementDetailDTO(createReplaceOrderProductStatementDTO(replaceOrderProduct, orderProduct, order, mapContainer,baseCheckStatementDetailDTO));
-                }else if (statementDetailDTO instanceof CheckStatementDetailUnReplaceProductDTO && isReplaceOrderTemp) {
-//                    statisticsDTO.addCheckStatementDetailDTO(createReplaceOrderProductStatementDTO(replaceOrderProduct, orderProduct, order, mapContainer,baseCheckStatementDetailDTO));
+                if ((statementDetailDTO instanceof CheckStatementDetailUnReplaceProductDTO) && isReplaceOrderTemp) {
+                    isReplaceOrder =true;
+                    orderProduct = orderProductMap.get(replaceOrderProduct.getOldOrderProductId());
+                    break;
                 }
             }
-
+            if(isReplaceOrder){
+                statisticsDTO.addCheckStatementDetailDTO(createReplaceOrderProductStatementDTO(replaceOrderProduct, orderProduct, order, mapContainer,baseCheckStatementDetailDTO));
+            }
         }
     }
 
@@ -623,15 +643,21 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
     /**
      * 创建换货商品对账单数据传输对象
      */
-    private BaseCheckStatementDetailDTO createReplaceOrderProductStatementDTO(K3ReturnOrderDetail k3ReturnOrderDetail, OrderProduct orderProduct, Order order, CheckStatementMapContainer mapContainer,BaseCheckStatementDetailDTO statementDetailDTO) {
-        BaseCheckStatementDetailDTO checkStatementDetailDTO = new CheckStatementDetailUnRentProductDTO();
+    private BaseCheckStatementDetailDTO createReplaceOrderProductStatementDTO(ReplaceOrderProduct replaceOrderProduct, OrderProduct orderProduct, Order order, CheckStatementMapContainer mapContainer,BaseCheckStatementDetailDTO statementDetailDTO) {
+        BaseCheckStatementDetailDTO checkStatementDetailDTO = new CheckStatementDetailUnReplaceProductDTO();
         setStatementOrderProductData(checkStatementDetailDTO, orderProduct);
-        checkStatementDetailDTO.setItemCount(CommonConstant.COMMON_ZERO - k3ReturnOrderDetail.getRealProductCount());
+        checkStatementDetailDTO.setItemCount(CommonConstant.COMMON_ZERO - replaceOrderProduct.getRealReplaceProductCount());
         checkStatementDetailDTO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT);
-        checkStatementDetailDTO.setOrderType(OrderType.ORDER_TYPE_RETURN);
-        checkStatementDetailDTO.setOrderItemReferId(k3ReturnOrderDetail.getK3ReturnOrderDetailId());
-        checkStatementDetailDTO.setStatementOrderDetailId(k3ReturnOrderDetail.getK3ReturnOrderDetailId());
-        setStatementK3ReturnOrderData(checkStatementDetailDTO, k3ReturnOrderDetail, mapContainer);
+        checkStatementDetailDTO.setOrderType(OrderType.ORDER_TYPE_REPLACE);
+//        if(statementDetailDTO.getReletOrderItemReferId() != null){
+//            checkStatementDetailDTO.setOrderItemReferId(statementDetailDTO.getReletOrderItemReferId());
+//        }else {
+//            checkStatementDetailDTO.setOrderItemReferId(statementDetailDTO.getOrderItemReferId());
+//        }
+//        checkStatementDetailDTO.setOrderItemReferId(replaceOrderProduct.getReplaceOrderProductId());
+        checkStatementDetailDTO.setOrderItemReferId(statementDetailDTO.getOrderItemReferId());
+        checkStatementDetailDTO.setStatementOrderDetailId(replaceOrderProduct.getReplaceOrderProductId());
+        setStatementReplaceOrderProductData(checkStatementDetailDTO, replaceOrderProduct, mapContainer);
         setStatementOrderData(checkStatementDetailDTO, order, false);
         checkStatementDetailDTO.mapContainer(mapContainer).loadAmountData().buildImportData();
         return checkStatementDetailDTO;
@@ -679,6 +705,15 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         checkStatementDetailDTO.setReturnReasonType(k3ReturnOrder.getReturnReasonType());
         checkStatementDetailDTO.setReturnOrderNo(k3ReturnOrder.getReturnOrderNo());
         checkStatementDetailDTO.setOrderItemReferId(k3ReturnOrderDetail.getK3ReturnOrderDetailId());
+    }
+
+    private void setStatementReplaceOrderProductData(BaseCheckStatementDetailDTO checkStatementDetailDTO, ReplaceOrderProduct replaceOrderProduct, CheckStatementMapContainer mapContainer) {
+        ReplaceOrder replaceOrder = mapContainer.getIdReplaceOrderMap().get(replaceOrderProduct.getReplaceOrderId());
+        checkStatementDetailDTO.setStatementExpectPayTime(replaceOrder.getRealReplaceTime());
+        checkStatementDetailDTO.setOrderId(replaceOrder.getReplaceOrderId());
+        checkStatementDetailDTO.setReturnTime(replaceOrder.getRealReplaceTime());
+        checkStatementDetailDTO.setReturnOrderNo(replaceOrder.getReplaceOrderNo());
+//        checkStatementDetailDTO.setOrderItemReferId(replaceOrderProduct.getReplaceOrderProductId());
     }
 
 
@@ -734,10 +769,10 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             Map<String, BaseCheckStatementDetailDTO> orderIdAndOrderItemIdMap = Maps.newLinkedHashMap();
             // 合并租赁、续租订单
             mergeOrders(statementStatisticsDTO, orderIdAndOrderItemIdMap);
-            // 合并退货单
-            mergeReturnOrders(statementStatisticsDTO, orderIdAndOrderItemIdMap);
             // 合并换货单
             mergeReplaceOrders(statementStatisticsDTO, orderIdAndOrderItemIdMap);
+            // 合并退货单
+            mergeReturnOrders(statementStatisticsDTO, orderIdAndOrderItemIdMap);
             // 构建新的结算单详情列表数据
             List<BaseCheckStatementDetailDTO> checkStatementDetailDTONew = buildNewStatementDetailDTOs(statementStatisticsDTO, orderIdAndOrderItemIdMap);
             // 排序
@@ -894,6 +929,9 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             if(detailDTO.getReturnOrderNo() != null){
                 if(map.get(detailDTO.getOrderItemReferId()) == null){
                     List<BaseCheckStatementDetailDTO> list = new ArrayList<>();
+                    if(detailDTO instanceof CheckStatementDetailUnRentReletDTO){
+
+                    }
                     list.add(detailDTO);
                     map.put(detailDTO.getOrderItemReferId(),list);
                 }else {

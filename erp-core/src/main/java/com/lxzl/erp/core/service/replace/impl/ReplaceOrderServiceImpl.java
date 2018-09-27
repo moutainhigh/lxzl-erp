@@ -825,13 +825,13 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             return result;
         }
 
-        //校验实际换货时间和预计换货时间与当前时间
-        Date replaceTime = replaceOrder.getReplaceTime();
-        String replaceTimeString = simpleDateFormat.format(replaceTime);
-        String nowTimeString = simpleDateFormat.format(date);
-        if (checkRealReplaceTime(result, simpleDateFormat, realReplaceTimeString, replaceTimeString, nowTimeString)){
-            return result;
-        }
+//        //校验实际换货时间和预计换货时间与当前时间
+//        Date replaceTime = replaceOrder.getReplaceTime();
+//        String replaceTimeString = simpleDateFormat.format(replaceTime);
+//        String nowTimeString = simpleDateFormat.format(date);
+//        if (checkRealReplaceTime(result, simpleDateFormat, realReplaceTimeString, replaceTimeString, nowTimeString)){
+//            return result;
+//        }
 
 
 

@@ -7284,7 +7284,7 @@ public class StatementServiceImpl implements StatementService {
 
         // todo 获取订单类型为换货类型的结算数据列表  类型抽出来set
         statementOrderMonthQueryParam.setQueryOrderType(OrderType.ORDER_TYPE_REPLACE);
-        addServiceResult(returnServiceResult,listRentByCustomerId(statementOrderMonthQueryParam));
+        addServiceResult(returnServiceResult,listUnRentByOrderIds(statementOrderMonthQueryParam));
 
         // 获取订单类型为退货类型的结算数据列表
         statementOrderMonthQueryParam.setQueryOrderType(OrderType.ORDER_TYPE_RETURN);

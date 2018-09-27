@@ -29,18 +29,4 @@ public class CheckStatementDetailUnRentDTO extends BaseCheckStatementDetailUnRen
         return cacheKey;
     }
 
-    public boolean checkIsAddTheMonth(CheckStatementStatisticsDTO statementStatisticsDTO, Date returnTime, Date statementStartTime){
-        String returnTimeStr = DateFormatUtils.format(returnTime, "yyyy-MM");
-        if (statementStatisticsDTO.getMonth().equals(returnTimeStr)) {
-            if (this.getStatementExpectPayTime() == null) {
-                return true;
-            }
-            if(DateFormatUtils.format(statementStartTime, "yyyy-MM").equals(returnTimeStr)){
-                return true;
-            }
-            return false;
-        }
-        return super.isAddTheMonth(statementStatisticsDTO);
-    }
-
 }

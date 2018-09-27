@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.statement.pojo.dto;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.lxzl.erp.common.constant.OrderRentType;
+import com.lxzl.erp.common.constant.ReplaceReasonType;
 import com.lxzl.erp.common.constant.StatementOrderStatus;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
@@ -19,6 +20,7 @@ import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CheckStatementUtil;
 import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.common.util.JSONUtil;
+import com.lxzl.se.common.util.StringUtil;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -50,6 +52,10 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
      * 退还时间
      */
     private Date returnTime;
+    /**
+     * 换货时间
+     */
+    private Date replaceTime;
     /**
      * 结算单ID
      */
@@ -855,7 +861,12 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
 
     @Override
     public final String getReturnReasonTypeStr() {
-        return ReturnReasonType.getReturnReasonTypeStr(this.getReturnReasonType());
+        if(this.sourceId != null){
+            return ReplaceReasonType.getReplaceReasonTypeStr(this.getReturnReasonType());
+        }else if(StringUtil.isNotBlank(this.returnOrderNo)){
+            return ReturnReasonType.getReturnReasonTypeStr(this.getReturnReasonType());
+        }
+        return null;
     }
 
     @Override
@@ -1404,4 +1415,21 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
         this.replaceItemId = replaceItemId;
     }
 
+    public Date getReplaceTime() { return replaceTime; }
+
+    public void setReplaceTime(Date replaceTime) { this.replaceTime = replaceTime; }
+
+    public boolean checkIsAddTheMonth(CheckStatementStatisticsDTO statementStatisticsDTO, Date returnTime, Date statementStartTime){
+        String returnTimeStr = DateFormatUtils.format(returnTime, "yyyy-MM");
+        if (statementStatisticsDTO.getMonth().equals(returnTimeStr)) {
+            if (this.getStatementExpectPayTime() == null) {
+                return true;
+            }
+            if(DateFormatUtils.format(statementStartTime, "yyyy-MM").equals(returnTimeStr)){
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
 }

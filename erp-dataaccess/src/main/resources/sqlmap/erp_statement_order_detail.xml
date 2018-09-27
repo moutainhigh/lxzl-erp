@@ -1697,7 +1697,7 @@
         <include refid="column_List"/>
         FROM erp_statement_order_detail esod
         WHERE esod.id IN <foreach collection="ids" item="item" index="index" separator="," open="(" close=")">#{item}</foreach>
-         AND esod.data_status = 1
+        AND esod.data_status = 1
     </select>
 
     <select id="findOrderItemStatementByType" resultMap="StatementOrderDetailDO">
@@ -1750,7 +1750,7 @@
             </foreach>
         </if>
         <if test="queryParam.queryOrderType == 6 and queryParam.replaceOrderIds != null and queryParam.replaceOrderIds.size() > 0">
-            AND esod.order_id in
+            AND esod.source_id in
             <foreach collection="queryParam.replaceOrderIds" item="item" index="index" separator="," open="(" close=")">
                 #{item}
             </foreach>
