@@ -28,7 +28,7 @@ public class CheckStatementDetailUnReplaceMaterialDTO extends CheckStatementDeta
 
         setItemRentType(replaceOrderMaterial.getRentType());
         setItemCount(CommonConstant.COMMON_ZERO - replaceOrderMaterial.getRealReplaceMaterialCount());
-
+        setReturnReferId(super.getReturnReferId());
         setReturnTime(replaceOrder.getRealReplaceTime());
         return this;
     }

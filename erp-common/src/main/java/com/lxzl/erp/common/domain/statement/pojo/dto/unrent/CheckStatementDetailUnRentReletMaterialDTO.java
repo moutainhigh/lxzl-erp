@@ -39,6 +39,7 @@ public class CheckStatementDetailUnRentReletMaterialDTO extends CheckStatementDe
 
         setItemRentType(orderMaterial.getRentType());
         setItemCount(CommonConstant.COMMON_ZERO - k3ReturnOrderDetail.getRealProductCount());
+        setReturnReferId(super.getReturnReferId());
         return this;
     }
 
