@@ -322,25 +322,25 @@
         {{/hasListData}}
     </script>
 
-    <div id="totalInfo" class="hide">
-        <div class="row">
-            <div class="col-md-12">
-                <div id="orderAmountInfo">
-                    <table class="table table-bordered mbn">
-                        <tbody>
-                        <tr>
-                            <td class="text-center" style="width:120px;"><b>总计金额:</b></td>
-                            <td>
-                                <div class="pull-left" style="padding-left:10px; width:280px;">租金总额:<b id="rentTotal"></b></div>
-                                <div class="pull-left">押金总额:<b id="totalDeposit"></b></div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+##    <div id="totalInfo" class="hide">
+##        <div class="row">
+##            <div class="col-md-12">
+##                <div id="orderAmountInfo">
+##                    <table class="table table-bordered mbn">
+##                        <tbody>
+##                        <tr>
+##                            <td class="text-center" style="width:120px;"><b>总计金额:</b></td>
+##                            <td>
+##                                <div class="pull-left" style="padding-left:10px; width:280px;">租金总额:<b id="rentTotal"></b></div>
+##                                <div class="pull-left">押金总额:<b id="totalDeposit"></b></div>
+##                            </td>
+##                        </tr>
+##                        </tbody>
+##                    </table>
+##                </div>
+##            </div>
+##        </div>
+##    </div>
 
     <script type="text/html" id="oldProductListTpl">
         {{#hasListData}}

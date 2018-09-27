@@ -111,8 +111,8 @@
                                             <tr class="productRow skuRow" productRowKey="{{productId}}">
                                                 <td><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></td>
                                                 <td>
-                                                    <p class="mn mb5">{{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}{{productName}}</p>  
-                                                    <p class="mn mw300">{{productSkuName}}</p> 
+                                                    <p class="mn mb5">{{#isNewValueBadge}}{{oldIsNewProduct}}{{/isNewValueBadge}}{{oldProductName}}</p>  
+                                                    <p class="mn mw300">{{oldProductSkuName}}</p> 
                                                 </td>
                                                 <td>￥{{#price}}{{oldProductUnitAmount}}{{/price}}</td>
                                                 <td>{{oldRentingProductCount}}</td>
