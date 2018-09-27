@@ -1062,8 +1062,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                     replaceOrderProductMapper.update(replaceOrderProductDO);
                 }
             }
-
-
 //            if (replaceOrderMaterialDOListIsNotEmpty) {
 //                replaceOrderMaterialMapper.updateListForConfirm(replaceOrderMaterialDOList);
 //            }
@@ -2069,8 +2067,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
         return totalCreditDepositAmount;
     }
-
-
 
     @Autowired
     private ReplaceOrderMapper replaceOrderMapper;
