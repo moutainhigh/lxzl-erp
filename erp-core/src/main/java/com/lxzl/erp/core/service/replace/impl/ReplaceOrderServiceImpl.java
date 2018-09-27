@@ -911,7 +911,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         // 原订单设备信用押金总额
         BigDecimal oldTotalCreditDepositAmount = replaceOrderDO.getOldTotalCreditDepositAmount();
         // 换货后订单设备信用押金总额
-        BigDecimal newTotalCreditDepositAmount = replaceOrderDO.getNewTotalCreditDepositAmount();
+        BigDecimal newTotalCreditDepositAmount = replaceOrderDO.getOldTotalCreditDepositAmount();
 
         Integer totalReplaceProductCount = replaceOrderDO.getTotalReplaceProductCount();
         Integer totalReplaceMaterialCount = replaceOrderDO.getTotalReplaceMaterialCount();
@@ -958,19 +958,15 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
         BigDecimal totalCreditDepositAmount = BigDecimalUtil.sub(oldTotalCreditDepositAmount,newTotalCreditDepositAmount);
         BigDecimal updateTotalCreditDepositAmount = replaceOrderDO.getUpdateTotalCreditDepositAmount();
-
-        if (BigDecimalUtil.compare(BigDecimalUtil.mul(updateTotalCreditDepositAmount,totalCreditDepositAmount), BigDecimal.ZERO) != 0) {
-            // 返还扣走或者添加的信用额度
-            if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
-                customerSupport.addCreditAmountUsed(replaceOrderDO.getCustomerId(), updateTotalCreditDepositAmount, CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+        BigDecimal changeTotalCreditDepositAmount = BigDecimalUtil.sub(updateTotalCreditDepositAmount,totalCreditDepositAmount);
+        if (BigDecimalUtil.compare(changeTotalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+            replaceOrderDO.setNewTotalCreditDepositAmount(newTotalCreditDepositAmount);
+            replaceOrderDO.setUpdateTotalCreditDepositAmount(totalCreditDepositAmount);
+            //未全部收货变更授信额度
+            if (BigDecimalUtil.compare(changeTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
+                customerSupport.addCreditAmountUsed(replaceOrderDO.getCustomerId(), changeTotalCreditDepositAmount, CustomerRiskBusinessType.CONFIRM_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
             } else if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) < 0) {
-                customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), BigDecimalUtil.mul(updateTotalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
-            }
-            // 扣除信用额度
-            if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0) {
-                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.CONFIRM_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
-            } else if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) < 0) {
-                customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), BigDecimalUtil.mul(totalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.CONFIRM_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), BigDecimalUtil.mul(changeTotalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.CONFIRM_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
             }
         }
         //更新订单授信押金金额，商品授信押金金额
@@ -1362,7 +1358,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             if (ReplaceOrderStatus.REPLACE_ORDER_STATUS_PROCESSING.equals(replaceOrderDO.getReplaceOrderStatus())) {
                 //审核通过推送换货单信息
                 k3confirmOrderUrl = K3Config.k3Server + "/DataDelivery/Barter";
-            } else if (ReplaceOrderStatus.REPLACE_ORDER_STATUS_CONFIRM.equals(replaceOrderDO.getReplaceOrderStatus())) {
+            } else if (ReplaceOrderStatus.REPLACE_ORDER_STATUS_CONFIRM.equals(replaceOrderDO.getReplaceOrderStatus()) ||
+                    ReplaceOrderStatus.REPLACE_ORDER_STATUS_CLOSED.equals(replaceOrderDO.getReplaceOrderStatus())) {
                 //确认换货推送换货单信息
                 k3confirmOrderUrl = K3Config.k3Server + "/DataDelivery/ConfirmlBarter";
             } else {
@@ -1438,11 +1435,13 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 } else {
                     replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_BACKED);
                     // 返还扣走或者添加的信用额度
-                    BigDecimal totalCreditDepositAmount = replaceOrderDO.getUpdateTotalCreditDepositAmount();
-                    if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0) {
-                        customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
-                    } else if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) < 0) {
-                        customerSupport.addCreditAmountUsed(replaceOrderDO.getCustomerId(), BigDecimalUtil.mul(totalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.BACKED_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                    BigDecimal updateTotalCreditDepositAmount = replaceOrderDO.getUpdateTotalCreditDepositAmount();
+                    if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+                        if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
+                            customerSupport.addCreditAmountUsed(replaceOrderDO.getCustomerId(), updateTotalCreditDepositAmount, CustomerRiskBusinessType.CANCEL_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                        } else if (BigDecimalUtil.compare(updateTotalCreditDepositAmount, BigDecimal.ZERO) < 0) {
+                            customerSupport.subCreditAmountUsed(replaceOrderDO.getCustomerId(), BigDecimalUtil.mul(updateTotalCreditDepositAmount, new BigDecimal(-1)), CustomerRiskBusinessType.CANCEL_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
+                        }
                     }
                 }
                 replaceOrderMapper.update(replaceOrderDO);
