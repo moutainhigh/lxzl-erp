@@ -4,8 +4,8 @@
             <thead>
             <tr class="bg-light">
                 <th class="nowrap">换货单编号</th>
-                <th class="nowrap">换货时间</th>
-                <th class="nowrap">预计归还时间</th>
+                <th class="nowrap">预计换货时间</th>
+                <th class="nowrap">实际归还时间</th>
                 <th class="nowrap text-center">换货数量</th>
                 <th class="nowrap text-center">实际换货数量</th>
                 <th class="nowrap">创建人</th>
@@ -19,12 +19,12 @@
             <tr>  
                 <td class="nowrap"><a href="{{replaceDetailUrl}}" target="_blank">{{replaceOrderNo}}</a></td>
                 <td class="nowrap">{{#clockShorTime}}{{replaceTime}}{{/clockShorTime}}</td>
-                <td class="nowrap">{{#clockShorTime}}{{orderExpectReturnTime}}{{/clockShorTime}}</td>
+                <td class="nowrap">{{#clockShorTime}}{{realReplaceTime}}{{/clockShorTime}}</td>
                 <td class="nowrap text-center">{{totalReplaceProductCount}}</td>
                 <td class="nowrap text-center">{{realTotalReplaceCount}}</td>
                 <td class="nowrap">
                     <span class="mr5">{{createUserRealName}}</span>
-                    <span>{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</span>
+                    <span>{{#clockTime}}{{createTime}}{{/clockTime}}</span>
                 </td>
                 <td class="nowrap">{{statusVal}}</td>
                 <td class="nowrap text-right">
