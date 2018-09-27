@@ -1156,6 +1156,10 @@ public class ErrorCode {
     public static final String REAL_REPLACE_TIME_MUST_BEFORE_CONFIRM_TIME= "J310000033";//实际换货时间不能大于当前时间
     public static final String SEND_REPLACE_ORDER_TO_K3_STATUS_ERROR= "J310000034";//换货单状态错误
     public static final String K3_REPLACE_ORDER_ERROR= "J310000035";//K3换货单推送信息失败,【%s 】
+    public static final String REPLACE_ORDER_IS_NEW_PRODUCT_NOT_NULL= "J310000036";//换货商品或被换商品新旧属性不能为空
+    public static final String REPLACE_ORDER_PRODUCT_NOT_NEW= "J310000037";//新商不能换货或被换，只能选择次新商品进行更换
+    public static final String APPLE_NOT_REPLACE_OTHER= "J310000038";//苹果商品只能更换苹果商品
+    public static final String OTHER_NOT_REPLACE_APPLE= "J310000039";//非苹果商品不能更换苹果商品
 
 
     static {
@@ -2292,6 +2296,11 @@ public class ErrorCode {
         MAP.put(REAL_REPLACE_TIME_MUST_BEFORE_CONFIRM_TIME, "实际换货时间不能大于当前时间");
         MAP.put(SEND_REPLACE_ORDER_TO_K3_STATUS_ERROR, "换货单状态错误");
         MAP.put(K3_REPLACE_ORDER_ERROR, "K3换货单推送信息失败,【%s 】");
+        MAP.put(REPLACE_ORDER_IS_NEW_PRODUCT_NOT_NULL, "换货商品或被换商品新旧属性不能为空");
+        MAP.put(REPLACE_ORDER_PRODUCT_NOT_NEW, "全新商不能换货或被换，只能选择次新商品进行换货操作");
+        MAP.put(APPLE_NOT_REPLACE_OTHER, "苹果商品只能更换苹果商品");
+        MAP.put(OTHER_NOT_REPLACE_APPLE, "非苹果商品不能更换苹果商品");
+
 
         MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
         MAP.put(DEPOSIT_NOT_PAID_BEFORE_REPLACE_ORDER, "换货之前需先支付原订单押金");
