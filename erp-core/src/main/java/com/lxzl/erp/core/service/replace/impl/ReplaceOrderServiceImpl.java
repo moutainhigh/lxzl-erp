@@ -1055,7 +1055,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                     oldOrderProductDO.setUpdateUser(replaceOrderDO.getUpdateUser());
                     // TODO: 2018\9\18 0018 保存订单项
                     orderProductMapper.save(orderProductDO);
-                    orderProductDOList.add(oldOrderProductDO);
                     // TODO: 2018\9\18 0018 更新订单项
                     orderProductMapper.update(oldOrderProductDO);
                     replaceOrderProductDO.setNewOrderProductId(orderProductDO.getId());
