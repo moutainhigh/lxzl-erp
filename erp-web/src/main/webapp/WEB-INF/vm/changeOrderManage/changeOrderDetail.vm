@@ -26,7 +26,7 @@
                                 <div class="col-md-8 text-right">
                                     <script type="text/html" id="actionButtonsTpl">
                                         {{#acitonButtons}}
-                                        <a href="${ctx}{{menuUrl}}?no={{no}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">
+                                        <a href="${ctx}{{menuUrl}}?no={{no}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}" data-deliver="{{replaceDeliveryTime}}">
                                             <i class="{{iClass}}"></i> {{text}}
                                         </a>
                                         {{/acitonButtons}}
