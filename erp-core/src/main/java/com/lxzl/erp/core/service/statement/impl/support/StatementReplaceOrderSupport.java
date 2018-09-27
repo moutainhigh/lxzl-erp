@@ -173,7 +173,7 @@ public class StatementReplaceOrderSupport {
                 BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(oldProduct.getDepositAmount(), new BigDecimal(oldProduct.getProductCount()), BigDecimalUtil.SCALE), new BigDecimal(changeCount));
 
                 //原订单项关联结算
-                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, replaceOrderProductDO.getOldOrderProductId());
+                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndIdIngnoreOrderType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, replaceOrderProductDO.getOldOrderProductId());
 
                 if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
                     BigDecimal hasSettleRentAmount = BigDecimal.ZERO;
@@ -281,7 +281,7 @@ public class StatementReplaceOrderSupport {
                 BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(oldMaterial.getDepositAmount(), new BigDecimal(oldMaterial.getMaterialCount()), BigDecimalUtil.SCALE), new BigDecimal(changeCount));
 
                 //原订单项关联结算
-                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, replaceOrderMaterialDO.getOldOrderMaterialId());
+                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndIdIngnoreOrderType(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, replaceOrderMaterialDO.getOldOrderMaterialId());
 
                 if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
                     BigDecimal hasSettleRentAmount = BigDecimal.ZERO;
