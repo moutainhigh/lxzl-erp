@@ -1175,16 +1175,10 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
         //获取客户风控信息
         CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(orderDO.getBuyerCustomerId());
-        // 原设备信用押金总额
-        BigDecimal oldTotalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
         // 设备信用押金总额
-        BigDecimal newTotalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
+        BigDecimal newTotalCreditDepositAmount = replaceOrderDO.getNewTotalCreditDepositAmount();
         // 校验客户风控信息
         verifyCustomerRiskInfo(replaceOrderDO,customerDO,orderDO,customerRiskManagementDO);
-        //获取商品改变设备信用押金总额
-        newTotalCreditDepositAmount = getTotalCreditDepositAmountForProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
-        //获取配件改变设备信用押金总额
-        newTotalCreditDepositAmount = getTotalCreditDepositAmountForMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
 
         if (customerRiskManagementDO == null && BigDecimalUtil.compare(newTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
             result.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_NEED_RISK_INFO);
@@ -1194,7 +1188,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             result.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW);
             return result;
         }
-        BigDecimal totalCreditDepositAmount = BigDecimalUtil.sub(oldTotalCreditDepositAmount,newTotalCreditDepositAmount);
+        BigDecimal totalCreditDepositAmount = replaceOrderDO.getUpdateTotalCreditDepositAmount();
         //扣除信用额度
         if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0) {
             customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount, CustomerRiskBusinessType.COMMIT_REPLACE_ORDER_TYPE, replaceOrderDO.getReplaceOrderNo(), null);
@@ -1878,126 +1872,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 replaceOrderMaterialDO.setRentDepositAmount(rentDepositAmount);
                 replaceOrderMaterialDO.setDepositAmount(depositAmount);
                 replaceOrderMaterialDO.setCreditDepositAmount(creditDepositAmount);
-            }
-        }
-        return totalCreditDepositAmount;
-    }
-
-    /**
-     * 获取商品改变设备信用押金总额
-     */
-    public BigDecimal getTotalCreditDepositAmountForProductInfo(List<ReplaceOrderProductDO> replaceOrderProductDOList,Map<Integer,OrderProductDO> orderProductDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
-
-        if (CollectionUtil.isNotEmpty(replaceOrderProductDOList)) {
-            for (ReplaceOrderProductDO replaceOrderProductDO : replaceOrderProductDOList) {
-                BigDecimal depositAmount = BigDecimal.ZERO;
-                BigDecimal creditDepositAmount = BigDecimal.ZERO;
-                BigDecimal rentDepositAmount = BigDecimal.ZERO;
-                OrderProductDO orderProductDO = orderProductDOMap.get(replaceOrderProductDO.getOldOrderProductId());
-                if (orderProductDO == null) {
-                    throw new BusinessException(ErrorCode.ORDER_PRODUCT_NOT_EXISTS);
-                }
-                ServiceResult<String, Product> oldproductServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
-                if (!ErrorCode.SUCCESS.equals(oldproductServiceResult.getErrorCode())) {
-                    throw new BusinessException(oldproductServiceResult.getErrorCode());
-                }
-                Product oldProduct = oldproductServiceResult.getResult();
-
-
-                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(replaceOrderProductDO.getProductSkuId());
-                if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
-                    throw new BusinessException(productServiceResult.getErrorCode());
-                }
-                Product product = productServiceResult.getResult();
-                ProductSku productSku = CollectionUtil.isNotEmpty(product.getProductSkuList()) ? product.getProductSkuList().get(0) : null;
-                if (productSku == null) {
-                    throw new BusinessException(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
-                }
-                BigDecimal skuPrice = CommonConstant.COMMON_CONSTANT_YES.equals(replaceOrderProductDO.getIsNewProduct()) ? productSku.getNewSkuPrice() : productSku.getSkuPrice();
-                String skuName = productSku.getSkuName();
-
-                // 小于等于90天的,不走风控，大于90天的，走风控授信
-                if (OrderRentType.RENT_TYPE_DAY.equals(replaceOrderProductDO.getRentType()) && replaceOrderProductDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
-                    if (replaceOrderProductDO.getReplaceProductCount() > 0) {
-                        BigDecimal remainder = replaceOrderProductDO.getDepositAmount().divideAndRemainder(new BigDecimal(replaceOrderProductDO.getReplaceProductCount()))[1];
-                        if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
-                            throw new BusinessException(ErrorCode.ORDER_PRODUCT_DEPOSIT_ERROR);
-                        }
-                    }
-                    depositAmount = replaceOrderProductDO.getDepositAmount();
-                } else if (customerRiskManagementDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
-                    depositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(replaceOrderProductDO.getReplaceProductCount()));
-                } else {
-                    if ((BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) || CommonConstant.COMMON_CONSTANT_YES.equals(replaceOrderProductDO.getIsNewProduct())) {
-                        Integer depositCycle = replaceOrderProductDO.getDepositCycle() <= replaceOrderProductDO.getRentTimeLength() ? replaceOrderProductDO.getDepositCycle() : replaceOrderProductDO.getRentTimeLength();
-                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderProductDO.getProductUnitAmount(), new BigDecimal(replaceOrderProductDO.getReplaceProductCount()), 2), new BigDecimal(depositCycle));
-                    } else {
-                        Integer depositCycle = replaceOrderProductDO.getDepositCycle() <= replaceOrderProductDO.getRentTimeLength() ? replaceOrderProductDO.getDepositCycle() : replaceOrderProductDO.getRentTimeLength();
-                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderProductDO.getProductUnitAmount(), new BigDecimal(replaceOrderProductDO.getReplaceProductCount()), 2), new BigDecimal(depositCycle));
-                    }
-                    creditDepositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(replaceOrderProductDO.getReplaceProductCount()));
-                    BigDecimal oldSkuPrice= BigDecimalUtil.div(orderProductDO.getCreditDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),4);
-                    BigDecimal oldOrderProductCreditDepositAmount = BigDecimalUtil.mul(oldSkuPrice, new BigDecimal(replaceOrderProductDO.getReplaceProductCount()));
-                    totalCreditDepositAmount = BigDecimalUtil.sub(totalCreditDepositAmount,oldOrderProductCreditDepositAmount);
-                    totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
-                }
-            }
-        }
-        return totalCreditDepositAmount;
-    }
-
-    /**
-     * 获取配件改变设备信用押金总额
-     */
-    public BigDecimal getTotalCreditDepositAmountForMaterialInfo(List<ReplaceOrderMaterialDO> replaceOrderMaterialDOList,Map<Integer,OrderMaterialDO> orderMaterialDOMap,OrderDO orderDO,BigDecimal totalCreditDepositAmount,CustomerRiskManagementDO customerRiskManagementDO) {
-        if (CollectionUtil.isNotEmpty(replaceOrderMaterialDOList)) {
-
-            for (ReplaceOrderMaterialDO replaceOrderMaterialDO : replaceOrderMaterialDOList) {
-                BigDecimal depositAmount = BigDecimal.ZERO;
-                BigDecimal creditDepositAmount = BigDecimal.ZERO;
-                BigDecimal rentDepositAmount = BigDecimal.ZERO;
-
-                ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(replaceOrderMaterialDO.getMaterialId());
-                if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
-                    throw new BusinessException(materialServiceResult.getErrorCode());
-                }
-                Material material = materialServiceResult.getResult();
-                if (material == null) {
-                    throw new BusinessException(ErrorCode.MATERIAL_NOT_EXISTS);
-                }
-                String materialName = material.getMaterialName();
-                BigDecimal materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(replaceOrderMaterialDO.getIsNewMaterial()) ? material.getNewMaterialPrice() : material.getMaterialPrice();
-
-                // 小于等于90天的,不走风控，大于90天的，走风控授信
-                if (OrderRentType.RENT_TYPE_DAY.equals(replaceOrderMaterialDO.getRentType()) && replaceOrderMaterialDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
-                    if (replaceOrderMaterialDO.getReplaceMaterialCount() > 0) {
-                        BigDecimal remainder = replaceOrderMaterialDO.getDepositAmount().divideAndRemainder(new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()))[1];
-                        if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
-                            throw new BusinessException(ErrorCode.ORDER_MATERIAL_DEPOSIT_ERROR);
-                        }
-                    }
-
-                    depositAmount = replaceOrderMaterialDO.getDepositAmount();
-                } else if (customerRiskManagementDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
-                    depositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()));
-                } else {
-                    if (CommonConstant.COMMON_CONSTANT_YES.equals(replaceOrderMaterialDO.getIsNewMaterial())) {
-                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()), 2), new BigDecimal(replaceOrderMaterialDO.getDepositCycle()));
-                    } else {
-                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(replaceOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()), 2), new BigDecimal(replaceOrderMaterialDO.getDepositCycle()));
-                    }
-                    MaterialTypeDO materialTypeDO = materialTypeMapper.findById(material.getMaterialType());
-                    if (materialTypeDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsMainMaterial())) {
-                        creditDepositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()));
-                        totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
-
-                        OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(replaceOrderMaterialDO.getOldOrderMaterialId());
-                        BigDecimal oldSkuPrice= BigDecimalUtil.div(orderMaterialDO.getCreditDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),4);
-                        BigDecimal oldOrderMaterialCreditDepositAmount = BigDecimalUtil.mul(oldSkuPrice, new BigDecimal(replaceOrderMaterialDO.getReplaceMaterialCount()));
-                        totalCreditDepositAmount = BigDecimalUtil.sub(totalCreditDepositAmount,oldOrderMaterialCreditDepositAmount);
-                        totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
-                    }
-                }
             }
         }
         return totalCreditDepositAmount;
