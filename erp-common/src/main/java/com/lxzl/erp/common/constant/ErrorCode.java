@@ -1121,6 +1121,9 @@ public class ErrorCode {
     public static final String STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR = "J310000005";
     public static final String STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR = "J310000006";
 
+    //变更单
+    public static final String EXCHANGE_ORDER_STATUS_ERROR = "J330000001";
+
     //换货
     public static final String REPLACE_TIME_NOT_NULL = "J310000001";//换货时间不能为空
     public static final String REPLACE_REASON_TYPE_ERROR = "J310000002";//换货原因类型错误
@@ -2307,6 +2310,8 @@ public class ErrorCode {
         MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
         MAP.put(DEPOSIT_NOT_PAID_BEFORE_REPLACE_ORDER, "换货之前需先支付原订单押金");
 
+
+        MAP.put(EXCHANGE_ORDER_STATUS_ERROR, "变更单状态有误，请仔细检查该订单");
 
     }
 

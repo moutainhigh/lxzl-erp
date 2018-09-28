@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.order.ExchangeOrderProductMapper">
+
+	<resultMap id="ExchangeOrderProductDO" type="com.lxzl.erp.dataaccess.domain.order.ExchangeOrderProductDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="exchange_order_id" jdbcType="INTEGER" property="exchangeOrderId" />
+		<result column="order_product_id" jdbcType="INTEGER" property="orderProductId" />
+		<result column="product_name" jdbcType="VARCHAR" property="productName" />
+		<result column="product_sku_id" jdbcType="INTEGER" property="productSkuId" />
+		<result column="product_sku_name" jdbcType="VARCHAR" property="productSkuName" />
+		<result column="product_unit_amount" jdbcType="DECIMAL" property="productUnitAmount" />
+		<result column="old_product_unit_amount" jdbcType="DECIMAL" property="oldProductUnitAmount" />
+		<result column="is_new_product" jdbcType="INTEGER" property="isNewProduct" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+	</resultMap>
+
+	<sql id="column_List">
+		eeop.id,eeop.exchange_order_id,eeop.order_product_id,eeop.product_name,eeop.product_sku_id,eeop.product_sku_name,eeop.product_unit_amount,eeop.old_product_unit_amount,eeop.is_new_product,eeop.data_status
+	</sql>
+
+	<select id="findById" resultMap="ExchangeOrderProductDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_exchange_order_product eeop 
+		WHERE eeop.id = #{id, jdbcType=INTEGER} AND eeop.data_status = 1 
+	</select>
+
+	<select id="findByExchangeOrderId" resultMap="ExchangeOrderProductDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_exchange_order_product eeop
+		WHERE eeop.exchange_order_id = #{exchangeOrderId, jdbcType=INTEGER} AND eeop.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eeop.id) FROM erp_exchange_order_product eeop 
+		<where>
+			<if test="true">
+				AND eeop.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="ExchangeOrderProductDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_exchange_order_product eeop 
+		<where>
+			<if test="true">
+				AND eeop.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="exchangeOrderId != null">
+				exchange_order_id = #{exchangeOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="orderProductId != null">
+				order_product_id = #{orderProductId,jdbcType=INTEGER},
+			</if>
+			<if test="productName != null">
+				product_name = #{productName,jdbcType=VARCHAR},
+			</if>
+			<if test="productSkuId != null">
+				product_sku_id = #{productSkuId,jdbcType=INTEGER},
+			</if>
+			<if test="productSkuName != null">
+				product_sku_name = #{productSkuName,jdbcType=VARCHAR},
+			</if>
+			<if test="productUnitAmount != null">
+				product_unit_amount = #{productUnitAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="oldProductUnitAmount != null">
+				old_product_unit_amount = #{oldProductUnitAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="isNewProduct != null">
+				is_new_product = #{isNewProduct,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.order.ExchangeOrderProductDO">
+		INSERT INTO erp_exchange_order_product <include refid="set_column_sql"/>
+	</insert>
+
+	<insert id="saveList" parameterType="java.util.List">
+		INSERT INTO erp_exchange_order_product (exchange_order_id,order_product_id,product_name,product_sku_id,product_sku_name,product_unit_amount,old_product_unit_amount,is_new_product,data_status)
+		values
+		<foreach collection="list" item="item" separator=",">
+			(#{item.exchangeOrderId},
+			#{item.orderProductId},
+			#{item.productName},
+			#{item.productSkuId},
+			#{item.productSkuName},
+			#{item.productUnitAmount},
+			#{item.oldProductUnitAmount},
+			#{item.isNewProduct},
+			#{item.dataStatus}
+			)
+		</foreach>
+	</insert>
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.order.ExchangeOrderProductDO">
+		UPDATE erp_exchange_order_product <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

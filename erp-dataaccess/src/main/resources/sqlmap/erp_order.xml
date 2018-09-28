@@ -72,6 +72,9 @@
         <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="is_original_order" jdbcType="TIMESTAMP" property="isOriginalOrder"/>
+        <result column="is_exchange_order" jdbcType="TIMESTAMP" property="isExchangeOrder"/>
+        <result column="original_order_no" jdbcType="VARCHAR" property="originalOrderNo"/>
         <collection property="orderProductDOList" resultMap="OrderProductDO"/>
         <collection property="orderMaterialDOList" resultMap="OrderMaterialDO"/>
         <collection property="orderConsignInfoDO" resultMap="OrderConsignInfoDO"/>
@@ -982,6 +985,15 @@
             </if>
             <if test="isTurnRentOrder != null">
                 is_turn_rent_order = #{isTurnRentOrder, jdbcType=INTEGER},
+            </if>
+            <if test="isOriginalOrder != null">
+                is_original_order = #{isOriginalOrder, jdbcType=INTEGER},
+            </if>
+            <if test="originalOrderNo != null">
+                original_order_no = #{originalOrderNo, jdbcType=VARCHAR},
+            </if>
+            <if test="isExchangeOrder != null">
+                is_exchange_order = #{isExchangeOrder, jdbcType=INTEGER},
             </if>
         </set>
     </sql>

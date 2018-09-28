@@ -125,6 +125,11 @@ public class WorkflowType {
      */
     public static final Integer WORKFLOW_TYPE_MALL_CUSTOMER_CONSIGN = 26;
 
+    /**
+     * 订单变更（单价、租赁方式、支付方式）
+     */
+    public static  final  Integer WORKFLOW_TYPE_EXCHANGE_ORDER=30;
+
     public static String getWorkflowTypeDesc(Integer workflowType) {
         if (WORKFLOW_TYPE_PURCHASE.equals(workflowType)) {
             return "采购订单";
@@ -174,7 +179,9 @@ public class WorkflowType {
             return "商城客户";
         } else if (WORKFLOW_TYPE_MALL_CUSTOMER_CONSIGN.equals(workflowType)) {
             return "商城收货地址";
-        } else {
+        } else if (WORKFLOW_TYPE_EXCHANGE_ORDER.equals(workflowType)) {
+            return "变更单";
+        }else{
             return "其他";
         }
     }

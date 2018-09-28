@@ -1083,3 +1083,30 @@ ALTER TABLE erp_workflow_node add `verify_type` INT(11) NOT NULL DEFAULT 1 COMME
 
 ALTER TABLE erp_statement_order_return_detail add `order_type` INT(11) NOT NULL DEFAULT 4 COMMENT '订单类型:4-退货单,6-换货单';
 ALTER TABLE erp_statement_order_detail add `source_id` int(20) DEFAULT NULL COMMENT '生成结算的目标源id(扩展字段，订单类型为换货单时，此字段保存换货单项id)';
+
+ALTER TABLE erp_statement_order_correct add `relet_order_item_refer_id` int(20) DEFAULT NULL COMMENT '续租订单项ID';
+
+ALTER TABLE erp_customer_person ADD internal_name varchar(20) COLLATE utf8_bin DEFAULT NULL COMMENT '内部名称';
+
+ALTER TABLE `erp_customer_company`
+MODIFY COLUMN `agent_person_name`  varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '经办人姓名' AFTER `legal_person_phone`;
+
+ALTER TABLE erp_dynamic_sql
+ADD COLUMN sql_type int(4) NOT NULL DEFAULT 0 COMMENT 'sql语句的类型下标(0默认，1查询，2更新，4删除，8其他)' AFTER sql_content;
+UPDATE erp_dynamic_sql SET erp_dynamic_sql.sql_type=1 WHERE erp_dynamic_sql.sql_type=0;
+
+ALTER TABLE `erp_customer_company` ADD COLUMN `is_subsidiary` tinyint(1) DEFAULT '0' COMMENT '是否为子公司，1是子公司，0不是子公司';
+ALTER TABLE `erp_customer_company` ADD COLUMN `parent_customer_id` int(11) COMMENT '母公司id';
+ALTER TABLE `erp_customer_company` ADD COLUMN `is_parent` tinyint(1) DEFAULT '0' COMMENT '是否为母公司，1是母公司，0不是母公司';
+
+ALTER TABLE `erp_customer_risk_management`
+ADD COLUMN `credit_parent_amount_used`  decimal(10,0) NULL DEFAULT 0 COMMENT '子公司使用母公额度';
+
+ALTER table erp_order_product ADD test_machine_order_product_id int(20) DEFAULT NULL COMMENT '测试机订单商品项id';
+ALTER table erp_order_material ADD test_machine_order_material_id int(20) DEFAULT NULL COMMENT '测试机订单配件项id';
+ALTER TABLE erp_order ADD `is_turn_rent_order` int(10) NOT NULL DEFAULT '0' COMMENT '是否已经转为租赁单,1-是;0-否。(测试机专用字段)';
+ALTER TABLE erp_order_product add `is_item_delivered` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否已发货，0否1是';
+ALTER TABLE erp_order_material add `is_item_delivered` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否已发货，0否1是';
+
+
+

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.order.ExchangeOrderMaterialMapper">
+
+	<resultMap id="ExchangeOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.order.ExchangeOrderMaterialDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="exchange_order_id" jdbcType="INTEGER" property="exchangeOrderId" />
+		<result column="order_product_id" jdbcType="INTEGER" property="orderProductId" />
+		<result column="material_id" jdbcType="INTEGER" property="materialId" />
+		<result column="material_name" jdbcType="VARCHAR" property="materialName" />
+		<result column="material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount" />
+		<result column="old_material_unit_amount" jdbcType="DECIMAL" property="oldMaterialUnitAmount" />
+		<result column="is_new_material" jdbcType="INTEGER" property="isNewMaterial" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+	</resultMap>
+
+	<sql id="column_List">
+		eeom.id,eeom.exchange_order_id,eeom.order_product_id,eeom.material_id,eeom.material_name,eeom.material_unit_amount,eeom.old_material_unit_amount,eeom.is_new_material,eeom.data_status
+	</sql>
+
+	<select id="findById" resultMap="ExchangeOrderMaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_exchange_order_material eeom 
+		WHERE eeom.id = #{id, jdbcType=INTEGER} AND eeom.data_status = 1 
+	</select>
+
+	<select id="findByExchangeOrderId" resultMap="ExchangeOrderMaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_exchange_order_material eeop
+		WHERE eeop.exchange_order_id = #{exchangeOrderId, jdbcType=INTEGER} AND eeop.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eeom.id) FROM erp_exchange_order_material eeom 
+		<where>
+			<if test="true">
+				AND eeom.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="ExchangeOrderMaterialDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_exchange_order_material eeom 
+		<where>
+			<if test="true">
+				AND eeom.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="exchangeOrderId != null">
+				exchange_order_id = #{exchangeOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="orderProductId != null">
+				order_product_id = #{orderProductId,jdbcType=INTEGER},
+			</if>
+			<if test="materialId != null">
+				material_id = #{materialId,jdbcType=INTEGER},
+			</if>
+			<if test="materialName != null">
+				material_name = #{materialName,jdbcType=VARCHAR},
+			</if>
+			<if test="materialUnitAmount != null">
+				material_unit_amount = #{materialUnitAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="oldMaterialUnitAmount != null">
+				old_material_unit_amount = #{oldMaterialUnitAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="isNewMaterial != null">
+				is_new_material = #{isNewMaterial,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.order.ExchangeOrderMaterialDO">
+		INSERT INTO erp_exchange_order_material <include refid="set_column_sql"/>
+	</insert>
+
+	<insert id="saveList" parameterType="java.util.List">
+		INSERT INTO erp_exchange_order_material (exchange_order_id,order_product_id,material_id,material_name,material_unit_amount,old_material_unit_amount,is_new_material,data_status)
+		values
+		<foreach collection="list" item="item" separator=",">
+			(#{item.exchangeOrderId},
+			#{item.orderProductId},
+			#{item.materialId},
+			#{item.materialName},
+			#{item.materialUnitAmount},
+			#{item.oldMaterialUnitAmount},
+			#{item.isNewMaterial},
+			#{item.dataStatus}
+			)
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.order.ExchangeOrderMaterialDO">
+		UPDATE erp_exchange_order_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

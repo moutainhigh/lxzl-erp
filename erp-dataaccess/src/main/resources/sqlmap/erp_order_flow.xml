@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.order.OrderFlowMapper">
+
+	<resultMap id="OrderFlowDO" type="com.lxzl.erp.dataaccess.domain.order.OrderFlowDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="original_order_no" jdbcType="VARCHAR" property="originalOrderNo" />
+		<result column="node_order_no" jdbcType="VARCHAR" property="nodeOrderNo" />
+		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="original_expect_return_time" jdbcType="TIMESTAMP" property="originalExpectReturnTime" />
+		<result column="original_rent_start_time" jdbcType="TIMESTAMP" property="originalRentStartTime" />
+		<result column="rent_start_time" jdbcType="TIMESTAMP" property="rentStartTime" />
+		<result column="expect_return_time" jdbcType="TIMESTAMP" property="expectReturnTime" />
+	</resultMap>
+
+	<sql id="column_List">
+		eof.id,eof.original_order_no,eof.node_order_no,eof.order_no,eof.data_status,eof.create_time,eof.create_user,eof.update_time,eof.update_user,eof.original_expect_return_time,eof.original_rent_start_time,eof.rent_start_time,eof.expect_return_time
+	</sql>
+
+	<select id="findById" resultMap="OrderFlowDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_order_flow eof 
+		WHERE eof.id = #{id, jdbcType=INTEGER} AND eof.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eof.id) FROM erp_order_flow eof 
+		<where>
+			<if test="true">
+				AND eof.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="OrderFlowDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_order_flow eof 
+		<where>
+			<if test="true">
+				AND eof.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="originalOrderNo != null">
+				original_order_no = #{originalOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="nodeOrderNo != null">
+				node_order_no = #{nodeOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNo != null">
+				order_no = #{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="originalExpectReturnTime != null">
+				original_expect_return_time = #{originalExpectReturnTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="originalRentStartTime != null">
+				original_rent_start_time = #{originalRentStartTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="rentStartTime != null">
+				rent_start_time = #{rentStartTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="expectReturnTime != null">
+				expect_return_time = #{expectReturnTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.order.OrderFlowDO">
+		INSERT INTO erp_order_flow <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.order.OrderFlowDO">
+		UPDATE erp_order_flow <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
