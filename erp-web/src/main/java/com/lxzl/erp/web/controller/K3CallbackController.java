@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrder;
 import com.lxzl.erp.common.domain.k3.group.K3ReturnOrderCallback;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
+import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.k3.K3CallbackService;
@@ -51,6 +52,18 @@ public class K3CallbackController extends BaseController {
     @RequestMapping(value = "callbackManualReturnOrder", method = RequestMethod.POST)
     public Result callbackManualReturnOrder(@RequestBody K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = k3CallbackService.callbackManualReturnOrder(k3ReturnOrder.getReturnOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+    /**
+     * 换货单发货回调
+     * @Author : sunzhipeng
+     * @param replaceOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "replaceOrderDeliveryCallBack", method = RequestMethod.POST)
+    public Result replaceOrderDeliveryCallBack(@RequestBody ReplaceOrder replaceOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = k3CallbackService.replaceOrderDeliveryCallBack(replaceOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

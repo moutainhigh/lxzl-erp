@@ -3,53 +3,21 @@
         <span class="panel-title">基本信息</span>
     </div>
     <div class="form-horizontal panel-body bg-light dark">
-        <div class="section row">
+        <div class="section row replaceSection">
             <div class="col-md-1"></div>
             <div class="col-md-6">
 
                 <div class="form-group field">
                     <label class="col-md-2 control-label">客户</label>
-                    <div class="col-md-10">
-                        <div class="input-group bringContainer">
-                            <input type="hidden" id="buyerCustomerName" name="customerName" bringFiled="customerName" class="form-control required" />
-                        </div>
+                    <div class="col-md-10 pt10">
+                        <div class="input-group" id="buyerCustomerName"></div>
                     </div>
                 </div>
 
                 <div class="form-group field">
                     <label class="col-md-2 control-label">换货地址</label>
-                    <div class="col-md-10">
-                        <script type="text/html" id="orderConsignInfoTpl">
-                            {{#address}}
-                            <p class="mn">{{provinceName}}{{cityName}}{{districtName}}{{address}}</p>
-                            {{/address}}
-                        </script>
+                    <div class="col-md-10 pt10">
                         <div id="orderConsignInfo"></div>
-##                        <div class="panel" id="customerAddressPannel">
-##                            <div class="panel-body admin-form">
-##                                <script type="text/html" id="orderConsignInfoTpl">
-##                                    {{#address}}
-##                                    <address class="mn">
-##                                        <strong>{{consigneeName}}</strong>
-##                                        <br>
-##                                        {{provinceName}}{{cityName}}{{districtName}}{{address}}
-##                                        <br>
-##                                        <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{consigneePhone}}
-##                                    </address>
-##                                    {{/address}}
-##                                    {{^address}}
-##                                    <address class="mn">
-##                                        还没有添加换货地址
-##                                    </address>
-##                                    {{/address}}
-##                                </script>
-##                                <div class="well mn" id="orderConsignInfo">
-##                                    <address class="mn">
-##                                        还没有添加换货地址
-##                                    </address>
-##                                </div>
-##                            </div>
-##                        </div>
                     </div>
                 </div>
 
@@ -57,7 +25,7 @@
                     <label class="col-md-2 control-label"><em class="text-danger">*</em>联系人</label>
                     <div class="col-md-10">
                         <div class="input-group" style="width:100%;">
-                            <input id="ownerName" name="ownerName" bringFiled="ownerName" class="form-control required" type="text" placeholder="请输入联系人" />
+                            <input id="consigneeName" name="consigneeName" class="form-control required" type="text" placeholder="请输入联系人" />
                         </div>
                     </div>
                 </div>
@@ -66,7 +34,7 @@
                     <label class="col-md-2 control-label"><em class="text-danger">*</em>联系电话</label>
                     <div class="col-md-10">
                         <div class="input-group" style="width:100%;">
-                            <input id="ownerName" name="ownerName" bringFiled="ownerName" class="form-control required" type="text" placeholder="请输入联系电话" />
+                            <input id="consigneePhone" name="consigneePhone" class="form-control required mobilephone" type="text" placeholder="请输入联系电话" />
                         </div>
                     </div>
                 </div>
@@ -74,8 +42,8 @@
                 <div class="form-group field">
                     <label class="col-md-2 control-label"><em class="text-danger">*</em>换货日期</label>
                     <div class="col-md-10">
-                        <div class="input-group date" id="rentStartTimePicker">
-                            <input id="rentStartTime" name="rentStartTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择换货日期" />
+                        <div class="input-group date" id="replaceTimePicker">
+                            <input id="replaceTime" name="replaceTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择换货日期" />
                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                         </div>
                     </div>
@@ -85,7 +53,7 @@
                     <label class="col-md-2 control-label"><em class="text-danger">*</em>换货方式</label>
                     <div class="col-md-10">
                         <div class="input-group" style="width: 100%;">
-                            <select class="form-control required" name="changeMode"></select>
+                            <select class="form-control required" name="replaceMode" id="replaceMode"></select>
                         </div>
                     </div>
                 </div>
@@ -94,7 +62,7 @@
                     <label class="col-md-2 control-label"><em class="text-danger">*</em>换货原因</label>
                     <div class="col-md-10">
                         <div class="input-group" style="width: 100%;">
-                            <select class="form-control required" name="changeReasonType" id="changeReasonType"></select>
+                            <select class="form-control required" name="replaceReasonType" id="replaceReasonType"></select>
                         </div>
                     </div>
                 </div>
@@ -107,29 +75,29 @@
                 </div>
 
                 <div class="form-group field">
-                    <label class="col-md-2 control-label">运费</label>
+                    <label class="col-md-2 control-label"><em class="text-danger">*</em>运费</label>
                     <div class="col-md-2" style="padding-right:0;">
                         <div class="input-group">
-                            <input id="ownerName" name="ownerName" bringFiled="ownerName" class="form-control required" type="text" readonly placeholder="请输入运费" />
+                            <input id="logisticsCost" name="logisticsCost" class="form-control required" type="text" placeholder="请输入运费" />
                         </div>
                     </div>
-                    <label class="col-md-2 control-label">服务费</label>
+                    <label class="col-md-2 control-label"><em class="text-danger">*</em>服务费</label>
                     <div class="col-md-2">
                         <div class="input-group" style="padding-right:0;">
-                            <input id="ownerName" name="ownerName" bringFiled="ownerName" class="form-control required" type="text" readonly placeholder="请输入服务费" />
+                            <input id="serviceCost" name="serviceCost" class="form-control required" type="text" placeholder="请输入服务费" />
                         </div>
                     </div>
-                    <label class="col-md-2 control-label">维修费</label>
+                    <label class="col-md-2 control-label"><em class="text-danger">*</em>维修费</label>
                     <div class="col-md-2">
                         <div class="input-group">
-                            <input id="ownerName" name="ownerName" bringFiled="ownerName" class="form-control required" type="text" readonly placeholder="请输入维修费" />
+                            <input id="repairCost" name="repairCost" class="form-control required" type="text" placeholder="请输入维修费" />
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group field">
                     <label class="col-md-2 control-label">发货公司</label>
-                    <div class="col-md-10">
+                    <div class="col-md-10 pt10">
                         <div id="deliveryCompany"></div>
                     </div>
                 </div>
@@ -140,14 +108,14 @@
         <div class="row">
             <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
                 <li class="active">
-                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
+                    <a href="#changeOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
                 </li>
             </ul>
         </div>
     </div>
     <div class="panel-body dark pn">
         <div class="tab-content pn br-n">
-            <div id="purchaseOrderProductItems" class="tab-pane active">
+            <div id="changeOrderProductItems" class="tab-pane active">
                 <div class="panel-menu p12 br-n br-b">
                     <div class="row">
                         <div class="pull-left ml10">
@@ -173,11 +141,11 @@
                                 </label>
                             </th>
                             <th>订单编号</th>
-                            <th>商品编号</th>
-                            <th>单价</th>
-                            <th>在租数</th>
+                            <th>商品信息</th>
+                            <th class="nowrap">单价</th>
+                            <th class="nowrap">在租数</th>
                             <th>更换商品信息</th>
-                            <th>更换数量</th>
+                            <th class="nowrap">更换数量</th>
                             <th>更换商品单价</th>
                             <th>备注</th>
                             <th>操作</th>
@@ -185,38 +153,52 @@
                         </thead>
                         <tbody>
                         {{#listData}}
-                        <tr class="productRow skuRow" productRowKey="{{productId}}">
-                            <td {{#destChangeProductInfo}}rowSpan="2" class="br-r"{{/destChangeProductInfo}}>
+                        <tr data-serial="{{serialNumber}}">
+                            <td>
                                 <label class="option block mn">
-                                    <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}">
+                                    <input type="checkbox" name="checkItem" value="{{productId}}">
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                            <td>{{productName}}</td>
-                            <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
-                            <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
-                            <td>{{propertiesToStr}}</td>
-                            <td></td>
+                            <td>{{orderNo}}</td>
                             <td>
-                                <label class="field prepend-icon mw200">
-                                    <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
-                                    <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
-                                    <input type="text" name="changeProductSkuCount-{{skuId}}" value="{{changeProductSkuCount}}" class="changeProductSkuCount form-control required checkInteger pl10" placeholder="输入换货数量" />
-                                </label>
+                                <p class="mn mb5">{{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}{{productName}}</p>  
+                                <p class="mn mw300">{{productSkuName}}</p> 
                             </td>
+                            <td>￥{{#price}}{{productUnitAmount}}{{/price}}</td>
+                            <td>{{rentingProductCount}}</td>
                             <td>
-                                <div class="smart-widget sm-right smr-50 mw200">
+                                <p class="mn mb5">{{#isNewValueBadge}}{{isNewReplace}}{{/isNewValueBadge}}{{newProductName}}</p>  
+                                <p class="mn mw300">{{newProductSkuName}}</p> 
+                            </td>
+                            <td>{{replaceProductCount}}</td>
+                            <td>
+                                <div class="mw200">
                                     <label class="field prepend-icon">
-                                        <input type="text" name="productUnitAmount-1719-79" value="" class="productUnitAmount form-control required gui-input" placeholder="支持四位小数">
+                                        <input type="text" name="newProductUnitAmount-{{serialNumber}}" value="{{newProductUnitAmount}}" class="newProductUnitAmount form-control required gui-input" placeholder="单价">
                                         <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                     </label>
                                 </div>
                             </td>
-                            <td>{{propertiesToStr}}</td>
+                            <td>
+                                <div class="mw200">
+                                    <label class="field">
+                                        <input type="text" name="remark" value="{{remark}}" class="remark form-control gui-input" placeholder="备注">
+                                    </label>
+                                </div>
+                            </td>
                             <td>
                                 <div class="btn-group text-right">
-                                    <a href="#" type="button" class="btn btn-default btn-xs chooseDestChangeProduct" data-skuid="{{skuId}}" data-productid="{{productId}}">选择更换商品</a>
-                                    <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
+                                    <a href="#" type="button" class="btn btn-default btn-xs deleteProduct mr5" style="height:25px;">删除</a>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-expanded="false">换货<span class="caret ml5"></span></button>
+                                        <ul class="dropdown-menu pull-right" role="menu">
+                                            <li>
+                                                <a href="javascript:;" class="sameConfig">同配置更换</a>
+                                                <a href="javascript:;" class="diffConfig">不同配置更换</a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </td>
                         </tr>

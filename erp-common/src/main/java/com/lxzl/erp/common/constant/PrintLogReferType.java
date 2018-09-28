@@ -6,5 +6,6 @@ package com.lxzl.erp.common.constant;
 public class PrintLogReferType {
     public static final int ORDER_TYPE_CHANGE = 1;
     public static final int ORDER_TYPE_RETURN = 2;
+    public static final int ORDER_TYPE_REPLACE = 3;//换货单
 
 }
