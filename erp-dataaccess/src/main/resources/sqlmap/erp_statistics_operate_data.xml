@@ -1699,6 +1699,7 @@
 	<select id="findStatisticsOperateDataByParams" resultMap="StatisticsOperateDataDO" parameterType="map">
 		SELECT <include refid="column_List"/>,case when esod.owner_id is null then 0 else 1 end is_sub_company
 		FROM erp_statistics_operate_data esod
+		LEFT JOIN erp_user eu on eu.id = esod.owner_id
 		<where>
 			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.subCompanyId != null ">
 				and esod.sub_company_id = #{maps.statisticsOperateDataPageParam.subCompanyId, jdbcType=INTEGER}
