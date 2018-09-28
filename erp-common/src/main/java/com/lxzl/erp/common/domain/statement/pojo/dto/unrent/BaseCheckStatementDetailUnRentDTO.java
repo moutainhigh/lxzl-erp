@@ -105,6 +105,10 @@ public class BaseCheckStatementDetailUnRentDTO extends BaseCheckStatementDetailD
     public boolean isShowTheMonth(CheckStatementStatisticsDTO statementStatisticsDTO) {
         String returnTimeStr = DateFormatUtils.format(super.getReturnTime(), "yyyy-MM");
         if (!statementStatisticsDTO.getMonth().equals(returnTimeStr)) {
+            String payTimeStr = DateFormatUtils.format(super.getStatementExpectPayTime(), "yyyy-MM");
+            if(payTimeStr.equals(statementStatisticsDTO.getMonth()) && OrderPayMode.PAY_MODE_PAY_BEFORE.equals(super.getPayMode())){
+                return true;
+            }
             return false;
         }
         return super.isShowTheMonth(statementStatisticsDTO);

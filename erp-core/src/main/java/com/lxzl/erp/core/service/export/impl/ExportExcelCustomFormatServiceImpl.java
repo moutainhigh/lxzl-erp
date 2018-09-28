@@ -319,6 +319,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             List<ReplaceOrderProduct> replaceOrderProducts = ConverterUtil.convertList(replaceOrderProductMapper.listByOrderIds(replaceIds), ReplaceOrderProduct.class);
             List<ReplaceOrderMaterial> replaceOrderMaterials = ConverterUtil.convertList(replaceOrderMaterialMapper.listByOrderIds(replaceIds), ReplaceOrderMaterial.class);
 
+            // 结算单详情只保存换货单id，没有itemId，set数据给结算单结构
             for (ReplaceOrderProduct replaceOrderProduct : replaceOrderProducts) {
                 for (BaseCheckStatementDetailDTO baseCheckStatementDetailDTO : checkStatementDetailDTOS) {
                     if (OrderType.ORDER_TYPE_REPLACE.equals(baseCheckStatementDetailDTO.getOrderType())) {
@@ -795,6 +796,15 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         for (BaseCheckStatementDetailDTO detailDTO : statementStatisticsDTO.getCheckStatementDetailDTOS()) {
             if (detailDTO.getReturnReferId() != null) {
                 String detailMonth = DateFormatUtils.format(detailDTO.getReturnTime(), "yyyy-MM");
+                String payTimeStr = DateFormatUtils.format(detailDTO.getStatementExpectPayTime(), "yyyy-MM");
+//                if(payTimeStr.equals(statementStatisticsDTO.getMonth()) && OrderPayMode.PAY_MODE_PAY_BEFORE.equals(detailDTO.getPayMode())){
+//                    String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
+//                    orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
+//                }
+                if(statementStatisticsDTO.getMonthStartTime() < detailDTO.getReturnTime().getTime()){
+                    String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
+                    orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
+                }
                 if (!detailMonth.equals(statementStatisticsDTO.getMonth())) {
                     if (margeOrderListMap.get(detailDTO.getReturnReferId()) == null) {
                         List<BaseCheckStatementDetailDTO> list = new ArrayList<>();
@@ -1042,9 +1052,6 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             if (detailDTO.getReturnOrderNo() != null) {
                 if (map.get(detailDTO.getOrderItemReferId()) == null) {
                     List<BaseCheckStatementDetailDTO> list = new ArrayList<>();
-                    if (detailDTO instanceof CheckStatementDetailUnRentReletDTO) {
-
-                    }
                     list.add(detailDTO);
                     map.put(detailDTO.getOrderItemReferId(), list);
                 } else {
