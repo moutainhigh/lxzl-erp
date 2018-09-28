@@ -43,7 +43,7 @@
                     <label class="col-md-2 control-label"><em class="text-danger">*</em>换货日期</label>
                     <div class="col-md-10">
                         <div class="input-group date" id="replaceTimePicker">
-                            <input id="replaceTime" name="replaceTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择换货日期" />
+                            <input id="replaceTime" name="replaceTime" class="form-control required" type="text" autocomplete="off" readonly="readonly" placeholder="请选择换货日期" />
                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                         </div>
                     </div>
