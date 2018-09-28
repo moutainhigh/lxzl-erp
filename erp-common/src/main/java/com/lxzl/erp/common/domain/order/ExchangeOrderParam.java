@@ -11,6 +11,16 @@ public class ExchangeOrderParam {
     @NotBlank(message = ErrorCode.RETURN_ORDER_NO_NOT_NULL)
     private String orderNo;
 
+    private String exchangeOrderNo;
+
+    public String getExchangeOrderNo() {
+        return exchangeOrderNo;
+    }
+
+    public void setExchangeOrderNo(String exchangeOrderNo) {
+        this.exchangeOrderNo = exchangeOrderNo;
+    }
+
     public String getOrderNo() {
         return orderNo;
     }

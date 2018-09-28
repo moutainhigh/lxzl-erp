@@ -7,11 +7,13 @@ import com.lxzl.erp.common.domain.order.ExchangeOrderCommitParam;
 import com.lxzl.erp.common.domain.order.pojo.ExchangeOrder;
 import com.lxzl.erp.common.domain.order.pojo.ExchangeOrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.ExchangeOrderProduct;
+import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.order.ExchangeOrderService;
+import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
@@ -50,6 +52,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         //只允许有一个有效的变更单
         //判断是否有操作这个订单的权限
         //只有租赁中的订单才可以进行
+        //查询是否存在换货单
         //保存变更信息
         ExchangeOrderDO exchangeOrderDO = new ExchangeOrderDO();
         BeanUtils.copyProperties(exchangeOrder, exchangeOrderDO);
@@ -96,7 +99,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
     public ServiceResult<String, String> commitExchangeOrder(ExchangeOrderCommitParam exchangeOrderCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
-        String orderNo = exchangeOrderCommitParam.getOrderNo();
+        String orderNo = exchangeOrderCommitParam.getExchangeOrderNo();
         Integer verifyUser = exchangeOrderCommitParam.getVerifyUser();
         String commitRemark = exchangeOrderCommitParam.getCommitRemark();
         ExchangeOrderDO exchangeOrderDO = exchangeOrderMapper.findByExchangeOrderNo(orderNo);
@@ -150,7 +153,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", 0);
         maps.put("pageSize", 100);
-        maps.put("orderQueryParam", orderNo);
+        maps.put("orderNo", orderNo);
+        maps.put("orderQueryParam",new HashMap<>());
         Integer count = exchangeOrderMapper.listCount(maps);
         List<ExchangeOrderDO> exchangeOrderDOList =exchangeOrderMapper.listPage(maps);
         List<ExchangeOrder> exchangeOrderList=ConverterUtil.convertList(exchangeOrderDOList,ExchangeOrder.class);
@@ -158,6 +162,58 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> cancelExchangeOrder(String exchangerOrderNo) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date currentTime = new Date();
+        User loginUser = userSupport.getCurrentUser();
+        ExchangeOrderDO exchangeOrderDO = exchangeOrderMapper.findByExchangeOrderNo(exchangerOrderNo);
+        if (null == exchangeOrderDO) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        if (!CommonConstant.DATA_STATUS_ENABLE.equals(exchangeOrderDO.getDataStatus()) && ExchangeOrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(exchangeOrderDO.getStatus())) {
+            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_STATUS_ERROR);
+            return result;
+        }
+
+        //审核通过
+        exchangeOrderDO.setDataStatus(ExchangeOrderStatus.ORDER_STATUS_CANCEL);
+        exchangeOrderDO.setUpdateTime(currentTime);
+        exchangeOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        exchangeOrderMapper.update(exchangeOrderDO);
+        result.setResult(exchangeOrderDO.getExchangeOrderNo());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> generatedOrder(String exchangerOrderNo) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date currentTime = new Date();
+        User loginUser = userSupport.getCurrentUser();
+        ExchangeOrderDO exchangeOrderDO = exchangeOrderMapper.findByExchangeOrderNo(exchangerOrderNo);
+        if (null == exchangeOrderDO) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        if (!CommonConstant.DATA_STATUS_ENABLE.equals(exchangeOrderDO.getDataStatus()) && ExchangeOrderStatus.ORDER_STATUS_CONFIRM.equals(exchangeOrderDO.getStatus())) {
+            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_STATUS_ERROR);
+            return result;
+        }
+        //1、查询原订单信息
+        ServiceResult<String, Order> orderServiceResult=orderService.queryOrderByNo(exchangeOrderDO.getOrderNo());
+        if(!ErrorCode.SUCCESS.equals(orderServiceResult.getErrorCode())){
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        //2、新订单创建\处理
+        //3、原退货单处理
+        //3、K3数据同步
+
+        return null;
     }
 
     /**
@@ -190,6 +246,9 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         exchangeOrderMapper.update(exchangeOrderDO);
         return ErrorCode.SUCCESS;
     }
+
+    @Autowired
+    private OrderService orderService;
 
     @Autowired
     private OrderMapper orderMapper;
