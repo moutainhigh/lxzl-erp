@@ -18,7 +18,7 @@ public class CheckStatementDetailUnReplaceProductDTO extends CheckStatementDetai
         ReplaceOrder replaceOrder = super.getReplaceOrderId(super.getSourceId());
         ReplaceOrderProduct replaceOrderProduct = super.getReplaceOrderProductById(super.getReplaceItemId());
         setOrderItemActualId(replaceOrderProduct.getOldOrderProductId());
-        setOrderNo(replaceOrderProduct.getReplaceOrderNo());
+        setOrderNo(replaceOrder.getOrderNo());
         setItemName(replaceOrderProduct.getOldProductName());
         setItemSkuName(replaceOrderProduct.getProductSkuName());
         setIsNew(replaceOrderProduct.getIsNewProduct());

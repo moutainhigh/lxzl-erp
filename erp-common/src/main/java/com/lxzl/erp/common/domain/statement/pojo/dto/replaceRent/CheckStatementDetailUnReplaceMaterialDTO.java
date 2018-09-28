@@ -18,7 +18,7 @@ public class CheckStatementDetailUnReplaceMaterialDTO extends CheckStatementDeta
         ReplaceOrder replaceOrder = super.getReplaceOrderId(super.getSourceId());
         ReplaceOrderMaterial replaceOrderMaterial = super.getReplaceOrderMaterialById(super.getReplaceItemId());
         setOrderItemActualId(replaceOrderMaterial.getOldOrderMaterialId());
-        setOrderNo(replaceOrderMaterial.getReplaceOrderNo());
+        setOrderNo(replaceOrder.getOrderNo());
         //todo 没旧物料名称字段
         setItemName(replaceOrderMaterial.getMaterialName());
         setIsNew(replaceOrderMaterial.getIsNewMaterial());
