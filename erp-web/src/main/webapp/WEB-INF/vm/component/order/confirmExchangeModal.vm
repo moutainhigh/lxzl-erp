@@ -11,7 +11,7 @@
                         <div class="col-md-4">
                             <div class="input-group date" id="realReplaceTimePicker">
                                 <input type="hidden" name="realReplaceTime" id="realReplaceTime">
-                                <input type="text" readonly="" id="realReplaceTimeInput" data-type="date" class="form-control" autocomplete="off" readonly="readonly" placeholder="选择时间" style="height:42px;">
+                                <input type="text" id="realReplaceTimeInput" data-type="date" class="form-control" autocomplete="off" readonly="readonly" placeholder="选择时间" style="height:42px;">
                                 <span class="input-group-addon cursor"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
