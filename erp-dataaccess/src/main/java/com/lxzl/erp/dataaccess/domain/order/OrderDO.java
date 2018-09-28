@@ -70,6 +70,10 @@ public class OrderDO extends BaseDO {
     private Integer isTurnRentOrder;                               //是否已经转为租赁单,0-否;1-生成新订单;2-新订单审核通过;。(测试机专用字段)
     private String testMachineOrderNo;                               //原测试机订单的编号
 
+    private Integer isOriginalOrder;  //是否原订单
+    private Integer isExchangeOrder;  //是否已转单
+    private String originalOrderNo;  //原订单单号
+
     private List<OrderProductDO> orderProductDOList;
     private List<OrderMaterialDO> orderMaterialDOList;
     private OrderConsignInfoDO orderConsignInfoDO;
@@ -625,5 +629,29 @@ public class OrderDO extends BaseDO {
 
     public void setTestMachineOrderNo(String testMachineOrderNo) {
         this.testMachineOrderNo = testMachineOrderNo;
+    }
+
+    public Integer getIsOriginalOrder() {
+        return isOriginalOrder;
+    }
+
+    public void setIsOriginalOrder(Integer isOriginalOrder) {
+        this.isOriginalOrder = isOriginalOrder;
+    }
+
+    public Integer getIsExchangeOrder() {
+        return isExchangeOrder;
+    }
+
+    public void setIsExchangeOrder(Integer isExchangeOrder) {
+        this.isExchangeOrder = isExchangeOrder;
+    }
+
+    public String getOriginalOrderNo() {
+        return originalOrderNo;
+    }
+
+    public void setOriginalOrderNo(String originalOrderNo) {
+        this.originalOrderNo = originalOrderNo;
     }
 }

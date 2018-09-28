@@ -9,6 +9,7 @@ import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
 import com.lxzl.erp.core.service.k3.K3ChangeOrderService;
 import com.lxzl.erp.core.service.k3.K3ReturnOrderService;
 import com.lxzl.erp.core.service.k3.K3Service;
+import com.lxzl.erp.core.service.order.ExchangeOrderService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.peerDeploymentOrder.PeerDeploymentOrderService;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
@@ -19,6 +20,8 @@ import com.lxzl.erp.core.service.returnOrder.ReturnOrderService;
 import com.lxzl.erp.core.service.transferOrder.TransferOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.WildcardType;
 
 /**
  * @Author: your name
@@ -58,6 +61,8 @@ public class WorkFlowManager {
     private K3ReturnOrderService k3ReturnOrderService;
     @Autowired
     private ReletOrderService reletOrderService;
+    @Autowired
+    private ExchangeOrderService exchangeOrderService;
 
     //todo 剩下客户 订单 退货 续租 回调 逻辑需要修改推送
     //todo 换货单 志鹏要新写service，如果商城要换货单 写同service下
@@ -97,6 +102,8 @@ public class WorkFlowManager {
         } else if (WorkflowType.WORKFLOW_TYPE_RELET_ORDER_INFO.equals(workflowType)
                 || WorkflowType.WORKFLOW_TYPE_MALL_RELET_ORDER.equals(workflowType)) {
             return reletOrderService;
+        } else  if(WorkflowType.WORKFLOW_TYPE_EXCHANGE_ORDER.equals(workflowType)){
+            return exchangeOrderService;
         }
         return null;
     }

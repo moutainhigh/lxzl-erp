@@ -1118,6 +1118,9 @@ public class ErrorCode {
     public static final String STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR = "J310000005";
     public static final String STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR = "J310000006";
 
+    //变更单
+    public static final String EXCHANGE_ORDER_STATUS_ERROR = "J330000001";
+
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -2217,6 +2220,8 @@ public class ErrorCode {
         MAP.put(STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR, "查询月经营数据传入的查询开始时间必须是月初一号");
 
         MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
+
+        MAP.put(EXCHANGE_ORDER_STATUS_ERROR, "变更单状态有误，请仔细检查该订单");
 
     }
 

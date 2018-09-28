@@ -104,6 +104,7 @@ import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -852,6 +853,7 @@ public class OrderServiceImpl implements OrderService {
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
+
 
     @Override
     public ServiceResult<String, String> payOrder(String orderNo) {
@@ -5101,7 +5103,5 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderFromTestMachineMapper orderFromTestMachineMapper;
-
-
 
 }
