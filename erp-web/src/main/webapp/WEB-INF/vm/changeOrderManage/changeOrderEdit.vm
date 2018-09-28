@@ -29,10 +29,11 @@
             'manage.change.order.mixin.js',
             'manage.change.order.edit.js',
             'modal.choose.rent.product.js',
-            'modal.choose.product.js',
+            'manage.choose.diff.product.js',
             'modal.choose.material.js',
             'manage.order.item.render.js',
             'manage.order.util.js',
+            'modal.confirm.stock.js',
             'modal.choose.user.js');
 </script>
 <script type="text/javascript">
