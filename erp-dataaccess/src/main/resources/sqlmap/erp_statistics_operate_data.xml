@@ -1697,7 +1697,7 @@
 	</select>
 
 	<select id="findStatisticsOperateDataByParams" resultMap="StatisticsOperateDataDO" parameterType="map">
-		SELECT <include refid="column_List"/>
+		SELECT <include refid="column_List"/>,case when esod.owner_id is null then 0 else 1 end is_sub_company
 		FROM erp_statistics_operate_data esod
 		<where>
 			<if test="maps.statisticsOperateDataPageParam != null &amp;&amp; maps.statisticsOperateDataPageParam.subCompanyId != null ">
@@ -1749,7 +1749,7 @@
 				AND esod.data_status = 1
 			</if>
 		</where>
-		ORDER BY esod.create_time DESC
+		ORDER BY is_sub_company,esod.sub_company_id,eu.is_disabled,esod.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 
