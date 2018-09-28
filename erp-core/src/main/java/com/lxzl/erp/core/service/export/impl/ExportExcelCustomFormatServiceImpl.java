@@ -819,6 +819,9 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                         list.add(detailDTO);
                         margeOrderListMap.put(detailDTO.getReturnReferId(),list);
                     }
+                }else {
+                    String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
+                    orderIdAndOrderItemIdMap.put(cloneKey,detailDTO);
                 }
             }
             // 加入 换货单需支付的
@@ -847,6 +850,10 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             }
             if(margeOrderListMap.get(detailDTO.getStatementOrderDetailId()) != null){
                 for(BaseCheckStatementDetailDTO targetDetail : margeOrderListMap.get(detailDTO.getStatementOrderDetailId())){
+                    String targetMonth = DateFormatUtils.format(targetDetail.getReturnTime(), "yyyy-MM");
+                    if (targetMonth.equals(statementStatisticsDTO.getMonth())) {
+                        continue;
+                    }
                     String detailPayMonth = DateFormatUtils.format(detailDTO.getStatementExpectPayTime(), "yyyy-MM-dd");
                     String targetDetailPayMonth = DateFormatUtils.format(targetDetail.getStatementExpectPayTime(), "yyyy-MM-dd");
                     if (detailPayMonth.equals(targetDetailPayMonth)) {
