@@ -164,6 +164,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         if (exReletOrderDO != null) {
             Date reletTime = exReletOrderDO.getRentStartTime();
             String reletTimeString = simpleDateFormat.format(reletTime);
+            //校验是否在续租单开始之前换货
             if (checkReplaceTiamAndReletTime(serviceResult, simpleDateFormat, replaceTimeString, reletTimeString)){
                 return serviceResult;
             }
@@ -223,7 +224,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         //补全换货商品项信息
         newTotalCreditDepositAmount = calculateOrderProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
         //补全换货配件项信息
-        newTotalCreditDepositAmount = calculateOrderMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
+//        newTotalCreditDepositAmount = calculateOrderMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
 
         //校验换货项（新的不能换，普通和苹果不能互换）
         if (checkProductIsNewAndIsApple(serviceResult, replaceOrderProductDOList)){
@@ -465,12 +466,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 replaceOrderMaterialDO.setUpdateTime(date);
             }
         }
-        if (CollectionUtil.isNotEmpty(dbreplaceOrderProductDOList)) {
-            replaceOrderProductMapper.updateListForCancel(dbreplaceOrderProductDOList);
-        }
-        if (CollectionUtil.isNotEmpty(dbreplaceOrderMaterialDOList)) {
-            replaceOrderMaterialMapper.updateListForCancel(dbreplaceOrderMaterialDOList);
-        }
+
 
         ReplaceOrderDO replaceOrderDO = ConverterUtil.convert(replaceOrder, ReplaceOrderDO.class);
         List<ReplaceOrderProductDO> replaceOrderProductDOList = replaceOrderDO.getReplaceOrderProductDOList();
@@ -704,6 +700,12 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
         if (CollectionUtil.isNotEmpty(saveReplaceOrderMaterialDOList)) {
             replaceOrderMaterialMapper.saveList(saveReplaceOrderProductDOList);
+        }
+        if (CollectionUtil.isNotEmpty(dbreplaceOrderProductDOList)) {
+            replaceOrderProductMapper.updateListForCancel(dbreplaceOrderProductDOList);
+        }
+        if (CollectionUtil.isNotEmpty(dbreplaceOrderMaterialDOList)) {
+            replaceOrderMaterialMapper.updateListForCancel(dbreplaceOrderMaterialDOList);
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
@@ -979,6 +981,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         orderMapper.update(orderDO);
         //保存图片
         if (saveImg(replaceOrderConfirmChangeParam, result, date, replaceOrderDO)) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             return result;
         }
         replaceOrderDO.setConfirmReplaceTime(date);
@@ -993,7 +996,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         if (0 != (realTotalReplaceProductCount+realTotalReplaceMaterialCount)) {
 
             replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_CONFIRM);
-            replaceOrderMapper.update(replaceOrderDO);
+
             if (replaceOrderProductDOListIsNotEmpty) {
                 for (ReplaceOrderProductDO replaceOrderProductDO:replaceOrderProductDOList) {
                     OrderProductDO orderProductDO = new OrderProductDO();
@@ -1070,6 +1073,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 result.setErrorCode(errorCode);
                 return result;
             }
+            replaceOrderMapper.update(replaceOrderDO);
             result.setErrorCode(ErrorCode.SUCCESS);
             result.setResult(replaceOrderDO.getReletOrderNo());
 
@@ -1093,7 +1097,6 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 //                }
 //            }
             replaceOrderMapper.update(replaceOrderDO);
-
             result.setErrorCode(ErrorCode.SUCCESS);
             result.setResult(replaceOrderDO.getReletOrderNo());
         }
@@ -1261,10 +1264,12 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
         ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_CHANGE);
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             result.setErrorCode(needVerifyResult.getErrorCode());
             return result;
         } else if (needVerifyResult.getResult()) {
             if (replaceOrderCommitParam.getVerifyUserId() == null) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 result.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
                 return result;
             }
@@ -1279,6 +1284,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 replaceOrderMapper.update(replaceOrderDO);
                 return verifyResult;
             } else {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 result.setErrorCode(verifyResult.getErrorCode());
                 return result;
             }
