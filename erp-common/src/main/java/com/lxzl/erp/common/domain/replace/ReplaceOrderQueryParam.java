@@ -37,8 +37,28 @@ public class ReplaceOrderQueryParam extends BasePageParam {
     private Date createEndTime;   //添加结束时间
     private Date updateStartTime;   //修改开始时间
     private Date updateEndTime;   //修改结束时间
-    private Date confirmReplaceStartTime;   //确认换货时间
-    private Date confirmReplaceEndTime;   //确认换货时间
+    private Date confirmReplaceStartTime;   //确认换货开始时间
+    private Date confirmReplaceEndTime;   //确认换货结束时间
+    private Integer deliverySubCompanyId;  //发货分公司
+    private Date realReplaceStartTime;   //实际换货开始时间
+    private Date realReplaceEndTime;   //实际换货结束时间
+
+    public Date getRealReplaceEndTime() {
+        return realReplaceEndTime;
+    }
+
+    public void setRealReplaceEndTime(Date realReplaceEndTime) {
+        this.realReplaceEndTime = realReplaceEndTime;
+    }
+
+    public Date getRealReplaceStartTime() {
+
+        return realReplaceStartTime;
+    }
+
+    public void setRealReplaceStartTime(Date realReplaceStartTime) {
+        this.realReplaceStartTime = realReplaceStartTime;
+    }
 
     public Integer getReplaceOrderId() {
         return replaceOrderId;
@@ -207,5 +227,13 @@ public class ReplaceOrderQueryParam extends BasePageParam {
 
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
+    }
+
+    public Integer getDeliverySubCompanyId() {
+        return deliverySubCompanyId;
+    }
+
+    public void setDeliverySubCompanyId(Integer deliverySubCompanyId) {
+        this.deliverySubCompanyId = deliverySubCompanyId;
     }
 }

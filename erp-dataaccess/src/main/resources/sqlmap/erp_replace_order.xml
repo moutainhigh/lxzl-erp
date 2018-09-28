@@ -403,10 +403,10 @@
 				<![CDATA[ AND ero.update_time <= #{maps.replaceOrderQueryParam.updateEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceStartTime != null ">
-				<![CDATA[ AND ero.confirm_replace_user >= #{maps.replaceOrderQueryParam.confirmReplaceStartTime,jdbcType=TIMESTAMP} ]]>
+				<![CDATA[ AND ero.confirm_replace_time >= #{maps.replaceOrderQueryParam.confirmReplaceStartTime,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceEndTime != null ">
-				<![CDATA[ AND ero.confirm_replace_user <= #{maps.replaceOrderQueryParam.confirmReplaceEndTime,jdbcType=TIMESTAMP} ]]>
+				<![CDATA[ AND ero.confirm_replace_time <= #{maps.replaceOrderQueryParam.confirmReplaceEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.replaceOrderQueryParam.confirmReplaceUserName != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceUserName != ''">
 				and eu1.real_name like CONCAT('%','${maps.replaceOrderQueryParam.confirmReplaceUserName}','%' )
@@ -419,6 +419,15 @@
 			</if>
 			<if test="maps.replaceOrderQueryParam.customerName != null &amp;&amp; maps.replaceOrderQueryParam.customerName != ''">
 				and ec.customer_name like CONCAT('%','${maps.replaceOrderQueryParam.customerName}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.deliverySubCompanyId != null ">
+				and ero.delivery_sub_company_id = #{maps.replaceOrderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.realReplaceStartTime != null ">
+				<![CDATA[ AND ero.real_replace_time >= #{maps.replaceOrderQueryParam.realReplaceStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.realReplaceEndTime != null ">
+				<![CDATA[ AND ero.real_replace_time <= #{maps.replaceOrderQueryParam.realReplaceEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="true">
 				AND ero.data_status = 1
@@ -481,10 +490,10 @@
 				<![CDATA[ AND ero.update_time <= #{maps.replaceOrderQueryParam.updateEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceStartTime != null ">
-				<![CDATA[ AND ero.confirm_replace_user >= #{maps.replaceOrderQueryParam.confirmReplaceStartTime,jdbcType=TIMESTAMP} ]]>
+				<![CDATA[ AND ero.confirm_replace_time >= #{maps.replaceOrderQueryParam.confirmReplaceStartTime,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceEndTime != null ">
-				<![CDATA[ AND ero.confirm_replace_user <= #{maps.replaceOrderQueryParam.confirmReplaceEndTime,jdbcType=TIMESTAMP} ]]>
+				<![CDATA[ AND ero.confirm_replace_time <= #{maps.replaceOrderQueryParam.confirmReplaceEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.replaceOrderQueryParam.confirmReplaceUserName != null &amp;&amp; maps.replaceOrderQueryParam.confirmReplaceUserName != ''">
 				and eu1.real_name like CONCAT('%','${maps.replaceOrderQueryParam.confirmReplaceUserName}','%' )
@@ -497,6 +506,15 @@
 			</if>
 			<if test="maps.replaceOrderQueryParam.customerName != null &amp;&amp; maps.replaceOrderQueryParam.customerName != ''">
 				and ec.customer_name like CONCAT('%','${maps.replaceOrderQueryParam.customerName}','%' )
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.deliverySubCompanyId != null ">
+				and ero.delivery_sub_company_id = #{maps.replaceOrderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.realReplaceStartTime != null ">
+				<![CDATA[ AND ero.real_replace_time >= #{maps.replaceOrderQueryParam.realReplaceStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.realReplaceEndTime != null ">
+				<![CDATA[ AND ero.real_replace_time <= #{maps.replaceOrderQueryParam.realReplaceEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="true">
 				AND ero.data_status = 1
