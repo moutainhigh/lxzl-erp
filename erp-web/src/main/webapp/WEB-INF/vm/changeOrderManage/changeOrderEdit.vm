@@ -28,19 +28,12 @@
     management_load_script('${staticManagement}/js',
             'manage.change.order.mixin.js',
             'manage.change.order.edit.js',
-            'modal.choose.customer.js',
-            'modal.choose.customer.business.js',
             'modal.choose.rent.product.js',
-            'modal.choose.product.js',
-            'modal.choose.can.change.material.js',
+            'manage.choose.diff.product.js',
             'modal.choose.material.js',
             'manage.order.item.render.js',
             'manage.order.util.js',
-            'modal.input.address.js',
-            'modal.choose.customer.address.js',
-            'manage.customer.address.js',
-            'manage.customer.address.add.js',
-            'manage.customer.address.edit.js',
+            'modal.confirm.stock.js',
             'modal.choose.user.js');
 </script>
 <script type="text/javascript">

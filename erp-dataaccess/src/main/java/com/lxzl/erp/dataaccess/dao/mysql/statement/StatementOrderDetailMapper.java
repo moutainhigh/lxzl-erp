@@ -26,6 +26,7 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
     List<StatementOrderDetailDO> findByReturnOrderId(@Param("orderId") Integer orderId);
 
     List<StatementOrderDetailDO> findByOrderItemTypeAndId(@Param("orderItemType") Integer orderItemType, @Param("orderItemId") Integer orderItemId);
+    List<StatementOrderDetailDO> findByOrderItemTypeAndIdIngnoreOrderType(@Param("orderItemType") Integer orderItemType, @Param("orderItemId") Integer orderItemId);
 
     List<StatementOrderDetailDO> findByOrderTypeAndId(@Param("orderType") Integer orderType, @Param("orderId") Integer orderId);
 
@@ -118,4 +119,6 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
     List<StatementOrderDetailDO> findOrderItemStatementByType(@Param("orderItemType")Integer orderItemType,@Param("orderItemReferId")Integer orderItemReferId,@Param("statementDetailType")Integer statementDetailType);
 
     List<StatementOrderDetailDO> findByOrderIdAndStatementDetailType(@Param("orderId") Integer orderId, @Param("orderType") Integer orderType,@Param("statementDetailType") Integer statementDetailType);
+
+    List<StatementOrderDetailDO> findByOrderTypeAndSourceId(@Param("orderType") Integer orderType, @Param("sourceId") Integer sourceId);
 }

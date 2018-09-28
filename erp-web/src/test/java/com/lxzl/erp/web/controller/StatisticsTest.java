@@ -198,10 +198,10 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         ca1.setTime(date);
         ca1.add(Calendar.DATE,-10);
         Date endTime = ca1.getTime();
-        statisticsOperateDataPageParam.setStartTime(endTime);
-        statisticsOperateDataPageParam.setStatisticalStatus(2);
-        statisticsOperateDataPageParam.setStatisticalDimension(2);
-        TestResult testResult = getJsonTestResult("/statistics/queryStatisticsOperateDataForWeek", statisticsOperateDataPageParam);
+        statisticsOperateDataPageParam.setStartTime(date);
+        statisticsOperateDataPageParam.setStatisticalStatus(1);
+//        statisticsOperateDataPageParam.setStatisticalDimension(2);
+        TestResult testResult = getJsonTestResult("/statistics/queryStatisticsOperateDataForDay", statisticsOperateDataPageParam);
         System.out.println(JSON.toJSONString(testResult));
     }
 

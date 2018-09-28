@@ -17,6 +17,7 @@ import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskLogDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.se.common.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -343,6 +344,21 @@ public class CustomerSupport {
             customerDO = customerMapper.findByNo(k3CustomerNo);
         } else {
             customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
+        }
+        return customerDO;
+    }
+
+    /**
+     * 根据订单获取客户（从业务代码中抽取）
+     * @param orderDO
+     * @return
+     */
+    public CustomerDO getCustomerByOrder(OrderDO orderDO){
+        CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
+        if (customerDO == null) {
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
+                customerDO = customerMapper.findByName(orderDO.getBuyerCustomerName());
+            }
         }
         return customerDO;
     }

@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.product.pojo.Product;
+import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.common.domain.supplier.pojo.Supplier;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -17,6 +18,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
@@ -25,6 +27,7 @@ import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
 import com.lxzl.erp.dataaccess.domain.supplier.SupplierDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +60,8 @@ public class RecordTypeSupport {
     private WebServiceHelper webServiceHelper;
     @Autowired
     private K3SendRecordMapper k3SendRecordMapper;
+    @Autowired
+    private ReplaceOrderMapper replaceOrderMapper;
 
     public String getNoByRecordType(Integer recordType,Integer recordReferId){
 
@@ -96,7 +101,13 @@ public class RecordTypeSupport {
             if(k3ReturnOrderDO != null){
                 recordRefer = k3ReturnOrderDO.getReturnOrderNo();
             }
+        }else if(PostK3Type.POST_K3_TYPE_REPLACE_ORDER.equals(recordType)){
+            ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findById(recordReferId);
+            if(replaceOrderDO != null){
+                recordRefer = replaceOrderDO.getReplaceOrderNo();
+            }
         }
+
         return recordRefer;
     }
 
@@ -129,6 +140,9 @@ public class RecordTypeSupport {
         }else if(PostK3Type.POST_K3_TYPE_RETURN_ORDER.equals(recordType)){
             K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(recordReferId);
             return ConverterUtil.convert(k3ReturnOrderDO,K3ReturnOrder.class);
+        }else if(PostK3Type.POST_K3_TYPE_REPLACE_ORDER.equals(recordType)){
+            ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findById(recordReferId);
+            return ConverterUtil.convert(replaceOrderDO,ReplaceOrder.class);
         }
         return null;
     }

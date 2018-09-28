@@ -4,6 +4,7 @@ package com.lxzl.erp.core.service.k3;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
+import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.se.core.service.BaseService;
 
@@ -25,4 +26,6 @@ public interface K3CallbackService extends BaseService {
 
     /** 手动回调退货单 */
     ServiceResult<String, String> callbackManualReturnOrder(String returnOrderNo);
+
+    ServiceResult<String,String> replaceOrderDeliveryCallBack(ReplaceOrder replaceOrder);
 }
