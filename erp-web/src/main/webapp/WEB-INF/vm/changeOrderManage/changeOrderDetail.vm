@@ -54,7 +54,8 @@
                                     </div>
                                     <div class="col-md-4">
                                         <dl class="dl-horizontal">
-                                            <dt class="mb10">换货日期</dt><dd>{{#clockShorTime}}{{replaceTime}}{{/clockShorTime}}&nbsp;</dd>
+                                            <dt class="mb10">预计换货日期</dt><dd>{{#clockShorTime}}{{replaceTime}}{{/clockShorTime}}&nbsp;</dd>
+                                            <dt class="mb10">实际换货日期</dt><dd>{{#clockShorTime}}{{realReplaceTime}}{{/clockShorTime}}&nbsp;</dd>
                                             <dt class="mb10">换货原因</dt><dd>{{changeReasonTypeValue}}</dd>
                                             <dt class="mb10">运费</dt><dd class="text-danger">￥{{#price}}{{logisticsCost}}{{/price}}</dd>
                                             <dt class="mb10">服务费</dt><dd class="text-danger">￥{{#price}}{{serviceCost}}{{/price}}</dd>

@@ -67,6 +67,29 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="section row mt15">
+                                    <div class="col-md-12">
+                                        <div class="col-md-2">
+                                            <div class="form-group mn">
+                                                <input type="hidden" name="realReplaceStartTime" id="realReplaceStartTime" />
+                                                <input type="hidden" name="realReplaceEndTime" id="realReplaceEndTime" />
+                                                <div class="input-group date" id="realReplacePicker">
+                                                    <input type="text" name="realReplacePicker" id="realReplacePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="请选择实际换货时间">
+                                                    <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="field form-group mn">
+                                                <div class="input-group" style="width: 100%">
+                                                    <select class="form-control input-sm bradius" name="deliverySubCompanyId" id="deliverySubCompanyId">
+                                                        <option value="">请选择</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <hr class="short alt">
                                 <div class="section row">
                                     <div class="col-md-12">
@@ -99,8 +122,10 @@
                                 <th>换货单编号</th>
                                 <th>客户编号</th>
                                 <th>客户名称</th>
+                                <th>发货分公司</th>
                                 <th>换货地址</th>
                                 <th>状态</th>
+                                <th>实际换货日期</th>
                                 <th>备注</th>
                                 <th>创建</th>
                                 {{#hasRowActionButtons}}
@@ -115,12 +140,14 @@
                                 <td><a href="{{detailUrl}}" target="_blank">{{replaceOrderNo}}</a></td>
                                 <td><a href="{{customerUrl}}" target="_blank">{{customerNo}}</a></td>
                                 <td><a href="{{customerUrl}}" target="_blank">{{customerName}}</a></td>
+                                <td>{{deliverySubCompanyName}}</td>
                                 <td>
                                     <p class="mn">{{consigneeName}}</p>
                                     <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{consigneePhone}}</p>
                                     <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{address}}</p>
                                 </td>
                                 <td class="{{changeOrderStatusClass}}">{{changeOrderStatusValue}}</td>
+                                <td>{{#clockShorTime}}{{realReplaceTime}}{{/clockShorTime}}</td>
                                 <td>{{remark}}</td>
                                 <td>
                                     <p class="mn">{{createUserRealName}}</p>
