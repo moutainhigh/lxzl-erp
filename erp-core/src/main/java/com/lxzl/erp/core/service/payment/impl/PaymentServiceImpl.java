@@ -154,7 +154,7 @@ public class PaymentServiceImpl implements PaymentService {
             return ErrorCode.SUCCESS;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BusinessException(e.getMessage());
         }
     }
 
