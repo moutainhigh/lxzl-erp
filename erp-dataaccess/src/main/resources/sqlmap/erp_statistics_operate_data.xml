@@ -946,7 +946,7 @@
 	</insert>
 
 	<select id="findDataListForSalesmanDate" resultMap="StatisticsOperateDataDO" parameterType="map">
-		SELECT  DISTINCT eu.id as owner_id,eu.real_name as owner_name,esc.id AS sub_company_id,esc.sub_company_name AS sub_company_name,
+		SELECT  DISTINCT eu.id as owner_id,eu.real_name as owner_name,esc.id AS sub_company_id,esc.sub_company_name AS sub_company_name,eu.is_disabled,
 		IFNULL(a1.long_rent_increase_count,0) AS long_rent_increase_count,
 		IFNULL(a2.long_rent_increase_amount,0) AS long_rent_increase_amount,
 		IFNULL(a3.long_rent_increase_customer_count,0) AS long_rent_increase_customer_count,
@@ -1489,11 +1489,11 @@
 		GROUP BY t1.owner
 		) d2 on d2.user_id = eu.id
 		where esc.id is not null and eu.id is not null and ed.department_type in (select department_type from erp_business_commission_config) and ed.data_status = 1
-		ORDER BY eu.id,esc.id
+		ORDER BY eu.id,esc.id,eu.is_disabled
 	</select>
 
 	<select id="findDataListForSalesmanWeekAndMonth" resultMap="StatisticsOperateDataDO" parameterType="map">
-		SELECT  DISTINCT eu.id as owner_id,eu.real_name as owner_name,esc.id AS sub_company_id,esc.sub_company_name AS sub_company_name,
+		SELECT  DISTINCT eu.id as owner_id,eu.real_name as owner_name,esc.id AS sub_company_id,esc.sub_company_name AS sub_company_name,eu.is_disabled,
 		IFNULL(a1.long_rent_increase_count,0) AS long_rent_increase_count,
 		IFNULL(a2.long_rent_increase_amount,0) AS long_rent_increase_amount,
 		IFNULL(a3.long_rent_increase_customer_count,0) AS long_rent_increase_customer_count,
@@ -1693,7 +1693,7 @@
 		GROUP BY t1.owner
 		) d2 on d2.user_id = eu.id
 		where esc.id is not null and eu.id is not null and ed.department_type in (select department_type from erp_business_commission_config) and ed.data_status = 1
-		ORDER BY eu.id,esc.id
+		ORDER BY eu.id,esc.id,eu.is_disabled
 	</select>
 
 	<select id="findStatisticsOperateDataByParams" resultMap="StatisticsOperateDataDO" parameterType="map">
