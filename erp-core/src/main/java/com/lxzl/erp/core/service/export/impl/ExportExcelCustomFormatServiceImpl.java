@@ -240,7 +240,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         buildRentOrderItem(orderIds, mapContainer);
         // 构建续租订单相关数据
         buildReletOrder(orderIds, mapContainer);
-        // todo 构建换货单相关数据
+        // 构建换货单相关数据
         buildReplaceOrder(orderIds, mapContainer,checkStatementDetailDTOS);
 
         for (BaseCheckStatementDetailDTO checkStatementDetailDTO : checkStatementDetailDTOS) {
@@ -341,14 +341,12 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                         if(OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(baseCheckStatementDetailDTO.getOrderItemType())){
                             if(replaceOrderProduct.getOldOrderProductId().equals(baseCheckStatementDetailDTO.getOrderItemReferId())){
                                 baseCheckStatementDetailDTO.setReplaceItemId(replaceOrderProduct.getReplaceOrderProductId());
-//                            baseCheckStatementDetailDTO.setItemId(replaceOrderProduct.getReplaceOrderProductId());
                             }
                         }
 
                         if(OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(baseCheckStatementDetailDTO.getOrderItemType())){
                             if(replaceOrderProduct.getNewOrderProductId().equals(baseCheckStatementDetailDTO.getOrderItemReferId())){
                                 baseCheckStatementDetailDTO.setReplaceItemId(replaceOrderProduct.getReplaceOrderProductId());
-//                            baseCheckStatementDetailDTO.setItemId(replaceOrderProduct.getReplaceOrderProductId());
                             }
                         }
                     }
