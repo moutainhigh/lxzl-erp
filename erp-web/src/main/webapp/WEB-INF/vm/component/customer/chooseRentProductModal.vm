@@ -29,7 +29,11 @@
                             </label>
                             {{/canReplace}}
                         </td>
-                        <td>{{productName}}</td>
+                        <td>
+                            <span class="badge mr5 {{#isNewProduct}}badge-primary{{/isNewProduct}}{{^isNewProduct}}badge-default{{/isNewProduct}}">
+                                {{#isNewProduct}}全新{{/isNewProduct}}{{^isNewProduct}}次新{{/isNewProduct}}
+                            </span>{{productName}}
+                        </td>
                         <td>{{productNumber}}</td>
                         <td><div style="max-width:300px;">{{productSkuStr}}</div></td>
                         <td>{{rentingProductCount}}</td>

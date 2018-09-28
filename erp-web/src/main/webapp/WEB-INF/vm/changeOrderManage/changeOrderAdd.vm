@@ -31,8 +31,9 @@
                 'manage.change.order.mixin.js',
                 'manage.change.order.add.js',
                 'modal.choose.rent.product.js',
-                'modal.choose.product.js',
+                'manage.choose.diff.product.js',
                 'manage.order.item.render.js',
+                'modal.confirm.stock.js',
                 'manage.order.util.js');
     </script>
     <script type="text/javascript">
