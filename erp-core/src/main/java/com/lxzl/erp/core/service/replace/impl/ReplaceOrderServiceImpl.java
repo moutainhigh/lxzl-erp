@@ -122,10 +122,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             serviceResult.setErrorCode(ErrorCode.REPLACE_ORDER_DETAIL_LIST_NOT_NULL);
             return serviceResult;
         }
-        //校验换货项（新的不能换，普通和苹果不能互换）
-        if (checkProductIsNewAndIsApple(serviceResult, replaceOrderProductDOList)){
-            return serviceResult;
-        }
+
         replaceOrderDO.setCustomerName(customerDO.getCustomerName());
 
         //校验订单编号
@@ -227,6 +224,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         newTotalCreditDepositAmount = calculateOrderProductInfo(replaceOrderProductDOList,orderProductDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
         //补全换货配件项信息
         newTotalCreditDepositAmount = calculateOrderMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
+
+        //校验换货项（新的不能换，普通和苹果不能互换）
+        if (checkProductIsNewAndIsApple(serviceResult, replaceOrderProductDOList)){
+            return serviceResult;
+        }
 
         if (customerRiskManagementDO == null && BigDecimalUtil.compare(newTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_NEED_RISK_INFO);
@@ -516,10 +518,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             return serviceResult;
         }
 
-        //校验换货项（新的不能换，普通和苹果不能互换）
-        if (checkProductIsNewAndIsApple(serviceResult, replaceOrderProductDOList)){
-            return serviceResult;
-        }
+
 
         //校验是否在续租单开始之前换货
         ReletOrderDO exReletOrderDO = reletOrderMapper.findRecentlyReletOrderByOrderNo(orderDO.getOrderNo());
@@ -570,6 +569,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         //补全换货配件项信息
         newTotalCreditDepositAmount = calculateOrderMaterialInfo(replaceOrderMaterialDOList,orderMaterialDOMap, orderDO,newTotalCreditDepositAmount,customerRiskManagementDO);
 
+        //校验换货项（新的不能换，普通和苹果不能互换）
+        if (checkProductIsNewAndIsApple(serviceResult, replaceOrderProductDOList)){
+            return serviceResult;
+        }
+        
         if (customerRiskManagementDO == null && BigDecimalUtil.compare(newTotalCreditDepositAmount, BigDecimal.ZERO) > 0) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_NEED_RISK_INFO);
             return serviceResult;
@@ -770,7 +774,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 }
             }
         }
-        
+
         replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_CANCEL);
         replaceOrderDO.setUpdateTime(date);
         replaceOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
