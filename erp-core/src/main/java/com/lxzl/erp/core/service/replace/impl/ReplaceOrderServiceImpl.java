@@ -1066,6 +1066,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 //            if (replaceOrderMaterialDOListIsNotEmpty) {
 //                replaceOrderMaterialMapper.updateListForConfirm(replaceOrderMaterialDOList);
 //            }
+            replaceOrderMapper.update(replaceOrderDO);
             // TODO: 2018\9\19 0019 换货单结算
             String errorCode = statementReplaceOrderSupport.createStatement(replaceOrderDO.getReplaceOrderNo());
             if (!ErrorCode.SUCCESS.equals(errorCode)) {
@@ -1073,7 +1074,7 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 result.setErrorCode(errorCode);
                 return result;
             }
-            replaceOrderMapper.update(replaceOrderDO);
+
             result.setErrorCode(ErrorCode.SUCCESS);
             result.setResult(replaceOrderDO.getReletOrderNo());
 
