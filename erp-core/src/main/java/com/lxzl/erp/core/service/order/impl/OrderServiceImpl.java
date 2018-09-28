@@ -4039,19 +4039,11 @@ public class OrderServiceImpl implements OrderService {
                     depositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(orderProductDO.getProductCount()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else {
-                    if ((BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) || CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
-                        Integer depositCycle = orderProductDO.getDepositCycle() <= orderProductDO.getRentTimeLength() ? orderProductDO.getDepositCycle() : orderProductDO.getRentTimeLength();
-                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount()), 2), new BigDecimal(depositCycle));
-                        totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
-                    } else {
-                        Integer depositCycle = orderProductDO.getDepositCycle() <= orderProductDO.getRentTimeLength() ? orderProductDO.getDepositCycle() : orderProductDO.getRentTimeLength();
-                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount()), 2), new BigDecimal(depositCycle));
-                        totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
-                    }
+                    rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount()), 2), new BigDecimal(orderProductDO.getDepositCycle()));
+                    totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                     creditDepositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(orderProductDO.getProductCount()));
                     totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                 }
-
 
                 orderProductDO.setRentDepositAmount(rentDepositAmount);
                 orderProductDO.setDepositAmount(depositAmount);
