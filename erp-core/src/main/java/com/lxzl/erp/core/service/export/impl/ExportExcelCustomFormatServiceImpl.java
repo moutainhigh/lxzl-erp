@@ -423,13 +423,9 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         for (Date month : monthStatisticsMap.keySet()) {
             CheckStatementStatisticsDTO statementStatisticsDTO = monthStatisticsMap.get(month);
             statementStatisticsDTO.setCustomerName(customerDO.getCustomerName());
-
-
-
-
-//            // 根据退货时间创建并新增退货订单数据
+            // 根据退货时间创建并新增退货订单数据
             createAndAddUnRentOrdersByReturnTime(mapContainer, statementStatisticsDTO, checkStatementDetailDTOS);
-//            // TODO 根据换货时间创建并新增换货数据
+            // 根据换货时间创建并新增换货数据
             createReplaceOrdersByReturnTime(mapContainer, statementStatisticsDTO, checkStatementDetailDTOS);
             // 处理租赁、续租结算单
             for (BaseCheckStatementDetailDTO checkStatementDetailDTO : checkStatementDetailDTOS) {
@@ -541,7 +537,6 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
     private void createReplaceOrdersByReturnTime(CheckStatementMapContainer mapContainer, CheckStatementStatisticsDTO statisticsDTO, List<BaseCheckStatementDetailDTO> checkStatementDetailDTOS){
         Map<Integer, ReplaceOrder> replaceOrderMap = mapContainer.getIdReplaceOrderMap();
-        Map<Integer, ReplaceOrderMaterial> replaceOrderMaterialMap = mapContainer.getIdReplaceOrderMaterialMap();
         Map<Integer, OrderProduct> orderProductMap = mapContainer.getIdOrderProductMap();
         Map<Integer, OrderMaterial> orderMaterialMap = mapContainer.getIdOrderMaterialMap();
         Map<String, Order> orderMap = mapContainer.getNoOrderMap();
@@ -580,6 +575,44 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 }
                 if(isReplaceOrder){
                     statisticsDTO.addCheckStatementDetailDTO(createReplaceOrderProductStatementDTO(replaceOrderProduct, orderProduct, order, mapContainer,baseCheckStatementDetailDTO));
+                }
+            }
+        }
+        if(mapContainer.getIdReplaceOrderMaterialMap() != null){
+            for (ReplaceOrderMaterial replaceOrderMaterial : mapContainer.getIdReplaceOrderMaterialMap().values()) {
+                ReplaceOrder replaceOrder = replaceOrderMap.get(replaceOrderMaterial.getReplaceOrderId());
+                if (replaceOrder == null) {
+                    continue;
+                }
+
+                String returnTimeMonthStr = DateFormatUtils.format(replaceOrderMap.get(replaceOrderMaterial.getReplaceOrderId()).getRealReplaceTime(), "yyyy-MM");
+                if (!returnTimeMonthStr.equals(statisticsDTO.getMonth())) {
+                    continue;
+                }
+
+                Order order = orderMap.get(replaceOrder.getOrderNo());
+                if (order == null) {
+                    continue;
+                }
+
+                BigDecimal unitAmount = replaceOrderMaterial.getMaterialUnitAmount();
+                if (unitAmount == null || BigDecimal.ZERO.compareTo(unitAmount) == 0) {
+                    continue;
+                }
+                boolean isReplaceOrder = false;
+                BaseCheckStatementDetailDTO baseCheckStatementDetailDTO = null;
+                OrderMaterial orderMaterial = null;
+                for (BaseCheckStatementDetailDTO statementDetailDTO : checkStatementDetailDTOS) {
+                    boolean isReplaceOrderTemp = replaceOrderMaterial.getReplaceOrderMaterialId().equals(statementDetailDTO.getReplaceItemId());
+                    baseCheckStatementDetailDTO = statementDetailDTO;
+                    if ((statementDetailDTO instanceof CheckStatementDetailUnReplaceProductDTO) && isReplaceOrderTemp) {
+                        isReplaceOrder =true;
+                        orderMaterial = orderMaterialMap.get(replaceOrderMaterial.getOldOrderMaterialId());
+                        break;
+                    }
+                }
+                if(isReplaceOrder){
+                    statisticsDTO.addCheckStatementDetailDTO(createReplaceOrderMaterialStatementDTO(replaceOrderMaterial, orderMaterial, order, mapContainer,baseCheckStatementDetailDTO));
                 }
             }
         }
@@ -654,15 +687,26 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         checkStatementDetailDTO.setItemCount(CommonConstant.COMMON_ZERO - replaceOrderProduct.getRealReplaceProductCount());
         checkStatementDetailDTO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT);
         checkStatementDetailDTO.setOrderType(OrderType.ORDER_TYPE_REPLACE);
-//        if(statementDetailDTO.getReletOrderItemReferId() != null){
-//            checkStatementDetailDTO.setOrderItemReferId(statementDetailDTO.getReletOrderItemReferId());
-//        }else {
-//            checkStatementDetailDTO.setOrderItemReferId(statementDetailDTO.getOrderItemReferId());
-//        }
-//        checkStatementDetailDTO.setOrderItemReferId(replaceOrderProduct.getReplaceOrderProductId());
         checkStatementDetailDTO.setOrderItemReferId(statementDetailDTO.getOrderItemReferId());
         checkStatementDetailDTO.setStatementOrderDetailId(replaceOrderProduct.getReplaceOrderProductId());
-        setStatementReplaceOrderProductData(checkStatementDetailDTO, replaceOrderProduct, mapContainer);
+        setStatementReplaceOrderProductAndMaterialData(checkStatementDetailDTO, replaceOrderProduct.getReplaceOrderId(), mapContainer);
+        setStatementOrderData(checkStatementDetailDTO, order, false);
+        checkStatementDetailDTO.mapContainer(mapContainer).loadAmountData().buildImportData();
+        return checkStatementDetailDTO;
+    }
+
+    /**
+     * 创建换货配件对账单数据传输对象
+     */
+    private BaseCheckStatementDetailDTO createReplaceOrderMaterialStatementDTO(ReplaceOrderMaterial replaceOrderMaterial, OrderMaterial orderMaterial, Order order, CheckStatementMapContainer mapContainer,BaseCheckStatementDetailDTO statementDetailDTO) {
+        BaseCheckStatementDetailDTO checkStatementDetailDTO = new CheckStatementDetailUnReplaceProductDTO();
+        setStatementOrderMaterialData(checkStatementDetailDTO, orderMaterial);
+        checkStatementDetailDTO.setItemCount(CommonConstant.COMMON_ZERO - replaceOrderMaterial.getRealReplaceMaterialCount());
+        checkStatementDetailDTO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL);
+        checkStatementDetailDTO.setOrderType(OrderType.ORDER_TYPE_REPLACE);
+        checkStatementDetailDTO.setOrderItemReferId(statementDetailDTO.getOrderItemReferId());
+        checkStatementDetailDTO.setStatementOrderDetailId(replaceOrderMaterial.getReplaceOrderMaterialId());
+        setStatementReplaceOrderProductAndMaterialData(checkStatementDetailDTO, replaceOrderMaterial.getReplaceOrderId(), mapContainer);
         setStatementOrderData(checkStatementDetailDTO, order, false);
         checkStatementDetailDTO.mapContainer(mapContainer).loadAmountData().buildImportData();
         return checkStatementDetailDTO;
@@ -712,15 +756,13 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         checkStatementDetailDTO.setOrderItemReferId(k3ReturnOrderDetail.getK3ReturnOrderDetailId());
     }
 
-    private void setStatementReplaceOrderProductData(BaseCheckStatementDetailDTO checkStatementDetailDTO, ReplaceOrderProduct replaceOrderProduct, CheckStatementMapContainer mapContainer) {
-        ReplaceOrder replaceOrder = mapContainer.getIdReplaceOrderMap().get(replaceOrderProduct.getReplaceOrderId());
+    private void setStatementReplaceOrderProductAndMaterialData(BaseCheckStatementDetailDTO checkStatementDetailDTO, Integer replaceOrderId, CheckStatementMapContainer mapContainer) {
+        ReplaceOrder replaceOrder = mapContainer.getIdReplaceOrderMap().get(replaceOrderId);
         checkStatementDetailDTO.setStatementExpectPayTime(replaceOrder.getRealReplaceTime());
         checkStatementDetailDTO.setOrderId(replaceOrder.getReplaceOrderId());
         checkStatementDetailDTO.setReturnTime(replaceOrder.getRealReplaceTime());
         checkStatementDetailDTO.setReturnOrderNo(replaceOrder.getReplaceOrderNo());
-//        checkStatementDetailDTO.setOrderItemReferId(replaceOrderProduct.getReplaceOrderProductId());
     }
-
 
     private void setStatementOrderProductData(BaseCheckStatementDetailDTO checkStatementDetailDTO, OrderProduct orderProduct) {
         checkStatementDetailDTO.setItemCount(orderProduct.getProductCount());
@@ -762,48 +804,54 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         }
     }
 
-    private void build(CheckStatementStatisticsDTO statementStatisticsDTO, Map<String, BaseCheckStatementDetailDTO> orderIdAndOrderItemIdMap){
-        Map<Integer,List<BaseCheckStatementDetailDTO>> listMap = new HashMap<>();
+    /** 合并需要支付的其他项与合并退货与换货的扣款钱 */
+    private void mergeRePayOrder(CheckStatementStatisticsDTO statementStatisticsDTO, Map<String, BaseCheckStatementDetailDTO> orderIdAndOrderItemIdMap){
+        Map<Integer,List<BaseCheckStatementDetailDTO>> margeOrderListMap = new HashMap<>();
+        // 统计需要合并的结算详情
         for (BaseCheckStatementDetailDTO detailDTO : statementStatisticsDTO.getCheckStatementDetailDTOS()) {
             if(detailDTO.getReturnReferId() != null){
                 String detailMonth = DateFormatUtils.format(detailDTO.getReturnTime(), "yyyy-MM");
                 if (!detailMonth.equals(statementStatisticsDTO.getMonth())) {
-                    if(listMap.get(detailDTO.getReturnReferId()) == null){
+                    if(margeOrderListMap.get(detailDTO.getReturnReferId()) == null){
                         List<BaseCheckStatementDetailDTO> list = new ArrayList<>();
                         list.add(detailDTO);
-                        listMap.put(detailDTO.getReturnReferId(),list);
+                        margeOrderListMap.put(detailDTO.getReturnReferId(),list);
                     }else {
-                        List<BaseCheckStatementDetailDTO> list = listMap.get(detailDTO.getReturnReferId());
+                        List<BaseCheckStatementDetailDTO> list = margeOrderListMap.get(detailDTO.getReturnReferId());
                         list.add(detailDTO);
-                        listMap.put(detailDTO.getReturnReferId(),list);
+                        margeOrderListMap.put(detailDTO.getReturnReferId(),list);
                     }
                 }
             }
+            // 加入 换货单需支付的
             if(detailDTO.getSourceId() != null && detailDTO.getReturnTime() == null){
                 String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
                 orderIdAndOrderItemIdMap.put(cloneKey,detailDTO);
             }
+            // 加入 其他项
             if(detailDTO.getReturnTime() != null && (OrderItemType.ORDER_ITEM_TYPE_OTHER.equals(detailDTO.getOrderItemType())
                     ||OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER.equals(detailDTO.getOrderItemType())
                     ||OrderItemType.ORDER_ITEM_TYPE_CHANGE_OTHER.equals(detailDTO.getOrderItemType()))){
                 String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
                 orderIdAndOrderItemIdMap.put(cloneKey,detailDTO);
             }
+            // 加入构造的退货或换货的当月申请记录
             if(detailDTO.getStatementExpectPayTime() == null){
                 String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
                 orderIdAndOrderItemIdMap.put(cloneKey,detailDTO);
             }
         }
 
+        // 合并结算统计详情
         for (BaseCheckStatementDetailDTO detailDTO : orderIdAndOrderItemIdMap.values()) {
             if(detailDTO.getReturnReferId() != null){
                 continue;
             }
-            if(listMap.get(detailDTO.getStatementOrderDetailId()) != null){
-                for(BaseCheckStatementDetailDTO targetDetail : listMap.get(detailDTO.getStatementOrderDetailId())){
-                    String detailMonth = DateFormatUtils.format(detailDTO.getStatementExpectPayTime(), "yyyy-MM-dd");
-                    String detailMonth2 = DateFormatUtils.format(targetDetail.getStatementExpectPayTime(), "yyyy-MM-dd");
-                    if (detailMonth.equals(detailMonth2)) {
+            if(margeOrderListMap.get(detailDTO.getStatementOrderDetailId()) != null){
+                for(BaseCheckStatementDetailDTO targetDetail : margeOrderListMap.get(detailDTO.getStatementOrderDetailId())){
+                    String detailPayMonth = DateFormatUtils.format(detailDTO.getStatementExpectPayTime(), "yyyy-MM-dd");
+                    String targetDetailPayMonth = DateFormatUtils.format(targetDetail.getStatementExpectPayTime(), "yyyy-MM-dd");
+                    if (detailPayMonth.equals(targetDetailPayMonth)) {
                         // 合并数量与金额
                         if(detailDTO.getStatementStartTime().getTime() == targetDetail.getStatementStartTime().getTime() && detailDTO.getStatementEndTime().getTime() == targetDetail.getStatementEndTime().getTime()){
                             detailDTO.setItemCount(detailDTO.getItemCount() + targetDetail.getItemCount());
@@ -844,7 +892,9 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 //            mergeReplaceOrders(statementStatisticsDTO, orderIdAndOrderItemIdMap);
 //            // 合并退货单
 //            mergeReturnOrders(statementStatisticsDTO, orderIdAndOrderItemIdMap);
-            build(statementStatisticsDTO, orderIdAndOrderItemIdMap);
+
+            // 合并需要支付的其他项与合并退货与换货的扣款钱
+            mergeRePayOrder(statementStatisticsDTO, orderIdAndOrderItemIdMap);
             // 构建新的结算单详情列表数据
             List<BaseCheckStatementDetailDTO> checkStatementDetailDTONew = buildNewStatementDetailDTOs(statementStatisticsDTO, orderIdAndOrderItemIdMap);
             // 排序
