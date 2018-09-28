@@ -5,7 +5,7 @@
             <tr class="bg-light">
                 <th class="nowrap">换货单编号</th>
                 <th class="nowrap">预计换货时间</th>
-                <th class="nowrap">实际归还时间</th>
+                <th class="nowrap">实际换货时间</th>
                 <th class="nowrap text-center">换货数量</th>
                 <th class="nowrap text-center">实际换货数量</th>
                 <th class="nowrap">创建人</th>
