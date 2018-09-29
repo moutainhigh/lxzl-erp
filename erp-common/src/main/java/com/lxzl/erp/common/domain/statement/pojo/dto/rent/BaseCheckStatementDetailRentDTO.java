@@ -1,5 +1,6 @@
 package com.lxzl.erp.common.domain.statement.pojo.dto.rent;
 
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.constant.OrderType;
 import com.lxzl.erp.common.domain.order.pojo.Order;
@@ -17,7 +18,11 @@ public class BaseCheckStatementDetailRentDTO extends BaseCheckStatementDetailDTO
         super.loadData();
         Order order = getOrderById(getOrderId());
         super.setOrderOriginalId(getOrderId());
-        super.setOrderNo(order.getOrderNo());
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(order.getIsOriginalOrder())){
+            super.setOrderNo(order.getOrderNo());
+        }else {
+            super.setOrderNo(order.getOriginalOrderNo());
+        }
         super.setOrderRentStartTime(order.getRentStartTime());
         super.setOrderExpectReturnTime(order.getExpectReturnTime());
         super.setOrderItemActualId(getOrderItemReferId());

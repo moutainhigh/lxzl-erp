@@ -15,6 +15,33 @@ public class ExchangeOrderMaterialDO  extends BaseDO {
 	private BigDecimal oldMaterialUnitAmount;
 	private Integer isNewMaterial;
 	private Integer dataStatus;
+	private Integer depositCycle;
+	private Integer paymentCycle;
+	private Integer payMode;
+
+	public Integer getDepositCycle() {
+		return depositCycle;
+	}
+
+	public void setDepositCycle(Integer depositCycle) {
+		this.depositCycle = depositCycle;
+	}
+
+	public Integer getPaymentCycle() {
+		return paymentCycle;
+	}
+
+	public void setPaymentCycle(Integer paymentCycle) {
+		this.paymentCycle = paymentCycle;
+	}
+
+	public Integer getPayMode() {
+		return payMode;
+	}
+
+	public void setPayMode(Integer payMode) {
+		this.payMode = payMode;
+	}
 
 	public Integer getId(){
 		return id;

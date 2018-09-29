@@ -17,7 +17,33 @@ public class ExchangeOrderMaterial extends BasePO {
 	private BigDecimal oldMaterialUnitAmount;   //原商品单价
 	private Integer isNewMaterial;   //是否是全新机，1是0否
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
+	private Integer depositCycle;
+	private Integer paymentCycle;
+	private Integer payMode;
 
+	public Integer getDepositCycle() {
+		return depositCycle;
+	}
+
+	public void setDepositCycle(Integer depositCycle) {
+		this.depositCycle = depositCycle;
+	}
+
+	public Integer getPaymentCycle() {
+		return paymentCycle;
+	}
+
+	public void setPaymentCycle(Integer paymentCycle) {
+		this.paymentCycle = paymentCycle;
+	}
+
+	public Integer getPayMode() {
+		return payMode;
+	}
+
+	public void setPayMode(Integer payMode) {
+		this.payMode = payMode;
+	}
 
 	public Integer getExchangeOrderMaterialId(){
 		return exchangeOrderMaterialId;

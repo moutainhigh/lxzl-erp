@@ -1121,8 +1121,7 @@ public class ErrorCode {
     public static final String STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR = "J310000005";
     public static final String STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR = "J310000006";
 
-    //变更单
-    public static final String EXCHANGE_ORDER_STATUS_ERROR = "J330000001";
+
 
     //换货
     public static final String REPLACE_TIME_NOT_NULL = "J310000001";//换货时间不能为空
@@ -1165,6 +1164,9 @@ public class ErrorCode {
     public static final String APPLE_NOT_REPLACE_OTHER= "J310000038";//苹果商品只能更换苹果商品
     public static final String OTHER_NOT_REPLACE_APPLE= "J310000039";//非苹果商品不能更换苹果商品
 
+    //变更单
+    public static final String EXCHANGE_ORDER_STATUS_ERROR = "J330000001";
+    public static final String ORIGINAL_ORDER_NO_NOT_NULL = "J330000002";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -2312,6 +2314,7 @@ public class ErrorCode {
 
 
         MAP.put(EXCHANGE_ORDER_STATUS_ERROR, "变更单状态有误，请仔细检查该订单");
+        MAP.put(ORIGINAL_ORDER_NO_NOT_NULL, "原订单编号不能为空");
 
     }
 
