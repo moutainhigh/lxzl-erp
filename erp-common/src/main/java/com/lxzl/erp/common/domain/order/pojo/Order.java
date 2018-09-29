@@ -130,6 +130,34 @@ public class Order extends BasePO {
 
     private CustomerCompanyDTO customerCompanyDTO;//公司信息
 
+    private Integer isOriginalOrder;  //是否原订单
+    private Integer isExchangeOrder;  //是否已转单
+    private String originalOrderNo;  //原订单单号
+
+    public Integer getIsOriginalOrder() {
+        return isOriginalOrder;
+    }
+
+    public void setIsOriginalOrder(Integer isOriginalOrder) {
+        this.isOriginalOrder = isOriginalOrder;
+    }
+
+    public Integer getIsExchangeOrder() {
+        return isExchangeOrder;
+    }
+
+    public void setIsExchangeOrder(Integer isExchangeOrder) {
+        this.isExchangeOrder = isExchangeOrder;
+    }
+
+    public String getOriginalOrderNo() {
+        return originalOrderNo;
+    }
+
+    public void setOriginalOrderNo(String originalOrderNo) {
+        this.originalOrderNo = originalOrderNo;
+    }
+
     public CustomerCompanyDTO getCustomerCompanyDTO() {
         return customerCompanyDTO;
     }
