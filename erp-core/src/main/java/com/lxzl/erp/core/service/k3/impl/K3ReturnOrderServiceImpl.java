@@ -534,7 +534,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             throw new BusinessException(response.getResult());
         }
     }
-
     @Override
     public ServiceResult<String, Page<K3ReturnOrder>> queryReturnOrder(K3ReturnOrderQueryParam k3ReturnOrderQueryParam) {
         ServiceResult<String, Page<K3ReturnOrder>> result = new ServiceResult<>();

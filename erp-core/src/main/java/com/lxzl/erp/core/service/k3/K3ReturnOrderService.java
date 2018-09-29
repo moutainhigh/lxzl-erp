@@ -19,7 +19,7 @@ import java.util.List;
  */
 public interface K3ReturnOrderService extends VerifyReceiver {
     /**
-     * 创建K3退货单
+     * 创建K3退货单（作废）
      * @param k3ReturnOrder
      * @return
      */
@@ -61,7 +61,7 @@ public interface K3ReturnOrderService extends VerifyReceiver {
     ServiceResult<String, K3ReturnOrder> queryReturnOrderByNo(String returnOrderNo);
 
     /**
-     * 编辑K3退货单
+     * 编辑K3退货单（作废）
      * @param k3ReturnOrder
      * @return
      */

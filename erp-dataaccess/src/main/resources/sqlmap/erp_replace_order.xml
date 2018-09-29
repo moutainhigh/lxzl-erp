@@ -433,6 +433,9 @@
 			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.realReplaceEndTime != null ">
 				<![CDATA[ AND ero.real_replace_time <= #{maps.replaceOrderQueryParam.realReplaceEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.originalOrderNo != null &amp;&amp; maps.replaceOrderQueryParam.originalOrderNo != ''">
+				and ero.original_order_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.originalOrderNo}','%' )
+			</if>
 			<if test="true">
 				AND ero.data_status = 1
 			</if>
@@ -519,6 +522,9 @@
 			</if>
 			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.realReplaceEndTime != null ">
 				<![CDATA[ AND ero.real_replace_time <= #{maps.replaceOrderQueryParam.realReplaceEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.originalOrderNo != null &amp;&amp; maps.replaceOrderQueryParam.originalOrderNo != ''">
+				and ero.original_order_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.originalOrderNo}','%' )
 			</if>
 			<if test="true">
 				AND ero.data_status = 1

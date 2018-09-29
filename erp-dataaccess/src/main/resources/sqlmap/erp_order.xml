@@ -1363,6 +1363,9 @@
             <if test="maps.orderForReturnQueryParam.createEndTime != null ">
                 <![CDATA[ AND eo.create_time <= #{maps.orderForReturnQueryParam.createEndTime} ]]>
             </if>
+            <if test="maps.orderForReturnQueryParam.originalOrderNo != null &amp;&amp; maps.orderForReturnQueryParam.originalOrderNo != ''">
+                and eo.original_order_no like CONCAT('%','${maps.orderForReturnQueryParam.originalOrderNo}','%' )
+            </if>
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
             </if>
@@ -1407,6 +1410,9 @@
             </if>
             <if test="maps.orderForReturnQueryParam.createEndTime != null ">
                 <![CDATA[ AND eo.create_time <= #{maps.orderForReturnQueryParam.createEndTime} ]]>
+            </if>
+            <if test="maps.orderForReturnQueryParam.originalOrderNo != null &amp;&amp; maps.orderForReturnQueryParam.originalOrderNo != ''">
+                and eo.original_order_no like CONCAT('%','${maps.orderForReturnQueryParam.originalOrderNo}','%' )
             </if>
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
