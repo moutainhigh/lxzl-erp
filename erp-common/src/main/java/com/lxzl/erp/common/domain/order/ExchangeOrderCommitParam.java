@@ -11,16 +11,16 @@ import org.hibernate.validator.constraints.NotBlank;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ExchangeOrderCommitParam extends BaseCommitParam {
     @NotBlank(message = ErrorCode.RETURN_ORDER_NO_NOT_NULL)
-    private String orderNo;
+    private String exchangeOrderNo;
     private Integer verifyUser;
     private String commitRemark;
 
-    public String getOrderNo() {
-        return orderNo;
+    public String getExchangeOrderNo() {
+        return exchangeOrderNo;
     }
 
-    public void setOrderNo(String orderNo) {
-        this.orderNo = orderNo;
+    public void setOrderNo(String exchangeOrderNo) {
+        this.exchangeOrderNo = exchangeOrderNo;
     }
 
     public Integer getVerifyUser() {

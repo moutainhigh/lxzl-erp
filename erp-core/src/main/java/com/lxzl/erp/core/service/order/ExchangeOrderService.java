@@ -40,4 +40,20 @@ public interface ExchangeOrderService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String,Page<ExchangeOrder>> queryByOrderNo(String orderNo);
+
+    /**
+     * 取消变更单
+     *
+     * @param exchangerOrderNo
+     * @return
+     */
+    ServiceResult<String,String> cancelExchangeOrder(String exchangerOrderNo);
+
+    /**
+     * 生成订单
+     *
+     * @param exchangerOrderNo
+     * @return
+     */
+    ServiceResult<String,String> generatedOrder(String exchangerOrderNo);
 }

@@ -258,7 +258,7 @@ public class OrderController extends BaseController {
      */
     @RequestMapping(value = "queryExchangeOrderByNo", method = RequestMethod.POST)
     public Result queryExchangeOrderByNo(@RequestBody ExchangeOrderParam exchangeOrderParam, BindingResult validResult) {
-        ServiceResult<String, ExchangeOrder> serviceResult = exchangeOrderService.queryExchangeOrderByNo(exchangeOrderParam.getOrderNo());
+        ServiceResult<String, ExchangeOrder> serviceResult = exchangeOrderService.queryExchangeOrderByNo(exchangeOrderParam.getExchangeOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -272,6 +272,19 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "queryByOrderNo", method = RequestMethod.POST)
     public Result queryByOrderNo(@RequestBody ExchangeOrderParam exchangeOrderParam, BindingResult validResult) {
         ServiceResult<String, Page<ExchangeOrder>> serviceResult = exchangeOrderService.queryByOrderNo(exchangeOrderParam.getOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 取消变更单
+     *
+     * @param exchangeOrderParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "cancelExchangeOrder", method = RequestMethod.POST)
+    public Result cancelExchangeOrder(@RequestBody ExchangeOrderParam exchangeOrderParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = exchangeOrderService.cancelExchangeOrder(exchangeOrderParam.getExchangeOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

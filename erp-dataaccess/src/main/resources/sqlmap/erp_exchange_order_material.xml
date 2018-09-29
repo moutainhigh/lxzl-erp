@@ -20,12 +20,12 @@
 
 	<select id="findById" resultMap="ExchangeOrderMaterialDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_exchange_order_material eeom 
-		WHERE eeom.id = #{id, jdbcType=INTEGER} AND eeom.data_status = 1 
+		WHERE eeom.id = #{id, jdbcType=INTEGER} AND eeom.data_status = 1
 	</select>
 
 	<select id="findByExchangeOrderId" resultMap="ExchangeOrderMaterialDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_exchange_order_material eeop
-		WHERE eeop.exchange_order_id = #{exchangeOrderId, jdbcType=INTEGER} AND eeop.data_status = 1
+		SELECT <include refid="column_List"/> FROM erp_exchange_order_material eeom
+		WHERE eeom.exchange_order_id = #{exchangeOrderId, jdbcType=INTEGER} AND eeom.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
