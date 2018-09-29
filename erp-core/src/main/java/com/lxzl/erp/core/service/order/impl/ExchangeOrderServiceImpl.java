@@ -23,9 +23,11 @@ import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
+import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
 import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,12 +53,20 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
+
         //TODO 开始时间都是一个月的开始时间
         //只允许有一个有效的变更单
         //判断是否有操作这个订单的权限
         //只有租赁中的订单才可以进行
         //查询是否存在换货单
         //保存变更信息
+
+        //查询为完成的换货单
+        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(exchangeOrder.getOrderNo());
+        if(CollectionUtil.isNotEmpty(replaceOrderDOList)){
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
         ExchangeOrderDO exchangeOrderDO = new ExchangeOrderDO();
         BeanUtils.copyProperties(exchangeOrder, exchangeOrderDO);
         exchangeOrderDO.setExchangeOrderNo(generateNoSupport.generateExchangeOrderNo(now, orderDO.getOrderSubCompanyId().toString()));
@@ -80,10 +90,10 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             }
             exchangeOrderProductMapper.saveList(exchangeOrderProductDOList);
         }
-        if (!CollectionUtil.isEmpty(exchangeOrder.getExchangeOrderMaterial())) {
+        if (!CollectionUtil.isEmpty(exchangeOrder.getExchangeOrderMaterialList())) {
             List<ExchangeOrderMaterialDO> exchangeOrderMaterialDOList = new ArrayList<>();
             //保存配件信息
-            for (ExchangeOrderMaterial exchangeOrderMaterial : exchangeOrder.getExchangeOrderMaterial()) {
+            for (ExchangeOrderMaterial exchangeOrderMaterial : exchangeOrder.getExchangeOrderMaterialList()) {
                 ExchangeOrderMaterialDO exchangeOrderMaterialDO = new ExchangeOrderMaterialDO();
                 BeanUtils.copyProperties(exchangeOrderMaterial, exchangeOrderMaterialDO);
                 exchangeOrderMaterialDO.setExchangeOrderId(exchangeOrderDO.getId());
@@ -272,7 +282,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         //3、K3数据同步
         Map<String, Object> maps = new HashMap<>();
         maps.put("orderNo", nodeOrderNo);
-        maps.put("nowDate", date);
+        //maps.put("nowDate", date);
        // List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findReturnOrderByOrderNoAndDate(maps);
 
 
@@ -355,6 +365,9 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
     }
 
 
+
+    @Autowired
+    private ReplaceOrderMapper replaceOrderMapper;
 
     @Autowired
     private OrderConsignInfoMapper orderConsignInfoMapper;

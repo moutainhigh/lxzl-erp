@@ -1164,6 +1164,7 @@ public class ErrorCode {
     //变更单
     public static final String EXCHANGE_ORDER_STATUS_ERROR = "J330000001";
     public static final String ORIGINAL_ORDER_NO_NOT_NULL = "J330000002";
+    public static final String REPLACE_ORDER_EXISTS = "J330000003";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -2311,6 +2312,7 @@ public class ErrorCode {
 
         MAP.put(EXCHANGE_ORDER_STATUS_ERROR, "变更单状态有误，请仔细检查该订单");
         MAP.put(ORIGINAL_ORDER_NO_NOT_NULL, "原订单编号不能为空");
+        MAP.put(REPLACE_ORDER_EXISTS, "该订单有未完成的换货单");
 
     }
 

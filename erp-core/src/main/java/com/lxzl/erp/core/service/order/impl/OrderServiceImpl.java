@@ -254,6 +254,8 @@ public class OrderServiceImpl implements OrderService {
 
         Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
+        orderDO.setIsOriginalOrder(CommonConstant.YES);
+        orderDO.setOriginalOrderNo(orderDO.getOrderNo());
         orderMapper.save(orderDO);
 
         /***** 增加的组合商品逻辑 start*******/
@@ -4367,6 +4369,8 @@ public class OrderServiceImpl implements OrderService {
 
         Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
+        orderDO.setOriginalOrderNo(orderDO.getOrderNo());
+        orderDO.setIsOriginalOrder(CommonConstant.COMMON_CONSTANT_YES);
         orderMapper.save(orderDO);
 
         //原测试机订单加入转为租赁单的标记

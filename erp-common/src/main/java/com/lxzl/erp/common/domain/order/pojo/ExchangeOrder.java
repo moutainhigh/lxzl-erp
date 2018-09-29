@@ -38,7 +38,7 @@ public class ExchangeOrder extends BasePO {
 	/**
 	 * 变更单配件明细
 	 */
-	private List<ExchangeOrderMaterial> exchangeOrderMaterial;
+	private List<ExchangeOrderMaterial> exchangeOrderMaterialList;
 
 	public List<ExchangeOrderProduct> getExchangeOrderProductList() {
 		return exchangeOrderProductList;
@@ -48,12 +48,12 @@ public class ExchangeOrder extends BasePO {
 		this.exchangeOrderProductList = exchangeOrderProductList;
 	}
 
-	public List<ExchangeOrderMaterial> getExchangeOrderMaterial() {
-		return exchangeOrderMaterial;
+	public List<ExchangeOrderMaterial> getExchangeOrderMaterialList() {
+		return exchangeOrderMaterialList;
 	}
 
-	public void setExchangeOrderMaterial(List<ExchangeOrderMaterial> exchangeOrderMaterial) {
-		this.exchangeOrderMaterial = exchangeOrderMaterial;
+	public void setExchangeOrderMaterialList(List<ExchangeOrderMaterial> exchangeOrderMaterialList) {
+		this.exchangeOrderMaterialList = exchangeOrderMaterialList;
 	}
 
 	public Integer getExchangeOrderId(){
