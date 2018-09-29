@@ -1,5 +1,7 @@
 package com.lxzl.erp.common.domain.statement;
 
+import com.lxzl.erp.common.util.BigDecimalUtil;
+
 import java.math.BigDecimal;
 
 /**
@@ -21,6 +23,16 @@ public class AmountNeedReturn {
     BigDecimal penaltyPaidAmount = BigDecimal.ZERO;
     //已付租金押金
     BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
+
+    public AmountNeedReturn add(AmountNeedReturn amountNeedReturn){
+        depositPaidAmount= BigDecimalUtil.add(depositPaidAmount,amountNeedReturn.getDepositPaidAmount());
+        otherPaidAmount=BigDecimalUtil.add(otherPaidAmount,amountNeedReturn.getOtherPaidAmount());
+        rentPaidAmount=BigDecimalUtil.add(rentPaidAmount,amountNeedReturn.getRentPaidAmount());
+        overduePaidAmount=BigDecimalUtil.add(overduePaidAmount,amountNeedReturn.getOverduePaidAmount());
+        penaltyPaidAmount=BigDecimalUtil.add(penaltyPaidAmount,amountNeedReturn.getPenaltyPaidAmount());
+        rentDepositPaidAmount=BigDecimalUtil.add(rentDepositPaidAmount,amountNeedReturn.getRentDepositPaidAmount());
+        return this;
+    }
 
     public BigDecimal getDepositPaidAmount() {
         return depositPaidAmount;

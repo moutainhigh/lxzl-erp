@@ -1118,6 +1118,10 @@ public class ErrorCode {
     public static final String STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR = "J310000005";
     public static final String STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR = "J310000006";
 
+    //换单
+    public static final String ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER = "J320000001";
+    public static final String EXIT_CORRECT_ORDER_NOT_ALLOW_CHANGE_ORDER = "J320000002";
+
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -2217,6 +2221,9 @@ public class ErrorCode {
         MAP.put(STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR, "查询月经营数据传入的查询开始时间必须是月初一号");
 
         MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
+
+        MAP.put(ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER, "仅月租允许换单");
+        MAP.put(EXIT_CORRECT_ORDER_NOT_ALLOW_CHANGE_ORDER, "当前结算单已进行过冲正，请取消冲正后重试");
 
     }
 
