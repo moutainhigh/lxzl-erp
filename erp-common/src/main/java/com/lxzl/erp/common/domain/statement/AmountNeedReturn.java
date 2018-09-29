@@ -1,8 +1,6 @@
 package com.lxzl.erp.common.domain.statement;
 
-import com.lxzl.erp.common.util.BigDecimalUtil;
-
-import java.math.BigDecimal;
+import com.lxzl.erp.common.util.BigDecimalUtil;import java.math.BigDecimal;
 
 /**
  * @author: huanglong
@@ -25,20 +23,25 @@ public class AmountNeedReturn {
     BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
 
     public AmountNeedReturn add(AmountNeedReturn amountNeedReturn){
-        depositPaidAmount= BigDecimalUtil.add(depositPaidAmount,amountNeedReturn.getDepositPaidAmount());
-        otherPaidAmount=BigDecimalUtil.add(otherPaidAmount,amountNeedReturn.getOtherPaidAmount());
-        rentPaidAmount=BigDecimalUtil.add(rentPaidAmount,amountNeedReturn.getRentPaidAmount());
-        overduePaidAmount=BigDecimalUtil.add(overduePaidAmount,amountNeedReturn.getOverduePaidAmount());
-        penaltyPaidAmount=BigDecimalUtil.add(penaltyPaidAmount,amountNeedReturn.getPenaltyPaidAmount());
-        rentDepositPaidAmount=BigDecimalUtil.add(rentDepositPaidAmount,amountNeedReturn.getRentDepositPaidAmount());
+        this.depositPaidAmount= BigDecimalUtil.add(this.depositPaidAmount,amountNeedReturn.getDepositPaidAmount());
+        this.otherPaidAmount=BigDecimalUtil.add(this.otherPaidAmount,amountNeedReturn.getOtherPaidAmount());
+        this.rentPaidAmount=BigDecimalUtil.add(this.rentPaidAmount,amountNeedReturn.getRentPaidAmount());
+        this.overduePaidAmount=BigDecimalUtil.add(this.overduePaidAmount,amountNeedReturn.getOverduePaidAmount());
+        this.penaltyPaidAmount= BigDecimalUtil.add(this.penaltyPaidAmount,amountNeedReturn.getPenaltyPaidAmount());
+        this.rentDepositPaidAmount=BigDecimalUtil.add(this.rentDepositPaidAmount,amountNeedReturn.getRentDepositPaidAmount());
         return this;
     }
-
-    public BigDecimal getTotalAmount(){
-        return BigDecimalUtil.add(depositPaidAmount,otherPaidAmount,rentPaidAmount,overduePaidAmount,penaltyPaidAmount,rentDepositPaidAmount);
+    public AmountNeedReturn() {
     }
 
-    public BigDecimal getDepositPaidAmount() {
+    public AmountNeedReturn(BigDecimal depositPaidAmount, BigDecimal rentPaidAmount, BigDecimal rentDepositPaidAmount) {
+        this.depositPaidAmount = depositPaidAmount;
+        this.rentPaidAmount = rentPaidAmount;
+        this.rentDepositPaidAmount = rentDepositPaidAmount;
+    }
+    public BigDecimal getTotalAmount(){
+        return BigDecimalUtil.add(depositPaidAmount,otherPaidAmount,rentPaidAmount,overduePaidAmount,penaltyPaidAmount,rentDepositPaidAmount);
+    }    public BigDecimal getDepositPaidAmount() {
         return depositPaidAmount;
     }
 

@@ -25,6 +25,7 @@ public class K3ReturnOrderDetailDO extends BaseDO {
 
     @Transient
     private Date returnTime;
+    private String originalOrderNo;  //原订单单号
 
     public Integer getId() {
         return id;
@@ -136,5 +137,13 @@ public class K3ReturnOrderDetailDO extends BaseDO {
 
     public void setOrderItemType(Integer orderItemType) {
         this.orderItemType = orderItemType;
+    }
+
+    public String getOriginalOrderNo() {
+        return originalOrderNo;
+    }
+
+    public void setOriginalOrderNo(String originalOrderNo) {
+        this.originalOrderNo = originalOrderNo;
     }
 }

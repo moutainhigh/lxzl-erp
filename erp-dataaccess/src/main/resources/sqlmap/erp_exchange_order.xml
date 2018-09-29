@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.order.ExchangeOrderMapper">
+
+	<resultMap id="ExchangeOrderDO" type="com.lxzl.erp.dataaccess.domain.order.ExchangeOrderDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="exchange_order_no" jdbcType="VARCHAR" property="exchangeOrderNo" />
+		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+		<result column="new_order_no" jdbcType="VARCHAR" property="newOrderNo" />
+		<result column="rent_start_time" jdbcType="TIMESTAMP" property="rentStartTime" />
+		<result column="deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
+		<result column="payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="pay_mode" jdbcType="INTEGER" property="payMode" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="business_type" jdbcType="INTEGER" property="businessType" />
+		<result column="status" jdbcType="INTEGER" property="status" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+
+	<sql id="column_List">
+		eeo.id,eeo.exchange_order_no,eeo.order_no,eeo.new_order_no,eeo.rent_start_time,eeo.deposit_cycle,eeo.payment_cycle,eeo.pay_mode,eeo.data_status,eeo.create_time,eeo.create_user,eeo.update_time,eeo.update_user,eeo.business_type,eeo.status,eeo.remark
+	</sql>
+
+	<select id="findById" resultMap="ExchangeOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_exchange_order eeo 
+		WHERE eeo.id = #{id, jdbcType=INTEGER} AND eeo.data_status = 1 
+	</select>
+
+	<select id="findByExchangeOrderNo" resultMap="ExchangeOrderDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_exchange_order eeo
+		WHERE eeo.exchange_order_no = #{exchangeOrderNo, jdbcType=INTEGER} AND eeo.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eeo.id) FROM erp_exchange_order eeo 
+		<where>
+			<if test="true">
+				AND eeo.data_status = 1
+			</if>
+			<if test="maps.orderNo != null">
+				AND order_no = #{maps.orderNo,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.orderQueryParam.createStartTime != null">
+				<![CDATA[ AND eeo.create_time >= #{maps.orderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.orderQueryParam.createEndTime != null ">
+				<![CDATA[ AND eeo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="ExchangeOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_exchange_order eeo 
+		<where>
+			<if test="true">
+				AND eeo.data_status = 1
+			</if>
+			<if test="maps.orderNo != null">
+				AND order_no = #{maps.orderNo,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.orderQueryParam.createStartTime != null">
+				<![CDATA[ AND eeo.create_time >= #{maps.orderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.orderQueryParam.createEndTime != null ">
+				<![CDATA[ AND eeo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="exchangeOrderNo != null">
+				exchange_order_no = #{exchangeOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNo != null">
+				order_no = #{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="newOrderNo != null">
+				new_order_no = #{newOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="rentStartTime != null">
+				rent_start_time = #{rentStartTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="depositCycle != null">
+				deposit_cycle = #{depositCycle,jdbcType=INTEGER},
+			</if>
+			<if test="paymentCycle != null">
+				payment_cycle = #{paymentCycle,jdbcType=INTEGER},
+			</if>
+			<if test="payMode != null">
+				pay_mode = #{payMode,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="businessType != null">
+				business_type = #{businessType,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.order.ExchangeOrderDO">
+		INSERT INTO erp_exchange_order <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.order.ExchangeOrderDO">
+		UPDATE erp_exchange_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

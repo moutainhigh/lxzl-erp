@@ -104,6 +104,7 @@ import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -253,6 +254,8 @@ public class OrderServiceImpl implements OrderService {
 
         Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
+        orderDO.setIsOriginalOrder(CommonConstant.YES);
+        orderDO.setOriginalOrderNo(orderDO.getOrderNo());
         orderMapper.save(orderDO);
 
         /***** 增加的组合商品逻辑 start*******/
@@ -852,6 +855,7 @@ public class OrderServiceImpl implements OrderService {
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
+
 
     @Override
     public ServiceResult<String, String> payOrder(String orderNo) {
@@ -3946,8 +3950,8 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-
-    private void updateOrderConsignInfo(Integer userConsignId, Integer orderId, User loginUser, Date currentTime) {
+    @Override
+    public void updateOrderConsignInfo(Integer userConsignId, Integer orderId, User loginUser, Date currentTime) {
         CustomerConsignInfoDO userConsignInfoDO = customerConsignInfoMapper.findById(userConsignId);
         OrderConsignInfoDO dbOrderConsignInfoDO = orderConsignInfoMapper.findByOrderId(orderId);
         OrderConsignInfoDO orderConsignInfoDO = new OrderConsignInfoDO();
@@ -4365,6 +4369,8 @@ public class OrderServiceImpl implements OrderService {
 
         Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
+        orderDO.setOriginalOrderNo(orderDO.getOrderNo());
+        orderDO.setIsOriginalOrder(CommonConstant.COMMON_CONSTANT_YES);
         orderMapper.save(orderDO);
 
         //原测试机订单加入转为租赁单的标记
@@ -5101,7 +5107,5 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderFromTestMachineMapper orderFromTestMachineMapper;
-
-
 
 }

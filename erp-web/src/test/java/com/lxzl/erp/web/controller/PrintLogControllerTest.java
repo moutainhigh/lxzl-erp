@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.printLog.PrintLogPageParam;
@@ -15,10 +16,11 @@ public class PrintLogControllerTest extends ERPUnTransactionalTest{
     @Test
     public void updatePrintLog() throws Exception {
         PrintLog printLog =  new PrintLog();
-        printLog.setReferNo("LXZL-01010100");
-        printLog.setReferType(1);
+        printLog.setReferNo("LXREO20180925133753361");
+        printLog.setReferType(3);
         printLog.setRemark("测试备注1");
         getJsonTestResult("/print/savePrintLog",printLog);
+        System.out.println(JSON.toJSONString(getJsonTestResult("/print/savePrintLog",printLog)));
     }
 
     @Test

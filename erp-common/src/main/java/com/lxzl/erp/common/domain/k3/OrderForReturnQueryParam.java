@@ -19,6 +19,7 @@ public class OrderForReturnQueryParam extends BasePageParam implements Serializa
     private Integer orderStatus;
     private Date createStartTime;
     private Date createEndTime;
+    private String originalOrderNo;  //原订单单号
 
     public Integer getOrderStatus() {
         return orderStatus;
@@ -58,5 +59,13 @@ public class OrderForReturnQueryParam extends BasePageParam implements Serializa
 
     public void setCustomerNo(String customerNo) {
         this.customerNo = customerNo;
+    }
+
+    public String getOriginalOrderNo() {
+        return originalOrderNo;
+    }
+
+    public void setOriginalOrderNo(String originalOrderNo) {
+        this.originalOrderNo = originalOrderNo;
     }
 }
