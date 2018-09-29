@@ -1,6 +1,7 @@
 package com.lxzl.erp.core.service.statement.impl.support;
 
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dingding.DingDingCommonMsg;
 import com.lxzl.erp.common.domain.messagethirdchannel.pojo.MessageThirdChannel;
 import com.lxzl.erp.common.domain.statement.AmountHasReturn;
@@ -14,12 +15,8 @@ import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.messagethirdchannel.MessageThirdChannelService;
 import com.lxzl.erp.core.service.order.impl.support.OrderSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
-import com.lxzl.erp.core.service.statistics.StatisticsService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
-import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerPersonMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.dingdingGroupMessageConfig.DingdingGroupMessageConfigMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderStatementDateChangeLogMapper;
@@ -28,8 +25,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.dingdingGroupMessageConfig.DingdingGroupMessageConfigDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
@@ -66,25 +61,8 @@ public class StatementOrderSupport {
     private StatementOrderDetailMapper statementOrderDetailMapper;
 
     @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private SubCompanyMapper subCompanyMapper;
-
-    @Autowired
-    private RoleMapper roleMapper;
-
-    @Autowired
-    private DepartmentMapper departmentMapper;
-
-    @Autowired
-    private CustomerPersonMapper customerPersonMapper;
-
-    @Autowired
     private CustomerMapper customerMapper;
 
-    @Autowired
-    private StatisticsService statisticsService;
 
     @Autowired
     private DataDictionaryMapper dataDictionaryMapper;
@@ -375,8 +353,8 @@ public class StatementOrderSupport {
             List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByReturnReferIdAndStatementType(statementOrderDetailDO.getId(), returnType);
             if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
                 for (StatementOrderDetailDO sod : statementOrderDetailDOList) {
-                    returnStatementAmount = BigDecimalUtil.add(returnStatementAmount, sod.getStatementDetailAmount(), BigDecimalUtil.STANDARD_SCALE);
                     returnStatementRentAmount = BigDecimalUtil.add(returnStatementRentAmount, sod.getStatementDetailRentAmount(), BigDecimalUtil.STANDARD_SCALE);
+                    returnStatementAmount = BigDecimalUtil.add(returnStatementAmount, sod.getStatementDetailAmount(), BigDecimalUtil.STANDARD_SCALE);
                     returnStatementDepositAmount = BigDecimalUtil.add(returnStatementDepositAmount, sod.getStatementDetailDepositAmount(), BigDecimalUtil.STANDARD_SCALE);
                     returnStatementRentDepositAmount = BigDecimalUtil.add(returnStatementRentDepositAmount, sod.getStatementDetailRentDepositAmount(), BigDecimalUtil.STANDARD_SCALE);
                 }
@@ -465,7 +443,6 @@ public class StatementOrderSupport {
                 return ErrorCode.CUSTOMER_NOT_EXISTS;
             }
         }
-
         boolean isTestMachineOrder = isTestMachineOrder(orderDO);
         if (!isTestMachineOrder) {
             return ErrorCode.IS_NOT_TEST_MECHANINE_ORDER;
@@ -478,8 +455,8 @@ public class StatementOrderSupport {
         if (!isStopTimeInOrderLifcycle) {
             return ErrorCode.TEST_MECHANINE_ORDER_CHANGE_TIME_ERROR;
         }
-        int oldTimeLength = DateUtil.daysBetween(orderDO.getRentStartTime(), expectReturnTime)+1;
-        int timeLength = DateUtil.daysBetween(orderDO.getRentStartTime(), stopTime)+1;
+        int oldTimeLength = DateUtil.daysBetween(orderDO.getRentStartTime(), expectReturnTime) + 1;
+        int timeLength = DateUtil.daysBetween(orderDO.getRentStartTime(), stopTime) + 1;
         if (oldTimeLength == 0) {
             return ErrorCode.ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL;
         }
@@ -502,11 +479,11 @@ public class StatementOrderSupport {
                         return ErrorCode.TEST_MECHANINE_ORDER_HAS_RELET;
                     }
                     AmountNeedReturn amountNeedReturn = modifyStatementItem(percent, statementOrderDOMap, needUpdateDetailDOList, statementOrderDetailDO, userId, updateTime, stopTime);
-                    if(amountNeedReturn!=null){
+                    if (amountNeedReturn != null) {
 
                         needReturnRentAmount = BigDecimalUtil.add(needReturnRentAmount, amountNeedReturn.getRentPaidAmount());
-                        needReturnRentDepositAmount=BigDecimalUtil.add(needReturnRentDepositAmount,amountNeedReturn.getRentDepositPaidAmount());
-                        needReturnDepositAmount=BigDecimalUtil.add(needReturnDepositAmount,amountNeedReturn.getDepositPaidAmount());
+                        needReturnRentDepositAmount = BigDecimalUtil.add(needReturnRentDepositAmount, amountNeedReturn.getRentDepositPaidAmount());
+                        needReturnDepositAmount = BigDecimalUtil.add(needReturnDepositAmount, amountNeedReturn.getDepositPaidAmount());
                     }
                 }
             }
@@ -522,7 +499,7 @@ public class StatementOrderSupport {
 
             //退款
             if (BigDecimalUtil.compare(needReturnRentAmount, BigDecimal.ZERO) > 0) {
-                String payResultCode = paymentService.returnDepositExpand(customerDO.getCustomerNo(), needReturnRentAmount, BigDecimal.ZERO, needReturnRentDepositAmount,needReturnDepositAmount, "测试机转单退款");
+                String payResultCode = paymentService.returnDepositExpand(customerDO.getCustomerNo(), needReturnRentAmount, BigDecimal.ZERO, needReturnRentDepositAmount, needReturnDepositAmount, "测试机转单退款");
                 if (!ErrorCode.SUCCESS.equals(payResultCode)) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     return payResultCode;
@@ -531,6 +508,83 @@ public class StatementOrderSupport {
         }
         return ErrorCode.SUCCESS;
     }
+
+    /**
+     * 清除结算信息
+     *
+     * @param paid
+     * @param buyerCustomerNo
+     * @param statementOrderDetailDOList
+     * @return 返回需退还账户的金额
+     */
+    public ServiceResult<String, AmountNeedReturn> clearStatement(boolean paid, String buyerCustomerNo, List<StatementOrderDetailDO> statementOrderDetailDOList) {
+        ServiceResult<String, AmountNeedReturn> result = new ServiceResult<>();
+        Map<Integer, StatementOrderDO> statementOrderDOMap = getStatementOrderByDetails(statementOrderDetailDOList);
+        reStatement(new Date(), statementOrderDOMap, statementOrderDetailDOList);
+        //删除相关冲正单
+        clearStatementRefCorrect(statementOrderDetailDOList);
+        if (paid) {
+            //已付设备押金
+            BigDecimal depositPaidAmount = BigDecimal.ZERO;
+            //已付其他费用
+            BigDecimal otherPaidAmount = BigDecimal.ZERO;
+            // 已付租金
+            BigDecimal rentPaidAmount = BigDecimal.ZERO;
+            //已付逾期费用
+            BigDecimal overduePaidAmount = BigDecimal.ZERO;
+            //已付违约金
+            BigDecimal penaltyPaidAmount = BigDecimal.ZERO;
+            //已付租金押金
+            BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
+            for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+                //计算所有已支付金额,由于付款是在冲正后做的，所以此时无需考虑冲正金额
+                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount, BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()));
+                otherPaidAmount = BigDecimalUtil.add(otherPaidAmount, statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount, statementOrderDetailDO.getStatementDetailRentPaidAmount());
+                overduePaidAmount = BigDecimalUtil.add(overduePaidAmount, statementOrderDetailDO.getStatementDetailOverduePaidAmount());
+                penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount, statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
+                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount, BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), statementOrderDetailDO.getStatementDetailRentDepositReturnAmount()));
+            }
+            //处理结算单总状态及已支付金额
+            reStatementPaid(statementOrderDOMap, statementOrderDetailDOList);
+            AmountNeedReturn amountNeedReturn = new AmountNeedReturn();
+            amountNeedReturn.setDepositPaidAmount(depositPaidAmount);
+            amountNeedReturn.setRentDepositPaidAmount(rentDepositPaidAmount);
+            amountNeedReturn.setOtherPaidAmount(otherPaidAmount);
+            amountNeedReturn.setOverduePaidAmount(overduePaidAmount);
+            amountNeedReturn.setPenaltyPaidAmount(penaltyPaidAmount);
+            amountNeedReturn.setRentPaidAmount(rentPaidAmount);
+//            if(BigDecimalUtil.compare(rentPaidAmount,BigDecimal.ZERO)!=0||BigDecimalUtil.compare(rentDepositPaidAmount,BigDecimal.ZERO)!=0||BigDecimalUtil.compare(depositPaidAmount,BigDecimal.ZERO)!=0||BigDecimalUtil.compare(BigDecimalUtil.addAll(otherPaidAmount, overduePaidAmount, penaltyPaidAmount),BigDecimal.ZERO)==0){
+//                String returnCode = paymentService.returnDepositExpand(buyerCustomerNo, rentPaidAmount, BigDecimalUtil.addAll(otherPaidAmount, overduePaidAmount, penaltyPaidAmount)
+//                        , rentDepositPaidAmount, depositPaidAmount, "重算结算单，已支付金额退还到客户余额");
+//                if (!ErrorCode.SUCCESS.equals(returnCode)) {
+//                    result.setErrorCode(returnCode);
+//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                    return result;
+//                }
+//            }
+            result.setResult(amountNeedReturn);
+        } else {
+            //如果未支付，物理删除结算单详情，结算单
+            if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+                statementOrderDetailMapper.realDeleteStatementOrderDetailList(statementOrderDetailDOList);
+            }
+            List<StatementOrderDO> deleteStatementOrderDOList = new ArrayList<>();
+            for (Integer key : statementOrderDOMap.keySet()) {
+                StatementOrderDO statementOrderDO = statementOrderDOMap.get(key);
+                if (CommonConstant.DATA_STATUS_DELETE.equals(statementOrderDO.getDataStatus())) {
+                    deleteStatementOrderDOList.add(statementOrderDO);
+                }
+            }
+            if (CollectionUtil.isNotEmpty(deleteStatementOrderDOList)) {
+                statementOrderMapper.realDeleteStatementOrderList(deleteStatementOrderDOList);
+            }
+
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
 
     private AmountNeedReturn modifyStatementItem(BigDecimal percent, Map<Integer, StatementOrderDO> statementOrderDOMap, List<StatementOrderDetailDO> needUpdateDetailDOList, StatementOrderDetailDO statementOrderDetailDO, String userId, Date updateTime, Date changeTime) {
         BigDecimal rentDepositNeedReturn = BigDecimal.ZERO;
@@ -570,7 +624,7 @@ public class StatementOrderSupport {
             statementOrderDetailDO.setStatementDetailRentDepositAmount(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
             BigDecimal subRentDepositAmount = BigDecimalUtil.sub(oldRentDepositAmount, statementOrderDetailDO.getStatementDetailRentDepositAmount());
 
-            statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(),subRentDepositAmount));
+            statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(), subRentDepositAmount));
 
             statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositAmount(), subRentDepositAmount));
         }
@@ -589,7 +643,7 @@ public class StatementOrderSupport {
             statementOrderDetailDO.setStatementDetailDepositAmount(statementOrderDetailDO.getStatementDetailDepositPaidAmount());
             BigDecimal subDepositAmount = BigDecimalUtil.sub(oldDepositAmount, statementOrderDetailDO.getStatementDetailDepositAmount());
 
-            statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(),subDepositAmount));
+            statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(), subDepositAmount));
             statementOrderDO.setStatementDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementDepositAmount(), subDepositAmount));
         }
 

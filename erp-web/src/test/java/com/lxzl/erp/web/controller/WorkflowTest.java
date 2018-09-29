@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.*;
@@ -34,26 +35,28 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     @Test
     public void verifyWorkFlow() throws Exception {
         VerifyWorkflowParam workflowParam = new VerifyWorkflowParam();
-        workflowParam.setWorkflowLinkNo("LXWF-500001-20180712-00175");
+        workflowParam.setWorkflowLinkNo("LXWF-500001-20180921-00232");
         workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
 //        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
-        workflowParam.setReturnType(1);
-        workflowParam.setVerifyOpinion("test10");
+//        workflowParam.setReturnType(1);
+        workflowParam.setVerifyOpinion("通过");
 //        workflowParam.setNextVerifyUser(500081);
 //        List<Integer> list = new ArrayList<>();
 //        list.add(1819);
 //        workflowParam.setImgIdList(list);
 
         TestResult testResult = getJsonTestResult("/workflow/verifyWorkFlow", workflowParam);
-        Thread.sleep(30000);
+//        Thread.sleep(30000);
+        System.out.println(JSON.toJSONString(testResult));
     }
 
     @Test
     public void queryNextVerifyUsers() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
-        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_CUSTOMER);
-        workflowLinkQueryParam.setWorkflowReferNo("LXCC-027-20180412-00021");
+        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_CHANGE);
+        workflowLinkQueryParam.setWorkflowReferNo("LXREO20180921135842793");
         TestResult testResult = getJsonTestResult("/workflow/queryNextVerifyUsers", workflowLinkQueryParam);
+        System.out.println(JSON.toJSONString(testResult));
     }
 
     @Test

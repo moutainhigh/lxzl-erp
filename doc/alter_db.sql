@@ -1080,6 +1080,10 @@ ALTER TABLE `erp_statement_order_return_detail` ADD COLUMN `return_order_detail_
 ALTER TABLE erp_workflow_node add `verify_type` INT(11) NOT NULL DEFAULT 1 COMMENT '审核类型:1-本条通过则通过,2-相同审核组的所有2的通过则通过,3-不用获取审核人该条通过直接通过';
 
 
+
+ALTER TABLE erp_statement_order_return_detail add `order_type` INT(11) NOT NULL DEFAULT 4 COMMENT '订单类型:4-退货单,6-换货单';
+ALTER TABLE erp_statement_order_detail add `source_id` int(20) DEFAULT NULL COMMENT '生成结算的目标源id(扩展字段，订单类型为换货单时，此字段保存换货单项id)';
+
 ALTER TABLE erp_statement_order_correct add `relet_order_item_refer_id` int(20) DEFAULT NULL COMMENT '续租订单项ID';
 
 ALTER TABLE erp_customer_person ADD internal_name varchar(20) COLLATE utf8_bin DEFAULT NULL COMMENT '内部名称';
@@ -1103,5 +1107,3 @@ ALTER table erp_order_material ADD test_machine_order_material_id int(20) DEFAUL
 ALTER TABLE erp_order ADD `is_turn_rent_order` int(10) NOT NULL DEFAULT '0' COMMENT '是否已经转为租赁单,1-是;0-否。(测试机专用字段)';
 ALTER TABLE erp_order_product add `is_item_delivered` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否已发货，0否1是';
 ALTER TABLE erp_order_material add `is_item_delivered` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否已发货，0否1是';
-
-

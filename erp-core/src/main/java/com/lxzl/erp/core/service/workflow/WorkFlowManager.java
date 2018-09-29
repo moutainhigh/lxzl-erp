@@ -16,6 +16,7 @@ import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.core.service.purchaseApply.PurchaseApplyOrderService;
 import com.lxzl.erp.core.service.reletorder.ReletOrderService;
 import com.lxzl.erp.core.service.repairOrder.RepairOrderService;
+import com.lxzl.erp.core.service.replace.ReplaceOrderService;
 import com.lxzl.erp.core.service.returnOrder.ReturnOrderService;
 import com.lxzl.erp.core.service.transferOrder.TransferOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,8 @@ public class WorkFlowManager {
     private ReletOrderService reletOrderService;
     @Autowired
     private ExchangeOrderService exchangeOrderService;
+    @Autowired
+    private ReplaceOrderService replaceOrderService;
 
     //todo 剩下客户 订单 退货 续租 回调 逻辑需要修改推送
     //todo 换货单 志鹏要新写service，如果商城要换货单 写同service下
@@ -75,7 +78,7 @@ public class WorkFlowManager {
         } else if (WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO.equals(workflowType)) {
             return deploymentOrderService;
         } else if (WorkflowType.WORKFLOW_TYPE_CHANGE.equals(workflowType)) {
-            return changeOrderService;
+            return replaceOrderService;
         } else if (WorkflowType.WORKFLOW_TYPE_REPAIR.equals(workflowType)) {
             return repairOrderService;
         } else if (WorkflowType.WORKFLOW_TYPE_RETURN.equals(workflowType)) {

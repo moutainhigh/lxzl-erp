@@ -18,8 +18,8 @@ public class PrintLogPageParam  extends BasePageParam {
     @NotBlank(message = ErrorCode.PRINT_LOG_REFER_NO_NOT_NULL,groups = {QueryGroup.class})
     private String referNo;   //关联NO
     @NotNull(message = ErrorCode.PRINT_LOG_REFER_TYPE_NOT_NULL,groups = {QueryGroup.class})
-    @In(value = {PrintLogReferType.ORDER_TYPE_CHANGE,PrintLogReferType.ORDER_TYPE_RETURN},message = ErrorCode.PRINT_LOG_REFER_TYPE_ERROR,groups = {QueryGroup.class})
-    private Integer referType;   //关联项类型，1-交货单,2-退货单
+    @In(value = {PrintLogReferType.ORDER_TYPE_CHANGE,PrintLogReferType.ORDER_TYPE_RETURN,PrintLogReferType.ORDER_TYPE_REPLACE},message = ErrorCode.PRINT_LOG_REFER_TYPE_ERROR,groups = {QueryGroup.class})
+    private Integer referType;   //关联项类型，1-交货单,2-退货单，3-换货单
 
     public String getReferNo() {
         return referNo;

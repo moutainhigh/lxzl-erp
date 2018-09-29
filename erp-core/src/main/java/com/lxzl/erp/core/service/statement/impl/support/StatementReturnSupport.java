@@ -1,10 +1,8 @@
 package com.lxzl.erp.core.service.statement.impl.support;
 
 import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.constant.OrderType;
 import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.ReturnOrderRollbackLogMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderReturnDetailMapper;
 import com.lxzl.erp.dataaccess.domain.k3.ReturnOrderRollbackLogDO;
@@ -31,12 +29,12 @@ public class StatementReturnSupport {
     private ReturnOrderRollbackLogMapper returnOrderRollbackLogMapper;
 
     public void saveStatementReturnRecord(Integer statementOrderId, Integer customerId, Integer orderId, Integer orderItemReferId, Integer returnType, BigDecimal returnAmount, Date returnTime, Integer loginUserId, Date currentTime) {
-        saveStatementReturnRecord( statementOrderId,  customerId, orderId,  orderItemReferId,  returnType,  returnAmount, returnTime, loginUserId,currentTime,null,null);
+        saveStatementReturnRecord(statementOrderId, customerId, orderId, orderItemReferId, returnType, returnAmount, returnTime, loginUserId, currentTime, OrderType.ORDER_TYPE_RETURN, null, null);
     }
 
-    public void saveStatementReturnRecord(Integer statementOrderId, Integer customerId, Integer orderId, Integer orderItemReferId, Integer returnType, BigDecimal returnAmount, Date returnTime, Integer loginUserId, Date currentTime,Integer returnOrderId,Integer returnOrderDetailId) {
+    public void saveStatementReturnRecord(Integer statementOrderId, Integer customerId, Integer orderId, Integer orderItemReferId, Integer returnType, BigDecimal returnAmount, Date returnTime, Integer loginUserId, Date currentTime, Integer orderType, Integer returnOrderId, Integer returnOrderDetailId) {
         //为零不保存
-        if(BigDecimalUtil.compare(returnAmount,BigDecimal.ZERO)==0)return;
+        if (BigDecimalUtil.compare(returnAmount, BigDecimal.ZERO) == 0) return;
         StatementOrderReturnDetailDO statementOrderReturnDetailDO = new StatementOrderReturnDetailDO();
         statementOrderReturnDetailDO.setStatementOrderId(statementOrderId);
         statementOrderReturnDetailDO.setCustomerId(customerId);
@@ -48,6 +46,7 @@ public class StatementReturnSupport {
         statementOrderReturnDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         statementOrderReturnDetailDO.setCreateUser(loginUserId.toString());
         statementOrderReturnDetailDO.setCreateTime(currentTime);
+        statementOrderReturnDetailDO.setOrderType(orderType);
         statementOrderReturnDetailDO.setUpdateUser(loginUserId.toString());
         statementOrderReturnDetailDO.setUpdateTime(currentTime);
         statementOrderReturnDetailDO.setReturnOrderId(returnOrderId);
@@ -55,8 +54,8 @@ public class StatementReturnSupport {
         statementOrderReturnDetailMapper.save(statementOrderReturnDetailDO);
     }
 
-    public void saveReturnOrderRollLogToDB(K3ReturnOrderDO k3ReturnOrderDO,String userId) {
-        ReturnOrderRollbackLogDO logDO=new ReturnOrderRollbackLogDO();
+    public void saveReturnOrderRollLogToDB(K3ReturnOrderDO k3ReturnOrderDO, String userId) {
+        ReturnOrderRollbackLogDO logDO = new ReturnOrderRollbackLogDO();
         logDO.setReturnOrderId(k3ReturnOrderDO.getId());
         logDO.setReturnOrderNo(k3ReturnOrderDO.getReturnOrderNo());
         logDO.setCreateTime(new Date());
