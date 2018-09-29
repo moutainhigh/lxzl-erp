@@ -20,4 +20,12 @@ public interface ExchangeOrderMapper extends BaseMysqlDAO<ExchangeOrderDO> {
 	 * @return
 	 */
 	ExchangeOrderDO findByExchangeOrderNo(@Param("exchangeOrderNo") String exchangeOrderNo);
+
+	/**
+	 *根据订单号获取变更单
+	 *
+	 * @param orderNo
+	 * @return
+	 */
+	List<ExchangeOrderDO> findByOrderNo(@Param("orderNo") String orderNo);
 }

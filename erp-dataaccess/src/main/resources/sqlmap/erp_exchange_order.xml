@@ -35,6 +35,11 @@
 		WHERE eeo.exchange_order_no = #{exchangeOrderNo, jdbcType=INTEGER} AND eeo.data_status = 1
 	</select>
 
+	<select id="findByOrderNo" resultMap="ExchangeOrderDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_exchange_order eeo
+		WHERE eeo.order_no = #{orderNo, jdbcType=INTEGER} AND eeo.data_status = 1
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(eeo.id) FROM erp_exchange_order eeo 
 		<where>

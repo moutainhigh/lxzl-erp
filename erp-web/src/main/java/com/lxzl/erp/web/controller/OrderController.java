@@ -290,13 +290,13 @@ public class OrderController extends BaseController {
     }
 
     /**
-     * 取消变更单
+     * 手动触发变更单单
      *
      * @param exchangeOrderParam
      * @param validResult
      * @return
      */
-    @RequestMapping(value = "generatedOrder", method = RequestMethod.POST)
+    @RequestMapping(value = "generatedOrder", method = RequestMethod.GET)
     public Result generatedOrder(@RequestBody ExchangeOrderParam exchangeOrderParam, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = exchangeOrderService.generatedOrder(exchangeOrderParam.getExchangeOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());

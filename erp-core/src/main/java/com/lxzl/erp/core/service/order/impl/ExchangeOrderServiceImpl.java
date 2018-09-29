@@ -53,13 +53,24 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
+        //更改时间不能在最后一期
+        //归还时间
+        Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
 
-        //TODO 开始时间都是一个月的开始时间
-        //只允许有一个有效的变更单
+        //开始时间都是一个月的开始时间,
         //判断是否有操作这个订单的权限
         //只有租赁中的订单才可以进行
+        if (!(OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus())||OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus()))) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
         //查询是否存在换货单
-        //保存变更信息
+        //如果有变更单就不允许更换
+        List<ExchangeOrderDO> exchangeOrderDOList=exchangeOrderMapper.findByOrderNo(exchangeOrder.getOrderNo());
+        if(CollectionUtil.isNotEmpty(exchangeOrderDOList)){
+            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_EXISTS);
+            return result;
+        }
 
         //查询为完成的换货单
         List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(exchangeOrder.getOrderNo());
@@ -278,6 +289,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         }
         newOrder.setFirstNeedPayAmount(createStatementOrderResult.getResult());
         orderTimeAxisSupport.addOrderTimeAxis(newOrder.getId(), newOrder.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_SUCCESS);
+        //结算原单
         //3、原退货单处理
         //3、K3数据同步
         Map<String, Object> maps = new HashMap<>();
