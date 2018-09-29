@@ -21,7 +21,9 @@ import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
+import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import org.apache.commons.collections.ListUtils;
@@ -209,6 +211,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         }
         //1、查询原订单信息
         OrderDO orderDO = orderMapper.findByOrderNo(exchangeOrderDO.getOrderNo());
+        //更新为已转单
+        orderMapper.updateIsExchangeOrder(orderDO.getId());
         OrderConsignInfoDO orderConsignInfoDO=orderConsignInfoMapper.findByOrderId(orderDO.getId());
         Date originalExpectReturnTime = orderDO.getExpectReturnTime();
         Date originalRentStartTime = orderDO.getRentStartTime();
@@ -238,7 +242,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         newOrder.setId(null);
         newOrder.setOriginalOrderNo(originalOrderNo);
         newOrder.setIsOriginalOrder(CommonConstant.COMMON_CONSTANT_NO);
-        newOrder.setIsExchangeOrder(CommonConstant.COMMON_CONSTANT_YES);
+        newOrder.setIsExchangeOrder(CommonConstant.COMMON_CONSTANT_NO);
         orderMapper.save(newOrder);
         orderService.updateOrderConsignInfo(orderConsignInfoDO.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
         //生成新的订单
@@ -266,6 +270,12 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         orderTimeAxisSupport.addOrderTimeAxis(newOrder.getId(), newOrder.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_SUCCESS);
         //3、原退货单处理
         //3、K3数据同步
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("orderNo", nodeOrderNo);
+        maps.put("nowDate", date);
+       // List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findReturnOrderByOrderNoAndDate(maps);
+
+
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(newOrder.getOrderNo());
         return result;
@@ -317,6 +327,15 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
     }
 
+    public void updateK3ReturnOrderDetailForChangeOrder(String orderNo,OrderMaterialDO orderMaterialDO,K3ReturnOrderDetailDO k3ReturnOrderDetailDO){
+        Date date = new Date();
+        k3ReturnOrderDetailDO.setOrderNo(orderNo);
+        k3ReturnOrderDetailDO.setOrderItemId(orderMaterialDO.getId().toString());
+        k3ReturnOrderDetailDO.setUpdateTime(date);
+        k3ReturnOrderDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
+    }
+
     public OrderFlowDO initOrderFlowDO(String originalOrderNo, String nodeOrderNo, String orderNo, Date originalExpectReturnTime, Date originalRentStartTime, Date rentStartTime, Date expectReturnTime,String userId) {
         OrderFlowDO orderFlowDO=new OrderFlowDO();
         Date now=new Date();
@@ -339,6 +358,9 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
 
     @Autowired
     private OrderConsignInfoMapper orderConsignInfoMapper;
+
+    @Autowired
+    private K3ReturnOrderMapper k3ReturnOrderMapper;
 
     @Autowired
     private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
