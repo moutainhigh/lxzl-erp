@@ -8,22 +8,6 @@ import java.util.Date;
 
 public class OrderFlowDO extends BaseDO {
 
-    public OrderFlowDO(String originalOrderNo, String nodeOrderNo, String orderNo, Date originalExpectReturnTime, Date originalRentStartTime, Date rentStartTime, Date expectReturnTime,String userId) {
-        Date now=new Date();
-        this.originalOrderNo = originalOrderNo;
-        this.nodeOrderNo = nodeOrderNo;
-        this.orderNo = orderNo;
-        this.dataStatus = CommonConstant.DATA_STATUS_ENABLE;
-        this.originalExpectReturnTime = originalExpectReturnTime;
-        this.originalRentStartTime = originalRentStartTime;
-        this.rentStartTime = rentStartTime;
-        this.expectReturnTime = expectReturnTime;
-        this.createTime=now;
-        this.createUser= userId;
-        this.updateUser=userId;
-        this.updateTime=now;
-    }
-
     private Integer id;
     private String originalOrderNo;
     private String nodeOrderNo;

@@ -3948,8 +3948,8 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-
-    private void updateOrderConsignInfo(Integer userConsignId, Integer orderId, User loginUser, Date currentTime) {
+    @Override
+    public void updateOrderConsignInfo(Integer userConsignId, Integer orderId, User loginUser, Date currentTime) {
         CustomerConsignInfoDO userConsignInfoDO = customerConsignInfoMapper.findById(userConsignId);
         OrderConsignInfoDO dbOrderConsignInfoDO = orderConsignInfoMapper.findByOrderId(orderId);
         OrderConsignInfoDO orderConsignInfoDO = new OrderConsignInfoDO();

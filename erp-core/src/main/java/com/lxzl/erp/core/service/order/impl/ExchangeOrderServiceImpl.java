@@ -20,7 +20,9 @@ import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
+import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.BeanUtils;
@@ -207,7 +209,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         }
         //1、查询原订单信息
         OrderDO orderDO = orderMapper.findByOrderNo(exchangeOrderDO.getOrderNo());
-
+        OrderConsignInfoDO orderConsignInfoDO=orderConsignInfoMapper.findByOrderId(orderDO.getId());
         Date originalExpectReturnTime = orderDO.getExpectReturnTime();
         Date originalRentStartTime = orderDO.getRentStartTime();
         String originalOrderNo = orderDO.getOriginalOrderNo();
@@ -228,7 +230,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         }
         String orderNO=originalOrderNo+"-"+String.valueOf(countOrderFlow+1);
         //新订单流
-        OrderFlowDO orderFlowDO = new OrderFlowDO(originalOrderNo, nodeOrderNo, orderNO, originalExpectReturnTime, originalRentStartTime, rentStartTime, expectReturnTime, loginUser.getUserId().toString());
+        OrderFlowDO orderFlowDO = this.initOrderFlowDO(originalOrderNo, nodeOrderNo, orderNO, originalExpectReturnTime, originalRentStartTime, rentStartTime, expectReturnTime, loginUser.getUserId().toString());
         orderFlowMapper.save(orderFlowDO);
         //2、新订单创建\处理
         OrderDO newOrder = orderDO;
@@ -238,6 +240,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         newOrder.setIsOriginalOrder(CommonConstant.COMMON_CONSTANT_NO);
         newOrder.setIsExchangeOrder(CommonConstant.COMMON_CONSTANT_YES);
         orderMapper.save(newOrder);
+        orderService.updateOrderConsignInfo(orderConsignInfoDO.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
         //生成新的订单
         if (CollectionUtil.isNotEmpty(newOrder.getOrderProductDOList())) {
             for (OrderProductDO orderProductDO : newOrder.getOrderProductDOList()) {
@@ -298,6 +301,47 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         exchangeOrderMapper.update(exchangeOrderDO);
         return ErrorCode.SUCCESS;
     }
+
+    /**
+     * 更新退货单
+     * @param orderNo
+     * @param orderProductDO
+     * @param k3ReturnOrderDetailDO
+     */
+    public void updateK3ReturnOrderDetailForChangeOrder(String orderNo,OrderProductDO orderProductDO,K3ReturnOrderDetailDO k3ReturnOrderDetailDO){
+        Date date = new Date();
+        k3ReturnOrderDetailDO.setOrderNo(orderNo);
+        k3ReturnOrderDetailDO.setOrderItemId(orderProductDO.getId().toString());
+        k3ReturnOrderDetailDO.setUpdateTime(date);
+        k3ReturnOrderDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
+    }
+
+    public OrderFlowDO initOrderFlowDO(String originalOrderNo, String nodeOrderNo, String orderNo, Date originalExpectReturnTime, Date originalRentStartTime, Date rentStartTime, Date expectReturnTime,String userId) {
+        OrderFlowDO orderFlowDO=new OrderFlowDO();
+        Date now=new Date();
+        orderFlowDO.setOriginalOrderNo(originalOrderNo);
+        orderFlowDO.setNodeOrderNo(nodeOrderNo);
+        orderFlowDO.setOrderNo(orderNo);
+        orderFlowDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        orderFlowDO.setOriginalExpectReturnTime(originalExpectReturnTime);
+        orderFlowDO.setOriginalRentStartTime(originalRentStartTime);
+        orderFlowDO.setRentStartTime(rentStartTime);
+        orderFlowDO.setExpectReturnTime(expectReturnTime);
+        orderFlowDO.setCreateTime(now);
+        orderFlowDO.setCreateUser(userId);
+        orderFlowDO.setUpdateUser(userId);
+        orderFlowDO.setUpdateTime(now);
+        return  orderFlowDO;
+    }
+
+
+
+    @Autowired
+    private OrderConsignInfoMapper orderConsignInfoMapper;
+
+    @Autowired
+    private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
 
     @Autowired
     private StatementService statementService;
