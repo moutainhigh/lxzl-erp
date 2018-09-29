@@ -34,6 +34,10 @@ public class AmountNeedReturn {
         return this;
     }
 
+    public BigDecimal getTotalAmount(){
+        return BigDecimalUtil.add(depositPaidAmount,otherPaidAmount,rentPaidAmount,overduePaidAmount,penaltyPaidAmount,rentDepositPaidAmount);
+    }
+
     public BigDecimal getDepositPaidAmount() {
         return depositPaidAmount;
     }
