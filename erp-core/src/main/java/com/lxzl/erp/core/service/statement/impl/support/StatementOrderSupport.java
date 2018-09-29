@@ -714,18 +714,15 @@ public class StatementOrderSupport {
     }
 
     /**
-     * stop old order which is rentType month after change order
+     * stop old order which is rentType of month
      *
      * @param orderNo
      * @param changeTime
      * @return
      */
-    public Map<String, AmountNeedReturn> stopOldOrder(String orderNo, Date changeTime) {
+    public Map<String, AmountNeedReturn> stopOldMonthRentOrder(String orderNo, Date changeTime) {
         Assert.notNull(orderNo, "订单号不能为空！");
         Assert.notNull(changeTime, "换单时间不能为空！");
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(changeTime);
-        Assert.isTrue(CommonConstant.COMMON_ONE.equals(calendar.get(Calendar.DAY_OF_MONTH)), "截断日必须是月初 ");
         OrderDO orderDO = orderMapper.findByOrderNoSimple(orderNo);
         if (orderDO == null) {
             throw new BusinessException(ErrorCode.ORDER_NOT_EXISTS);
@@ -752,6 +749,16 @@ public class StatementOrderSupport {
                 stopOrderItemMonthStatement(stopTime, statementOrderDOMap, needUpdateDetailDOList, currentTime, userId, returnAmountMap, orderMaterialDO.getOrderId(), OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId());
             }
         }
+        //更新结算详情
+        if (CollectionUtil.isNotEmpty(needUpdateDetailDOList)) {
+            statementOrderDetailMapper.batchUpdate(needUpdateDetailDOList);
+        }
+        //更新结算单
+        if (statementOrderDOMap.size() > 0) {
+            for (StatementOrderDO statementOrderDO : statementOrderDOMap.values()) {
+                statementOrderMapper.update(statementOrderDO);
+            }
+        }
         return returnAmountMap;
     }
 
@@ -759,26 +766,22 @@ public class StatementOrderSupport {
         String uniqueKey = orderId + "_" + orderItemType + "_" + orderItemId;
         //todo 切换到不过滤订单类型的方法
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(orderItemType, orderItemId);
-        if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) return;
+        if (CollectionUtil.isEmpty(statementOrderDetailDOList)) return;
         for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
             //押金全退
             BigDecimal percent;
             if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
                 percent = new BigDecimal(CommonConstant.COMMON_ZERO);
             } else {
-                //如果是当期 则被截断
-                //截断租金，截断关联退货
-
                 //保留完整期
                 if (isThisPhaseNotNeedModify(stopTime, statementOrderDetailDO)) continue;
                 //需保留百分比，默认无需保留
                 percent = new BigDecimal(CommonConstant.COMMON_ZERO);
+                //如果是当期 则被截断，截断租金，截断关联退货
                 if (isThisPhaseNeedInterupt(stopTime, statementOrderDetailDO)) {
                     percent = getRentLengthPercent(statementOrderDetailDO.getStatementStartTime(), stopTime, statementOrderDetailDO.getStatementEndTime());
                 }
             }
-            //if(!StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetailDO.getStatementDetailType()))continue;
-
             AmountNeedReturn amountNeedReturn = modifyStatementItem(percent, statementOrderDOMap, needUpdateDetailDOList, statementOrderDetailDO, userId == null ? CommonConstant.SUPER_USER_ID.toString() : userId.toString(), currentTime, stopTime);
             if (amountNeedReturn != null) {
                 if (!returnAmountMap.containsKey(uniqueKey)) {
@@ -787,7 +790,6 @@ public class StatementOrderSupport {
                     returnAmountMap.get(uniqueKey).add(amountNeedReturn);
                 }
             }
-            //删除租金和关联退货结算
         }
     }
 
@@ -808,6 +810,13 @@ public class StatementOrderSupport {
         return DateUtil.daysBetween(statementOrderDetailDO.getStatementStartTime(), stopTime) >= 0 && DateUtil.daysBetween(stopTime, statementOrderDetailDO.getStatementEndTime()) > 0;
     }
 
+    /**
+     * 将租金押金补到新订单
+     * @param newOrderNo 新订单编号
+     * @param oldAmountMap 老订单截断后需退还的金额
+     * @param orderItemUnionKeyMapping 新订单商品索引与旧订单商品索引的映射关系 （key= orderId + "_" + orderItemType +"_"+orderItemId）
+     * @return
+     */
     public String fillOldOrderAmountToNew(String newOrderNo, Map<String, AmountNeedReturn> oldAmountMap, Map<String, String> orderItemUnionKeyMapping) {
         if (oldAmountMap == null || oldAmountMap.size() == 0) return ErrorCode.SUCCESS;
 
@@ -866,7 +875,6 @@ public class StatementOrderSupport {
                             needUpdate.add(statementOrderDetailDO);
                         }
                     }
-
                 }
             }
             //更新结算详情
