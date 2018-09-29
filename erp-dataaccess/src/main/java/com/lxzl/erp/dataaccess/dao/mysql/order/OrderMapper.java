@@ -92,4 +92,12 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     List<OrderDO>  findOderForWarehouseWorkbench(@Param("maps") Map<String, Object> maps);
 
     Integer findOderCountForWarehouseWorkbench(@Param("maps") Map<String, Object> maps);
+
+    /**
+     * 更新是否已转单
+     *
+     * @param id
+     * @return
+     */
+    Integer updateIsExchangeOrder(@Param("id") Integer id);
 }

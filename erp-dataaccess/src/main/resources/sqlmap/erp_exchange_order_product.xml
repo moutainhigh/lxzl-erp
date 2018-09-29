@@ -97,7 +97,7 @@
 	</insert>
 
 	<insert id="saveList" parameterType="java.util.List">
-		INSERT INTO erp_exchange_order_product (exchange_order_id,order_product_id,product_name,product_sku_id,product_sku_name,product_unit_amount,old_product_unit_amount,is_new_product,data_status)
+		INSERT INTO erp_exchange_order_product (exchange_order_id,order_product_id,product_name,product_sku_id,product_sku_name,product_unit_amount,old_product_unit_amount,is_new_product,data_status,deposit_cycle,payment_cycle,pay_mode)
 		values
 		<foreach collection="list" item="item" separator=",">
 			(#{item.exchangeOrderId},

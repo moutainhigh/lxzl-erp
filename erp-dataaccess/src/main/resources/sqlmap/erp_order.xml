@@ -1078,6 +1078,11 @@
         where order_no = #{orderNo, jdbcType=VARCHAR};
     </update>
 
+    <update id="updateIsExchangeOrder" parameterType="java.lang.Integer">
+        UPDATE erp_order SET  is_exchange_order = 1
+        where id = #{id, jdbcType=INTEGER};
+    </update>
+
     <update id="updateOrderMaterialPriceList" parameterType="java.util.ArrayList">
         UPDATE erp_order_material SET
         <trim>

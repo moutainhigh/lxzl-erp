@@ -271,4 +271,6 @@ public interface OrderService extends VerifyReceiver {
      */
     ServiceResult<String,String> testMachineOrderConvertOrder(Order order);
 
+    void updateOrderConsignInfo(Integer userConsignId, Integer orderId, User loginUser, Date currentTime);
+
 }
