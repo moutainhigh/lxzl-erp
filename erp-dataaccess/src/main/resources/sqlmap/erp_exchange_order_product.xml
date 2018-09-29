@@ -13,10 +13,13 @@
 		<result column="old_product_unit_amount" jdbcType="DECIMAL" property="oldProductUnitAmount" />
 		<result column="is_new_product" jdbcType="INTEGER" property="isNewProduct" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
+		<result column="payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="pay_mode" jdbcType="INTEGER" property="payMode" />
 	</resultMap>
 
 	<sql id="column_List">
-		eeop.id,eeop.exchange_order_id,eeop.order_product_id,eeop.product_name,eeop.product_sku_id,eeop.product_sku_name,eeop.product_unit_amount,eeop.old_product_unit_amount,eeop.is_new_product,eeop.data_status
+		eeop.id,eeop.exchange_order_id,eeop.order_product_id,eeop.product_name,eeop.product_sku_id,eeop.product_sku_name,eeop.product_unit_amount,eeop.old_product_unit_amount,eeop.is_new_product,eeop.data_status,eeop.deposit_cycle,eeop.payment_cycle,eeop.pay_mode
 	</sql>
 
 	<select id="findById" resultMap="ExchangeOrderProductDO" parameterType="java.lang.Integer">
@@ -77,6 +80,15 @@
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
 			</if>
+			<if test="depositCycle != null">
+				deposit_cycle = #{depositCycle,jdbcType=INTEGER},
+			</if>
+			<if test="paymentCycle != null">
+				payment_cycle = #{paymentCycle,jdbcType=INTEGER},
+			</if>
+			<if test="payMode != null">
+				pay_mode = #{payMode,jdbcType=INTEGER},
+			</if>
 		</set>
 	</sql>
 
@@ -96,7 +108,10 @@
 			#{item.productUnitAmount},
 			#{item.oldProductUnitAmount},
 			#{item.isNewProduct},
-			#{item.dataStatus}
+			#{item.dataStatus},
+			#{item.depositCycle},
+			#{item.paymentCycle},
+			#{item.payMode}
 			)
 		</foreach>
 	</insert>

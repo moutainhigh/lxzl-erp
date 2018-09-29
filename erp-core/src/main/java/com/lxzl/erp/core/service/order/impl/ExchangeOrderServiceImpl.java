@@ -11,20 +11,18 @@ import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.order.ExchangeOrderService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderSupport;
+import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
+import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
-import com.lxzl.erp.dataaccess.dao.mysql.order.ExchangeOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.ExchangeOrderMaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.ExchangeOrderProductMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
-import com.lxzl.erp.dataaccess.domain.order.ExchangeOrderDO;
-import com.lxzl.erp.dataaccess.domain.order.ExchangeOrderMaterialDO;
-import com.lxzl.erp.dataaccess.domain.order.ExchangeOrderProductDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderDO;
+import com.lxzl.erp.dataaccess.dao.mysql.order.*;
+import com.lxzl.erp.dataaccess.domain.order.*;
+import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +31,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service("exchangeOrderService")
@@ -118,6 +117,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             return result;
         }
         String verifyMatters = "例行审核";
+        exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_CONFIRM);
         ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_EXCHANGE_ORDER, orderNo, verifyUser, verifyMatters, commitRemark, exchangeOrderCommitParam.getImgIdList(), null);
         if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -141,7 +141,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         List<ExchangeOrderMaterialDO> exchangeOrderMaterialDO = exchangeOrderMaterialMapper.findByExchangeOrderId(exchangeOrderDO.getId());
         exchangeOrderDO.setExchangeOrderMaterialDOList(exchangeOrderMaterialDO);
         exchangeOrderDO.setExchangeOrderProductDOList(exchangeOrderProductDOLiost);
-        ExchangeOrder exchangeOrder= ConverterUtil.convert(exchangeOrderDO, ExchangeOrder.class);
+        ExchangeOrder exchangeOrder = ConverterUtil.convert(exchangeOrderDO, ExchangeOrder.class);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(exchangeOrder);
         return result;
@@ -149,15 +149,15 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
 
     @Override
     public ServiceResult<String, Page<ExchangeOrder>> queryByOrderNo(String orderNo) {
-        ServiceResult<String,Page<ExchangeOrder>> result = new ServiceResult<>();
+        ServiceResult<String, Page<ExchangeOrder>> result = new ServiceResult<>();
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", 0);
         maps.put("pageSize", 100);
         maps.put("orderNo", orderNo);
-        maps.put("orderQueryParam",new HashMap<>());
+        maps.put("orderQueryParam", new HashMap<>());
         Integer count = exchangeOrderMapper.listCount(maps);
-        List<ExchangeOrderDO> exchangeOrderDOList =exchangeOrderMapper.listPage(maps);
-        List<ExchangeOrder> exchangeOrderList=ConverterUtil.convertList(exchangeOrderDOList,ExchangeOrder.class);
+        List<ExchangeOrderDO> exchangeOrderDOList = exchangeOrderMapper.listPage(maps);
+        List<ExchangeOrder> exchangeOrderList = ConverterUtil.convertList(exchangeOrderDOList, ExchangeOrder.class);
         Page<ExchangeOrder> page = new Page<>(exchangeOrderList, count, 0, 100);
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -180,7 +180,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         }
 
         //审核通过
-        exchangeOrderDO.setDataStatus(ExchangeOrderStatus.ORDER_STATUS_CANCEL);
+
+        exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_CANCEL);
         exchangeOrderDO.setUpdateTime(currentTime);
         exchangeOrderDO.setUpdateUser(loginUser.getUserId().toString());
         exchangeOrderMapper.update(exchangeOrderDO);
@@ -190,6 +191,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> generatedOrder(String exchangerOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -204,16 +206,66 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             return result;
         }
         //1、查询原订单信息
-        ServiceResult<String, Order> orderServiceResult=orderService.queryOrderByNo(exchangeOrderDO.getOrderNo());
-        if(!ErrorCode.SUCCESS.equals(orderServiceResult.getErrorCode())){
-            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-            return result;
+        OrderDO orderDO = orderMapper.findByOrderNo(exchangeOrderDO.getOrderNo());
+
+        Date originalExpectReturnTime = orderDO.getExpectReturnTime();
+        Date originalRentStartTime = orderDO.getRentStartTime();
+        String originalOrderNo = orderDO.getOriginalOrderNo();
+        String nodeOrderNo = orderDO.getOrderNo();
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsOriginalOrder())) {//如果是原单
+            originalOrderNo = nodeOrderNo;
         }
+        //根据原订单号，获取订单流
+        //根据原订单号订单流
+        List<OrderFlowDO> orderFlowDOList = orderFlowMapper.findByOriginalOrderNo(originalOrderNo);
+        Date rentStartTime = orderDO.getRentStartTime();
+        Date expectReturnTime = orderDO.getExpectReturnTime();
+        Integer countOrderFlow=0;
+        if (CollectionUtil.isNotEmpty(orderFlowDOList)) {
+            originalExpectReturnTime = orderFlowDOList.get(0).getOriginalExpectReturnTime();
+            originalRentStartTime = orderFlowDOList.get(0).getOriginalRentStartTime();
+            countOrderFlow=orderFlowDOList.size();
+        }
+        String orderNO=originalOrderNo+"-"+String.valueOf(countOrderFlow+1);
+        //新订单流
+        OrderFlowDO orderFlowDO = new OrderFlowDO(originalOrderNo, nodeOrderNo, orderNO, originalExpectReturnTime, originalRentStartTime, rentStartTime, expectReturnTime, loginUser.getUserId().toString());
+        orderFlowMapper.save(orderFlowDO);
         //2、新订单创建\处理
+        OrderDO newOrder = orderDO;
+        newOrder.setOrderNo(orderNO);
+        newOrder.setId(null);
+        newOrder.setOriginalOrderNo(originalOrderNo);
+        newOrder.setIsOriginalOrder(CommonConstant.COMMON_CONSTANT_NO);
+        newOrder.setIsExchangeOrder(CommonConstant.COMMON_CONSTANT_YES);
+        orderMapper.save(newOrder);
+        //生成新的订单
+        if (CollectionUtil.isNotEmpty(newOrder.getOrderProductDOList())) {
+            for (OrderProductDO orderProductDO : newOrder.getOrderProductDOList()) {
+                orderProductDO.setOrderId(newOrder.getId());
+            }
+            orderService.saveOrderProductInfo(newOrder.getOrderProductDOList(), newOrder.getId(), loginUser, currentTime);
+        }
+        if (CollectionUtil.isNotEmpty(newOrder.getOrderMaterialDOList())) {
+            for (OrderMaterialDO orderMaterialDO : newOrder.getOrderMaterialDOList()) {
+                orderMaterialDO.setOrderId(newOrder.getId());
+            }
+            orderService.saveOrderMaterialInfo(newOrder.getOrderMaterialDOList(), newOrder.getId(), loginUser, currentTime);
+        }
+        orderTimeAxisSupport.addOrderTimeAxis(newOrder.getId(), newOrder.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.CREATE_ORDER);
+
+        // 生成结算单
+        ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createOrderStatement(newOrder.getOrderNo());
+        if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            //return createStatementOrderResult.getErrorCode();
+        }
+        newOrder.setFirstNeedPayAmount(createStatementOrderResult.getResult());
+        orderTimeAxisSupport.addOrderTimeAxis(newOrder.getId(), newOrder.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_SUCCESS);
         //3、原退货单处理
         //3、K3数据同步
-
-        return null;
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(newOrder.getOrderNo());
+        return result;
     }
 
     /**
@@ -237,15 +289,21 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         }
         //审核通过
         if (verifyResult) {
-            exchangeOrderDO.setDataStatus(ExchangeOrderStatus.ORDER_STATUS_CONFIRM);
+            exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_CONFIRM);
         } else {
-            exchangeOrderDO.setDataStatus(ExchangeOrderStatus.ORDER_STATUS_WAIT_COMMIT);
+            exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_WAIT_COMMIT);
         }
         exchangeOrderDO.setUpdateTime(currentTime);
         exchangeOrderDO.setUpdateUser(loginUser.getUserId().toString());
         exchangeOrderMapper.update(exchangeOrderDO);
         return ErrorCode.SUCCESS;
     }
+
+    @Autowired
+    private StatementService statementService;
+
+    @Autowired
+    private OrderFlowMapper orderFlowMapper;
 
     @Autowired
     private OrderService orderService;
@@ -273,5 +331,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
 
     @Autowired
     private ExchangeOrderMaterialMapper exchangeOrderMaterialMapper;
+
+    @Autowired
+    private OrderTimeAxisSupport orderTimeAxisSupport;
 
 }

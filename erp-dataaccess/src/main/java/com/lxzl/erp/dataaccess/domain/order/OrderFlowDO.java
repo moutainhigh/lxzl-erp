@@ -1,91 +1,109 @@
 package com.lxzl.erp.dataaccess.domain.order;
 
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+
 import java.util.Date;
 
 
-public class OrderFlowDO  extends BaseDO {
+public class OrderFlowDO extends BaseDO {
 
-	private Integer id;
-	private String originalOrderNo;
-	private String nodeOrderNo;
-	private String orderNo;
-	private Integer dataStatus;
-	private Date originalExpectReturnTime;
-	private Date originalRentStartTime;
-	private Date rentStartTime;
-	private Date expectReturnTime;
+    public OrderFlowDO(String originalOrderNo, String nodeOrderNo, String orderNo, Date originalExpectReturnTime, Date originalRentStartTime, Date rentStartTime, Date expectReturnTime,String userId) {
+        Date now=new Date();
+        this.originalOrderNo = originalOrderNo;
+        this.nodeOrderNo = nodeOrderNo;
+        this.orderNo = orderNo;
+        this.dataStatus = CommonConstant.DATA_STATUS_ENABLE;
+        this.originalExpectReturnTime = originalExpectReturnTime;
+        this.originalRentStartTime = originalRentStartTime;
+        this.rentStartTime = rentStartTime;
+        this.expectReturnTime = expectReturnTime;
+        this.createTime=now;
+        this.createUser= userId;
+        this.updateUser=userId;
+        this.updateTime=now;
+    }
 
-	public Integer getId(){
-		return id;
-	}
+    private Integer id;
+    private String originalOrderNo;
+    private String nodeOrderNo;
+    private String orderNo;
+    private Integer dataStatus;
+    private Date originalExpectReturnTime;
+    private Date originalRentStartTime;
+    private Date rentStartTime;
+    private Date expectReturnTime;
 
-	public void setId(Integer id){
-		this.id = id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getOriginalOrderNo(){
-		return originalOrderNo;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setOriginalOrderNo(String originalOrderNo){
-		this.originalOrderNo = originalOrderNo;
-	}
+    public String getOriginalOrderNo() {
+        return originalOrderNo;
+    }
 
-	public String getNodeOrderNo(){
-		return nodeOrderNo;
-	}
+    public void setOriginalOrderNo(String originalOrderNo) {
+        this.originalOrderNo = originalOrderNo;
+    }
 
-	public void setNodeOrderNo(String nodeOrderNo){
-		this.nodeOrderNo = nodeOrderNo;
-	}
+    public String getNodeOrderNo() {
+        return nodeOrderNo;
+    }
 
-	public String getOrderNo(){
-		return orderNo;
-	}
+    public void setNodeOrderNo(String nodeOrderNo) {
+        this.nodeOrderNo = nodeOrderNo;
+    }
 
-	public void setOrderNo(String orderNo){
-		this.orderNo = orderNo;
-	}
+    public String getOrderNo() {
+        return orderNo;
+    }
 
-	public Integer getDataStatus(){
-		return dataStatus;
-	}
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
 
-	public void setDataStatus(Integer dataStatus){
-		this.dataStatus = dataStatus;
-	}
+    public Integer getDataStatus() {
+        return dataStatus;
+    }
 
-	public Date getOriginalExpectReturnTime(){
-		return originalExpectReturnTime;
-	}
+    public void setDataStatus(Integer dataStatus) {
+        this.dataStatus = dataStatus;
+    }
 
-	public void setOriginalExpectReturnTime(Date originalExpectReturnTime){
-		this.originalExpectReturnTime = originalExpectReturnTime;
-	}
+    public Date getOriginalExpectReturnTime() {
+        return originalExpectReturnTime;
+    }
 
-	public Date getOriginalRentStartTime(){
-		return originalRentStartTime;
-	}
+    public void setOriginalExpectReturnTime(Date originalExpectReturnTime) {
+        this.originalExpectReturnTime = originalExpectReturnTime;
+    }
 
-	public void setOriginalRentStartTime(Date originalRentStartTime){
-		this.originalRentStartTime = originalRentStartTime;
-	}
+    public Date getOriginalRentStartTime() {
+        return originalRentStartTime;
+    }
 
-	public Date getRentStartTime(){
-		return rentStartTime;
-	}
+    public void setOriginalRentStartTime(Date originalRentStartTime) {
+        this.originalRentStartTime = originalRentStartTime;
+    }
 
-	public void setRentStartTime(Date rentStartTime){
-		this.rentStartTime = rentStartTime;
-	}
+    public Date getRentStartTime() {
+        return rentStartTime;
+    }
 
-	public Date getExpectReturnTime(){
-		return expectReturnTime;
-	}
+    public void setRentStartTime(Date rentStartTime) {
+        this.rentStartTime = rentStartTime;
+    }
 
-	public void setExpectReturnTime(Date expectReturnTime){
-		this.expectReturnTime = expectReturnTime;
-	}
+    public Date getExpectReturnTime() {
+        return expectReturnTime;
+    }
+
+    public void setExpectReturnTime(Date expectReturnTime) {
+        this.expectReturnTime = expectReturnTime;
+    }
 
 }
