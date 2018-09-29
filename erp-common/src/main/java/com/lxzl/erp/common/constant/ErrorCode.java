@@ -1120,7 +1120,7 @@ public class ErrorCode {
     public static final String STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR = "J310000005";
     public static final String STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR = "J310000006";
 
-    //换货
+ //换货
     public static final String REPLACE_TIME_NOT_NULL = "J310000001";//换货时间不能为空
     public static final String REPLACE_REASON_TYPE_ERROR = "J310000002";//换货原因类型错误
     public static final String REPLACE_ORDER_DETAIL_LIST_NOT_NULL = "J310000003";//换货详情列表不能为空
@@ -1167,7 +1167,8 @@ public class ErrorCode {
     public static final String REPLACE_ORDER_EXISTS = "J330000003";
     public static final String EXCHANGE_ORDER_EXISTS="J330000004";
 
-    static {
+    public static final String ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER = "J340000001";
+    public static final String EXIT_CORRECT_ORDER_NOT_ALLOW_CHANGE_ORDER = "J340000002";    static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
         MAP.put(BUSINESS_EXCEPTION, "业务异常");
@@ -2310,13 +2311,13 @@ public class ErrorCode {
         MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
         MAP.put(DEPOSIT_NOT_PAID_BEFORE_REPLACE_ORDER, "换货之前需先支付原订单押金");
 
-
         MAP.put(EXCHANGE_ORDER_STATUS_ERROR, "变更单状态有误，请仔细检查该订单");
         MAP.put(ORIGINAL_ORDER_NO_NOT_NULL, "原订单编号不能为空");
         MAP.put(REPLACE_ORDER_EXISTS, "该订单有未完成的换货单");
         MAP.put(EXCHANGE_ORDER_EXISTS, "该订单还有变更单");
 
-    }
+        MAP.put(ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER, "仅月租允许换单");
+        MAP.put(EXIT_CORRECT_ORDER_NOT_ALLOW_CHANGE_ORDER, "当前结算单已进行过冲正，请取消冲正后重试");    }
 
 
     public static String getMessage(String code) {
