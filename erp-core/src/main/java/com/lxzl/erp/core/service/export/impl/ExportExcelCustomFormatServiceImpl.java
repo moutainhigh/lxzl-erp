@@ -839,6 +839,8 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             }
         }
 
+
+        List<BaseCheckStatementDetailDTO> baseCheckStatementDetailDTOS = new ArrayList<>(); //起始与结束时间不同無法合併的put
         // 合并结算统计详情
         for (BaseCheckStatementDetailDTO detailDTO : orderIdAndOrderItemIdMap.values()) {
             if (detailDTO.getReturnReferId() != null) {
@@ -870,9 +872,18 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                             detailDTO.setStatementDetailOverdueAmount(BigDecimalUtil.add(detailDTO.getStatementDetailOverdueAmount(), targetDetail.getStatementDetailOverdueAmount()));
                             detailDTO.setStatementDetailOverduePaidAmount(BigDecimalUtil.add(detailDTO.getStatementDetailOverduePaidAmount(), targetDetail.getStatementDetailOverduePaidAmount()));
                             detailDTO.setStatementDetailCorrectAmount(BigDecimalUtil.add(detailDTO.getStatementDetailCorrectAmount(), targetDetail.getStatementDetailCorrectAmount()));
+                        }else {
+                            baseCheckStatementDetailDTOS.add(targetDetail);
                         }
                     }
                 }
+            }
+        }
+        // 合并结算统计详情
+        if(CollectionUtil.isNotEmpty(baseCheckStatementDetailDTOS)){
+            for(BaseCheckStatementDetailDTO targetDetail : baseCheckStatementDetailDTOS){
+                String cloneKey = targetDetail.getCacheKey(statementStatisticsDTO);
+                orderIdAndOrderItemIdMap.put(cloneKey, targetDetail);
             }
         }
     }

@@ -2258,7 +2258,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                         Date returnTimeDate = simpleDateFormat.parse(returnTimeString);
                         Date realReplaceTimeDate = simpleDateFormat.parse(realReplaceTimeString);
                         if (realReplaceTimeDate.after(returnTimeDate)) {
-                            result.setErrorCode(ErrorCode.RETURN_TIME_NOT_BEFORE_REPLACE_TIME, returnTimeString, replaceOrderDO.getReplaceOrderNo(), realReplaceTimeString);
+                            result.setErrorCode(ErrorCode.RETURN_TIME_NOT_BEFORE_REPLACE_TIME, returnTimeString,replaceOrderDO.getOrderNo(), replaceOrderDO.getReplaceOrderNo(), realReplaceTimeString);
                             return result;
                         }
                     } catch (ParseException e) {
