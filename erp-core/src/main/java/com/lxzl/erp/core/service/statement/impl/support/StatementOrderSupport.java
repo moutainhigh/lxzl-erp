@@ -588,7 +588,7 @@ public class StatementOrderSupport {
 
     private AmountNeedReturn modifyStatementItem(BigDecimal percent, Map<Integer, StatementOrderDO> statementOrderDOMap, List<StatementOrderDetailDO> needUpdateDetailDOList, StatementOrderDetailDO statementOrderDetailDO, String userId, Date updateTime, Date changeTime) {
         if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailCorrectAmount(), BigDecimal.ZERO) > 0) {
-            throw new BusinessException(ErrorCode.EXIT_CORRECT_ORDER_NOT_ALLOW_CHANGE_ORDER);
+            throw new BusinessException(ErrorCode.EXIT_CORRECT_ORDER_NOT_ALLOW_CHANGE_ORDER,ErrorCode.getMessage(ErrorCode.EXIT_CORRECT_ORDER_NOT_ALLOW_CHANGE_ORDER));
         }
         BigDecimal rentDepositNeedReturn = BigDecimal.ZERO;
         BigDecimal depositNeedReturn = BigDecimal.ZERO;
@@ -650,6 +650,11 @@ public class StatementOrderSupport {
             statementOrderDO.setStatementDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementDepositAmount(), subDepositAmount));
         }
 
+        if(isRentDepositNeedModify||isDepositNeedModify){
+            if(BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailAmount(),BigDecimal.ZERO)==0){
+                statementOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            }
+        }
 
         //租金是否需要截断（占时间轴百分百则不需要截断）
         boolean thisPhaseAllRemove = BigDecimalUtil.compare(percent, BigDecimal.ZERO) == 0;
@@ -776,10 +781,10 @@ public class StatementOrderSupport {
         Assert.notNull(changeTime, "换单时间不能为空！");
         OrderDO orderDO = orderMapper.findByOrderNoSimple(orderNo);
         if (orderDO == null) {
-            throw new BusinessException(ErrorCode.ORDER_NOT_EXISTS);
+            throw new BusinessException(ErrorCode.ORDER_NOT_EXISTS,ErrorCode.getMessage(ErrorCode.ORDER_NOT_EXISTS));
         }
         if (!OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())) {
-            throw new BusinessException(ErrorCode.ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER);
+            throw new BusinessException(ErrorCode.ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER,ErrorCode.getMessage(ErrorCode.ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER));
         }
         Date stopTime = DateUtil.getDayByOffset(changeTime, -1);
         Map<Integer, StatementOrderDO> statementOrderDOMap = new HashMap<>();
@@ -832,7 +837,7 @@ public class StatementOrderSupport {
                 }
             }
             AmountNeedReturn amountNeedReturn = modifyStatementItem(percent, statementOrderDOMap, needUpdateDetailDOList, statementOrderDetailDO, userId == null ? CommonConstant.SUPER_USER_ID.toString() : userId.toString(), currentTime, stopTime);
-            if (amountNeedReturn != null) {
+            if (amountNeedReturn != null&&BigDecimalUtil.compare(amountNeedReturn.getTotalAmount(),BigDecimal.ZERO)>0) {
                 if (!returnAmountMap.containsKey(uniqueKey)) {
                     returnAmountMap.put(uniqueKey, amountNeedReturn);
                 } else {
@@ -846,7 +851,7 @@ public class StatementOrderSupport {
         int oldTimeLength = DateUtil.daysBetween(startTime, endTime) + 1;
         int timeLength = DateUtil.daysBetween(startTime, stopTime) + 1;
         if (oldTimeLength == 0) {
-            throw new BusinessException(ErrorCode.ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL);
+            throw new BusinessException(ErrorCode.ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL,ErrorCode.getMessage(ErrorCode.ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL));
         }
         return BigDecimalUtil.div(new BigDecimal(timeLength), new BigDecimal(oldTimeLength), BigDecimalUtil.SCALE);
     }
