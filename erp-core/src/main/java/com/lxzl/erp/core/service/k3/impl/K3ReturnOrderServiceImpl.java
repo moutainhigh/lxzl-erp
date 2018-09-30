@@ -301,9 +301,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         //校验在换货之前时间退货
         ServiceResult<String, String> checkReplaceTimeForReturn = checkReplaceTimeForReturn(newK3ReturnOrderDetailDOList,k3ReturnOrder);
         if(!ErrorCode.SUCCESS.equals(checkReplaceTimeForReturn.getErrorCode())){
-            result.setErrorCode(checkReplaceTimeForReturn.getErrorCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            return result;
+            return checkReplaceTimeForReturn;
         }
 
         //退货日期校验(退货时间不能大于起租时间)
@@ -1284,9 +1283,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         //校验在换货之前时间退货
         ServiceResult<String, String> checkReplaceTimeForReturn = checkReplaceTimeForReturn(newK3ReturnOrderDetailDOList,k3ReturnOrder);
         if(!ErrorCode.SUCCESS.equals(checkReplaceTimeForReturn.getErrorCode())){
-            result.setErrorCode(checkReplaceTimeForReturn.getErrorCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            return result;
+            return checkReplaceTimeForReturn;
         }
 
         //不全部是K3老订单才校验退货日期不能小于三月五号，如果全部是老订单则不进行校验
@@ -1486,9 +1484,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             //校验在换货之前时间退货
             ServiceResult<String, String> checkReplaceTimeForReturn = checkReplaceTimeForReturn(orderDetailList,k3ReturnOrder);
             if(!ErrorCode.SUCCESS.equals(checkReplaceTimeForReturn.getErrorCode())){
-                result.setErrorCode(checkReplaceTimeForReturn.getErrorCode());
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                return result;
+                return checkReplaceTimeForReturn;
             }
 
             for (K3ReturnOrderDetailDO k3ReturnOrderDetail : orderDetailList) {
