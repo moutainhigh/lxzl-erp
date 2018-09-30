@@ -10,9 +10,7 @@ import com.lxzl.erp.common.domain.order.pojo.ExchangeOrderProduct;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.statement.AmountNeedReturn;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.order.ExchangeOrderService;
@@ -56,6 +54,12 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
+
+        //TODO 只能按月租
+
+        //获取当前月的结算日
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), orderDO.getRentStartTime());
+
         //更改时间不能在最后一期
         //归还时间
         Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
@@ -94,24 +98,39 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         exchangeOrderMapper.save(exchangeOrderDO);
         if (!CollectionUtil.isEmpty(exchangeOrder.getExchangeOrderProductList())) {
             List<ExchangeOrderProductDO> exchangeOrderProductDOList = new ArrayList<>();
+            Map<Integer,OrderProductDO> orderProductDOMap=ListUtil.listToMap(orderDO.getOrderProductDOList(),"id");
             //保存商品信息
             for (ExchangeOrderProduct exchangeOrderProduct : exchangeOrder.getExchangeOrderProductList()) {
+                OrderProductDO orderProductDO=orderProductDOMap.get(exchangeOrderProduct.getOrderProductId());
+                //补全信息
                 ExchangeOrderProductDO exchangeOrderProductDO = new ExchangeOrderProductDO();
                 BeanUtils.copyProperties(exchangeOrderProduct, exchangeOrderProductDO);
                 exchangeOrderProductDO.setExchangeOrderId(exchangeOrderDO.getId());
                 exchangeOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                exchangeOrderProductDO.setIsNewProduct(orderProductDO.getIsNewProduct());
+                exchangeOrderProductDO.setOldProductUnitAmount(orderProductDO.getProductUnitAmount());
+                exchangeOrderProductDO.setProductName(orderProductDO.getProductName());
+                exchangeOrderProductDO.setProductSkuId(orderProductDO.getProductSkuId());
+                exchangeOrderProductDO.setProductSkuName(orderProductDO.getProductSkuName());
                 exchangeOrderProductDOList.add(exchangeOrderProductDO);
             }
             exchangeOrderProductMapper.saveList(exchangeOrderProductDOList);
         }
         if (!CollectionUtil.isEmpty(exchangeOrder.getExchangeOrderMaterialList())) {
             List<ExchangeOrderMaterialDO> exchangeOrderMaterialDOList = new ArrayList<>();
+            Map<Integer,OrderMaterialDO> orderMaterialDOMap=ListUtil.listToMap(orderDO.getOrderMaterialDOList(),"id");
             //保存配件信息
             for (ExchangeOrderMaterial exchangeOrderMaterial : exchangeOrder.getExchangeOrderMaterialList()) {
+                OrderMaterialDO orderMaterialDO=orderMaterialDOMap.get(exchangeOrderMaterial.getOrderProductId());
+                //补全信息
                 ExchangeOrderMaterialDO exchangeOrderMaterialDO = new ExchangeOrderMaterialDO();
                 BeanUtils.copyProperties(exchangeOrderMaterial, exchangeOrderMaterialDO);
                 exchangeOrderMaterialDO.setExchangeOrderId(exchangeOrderDO.getId());
                 exchangeOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                exchangeOrderMaterialDO.setIsNewMaterial(orderMaterialDO.getIsNewMaterial());
+                exchangeOrderMaterialDO.setMaterialId(orderMaterialDO.getMaterialId());
+                exchangeOrderMaterialDO.setMaterialName(orderMaterialDO.getMaterialName());
+                exchangeOrderMaterialDO.setOldMaterialUnitAmount(orderMaterialDO.getMaterialUnitAmount());
                 exchangeOrderMaterialDOList.add(exchangeOrderMaterialDO);
             }
             exchangeOrderMaterialMapper.saveList(exchangeOrderMaterialDOList);
@@ -269,61 +288,73 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         OrderFlowDO orderFlowDO = this.initOrderFlowDO(originalOrderNo, nodeOrderNo, orderNO, originalExpectReturnTime, originalRentStartTime, rentStartTime, expectReturnTime, loginUser.getUserId().toString());
         orderFlowMapper.save(orderFlowDO);
         //2、新订单创建\处理
-        OrderDO newOrder = orderDO;
-        newOrder.setOrderNo(orderNO);
-        newOrder.setId(null);
-        newOrder.setOriginalOrderNo(originalOrderNo);
-        newOrder.setIsOriginalOrder(CommonConstant.COMMON_CONSTANT_NO);
-        newOrder.setIsExchangeOrder(CommonConstant.COMMON_CONSTANT_NO);
-        newOrder.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
-        newOrder.setRentStartTime(exchangeOrderDO.getRentStartTime());
-        orderMapper.save(newOrder);
+        OrderDO newOrderDO = orderDO;
+        newOrderDO.setOrderNo(orderNO);
+        newOrderDO.setId(null);
+        newOrderDO.setOriginalOrderNo(originalOrderNo);
+        newOrderDO.setIsOriginalOrder(CommonConstant.COMMON_CONSTANT_NO);
+        newOrderDO.setIsExchangeOrder(CommonConstant.COMMON_CONSTANT_NO);
+        newOrderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
+        newOrderDO.setRentStartTime(exchangeOrderDO.getRentStartTime());
+        //重新计算价格
+        int[] diff = com.lxzl.erp.common.util.DateUtil.getDiff(newOrderDO.getRentStartTime(),expectReturnTime);
+        if (diff[1]>0) {
+            diff[0] += 1;
+        }
+        if (diff[0] == 0) {
+            diff[0] += 1;
+        }
+        newOrderDO.setRentTimeLength(diff[0]);
+        orderService.calculateOrderProductInfo(newOrderDO.getOrderProductDOList(),newOrderDO);
+        orderService.calculateOrderMaterialInfo(newOrderDO.getOrderMaterialDOList(),newOrderDO);
+        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
+        orderMapper.save(newOrderDO);
         orderService.updateOrderConsignInfo(orderConsignInfoDO.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
         //结算单用到的订单数据关系
         Map<String, String> orderItemUnionKeyMapping = new HashMap<>();
         //生成新的订单
-        if (CollectionUtil.isNotEmpty(newOrder.getOrderProductDOList())) {
-            for (OrderProductDO orderProductDO : newOrder.getOrderProductDOList()) {
-                orderProductDO.setOrderId(newOrder.getId());
+        if (CollectionUtil.isNotEmpty(newOrderDO.getOrderProductDOList())) {
+            for (OrderProductDO orderProductDO : newOrderDO.getOrderProductDOList()) {
+                orderProductDO.setOrderId(newOrderDO.getId());
                 orderProductDO.setTestMachineOrderProductId(orderProductDO.getId());//临时使用，存储原有的商品项id
                 orderProductDO.setId(null);
             }
-            orderService.saveOrderProductInfo(newOrder.getOrderProductDOList(), newOrder.getId(), loginUser, currentTime);
-            for (OrderProductDO orderProductDO : newOrder.getOrderProductDOList()) {
-                String key = newOrder.getId().toString() + "_" + OrderItemType.ORDER_ITEM_TYPE_PRODUCT.toString() + "_" + orderProductDO.getId();
+            orderService.saveOrderProductInfo(newOrderDO.getOrderProductDOList(), newOrderDO.getId(), loginUser, currentTime);
+            for (OrderProductDO orderProductDO : newOrderDO.getOrderProductDOList()) {
+                String key = newOrderDO.getId().toString() + "_" + OrderItemType.ORDER_ITEM_TYPE_PRODUCT.toString() + "_" + orderProductDO.getId();
                 String value = originalOrderId.toString() + "_" + OrderItemType.ORDER_ITEM_TYPE_PRODUCT.toString() + "_" + orderProductDO.getTestMachineOrderProductId();
                 orderItemUnionKeyMapping.put(key, value);
             }
         }
-        if (CollectionUtil.isNotEmpty(newOrder.getOrderMaterialDOList())) {
-            for (OrderMaterialDO orderMaterialDO : newOrder.getOrderMaterialDOList()) {
-                orderMaterialDO.setOrderId(newOrder.getId());
+        if (CollectionUtil.isNotEmpty(newOrderDO.getOrderMaterialDOList())) {
+            for (OrderMaterialDO orderMaterialDO : newOrderDO.getOrderMaterialDOList()) {
+                orderMaterialDO.setOrderId(newOrderDO.getId());
                 orderMaterialDO.setTestMachineOrderMaterialId(orderMaterialDO.getId());
                 orderMaterialDO.setId(null);
             }
-            orderService.saveOrderMaterialInfo(newOrder.getOrderMaterialDOList(), newOrder.getId(), loginUser, currentTime);
-            for (OrderMaterialDO orderMaterialDO : newOrder.getOrderMaterialDOList()) {
-                String key = newOrder.getId().toString() + "_" + OrderItemType.ORDER_ITEM_TYPE_MATERIAL.toString() + "_" + orderMaterialDO.getId();
+            orderService.saveOrderMaterialInfo(newOrderDO.getOrderMaterialDOList(), newOrderDO.getId(), loginUser, currentTime);
+            for (OrderMaterialDO orderMaterialDO : newOrderDO.getOrderMaterialDOList()) {
+                String key = newOrderDO.getId().toString() + "_" + OrderItemType.ORDER_ITEM_TYPE_MATERIAL.toString() + "_" + orderMaterialDO.getId();
                 String value = originalOrderId.toString() + "_" + OrderItemType.ORDER_ITEM_TYPE_MATERIAL.toString() + "_" + orderMaterialDO.getTestMachineOrderMaterialId();
                 orderItemUnionKeyMapping.put(key, value);
             }
         }
         //创建订单轴
-        orderTimeAxisSupport.addOrderTimeAxis(newOrder.getId(), newOrder.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.CREATE_ORDER);
+        orderTimeAxisSupport.addOrderTimeAxis(newOrderDO.getId(), newOrderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.CREATE_ORDER);
         //3、生成结算单
-        ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createOrderStatement(newOrder.getOrderNo());
+        ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createOrderStatement(newOrderDO.getOrderNo());
         if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result.setErrorCode(ErrorCode.SYSTEM_ERROR);
-            result.setResult(newOrder.getOrderNo());
+            result.setResult(newOrderDO.getOrderNo());
             return result;
         }
-        newOrder.setFirstNeedPayAmount(createStatementOrderResult.getResult());
+        newOrderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
         //审核订单轴
-        orderTimeAxisSupport.addOrderTimeAxis(newOrder.getId(), newOrder.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_SUCCESS);
+        orderTimeAxisSupport.addOrderTimeAxis(newOrderDO.getId(), newOrderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_SUCCESS);
 
         //3、变更单给K3传数据
-        Order order = ConverterUtil.convert(newOrder, Order.class);
+        Order order = ConverterUtil.convert(newOrderDO, Order.class);
         order.setTestMachineOrderNo(nodeOrderNo);
 //        ServiceResult<String, String> serviceResult = k3Service.testMachineOrderTurnRentOrder(order);
 //        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
@@ -339,14 +370,14 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         //获取所有退货列表，进行退货转移处理
         List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findReturnOrderByOrderNoAndDate(maps);
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDOList)) {
-            if (CollectionUtil.isNotEmpty(newOrder.getOrderProductDOList())) {
-                for (OrderProductDO orderProductDO : newOrder.getOrderProductDOList()) {
-                    this.updk3ReturnOrderProduct(k3ReturnOrderDOList, orderProductDO, null, newOrder.getOrderNo());
+            if (CollectionUtil.isNotEmpty(newOrderDO.getOrderProductDOList())) {
+                for (OrderProductDO orderProductDO : newOrderDO.getOrderProductDOList()) {
+                    this.updk3ReturnOrderProduct(k3ReturnOrderDOList, orderProductDO, null, newOrderDO.getOrderNo());
                 }
             }
-            if (CollectionUtil.isNotEmpty(newOrder.getOrderMaterialDOList())) {
-                for (OrderMaterialDO orderMaterialDO : newOrder.getOrderMaterialDOList()) {
-                    this.updk3ReturnOrderProduct(k3ReturnOrderDOList, null, orderMaterialDO, newOrder.getOrderNo());
+            if (CollectionUtil.isNotEmpty(newOrderDO.getOrderMaterialDOList())) {
+                for (OrderMaterialDO orderMaterialDO : newOrderDO.getOrderMaterialDOList()) {
+                    this.updk3ReturnOrderProduct(k3ReturnOrderDOList, null, orderMaterialDO, newOrderDO.getOrderNo());
                 }
             }
         }
@@ -354,25 +385,25 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         //5、原订单结算单处理
         Map<String, AmountNeedReturn> oldAmountMap = statementOrderSupport.stopOldMonthRentOrder(nodeOrderNo, exchangeOrderDO.getRentStartTime());
         //6、新订单结算单处理
-        String statementResult = statementOrderSupport.fillOldOrderAmountToNew(newOrder.getOrderNo(), oldAmountMap, orderItemUnionKeyMapping);
+        String statementResult = statementOrderSupport.fillOldOrderAmountToNew(newOrderDO.getOrderNo(), oldAmountMap, orderItemUnionKeyMapping);
         if (!ErrorCode.SUCCESS.equals(statementResult)) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result.setErrorCode(ErrorCode.SYSTEM_ERROR);
-            result.setResult(newOrder.getOrderNo());
+            result.setResult(newOrderDO.getOrderNo());
             return result;
         }
 
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(newOrder.getOrderNo());
+        result.setResult(newOrderDO.getOrderNo());
         return result;
     }
 
     private void updk3ReturnOrderProduct(List<K3ReturnOrderDO> k3ReturnOrderDOList, OrderProductDO orderProductDO, OrderMaterialDO orderMaterialDO, String orderNo) {
-        Integer orderItemId = null == orderProductDO ? orderMaterialDO.getId() : orderProductDO.getId();
+        Integer orderItemId = null == orderProductDO ? orderMaterialDO.getTestMachineOrderMaterialId() : orderProductDO.getTestMachineOrderProductId();
         for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOList) {
             List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
             for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList) {
-                if (k3ReturnOrderDetailDO.getOrderItemId().equals(orderItemId)) {
+                if (k3ReturnOrderDetailDO.getOrderItemId().equals(orderItemId.toString())) {
                     Date date = new Date();
                     k3ReturnOrderDetailDO.setOrderNo(orderNo);
                     k3ReturnOrderDetailDO.setOrderItemId(orderItemId.toString());
@@ -382,7 +413,6 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
                 }
             }
         }
-
     }
 
     /**
