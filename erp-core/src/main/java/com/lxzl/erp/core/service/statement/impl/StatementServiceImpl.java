@@ -1835,24 +1835,21 @@ public class StatementServiceImpl implements StatementService {
         //存放退货结算单商品、配件项
         Map<Integer, List<StatementOrderDetail>> returnOrderProudctAndMaterialMap = new HashMap<>();
         for (StatementOrderDetail statementOrderDetail : statementOrderDetailList) {
-            if(OrderType.ORDER_TYPE_REPLACE.equals(statementOrderDetail.getOrderType())){
-                allList.add(statementOrderDetail);
-                continue;
-            }
-            if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
+            //是否订单或换货单商品项结算
+            boolean isOrderItem=OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())||(OrderType.ORDER_TYPE_REPLACE.equals(statementOrderDetail.getOrderType())&&statementOrderDetail.getReturnReferId()==null);
+            boolean isReturnItem=!isOrderItem&&statementOrderDetail.getReturnReferId()!=null;
+            if(isOrderItem){
                 notReturnOrderMap.put(statementOrderDetail.getStatementOrderDetailId(), statementOrderDetail);
-            } else {
-                if (null == statementOrderDetail.getReturnReferId()) {
-                    returnOrderOtherList.add(statementOrderDetail);
+            }else if(isReturnItem){
+                if (returnOrderProudctAndMaterialMap.containsKey(statementOrderDetail.getReturnReferId())) {
+                    returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId()).add(statementOrderDetail);
                 } else {
-                    if (null != returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId())) {
-                        returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId()).add(statementOrderDetail);
-                    } else {
-                        List<StatementOrderDetail> returnOrderProudctAndMaterialList = new ArrayList<>();
-                        returnOrderProudctAndMaterialList.add(statementOrderDetail);
-                        returnOrderProudctAndMaterialMap.put(statementOrderDetail.getReturnReferId(), returnOrderProudctAndMaterialList);
-                    }
+                    List<StatementOrderDetail> returnOrderProudctAndMaterialList = new ArrayList<>();
+                    returnOrderProudctAndMaterialList.add(statementOrderDetail);
+                    returnOrderProudctAndMaterialMap.put(statementOrderDetail.getReturnReferId(), returnOrderProudctAndMaterialList);
                 }
+            }else{
+                returnOrderOtherList.add(statementOrderDetail);
             }
         }
         if (CollectionUtil.isNotEmpty(returnOrderOtherList)) {
