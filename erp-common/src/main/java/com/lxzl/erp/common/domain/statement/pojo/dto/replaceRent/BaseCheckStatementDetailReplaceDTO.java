@@ -57,22 +57,16 @@ public class BaseCheckStatementDetailReplaceDTO extends BaseCheckStatementDetail
 
     @Override
     public void mergeToTarget(BaseCheckStatementDetailDTO targetDetail, CheckStatementStatisticsDTO statementStatisticsDTO) {
-        // 合并数量
-//        Long statementExpectPayTime = this.getStatementExpectPayTime().getTime();
-//        if (statementStatisticsDTO.getMonthEndTime() >= statementExpectPayTime) {
-            if (this.getStatementStartTime().getTime() == targetDetail.getStatementStartTime().getTime() && this.getStatementEndTime().getTime() == targetDetail.getStatementEndTime().getTime()) {
-                targetDetail.setItemCount(this.getItemCount() + targetDetail.getItemCount());
-                // 合并金额
-                super.mergeAmountToTarget(targetDetail);
-            }
-//        }
-        // 合并数量
-//        Long statementExpectPayTime = this.getStatementExpectPayTime().getTime();
-//        if (targetDetail.getStatementExpectPayTime().getTime() == statementExpectPayTime) {
-//            targetDetail.setItemCount(this.getItemCount() + targetDetail.getItemCount());
-//            // 合并金额
-//            super.mergeAmountToTarget(targetDetail);
-//        }
+        if (!(this.getOrderItemType().equals(targetDetail.getOrderItemType()) && this.getOrderItemReferId().equals(targetDetail.getOrderItemReferId()))) {
+            return;
+        }
+        if (!this.getStatementExpectPayTime().equals(targetDetail.getStatementExpectPayTime())) {
+            return;
+        }
+        super.mergeAmountToTarget(targetDetail);
+        if (this.getStatementEndTime().getTime() > targetDetail.getStatementEndTime().getTime()) {
+            targetDetail.setStatementEndTime(this.getStatementEndTime());
+        }
     }
 
     protected String doGetNoThisMonthCacheKey(CheckStatementStatisticsDTO statementStatisticsDTO) {
