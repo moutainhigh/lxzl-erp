@@ -21,6 +21,7 @@ public class UnReceivableDetail {
     private Integer overduePhaseCount;  //逾期期数
     private Integer orderItemReferId;  //订单项ID
     private Integer orderItemType;  //订单项类型，1为商品，2为配件
+    private BigDecimal returnAmount;//合计退换货金额
 
     public String getOrderNo() {
         return orderNo;
@@ -116,5 +117,13 @@ public class UnReceivableDetail {
 
     public void setOrderItemType(Integer orderItemType) {
         this.orderItemType = orderItemType;
+    }
+
+    public BigDecimal getReturnAmount() {
+        return returnAmount;
+    }
+
+    public void setReturnAmount(BigDecimal returnAmount) {
+        this.returnAmount = returnAmount;
     }
 }
