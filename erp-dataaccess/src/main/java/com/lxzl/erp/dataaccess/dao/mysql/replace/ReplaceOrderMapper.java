@@ -32,4 +32,5 @@ public interface ReplaceOrderMapper extends BaseMysqlDAO<ReplaceOrderDO> {
 
     List<ReplaceOrderDO> listByMonthQuery(@Param(value = "queryParam") StatementOrderMonthQueryParam queryParam);
 
+    List<ReplaceOrderDO> findByNewOrderProductIdList(@Param("orderProductIdList") List<Integer> orderProductIdList);
 }
