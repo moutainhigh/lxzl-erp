@@ -1302,6 +1302,12 @@ public class PageController extends BaseController {
         return "/component/order/changePriceModal";
     }
 
+    //创建变更单
+    @RequestMapping("/order-manage/change-rent-create")
+    public String changeRentCreateModal() {
+        return "/component/order/changeRentCreateModal";
+    }
+
     //确认换货
     @RequestMapping("/order-manage/confirm-exchange")
     public String confirmExchangeProductModal() {

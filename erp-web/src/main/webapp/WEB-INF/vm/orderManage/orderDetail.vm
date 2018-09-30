@@ -190,7 +190,8 @@
                 'modal.submit.audit.js',
                 'manage.order.picking.js',
                 'manage.order.print.record.js',
-                'modal.input.js');
+                'modal.input.js',
+                'manage.order.change.rent.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
