@@ -823,7 +823,11 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             // 加入 换货单需支付的
             if (detailDTO.getSourceId() != null && detailDTO.getReturnTime() == null) {
                 String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
-                orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
+                if(orderIdAndOrderItemIdMap.get(cloneKey) != null){
+                    detailDTO.mergeToTarget(orderIdAndOrderItemIdMap.get(cloneKey), statementStatisticsDTO);
+                }else {
+                    orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
+                }
             }
             // 加入 其他项
             if (detailDTO.getReturnTime() != null && (OrderItemType.ORDER_ITEM_TYPE_OTHER.equals(detailDTO.getOrderItemType())
