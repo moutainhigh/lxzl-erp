@@ -299,7 +299,12 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         List<K3ReturnOrderDetailDO> newK3ReturnOrderDetailDOList = newK3ReturnOrderDO.getK3ReturnOrderDetailDOList();
 
         //校验在换货之前时间退货
-        checkReplaceTimeForReturn(newK3ReturnOrderDetailDOList,k3ReturnOrder);
+        ServiceResult<String, String> checkReplaceTimeForReturn = checkReplaceTimeForReturn(newK3ReturnOrderDetailDOList,k3ReturnOrder);
+        if(!ErrorCode.SUCCESS.equals(checkReplaceTimeForReturn.getErrorCode())){
+            result.setErrorCode(checkReplaceTimeForReturn.getErrorCode());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
 
         //退货日期校验(退货时间不能大于起租时间)
         Map<String, OrderDO> orderCatch = new HashMap<String, OrderDO>();
@@ -1277,7 +1282,12 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         K3ReturnOrderDO newK3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrderDO.getReturnOrderNo());
         List<K3ReturnOrderDetailDO> newK3ReturnOrderDetailDOList = newK3ReturnOrderDO.getK3ReturnOrderDetailDOList();
         //校验在换货之前时间退货
-        checkReplaceTimeForReturn(newK3ReturnOrderDetailDOList,k3ReturnOrder);
+        ServiceResult<String, String> checkReplaceTimeForReturn = checkReplaceTimeForReturn(newK3ReturnOrderDetailDOList,k3ReturnOrder);
+        if(!ErrorCode.SUCCESS.equals(checkReplaceTimeForReturn.getErrorCode())){
+            result.setErrorCode(checkReplaceTimeForReturn.getErrorCode());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
 
         //不全部是K3老订单才校验退货日期不能小于三月五号，如果全部是老订单则不进行校验
         if (verifyReturnTime(k3ReturnOrder, result, erpOrderCount)) return result;
@@ -1474,7 +1484,12 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if (CollectionUtil.isNotEmpty(orderDetailList)) {
 
             //校验在换货之前时间退货
-            checkReplaceTimeForReturn(orderDetailList,k3ReturnOrder);
+            ServiceResult<String, String> checkReplaceTimeForReturn = checkReplaceTimeForReturn(orderDetailList,k3ReturnOrder);
+            if(!ErrorCode.SUCCESS.equals(checkReplaceTimeForReturn.getErrorCode())){
+                result.setErrorCode(checkReplaceTimeForReturn.getErrorCode());
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return result;
+            }
 
             for (K3ReturnOrderDetailDO k3ReturnOrderDetail : orderDetailList) {
                 if (!orderCatch.containsKey(k3ReturnOrderDetail.getOrderNo())) {
@@ -2224,7 +2239,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
     }
 
-    private void checkReplaceTimeForReturn(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList , K3ReturnOrder k3ReturnOrder){
+    private ServiceResult<String, String> checkReplaceTimeForReturn(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList , K3ReturnOrder k3ReturnOrder){
+        ServiceResult<String, String> result = new ServiceResult<>();
         //校验在换货之前时间退货
         List<Integer> orderProductIdList = new ArrayList<>();
         for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDetailDOList){
@@ -2245,17 +2261,20 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                         Date returnTimeDate = simpleDateFormat.parse(returnTimeString);
                         Date realReplaceTimeDate = simpleDateFormat.parse(realReplaceTimeString);
                         if (realReplaceTimeDate.after(returnTimeDate)) {
-                            throw new BusinessException(ErrorCode.RETURN_TIME_NOT_BEFORE_REPLACE_TIME,ErrorCode.getMessage(ErrorCode.RETURN_TIME_NOT_BEFORE_REPLACE_TIME));
+                            result.setErrorCode(ErrorCode.RETURN_TIME_NOT_BEFORE_REPLACE_TIME, returnTimeString, replaceOrderDO.getReplaceOrderNo(), realReplaceTimeString);
+                            return result;
                         }
                     } catch (ParseException e) {
                         e.printStackTrace();
                         logger.error("【创建退货单,退货时间或换货时间parse出错】", e);
-                        throw new BusinessException(ErrorCode.SYSTEM_ERROR,ErrorCode.getMessage(ErrorCode.SYSTEM_ERROR));
+                        result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+                        return result;
                     }
                 }
             }
         }
-
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
 
