@@ -290,7 +290,7 @@ public class OrderController extends BaseController {
     }
 
     /**
-     * 取消变更单
+     * 手动触发变更单单
      *
      * @param exchangeOrderParam
      * @param validResult

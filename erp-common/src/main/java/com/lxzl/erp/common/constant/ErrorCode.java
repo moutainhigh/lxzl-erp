@@ -1165,6 +1165,7 @@ public class ErrorCode {
     public static final String EXCHANGE_ORDER_STATUS_ERROR = "J330000001";
     public static final String ORIGINAL_ORDER_NO_NOT_NULL = "J330000002";
     public static final String REPLACE_ORDER_EXISTS = "J330000003";
+    public static final String EXCHANGE_ORDER_EXISTS="J330000004";
 
     public static final String ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER = "J340000001";
     public static final String EXIT_CORRECT_ORDER_NOT_ALLOW_CHANGE_ORDER = "J340000002";    static {
@@ -2313,6 +2314,7 @@ public class ErrorCode {
         MAP.put(EXCHANGE_ORDER_STATUS_ERROR, "变更单状态有误，请仔细检查该订单");
         MAP.put(ORIGINAL_ORDER_NO_NOT_NULL, "原订单编号不能为空");
         MAP.put(REPLACE_ORDER_EXISTS, "该订单有未完成的换货单");
+        MAP.put(EXCHANGE_ORDER_EXISTS, "该订单还有变更单");
 
         MAP.put(ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER, "仅月租允许换单");
         MAP.put(EXIT_CORRECT_ORDER_NOT_ALLOW_CHANGE_ORDER, "当前结算单已进行过冲正，请取消冲正后重试");    }
