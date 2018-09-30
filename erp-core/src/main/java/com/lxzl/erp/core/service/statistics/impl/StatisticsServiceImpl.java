@@ -161,7 +161,13 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         UnReceivable unReceivable = statisticsMapper.queryUnReceivableCount(maps);
         List<UnReceivableDetail> statisticsIncomeDetailList = statisticsMapper.queryUnReceivable(maps);
-        Page<UnReceivableDetail> page = new Page<>(statisticsIncomeDetailList, unReceivable.getTotalCount(), unReceivablePageParam.getPageNo(), unReceivablePageParam.getPageSize());
+        List<UnReceivableDetail>allUnReceivableDetail=new ArrayList<>();
+        for(UnReceivableDetail unReceivableDetail:statisticsIncomeDetailList){
+            BigDecimal endUnReceivable =BigDecimalUtil.add(unReceivableDetail.getUnReceivable(),unReceivableDetail.getReturnAmount());
+            unReceivableDetail.setUnReceivable(endUnReceivable);
+            allUnReceivableDetail.add(unReceivableDetail);
+        }
+        Page<UnReceivableDetail> page = new Page<>(allUnReceivableDetail, unReceivable.getTotalCount(), unReceivablePageParam.getPageNo(), unReceivablePageParam.getPageSize());
         unReceivable.setUnReceivableDetailPage(page);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(unReceivable);
@@ -176,15 +182,35 @@ public class StatisticsServiceImpl implements StatisticsService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("statisticsUnReceivablePageParam", statisticsUnReceivablePageParam);
-
         StatisticsUnReceivable statisticsUnReceivable = statisticsMapper.queryStatisticsUnReceivableCount(maps);
         statisticsUnReceivable.setTotalCustomerCount(statisticsUnReceivable.getTotalRentedCustomerCountShort()+statisticsUnReceivable.getTotalRentingCustomerCountLong());
-        statisticsUnReceivable.setTotalUnReceivablePercentage(getPercentage(statisticsUnReceivable.getTotalUnReceivable(),statisticsUnReceivable.getTotalLastMonthRent()));
+
+        //长租未收总额 - 长租实际发生退换货总额=实际长租未总额
+        BigDecimal allTotalUnReceivableLong =BigDecimalUtil.add(statisticsUnReceivable.getTotalUnReceivableLong(),statisticsUnReceivable.getTotalReturnUnReceivableLong());
+        statisticsUnReceivable.setTotalUnReceivableLong(allTotalUnReceivableLong);
+        //短租未收总额 - 短租实际发生退换货总额=实际短租未收总额
+        BigDecimal allTotalUnReceivableShort =BigDecimalUtil.add(statisticsUnReceivable.getTotalUnReceivableShort(),statisticsUnReceivable.getTotalReturnUnReceivableShort());
+        statisticsUnReceivable.setTotalUnReceivableShort(allTotalUnReceivableShort);
+        //合计未收总额 - 合计发生退换货总额=实际合计未收总额
+        BigDecimal allTotalUnReceivable =BigDecimalUtil.add(statisticsUnReceivable.getTotalUnReceivable(),statisticsUnReceivable.getTotalReturnUnReceivable());
+        statisticsUnReceivable.setTotalUnReceivable(allTotalUnReceivable);
+
+        statisticsUnReceivable.setTotalUnReceivablePercentage(getPercentage(allTotalUnReceivable,statisticsUnReceivable.getTotalLastMonthRent()));
         List<StatisticsUnReceivableDetail> statisticsUnReceivableDetailList = statisticsMapper.queryStatisticsUnReceivable(maps);
         if(CollectionUtil.isNotEmpty(statisticsUnReceivableDetailList)){
             for(StatisticsUnReceivableDetail statisticsUnReceivableDetail : statisticsUnReceivableDetailList){
                 statisticsUnReceivableDetail.setCustomerCount(statisticsUnReceivableDetail.getRentedCustomerCountShort()+statisticsUnReceivableDetail.getRentingCustomerCountLong());
-                statisticsUnReceivableDetail.setUnReceivablePercentage(getPercentage(statisticsUnReceivableDetail.getUnReceivable(),statisticsUnReceivableDetail.getLastMonthRent()));
+
+                //长租未收总额 - 长租实际发生退换货总额=实际长租未总额
+                BigDecimal allUnReceivableLong =BigDecimalUtil.add(statisticsUnReceivableDetail.getUnReceivableLong(),statisticsUnReceivableDetail.getReturnReceivableLong());
+                statisticsUnReceivableDetail.setUnReceivableLong(allUnReceivableLong);
+                //短租未收总额 - 短租实际发生退换货总额=实际短租未收总额
+                BigDecimal allUnReceivableShort =BigDecimalUtil.add(statisticsUnReceivableDetail.getUnReceivableShort(),statisticsUnReceivableDetail.getReturnReceivableShort());
+                statisticsUnReceivableDetail.setUnReceivableShort(allUnReceivableShort);
+                //合计未收总额 - 合计发生退换货总额=实际合计未收总额
+                BigDecimal allUnReceivable =BigDecimalUtil.add(statisticsUnReceivableDetail.getUnReceivable(),statisticsUnReceivableDetail.getReturnReceivable());
+                statisticsUnReceivableDetail.setUnReceivable(allUnReceivable);
+                statisticsUnReceivableDetail.setUnReceivablePercentage(getPercentage(allUnReceivable,statisticsUnReceivableDetail.getLastMonthRent()));
             }
         }
         Page<StatisticsUnReceivableDetail> page = new Page<>(statisticsUnReceivableDetailList, statisticsUnReceivable.getTotalCount(), statisticsUnReceivablePageParam.getPageNo(), statisticsUnReceivablePageParam.getPageSize());
