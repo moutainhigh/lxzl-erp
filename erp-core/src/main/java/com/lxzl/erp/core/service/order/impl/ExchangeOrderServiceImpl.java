@@ -29,6 +29,7 @@ import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
+import com.lxzl.se.common.util.secret.MD5Util;
 import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,9 +58,18 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
 
         //TODO 只能按月租
 
-        //获取当前月的结算日
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), orderDO.getRentStartTime());
+        //获取当前月的结算日、如果是31号就是当前月的最后一天。如果是其他就跟着你月份走就可以了。
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), exchangeOrder.getRentStartTime());
+        //获取日期下一天
+        DateUtil.getDayByOffset(exchangeOrder.getRentStartTime(),1);
 
+
+        //判断一下是否在最后一期
+        if (null != statementDays) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            result.setErrorCode(statementDays.toString());
+            return result;
+        }
         //更改时间不能在最后一期
         //归还时间
         Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
@@ -558,5 +568,4 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
 
     @Autowired
     private OrderTimeAxisSupport orderTimeAxisSupport;
-
 }
