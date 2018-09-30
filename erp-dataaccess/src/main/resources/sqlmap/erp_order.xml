@@ -809,6 +809,7 @@
             </if>
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
+                AND eo.is_exchange_order = 0
             </if>
             <include refid="permission_sql.order_control"/>
         </where>
