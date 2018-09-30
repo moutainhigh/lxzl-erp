@@ -477,6 +477,10 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             }
             if (productSupport.isProduct(k3ReturnOrderDetail.getProductNo())) {
                 OrderProduct orderProduct = orderProductMap.get(Integer.valueOf(k3ReturnOrderDetail.getOrderItemId()));
+                //如果订单配件不存在则跳出
+                if(orderProduct == null){
+                    continue;
+                }
                 BigDecimal unitAmount = orderProduct.getProductUnitAmount();
                 if (unitAmount == null || BigDecimal.ZERO.compareTo(unitAmount) == 0) {
                     continue;
@@ -496,6 +500,10 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 }
             } else if (productSupport.isMaterial(k3ReturnOrderDetail.getProductNo())) {
                 OrderMaterial orderMaterial = orderMaterialMap.get(Integer.valueOf(k3ReturnOrderDetail.getOrderItemId()));
+                //如果订单配件不存在则跳出
+                if(orderMaterial == null){
+                    continue;
+                }
                 BigDecimal unitAmount = orderMaterial.getMaterialUnitAmount();
                 if (unitAmount == null || BigDecimal.ZERO.compareTo(unitAmount) == 0) {
                     continue;
