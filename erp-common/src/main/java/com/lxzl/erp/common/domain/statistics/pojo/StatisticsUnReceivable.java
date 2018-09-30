@@ -28,6 +28,11 @@ public class StatisticsUnReceivable implements Serializable {
     private Integer totalRentingCustomerCountLong;  //长租在租客户数
     private Page<StatisticsUnReceivableDetail> statisticsUnReceivableDetailPage;    //统计项分页
 
+    private BigDecimal totalReturnUnReceivableLong;  //总退换货长租结算
+    private BigDecimal totalReturnUnReceivableShort;  //总退换货短租结算
+    private BigDecimal totalReturnUnReceivable;  //总退换货合计结算
+
+
     public Integer getTotalCount() {
         return totalCount;
     }
@@ -122,6 +127,30 @@ public class StatisticsUnReceivable implements Serializable {
 
     public void setStatisticsUnReceivableDetailPage(Page<StatisticsUnReceivableDetail> statisticsUnReceivableDetailPage) {
         this.statisticsUnReceivableDetailPage = statisticsUnReceivableDetailPage;
+    }
+
+    public BigDecimal getTotalReturnUnReceivableLong() {
+        return totalReturnUnReceivableLong;
+    }
+
+    public void setTotalReturnUnReceivableLong(BigDecimal totalReturnUnReceivableLong) {
+        this.totalReturnUnReceivableLong = totalReturnUnReceivableLong;
+    }
+
+    public BigDecimal getTotalReturnUnReceivableShort() {
+        return totalReturnUnReceivableShort;
+    }
+
+    public void setTotalReturnUnReceivableShort(BigDecimal totalReturnUnReceivableShort) {
+        this.totalReturnUnReceivableShort = totalReturnUnReceivableShort;
+    }
+
+    public BigDecimal getTotalReturnUnReceivable() {
+        return totalReturnUnReceivable;
+    }
+
+    public void setTotalReturnUnReceivable(BigDecimal totalReturnUnReceivable) {
+        this.totalReturnUnReceivable = totalReturnUnReceivable;
     }
 }
 

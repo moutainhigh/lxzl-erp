@@ -832,6 +832,7 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_DETAIL_NOT_IN_SAME_ORDER = "J16000024";
     public static final String STATEMENT_ORDER_ITEM_NO_NEED_PAY = "J16000025";
     public static final String CORRECT_AMOUNT_ERROR = "J16000026";
+    public static final String CHECK_SHEET_CHOICE_MONTH_NOT_STATEMENT_ORDER_INFORMATION = "J16000027";
 
     public static final String K3_RETURN_ORDER_IS_NOT_NULL = "J17000001";
     public static final String K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE = "J17000002";
@@ -1160,7 +1161,7 @@ public class ErrorCode {
     public static final String REPLACE_ORDER_PRODUCT_NOT_NEW= "J310000037";//新商不能换货或被换，只能选择次新商品进行更换
     public static final String APPLE_NOT_REPLACE_OTHER= "J310000038";//苹果商品只能更换苹果商品
     public static final String OTHER_NOT_REPLACE_APPLE= "J310000039";//非苹果商品不能更换苹果商品
-
+    public static final String RETURN_TIME_NOT_BEFORE_REPLACE_TIME= "J3100000340";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1956,6 +1957,7 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_DETAIL_NOT_IN_SAME_ORDER, "结算单项不属于同一结算单");
         MAP.put(STATEMENT_ORDER_ITEM_NO_NEED_PAY, "结算单项无需支付");
         MAP.put(CORRECT_AMOUNT_ERROR, "冲正金额有误，%s ");
+        MAP.put(CHECK_SHEET_CHOICE_MONTH_NOT_STATEMENT_ORDER_INFORMATION, "选择月份未有对帐单信息");
 
         MAP.put(K3_RETURN_ORDER_IS_NOT_NULL, "K3退货单不存在");
         MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE, "K3退货单状态为审核中或者已推送到K3，不能修改");
@@ -2300,6 +2302,7 @@ public class ErrorCode {
         MAP.put(REPLACE_ORDER_PRODUCT_NOT_NEW, "全新商不能换货或被换，只能选择次新商品进行换货操作");
         MAP.put(APPLE_NOT_REPLACE_OTHER, "苹果商品只能更换苹果商品");
         MAP.put(OTHER_NOT_REPLACE_APPLE, "非苹果商品不能更换苹果商品");
+        MAP.put(RETURN_TIME_NOT_BEFORE_REPLACE_TIME, "所选退货时间为【%s 】，订单【%s 】的换货单【%s 】的换货时间为【%s 】，所退的商品中有换货的商品，退货时间不能选在换货之前");
 
 
         MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");

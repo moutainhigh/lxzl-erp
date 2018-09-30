@@ -24,6 +24,11 @@ public class StatisticsUnReceivableDetail {
     private Integer rentedCustomerCountShort;  //短租合作客户数
     private Integer rentingCustomerCountLong;  //长租在租客户数
 
+    private BigDecimal returnReceivableLong; //退换长租已结算的
+    private BigDecimal returnReceivableShort;//退换短租已结算的
+    private BigDecimal returnReceivable;//退换货合计已结算的
+
+
     public Integer getSubCompanyId() {
         return subCompanyId;
     }
@@ -135,4 +140,30 @@ public class StatisticsUnReceivableDetail {
     public void setRentingCustomerCountLong(Integer rentingCustomerCountLong) {
         this.rentingCustomerCountLong = rentingCustomerCountLong;
     }
+
+    public BigDecimal getReturnReceivableLong() {
+        return returnReceivableLong;
+    }
+
+    public void setReturnReceivableLong(BigDecimal returnReceivableLong) {
+        this.returnReceivableLong = returnReceivableLong;
+    }
+
+    public BigDecimal getReturnReceivableShort() {
+        return returnReceivableShort;
+    }
+
+    public void setReturnReceivableShort(BigDecimal returnReceivableShort) {
+        this.returnReceivableShort = returnReceivableShort;
+    }
+
+    public BigDecimal getReturnReceivable() {
+        return returnReceivable;
+    }
+
+    public void setReturnReceivable(BigDecimal returnReceivable) {
+        this.returnReceivable = returnReceivable;
+    }
+
+
 }
