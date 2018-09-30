@@ -1575,6 +1575,22 @@ public class StatementServiceImpl implements StatementService {
             for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
                 statementOrderIdList.add(statementOrderDetailDO.getStatementOrderId());
             }
+
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsOriginalOrder()) &&
+                    CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsExchangeOrder())){
+                //获取转单列表
+                List<OrderFlowDO> orderFlowDOList = orderFlowMapper.findByOriginalOrderNo(orderDO.getOrderNo());
+                if (CollectionUtil.isNotEmpty(orderFlowDOList)){
+                    //查询原单转单过的所有订单的结算单
+                    List<StatementOrderDetailDO> statementExchangeOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndOrderNoList(OrderType.ORDER_TYPE_ORDER, orderFlowDOList);
+                    if (CollectionUtil.isNotEmpty(statementExchangeOrderDetailDOList)){
+
+                        for (StatementOrderDetailDO statementExchangeOrderDetailDO : statementExchangeOrderDetailDOList) {
+                            statementOrderIdList.add(statementExchangeOrderDetailDO.getStatementOrderId());
+                        }
+                    }
+                }
+            }
             maps.put("statementOrderIdList", statementOrderIdList);
         }
 
@@ -8155,5 +8171,8 @@ public class StatementServiceImpl implements StatementService {
     private ReplaceOrderMaterialMapper replaceOrderMaterialMapper;
     @Autowired
     private ReplaceOrderProductMapper replaceOrderProductMapper;
+
+    @Autowired
+    private OrderFlowMapper orderFlowMapper;
 
 }
