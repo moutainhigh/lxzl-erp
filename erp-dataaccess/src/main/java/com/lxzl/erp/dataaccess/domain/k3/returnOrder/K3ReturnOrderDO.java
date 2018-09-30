@@ -1,10 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.k3.returnOrder;
 
-import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
-import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;

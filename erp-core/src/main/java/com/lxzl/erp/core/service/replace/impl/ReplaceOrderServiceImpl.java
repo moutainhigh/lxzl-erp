@@ -891,13 +891,13 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             return result;
         }
 
-        //校验实际换货时间和预计换货时间与当前时间
-        Date replaceTime = replaceOrder.getReplaceTime();
-        String replaceTimeString = simpleDateFormat.format(replaceTime);
-        String nowTimeString = simpleDateFormat.format(date);
-        if (checkRealReplaceTime(result, simpleDateFormat, realReplaceTimeString, replaceTimeString, nowTimeString)){
-            return result;
-        }
+//        //校验实际换货时间和预计换货时间与当前时间
+//        Date replaceTime = replaceOrder.getReplaceTime();
+//        String replaceTimeString = simpleDateFormat.format(replaceTime);
+//        String nowTimeString = simpleDateFormat.format(date);
+//        if (checkRealReplaceTime(result, simpleDateFormat, realReplaceTimeString, replaceTimeString, nowTimeString)){
+//            return result;
+//        }
 
         ReplaceOrderDO replaceOrderDO = ConverterUtil.convert(replaceOrder,ReplaceOrderDO.class);
 
@@ -1375,22 +1375,25 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 serviceResult.setErrorCode(ErrorCode.SEND_REPLACE_ORDER_TO_K3_STATUS_ERROR);
                 return serviceResult;
             }
-            response = HttpClientUtil.post(k3confirmOrderUrl, requestJson, headerBuilder, "UTF-8");
-            responseMap = JSONObject.parseObject(response,HashMap.class);
-            if ("true".equals(responseMap.get("IsSuccess").toString())){
-                serviceResult.setErrorCode(ErrorCode.SUCCESS);
-                serviceResult.setResult(responseMap.get("Message").toString());
-                return serviceResult;
-            }else{
-                StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
-                sb.append("向K3推送【换货单-").append(replaceOrderDO.getReplaceOrderNo()).append("】数据失败：");
-                sb.append(responseMap.get("Message").toString());
-                sb.append("\r\n").append("请求参数：").append(requestJson);
-                dingDingSupport.dingDingSendMessage(sb.toString());
-                serviceResult.setErrorCode(ErrorCode.K3_REPLACE_ORDER_ERROR,responseMap.get("Message").toString());
-                serviceResult.setResult(responseMap.get("Message").toString());
-                return serviceResult;
-            }
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+//            serviceResult.setResult(responseMap.get("Message").toString());
+            return serviceResult;
+//            response = HttpClientUtil.post(k3confirmOrderUrl, requestJson, headerBuilder, "UTF-8");
+//            responseMap = JSONObject.parseObject(response,HashMap.class);
+//            if ("true".equals(responseMap.get("IsSuccess").toString())){
+//                serviceResult.setErrorCode(ErrorCode.SUCCESS);
+//                serviceResult.setResult(responseMap.get("Message").toString());
+//                return serviceResult;
+//            }else{
+//                StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+//                sb.append("向K3推送【换货单-").append(replaceOrderDO.getReplaceOrderNo()).append("】数据失败：");
+//                sb.append(responseMap.get("Message").toString());
+//                sb.append("\r\n").append("请求参数：").append(requestJson);
+//                dingDingSupport.dingDingSendMessage(sb.toString());
+//                serviceResult.setErrorCode(ErrorCode.K3_REPLACE_ORDER_ERROR,responseMap.get("Message").toString());
+//                serviceResult.setResult(responseMap.get("Message").toString());
+//                return serviceResult;
+//            }
         }catch (Exception e){
             logger.error("向K3推送换货单异常：",e);
             StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());

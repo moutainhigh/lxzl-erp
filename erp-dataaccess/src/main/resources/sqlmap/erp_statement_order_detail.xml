@@ -1697,7 +1697,7 @@
         <include refid="column_List"/>
         FROM erp_statement_order_detail esod
         WHERE esod.id IN <foreach collection="ids" item="item" index="index" separator="," open="(" close=")">#{item}</foreach>
-         AND esod.data_status = 1
+        AND esod.data_status = 1
     </select>
 
     <select id="findOrderItemStatementByType" resultMap="StatementOrderDetailDO">
@@ -1714,6 +1714,60 @@
         FROM erp_statement_order_detail esod
         WHERE esod.order_type = #{orderType, jdbcType=INTEGER} AND esod.order_id = #{orderId, jdbcType=INTEGER} AND esod.statement_detail_type= #{statementDetailType, jdbcType=INTEGER} AND
         esod.data_status = 1
+    </select>
+
+    <select id="listByCustomerId"  parameterType="com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam" resultMap="StatementOrderDetailDO">
+        SELECT
+        DISTINCT <include refid="column_List"/>
+        FROM erp_statement_order_detail esod
+        WHERE esod.customer_id = #{queryParam.customerId}
+        AND esod.data_status = 1
+        <if test="queryParam.queryOrderType != null">
+            AND esod.order_type = #{queryParam.queryOrderType}
+        </if>
+        AND(
+        NOT(
+        esod.statement_start_time <![CDATA[ > ]]> #{queryParam.statementOrderEndTimeAddOne}
+        OR esod.statement_end_time <![CDATA[ < ]]> #{queryParam.statementOrderStartTime}
+        )
+        OR esod.statement_expect_pay_time BETWEEN #{queryParam.statementOrderStartTime} AND #{queryParam.statementOrderEndTimeAddOne}
+        )
+    </select>
+
+    <select id="listUnRentByOrderIds"  parameterType="com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam" resultMap="StatementOrderDetailDO">
+        SELECT
+        DISTINCT <include refid="column_List"/>
+        FROM erp_statement_order_detail esod
+        WHERE esod.customer_id = #{queryParam.customerId}
+        AND esod.data_status = 1
+        <if test="queryParam.queryOrderType != null">
+            AND esod.order_type = #{queryParam.queryOrderType, jdbcType=INTEGER}
+        </if>
+        <if test="queryParam.queryOrderType == 4 and queryParam.orderIds != null and queryParam.orderIds.size() > 0">
+            AND esod.order_id in
+            <foreach collection="queryParam.orderIds" item="item" index="index" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="queryParam.queryOrderType == 6 and queryParam.replaceOrderIds != null and queryParam.replaceOrderIds.size() > 0">
+            AND esod.source_id in
+            <foreach collection="queryParam.replaceOrderIds" item="item" index="index" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY esod.order_id ASC, esod.statement_expect_pay_time ASC
+    </select>
+
+    <select id="sumStatementDetailAmountByCustomerNo" parameterType="com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam" resultType="com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementSummaryDTO">
+        SELECT
+        sum(esod.statement_detail_amount) previousPeriodEndUnpaidAmount
+        FROM erp_statement_order_detail esod
+        WHERE
+        esod.customer_id = #{queryParam.customerId}
+        <if test="queryParam.statementDetailStatus != null">
+            AND esod.statement_detail_status = #{queryParam.statementDetailStatus}
+        </if>
+        AND esod.statement_start_time <![CDATA[ < ]]> #{queryParam.statementOrderStartTime}
     </select>
 
     <select id="findByOrderTypeAndSourceId" resultMap="StatementOrderDetailDO">

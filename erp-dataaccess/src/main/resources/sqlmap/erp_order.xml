@@ -2355,4 +2355,32 @@
         </where>
     </select>
 
+    <select id="listByIds" resultMap="OrderDO" parameterType="java.util.Set">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_order eo
+        WHERE eo.data_status = 1
+        <if test="ids != null">
+            AND eo.id in
+            <foreach collection="ids" item="item" index="index" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="listByMonthQuery"  parameterType="com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam" resultMap="OrderDO">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_order eo
+        WHERE eo.buyer_customer_id = #{queryParam.customerId}
+        AND eo.data_status = 1
+        <!--<if test="queryParam.queryOrderType != null">-->
+            <!--AND eo.order_type = #{queryParam.queryOrderType}-->
+        <!--</if>-->
+        AND NOT
+        (
+        eo.rent_start_time <![CDATA[ > ]]> #{queryParam.statementOrderEndTimeAddOne}
+        OR eo.expect_return_time <![CDATA[ < ]]> #{queryParam.statementOrderStartTime}
+        )
+    </select>
 </mapper>

@@ -1,64 +1,55 @@
 package com.lxzl.erp.core.service.export.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.k3.pojo.returnOrder.ReturnReasonType;
-import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
-import com.lxzl.erp.common.domain.statement.CheckStatementOrderDetailBase;
-import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
+import com.lxzl.erp.common.domain.order.pojo.*;
+import com.lxzl.erp.common.domain.payment.CustomerAccountLogParam;
+import com.lxzl.erp.common.domain.reletorder.pojo.*;
+import com.lxzl.erp.common.domain.replace.pojo.*;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
-import com.lxzl.erp.common.domain.statement.pojo.CheckStatementOrder;
-import com.lxzl.erp.common.domain.statement.pojo.CheckStatementOrderDetail;
-import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.domain.statement.pojo.dto.*;
+import com.lxzl.erp.common.domain.statement.pojo.dto.rent.CheckStatementDetailRentProductDTO;
+import com.lxzl.erp.common.domain.statement.pojo.dto.replaceRent.CheckStatementDetailUnReplaceProductDTO;
+import com.lxzl.erp.common.domain.statement.pojo.dto.unrent.*;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.DateUtil;
-import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
-import com.lxzl.erp.core.service.export.AmountExcelExportView;
-import com.lxzl.erp.core.service.export.ExportExcelCustomFormatService;
+import com.lxzl.erp.core.service.export.ExcelExportConfig;
 import com.lxzl.erp.core.service.export.ExcelExportConfigGroup;
-import com.lxzl.erp.core.service.export.ExcelExportService;
+import com.lxzl.erp.core.service.export.ExportExcelCustomFormatService;
 import com.lxzl.erp.core.service.export.impl.support.ExcelExportSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
-import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
-import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
+import com.lxzl.erp.dataaccess.dao.mysql.order.*;
+import com.lxzl.erp.dataaccess.dao.mysql.reletorder.*;
+import com.lxzl.erp.dataaccess.dao.mysql.replace.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3OrderStatementConfigDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
-import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
-import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
-import com.lxzl.erp.dataaccess.domain.statement.CheckStatementOrderDetailDO;
-import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDO;
-import com.lxzl.se.common.util.StringUtil;
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
 import org.apache.commons.collections.MapUtils;
-import org.apache.poi.hssf.usermodel.*;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.*;
-import org.apache.tools.zip.ZipEntry;
-import org.apache.tools.zip.ZipOutputStream;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -73,27 +64,10 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
     private StatementService statementService;
 
     @Autowired
-    private ExcelExportService excelExportService;
-    @Autowired
     private OrderMapper orderMapper;
 
     @Autowired
-    private AmountExcelExportView amountExcelExportView;
-
-    @Autowired
-    private DingDingSupport dingDingSupport;
-
-    @Autowired
-    private StatementOrderMapper statementOrderMapper;
-
-    @Autowired
-    private PermissionSupport permissionSupport;
-
-    @Autowired
     private K3ReturnOrderMapper k3ReturnOrderMapper;
-
-    @Autowired
-    private StatementOrderCorrectMapper statementOrderCorrectMapper;
 
     @Autowired
     private OrderProductMapper orderProductMapper;
@@ -105,1222 +79,1254 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
     private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
 
     @Autowired
-    private StatementOrderDetailMapper statementOrderDetailMapper;
+    private ReletOrderMapper reletOrderMapper;
+
+    @Autowired
+    private ReletOrderMaterialMapper reletOrderMaterialMapper;
+
+    @Autowired
+    private ReletOrderProductMapper reletOrderProductMapper;
 
     @Autowired
     private CustomerMapper customerMapper;
 
     @Autowired
-    private ReletOrderMapper reletOrderMapper;
+    private K3OrderStatementConfigMapper k3OrderStatementConfigMapper;
 
     @Autowired
     private ProductSupport productSupport;
 
     @Autowired
     private PaymentService paymentService;
+
     @Autowired
-    private UserSupport userSupport;
+    private ReplaceOrderMapper replaceOrderMapper;
+
+    @Autowired
+    private ReplaceOrderProductMapper replaceOrderProductMapper;
+
+    @Autowired
+    private ReplaceOrderMaterialMapper replaceOrderMaterialMapper;
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public ServiceResult<String, String> queryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam, HttpServletResponse response) throws Exception {
+        return queryStatementOrderCheckParamNew(statementOrderMonthQueryParam, response);
+    }
 
-//        String dir = statementOrderMonthQueryParam.getStatementOrderSubCompanyName();
-//        File zip = new File("D:\\statement\\bj.zip");
-
-//        String[] customerNameStr = statementOrderMonthQueryParam.getStatementOrderCustomerName().split(",");
-
-        ServiceResult<String, String> result = new ServiceResult<>();
-
-        List<String> fileNames = new ArrayList();// 用于存放生成的文件名称s
-
-//        for (int i = 0; i < customerNameStr.length; i++) {
-        String customerNoParam = statementOrderMonthQueryParam.getStatementOrderCustomerNo();
-        Date statementOrderStartTime = statementOrderMonthQueryParam.getStatementOrderStartTime();
-        Date statementOrderEndTime = statementOrderMonthQueryParam.getStatementOrderEndTime();
-        //todo 获取有的预计支付时间
-        XSSFWorkbook hssfWorkbook = null;
-        BigDecimal beforePeriodUnpaid = new BigDecimal(0);
-        BigDecimal allPeriodUnpaid = new BigDecimal(0);
-        //查询账户余额
-        Boolean findCustomerAccount = true;
-        BigDecimal accountBalance = BigDecimal.ZERO;
-        CustomerAccount customerAccount = null;
-        try {
-            customerAccount = paymentService.queryCustomerAccount(customerNoParam);
-        }catch (Exception e){
-            findCustomerAccount = false;
-        }
-        if (customerAccount == null) {
-            findCustomerAccount = false;
-        }
-        if (findCustomerAccount) {
-            accountBalance = customerAccount.getBalanceAmount();
-        }
-
-        statementOrderMonthQueryParam = new StatementOrderMonthQueryParam();
-        statementOrderMonthQueryParam.setStatementOrderCustomerNo(customerNoParam);
-//        statementOrderMonthQueryParam.setStatementOrderStartTime(statementOrderStartTime);
-        statementOrderMonthQueryParam.setStatementOrderEndTime(statementOrderEndTime);
-        Integer userId = userSupport.getCurrentUserId();
-        ServiceResult<String, List<CheckStatementOrder>> stringListServiceResult = statementService.exportQueryStatementOrderCheckParam(statementOrderMonthQueryParam,userId);
-        if (!ErrorCode.SUCCESS.equals(stringListServiceResult.getErrorCode())) {
-            result.setErrorCode(stringListServiceResult.getErrorCode());
-            return result;
-        }
-        List<CheckStatementOrder> checkStatementOrderList = stringListServiceResult.getResult();
-        if (CollectionUtil.isEmpty(checkStatementOrderList)) {
-            dingDingSupport.dingDingSendMessage(customerNoParam + "无对账单");
-            return result;
-        }
-
-        Map<String, BigDecimal> totalEverPeriodAmountMap = new HashMap<>();
-        Map<String, BigDecimal> totalEverPeriodPaidAmountMap = new HashMap<>();
-
-        //算出总的未付
-        for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-            totalEverPeriodAmountMap.put(checkStatementOrder.getMonthTime(), BigDecimalUtil.add(totalEverPeriodAmountMap.get(checkStatementOrder.getMonthTime()), checkStatementOrder.getStatementAmount()));
-            totalEverPeriodPaidAmountMap.put(checkStatementOrder.getMonthTime(), BigDecimalUtil.add(totalEverPeriodPaidAmountMap.get(checkStatementOrder.getMonthTime()), checkStatementOrder.getStatementPaidAmount()));
-            allPeriodUnpaid = BigDecimalUtil.add(allPeriodUnpaid, BigDecimalUtil.sub(checkStatementOrder.getStatementAmount(), checkStatementOrder.getStatementPaidAmount()));
-        }
-
-        String previousSheetName = "";
-        String customerName = "";
-        //先付后用找月份和结算开始时间在同一月的那一期
-        Map<String,CheckStatementOrderDetail> bigDecimalMap = new HashMap<>();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
-        for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-            List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
-            if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
-                continue;
-            }
-            String monthTime = checkStatementOrder.getMonthTime();
-            for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
-                if (BigDecimalUtil.compare(exportStatementOrderDetail.getUnitAmount(),BigDecimal.ZERO)>0) {
-                    Date statementStartTimeDate = exportStatementOrderDetail.getStatementStartTime();
-                    if (statementStartTimeDate != null) {
-                        String statementStartTime = simpleDateFormat.format(statementStartTimeDate);
-                        //订单商品或配件，先付后用（1），月份等于计算开始时间，取出字符串和对象
-                        if ((OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())||
-                                OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType()))&&
-                                OrderPayMode.PAY_MODE_PAY_BEFORE.equals(exportStatementOrderDetail.getPayMode())&&
-                                monthTime.equals(statementStartTime)) {
-                            //Key 商品/配件ID+结算单详情类型+结算单商品配件类型+支付类型+支付开始时间+支付结束时间+订单编号
-                            String bigDecimalKey = exportStatementOrderDetail.getOrderItemReferId() +"-"+exportStatementOrderDetail.getOrderType()+"-"+
-                                    exportStatementOrderDetail.getOrderItemType()+"-"+exportStatementOrderDetail.getPayMode()+"-"+
-                                    exportStatementOrderDetail.getStatementStartTime()+"-"+exportStatementOrderDetail.getStatementEndTime()+"-"+exportStatementOrderDetail.getOrderNo();
-                            if (!bigDecimalMap.containsKey(bigDecimalKey)) {
-                                bigDecimalMap.put(bigDecimalKey,exportStatementOrderDetail);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        //开始存储先付后用的金额
-        if (MapUtils.isNotEmpty(bigDecimalMap)) {
-            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-                List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
-                if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
-                    continue;
-                }
-                String monthTime = checkStatementOrder.getMonthTime();
-                for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
-                    if (BigDecimalUtil.compare(exportStatementOrderDetail.getUnitAmount(),BigDecimal.ZERO)>0) {
-                        Date statementStartTimeDate = exportStatementOrderDetail.getStatementStartTime();
-                        if (statementStartTimeDate != null) {
-                            String statementStartTime = simpleDateFormat.format(statementStartTimeDate);
-                            if (!monthTime.equals(statementStartTime)) {
-                                //Key 商品/配件ID+结算单详情类型+结算单商品配件类型+支付类型+支付开始时间+支付结束时间+订单编号
-                                String bigDecimalKey = exportStatementOrderDetail.getOrderItemReferId() +"-"+exportStatementOrderDetail.getOrderType()+"-"+
-                                        exportStatementOrderDetail.getOrderItemType()+"-"+exportStatementOrderDetail.getPayMode()+"-"+
-                                        exportStatementOrderDetail.getStatementStartTime()+"-"+exportStatementOrderDetail.getStatementEndTime()+"-"+exportStatementOrderDetail.getOrderNo();
-                                if (bigDecimalMap.containsKey(bigDecimalKey)) {
-                                    CheckStatementOrderDetail checkStatementOrderDetail = bigDecimalMap.get(bigDecimalKey);
-                                    exportStatementOrderDetail.setStatementDetailEndAmount(checkStatementOrderDetail.getStatementDetailAmount());
-                                    exportStatementOrderDetail.setStatementDetailRentEndAmount(checkStatementOrderDetail.getStatementDetailRentAmount());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        // TODO: 2018\7\16 0016 查出续租退货的结算单
-        CustomerDO customerDO = customerMapper.findByNo(statementOrderMonthQueryParam.getStatementOrderCustomerNo());
+    /**
+     * 导出对账单数据
+     */
+    private ServiceResult<String, String> queryStatementOrderCheckParamNew(StatementOrderMonthQueryParam queryParam, HttpServletResponse response) throws Exception {
+        ServiceResult<String, String> serviceResult = new ServiceResult();
+        // 1：根据客户编号获取该客户指定时间段内的结算单详情列表信息(结算单起始时间和结束时间都需要考虑)
+        CustomerDO customerDO = customerMapper.findByNo(queryParam.getStatementOrderCustomerNo());
         if (customerDO == null) {
-            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
-            return result;
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
         }
-        Map<String, Object> maps = new HashMap<>();
-        StatementOrderDetailQueryParam statementOrderDetailQueryParam = new StatementOrderDetailQueryParam();
-        statementOrderDetailQueryParam.setCustomerId(customerDO.getId());
-        maps.put("start", 0);
-        maps.put("pageSize", Integer.MAX_VALUE);
-        maps.put("statementOrderDetailQueryParam", statementOrderDetailQueryParam);
-        //续租退货结算单
-        List<CheckStatementOrderDetailDO> reletReturnListPage = statementOrderDetailMapper.exportReletReturnListPage(maps);
-        if (CollectionUtil.isNotEmpty(reletReturnListPage)) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Set<Integer> k3ReturnIdSet = new HashSet<>();
-            for(CheckStatementOrderDetailDO checkStatementOrderDetailDO:reletReturnListPage){
-                if (checkStatementOrderDetailDO.getOrderId() != null) {
-                    k3ReturnIdSet.add(checkStatementOrderDetailDO.getOrderId());
-                }
-            }
-            //查出每个退货单的退货时间
-            Map<Integer,Date> k3ReturnMap = new HashMap<>();
-            if (CollectionUtil.isNotEmpty(k3ReturnIdSet)) {
-                List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findByIdSet(k3ReturnIdSet);
-                if (CollectionUtil.isNotEmpty(k3ReturnOrderDOList)) {
-                    for (K3ReturnOrderDO k3ReturnOrderDO:k3ReturnOrderDOList) {
-                        k3ReturnMap.put(k3ReturnOrderDO.getId(),k3ReturnOrderDO.getReturnTime());
-                    }
-                }
-            }
-            //存储退货月份和该月份的退货结算单
-            Map<String,Map<String,Set<CheckStatementOrderDetailDO>>> orderReletReturnMap = new HashMap<>();
-            Map<String,Map<String,CheckStatementOrderDetailDO>> returnReletReturnMap = new HashMap<>();
-            if (MapUtils.isNotEmpty(k3ReturnMap)) {
-                for(CheckStatementOrderDetailDO checkStatementOrderDetailDO:reletReturnListPage){
-                    if (checkStatementOrderDetailDO.getOrderId() != null) {
-                        if (k3ReturnMap.containsKey(checkStatementOrderDetailDO.getOrderId())) {
-                            Date returnTime = k3ReturnMap.get(checkStatementOrderDetailDO.getOrderId());
-                            Date statementExpectPayTime = checkStatementOrderDetailDO.getStatementExpectPayTime();
-                            String statementExpectPayTimeString = dateFormat.format(statementExpectPayTime);
-                            String returnTimeString = dateFormat.format(returnTime);
-                            if (returnTimeString.equals(statementExpectPayTimeString)) {
-                                String monthTimeString = simpleDateFormat.format(returnTime);
-                                if (!orderReletReturnMap.containsKey(monthTimeString) && !returnReletReturnMap.containsKey(monthTimeString)) {
-                                    Map<String,Set<CheckStatementOrderDetailDO>> orderMap = new HashMap<>();
-                                    Map<String,CheckStatementOrderDetailDO> returnMap = new HashMap<>();
-                                    Set<CheckStatementOrderDetailDO> reletStatementReturnSet = new HashSet<>();
-                                    reletStatementReturnSet.add(checkStatementOrderDetailDO);
-                                    String orderKey = null;
-                                    String returnKey =null;
-                                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(checkStatementOrderDetailDO.getOrderItemType())) {
-                                        //订单的key：退货关联ID-续租关联ID-商品类型
-                                        orderKey = checkStatementOrderDetailDO.getReturnReferId() +"-"+ checkStatementOrderDetailDO.getReletOrderItemReferId() +"-"+
-                                                OrderItemType.ORDER_ITEM_TYPE_PRODUCT;
-                                    } else if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(checkStatementOrderDetailDO.getOrderItemType())) {
-                                        //订单的key：退货关联ID-续租关联ID-商品类型
-                                        orderKey = checkStatementOrderDetailDO.getReturnReferId() +"-"+ checkStatementOrderDetailDO.getReletOrderItemReferId() +"-"+
-                                                OrderItemType.ORDER_ITEM_TYPE_MATERIAL;
-                                    }
+        queryParam.setCustomerId(customerDO.getId());
+        // 2：构建结算单
+        ServiceResult<String, List<BaseCheckStatementDetailDTO>> serviceResultOfCheckStatementDetail = getCheckStatementDetailDatas(queryParam);
+        if (!Objects.equals(serviceResultOfCheckStatementDetail.getErrorCode(), ErrorCode.SUCCESS)) {
+            serviceResult.setErrorCode(serviceResultOfCheckStatementDetail.getErrorCode(), serviceResultOfCheckStatementDetail.getFormatArgs());
+            return serviceResult;
+        }
+        // 3：获取对账单详情列表数据
+        List<BaseCheckStatementDetailDTO> checkStatementDetailDTOS = serviceResultOfCheckStatementDetail.getResult();
+        // 结算单映射容器
+        CheckStatementMapContainer mapContainer = new CheckStatementMapContainer();
+        // 获取单价为0的租赁商品和租赁订单信息
+        buildPriceForZeroRentProductAndOrder(queryParam, mapContainer);
+        // 4：构建对账单详情列表数据
+        buildCheckStatementDetailDatas(checkStatementDetailDTOS, mapContainer);
+        logger.info("构建对象单详情后的数据为：" + JSONObject.toJSONString(checkStatementDetailDTOS));
+        // 5：获取月份结算单统计对象的映射map
+        Map<Date, CheckStatementStatisticsDTO> monthStatisticsMap = getMonthStatisticsMap(queryParam);
+        // 6：根据月份对对账单详情列表进行分组
+        groupCheckStatementDetailsByMonth(monthStatisticsMap, checkStatementDetailDTOS, customerDO, mapContainer);
+        logger.info("分组后的数据为：" + JSONObject.toJSONString(monthStatisticsMap));
+        // 过滤对账单统计数据
+//        filterStatementStatisticsData(monthStatisticsMap, mapContainer, queryParam);
+        // 7：构建统计数据
+        buildStatisticsData(monthStatisticsMap, queryParam);
+        // 8：导出统计数据
+        logger.info("导出的数据为：" + JSONObject.toJSONString(monthStatisticsMap));
+        importCheckStatementStatisticsData(monthStatisticsMap, response);
+        serviceResult.setResult(JSONObject.toJSONString(monthStatisticsMap));
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
 
-                                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(checkStatementOrderDetailDO.getOrderItemType()) ||
-                                            OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(checkStatementOrderDetailDO.getOrderItemType())) {
-                                        //退货单的key：退货关联ID-续租关联ID-商品类型-退货单ID
-                                        returnKey = checkStatementOrderDetailDO.getReturnReferId() +"-"+ checkStatementOrderDetailDO.getReletOrderItemReferId() +"-"+
-                                                checkStatementOrderDetailDO.getOrderItemType() +"-"+ checkStatementOrderDetailDO.getOrderId();
-                                    }
-                                    if (orderKey != null) {
-                                        orderMap.put(orderKey,reletStatementReturnSet);
-                                        orderReletReturnMap.put(monthTimeString,orderMap);
-                                    }
-                                    if (returnKey != null) {
-                                        returnMap.put(returnKey,checkStatementOrderDetailDO);
-                                        returnReletReturnMap.put(monthTimeString,returnMap);
-                                    }
-                                }else {
-                                    Map<String,Set<CheckStatementOrderDetailDO>> orderMap = orderReletReturnMap.get(monthTimeString);
-                                    Map<String,CheckStatementOrderDetailDO> returnMap = returnReletReturnMap.get(monthTimeString);
-                                    String orderKey = null;
-                                    String returnKey =null;
-                                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(checkStatementOrderDetailDO.getOrderItemType())) {
-                                        //订单的key：退货关联ID-续租关联ID-商品类型
-                                        orderKey = checkStatementOrderDetailDO.getReturnReferId() +"-"+ checkStatementOrderDetailDO.getReletOrderItemReferId() +"-"+
-                                                OrderItemType.ORDER_ITEM_TYPE_PRODUCT;
-                                    } else if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(checkStatementOrderDetailDO.getOrderItemType())) {
-                                        //订单的key：退货关联ID-续租关联ID-商品类型
-                                        orderKey = checkStatementOrderDetailDO.getReturnReferId() +"-"+ checkStatementOrderDetailDO.getReletOrderItemReferId() +"-"+
-                                                OrderItemType.ORDER_ITEM_TYPE_MATERIAL;
-                                    }
-                                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(checkStatementOrderDetailDO.getOrderItemType()) ||
-                                            OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(checkStatementOrderDetailDO.getOrderItemType())) {
-                                        //退货单的key：退货关联ID-续租关联ID-商品类型-退货单ID
-                                        returnKey = checkStatementOrderDetailDO.getReturnReferId() +"-"+ checkStatementOrderDetailDO.getReletOrderItemReferId() +"-"+
-                                                checkStatementOrderDetailDO.getOrderItemType() +"-"+ checkStatementOrderDetailDO.getOrderId();
-                                    }
-                                    if (orderKey != null && !orderMap.containsKey(orderKey)) {
-                                        Set<CheckStatementOrderDetailDO> reletStatementReturnSet = new HashSet<>();
-                                        reletStatementReturnSet.add(checkStatementOrderDetailDO);
-                                        orderMap.put(orderKey,reletStatementReturnSet);
-                                    }else {
-                                        Set<CheckStatementOrderDetailDO> reletStatementReturnSet = orderMap.get(orderKey);
-                                        reletStatementReturnSet.add(checkStatementOrderDetailDO);
-                                    }
-                                    if (returnKey != null && !returnMap.containsKey(returnKey)) {
-                                        returnMap.put(returnKey,checkStatementOrderDetailDO);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+    /**
+     * 构建单价为0的租赁商品和租赁订单信息
+     */
+    private void buildPriceForZeroRentProductAndOrder(StatementOrderMonthQueryParam queryParam, CheckStatementMapContainer mapContainer) {
+        List<Order> orders = ConverterUtil.convertList(orderMapper.listByMonthQuery(queryParam), Order.class);
+        if (CollectionUtil.isNotEmpty(orders)) {
+            Set<Integer> orderIds = new LinkedHashSet<>();
+            for (Order order : orders) {
+                orderIds.add(order.getOrderId());
             }
-            // TODO: 2018\7\16 0016 先查出所有该客户的续租退货单，然后存入map集合
-            if (MapUtils.isNotEmpty(orderReletReturnMap) && MapUtils.isNotEmpty(returnReletReturnMap)) {
-                for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-                    if (orderReletReturnMap.containsKey(checkStatementOrder.getMonthTime()) && returnReletReturnMap.containsKey(checkStatementOrder.getMonthTime())) {
-                        Map<String,Set<CheckStatementOrderDetailDO>> orderMap = orderReletReturnMap.get(checkStatementOrder.getMonthTime());
-                        Map<String,CheckStatementOrderDetailDO> returnMap = returnReletReturnMap.get(checkStatementOrder.getMonthTime());
-                        for (CheckStatementOrderDetail exportStatementOrderDetail : checkStatementOrder.getStatementOrderDetailList()) {
-                            if (MapUtils.isNotEmpty(orderMap) &&
-                                    (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())||
-                                    OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType()))&&
-                                            exportStatementOrderDetail.getReletOrderItemReferId() != null) {
-                                //订单的key：退货关联ID-续租关联ID-商品类型
-                                String orderKey = exportStatementOrderDetail.getStatementOrderDetailId() +"-"+ exportStatementOrderDetail.getReletOrderItemReferId() +"-"+
-                                        exportStatementOrderDetail.getOrderItemType();
-                                if (orderMap.containsKey(orderKey)) {
-                                    Set<CheckStatementOrderDetailDO> reletStatementReturnSet = orderMap.get(orderKey);
-                                    if (CollectionUtil.isNotEmpty(reletStatementReturnSet)) {
-                                        //这里添加退货单合并逻辑
-                                        BigDecimal statementDetailAmount = BigDecimal.ZERO;
-                                        BigDecimal statementDetailRentAmount = BigDecimal.ZERO;
-                                        BigDecimal statementDetailDepositAmount = BigDecimal.ZERO;
-                                        BigDecimal statementDetailOtherAmount = BigDecimal.ZERO;
-                                        BigDecimal statementDetailPaidAmount = BigDecimal.ZERO;
-                                        BigDecimal statementDetailPenaltyAmount = BigDecimal.ZERO;
-                                        BigDecimal statementDetailPenaltyPaidAmount = BigDecimal.ZERO;
-                                        BigDecimal statementDetailRentDepositAmount = BigDecimal.ZERO;
-                                        for (CheckStatementOrderDetailDO checkStatementOrderDetail : reletStatementReturnSet) {
-                                            //如果金额不为0，将数量进行累加，然后跟最外层的订单对账单进行相减，金额相加，之后退货单不存储
-                                            statementDetailAmount = BigDecimalUtil.add(statementDetailAmount, checkStatementOrderDetail.getStatementDetailAmount());
-                                            statementDetailRentAmount = BigDecimalUtil.add(statementDetailRentAmount, checkStatementOrderDetail.getStatementDetailRentAmount());
-                                            statementDetailDepositAmount = BigDecimalUtil.add(statementDetailDepositAmount, checkStatementOrderDetail.getStatementDetailDepositAmount());
-                                            statementDetailOtherAmount = BigDecimalUtil.add(statementDetailOtherAmount, checkStatementOrderDetail.getStatementDetailOtherAmount());
-                                            statementDetailPaidAmount = BigDecimalUtil.add(statementDetailPaidAmount, BigDecimal.ZERO);
-                                            statementDetailPenaltyAmount = BigDecimalUtil.add(statementDetailPenaltyAmount, checkStatementOrderDetail.getStatementDetailPenaltyAmount());
-                                            statementDetailPenaltyPaidAmount = BigDecimalUtil.add(statementDetailPenaltyPaidAmount, checkStatementOrderDetail.getStatementDetailPenaltyPaidAmount());
-                                            statementDetailRentDepositAmount = BigDecimalUtil.add(statementDetailRentDepositAmount, checkStatementOrderDetail.getStatementDetailRentDepositAmount());
-                                        }
-                                        //将负值变成正值
-                                        statementDetailAmount = statementDetailAmount.multiply(new BigDecimal(-1));
-                                        statementDetailRentAmount = statementDetailRentAmount.multiply(new BigDecimal(-1));
-                                        statementDetailDepositAmount = statementDetailDepositAmount.multiply(new BigDecimal(-1));
-                                        statementDetailOtherAmount = statementDetailOtherAmount.multiply(new BigDecimal(-1));
-                                        statementDetailPaidAmount = statementDetailPaidAmount.multiply(new BigDecimal(-1));
-                                        statementDetailPenaltyAmount = statementDetailPenaltyAmount.multiply(new BigDecimal(-1));
-                                        statementDetailPenaltyPaidAmount = statementDetailPenaltyPaidAmount.multiply(new BigDecimal(-1));
-                                        statementDetailRentDepositAmount = statementDetailRentDepositAmount.multiply(new BigDecimal(-1));
-                                        //将扣减的金额加回去
-                                        exportStatementOrderDetail.setStatementDetailAmount(BigDecimalUtil.add(statementDetailAmount, exportStatementOrderDetail.getStatementDetailAmount()));
-                                        exportStatementOrderDetail.setStatementDetailAmount(BigDecimalUtil.compare(exportStatementOrderDetail.getStatementDetailAmount(), BigDecimal.ZERO) == -1 ? BigDecimal.ZERO : exportStatementOrderDetail.getStatementDetailAmount());
-                                        exportStatementOrderDetail.setStatementDetailRentAmount(BigDecimalUtil.add(statementDetailRentAmount, exportStatementOrderDetail.getStatementDetailRentAmount()));
-                                        exportStatementOrderDetail.setStatementDetailRentAmount(BigDecimalUtil.compare(exportStatementOrderDetail.getStatementDetailRentAmount(), BigDecimal.ZERO) == -1 ? BigDecimal.ZERO : exportStatementOrderDetail.getStatementDetailRentAmount());
-                                        exportStatementOrderDetail.setStatementDetailDepositAmount(BigDecimalUtil.add(statementDetailDepositAmount, exportStatementOrderDetail.getStatementDetailDepositAmount()));
-                                        exportStatementOrderDetail.setStatementDetailDepositAmount(BigDecimalUtil.compare(exportStatementOrderDetail.getStatementDetailDepositAmount(), BigDecimal.ZERO) == -1 ? BigDecimal.ZERO : exportStatementOrderDetail.getStatementDetailDepositAmount());
-                                        exportStatementOrderDetail.setStatementDetailOtherAmount(BigDecimalUtil.add(statementDetailOtherAmount, exportStatementOrderDetail.getStatementDetailOtherAmount()));
-                                        exportStatementOrderDetail.setStatementDetailOtherAmount(BigDecimalUtil.compare(exportStatementOrderDetail.getStatementDetailOtherAmount(), BigDecimal.ZERO) == -1 ? BigDecimal.ZERO : exportStatementOrderDetail.getStatementDetailOtherAmount());
-                                        exportStatementOrderDetail.setStatementDetailPaidAmount(BigDecimalUtil.add(statementDetailPaidAmount, exportStatementOrderDetail.getStatementDetailPaidAmount()));
-                                        exportStatementOrderDetail.setStatementDetailPaidAmount(BigDecimalUtil.compare(exportStatementOrderDetail.getStatementDetailPaidAmount(), BigDecimal.ZERO) == -1 ? BigDecimal.ZERO : exportStatementOrderDetail.getStatementDetailPaidAmount());
-                                        exportStatementOrderDetail.setStatementDetailPenaltyAmount(BigDecimalUtil.add(statementDetailPenaltyAmount, exportStatementOrderDetail.getStatementDetailPenaltyAmount()));
-                                        exportStatementOrderDetail.setStatementDetailPenaltyAmount(BigDecimalUtil.compare(exportStatementOrderDetail.getStatementDetailPenaltyAmount(), BigDecimal.ZERO) == -1 ? BigDecimal.ZERO : exportStatementOrderDetail.getStatementDetailPenaltyAmount());
-                                        exportStatementOrderDetail.setStatementDetailPenaltyPaidAmount(BigDecimalUtil.add(statementDetailPenaltyPaidAmount, exportStatementOrderDetail.getStatementDetailPenaltyPaidAmount()));
-                                        exportStatementOrderDetail.setStatementDetailPenaltyPaidAmount(BigDecimalUtil.compare(exportStatementOrderDetail.getStatementDetailPenaltyPaidAmount(), BigDecimal.ZERO) == -1 ? BigDecimal.ZERO : exportStatementOrderDetail.getStatementDetailPenaltyPaidAmount());
-                                        exportStatementOrderDetail.setStatementDetailRentDepositAmount(BigDecimalUtil.add(statementDetailRentDepositAmount, exportStatementOrderDetail.getStatementDetailRentDepositAmount()));
-                                        exportStatementOrderDetail.setStatementDetailRentDepositAmount(BigDecimalUtil.compare(exportStatementOrderDetail.getStatementDetailRentDepositAmount(), BigDecimal.ZERO) == -1 ? BigDecimal.ZERO : exportStatementOrderDetail.getStatementDetailRentDepositAmount());
-                                    }
-                                }
-                            } else if (MapUtils.isNotEmpty(returnMap) &&
-                                    (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())||
-                                            OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType()))&&
-                                    exportStatementOrderDetail.getReletOrderItemReferId() != null) {
-                                //退货单的key：退货关联ID-续租关联ID-商品类型-退货单ID
-                                String returnKey = exportStatementOrderDetail.getReturnReferId() +"-"+ exportStatementOrderDetail.getReletOrderItemReferId() +"-"+
-                                        exportStatementOrderDetail.getOrderItemType() +"-"+ exportStatementOrderDetail.getOrderId();
-                                if (returnMap.containsKey(returnKey)) {
-                                    CheckStatementOrderDetailDO CheckStatementOrderDetailDO = returnMap.get(returnKey);
-                                    exportStatementOrderDetail.setStatementDetailAmount(CheckStatementOrderDetailDO.getStatementDetailAmount());
-                                    exportStatementOrderDetail.setStatementDetailRentAmount(CheckStatementOrderDetailDO.getStatementDetailRentAmount());
-                                    exportStatementOrderDetail.setStatementDetailDepositAmount(CheckStatementOrderDetailDO.getStatementDetailDepositAmount());
-                                    exportStatementOrderDetail.setStatementDetailOtherAmount(CheckStatementOrderDetailDO.getStatementDetailOtherAmount());
-                                    exportStatementOrderDetail.setStatementDetailPaidAmount(BigDecimal.ZERO);
-                                    exportStatementOrderDetail.setStatementDetailPenaltyAmount(CheckStatementOrderDetailDO.getStatementDetailPenaltyAmount());
-                                    exportStatementOrderDetail.setStatementDetailPenaltyPaidAmount(CheckStatementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
-                                    exportStatementOrderDetail.setStatementDetailRentDepositAmount(CheckStatementOrderDetailDO.getStatementDetailRentDepositAmount());
-                                }
-                            }
-                        }
-                    }
-                }
+            Map<String, Object> productQueryMap = new HashMap<>();
+            productQueryMap.put("orderIds", orderIds);
+            productQueryMap.put("productUnitAmount", BigDecimal.ZERO);
+            List<OrderProduct> orderProducts = ConverterUtil.convertList(orderProductMapper.listByOrderIds(productQueryMap), OrderProduct.class);
+            mapContainer.addIdOrderMap(orders);
+            mapContainer.addIdOrderProductMap(orderProducts);
+        }
+    }
+
+    /**
+     * 获取对账单详情数据列表信息
+     */
+    private ServiceResult<String, List<BaseCheckStatementDetailDTO>> getCheckStatementDetailDatas(StatementOrderMonthQueryParam statementOrderMonthQueryParam) {
+        ServiceResult<String, List<BaseCheckStatementDetailDTO>> serviceResult = new ServiceResult<>();
+        // 查询该用户退还时间在指定时间段内退货单列表数据
+        List<K3ReturnOrderDO> k3ReturnOrderDOS = k3ReturnOrderMapper.listByMonthQuery(statementOrderMonthQueryParam);
+        Set<Integer> returnOrderIds = new LinkedHashSet<>();
+        for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOS) {
+            returnOrderIds.add(k3ReturnOrderDO.getId());
+        }
+        // 查询该用户确认换货时间在指定时间段内换货单列表数据
+        List<ReplaceOrderDO> replaceOrderDOS = replaceOrderMapper.listByMonthQuery(statementOrderMonthQueryParam);
+        Set<Integer> replaceOrderIds = new LinkedHashSet<>();
+        for (ReplaceOrderDO replaceOrderDO : replaceOrderDOS) {
+            replaceOrderIds.add(replaceOrderDO.getId());
+        }
+        //orderIds IS 退货单id
+        statementOrderMonthQueryParam.setOrderIds(returnOrderIds);
+        //replaceOrderIds is 换货单id
+        statementOrderMonthQueryParam.setReplaceOrderIds(replaceOrderIds);
+        // 根据查询条件获取结算单列表数据
+        ServiceResult<String, List<BaseCheckStatementDetailDTO>> serviceResultOfCheckStatementDetail = statementService.listCheckStatementDetailDTOByQuery(statementOrderMonthQueryParam);
+        if (!Objects.equals(serviceResultOfCheckStatementDetail.getErrorCode(), ErrorCode.SUCCESS)) {
+            serviceResult.setErrorCode(serviceResultOfCheckStatementDetail.getErrorCode(), serviceResultOfCheckStatementDetail.getFormatArgs());
+            return serviceResult;
+        }
+        return serviceResultOfCheckStatementDetail;
+    }
+
+    /**
+     * 构建对账单详情数据列表
+     */
+    private void buildCheckStatementDetailDatas(List<BaseCheckStatementDetailDTO> checkStatementDetailDTOS, CheckStatementMapContainer mapContainer) {
+
+        // 构建退货单数据和退货详情单数据
+        buildK3ReturnOrder(checkStatementDetailDTOS, mapContainer);
+        Map<Integer, Set<Integer>> orderIdsUseOrderTypeGroup = getOrderIdsUseOrderTypeGroupNew(checkStatementDetailDTOS);
+        // 构建租赁订单数据
+        buildRentOrder(orderIdsUseOrderTypeGroup, mapContainer);
+        // 获取符合条件的订单列表数据
+        Set<Integer> orderIds = orderIdsUseOrderTypeGroup.get(OrderType.ORDER_TYPE_ORDER);
+        // 构建订单项数据
+        buildRentOrderItem(orderIds, mapContainer);
+        // 构建续租订单相关数据
+        buildReletOrder(orderIds, mapContainer);
+        // 构建换货单相关数据
+        buildReplaceOrder(orderIds, mapContainer, checkStatementDetailDTOS);
+
+        for (BaseCheckStatementDetailDTO checkStatementDetailDTO : checkStatementDetailDTOS) {
+            checkStatementDetailDTO.mapContainer(mapContainer).build();
+        }
+    }
+
+    /**
+     * 构建退货单和退货详情单数据
+     */
+    private void buildK3ReturnOrder(List<BaseCheckStatementDetailDTO> checkStatementDetailDTOS, CheckStatementMapContainer checkStatementMapContainer) {
+        Set<Integer> returnOrderIds = new LinkedHashSet<>();
+        for (BaseCheckStatementDetailDTO detailRentDTO : checkStatementDetailDTOS) {
+            if (CheckStatementUtil.isReturnOrder(detailRentDTO)) {
+                returnOrderIds.add(detailRentDTO.getOrderId());
             }
         }
-        // TODO: 2018\7\18 0018 过滤商品数量为0，金额不为0的数据
-        // TODO: 2018\7\18 0018 拿到所有数量为零，金额不为0的订单数据
-        Map<String,Map<String,List<String>>> findMapOut = new HashMap<>();//map<支付月份，map<key,list<原月份>>>
-        Map<String,Map<String,Boolean>> booleanMapOut = new HashMap<>();//map<原月份，map<key,是否删除（默认都为true删除）>>
-        for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-            List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
-            if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
-                continue;
+        List<K3ReturnOrder> k3ReturnOrders = new ArrayList<>();
+        List<K3ReturnOrderDetail> k3ReturnOrderDetails = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(returnOrderIds)) {
+            k3ReturnOrders = ConverterUtil.convertList(k3ReturnOrderMapper.listByIds(returnOrderIds), K3ReturnOrder.class);
+            // 退货单详情列表数据
+            k3ReturnOrderDetails = ConverterUtil.convertList(k3ReturnOrderDetailMapper.listByReturnOrderIds(returnOrderIds), K3ReturnOrderDetail.class);
+        }
+        checkStatementMapContainer
+                .idK3ReturnOrderMap(k3ReturnOrders)
+                .idK3ReturnOrderDetailMap(k3ReturnOrderDetails);
+    }
+
+    /**
+     * 构建租赁订单数据
+     */
+    private void buildRentOrder(Map<Integer, Set<Integer>> orderIdsUseOrderTypeGroup, CheckStatementMapContainer mapContainer) {
+        Set<String> orderNos = new LinkedHashSet<>();
+        for (K3ReturnOrderDetail k3ReturnOrderDetail : mapContainer.getIdK3ReturnOrderDetailMap().values()) {
+            orderNos.add(k3ReturnOrderDetail.getOrderNo());
+        }
+        // 2 构建引用订单id列表信息（按照类型分为租赁订单（erp_order）、退货订单（erp_k3_return_order）、续租订单（erp_relet_order））
+        List<Order> orders = new ArrayList<>();
+        // 获取符合条件的订单列表数据
+
+        Set<Integer> orderIds = orderIdsUseOrderTypeGroup.get(OrderType.ORDER_TYPE_ORDER);
+        if (CollectionUtil.isNotEmpty(orderIds)) {
+            List<Order> ordersByIds = ConverterUtil.convertList(orderMapper.listByIds(orderIds), Order.class);
+            orders.addAll(ordersByIds);
+        }
+        if (CollectionUtil.isNotEmpty(orderNos)) {
+            List<Order> ordersByNos = ConverterUtil.convertList(orderMapper.listByOrderNOs(orderNos), Order.class);
+            orders.addAll(ordersByNos);
+        }
+        mapContainer.idOrderMap(orders)
+                .noOrderMap(orders);
+    }
+
+    /**
+     * 构建租赁订单项数据
+     */
+    private void buildRentOrderItem(Set<Integer> orderIds, CheckStatementMapContainer mapContainer) {
+        Map<String, Object> productQueryMap = new HashMap<>();
+        productQueryMap.put("orderIds", orderIds);
+        List<OrderProduct> orderProducts = ConverterUtil.convertList(orderProductMapper.listByOrderIds(productQueryMap), OrderProduct.class);
+        List<OrderMaterial> orderMaterials = ConverterUtil.convertList(orderMaterialMapper.listByOrderIds(orderIds), OrderMaterial.class);
+        mapContainer.idOrderProductMap(orderProducts)
+                .idOrderMaterialMap(orderMaterials);
+    }
+
+    /**
+     * 构建续租订单数据
+     */
+    private void buildReletOrder(Set<Integer> orderIds, CheckStatementMapContainer mapContainer) {
+        List<ReletOrder> reletOrders = ConverterUtil.convertList(reletOrderMapper.listByOrderIds(orderIds), ReletOrder.class);
+        List<ReletOrderProduct> reletOrderProducts = ConverterUtil.convertList(reletOrderProductMapper.listByOrderIds(orderIds), ReletOrderProduct.class);
+        List<ReletOrderMaterial> reletOrderMaterials = ConverterUtil.convertList(reletOrderMaterialMapper.listByOrderIds(orderIds), ReletOrderMaterial.class);
+        mapContainer
+                .idReletOrderMap(reletOrders)
+                .idReletOrderProductMap(reletOrderProducts)
+                .idReletOrderMaterialMap(reletOrderMaterials);
+    }
+
+    /**
+     * 构建换货订单数据
+     */
+    private void buildReplaceOrder(Set<Integer> orderIds, CheckStatementMapContainer mapContainer, List<BaseCheckStatementDetailDTO> checkStatementDetailDTOS) {
+        List<ReplaceOrder> replaceOrders = ConverterUtil.convertList(replaceOrderMapper.listByOrderIds(orderIds), ReplaceOrder.class);
+
+        Set<Integer> replaceIds = new HashSet<>();
+        if (CollectionUtil.isNotEmpty(replaceOrders)) {
+            for (ReplaceOrder replaceOrder : replaceOrders) {
+                replaceIds.add(replaceOrder.getReplaceOrderId());
             }
-            String monthTime = checkStatementOrder.getMonthTime();//原月份
-            for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
-                Date statementExpectPayEndTime = exportStatementOrderDetail.getStatementExpectPayEndTime();
-                String statementExpectPayEndTimeString = null;//支付月份
-                if (statementExpectPayEndTime!=null) {
-                    statementExpectPayEndTimeString = simpleDateFormat.format(statementExpectPayEndTime);
-                }
-                if (statementExpectPayEndTimeString!= null) {
-                    //判断条件：原月份和支付月份不在同一月，为订单商品或订单配件结算单，先付后用，租赁数量为零，本期应付数大于零，本期应付租金大于零
-                    if (!monthTime.equals(statementExpectPayEndTimeString) &&
-                            (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())||
-                            OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType()))&&
-                            exportStatementOrderDetail.getItemCount() == 0 &&
-                            OrderPayMode.PAY_MODE_PAY_BEFORE.equals(exportStatementOrderDetail.getPayMode())&&
-                            BigDecimalUtil.compare(exportStatementOrderDetail.getStatementDetailEndAmount(),BigDecimal.ZERO)>0 &&
-                            BigDecimalUtil.compare(exportStatementOrderDetail.getStatementDetailRentEndAmount(),BigDecimal.ZERO)>0) {
-                        //key:订单ID-商品、配件项ID-商品、配件类型-单价-本期应付日期
-                        String key = exportStatementOrderDetail.getOrderId() +"-"+ exportStatementOrderDetail.getOrderItemReferId() +"-"+
-                                exportStatementOrderDetail.getOrderItemType() +"-"+ exportStatementOrderDetail.getUnitAmount()  +"-"+
-                                exportStatementOrderDetail.getStatementExpectPayEndTime();
-                        //存储查找的map的逻辑
-                        if (!findMapOut.containsKey(statementExpectPayEndTimeString)) {
-                            Map<String,List<String>> findMapInner = new HashMap<>();
-                            List<String> findList = new ArrayList<>();
-                            findList.add(monthTime);
-                            findMapInner.put(key,findList);
-                            findMapOut.put(statementExpectPayEndTimeString,findMapInner);
-                        }else {
-                            Map<String,List<String>> findMapInner = findMapOut.get(statementExpectPayEndTimeString);
-                            if (!findMapInner.containsKey(key)) {
-                                List<String> findList = new ArrayList<>();
-                                findList.add(monthTime);
-                                findMapInner.put(key,findList);
-                            }else {
-                                List<String> findList = findMapInner.get(key);
-                                findList.add(monthTime);
+
+            List<ReplaceOrderProduct> replaceOrderProducts = ConverterUtil.convertList(replaceOrderProductMapper.listByOrderIds(replaceIds), ReplaceOrderProduct.class);
+            List<ReplaceOrderMaterial> replaceOrderMaterials = ConverterUtil.convertList(replaceOrderMaterialMapper.listByOrderIds(replaceIds), ReplaceOrderMaterial.class);
+
+            // 结算单详情只保存换货单id，没有itemId，set数据给结算单结构
+            for (ReplaceOrderProduct replaceOrderProduct : replaceOrderProducts) {
+                for (BaseCheckStatementDetailDTO baseCheckStatementDetailDTO : checkStatementDetailDTOS) {
+                    if (OrderType.ORDER_TYPE_REPLACE.equals(baseCheckStatementDetailDTO.getOrderType())) {
+                        if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(baseCheckStatementDetailDTO.getOrderItemType())) {
+                            if (replaceOrderProduct.getOldOrderProductId().equals(baseCheckStatementDetailDTO.getOrderItemReferId())) {
+                                baseCheckStatementDetailDTO.setReplaceItemId(replaceOrderProduct.getReplaceOrderProductId());
                             }
                         }
-                        //存储是否删除的map的逻辑
-                        if (!booleanMapOut.containsKey(monthTime)) {
-                            Map<String,Boolean> booleanMapInner = new HashMap<>();
-                            booleanMapInner.put(key,false);//存为false，默认删除该条数据
-                            booleanMapOut.put(monthTime,booleanMapInner);
-                        }else {
-                            Map<String,Boolean> booleanMapInner = booleanMapOut.get(monthTime);
-                            if (!booleanMapInner.containsKey(key)) {
-                                booleanMapInner.put(key,false);//存为false，默认删除该条数据
+
+                        if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(baseCheckStatementDetailDTO.getOrderItemType())) {
+                            if (replaceOrderProduct.getNewOrderProductId().equals(baseCheckStatementDetailDTO.getOrderItemReferId())) {
+                                baseCheckStatementDetailDTO.setReplaceItemId(replaceOrderProduct.getReplaceOrderProductId());
                             }
                         }
                     }
                 }
+            }
+
+            for (ReplaceOrderMaterial replaceOrderMaterial : replaceOrderMaterials) {
+                for (BaseCheckStatementDetailDTO baseCheckStatementDetailDTO : checkStatementDetailDTOS) {
+                    if (OrderType.ORDER_TYPE_REPLACE.equals(baseCheckStatementDetailDTO.getOrderType())) {
+                        if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(baseCheckStatementDetailDTO.getOrderItemType())) {
+                            if (replaceOrderMaterial.getOldOrderMaterialId().equals(baseCheckStatementDetailDTO.getOrderItemReferId())) {
+                                baseCheckStatementDetailDTO.setReplaceItemId(replaceOrderMaterial.getReplaceOrderMaterialId());
+                            }
+                        }
+
+                        if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(baseCheckStatementDetailDTO.getOrderItemType())) {
+                            if (replaceOrderMaterial.getNewOrderMaterialId().equals(baseCheckStatementDetailDTO.getOrderItemReferId())) {
+                                baseCheckStatementDetailDTO.setReplaceItemId(replaceOrderMaterial.getReplaceOrderMaterialId());
+                            }
+                        }
+                    }
+                }
+            }
+
+            mapContainer
+                    .idReplaceOrderMap(replaceOrders)
+                    .idReplaceOrderProductMap(replaceOrderProducts)
+                    .idReplaceOrderMaterialMap(replaceOrderMaterials);
+        }
+    }
+
+    /**
+     * 获取根据订单类型分组的订单id列表或者退货单id列表
+     */
+    private Map<Integer, Set<Integer>> getOrderIdsUseOrderTypeGroupNew(List<BaseCheckStatementDetailDTO> checkStatementDetailDTOS) {
+        Map<Integer, Set<Integer>> orderIdsUserOrderTypeGroup = Maps.newHashMap();
+        orderIdsUserOrderTypeGroup.put(OrderType.ORDER_TYPE_ORDER, new HashSet<Integer>());
+        orderIdsUserOrderTypeGroup.put(OrderType.ORDER_TYPE_RETURN, new HashSet<Integer>());
+        for (BaseCheckStatementDetailDTO checkStatementDetailDTO : checkStatementDetailDTOS) {
+            Integer orderType = checkStatementDetailDTO.getOrderType();
+            if (orderIdsUserOrderTypeGroup.containsKey(orderType)) {
+                orderIdsUserOrderTypeGroup.get(orderType).add(checkStatementDetailDTO.getOrderId());
             }
         }
-        // TODO: 2018\7\18 0018 到对应月份去找是否存在，存在标记为true，不存在标记为false不变
-        if (MapUtils.isNotEmpty(findMapOut)&& MapUtils.isNotEmpty(booleanMapOut)) {
-            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-                List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
-                if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
-                    continue;
-                }
-                String monthTime = checkStatementOrder.getMonthTime();
-                if (findMapOut.containsKey(monthTime) && MapUtils.isNotEmpty(findMapOut.get(monthTime))) {
-                    Map<String,List<String>> findMapInner = findMapOut.get(monthTime);
-                    for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
-                        Date statementExpectPayEndTime = exportStatementOrderDetail.getStatementExpectPayTime();
-                        String statementExpectPayEndTimeString = null;//支付月份
-                        if (statementExpectPayEndTime!=null) {
-                            statementExpectPayEndTimeString = simpleDateFormat.format(statementExpectPayEndTime);
-                        }
-                        if (monthTime.equals(statementExpectPayEndTimeString) &&
-                                OrderPayMode.PAY_MODE_PAY_BEFORE.equals(exportStatementOrderDetail.getPayMode())&&
-                                (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())||
-                                        OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType()))&&
-                                exportStatementOrderDetail.getItemCount() > 0) {
-                            //key:订单ID-商品、配件项ID-商品、配件类型-单价-本期应付日期
-                            String key = exportStatementOrderDetail.getOrderId() +"-"+ exportStatementOrderDetail.getOrderItemReferId() +"-"+
-                                    exportStatementOrderDetail.getOrderItemType() +"-"+ exportStatementOrderDetail.getUnitAmount()  +"-"+
-                                    exportStatementOrderDetail.getStatementExpectPayTime();
-                            if (findMapInner.containsKey(key) && CollectionUtil.isNotEmpty(findMapInner.get(key))) {
-                                List<String> findList = findMapInner.get(key);
-                                for (String monthTimeString:findList){
-                                    if (booleanMapOut.containsKey(monthTimeString) && MapUtils.isNotEmpty(booleanMapOut.get(monthTimeString))) {
-                                        Map<String,Boolean> booleanMapInner = booleanMapOut.get(monthTimeString);
-                                        if (booleanMapInner.containsKey(key)) {
-                                            booleanMapInner.put(key,true);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            // TODO: 2018\7\18 0018 循环遍历，删除标记为false的项
-            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-                List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
-                if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
-                    continue;
-                }
-                String monthTime = checkStatementOrder.getMonthTime();
-                if (booleanMapOut.containsKey(monthTime) && MapUtils.isNotEmpty(booleanMapOut.get(monthTime))) {
-                    Map<String,Boolean> booleanMapInner = booleanMapOut.get(monthTime);
-                    List<CheckStatementOrderDetail> newList = new ArrayList<>();
-                    for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
-                        //key:订单ID-商品、配件项ID-商品、配件类型-单价-本期应付日期
-                        String key = exportStatementOrderDetail.getOrderId() +"-"+ exportStatementOrderDetail.getOrderItemReferId() +"-"+
-                                exportStatementOrderDetail.getOrderItemType() +"-"+ exportStatementOrderDetail.getUnitAmount() +"-"+
-                                exportStatementOrderDetail.getStatementExpectPayEndTime();
-                        //map中没有则存储
-                        if (!booleanMapInner.containsKey(key)) {
-                            newList.add(exportStatementOrderDetail);
-                        }else if (booleanMapInner.get(key)) {//map中有，且为true就存储，为false不存储即删除
-                            newList.add(exportStatementOrderDetail);
-                        }
-                    }
-                    checkStatementOrder.setStatementOrderDetailList(newList);
+        return orderIdsUserOrderTypeGroup;
+    }
+
+    /**
+     * 获取月份和结算单统计的map对象
+     */
+    private Map<Date, CheckStatementStatisticsDTO> getMonthStatisticsMap(StatementOrderMonthQueryParam queryParam) {
+        // 按月分组
+        Map<Date, CheckStatementStatisticsDTO> monthStatisticsMap = Maps.newLinkedHashMap();
+        Date startTime = queryParam.getStatementOrderStartTime();
+        Date endTime = queryParam.getStatementOrderEndTime();
+        List<Date> monthsBetween = DateUtil.getMonthBetween(startTime, endTime);
+        for (Date month : monthsBetween) {
+            monthStatisticsMap.put(month, new CheckStatementStatisticsDTO(month));
+        }
+        return monthStatisticsMap;
+    }
+
+    /**
+     * 根据月份对对账单详情列表进行分组
+     */
+    private void groupCheckStatementDetailsByMonth(Map<Date, CheckStatementStatisticsDTO> monthStatisticsMap, List<BaseCheckStatementDetailDTO> checkStatementDetailDTOS, CustomerDO customerDO, CheckStatementMapContainer mapContainer) {
+        // 添加没有结算单的退租商品结算单数据
+        createAndAddUnitAmountIsZeroUnRentProductOrders(checkStatementDetailDTOS, mapContainer);
+        // 添加没有结算单的租赁商品结算单数据
+        createAndAddUnitAmountIsZeroRentProductOrders(checkStatementDetailDTOS, mapContainer);
+        // 分组并统计月数据
+        for (Date month : monthStatisticsMap.keySet()) {
+            CheckStatementStatisticsDTO statementStatisticsDTO = monthStatisticsMap.get(month);
+            statementStatisticsDTO.setCustomerName(customerDO.getCustomerName());
+            // 根据退货时间创建并新增退货订单数据
+            createAndAddUnRentOrdersByReturnTime(mapContainer, statementStatisticsDTO, checkStatementDetailDTOS);
+            // 根据换货时间创建并新增换货数据
+            createReplaceOrdersByReturnTime(mapContainer, statementStatisticsDTO, checkStatementDetailDTOS);
+            // 处理租赁、续租结算单
+            for (BaseCheckStatementDetailDTO checkStatementDetailDTO : checkStatementDetailDTOS) {
+                if (checkStatementDetailDTO.isAddTheMonth(statementStatisticsDTO)) {
+                    statementStatisticsDTO.addCheckStatementDetailDTO(checkStatementDetailDTO.clone());
                 }
             }
         }
-        // TODO: 2018\7\23 0023 续租当月且之前退货没有退货结算单展示不出来解决代码
-        // TODO: 2018\7\23 0023 先查出该用户所有的续租单
-        List<ReletOrderDO> reletOrderList = reletOrderMapper.findByCustomerId(customerDO.getId());
-        List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findByCustomerNoForExport(customerDO.getCustomerNo());
-        //存放订单编号，以及该订单续租的时间
-        Map<String,List<Date>> reletMap = new HashMap<>();
-        //用map存储（月份,map<key,list<插入的对象>>）
-        Map<String,Map<String,List<CheckStatementOrderDetail>>> returnCheckStatementOrderDetailMap = new HashMap<>();
-        if (CollectionUtil.isNotEmpty(reletOrderList) && CollectionUtil.isNotEmpty(k3ReturnOrderDOList)) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            for (ReletOrderDO reletOrderDO:reletOrderList) {
-                if (!reletMap.containsKey(reletOrderDO.getOrderNo())) {
-                    List<Date> reletTimeList = new ArrayList<>();
-                    reletTimeList.add(reletOrderDO.getRentStartTime());
-                    reletMap.put(reletOrderDO.getOrderNo(),reletTimeList);
-                }else {
-                    List<Date> reletTimeList = reletMap.get(reletOrderDO.getOrderNo());
-                    reletTimeList.add(reletOrderDO.getRentStartTime());
-                }
-            }
-            for (K3ReturnOrderDO k3ReturnOrderDO:k3ReturnOrderDOList) {
-                List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
-                Date returnTime = k3ReturnOrderDO.getReturnTime();
-                String returnTimeMonth = simpleDateFormat.format(returnTime);
-                String returnTimeDay = dateFormat.format(returnTime);
-                if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOList)) {
-                    for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDetailDOList) {
-                        if (reletMap.containsKey(k3ReturnOrderDetailDO.getOrderNo())) {
-                            List<Date> reletTimeList = reletMap.get(k3ReturnOrderDetailDO.getOrderNo());
-                            for (Date reletTime :reletTimeList) {
-                                String reletTimeMonth = simpleDateFormat.format(reletTime);
-                                String reletTimeDay = dateFormat.format(reletTime);
-                                //是否是在续租当月退货
-                                if (returnTimeMonth.equals(reletTimeMonth)) {
-                                    Date reletTimeDayTime = dateFormat.parse(reletTimeDay);
-                                    Date returnTimeDayTime = dateFormat.parse(returnTimeDay);
-                                    //是否是在续租之前退货
-                                    if (returnTimeDayTime.before(reletTimeDayTime)) {
-                                        //用map存储（月份,map<key,list<插入的对象>>）
-                                        if (!returnCheckStatementOrderDetailMap.containsKey(returnTimeMonth)) {
-                                            Map<String,List<CheckStatementOrderDetail>> returnCheckStatementOrderDetailMapInner = new HashMap<>();
-                                            List<CheckStatementOrderDetail> retrunCheckStatementOrderDetailList = new ArrayList<>();
-                                            //造退货对账单对象
-                                            CheckStatementOrderDetail checkStatementOrderDetail = createReturnCheckStatementOrderDetail(k3ReturnOrderDO, returnTime, k3ReturnOrderDetailDO);
-                                            //存储创造的退货单结算单
-                                            retrunCheckStatementOrderDetailList.add(checkStatementOrderDetail);
-                                            //key---商品/配件ID+类型
-                                            String key = checkStatementOrderDetail.getOrderItemReferId() +"-"+ k3ReturnOrderDetailDO.getOrderItemType();
-                                            returnCheckStatementOrderDetailMapInner.put(key,retrunCheckStatementOrderDetailList);
-                                            returnCheckStatementOrderDetailMap.put(returnTimeMonth,returnCheckStatementOrderDetailMapInner);
-                                        }else {
-                                            Map<String,List<CheckStatementOrderDetail>> returnCheckStatementOrderDetailMapInner = returnCheckStatementOrderDetailMap.get(returnTimeMonth);
-                                            String key = "";
-                                            if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(k3ReturnOrderDetailDO.getOrderItemType())) {
-                                                OrderProductDO orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
-                                                //存入商品名称
-                                                if (orderProductDO != null) {
-                                                    key = orderProductDO.getId() +"-"+ k3ReturnOrderDetailDO.getOrderItemType();
-                                                }
-                                            } else if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(k3ReturnOrderDetailDO.getOrderItemType())) {
-                                                OrderMaterialDO orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
-                                                if (orderMaterialDO != null) {
-                                                    key = orderMaterialDO.getId() +"-"+ k3ReturnOrderDetailDO.getOrderItemType();
-                                                }
-                                            }
-                                            if (!returnCheckStatementOrderDetailMapInner.containsKey(key) && key != "") {
-                                                List<CheckStatementOrderDetail> retrunCheckStatementOrderDetailList = new ArrayList<>();
-                                                //造退货对账单对象
-                                                CheckStatementOrderDetail checkStatementOrderDetail = createReturnCheckStatementOrderDetail(k3ReturnOrderDO, returnTime, k3ReturnOrderDetailDO);
-                                                //存储创造的退货单结算单
-                                                retrunCheckStatementOrderDetailList.add(checkStatementOrderDetail);
-                                                //key---商品/配件ID+类型
-                                                key = checkStatementOrderDetail.getOrderItemReferId() +"-"+ k3ReturnOrderDetailDO.getOrderItemType();
-                                                returnCheckStatementOrderDetailMapInner.put(key,retrunCheckStatementOrderDetailList);
-                                            } else if (returnCheckStatementOrderDetailMapInner.containsKey(key)) {
-                                                List<CheckStatementOrderDetail> retrunCheckStatementOrderDetailList = returnCheckStatementOrderDetailMapInner.get(key);
-                                                //造退货对账单对象
-                                                CheckStatementOrderDetail checkStatementOrderDetail = createReturnCheckStatementOrderDetail(k3ReturnOrderDO, returnTime, k3ReturnOrderDetailDO);
-                                                //存储创造的退货单结算单
-                                                retrunCheckStatementOrderDetailList.add(checkStatementOrderDetail);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        // TODO: 2018\7\23 0023 放到对应的订单项下
-        if (MapUtils.isNotEmpty(returnCheckStatementOrderDetailMap)) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-                List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
-                if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
-                    continue;
-                }
-                String monthTime = checkStatementOrder.getMonthTime();
-                if (returnCheckStatementOrderDetailMap.containsKey(monthTime)) {
-                    Map<String,List<CheckStatementOrderDetail>> returnCheckStatementOrderDetailMapInner = returnCheckStatementOrderDetailMap.get(monthTime);
-                    if (MapUtils.isNotEmpty(returnCheckStatementOrderDetailMapInner)) {
-                        List<CheckStatementOrderDetail> newList = new ArrayList<>();
-                        for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
-                            String key = exportStatementOrderDetail.getOrderItemReferId() +"-"+ exportStatementOrderDetail.getOrderItemType();
-                            if (returnCheckStatementOrderDetailMapInner.containsKey(key) && exportStatementOrderDetail.getReletOrderItemReferId()==null) {
-                                List<CheckStatementOrderDetail> retrunCheckStatementOrderDetailList = returnCheckStatementOrderDetailMapInner.get(key);
-                                if (CollectionUtil.isNotEmpty(retrunCheckStatementOrderDetailList)) {
-                                    newList.add(exportStatementOrderDetail);
-                                    for (CheckStatementOrderDetail retrunCheckStatementOrderDetail:retrunCheckStatementOrderDetailList) {
-                                        //判断退货时间是不是在结算开始时间和结算结束时间之间，如果是则存储
-                                        Date returnTime = retrunCheckStatementOrderDetail.getStatementStartTime();
-                                        String returnTimeString = dateFormat.format(returnTime);
-                                        Date returnTimeDay = dateFormat.parse(returnTimeString);
-                                        Date statementStartTime = exportStatementOrderDetail.getStatementStartTime();
-                                        Date statementEndTime = exportStatementOrderDetail.getStatementEndTime();
-                                        if (statementStartTime != null && statementEndTime!= null && returnTimeDay != null) {
-                                            if ((returnTimeDay.after(statementStartTime)||returnTimeDay.compareTo(statementStartTime) == 0) && (returnTimeDay.before(statementEndTime)||returnTimeDay.compareTo(statementEndTime) == 0)) {
-                                                retrunCheckStatementOrderDetail.setOrderRentStartTime(exportStatementOrderDetail.getOrderRentStartTime());
-                                                retrunCheckStatementOrderDetail.setOrderExpectReturnTime(exportStatementOrderDetail.getOrderExpectReturnTime());
-                                                retrunCheckStatementOrderDetail.setIsNew(exportStatementOrderDetail.getIsNew());
-                                                retrunCheckStatementOrderDetail.setPayMode(exportStatementOrderDetail.getPayMode());
-                                                retrunCheckStatementOrderDetail.setStatementExpectPayTime(returnTime);
-                                                retrunCheckStatementOrderDetail.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
-                                                retrunCheckStatementOrderDetail.setOrderRentType(exportStatementOrderDetail.getOrderRentType());
-                                                retrunCheckStatementOrderDetail.setItemSkuName(exportStatementOrderDetail.getItemSkuName());
-                                                newList.add(retrunCheckStatementOrderDetail);
-                                            }
-                                        }
-                                    }
-                                }else {
-                                    newList.add(exportStatementOrderDetail);
-                                }
-                            } else if (returnCheckStatementOrderDetailMapInner.containsKey(key) && exportStatementOrderDetail.getReletOrderItemReferId()!=null) {
-                                // TODO: 2018\7\23 0023 对应的续租单如果续租之前做了退货需要减少数量
-                                List<CheckStatementOrderDetail> retrunCheckStatementOrderDetailList = returnCheckStatementOrderDetailMapInner.get(key);
-                                Integer returnCount = 0;
-                                for (CheckStatementOrderDetail retrunCheckStatementOrderDetail:retrunCheckStatementOrderDetailList) {
-                                    Date returnTime = retrunCheckStatementOrderDetail.getStatementStartTime();
-                                    String returnTimeString = dateFormat.format(returnTime);
-                                    Date returnTimeDay = dateFormat.parse(returnTimeString);
-                                    Date statementStartTime = exportStatementOrderDetail.getStatementStartTime();
-                                    if (statementStartTime != null && returnTimeDay != null) {
-                                        if (returnTimeDay.before(statementStartTime)) {
-                                            returnCount += retrunCheckStatementOrderDetail.getItemCount();
-                                        }
-                                    }
-                                }
-                                Integer itemCount = returnCount + exportStatementOrderDetail.getItemCount();
-                                exportStatementOrderDetail.setItemCount(itemCount);
-                                newList.add(exportStatementOrderDetail);
-                            }else {
-                                newList.add(exportStatementOrderDetail);
-                            }
-                        }
-                        checkStatementOrder.setStatementOrderDetailList(newList);
-                    }
-                }
-            }
-        }
+    }
 
-        for (CheckStatementOrder checkStatementOrder : checkStatementOrderList) {
-
-            Date monthTime = simpleDateFormat.parse(checkStatementOrder.getMonthTime());
-            if (monthTime.getTime()<statementOrderStartTime.getTime()) {
-                continue;
-            }
-            if (StringUtil.isBlank(customerName)) {
-                customerName = checkStatementOrder.getCustomerName();
-            }
-            List<CheckStatementOrderDetail> exportStatementOrderDetailList = checkStatementOrder.getStatementOrderDetailList();
-            if (CollectionUtil.isEmpty(exportStatementOrderDetailList)) {
-                continue;
-            }
-            //要保存到额集合
-            List<CheckStatementOrderDetailBase> exportList = new ArrayList<>();
-            for (CheckStatementOrderDetail exportStatementOrderDetail : exportStatementOrderDetailList) {
-                //设置续租状态
-                if (OrderType.ORDER_TYPE_ORDER.equals(exportStatementOrderDetail.getOrderType()) && exportStatementOrderDetail.getReletOrderItemReferId() != null) {
-                    exportStatementOrderDetail.setOrderType(CommonConstant.ORDER_TYPE_RELET);
-                }
-                if (OrderType.ORDER_TYPE_RETURN.equals(exportStatementOrderDetail.getOrderType())
-                        && exportStatementOrderDetail.getReletOrderItemReferId() != null
-                        && exportStatementOrderDetail.getReletOrderItemReferId() != 0) {
-                    exportStatementOrderDetail.setOrderType(CommonConstant.ORDER_TYPE_RELET_RETURN);
-                }
-                //todo 分装对象来处理
-                CheckStatementOrderDetailBase exportStatementOrderDetailBase = new CheckStatementOrderDetailBase();
-                exportStatementOrderDetailBase.setOrderNo(exportStatementOrderDetail.getOrderNo()); //订单编号
-                exportStatementOrderDetailBase.setOrderType(exportStatementOrderDetail.getOrderItemType());    // 单子类型，详见ORDER_TYPE
-                exportStatementOrderDetailBase.setItemName(exportStatementOrderDetail.getItemName());  //商品名
-                exportStatementOrderDetailBase.setItemSkuName(exportStatementOrderDetail.getItemSkuName());  //配置
-                exportStatementOrderDetailBase.setItemCount(exportStatementOrderDetail.getItemCount());  //数量
-                exportStatementOrderDetailBase.setUnitAmount(BigDecimalUtil.round(exportStatementOrderDetail.getUnitAmount(), BigDecimalUtil.STANDARD_SCALE));  //"单价（元/台/月）"
-                exportStatementOrderDetailBase.setStatementRentAmount(exportStatementOrderDetail.getStatementDetailRentAmount());             // 租金小计
-                exportStatementOrderDetailBase.setStatementRentDepositAmount(exportStatementOrderDetail.getStatementDetailRentDepositAmount());      // 租金押金
-                exportStatementOrderDetailBase.setStatementDepositAmount(BigDecimalUtil.add(exportStatementOrderDetail.getStatementDetailDepositAmount(), exportStatementOrderDetail.getStatementDetailRentDepositAmount()));      // 设备押金
-                exportStatementOrderDetailBase.setStatementOverdueAmount(exportStatementOrderDetail.getStatementDetailOverdueAmount());      // 逾期金额
-                exportStatementOrderDetailBase.setStatementOtherAmount(exportStatementOrderDetail.getStatementDetailOtherAmount());      // 其它费用
-                exportStatementOrderDetailBase.setStatementCorrectAmount(exportStatementOrderDetail.getStatementDetailCorrectAmount());      // 冲正金额
-                exportStatementOrderDetailBase.setStatementAmount(exportStatementOrderDetail.getStatementDetailAmount());      // 应付金额
-                exportStatementOrderDetailBase.setStatementExpectPayEndTime(exportStatementOrderDetail.getStatementExpectPayEndTime());      // 应付日期
-
-                exportStatementOrderDetailBase.setStatementDetailEndAmount(exportStatementOrderDetail.getStatementDetailEndAmount());      // 本期应付金额
-                exportStatementOrderDetailBase.setStatementDetailRentEndAmount(exportStatementOrderDetail.getStatementDetailRentEndAmount());      // 本期应付金额
-
-                if (BigDecimalUtil.compare(exportStatementOrderDetailBase.getStatementDetailEndAmount(), BigDecimal.ZERO) == 0) {
-                    exportStatementOrderDetailBase.setStatementDetailEndAmount(exportStatementOrderDetail.getStatementDetailAmount());      // 本期应付金额
-                }
-                if (BigDecimalUtil.compare(exportStatementOrderDetailBase.getStatementDetailRentEndAmount(), BigDecimal.ZERO) == 0) {
-                    exportStatementOrderDetailBase.setStatementDetailRentEndAmount(exportStatementOrderDetail.getStatementDetailRentAmount());      // 本期应付租金金额
-                }
-                if (BigDecimalUtil.compare(exportStatementOrderDetailBase.getStatementAmount(), BigDecimal.ZERO) != 0) {
-                    exportStatementOrderDetailBase.setStatementExpectPayTime(exportStatementOrderDetail.getStatementExpectPayTime());      // 应付日期
-                }
-                if (exportStatementOrderDetailBase.getStatementExpectPayEndTime() == null) {
-                    exportStatementOrderDetailBase.setStatementExpectPayEndTime(exportStatementOrderDetail.getStatementExpectPayTime());      // 应付日期
-                }
-
-                exportStatementOrderDetailBase.setStatementDepositPaidAmount(exportStatementOrderDetail.getStatementDetailDepositPaidAmount());      // 支付押金
-                exportStatementOrderDetailBase.setStatementDetailStatus(exportStatementOrderDetail.getStatementDetailStatus());      // 状态
-                exportStatementOrderDetailBase.setIsNew(exportStatementOrderDetail.getIsNew());  //是否全新
-                //获取订单类型  月或者天租
-                exportStatementOrderDetailBase.setBusinessType(exportStatementOrderDetail.getOrderType());    //业务类型
-                exportStatementOrderDetailBase.setPayMode(exportStatementOrderDetail.getPayMode());    //支付方式
-                if (exportStatementOrderDetail.getDepositCycle() == null) {
-                    exportStatementOrderDetail.setDepositCycle(0);
-                }
-                if (exportStatementOrderDetail.getPaymentCycle() == null) {
-                    exportStatementOrderDetail.setPaymentCycle(0);
-                }
-                exportStatementOrderDetailBase.setDepositCycle(exportStatementOrderDetail.getDepositCycle());    //押金期数
-                exportStatementOrderDetailBase.setPaymentCycle(exportStatementOrderDetail.getPaymentCycle());    //付款期数
-                exportStatementOrderDetailBase.setRentProgramme("押" + exportStatementOrderDetail.getDepositCycle() + "付" + exportStatementOrderDetail.getPaymentCycle());
-
-                //冲正单单号和原因保存
-                List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderIdAndItemId(exportStatementOrderDetail.getStatementOrderId(), exportStatementOrderDetail.getOrderId(), exportStatementOrderDetail.getOrderItemReferId());
-                if (CollectionUtil.isNotEmpty(statementOrderCorrectDOList)) {
-                    StringBuffer statementCorrectNo = new StringBuffer();
-                    StringBuffer statementCorrectReason = new StringBuffer();
-                    for (StatementOrderCorrectDO statementOrderCorrectDO : statementOrderCorrectDOList) {
-                        statementCorrectNo.append(statementOrderCorrectDO.getStatementCorrectNo() + "/n");
-                        statementCorrectReason.append(statementOrderCorrectDO.getStatementCorrectReason() + "/n");
-                    }
-                    exportStatementOrderDetailBase.setStatementCorrectNo(statementCorrectNo.toString());
-                    exportStatementOrderDetailBase.setStatementCorrectReason(String.valueOf(statementCorrectReason));
-                }
-
-                //退货单和冲正单取No和原因
-                if (OrderType.ORDER_TYPE_RETURN.equals(exportStatementOrderDetail.getOrderType()) ||
-                        CommonConstant.ORDER_TYPE_RELET_RETURN.equals(exportStatementOrderDetail.getOrderType())) {
-
-                    K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(exportStatementOrderDetail.getOrderId());
-                    StringBuffer k3ReturnOrderDONo = new StringBuffer();
-                    StringBuffer returnReasonType = new StringBuffer();
-                    if (k3ReturnOrderDO != null) {
-                        k3ReturnOrderDONo.append(k3ReturnOrderDO.getReturnOrderNo());
-                        returnReasonType.append(formatReturnReasonType(k3ReturnOrderDO.getReturnReasonType()));
-                        //订单
-                        K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(exportStatementOrderDetail.getOrderItemReferId());
-                        if (k3ReturnOrderDetailDO != null) {
-                            OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
-                            exportStatementOrderDetailBase.setOrderNo(orderDO.getOrderNo());
-                            exportStatementOrderDetail.setOrderRentStartTime(orderDO.getRentStartTime());//租赁开始日期
-                            exportStatementOrderDetail.setOrderExpectReturnTime(orderDO.getExpectReturnTime());//租赁结束日期
-                            exportStatementOrderDetail.setOrderRentType(orderDO.getRentType());
-                            exportStatementOrderDetail.setOrderRentTimeLength(orderDO.getRentTimeLength());
-                            if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(exportStatementOrderDetail.getOrderItemType())) {
-                                OrderProductDO orderProductDO = null;
-                                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()) && k3ReturnOrderDetailDO.getOrderEntry() != null) {
-                                    orderProductDO = orderProductMapper.findK3OrderProduct(orderDO.getId(), Integer.parseInt(k3ReturnOrderDetailDO.getOrderEntry()));
-                                } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
-                                    String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
-                                    orderProductDO = orderProductMapper.findById(Integer.parseInt(orderItemId));
-                                }
-                                if (orderProductDO != null) {
-                                    Integer isNewProduct = orderProductDO.getIsNewProduct();
-                                    exportStatementOrderDetailBase.setIsNew(isNewProduct);
-                                }
-                            } else if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(exportStatementOrderDetail.getOrderItemType())) {
-                                OrderMaterialDO orderMaterialDO = null;
-                                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()) && k3ReturnOrderDetailDO.getOrderEntry() != null) {
-                                    orderMaterialDO = orderMaterialMapper.findK3OrderMaterial(orderDO.getId(), Integer.parseInt(k3ReturnOrderDetailDO.getOrderEntry()));
-                                } else if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
-                                    String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
-                                    orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(orderItemId));
-                                }
-
-                                if (orderMaterialDO != null) {
-                                    Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
-                                    exportStatementOrderDetailBase.setIsNew(isNewMaterial);
-                                }
-                            }
-                        }
-
-
-                        //冲正单单号和原因保存
-                        List<StatementOrderCorrectDO> returnStatementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderIdAndReferId(exportStatementOrderDetail.getStatementOrderId(), exportStatementOrderDetail.getOrderId());
-                        if (CollectionUtil.isNotEmpty(returnStatementOrderCorrectDOList)) {
-                            StringBuffer statementCorrectNo = new StringBuffer();
-                            StringBuffer statementCorrectReason = new StringBuffer();
-                            for (StatementOrderCorrectDO statementOrderCorrectDO : returnStatementOrderCorrectDOList) {
-                                statementCorrectNo.append(statementOrderCorrectDO.getStatementCorrectNo() + "/n");
-                                statementCorrectReason.append(statementOrderCorrectDO.getStatementCorrectReason() + "/n");
-                            }
-                            exportStatementOrderDetailBase.setStatementCorrectNo(String.valueOf(statementCorrectNo));
-                            exportStatementOrderDetailBase.setStatementCorrectReason(String.valueOf(statementCorrectReason));
-                        }
-
-                    }
-                    exportStatementOrderDetailBase.setK3ReturnOrderDONo(String.valueOf(k3ReturnOrderDONo));
-                    exportStatementOrderDetailBase.setReturnReasonType(String.valueOf(returnReasonType));
-                }
-
-                //-------------------以下是全部结算单-----------------------------
-                Date orderRentStartTime = exportStatementOrderDetail.getOrderRentStartTime();    //租赁开始日期
-                Date orderExpectReturnTime = exportStatementOrderDetail.getOrderExpectReturnTime();    //租赁结束日期
-                exportStatementOrderDetailBase.setRentStartTime(orderRentStartTime);    //租赁开始日期
-                exportStatementOrderDetailBase.setExpectReturnTime(orderExpectReturnTime);    //租赁结束日期
-                if (OrderRentType.RENT_TYPE_DAY.equals(exportStatementOrderDetail.getOrderRentType())) {
-                    exportStatementOrderDetailBase.setDay((DateUtil.daysBetween(orderRentStartTime,orderExpectReturnTime) + 1));  //日
-                    exportStatementOrderDetailBase.setMonth(0);  //月
-                } else if (OrderRentType.RENT_TYPE_MONTH.equals(exportStatementOrderDetail.getOrderRentType())) {
-                    int[] diff = DateUtil.getDiff(orderRentStartTime,orderExpectReturnTime);
-                    exportStatementOrderDetailBase.setDay(diff[1]);   //日
-                    exportStatementOrderDetailBase.setMonth(diff[0]);  //月
-                }
-                exportStatementOrderDetailBase.setMonth(exportStatementOrderDetailBase.getMonth() == null ? 0 : exportStatementOrderDetailBase.getMonth());
-                exportStatementOrderDetailBase.setDay(exportStatementOrderDetailBase.getDay() == null ? 0 : exportStatementOrderDetailBase.getDay());
-                String allRentTimeLength = exportStatementOrderDetailBase.getMonth() + "月" + exportStatementOrderDetailBase.getDay() + "天";
-                exportStatementOrderDetailBase.setAllRentTimeLength(allRentTimeLength);    //租赁总期限
-                exportStatementOrderDetailBase.setAllPeriodStartAndEnd(formatPeriodStartAndEnd(exportStatementOrderDetail.getOrderRentStartTime(), exportStatementOrderDetail.getOrderExpectReturnTime()) + allRentTimeLength);    //本期起止（总的期数起止）
-                //-------------------以上是全部结算单-----------------------------
-
-                //-------------------以下是本期结算单-----------------------------
-                if (exportStatementOrderDetail.getStatementStartTime() == null) {
-                    exportStatementOrderDetail.setStatementStartTime(exportStatementOrderDetail.getOrderRentStartTime());
-                }
-                if (exportStatementOrderDetail.getStatementEndTime() == null) {
-                    exportStatementOrderDetail.setStatementEndTime(exportStatementOrderDetail.getOrderExpectReturnTime());
-                }
-                Date statementStartTime = exportStatementOrderDetail.getStatementStartTime();     //结算开始日期
-                Date statementEndTime = exportStatementOrderDetail.getStatementEndTime();  //结算结束日期
-                exportStatementOrderDetailBase.setStatementStartTime(statementStartTime);     //结算开始日期
-                exportStatementOrderDetailBase.setStatementEndTime(statementEndTime);  //结算结束日期
-                int[] diff = DateUtil.getDiff(statementStartTime,statementEndTime);
-                int month = diff[0];
-                int day = diff[1];
-                String monthAndDays = month + "月" + day + "天";
-                int typeDay = DateUtil.daysBetween(statementStartTime, statementEndTime) + 1;
-                if (OrderRentType.RENT_TYPE_DAY.equals(exportStatementOrderDetail.getOrderRentType())) {
-                    exportStatementOrderDetailBase.setRentTimeLength(typeDay + "天");  //期限
-                    exportStatementOrderDetailBase.setStatementMonth(0); //月
-                    exportStatementOrderDetailBase.setStatementDay((DateUtil.daysBetween(statementStartTime,statementEndTime) + 1)); //日
-                    exportStatementOrderDetailBase.setUnitAmountInfo(exportStatementOrderDetailBase.getUnitAmount() + "/日");
-//                    exportStatementOrderDetail.setStatementStartTime(exportStatementOrderDetail.getOrderRentStartTime());
-//                    exportStatementOrderDetail.setStatementEndTime(exportStatementOrderDetail.getOrderExpectReturnTime());
-                } else if (OrderRentType.RENT_TYPE_MONTH.equals(exportStatementOrderDetail.getOrderRentType())) {
-                    exportStatementOrderDetailBase.setStatementMonth(month); //月
-                    exportStatementOrderDetailBase.setStatementDay(day); //日
-                    exportStatementOrderDetailBase.setUnitAmountInfo(exportStatementOrderDetailBase.getUnitAmount() + "/月");
-                    exportStatementOrderDetailBase.setRentTimeLength(monthAndDays);  //期限
-                }
-                exportStatementOrderDetailBase.setRentTimeLength(exportStatementOrderDetailBase.getRentTimeLength() == null ? "无" : exportStatementOrderDetailBase.getRentTimeLength());
-                exportStatementOrderDetailBase.setCurrentPeriodStartAndEnd(formatPeriodStartAndEnd(exportStatementOrderDetail.getStatementStartTime(), exportStatementOrderDetail.getStatementEndTime()) + exportStatementOrderDetailBase.getRentTimeLength());    //本期起止（当前期数起止）
-                //-------------------以上是本期结算单-----------------------------
-
-
-                exportList.add(exportStatementOrderDetailBase);
-            }
-            //对订单中有单价且有结算时间的商品进行存储
-            Map<String,String> orderProductMap = new HashMap<>();
-            if (CollectionUtil.isNotEmpty(exportList)) {
-                for (CheckStatementOrderDetailBase checkStatementOrderDetailBase: exportList) {
-                    if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(checkStatementOrderDetailBase.getOrderType())
-                            && BigDecimalUtil.compare(checkStatementOrderDetailBase.getUnitAmount(),BigDecimal.ZERO)>0) {
-                        if (!orderProductMap.containsKey(checkStatementOrderDetailBase.getOrderNo())
-                                && StringUtil.isNotEmpty(checkStatementOrderDetailBase.getCurrentPeriodStartAndEnd())) {
-                            orderProductMap.put(checkStatementOrderDetailBase.getOrderNo(), checkStatementOrderDetailBase.getCurrentPeriodStartAndEnd());
-                        }
-                    }
-                }
-            }
-            //对没有单价的商品处理时间
-            for (CheckStatementOrderDetailBase checkStatementOrderDetailBase: exportList) {
-                if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(checkStatementOrderDetailBase.getOrderType())
-                        && BigDecimalUtil.compare(checkStatementOrderDetailBase.getUnitAmount(),BigDecimal.ZERO)==0) {
-                    if (!orderProductMap.isEmpty() && orderProductMap.containsKey(checkStatementOrderDetailBase.getOrderNo())) {
-                        String currentPeriodStartAndEnd = orderProductMap.get(checkStatementOrderDetailBase.getOrderNo());
-                        checkStatementOrderDetailBase.setCurrentPeriodStartAndEnd(currentPeriodStartAndEnd);
-                    }
-                }
-            }
-
-            //按照租赁日期进行排序
-            Collections.sort(exportList, new Comparator<CheckStatementOrderDetailBase>() {
+    private void addReturnOrderData(CheckStatementStatisticsDTO statementStatisticsDTO, Map<String, List<BaseCheckStatementDetailDTO>> orderNoDetailsMap) {
+        // 退货结算单处理
+        for (List<BaseCheckStatementDetailDTO> detailDTOS : orderNoDetailsMap.values()) {
+            // 按照期数升序排列
+            Collections.sort(detailDTOS, new Comparator<BaseCheckStatementDetailDTO>() {
                 @Override
-                public int compare(CheckStatementOrderDetailBase o1, CheckStatementOrderDetailBase o2) {
+                public int compare(BaseCheckStatementDetailDTO o1, BaseCheckStatementDetailDTO o2) {
                     // 返回值为int类型，大于0表示正序，小于0表示逆序
-                    if (o1.getRentStartTime() == null && o2.getRentStartTime()!=null) {
-                        return 1;
-                    } else if (o1.getRentStartTime() != null && o2.getRentStartTime()==null) {
-                        return -1;
-                    } else if (o1.getRentStartTime() == null && o2.getRentStartTime()==null) {
-                        return 1;
-                    }else {
-                        int i = Integer.valueOf(String.valueOf(o1.getRentStartTime().getTime()/1000 - o2.getRentStartTime().getTime()/1000));
-                        return i;
-                    }
+                    return (int) ((o1.getStatementStartTime().getTime() - o2.getStatementStartTime().getTime()) / 1000);
                 }
             });
-
-            String sheetName = "";
-            if (checkStatementOrder.getMonthTime() != null) {
-                sheetName = checkStatementOrder.getMonthTime().replace("-", "年") + "月";
-            }
-            if(CollectionUtil.isEmpty(exportList)){
-                continue;
-            }
-
-
-            XSSFSheet hssfSheet = null;
-            //创建一个excel并且传入
-            if (hssfWorkbook == null) {
-                hssfWorkbook = new XSSFWorkbook();
-            }
-            if (hssfWorkbook.getSheet(sheetName) == null) {
-                hssfSheet = hssfWorkbook.createSheet(sheetName);
-                hssfSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 27));
-                XSSFRow rowNo1 = hssfSheet.createRow(0);
-                rowNo1.setHeightInPoints(39);
-                XSSFCell cellNo1 = rowNo1.createCell(0);
-                cellNo1.setCellValue(customerName);
-                rowNo1.setHeightInPoints(30);
-                XSSFCellStyle cellStyle = hssfWorkbook.createCellStyle();
-                Font font = hssfWorkbook.createFont();
-                font.setFontName("宋体");//字体格式
-                font.setFontHeightInPoints((short) 9);//字体大小
-                font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);//粗体显示
-                cellStyle.setFont(font);
-                cellStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER); // 居中
-                cellStyle.setVerticalAlignment(XSSFCellStyle.VERTICAL_CENTER);//垂直居中
-                cellNo1.setCellStyle(cellStyle);
-            }
-            if (hssfSheet == null) {
-                continue;
-            }
-
-            ServiceResult<String, XSSFWorkbook> serviceResult = excelExportService.getXSSFWorkbook(hssfWorkbook, hssfSheet, exportList, ExcelExportConfigGroup.statementOrderCheckConfig, sheetName, 2, 40, 63);
-            hssfWorkbook = serviceResult.getResult();
-            XSSFSheet sheetAt = hssfWorkbook.getSheet(sheetName);
-            int lastRowNum = sheetAt.getLastRowNum();
-
-            sheetAt.setColumnHidden(6, true);
-            sheetAt.setColumnHidden(7, true);
-            sheetAt.setColumnHidden(8, true);
-            sheetAt.setColumnHidden(9, true);
-            sheetAt.setColumnHidden(10, true);
-            sheetAt.setColumnHidden(12, true);
-            sheetAt.setColumnHidden(13, true);
-            sheetAt.setColumnHidden(14, true);
-            sheetAt.setColumnHidden(15, true);
-            sheetAt.setColumnHidden(16, true);
-
-            XSSFRow hssfRow1 = sheetAt.createRow(lastRowNum + 2);
-            XSSFRow hssfRow2 = sheetAt.createRow(lastRowNum + 3);
-            XSSFRow hssfRow3 = sheetAt.createRow(lastRowNum + 4);
-            XSSFRow hssfRow4 = sheetAt.createRow(lastRowNum + 5);
-            XSSFRow hssfRow5 = sheetAt.createRow(lastRowNum + 6);
-            XSSFRow hssfRow6 = sheetAt.createRow(lastRowNum + 7);
-            XSSFRow hssfRow7 = sheetAt.createRow(lastRowNum + 8);
-            hssfRow1.setHeightInPoints(30);
-            hssfRow2.setHeightInPoints(30);
-            hssfRow3.setHeightInPoints(30);
-            hssfRow4.setHeightInPoints(30);
-            hssfRow5.setHeightInPoints(30);
-            hssfRow6.setHeightInPoints(30);
-            hssfRow7.setHeightInPoints(30);
-
-
-            XSSFCell cell201 = hssfRow1.createCell(25);
-            XSSFCell cell202 = hssfRow2.createCell(25);
-            XSSFCell cell203 = hssfRow3.createCell(25);
-            XSSFCell cell204 = hssfRow4.createCell(25);
-            XSSFCell cell205 = hssfRow5.createCell(25);
-            XSSFCell cell206 = hssfRow6.createCell(25);
-            XSSFCell cell207 = hssfRow7.createCell(25);
-
-            // 本期应付
-            cell201.setCellValue(Double.parseDouble(amountExcelExportView.view(totalEverPeriodAmountMap.get(checkStatementOrder.getMonthTime())).toString()));
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell201, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
-            // 本期已付
-            cell202.setCellValue(Double.parseDouble(amountExcelExportView.view(totalEverPeriodPaidAmountMap.get(checkStatementOrder.getMonthTime())).toString()));
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell202, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
-            // 本期未付
-            BigDecimal currentPeriodUnpaid = BigDecimalUtil.sub(totalEverPeriodAmountMap.get(checkStatementOrder.getMonthTime()), totalEverPeriodPaidAmountMap.get(checkStatementOrder.getMonthTime()));
-            cell203.setCellValue(currentPeriodUnpaid.setScale(2, BigDecimal.ROUND_DOWN).doubleValue());
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell203, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
-
-            if (StringUtil.isNotBlank(previousSheetName) || !sheetName.equals(previousSheetName)) {
-                beforePeriodUnpaid = BigDecimalUtil.sub(allPeriodUnpaid, currentPeriodUnpaid);
-            }
-
-            // 截止上期未付
-            cell204.setCellValue(beforePeriodUnpaid.setScale(2, BigDecimal.ROUND_DOWN).doubleValue());
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell204, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
-
-            // 累计未付
-            cell205.setCellValue(allPeriodUnpaid.doubleValue());
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell205, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
-
-            if (findCustomerAccount) {
-                // TODO: 2018\7\31 0031  账户余额
-                cell206.setCellValue(accountBalance.doubleValue());
-                ExcelExportSupport.setCellStyle(hssfWorkbook, cell206, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
-                // TODO: 2018\7\31 0031  尚需支付
-                BigDecimal needPayAmount = BigDecimalUtil.sub(allPeriodUnpaid,accountBalance);
-                if (BigDecimalUtil.compare(needPayAmount, BigDecimal.ZERO) < 0) {
-                    needPayAmount = BigDecimal.ZERO;
+            String statementStartTimeMonthDay = null;
+            String statementUnrentStartTime = null;
+            for (BaseCheckStatementDetailDTO detailDTO : detailDTOS) {
+                if (detailDTO.isAddTheMonth(statementStatisticsDTO)) {
+                    // 其他退货单直接添加
+                    if (detailDTO instanceof CheckStatementDetailUnRentOtherDTO) {
+                        statementStatisticsDTO.addCheckStatementDetailDTO(detailDTO);
+                    } else if (detailDTO instanceof CheckStatementDetailUnRentDTO) {
+                        // 租赁退货
+                        if (statementStartTimeMonthDay == null) {
+                            statementStartTimeMonthDay = DateFormatUtils.format(detailDTO.getStatementStartTime(), "yyyyMMdd");
+                        }
+                        if (statementStartTimeMonthDay.equals(DateFormatUtils.format(detailDTO.getStatementStartTime(), "yyyyMMdd"))) {
+                            statementStatisticsDTO.addCheckStatementDetailDTO(detailDTO);
+                        }
+                    } else if (detailDTO instanceof CheckStatementDetailUnRentReletDTO) {
+                        // 续租退货
+                        if (statementUnrentStartTime == null) {
+                            statementUnrentStartTime = DateFormatUtils.format(detailDTO.getStatementStartTime(), "yyyyMMdd");
+                        }
+                        if (statementUnrentStartTime.equals(DateFormatUtils.format(detailDTO.getStatementStartTime(), "yyyyMMdd"))) {
+                            statementStatisticsDTO.addCheckStatementDetailDTO(detailDTO);
+                        }
+                    }
                 }
-                cell207.setCellValue(needPayAmount.doubleValue());
-                ExcelExportSupport.setCellStyle(hssfWorkbook, cell207, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
-            }else {
-                // TODO: 2018\7\31 0031  账户余额
-                cell206.setCellValue("未查询到该客户账户余额或查询出错");
-                ExcelExportSupport.setCellStyle(hssfWorkbook, cell206, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
-                // TODO: 2018\7\31 0031  尚需支付
-                cell207.setCellValue("未查询到该客户账户余额或查询出错");
-                ExcelExportSupport.setCellStyle(hssfWorkbook, cell207, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
+
+            }
+        }
+    }
+
+
+    private void createAndAddUnRentOrdersByReturnTime(CheckStatementMapContainer mapContainer, CheckStatementStatisticsDTO statisticsDTO, List<BaseCheckStatementDetailDTO> checkStatementDetailDTOS) {
+        Map<Integer, K3ReturnOrder> k3ReturnOrderMap = mapContainer.getIdK3ReturnOrderMap();
+        Map<Integer, OrderProduct> orderProductMap = mapContainer.getIdOrderProductMap();
+        Map<Integer, OrderMaterial> orderMaterialMap = mapContainer.getIdOrderMaterialMap();
+        Map<String, Order> orderMap = mapContainer.getNoOrderMap();
+        for (K3ReturnOrderDetail k3ReturnOrderDetail : mapContainer.getIdK3ReturnOrderDetailMap().values()) {
+            Order order = orderMap.get(k3ReturnOrderDetail.getOrderNo());
+            if (order == null) {
+                continue;
+            }
+            String returnTimeMonthStr = DateFormatUtils.format(k3ReturnOrderMap.get(k3ReturnOrderDetail.getReturnOrderId()).getReturnTime(), "yyyy-MM");
+            if (!returnTimeMonthStr.equals(statisticsDTO.getMonth())) {
+                continue;
+            }
+            if (productSupport.isProduct(k3ReturnOrderDetail.getProductNo())) {
+                OrderProduct orderProduct = orderProductMap.get(Integer.valueOf(k3ReturnOrderDetail.getOrderItemId()));
+                BigDecimal unitAmount = orderProduct.getProductUnitAmount();
+                if (unitAmount == null || BigDecimal.ZERO.compareTo(unitAmount) == 0) {
+                    continue;
+                }
+                boolean isReletReturnOrder = false;
+                BaseCheckStatementDetailDTO baseCheckStatementDetailDTO = null;
+                for (BaseCheckStatementDetailDTO statementDetailDTO : checkStatementDetailDTOS) {
+                    boolean isReletReturnOrderTemp = k3ReturnOrderDetail.getK3ReturnOrderDetailId().equals(statementDetailDTO.getOrderItemReferId());
+                    baseCheckStatementDetailDTO = statementDetailDTO;
+                    if ((statementDetailDTO instanceof CheckStatementDetailUnRentReletProductDTO || statementDetailDTO instanceof CheckStatementDetailUnRentProductDTO) && isReletReturnOrderTemp) {
+                        isReletReturnOrder = true;
+                        break;
+                    }
+                }
+                if (isReletReturnOrder) {
+                    statisticsDTO.addCheckStatementDetailDTO(createReturnProductStatementDTO(k3ReturnOrderDetail, orderProduct, order, mapContainer, baseCheckStatementDetailDTO));
+                }
+            } else if (productSupport.isMaterial(k3ReturnOrderDetail.getProductNo())) {
+                OrderMaterial orderMaterial = orderMaterialMap.get(Integer.valueOf(k3ReturnOrderDetail.getOrderItemId()));
+                BigDecimal unitAmount = orderMaterial.getMaterialUnitAmount();
+                if (unitAmount == null || BigDecimal.ZERO.compareTo(unitAmount) == 0) {
+                    continue;
+                }
+                boolean isReletReturnOrder = false;
+                BaseCheckStatementDetailDTO baseCheckStatementDetailDTO = null;
+                for (BaseCheckStatementDetailDTO statementDetailDTO : checkStatementDetailDTOS) {
+                    boolean isReletReturnOrderTemp = k3ReturnOrderDetail.getK3ReturnOrderDetailId().equals(statementDetailDTO.getOrderItemReferId());
+                    baseCheckStatementDetailDTO = statementDetailDTO;
+                    if ((statementDetailDTO instanceof CheckStatementDetailUnRentReletMaterialDTO || statementDetailDTO instanceof CheckStatementDetailUnRentMaterialDTO) && isReletReturnOrderTemp) {
+                        isReletReturnOrder = true;
+                        break;
+                    }
+                }
+                if (isReletReturnOrder) {
+                    statisticsDTO.addCheckStatementDetailDTO(createReturnMaterialStatementData(k3ReturnOrderDetail, orderMaterial, order, mapContainer, baseCheckStatementDetailDTO));
+                }
             }
 
+        }
+    }
 
-            if (StringUtil.isNotBlank(previousSheetName) || !sheetName.equals(previousSheetName)) {
-                allPeriodUnpaid = BigDecimalUtil.sub(allPeriodUnpaid, currentPeriodUnpaid);
+    private void createReplaceOrdersByReturnTime(CheckStatementMapContainer mapContainer, CheckStatementStatisticsDTO statisticsDTO, List<BaseCheckStatementDetailDTO> checkStatementDetailDTOS) {
+        Map<Integer, ReplaceOrder> replaceOrderMap = mapContainer.getIdReplaceOrderMap();
+        Map<Integer, OrderProduct> orderProductMap = mapContainer.getIdOrderProductMap();
+        Map<Integer, OrderMaterial> orderMaterialMap = mapContainer.getIdOrderMaterialMap();
+        Map<String, Order> orderMap = mapContainer.getNoOrderMap();
+        if (mapContainer.getIdReplaceOrderProductMap() != null) {
+            for (ReplaceOrderProduct replaceOrderProduct : mapContainer.getIdReplaceOrderProductMap().values()) {
+                ReplaceOrder replaceOrder = replaceOrderMap.get(replaceOrderProduct.getReplaceOrderId());
+                if (replaceOrder == null) {
+                    continue;
+                }
+
+                String returnTimeMonthStr = DateFormatUtils.format(replaceOrderMap.get(replaceOrderProduct.getReplaceOrderId()).getRealReplaceTime(), "yyyy-MM");
+                if (!returnTimeMonthStr.equals(statisticsDTO.getMonth())) {
+                    continue;
+                }
+
+                Order order = orderMap.get(replaceOrder.getOrderNo());
+                if (order == null) {
+                    continue;
+                }
+
+                BigDecimal unitAmount = replaceOrderProduct.getProductUnitAmount();
+                if (unitAmount == null || BigDecimal.ZERO.compareTo(unitAmount) == 0) {
+                    continue;
+                }
+                boolean isReplaceOrder = false;
+                BaseCheckStatementDetailDTO baseCheckStatementDetailDTO = null;
+                OrderProduct orderProduct = null;
+                for (BaseCheckStatementDetailDTO statementDetailDTO : checkStatementDetailDTOS) {
+                    boolean isReplaceOrderTemp = replaceOrderProduct.getReplaceOrderProductId().equals(statementDetailDTO.getReplaceItemId());
+                    baseCheckStatementDetailDTO = statementDetailDTO;
+                    if ((statementDetailDTO instanceof CheckStatementDetailUnReplaceProductDTO) && isReplaceOrderTemp) {
+                        isReplaceOrder = true;
+                        orderProduct = orderProductMap.get(replaceOrderProduct.getOldOrderProductId());
+                        break;
+                    }
+                }
+                if (isReplaceOrder) {
+                    statisticsDTO.addCheckStatementDetailDTO(createReplaceOrderProductStatementDTO(replaceOrderProduct, orderProduct, order, mapContainer, baseCheckStatementDetailDTO));
+                }
             }
+        }
+        if (mapContainer.getIdReplaceOrderMaterialMap() != null) {
+            for (ReplaceOrderMaterial replaceOrderMaterial : mapContainer.getIdReplaceOrderMaterialMap().values()) {
+                ReplaceOrder replaceOrder = replaceOrderMap.get(replaceOrderMaterial.getReplaceOrderId());
+                if (replaceOrder == null) {
+                    continue;
+                }
 
-            XSSFCell cell151 = hssfRow1.createCell(20);
-            XSSFCell cell152 = hssfRow2.createCell(20);
-            XSSFCell cell153 = hssfRow3.createCell(20);
-            XSSFCell cell154 = hssfRow4.createCell(20);
-            XSSFCell cell155 = hssfRow5.createCell(20);
-            XSSFCell cell156 = hssfRow6.createCell(20);
-            XSSFCell cell157 = hssfRow7.createCell(20);
+                String returnTimeMonthStr = DateFormatUtils.format(replaceOrderMap.get(replaceOrderMaterial.getReplaceOrderId()).getRealReplaceTime(), "yyyy-MM");
+                if (!returnTimeMonthStr.equals(statisticsDTO.getMonth())) {
+                    continue;
+                }
 
-            createCell(hssfWorkbook, hssfRow1, 21, 4);
-            createCell(hssfWorkbook, hssfRow2, 21, 4);
-            createCell(hssfWorkbook, hssfRow3, 21, 4);
-            createCell(hssfWorkbook, hssfRow4, 21, 4);
-            createCell(hssfWorkbook, hssfRow5, 21, 4);
-            createCell(hssfWorkbook, hssfRow6, 21, 4);
-            createCell(hssfWorkbook, hssfRow7, 21, 4);
+                Order order = orderMap.get(replaceOrder.getOrderNo());
+                if (order == null) {
+                    continue;
+                }
 
-            cell151.setCellValue("本月应付");
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell151, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
-            cell152.setCellValue("本月已付");
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell152, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
-            cell153.setCellValue("本月未付");
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell153, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
-            cell154.setCellValue("截止上期未付");
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell154, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
-            cell155.setCellValue("累计未付");
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell155, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
-            cell156.setCellValue("账户余额");
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell156, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
-            cell157.setCellValue("尚需支付");
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell157, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
+                BigDecimal unitAmount = replaceOrderMaterial.getMaterialUnitAmount();
+                if (unitAmount == null || BigDecimal.ZERO.compareTo(unitAmount) == 0) {
+                    continue;
+                }
+                boolean isReplaceOrder = false;
+                BaseCheckStatementDetailDTO baseCheckStatementDetailDTO = null;
+                OrderMaterial orderMaterial = null;
+                for (BaseCheckStatementDetailDTO statementDetailDTO : checkStatementDetailDTOS) {
+                    boolean isReplaceOrderTemp = replaceOrderMaterial.getReplaceOrderMaterialId().equals(statementDetailDTO.getReplaceItemId());
+                    baseCheckStatementDetailDTO = statementDetailDTO;
+                    if ((statementDetailDTO instanceof CheckStatementDetailUnReplaceProductDTO) && isReplaceOrderTemp) {
+                        isReplaceOrder = true;
+                        orderMaterial = orderMaterialMap.get(replaceOrderMaterial.getOldOrderMaterialId());
+                        break;
+                    }
+                }
+                if (isReplaceOrder) {
+                    statisticsDTO.addCheckStatementDetailDTO(createReplaceOrderMaterialStatementDTO(replaceOrderMaterial, orderMaterial, order, mapContainer, baseCheckStatementDetailDTO));
+                }
+            }
+        }
+    }
 
-            hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 2, lastRowNum + 2, 20, 24));
-            hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 3, lastRowNum + 3, 20, 24));
-            hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 4, lastRowNum + 4, 20, 24));
-            hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 5, lastRowNum + 5, 20, 24));
-            hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 6, lastRowNum + 6, 20, 24));
-            hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 7, lastRowNum + 7, 20, 24));
-            hssfSheet.addMergedRegion(new CellRangeAddress(lastRowNum + 8, lastRowNum + 8, 20, 24));
+    /**
+     * 创建并新增单价是0的退货产品订单列表信息
+     */
+    private void createAndAddUnitAmountIsZeroUnRentProductOrders(List<BaseCheckStatementDetailDTO> checkStatementDetailDTOS, CheckStatementMapContainer mapContainer) {
+        Map<String, BaseCheckStatementDetailDTO> itemIdAndItemType = new HashMap<>();
+        for (K3ReturnOrderDetail k3ReturnOrderDetail : mapContainer.getIdK3ReturnOrderDetailMap().values()) {
+            Order order = mapContainer.getNoOrderMap().get(k3ReturnOrderDetail.getOrderNo());
+            if (order != null) {
+                for (OrderProduct orderProduct : mapContainer.getIdOrderProductMap().values()) {
+                    if (BigDecimal.ZERO.compareTo(orderProduct.getProductUnitAmount()) != 0) {
+                        continue;
+                    }
+                    String itemIdAndItemTypeKey = orderProduct.getProductId() + "_" + OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT;
+                    if (itemIdAndItemType.containsKey(itemIdAndItemTypeKey)) {
+                        continue;
+                    }
+                    if (order.getOrderId().equals(orderProduct.getOrderId())) {
+                        BaseCheckStatementDetailDTO checkStatementDetailDTO = createReturnProductStatementDTO(k3ReturnOrderDetail, orderProduct, order, mapContainer, null);
+                        itemIdAndItemType.put(itemIdAndItemTypeKey, checkStatementDetailDTO);
+                        checkStatementDetailDTOS.add(checkStatementDetailDTO);
+                    }
+                }
+            }
+        }
+    }
 
-            if (StringUtil.isBlank(previousSheetName) || !previousSheetName.equals(sheetName)) {
-                previousSheetName = sheetName;
+    /**
+     * 创建并新增单价是0的租赁产品订单列表信息
+     */
+    private void createAndAddUnitAmountIsZeroRentProductOrders(List<BaseCheckStatementDetailDTO> checkStatementDetailDTOS, CheckStatementMapContainer mapContainer) {
+        Map<String, BaseCheckStatementDetailDTO> itemIdAndItemTypeMap = new HashMap<>();
+        for (Order order : mapContainer.getNoOrderMap().values()) {
+            if (order != null) {
+                for (OrderProduct orderProduct : mapContainer.getIdOrderProductMap().values()) {
+                    if (BigDecimal.ZERO.compareTo(orderProduct.getProductUnitAmount()) != 0) {
+                        continue;
+                    }
+                    String itemIdAndItemTypeKey = orderProduct.getProductId() + "_" + OrderItemType.ORDER_ITEM_TYPE_PRODUCT;
+                    if (itemIdAndItemTypeMap.containsKey(itemIdAndItemTypeKey)) {
+                        continue;
+                    }
+                    if (order.getOrderId().equals(orderProduct.getOrderId())) {
+                        BaseCheckStatementDetailDTO checkStatementDetailDTO = new CheckStatementDetailRentProductDTO();
+
+                        setStatementOrderProductData(checkStatementDetailDTO, orderProduct);
+                        setStatementOrderData(checkStatementDetailDTO, order, true);
+                        checkStatementDetailDTO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
+                        checkStatementDetailDTO.setOrderType(OrderType.ORDER_TYPE_ORDER);
+                        checkStatementDetailDTO.setOrderItemReferId(orderProduct.getOrderProductId());
+                        checkStatementDetailDTO.setOrderId(order.getOrderId());
+
+                        checkStatementDetailDTO.mapContainer(mapContainer).loadAmountData().buildImportData();
+                        itemIdAndItemTypeMap.put(itemIdAndItemTypeKey, checkStatementDetailDTO);
+                        checkStatementDetailDTOS.add(checkStatementDetailDTO);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 创建换货商品对账单数据传输对象
+     */
+    private BaseCheckStatementDetailDTO createReplaceOrderProductStatementDTO(ReplaceOrderProduct replaceOrderProduct, OrderProduct orderProduct, Order order, CheckStatementMapContainer mapContainer, BaseCheckStatementDetailDTO statementDetailDTO) {
+        BaseCheckStatementDetailDTO checkStatementDetailDTO = new CheckStatementDetailUnReplaceProductDTO();
+        setStatementOrderProductData(checkStatementDetailDTO, orderProduct);
+        checkStatementDetailDTO.setItemCount(CommonConstant.COMMON_ZERO - replaceOrderProduct.getRealReplaceProductCount());
+        checkStatementDetailDTO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT);
+        checkStatementDetailDTO.setOrderType(OrderType.ORDER_TYPE_REPLACE);
+        checkStatementDetailDTO.setOrderItemReferId(statementDetailDTO.getOrderItemReferId());
+        checkStatementDetailDTO.setStatementOrderDetailId(replaceOrderProduct.getReplaceOrderProductId());
+        setStatementReplaceOrderProductAndMaterialData(checkStatementDetailDTO, replaceOrderProduct.getReplaceOrderId(), mapContainer);
+        setStatementOrderData(checkStatementDetailDTO, order, false);
+        checkStatementDetailDTO.mapContainer(mapContainer).loadAmountData().buildImportData();
+        return checkStatementDetailDTO;
+    }
+
+    /**
+     * 创建换货配件对账单数据传输对象
+     */
+    private BaseCheckStatementDetailDTO createReplaceOrderMaterialStatementDTO(ReplaceOrderMaterial replaceOrderMaterial, OrderMaterial orderMaterial, Order order, CheckStatementMapContainer mapContainer, BaseCheckStatementDetailDTO statementDetailDTO) {
+        BaseCheckStatementDetailDTO checkStatementDetailDTO = new CheckStatementDetailUnReplaceProductDTO();
+        setStatementOrderMaterialData(checkStatementDetailDTO, orderMaterial);
+        checkStatementDetailDTO.setItemCount(CommonConstant.COMMON_ZERO - replaceOrderMaterial.getRealReplaceMaterialCount());
+        checkStatementDetailDTO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL);
+        checkStatementDetailDTO.setOrderType(OrderType.ORDER_TYPE_REPLACE);
+        checkStatementDetailDTO.setOrderItemReferId(statementDetailDTO.getOrderItemReferId());
+        checkStatementDetailDTO.setStatementOrderDetailId(replaceOrderMaterial.getReplaceOrderMaterialId());
+        setStatementReplaceOrderProductAndMaterialData(checkStatementDetailDTO, replaceOrderMaterial.getReplaceOrderId(), mapContainer);
+        setStatementOrderData(checkStatementDetailDTO, order, false);
+        checkStatementDetailDTO.mapContainer(mapContainer).loadAmountData().buildImportData();
+        return checkStatementDetailDTO;
+    }
+
+    /**
+     * 创建退货商品对账单数据传输对象
+     */
+    private BaseCheckStatementDetailDTO createReturnProductStatementDTO(K3ReturnOrderDetail k3ReturnOrderDetail, OrderProduct orderProduct, Order order, CheckStatementMapContainer mapContainer, BaseCheckStatementDetailDTO statementDetailDTO) {
+        BaseCheckStatementDetailDTO checkStatementDetailDTO = new CheckStatementDetailUnRentProductDTO();
+        setStatementOrderProductData(checkStatementDetailDTO, orderProduct);
+        checkStatementDetailDTO.setItemCount(CommonConstant.COMMON_ZERO - k3ReturnOrderDetail.getRealProductCount());
+        checkStatementDetailDTO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT);
+        checkStatementDetailDTO.setOrderType(OrderType.ORDER_TYPE_RETURN);
+        checkStatementDetailDTO.setOrderItemReferId(k3ReturnOrderDetail.getK3ReturnOrderDetailId());
+        checkStatementDetailDTO.setStatementOrderDetailId(k3ReturnOrderDetail.getK3ReturnOrderDetailId());
+        setStatementK3ReturnOrderData(checkStatementDetailDTO, k3ReturnOrderDetail, mapContainer);
+        setStatementOrderData(checkStatementDetailDTO, order, false);
+        checkStatementDetailDTO.mapContainer(mapContainer).loadAmountData().buildImportData();
+        return checkStatementDetailDTO;
+    }
+
+    /**
+     * 创建退货配件对账单数据传输对象
+     */
+    private BaseCheckStatementDetailDTO createReturnMaterialStatementData(K3ReturnOrderDetail k3ReturnOrderDetail, OrderMaterial orderMaterial, Order order, CheckStatementMapContainer mapContainer, BaseCheckStatementDetailDTO statementDetailDTO) {
+        BaseCheckStatementDetailDTO checkStatementDetailDTO = new CheckStatementDetailUnRentMaterialDTO();
+        setStatementOrderMaterialData(checkStatementDetailDTO, orderMaterial);
+        checkStatementDetailDTO.setItemCount(CommonConstant.COMMON_ZERO - k3ReturnOrderDetail.getRealProductCount());
+        checkStatementDetailDTO.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL);
+        checkStatementDetailDTO.setOrderType(OrderType.ORDER_TYPE_RETURN);
+        checkStatementDetailDTO.setOrderItemReferId(k3ReturnOrderDetail.getK3ReturnOrderDetailId());
+        checkStatementDetailDTO.setStatementOrderDetailId(k3ReturnOrderDetail.getK3ReturnOrderDetailId());
+        setStatementK3ReturnOrderData(checkStatementDetailDTO, k3ReturnOrderDetail, mapContainer);
+        setStatementOrderData(checkStatementDetailDTO, order, false);
+        checkStatementDetailDTO.mapContainer(mapContainer).loadAmountData().buildImportData();
+        return checkStatementDetailDTO;
+    }
+
+    private void setStatementK3ReturnOrderData(BaseCheckStatementDetailDTO checkStatementDetailDTO, K3ReturnOrderDetail k3ReturnOrderDetail, CheckStatementMapContainer mapContainer) {
+        K3ReturnOrder k3ReturnOrder = mapContainer.getIdK3ReturnOrderMap().get(k3ReturnOrderDetail.getReturnOrderId());
+        checkStatementDetailDTO.setStatementExpectPayTime(k3ReturnOrder.getReturnTime());
+        checkStatementDetailDTO.setOrderId(k3ReturnOrder.getK3ReturnOrderId());
+        checkStatementDetailDTO.setReturnTime(k3ReturnOrder.getReturnTime());
+        checkStatementDetailDTO.setReturnReasonType(k3ReturnOrder.getReturnReasonType());
+        checkStatementDetailDTO.setReturnOrderNo(k3ReturnOrder.getReturnOrderNo());
+        checkStatementDetailDTO.setOrderItemReferId(k3ReturnOrderDetail.getK3ReturnOrderDetailId());
+    }
+
+    private void setStatementReplaceOrderProductAndMaterialData(BaseCheckStatementDetailDTO checkStatementDetailDTO, Integer replaceOrderId, CheckStatementMapContainer mapContainer) {
+        ReplaceOrder replaceOrder = mapContainer.getIdReplaceOrderMap().get(replaceOrderId);
+        checkStatementDetailDTO.setStatementExpectPayTime(replaceOrder.getRealReplaceTime());
+        checkStatementDetailDTO.setOrderId(replaceOrder.getReplaceOrderId());
+        checkStatementDetailDTO.setReturnTime(replaceOrder.getRealReplaceTime());
+        checkStatementDetailDTO.setReturnOrderNo(replaceOrder.getReplaceOrderNo());
+    }
+
+    private void setStatementOrderProductData(BaseCheckStatementDetailDTO checkStatementDetailDTO, OrderProduct orderProduct) {
+        checkStatementDetailDTO.setItemCount(orderProduct.getProductCount());
+        checkStatementDetailDTO.setItemName(orderProduct.getProductName());
+        checkStatementDetailDTO.setItemSkuName(orderProduct.getProductSkuName());
+        checkStatementDetailDTO.setUnitAmount(orderProduct.getProductUnitAmount());
+        checkStatementDetailDTO.setIsNew(orderProduct.getIsNewProduct());
+        checkStatementDetailDTO.setPayMode(orderProduct.getPayMode());
+        checkStatementDetailDTO.setOrderItemActualId(orderProduct.getOrderProductId());
+        checkStatementDetailDTO.setDepositCycle(orderProduct.getDepositCycle());
+        checkStatementDetailDTO.setPaymentCycle(orderProduct.getPaymentCycle());
+        checkStatementDetailDTO.setItemRentType(orderProduct.getRentType());
+    }
+
+    private void setStatementOrderMaterialData(BaseCheckStatementDetailDTO checkStatementDetailDTO, OrderMaterial orderMaterial) {
+        checkStatementDetailDTO.setItemCount(orderMaterial.getMaterialCount());
+        checkStatementDetailDTO.setItemName(orderMaterial.getMaterialName());
+        checkStatementDetailDTO.setItemSkuName(orderMaterial.getMaterialName());
+        checkStatementDetailDTO.setUnitAmount(orderMaterial.getMaterialUnitAmount());
+        checkStatementDetailDTO.setIsNew(orderMaterial.getIsNewMaterial());
+        checkStatementDetailDTO.setPayMode(orderMaterial.getPayMode());
+        checkStatementDetailDTO.setOrderItemActualId(orderMaterial.getOrderMaterialId());
+        checkStatementDetailDTO.setDepositCycle(orderMaterial.getDepositCycle());
+        checkStatementDetailDTO.setPaymentCycle(orderMaterial.getPaymentCycle());
+        checkStatementDetailDTO.setItemRentType(orderMaterial.getRentType());
+    }
+
+    private void setStatementOrderData(BaseCheckStatementDetailDTO checkStatementDetailDTO, Order order, boolean isInitStatementData) {
+        checkStatementDetailDTO.setOrderNo(order.getOrderNo());
+        checkStatementDetailDTO.setOrderOriginalId(order.getOrderId());
+        checkStatementDetailDTO.setOrderRentStartTime(order.getRentStartTime());
+        checkStatementDetailDTO.setOrderExpectReturnTime(order.getExpectReturnTime());
+        if (isInitStatementData) {
+            checkStatementDetailDTO.setStatementStartTime(order.getRentStartTime());
+            checkStatementDetailDTO.setStatementEndTime(order.getExpectReturnTime());
+            checkStatementDetailDTO.setStatementExpectPayTime(order.getExpectReturnTime());
+        } else {
+            checkStatementDetailDTO.setStatementExpectPayTime(null);
+        }
+    }
+
+    /**
+     * 合并需要支付的其他项与合并退货与换货的扣款钱
+     */
+    private void mergeRePayOrder(CheckStatementStatisticsDTO statementStatisticsDTO, Map<String, BaseCheckStatementDetailDTO> orderIdAndOrderItemIdMap) {
+        Map<Integer, List<BaseCheckStatementDetailDTO>> margeOrderListMap = new HashMap<>();
+        // 统计需要合并的结算详情
+        for (BaseCheckStatementDetailDTO detailDTO : statementStatisticsDTO.getCheckStatementDetailDTOS()) {
+            if (detailDTO.getReturnReferId() != null) {
+                String detailMonth = DateFormatUtils.format(detailDTO.getReturnTime(), "yyyy-MM");
+                String payTimeStr = DateFormatUtils.format(detailDTO.getStatementExpectPayTime(), "yyyy-MM");
+//                if(payTimeStr.equals(statementStatisticsDTO.getMonth()) && OrderPayMode.PAY_MODE_PAY_BEFORE.equals(detailDTO.getPayMode())){
+//                    String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
+//                    orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
+//                }
+                if(statementStatisticsDTO.getMonthStartTime() < detailDTO.getReturnTime().getTime()){
+                    String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
+                    orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
+                }
+                if (!detailMonth.equals(statementStatisticsDTO.getMonth())) {
+                    if (margeOrderListMap.get(detailDTO.getReturnReferId()) == null) {
+                        List<BaseCheckStatementDetailDTO> list = new ArrayList<>();
+                        list.add(detailDTO);
+                        margeOrderListMap.put(detailDTO.getReturnReferId(), list);
+                    } else {
+                        List<BaseCheckStatementDetailDTO> list = margeOrderListMap.get(detailDTO.getReturnReferId());
+                        list.add(detailDTO);
+                        margeOrderListMap.put(detailDTO.getReturnReferId(), list);
+                    }
+                } else {
+                    String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
+                    orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
+                }
+            }
+            // 加入 换货单需支付的
+            if (detailDTO.getSourceId() != null && detailDTO.getReturnTime() == null) {
+                String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
+                if(orderIdAndOrderItemIdMap.get(cloneKey) != null){
+                    detailDTO.mergeToTarget(orderIdAndOrderItemIdMap.get(cloneKey), statementStatisticsDTO);
+                }else {
+                    orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
+                }
+            }
+            // 加入 其他项
+            if (detailDTO.getReturnTime() != null && (OrderItemType.ORDER_ITEM_TYPE_OTHER.equals(detailDTO.getOrderItemType())
+                    || OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER.equals(detailDTO.getOrderItemType())
+                    || OrderItemType.ORDER_ITEM_TYPE_CHANGE_OTHER.equals(detailDTO.getOrderItemType()))) {
+                String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
+                orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
+            }
+            // 加入构造的退货或换货的当月申请记录
+            if (detailDTO.getStatementExpectPayTime() == null) {
+                String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
+                orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
             }
         }
 
 
-//            String file = "D:\\statement\\20180628\\" + dir + "\\" + (customerName + "对账单") + ".xlsx";
-//            fileNames.add(file);
-//            FileOutputStream o = new FileOutputStream(file);
-//            hssfWorkbook.write(o);
-//        }
-
-        response.reset();
-        response.setHeader("Content-disposition", "attachment; filename=" + new String((customerName + "对账单").getBytes("GB2312"), "ISO_8859_1") + ".xlsx");
-        response.setContentType("application/json;charset=utf-8");
-        OutputStream stream = response.getOutputStream();
-        hssfWorkbook.write(stream);
-        stream.flush();
-        stream.close();
-
-//        File srcfile[] = new File[fileNames.size()];
-//        for (int i = 0, n1 = fileNames.size(); i < n1; i++) {
-//            srcfile[i] = new File(fileNames.get(i));
-//        }
-//
-//        ZipFiles(srcfile, zip);
-//        FileInputStream inStream = new FileInputStream(zip);
-//        byte[] buf = new byte[4096];
-//        int readLength;
-//        while (((readLength = inStream.read(buf)) != -1)) {
-//            response.getOutputStream().write(buf, 0, readLength);
-//        }
-//
-//        inStream.close();
-//        response.getOutputStream().close();
-
-
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
-    }
-
-    private CheckStatementOrderDetail createReturnCheckStatementOrderDetail(K3ReturnOrderDO k3ReturnOrderDO, Date returnTime, K3ReturnOrderDetailDO k3ReturnOrderDetailDO) {
-        CheckStatementOrderDetail checkStatementOrderDetail = new CheckStatementOrderDetail();
-        checkStatementOrderDetail.setOrderType(OrderType.ORDER_TYPE_RETURN);
-        if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(k3ReturnOrderDetailDO.getOrderItemType())) {
-            OrderProductDO orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
-            //存入商品名称
-            if (orderProductDO != null) {
-                checkStatementOrderDetail.setItemName(orderProductDO.getProductName());
-                checkStatementOrderDetail.setItemSkuName(orderProductDO.getProductSkuName());
-                //存入商品单价
-                checkStatementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
-                //存入租赁方式，1按天租，2按月租
-                checkStatementOrderDetail.setItemRentType(orderProductDO.getRentType());
-                checkStatementOrderDetail.setOrderItemReferId(orderProductDO.getId());
+        List<BaseCheckStatementDetailDTO> baseCheckStatementDetailDTOS = new ArrayList<>(); //起始与结束时间不同無法合併的put
+        // 合并结算统计详情
+        for (BaseCheckStatementDetailDTO detailDTO : orderIdAndOrderItemIdMap.values()) {
+            if (detailDTO.getReturnReferId() != null) {
+                continue;
             }
-            //存入结算单明细类型：3-抵消租金（退租）
-            checkStatementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
-            //存入实际退还商品数量
-            checkStatementOrderDetail.setItemCount(0-k3ReturnOrderDetailDO.getRealProductCount());
-            checkStatementOrderDetail.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT);
-        } else if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(k3ReturnOrderDetailDO.getOrderItemType())) {
-            checkStatementOrderDetail.setOrderItemType(OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL);
-            OrderMaterialDO orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
-            if (orderMaterialDO != null) {
-                //保存配件名
-                checkStatementOrderDetail.setItemName(orderMaterialDO.getMaterialName());
-                //保存配件单价
-                checkStatementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
-                //保存租赁方式，1按天租，2按月租
-                checkStatementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
-                checkStatementOrderDetail.setOrderItemReferId(orderMaterialDO.getId());
+            if (margeOrderListMap.get(detailDTO.getStatementOrderDetailId()) != null) {
+                for (BaseCheckStatementDetailDTO targetDetail : margeOrderListMap.get(detailDTO.getStatementOrderDetailId())) {
+                    String targetMonth = DateFormatUtils.format(targetDetail.getReturnTime(), "yyyy-MM");
+                    if (targetMonth.equals(statementStatisticsDTO.getMonth())) {
+                        continue;
+                    }
+                    String detailPayMonth = DateFormatUtils.format(detailDTO.getStatementExpectPayTime(), "yyyy-MM-dd");
+                    String targetDetailPayMonth = DateFormatUtils.format(targetDetail.getStatementExpectPayTime(), "yyyy-MM-dd");
+                    if (detailPayMonth.equals(targetDetailPayMonth)) {
+                        // 合并数量与金额
+                        if (detailDTO.getStatementStartTime().getTime() == targetDetail.getStatementStartTime().getTime() && detailDTO.getStatementEndTime().getTime() == targetDetail.getStatementEndTime().getTime()) {
+                            detailDTO.setItemCount(detailDTO.getItemCount() + targetDetail.getItemCount());
+                            detailDTO.setStatementDetailAmount(BigDecimalUtil.add(detailDTO.getStatementDetailAmount(), targetDetail.getStatementDetailAmount()));
+                            detailDTO.setStatementDetailOtherAmount(BigDecimalUtil.add(detailDTO.getStatementDetailOtherAmount(), targetDetail.getStatementDetailOtherAmount()));
+                            detailDTO.setStatementDetailOtherPaidAmount(BigDecimalUtil.add(detailDTO.getStatementDetailOtherPaidAmount(), targetDetail.getStatementDetailOtherPaidAmount()));
+                            detailDTO.setStatementDetailRentDepositAmount(BigDecimalUtil.add(detailDTO.getStatementDetailRentDepositAmount(), targetDetail.getStatementDetailRentDepositAmount()));
+                            detailDTO.setStatementDetailRentDepositPaidAmount(BigDecimalUtil.add(detailDTO.getStatementDetailRentDepositPaidAmount(), targetDetail.getStatementDetailRentDepositPaidAmount()));
+                            detailDTO.setStatementDetailRentDepositReturnAmount(BigDecimalUtil.add(detailDTO.getStatementDetailRentDepositReturnAmount(), targetDetail.getStatementDetailRentDepositReturnAmount()));
+                            detailDTO.setStatementDetailDepositAmount(BigDecimalUtil.add(detailDTO.getStatementDetailDepositAmount(), targetDetail.getStatementDetailDepositAmount()));
+                            detailDTO.setStatementDetailDepositPaidAmount(BigDecimalUtil.add(detailDTO.getStatementDetailDepositPaidAmount(), targetDetail.getStatementDetailDepositPaidAmount()));
+                            detailDTO.setStatementDetailDepositReturnAmount(BigDecimalUtil.add(detailDTO.getStatementDetailDepositReturnAmount(), targetDetail.getStatementDetailDepositReturnAmount()));
+                            detailDTO.setStatementDetailRentAmount(BigDecimalUtil.add(detailDTO.getStatementDetailRentAmount(), targetDetail.getStatementDetailRentAmount()));
+                            detailDTO.setStatementDetailRentPaidAmount(BigDecimalUtil.add(detailDTO.getStatementDetailRentPaidAmount(), targetDetail.getStatementDetailRentPaidAmount()));
+                            detailDTO.setStatementDetailOverdueAmount(BigDecimalUtil.add(detailDTO.getStatementDetailOverdueAmount(), targetDetail.getStatementDetailOverdueAmount()));
+                            detailDTO.setStatementDetailOverduePaidAmount(BigDecimalUtil.add(detailDTO.getStatementDetailOverduePaidAmount(), targetDetail.getStatementDetailOverduePaidAmount()));
+                            detailDTO.setStatementDetailCorrectAmount(BigDecimalUtil.add(detailDTO.getStatementDetailCorrectAmount(), targetDetail.getStatementDetailCorrectAmount()));
+                        }else {
+                            baseCheckStatementDetailDTOS.add(targetDetail);
+                        }
+                    }
+                }
             }
-            checkStatementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
-            //保存退货数量
-            checkStatementOrderDetail.setItemCount(0-k3ReturnOrderDetailDO.getRealProductCount());
         }
-        checkStatementOrderDetail.setOrderNo(k3ReturnOrderDetailDO.getOrderNo());
-        checkStatementOrderDetail.setStatementEndTime(returnTime);
-        checkStatementOrderDetail.setStatementStartTime(returnTime);
-        checkStatementOrderDetail.setOrderId(k3ReturnOrderDO.getId());
-        return checkStatementOrderDetail;
+        // 合并结算统计详情
+        if(CollectionUtil.isNotEmpty(baseCheckStatementDetailDTOS)){
+            for(BaseCheckStatementDetailDTO targetDetail : baseCheckStatementDetailDTOS){
+                String cloneKey = targetDetail.getCacheKey(statementStatisticsDTO);
+                orderIdAndOrderItemIdMap.put(cloneKey, targetDetail);
+            }
+        }
     }
 
-    //压缩文件
-    public static void ZipFiles(java.io.File[] srcfile, java.io.File zipfile) {
-        byte[] buf = new byte[1024];
+    /**
+     * 构建统计数据
+     */
+    private void buildStatisticsData(Map<Date, CheckStatementStatisticsDTO> monthStatisticsMap, StatementOrderMonthQueryParam queryParam) {
+        System.out.println("未合并数据之前的数据：" + JSONObject.toJSONString(monthStatisticsMap));
+        BigDecimal accountAmount = getAccountAmountByCustomerNo(queryParam.getStatementOrderCustomerNo());
+
+        for (Date month : monthStatisticsMap.keySet()) {
+            CheckStatementStatisticsDTO statementStatisticsDTO = monthStatisticsMap.get(month);
+            Map<String, BaseCheckStatementDetailDTO> orderIdAndOrderItemIdMap = Maps.newLinkedHashMap();
+            // 合并租赁、续租订单
+            mergeOrders(statementStatisticsDTO, orderIdAndOrderItemIdMap);
+            // 合并换货单
+//            mergeReplaceOrders(statementStatisticsDTO, orderIdAndOrderItemIdMap);
+//            // 合并退货单
+//            mergeReturnOrders(statementStatisticsDTO, orderIdAndOrderItemIdMap);
+
+            // 合并需要支付的其他项与合并退货与换货的扣款钱
+            mergeRePayOrder(statementStatisticsDTO, orderIdAndOrderItemIdMap);
+            // 构建新的结算单详情列表数据
+            List<BaseCheckStatementDetailDTO> checkStatementDetailDTONew = buildNewStatementDetailDTOs(statementStatisticsDTO, orderIdAndOrderItemIdMap);
+            // 排序
+            sortCheckStatementDetailDTOs(checkStatementDetailDTONew);
+            statementStatisticsDTO.setCheckStatementDetailDTOS(checkStatementDetailDTONew);
+            statementStatisticsDTO.getCheckStatementSummaryDTO().setAccountAmount(accountAmount);
+        }
+        // 构建统计汇总的数据
+        buildSummaryData(monthStatisticsMap, queryParam);
+    }
+
+    private BigDecimal getAccountAmountByCustomerNo(String customerNo) {
+        BigDecimal bigDecimalBigDecimal = BigDecimal.ZERO;
+        if (StringUtils.isBlank(customerNo)) {
+            return bigDecimalBigDecimal;
+        }
+        CustomerAccountLogParam accountLogParam = new CustomerAccountLogParam();
+        accountLogParam.setBusinessCustomerNo(customerNo);
+        accountLogParam.setPageNo(1);
+        accountLogParam.setPageSize(1);
+        ServiceResult<String, Map<String, Object>> accountAmountService;
         try {
-            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(
-                    zipfile));
-            for (int i = 0; i < srcfile.length; i++) {
-                FileInputStream in = new FileInputStream(srcfile[i]);
-                out.putNextEntry(new ZipEntry(srcfile[i].getName()));
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                out.closeEntry();
-                in.close();
+            accountAmountService = paymentService.queryCustomerAccountLogPage(accountLogParam);
+        } catch (Exception e) {
+            accountAmountService = new ServiceResult<>();
+            logger.error(e.getMessage(), e);
+        }
+
+        if (!ErrorCode.SUCCESS.equals(accountAmountService.getErrorCode())) {
+            return bigDecimalBigDecimal;
+        }
+        Map<String, Object> accountAmountMap = accountAmountService.getResult();
+        if (MapUtils.isEmpty(accountAmountMap)) {
+            return bigDecimalBigDecimal;
+        }
+        Map<String, Object> customerAccountLogSummary = (Map<String, Object>) accountAmountMap.get("customerAccountLogSummary");
+        if (customerAccountLogSummary == null) {
+            return bigDecimalBigDecimal;
+        }
+        String balanceAmount = MapUtils.getString(customerAccountLogSummary, "newBalanceAmount");
+        if (StringUtils.isBlank(balanceAmount)) {
+            return bigDecimalBigDecimal;
+        }
+        return new BigDecimal(balanceAmount);
+    }
+
+    /**
+     * 合并换货订单的数据
+     */
+    private void mergeReplaceOrders(CheckStatementStatisticsDTO statementStatisticsDTO, Map<String, BaseCheckStatementDetailDTO> orderIdAndOrderItemIdMap) {
+        // 合并换货订单
+        for (BaseCheckStatementDetailDTO detailDTO : statementStatisticsDTO.getCheckStatementDetailDTOS()) {
+            if (!CheckStatementUtil.isReplaceOrder(detailDTO)) {
+                continue;
             }
-            out.close();
-        } catch (IOException e) {
+
+            boolean mergeFlag = detailDTO.isMergeReturnOrder(statementStatisticsDTO);
+            String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
+            BaseCheckStatementDetailDTO ckStatementDetailDTOCache = null;
+            if (mergeFlag) {
+                boolean startFlag = false;
+                if (orderIdAndOrderItemIdMap.containsKey(cloneKey)) {
+                    startFlag = true;
+                    ckStatementDetailDTOCache = orderIdAndOrderItemIdMap.get(cloneKey);
+                } else {
+                    for (String key : orderIdAndOrderItemIdMap.keySet()) {
+                        if (key.startsWith(cloneKey)) {
+                            startFlag = true;
+                            ckStatementDetailDTOCache = orderIdAndOrderItemIdMap.get(key);
+                            cloneKey = key;
+                            break;
+                        }
+                    }
+                }
+                mergeFlag = mergeFlag && startFlag;
+            }
+            if (mergeFlag && ckStatementDetailDTOCache != null) {
+                detailDTO.mergeToTarget(ckStatementDetailDTOCache, statementStatisticsDTO);
+                orderIdAndOrderItemIdMap.put(cloneKey, ckStatementDetailDTOCache);
+            } else {
+                orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
+            }
+
+        }
+    }
+
+    /**
+     * 合并租赁订单和续租订单的数据
+     */
+    private void mergeOrders(CheckStatementStatisticsDTO statementStatisticsDTO, Map<String, BaseCheckStatementDetailDTO> orderIdAndOrderItemIdMap) {
+        // 合并租赁、续租订单
+        for (BaseCheckStatementDetailDTO detailDTO : statementStatisticsDTO.getCheckStatementDetailDTOS()) {
+            if (!CheckStatementUtil.isRentOrder(detailDTO)) {
+                continue;
+            }
+            boolean mergeFlag = detailDTO.isMergeOrder(statementStatisticsDTO);
+            String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
+            if (mergeFlag && orderIdAndOrderItemIdMap.containsKey(cloneKey)) {
+                BaseCheckStatementDetailDTO ckStatementDetailDTOCache = orderIdAndOrderItemIdMap.get(cloneKey);
+                detailDTO.mergeToTarget(ckStatementDetailDTOCache, statementStatisticsDTO);
+                orderIdAndOrderItemIdMap.put(cloneKey, ckStatementDetailDTOCache);
+            } else {
+                orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
+            }
+        }
+    }
+
+    /**
+     * 合并租赁退货订单和续租退货订单的数据
+     */
+    private void mergeReturnOrders(CheckStatementStatisticsDTO statementStatisticsDTO, Map<String, BaseCheckStatementDetailDTO> orderIdAndOrderItemIdMap) {
+        // 合并退货租赁、续租订单
+        for (BaseCheckStatementDetailDTO detailDTO : statementStatisticsDTO.getCheckStatementDetailDTOS()) {
+            if (!CheckStatementUtil.isReturnOrder(detailDTO)) {
+                continue;
+            }
+            boolean mergeFlag = detailDTO.isMergeReturnOrder(statementStatisticsDTO);
+            String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
+            BaseCheckStatementDetailDTO ckStatementDetailDTOCache = null;
+            if (mergeFlag) {
+                boolean startFlag = false;
+                if (orderIdAndOrderItemIdMap.containsKey(cloneKey)) {
+                    startFlag = true;
+                    ckStatementDetailDTOCache = orderIdAndOrderItemIdMap.get(cloneKey);
+                } else {
+                    for (String key : orderIdAndOrderItemIdMap.keySet()) {
+                        if (key.startsWith(cloneKey)) {
+                            startFlag = true;
+                            ckStatementDetailDTOCache = orderIdAndOrderItemIdMap.get(key);
+                            cloneKey = key;
+                            break;
+                        }
+                    }
+                }
+                mergeFlag = mergeFlag && startFlag;
+            }
+            if (mergeFlag && ckStatementDetailDTOCache != null) {
+                detailDTO.mergeToTarget(ckStatementDetailDTOCache, statementStatisticsDTO);
+                orderIdAndOrderItemIdMap.put(cloneKey, ckStatementDetailDTOCache);
+            } else {
+                orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
+            }
+        }
+    }
+
+    /**
+     * 构建新的结算单详情列表信息
+     */
+    private List<BaseCheckStatementDetailDTO> buildNewStatementDetailDTOs(CheckStatementStatisticsDTO statementStatisticsDTO, Map<String, BaseCheckStatementDetailDTO> orderIdAndOrderItemIdMap) {
+        List<BaseCheckStatementDetailDTO> checkStatementDetailDTONew = Lists.newArrayList();
+        //构造 退货单号相同两笔以上数据
+        Map<Integer, List<BaseCheckStatementDetailDTO>> map = new HashMap<>();
+        for (BaseCheckStatementDetailDTO detailDTO : orderIdAndOrderItemIdMap.values()) {
+            if (detailDTO.getReturnOrderNo() != null) {
+                if (map.get(detailDTO.getOrderItemReferId()) == null) {
+                    List<BaseCheckStatementDetailDTO> list = new ArrayList<>();
+                    list.add(detailDTO);
+                    map.put(detailDTO.getOrderItemReferId(), list);
+                } else {
+                    List<BaseCheckStatementDetailDTO> list = map.get(detailDTO.getOrderItemReferId());
+                    list.add(detailDTO);
+                    map.put(detailDTO.getOrderItemReferId(), list);
+                }
+            }
+        }
+
+        for (BaseCheckStatementDetailDTO detailDTO : orderIdAndOrderItemIdMap.values()) {
+            if (!detailDTO.isShowTheMonth(statementStatisticsDTO)) {
+                continue;
+            }
+            Date statementExpectPayTime = detailDTO.getStatementExpectPayTime();
+
+            if (map.size() > CommonConstant.COMMON_ZERO) {
+                if (CollectionUtil.isNotEmpty(map.get(detailDTO.getOrderItemReferId()))) {
+                    if (map.get(detailDTO.getOrderItemReferId()).size() > 1 && BigDecimalUtil.compare(detailDTO.getStatementDetailAmount(), BigDecimal.ZERO) == 0) {
+                        continue;
+                    }
+                }
+            }
+            detailDTO.buildMonthAmount(statementExpectPayTime, statementStatisticsDTO).build();
+            statementStatisticsDTO.getCheckStatementSummaryDTO().buildMonthAmount(detailDTO);
+            checkStatementDetailDTONew.add(detailDTO);
+        }
+        return checkStatementDetailDTONew;
+    }
+
+    // 排序
+    private void sortCheckStatementDetailDTOs(List<BaseCheckStatementDetailDTO> checkStatementStatisticsDTOS) {
+        List<BaseCheckStatementDetailDTO> notOtherUnRentDetailDTO = new ArrayList<>();
+        List<BaseCheckStatementDetailDTO> otherUnRentDetailDTO = new ArrayList<>();
+        for (BaseCheckStatementDetailDTO detailDTO : checkStatementStatisticsDTOS) {
+            if (detailDTO instanceof CheckStatementDetailUnRentOtherDTO) {
+                otherUnRentDetailDTO.add(detailDTO);
+            } else {
+                notOtherUnRentDetailDTO.add(detailDTO);
+            }
+        }
+        // 只排序除退货其他的对账单数据
+        Collections.sort(notOtherUnRentDetailDTO, new Comparator<BaseCheckStatementDetailDTO>() {
+            @Override
+            public int compare(BaseCheckStatementDetailDTO o1, BaseCheckStatementDetailDTO o2) {
+                // 返回值为int类型，大于0表示正序，小于0表示逆序
+                return (int) ((o1.getOrderRentStartTime().getTime() - o2.getOrderRentStartTime().getTime()) / 1000);
+            }
+        });
+        Collections.sort(notOtherUnRentDetailDTO, new Comparator<BaseCheckStatementDetailDTO>() {
+            @Override
+            public int compare(BaseCheckStatementDetailDTO o1, BaseCheckStatementDetailDTO o2) {
+                // 返回值为int类型，大于0表示正序，小于0表示逆序
+                // 按照原始订单id排序
+                int i = o1.getOrderOriginalId() - o2.getOrderOriginalId();
+                if (i == 0) {
+                    // 按照原始订单项id排序
+                    return o1.getSortItemType() - o2.getSortItemType();
+//
+                }
+                return 0;
+            }
+        });
+        notOtherUnRentDetailDTO.addAll(otherUnRentDetailDTO);
+        checkStatementStatisticsDTOS.clear();
+        checkStatementStatisticsDTOS.addAll(notOtherUnRentDetailDTO);
+    }
+
+    /**
+     * 构建统计的汇总数据
+     */
+    private void buildSummaryData(Map<Date, CheckStatementStatisticsDTO> statementStatisticsDTOMap, StatementOrderMonthQueryParam queryParam) {
+        // 构建期数未付金额数据
+        queryParam.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
+        CheckStatementSummaryDTO statementSummaryDTOFromData = statementService.sumStatementDetailAmountByCustomerNo(queryParam);
+        BigDecimal previousPeriodEndUnpaidAmount = statementSummaryDTOFromData.getPreviousPeriodEndUnpaidAmount();
+        for (CheckStatementStatisticsDTO checkStatementStatisticsDTO : statementStatisticsDTOMap.values()) {
+            CheckStatementSummaryDTO statementSummaryDTOFromCache = checkStatementStatisticsDTO.getCheckStatementSummaryDTO();
+            statementSummaryDTOFromCache.buildPeriodsUnpaidAmount(previousPeriodEndUnpaidAmount);
+            previousPeriodEndUnpaidAmount = statementSummaryDTOFromCache.getTotalUnpaidAmount();
+        }
+    }
+
+    /**
+     * 过滤对账单汇总数据
+     */
+    private void filterStatementStatisticsData(Map<Date, CheckStatementStatisticsDTO> monthStatisticsMap, CheckStatementMapContainer mapContainer, StatementOrderMonthQueryParam queryParam) {
+        Set<Integer> orderIds = new HashSet<>();
+        for (Order order : mapContainer.getNoOrderMap().values()) {
+            orderIds.add(order.getOrderId());
+        }
+        List<K3OrderStatementConfigDO> k3OrderStatementConfigDOS = k3OrderStatementConfigMapper.listByOrderIds(orderIds);
+        Map<Integer, K3OrderStatementConfigDO> k3OrderStatementConfigDOMap = ListUtil.listToMap(k3OrderStatementConfigDOS, "orderId");
+        if (MapUtils.isNotEmpty(k3OrderStatementConfigDOMap)) {
+            for (CheckStatementStatisticsDTO statementStatisticsDTO : monthStatisticsMap.values()) {
+                List<BaseCheckStatementDetailDTO> newCheckStatementDetailDTOs = new ArrayList<>();
+                List<BaseCheckStatementDetailDTO> monthCheckStatementDetails = statementStatisticsDTO.getCheckStatementDetailDTOS();
+                for (BaseCheckStatementDetailDTO statementDetailDTO : monthCheckStatementDetails) {
+                    K3OrderStatementConfigDO configDO = k3OrderStatementConfigDOMap.get(statementDetailDTO.getOrderOriginalId());
+                    if (configDO == null) {
+                        newCheckStatementDetailDTOs.add(statementDetailDTO);
+                        continue;
+                    }
+                    if (configDO.getRentStartTime().getTime() <= statementStatisticsDTO.getMonthEndTime()) {
+                        newCheckStatementDetailDTOs.add(statementDetailDTO);
+                    }
+                }
+                statementStatisticsDTO.setCheckStatementDetailDTOS(newCheckStatementDetailDTOs);
+            }
+        }
+    }
+
+    /**
+     * 导出对账单统计信息
+     */
+    private void importCheckStatementStatisticsData(Map<Date, CheckStatementStatisticsDTO> checkStatementStatisticsDTOMap, HttpServletResponse response) {
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
+//        HSSFWorkbook xssfWorkbook = new HSSFWorkbook();
+        SXSSFWorkbook workbook = new SXSSFWorkbook(xssfWorkbook, 1000);
+        String customerName = null;
+        ExcelExportConfig excelExportConfig = ExcelExportConfigGroup.statementOrderCheckConfigNew;
+        Map<String, CellStyle> stringCellStyleMap = ExcelExportSupport.getImportCheckStatementCellStyleMap(xssfWorkbook, excelExportConfig);
+        try {
+            // 对LinkHashMap逆序导出
+            ListIterator<Map.Entry<Date, CheckStatementStatisticsDTO>> i = new ArrayList<>(checkStatementStatisticsDTOMap.entrySet()).listIterator(checkStatementStatisticsDTOMap.size());
+            while (i.hasPrevious()) {
+                Map.Entry<Date, CheckStatementStatisticsDTO> entry = i.previous();
+                CheckStatementStatisticsDTO checkStatementStatisticsDTO = entry.getValue();
+                if (CollectionUtil.isEmpty(checkStatementStatisticsDTO.getCheckStatementDetailDTOS())) {
+                    continue;
+                }
+                if (customerName == null) {
+                    customerName = checkStatementStatisticsDTO.getCustomerName();
+                }
+                Sheet sheet = xssfWorkbook.getSheet(checkStatementStatisticsDTO.getMonth());
+                if (sheet == null) {
+                    sheet = xssfWorkbook.createSheet(checkStatementStatisticsDTO.getMonth());
+                    buildSheetTitle(xssfWorkbook, sheet, checkStatementStatisticsDTO);
+                }
+                ExcelExportSupport.buildSXSSFWorkbook(xssfWorkbook, stringCellStyleMap, sheet, checkStatementStatisticsDTO, excelExportConfig, 1, 40, 63);
+                buildCheckStatementSummaryData(xssfWorkbook, sheet, checkStatementStatisticsDTO);
+            }
+            response.reset();
+            response.setHeader("Content-disposition", "attachment; filename=" + new String((customerName + "对账单").getBytes("GB2312"), "ISO_8859_1") + ".xlsx");
+            response.setContentType("application/json;charset=utf-8");
+            OutputStream stream = response.getOutputStream();
+            workbook.write(stream);
+            stream.flush();
+            stream.close();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        System.out.println("对账单");
+    private void buildSheetTitle(Workbook workbook, Sheet sheet, CheckStatementStatisticsDTO checkStatementStatisticsDTO) {
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 27));
+        Row rowNo = sheet.createRow(0);
+        Cell cellNo = rowNo.createCell(0);
+        cellNo.setCellValue(checkStatementStatisticsDTO.getCustomerName());
+        rowNo.setHeightInPoints(30);
+        CellStyle cellStyle = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setFontName("宋体");//字体格式
+        font.setFontHeightInPoints((short) 9);//字体大小
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD);//粗体显示
+        cellStyle.setFont(font);
+        cellStyle.setAlignment(CellStyle.ALIGN_CENTER); // 居中
+        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//垂直居中
+        cellNo.setCellStyle(cellStyle);
     }
 
+    private void buildCheckStatementSummaryData(Workbook workbook, Sheet sheet, CheckStatementStatisticsDTO checkStatementStatisticsDTO) {
+        Sheet sheetAt = sheet;
+        int lastRowNum = sheetAt.getLastRowNum();
 
-    private String formatPeriodStartAndEnd(Date periodStart, Date periodEnd) {
-        if (periodStart == null || periodEnd == null) {
-            return "";
-        }
-        return "开始:" + new SimpleDateFormat("yyyy-MM-dd").format(periodStart) +
-                "\n结束:" + new SimpleDateFormat("yyyy-MM-dd").format(periodEnd) +
-                "\n期限:";
+        Row row1 = sheetAt.createRow(lastRowNum + 2);
+        Row row2 = sheetAt.createRow(lastRowNum + 3);
+        Row row3 = sheetAt.createRow(lastRowNum + 4);
+        Row row4 = sheetAt.createRow(lastRowNum + 5);
+        Row row5 = sheetAt.createRow(lastRowNum + 6);
+        Row row6 = sheetAt.createRow(lastRowNum + 7);
+        Row row7 = sheetAt.createRow(lastRowNum + 8);
+        row1.setHeightInPoints(30);
+        row2.setHeightInPoints(30);
+        row3.setHeightInPoints(30);
+        row4.setHeightInPoints(30);
+        row5.setHeightInPoints(30);
+        row6.setHeightInPoints(30);
+        row7.setHeightInPoints(30);
+
+        sheetAt.addMergedRegion(new CellRangeAddress(lastRowNum + 2, lastRowNum + 2, 20, 24));
+        sheetAt.addMergedRegion(new CellRangeAddress(lastRowNum + 3, lastRowNum + 3, 20, 24));
+        sheetAt.addMergedRegion(new CellRangeAddress(lastRowNum + 4, lastRowNum + 4, 20, 24));
+        sheetAt.addMergedRegion(new CellRangeAddress(lastRowNum + 5, lastRowNum + 5, 20, 24));
+        sheetAt.addMergedRegion(new CellRangeAddress(lastRowNum + 6, lastRowNum + 6, 20, 24));
+        sheetAt.addMergedRegion(new CellRangeAddress(lastRowNum + 7, lastRowNum + 7, 20, 24));
+        sheetAt.addMergedRegion(new CellRangeAddress(lastRowNum + 8, lastRowNum + 8, 20, 24));
+
+        Cell cell11 = row1.createCell(20);
+        Cell cell12 = row2.createCell(20);
+        Cell cell13 = row3.createCell(20);
+        Cell cell14 = row4.createCell(20);
+        Cell cell15 = row5.createCell(20);
+        Cell cell16 = row6.createCell(20);
+        Cell cell17 = row7.createCell(20);
+
+        createCell(workbook, row1, 21, 4);
+        createCell(workbook, row2, 21, 4);
+        createCell(workbook, row3, 21, 4);
+        createCell(workbook, row4, 21, 4);
+        createCell(workbook, row5, 21, 4);
+        createCell(workbook, row6, 21, 4);
+        createCell(workbook, row7, 21, 4);
+
+        cell11.setCellValue("本月应付");
+        ExcelExportSupport.setCellStyle(workbook, cell11, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
+        cell12.setCellValue("本月已付");
+        ExcelExportSupport.setCellStyle(workbook, cell12, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
+        cell13.setCellValue("本月未付");
+        ExcelExportSupport.setCellStyle(workbook, cell13, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
+        cell14.setCellValue("截止上期未付");
+        ExcelExportSupport.setCellStyle(workbook, cell14, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
+        cell15.setCellValue("累计未付");
+        ExcelExportSupport.setCellStyle(workbook, cell15, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
+        cell16.setCellValue("账户余额");
+        ExcelExportSupport.setCellStyle(workbook, cell16, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_TURQUOISE.index);
+        cell17.setCellValue("尚需支付");
+        ExcelExportSupport.setCellStyle(workbook, cell17, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_TURQUOISE.index);
+
+        Cell cell21 = row1.createCell(25);
+        Cell cell22 = row2.createCell(25);
+        Cell cell23 = row3.createCell(25);
+        Cell cell24 = row4.createCell(25);
+        Cell cell25 = row5.createCell(25);
+        Cell cell26 = row6.createCell(25);
+        Cell cell27 = row7.createCell(25);
+        CheckStatementSummaryDTO checkStatementSummaryDTO = checkStatementStatisticsDTO.getCheckStatementSummaryDTO();
+        ExcelExportSupport.setCellStyle(workbook, cell21, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
+        ExcelExportSupport.setCellStyle(workbook, cell22, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
+        ExcelExportSupport.setCellStyle(workbook, cell23, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LEMON_CHIFFON.index);
+        ExcelExportSupport.setCellStyle(workbook, cell24, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
+        ExcelExportSupport.setCellStyle(workbook, cell25, HSSFColor.GREY_80_PERCENT.index, HSSFColor.TAN.index);
+        ExcelExportSupport.setCellStyle(workbook, cell26, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_TURQUOISE.index);
+        ExcelExportSupport.setCellStyle(workbook, cell27, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_TURQUOISE.index);
+
+        ExcelExportSupport.generateValue(checkStatementSummaryDTO.getThisMonthPayableAmountStr(), cell21);
+        ExcelExportSupport.generateValue(checkStatementSummaryDTO.getThisMonthPaidAmountStr(), cell22);
+        ExcelExportSupport.generateValue(checkStatementSummaryDTO.getThisMonthUnpaidAmountStr(), cell23);
+        ExcelExportSupport.generateValue(checkStatementSummaryDTO.getPreviousPeriodEndUnpaidAmountStr(), cell24);
+        ExcelExportSupport.generateValue(checkStatementSummaryDTO.getTotalUnpaidAmountStr(), cell25);
+        ExcelExportSupport.generateValue(checkStatementSummaryDTO.getAccountAmountStr(), cell26);
+        ExcelExportSupport.generateValue(checkStatementSummaryDTO.getNeedPayAmountStr(), cell27);
+        logger.info("汇总数据为： " + JSONObject.toJSONString(checkStatementSummaryDTO));
     }
 
-    private void createCell(XSSFWorkbook hssfWorkbook, XSSFRow hssfRow, Integer startColumn, Integer several) {
+    private void createCell(Workbook workbook, Row row, Integer startColumn, Integer several) {
         for (int i = startColumn; i < startColumn + several; i++) {
-            XSSFCell cell = hssfRow.createCell(i);
-            ExcelExportSupport.setCellStyle(hssfWorkbook, cell, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
+            Cell cell = row.createCell(i);
+            ExcelExportSupport.setCellStyle(workbook, cell, HSSFColor.GREY_80_PERCENT.index, HSSFColor.LIGHT_GREEN.index);
         }
     }
 
-    String formatReturnReasonType(Integer returnReasonType) {
-
-        if (returnReasonType.equals(ReturnReasonType.NOT_REFUNDABLE)) {
-            return "客户方设备不愿或无法退还";
-        } else if (returnReasonType.equals(ReturnReasonType.EXPIRATION_OF_NORMAL)) {
-            return "期满正常收回";
-        } else if (returnReasonType.equals(ReturnReasonType.RETIRING_IN_ADVANCE)) {
-            return "提前退租";
-        } else if (returnReasonType.equals(ReturnReasonType.NO_PAYMENT_ON_TIME)) {
-            return "未按时付款或风险等原因上门收回";
-        } else if (returnReasonType.equals(ReturnReasonType.EQUIPMENT_FAILURE)) {
-            return "设备故障等我方原因导致退货";
-        } else if (returnReasonType.equals(ReturnReasonType.SUBJECTIVE_FACTORS)) {
-            return "主观因素等客户方原因导致退货";
-        } else if (returnReasonType.equals(ReturnReasonType.REPLACEMENT_EQUIPMENT)) {
-            return "更换设备";
-        } else if (returnReasonType.equals(ReturnReasonType.COMPANY_CLOSURES)) {
-            return "公司经营不善/倒闭";
-        } else if (returnReasonType.equals(ReturnReasonType.IDLE_EQUIPMENT)) {
-            return "项目结束闲置";
-        } else if (returnReasonType.equals(ReturnReasonType.FOLLOW_THE_RENT)) {
-            return "满三个月或六个月随租随还";
-        } else if (returnReasonType.equals(ReturnReasonType.OTHER)) {
-            return "其它',";
-        }else if (returnReasonType.equals(ReturnReasonType.COMMODITY_FAILURE_REPLACEMENT)) {
-            return "商品故障更换";
-        }else if (returnReasonType.equals(ReturnReasonType.CONFIGURATION_UPGRADE_REPLACEMENT)) {
-            return "配置升级更换";
-        }else if (returnReasonType.equals(ReturnReasonType.ORDER_INVALIDATION )) {
-            return "订单作废/取消";
-        }else if (returnReasonType.equals(ReturnReasonType.PRICE_CAUSE_TO_PURCHASE)) {
-            return "价格原因转购买";
-        }else if (returnReasonType.equals(ReturnReasonType.PRICE_REASONS_FOR_SUPPLIERS)) {
-            return "价格原因换供应商";
-        }else if (returnReasonType.equals(ReturnReasonType.PURCHASE_OF_COMMODITY_QUALITY)) {
-            return "商品质量问题转购买";
-        }else if (returnReasonType.equals(ReturnReasonType.COMMODITY_QUALITY_PROBLEMS_FOR_SUPPLIERS)) {
-            return "商品质量问题换供应商";
-        }else if (returnReasonType.equals(ReturnReasonType.THE_SERVICE_IS_NOT_RETURNED_IN_TIME)) {
-            return "服务不及时造成退货";
-        }else if (returnReasonType.equals(ReturnReasonType.STAFF_LEAVING_OR_STUDENT_GRADUATION_IDLE)) {
-            return "人员离职/学生毕业闲置";
-        }
-        return "";
-    }
-    
 }

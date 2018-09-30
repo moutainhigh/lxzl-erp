@@ -1,12 +1,10 @@
 package com.lxzl.erp.dataaccess.domain.peerDeploymentOrder;
 
-import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderConsignInfo;
-import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderMaterial;
-import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderProduct;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
-import java.util.Date;
+
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 public class PeerDeploymentOrderDO  extends BaseDO {

@@ -1,10 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.assembleOder;
 
-import com.lxzl.erp.common.domain.assembleOder.pojo.AssembleOrderMaterial;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
-import java.util.Date;
 import java.util.List;
 
 
