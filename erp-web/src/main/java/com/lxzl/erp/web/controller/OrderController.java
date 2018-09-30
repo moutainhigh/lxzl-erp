@@ -296,7 +296,7 @@ public class OrderController extends BaseController {
      * @param validResult
      * @return
      */
-    @RequestMapping(value = "generatedOrder", method = RequestMethod.GET)
+    @RequestMapping(value = "generatedOrder", method = RequestMethod.POST)
     public Result generatedOrder(@RequestBody ExchangeOrderParam exchangeOrderParam, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = exchangeOrderService.generatedOrder(exchangeOrderParam.getExchangeOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());

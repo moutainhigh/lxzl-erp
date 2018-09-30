@@ -8,16 +8,19 @@ import com.lxzl.erp.common.domain.order.pojo.ExchangeOrder;
 import com.lxzl.erp.common.domain.order.pojo.ExchangeOrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.ExchangeOrderProduct;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.statement.AmountNeedReturn;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.order.ExchangeOrderService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderSupport;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
+import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
@@ -60,21 +63,21 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         //开始时间都是一个月的开始时间,
         //判断是否有操作这个订单的权限
         //只有租赁中的订单才可以进行
-        if (!(OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus())||OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus()))) {
+        if (!(OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus()) || OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus()))) {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
         //查询是否存在换货单
         //如果有变更单就不允许更换
-        List<ExchangeOrderDO> exchangeOrderDOList=exchangeOrderMapper.findByOrderNo(exchangeOrder.getOrderNo());
-        if(CollectionUtil.isNotEmpty(exchangeOrderDOList)){
+        List<ExchangeOrderDO> exchangeOrderDOList = exchangeOrderMapper.findByOrderNo(exchangeOrder.getOrderNo());
+        if (CollectionUtil.isNotEmpty(exchangeOrderDOList)) {
             result.setErrorCode(ErrorCode.EXCHANGE_ORDER_EXISTS);
             return result;
         }
 
         //查询为完成的换货单
         List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(exchangeOrder.getOrderNo());
-        if(CollectionUtil.isNotEmpty(replaceOrderDOList)){
+        if (CollectionUtil.isNotEmpty(replaceOrderDOList)) {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
@@ -232,9 +235,17 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         }
         //1、查询原订单信息
         OrderDO orderDO = orderMapper.findByOrderNo(exchangeOrderDO.getOrderNo());
+        Integer originalOrderId = orderDO.getId();
         //更新为已转单
-        orderMapper.updateIsExchangeOrder(orderDO.getId());
-        OrderConsignInfoDO orderConsignInfoDO=orderConsignInfoMapper.findByOrderId(orderDO.getId());
+        //orderMapper.updateIsExchangeOrder(orderDO.getId());
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK); //原订单改为已归还状态
+        orderDO.setIsTurnRentOrder(CommonConstant.COMMON_TWO);
+        orderDO.setUpdateTime(currentTime);
+        orderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderDO.setIsExchangeOrder(CommonConstant.COMMON_CONSTANT_YES);
+        orderMapper.update(orderDO);
+
+        OrderConsignInfoDO orderConsignInfoDO = orderConsignInfoMapper.findByOrderId(orderDO.getId());
         Date originalExpectReturnTime = orderDO.getExpectReturnTime();
         Date originalRentStartTime = orderDO.getRentStartTime();
         String originalOrderNo = orderDO.getOriginalOrderNo();
@@ -247,13 +258,13 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         List<OrderFlowDO> orderFlowDOList = orderFlowMapper.findByOriginalOrderNo(originalOrderNo);
         Date rentStartTime = orderDO.getRentStartTime();
         Date expectReturnTime = orderDO.getExpectReturnTime();
-        Integer countOrderFlow=0;
+        Integer countOrderFlow = 0;
         if (CollectionUtil.isNotEmpty(orderFlowDOList)) {
             originalExpectReturnTime = orderFlowDOList.get(0).getOriginalExpectReturnTime();
             originalRentStartTime = orderFlowDOList.get(0).getOriginalRentStartTime();
-            countOrderFlow=orderFlowDOList.size();
+            countOrderFlow = orderFlowDOList.size();
         }
-        String orderNO=originalOrderNo+"-"+String.valueOf(countOrderFlow+1);
+        String orderNO = originalOrderNo + "-" + String.valueOf(countOrderFlow + 1);
         //新订单流
         OrderFlowDO orderFlowDO = this.initOrderFlowDO(originalOrderNo, nodeOrderNo, orderNO, originalExpectReturnTime, originalRentStartTime, rentStartTime, expectReturnTime, loginUser.getUserId().toString());
         orderFlowMapper.save(orderFlowDO);
@@ -264,43 +275,114 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         newOrder.setOriginalOrderNo(originalOrderNo);
         newOrder.setIsOriginalOrder(CommonConstant.COMMON_CONSTANT_NO);
         newOrder.setIsExchangeOrder(CommonConstant.COMMON_CONSTANT_NO);
+        newOrder.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
+        newOrder.setRentStartTime(exchangeOrderDO.getRentStartTime());
         orderMapper.save(newOrder);
         orderService.updateOrderConsignInfo(orderConsignInfoDO.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
+        //结算单用到的订单数据关系
+        Map<String, String> orderItemUnionKeyMapping = new HashMap<>();
         //生成新的订单
         if (CollectionUtil.isNotEmpty(newOrder.getOrderProductDOList())) {
             for (OrderProductDO orderProductDO : newOrder.getOrderProductDOList()) {
                 orderProductDO.setOrderId(newOrder.getId());
+                orderProductDO.setTestMachineOrderProductId(orderProductDO.getId());//临时使用，存储原有的商品项id
+                orderProductDO.setId(null);
             }
             orderService.saveOrderProductInfo(newOrder.getOrderProductDOList(), newOrder.getId(), loginUser, currentTime);
+            for (OrderProductDO orderProductDO : newOrder.getOrderProductDOList()) {
+                String key = newOrder.getId().toString() + "_" + OrderItemType.ORDER_ITEM_TYPE_PRODUCT.toString() + "_" + orderProductDO.getId();
+                String value = originalOrderId.toString() + "_" + OrderItemType.ORDER_ITEM_TYPE_PRODUCT.toString() + "_" + orderProductDO.getTestMachineOrderProductId();
+                orderItemUnionKeyMapping.put(key, value);
+            }
         }
         if (CollectionUtil.isNotEmpty(newOrder.getOrderMaterialDOList())) {
             for (OrderMaterialDO orderMaterialDO : newOrder.getOrderMaterialDOList()) {
                 orderMaterialDO.setOrderId(newOrder.getId());
+                orderMaterialDO.setTestMachineOrderMaterialId(orderMaterialDO.getId());
+                orderMaterialDO.setId(null);
             }
             orderService.saveOrderMaterialInfo(newOrder.getOrderMaterialDOList(), newOrder.getId(), loginUser, currentTime);
+            for (OrderMaterialDO orderMaterialDO : newOrder.getOrderMaterialDOList()) {
+                String key = newOrder.getId().toString() + "_" + OrderItemType.ORDER_ITEM_TYPE_MATERIAL.toString() + "_" + orderMaterialDO.getId();
+                String value = originalOrderId.toString() + "_" + OrderItemType.ORDER_ITEM_TYPE_MATERIAL.toString() + "_" + orderMaterialDO.getTestMachineOrderMaterialId();
+                orderItemUnionKeyMapping.put(key, value);
+            }
         }
+        //创建订单轴
         orderTimeAxisSupport.addOrderTimeAxis(newOrder.getId(), newOrder.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.CREATE_ORDER);
-
-        // 生成结算单
+        //3、生成结算单
         ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createOrderStatement(newOrder.getOrderNo());
         if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            //return createStatementOrderResult.getErrorCode();
+            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+            result.setResult(newOrder.getOrderNo());
+            return result;
         }
         newOrder.setFirstNeedPayAmount(createStatementOrderResult.getResult());
+        //审核订单轴
         orderTimeAxisSupport.addOrderTimeAxis(newOrder.getId(), newOrder.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_SUCCESS);
-        //结算原单
-        //3、原退货单处理
-        //3、K3数据同步
+
+        //3、变更单给K3传数据
+        Order order = ConverterUtil.convert(newOrder, Order.class);
+        order.setTestMachineOrderNo(nodeOrderNo);
+//        ServiceResult<String, String> serviceResult = k3Service.testMachineOrderTurnRentOrder(order);
+//        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+//            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+//            result.setResult(newOrder.getOrderNo());
+//            return result;
+//        }
+
+        //4、转移退货
         Map<String, Object> maps = new HashMap<>();
         maps.put("orderNo", nodeOrderNo);
-        //maps.put("nowDate", date);
-       // List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findReturnOrderByOrderNoAndDate(maps);
+        maps.put("nowDate", exchangeOrderDO.getRentStartTime());
+        //获取所有退货列表，进行退货转移处理
+        List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findReturnOrderByOrderNoAndDate(maps);
+        if (CollectionUtil.isNotEmpty(k3ReturnOrderDOList)) {
+            if (CollectionUtil.isNotEmpty(newOrder.getOrderProductDOList())) {
+                for (OrderProductDO orderProductDO : newOrder.getOrderProductDOList()) {
+                    this.updk3ReturnOrderProduct(k3ReturnOrderDOList, orderProductDO, null, newOrder.getOrderNo());
+                }
+            }
+            if (CollectionUtil.isNotEmpty(newOrder.getOrderMaterialDOList())) {
+                for (OrderMaterialDO orderMaterialDO : newOrder.getOrderMaterialDOList()) {
+                    this.updk3ReturnOrderProduct(k3ReturnOrderDOList, null, orderMaterialDO, newOrder.getOrderNo());
+                }
+            }
+        }
 
+        //5、原订单结算单处理
+        Map<String, AmountNeedReturn> oldAmountMap = statementOrderSupport.stopOldMonthRentOrder(nodeOrderNo, exchangeOrderDO.getRentStartTime());
+        //6、新订单结算单处理
+        String statementResult = statementOrderSupport.fillOldOrderAmountToNew(newOrder.getOrderNo(), oldAmountMap, orderItemUnionKeyMapping);
+        if (!ErrorCode.SUCCESS.equals(statementResult)) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+            result.setResult(newOrder.getOrderNo());
+            return result;
+        }
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(newOrder.getOrderNo());
         return result;
+    }
+
+    private void updk3ReturnOrderProduct(List<K3ReturnOrderDO> k3ReturnOrderDOList, OrderProductDO orderProductDO, OrderMaterialDO orderMaterialDO, String orderNo) {
+        Integer orderItemId = null == orderProductDO ? orderMaterialDO.getId() : orderProductDO.getId();
+        for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOList) {
+            List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
+            for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList) {
+                if (k3ReturnOrderDetailDO.getOrderItemId().equals(orderItemId)) {
+                    Date date = new Date();
+                    k3ReturnOrderDetailDO.setOrderNo(orderNo);
+                    k3ReturnOrderDetailDO.setOrderItemId(orderItemId.toString());
+                    k3ReturnOrderDetailDO.setUpdateTime(date);
+                    k3ReturnOrderDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
+                }
+            }
+        }
+
     }
 
     /**
@@ -334,33 +416,9 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         return ErrorCode.SUCCESS;
     }
 
-    /**
-     * 更新退货单
-     * @param orderNo
-     * @param orderProductDO
-     * @param k3ReturnOrderDetailDO
-     */
-    public void updateK3ReturnOrderDetailForChangeOrder(String orderNo,OrderProductDO orderProductDO,K3ReturnOrderDetailDO k3ReturnOrderDetailDO){
-        Date date = new Date();
-        k3ReturnOrderDetailDO.setOrderNo(orderNo);
-        k3ReturnOrderDetailDO.setOrderItemId(orderProductDO.getId().toString());
-        k3ReturnOrderDetailDO.setUpdateTime(date);
-        k3ReturnOrderDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
-    }
-
-    public void updateK3ReturnOrderDetailForChangeOrder(String orderNo,OrderMaterialDO orderMaterialDO,K3ReturnOrderDetailDO k3ReturnOrderDetailDO){
-        Date date = new Date();
-        k3ReturnOrderDetailDO.setOrderNo(orderNo);
-        k3ReturnOrderDetailDO.setOrderItemId(orderMaterialDO.getId().toString());
-        k3ReturnOrderDetailDO.setUpdateTime(date);
-        k3ReturnOrderDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
-    }
-
-    public OrderFlowDO initOrderFlowDO(String originalOrderNo, String nodeOrderNo, String orderNo, Date originalExpectReturnTime, Date originalRentStartTime, Date rentStartTime, Date expectReturnTime,String userId) {
-        OrderFlowDO orderFlowDO=new OrderFlowDO();
-        Date now=new Date();
+    private OrderFlowDO initOrderFlowDO(String originalOrderNo, String nodeOrderNo, String orderNo, Date originalExpectReturnTime, Date originalRentStartTime, Date rentStartTime, Date expectReturnTime, String userId) {
+        OrderFlowDO orderFlowDO = new OrderFlowDO();
+        Date now = new Date();
         orderFlowDO.setOriginalOrderNo(originalOrderNo);
         orderFlowDO.setNodeOrderNo(nodeOrderNo);
         orderFlowDO.setOrderNo(orderNo);
@@ -373,13 +431,18 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         orderFlowDO.setCreateUser(userId);
         orderFlowDO.setUpdateUser(userId);
         orderFlowDO.setUpdateTime(now);
-        return  orderFlowDO;
+        return orderFlowDO;
     }
-
 
 
     @Autowired
     private ReplaceOrderMapper replaceOrderMapper;
+
+    @Autowired
+    private K3Service k3Service;
+
+    @Autowired
+    private StatementOrderSupport statementOrderSupport;
 
     @Autowired
     private OrderConsignInfoMapper orderConsignInfoMapper;
