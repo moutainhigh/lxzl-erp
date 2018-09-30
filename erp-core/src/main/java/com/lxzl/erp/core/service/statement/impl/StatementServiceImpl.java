@@ -4648,8 +4648,8 @@ public class StatementServiceImpl implements StatementService {
 
         PageQuery pageQuery = new PageQuery(statementOrderDetailQueryParam.getPageNo(), statementOrderDetailQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
-        maps.put("start", pageQuery.getStart());
-        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("start", CommonConstant.COMMON_ONE);
+        maps.put("pageSize", Integer.MAX_VALUE);
         maps.put("statementOrderDetailQueryParam", statementOrderDetailQueryParam);
         maps.put("subCompanyId", userSupport.getCurrentUserCompanyId());
         maps.put("currentUserType", currentUserType);
