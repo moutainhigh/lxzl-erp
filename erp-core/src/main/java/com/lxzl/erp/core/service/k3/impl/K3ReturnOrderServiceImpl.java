@@ -1274,7 +1274,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             }
         }
 
-        K3ReturnOrderDO newK3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
+        K3ReturnOrderDO newK3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrderDO.getReturnOrderNo());
         List<K3ReturnOrderDetailDO> newK3ReturnOrderDetailDOList = newK3ReturnOrderDO.getK3ReturnOrderDetailDOList();
         //校验在换货之前时间退货
         checkReplaceTimeForReturn(newK3ReturnOrderDetailDOList,k3ReturnOrder);
