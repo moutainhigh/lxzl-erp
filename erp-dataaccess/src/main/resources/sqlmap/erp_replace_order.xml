@@ -576,4 +576,16 @@
 		)
 	</select>
 
+	<select id="findByNewOrderProductIdList" resultMap="ReplaceOrderDO">
+		SELECT
+		<include refid="column_List"/>,<include refid="product_column_List"/>
+		FROM erp_replace_order ero
+		LEFT JOIN erp_replace_order_product erop ON ero.id = erop.replace_order_id and erop.data_status = 1
+		WHERE erop.new_order_product_id IN
+		<foreach collection="orderProductIdList" item="item" index="index" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+		AND ero.data_status = 1 AND ero.replace_order_status = 20
+	</select>
+
 </mapper>
