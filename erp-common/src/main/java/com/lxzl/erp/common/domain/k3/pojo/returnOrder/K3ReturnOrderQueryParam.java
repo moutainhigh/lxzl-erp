@@ -22,6 +22,7 @@ public class K3ReturnOrderQueryParam extends BasePageParam implements Serializab
     private Integer isWarehouseWorkbench; //是否是仓库工作台
 
     private Boolean isHandleRent;
+    private String originalOrderNo;  //原订单单号
 
     public Integer getIsWarehouseWorkbench() {
         return isWarehouseWorkbench;
@@ -105,5 +106,13 @@ public class K3ReturnOrderQueryParam extends BasePageParam implements Serializab
 
     public void setCreateUserName(String createUserName) {
         this.createUserName = createUserName;
+    }
+
+    public String getOriginalOrderNo() {
+        return originalOrderNo;
+    }
+
+    public void setOriginalOrderNo(String originalOrderNo) {
+        this.originalOrderNo = originalOrderNo;
     }
 }
