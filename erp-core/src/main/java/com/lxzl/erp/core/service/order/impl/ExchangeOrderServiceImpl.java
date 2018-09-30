@@ -252,19 +252,21 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             result.setErrorCode(ErrorCode.EXCHANGE_ORDER_STATUS_ERROR);
             return result;
         }
+        exchangeOrderDO.setExchangeOrderMaterialDOList(exchangeOrderMaterialMapper.findByExchangeOrderId(exchangeOrderDO.getId()));
+        exchangeOrderDO.setExchangeOrderProductDOList(exchangeOrderProductMapper.findByExchangeOrderId(exchangeOrderDO.getId()));
         //1、查询原订单信息
         OrderDO orderDO = orderMapper.findByOrderNo(exchangeOrderDO.getOrderNo());
         Integer originalOrderId = orderDO.getId();
-        //更新为已转单
-        //orderMapper.updateIsExchangeOrder(orderDO.getId());
+        //1.1更新原订单信息
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK); //原订单改为已归还状态
         orderDO.setIsTurnRentOrder(CommonConstant.COMMON_TWO);
         orderDO.setUpdateTime(currentTime);
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderDO.setIsExchangeOrder(CommonConstant.COMMON_CONSTANT_YES);
         orderMapper.update(orderDO);
-
+        //1.2更新地址信息
         OrderConsignInfoDO orderConsignInfoDO = orderConsignInfoMapper.findByOrderId(orderDO.getId());
+        //1.3获取原订单信息，生成新订单
         Date originalExpectReturnTime = orderDO.getExpectReturnTime();
         Date originalRentStartTime = orderDO.getRentStartTime();
         String originalOrderNo = orderDO.getOriginalOrderNo();
@@ -272,8 +274,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsOriginalOrder())) {//如果是原单
             originalOrderNo = nodeOrderNo;
         }
-        //根据原订单号，获取订单流
-        //根据原订单号订单流
+        //2.1根据原订单号，获取订单流
         List<OrderFlowDO> orderFlowDOList = orderFlowMapper.findByOriginalOrderNo(originalOrderNo);
         Date rentStartTime = orderDO.getRentStartTime();
         Date expectReturnTime = orderDO.getExpectReturnTime();
@@ -283,11 +284,12 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             originalRentStartTime = orderFlowDOList.get(0).getOriginalRentStartTime();
             countOrderFlow = orderFlowDOList.size();
         }
+        //2.2生成新订单号
         String orderNO = originalOrderNo + "-" + String.valueOf(countOrderFlow + 1);
-        //新订单流
+        //2.3 新订单流
         OrderFlowDO orderFlowDO = this.initOrderFlowDO(originalOrderNo, nodeOrderNo, orderNO, originalExpectReturnTime, originalRentStartTime, rentStartTime, expectReturnTime, loginUser.getUserId().toString());
         orderFlowMapper.save(orderFlowDO);
-        //2、新订单创建\处理
+        //2.4 新订单创建\处理
         OrderDO newOrderDO = orderDO;
         newOrderDO.setOrderNo(orderNO);
         newOrderDO.setId(null);
@@ -296,7 +298,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         newOrderDO.setIsExchangeOrder(CommonConstant.COMMON_CONSTANT_NO);
         newOrderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
         newOrderDO.setRentStartTime(exchangeOrderDO.getRentStartTime());
-        //重新计算价格
+        //2.4.1重新计算价格
         int[] diff = com.lxzl.erp.common.util.DateUtil.getDiff(newOrderDO.getRentStartTime(),expectReturnTime);
         if (diff[1]>0) {
             diff[0] += 1;
@@ -305,12 +307,51 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             diff[0] += 1;
         }
         newOrderDO.setRentTimeLength(diff[0]);
+        //生成新的订单
+        if (CollectionUtil.isNotEmpty(newOrderDO.getOrderProductDOList())) {
+            for (OrderProductDO orderProductDO : newOrderDO.getOrderProductDOList()) {
+                //处理商品
+                if(CollectionUtil.isNotEmpty(exchangeOrderDO.getExchangeOrderProductDOList())) {
+                    for (ExchangeOrderProductDO exchangeOrderProductDO : exchangeOrderDO.getExchangeOrderProductDOList()) {
+                        if (exchangeOrderProductDO.getOrderProductId().equals(orderProductDO.getId())) {
+                            orderProductDO.setProductUnitAmount(exchangeOrderProductDO.getProductUnitAmount());
+                            orderProductDO.setRentTimeLength(diff[0]);
+                            orderProductDO.setDepositCycle(exchangeOrderProductDO.getDepositCycle());
+                            orderProductDO.setPaymentCycle(exchangeOrderProductDO.getPaymentCycle());
+                            orderProductDO.setPayMode(exchangeOrderProductDO.getPayMode());
+                            break;
+                        }
+                    }
+                }else{
+                    break;
+                }
+            }
+        }
+        if (CollectionUtil.isNotEmpty(newOrderDO.getOrderMaterialDOList())) {
+            for (OrderMaterialDO orderMaterialDO : newOrderDO.getOrderMaterialDOList()) {
+                if(CollectionUtil.isNotEmpty(exchangeOrderDO.getExchangeOrderMaterialDOList())) {
+                    for (ExchangeOrderMaterialDO exchangeOrderMaterialDO : exchangeOrderDO.getExchangeOrderMaterialDOList()) {
+                        if (exchangeOrderMaterialDO.getOrderProductId().equals(orderMaterialDO.getId())) {
+                            orderMaterialDO.setMaterialUnitAmount(exchangeOrderMaterialDO.getMaterialUnitAmount());
+                            orderMaterialDO.setRentTimeLength(diff[0]);
+                            orderMaterialDO.setDepositCycle(exchangeOrderMaterialDO.getDepositCycle());
+                            orderMaterialDO.setPaymentCycle(exchangeOrderMaterialDO.getPaymentCycle());
+                            orderMaterialDO.setPayMode(exchangeOrderMaterialDO.getPayMode());
+                            break;
+                        }
+                    }
+                }else{
+                    break;
+                }
+            }
+        }
         orderService.calculateOrderProductInfo(newOrderDO.getOrderProductDOList(),newOrderDO);
         orderService.calculateOrderMaterialInfo(newOrderDO.getOrderMaterialDOList(),newOrderDO);
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderMapper.save(newOrderDO);
         orderService.updateOrderConsignInfo(orderConsignInfoDO.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
-        //结算单用到的订单数据关系
+        //2.4.2 订单商品项生成
+        // 结算单用到的订单数据关系
         Map<String, String> orderItemUnionKeyMapping = new HashMap<>();
         //生成新的订单
         if (CollectionUtil.isNotEmpty(newOrderDO.getOrderProductDOList())) {
@@ -354,12 +395,11 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         orderTimeAxisSupport.addOrderTimeAxis(newOrderDO.getId(), newOrderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_SUCCESS);
 
         //3、变更单给K3传数据
-        Order order = ConverterUtil.convert(newOrderDO, Order.class);
-        order.setTestMachineOrderNo(nodeOrderNo);
+//        Order order = ConverterUtil.convert(newOrderDO, Order.class);
+//        order.setTestMachineOrderNo(nodeOrderNo);
 //        ServiceResult<String, String> serviceResult = k3Service.testMachineOrderTurnRentOrder(order);
 //        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
 //            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
-//            result.setResult(newOrder.getOrderNo());
 //            return result;
 //        }
 
