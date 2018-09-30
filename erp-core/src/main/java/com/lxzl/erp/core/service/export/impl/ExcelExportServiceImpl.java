@@ -44,11 +44,11 @@ public class ExcelExportServiceImpl<T> implements ExcelExportService<T> {
 
 
     @Override
-    public ServiceResult<String, String> export(List<T> list, ExcelExportConfig config, HttpServletResponse response, HSSFWorkbook hssfWorkbook, String fileName, String sheetName, Integer row) {
+    public ServiceResult<String, String> export(List<T> list, ExcelExportConfig config, HttpServletResponse response, XSSFWorkbook xssfWorkbook, String fileName, String sheetName, Integer row) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         try {
             //导出设计表格
-            serviceResult = ExcelExportSupport.export(list, config,response,hssfWorkbook,ExcelExportSupport.formatFileName(fileName),sheetName,row);
+            serviceResult = ExcelExportSupport.export(list, config,response,xssfWorkbook,ExcelExportSupport.formatFileName(fileName),sheetName,row);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -61,18 +61,18 @@ public class ExcelExportServiceImpl<T> implements ExcelExportService<T> {
         try {
             //导出设计表格
             //serviceResult = ExcelExportSupport.export(list, config,response,hssfWorkbook,ExcelExportSupport.formatFileName(fileName),sheetName,row);
-            HSSFWorkbook hssfWorkbook = null;
+            XSSFWorkbook xssfWorkbook = null;
             if (CollectionUtil.isNotEmpty(excelMultiSheetConfigList)) {
                 for (ExcelMultiSheetConfig excelMultiSheetConfig : excelMultiSheetConfigList) {
-                    hssfWorkbook = ExcelExportSupport.createHSSFSheetAttachToHSSFWorkbook(excelMultiSheetConfig.getBaseData(), excelMultiSheetConfig.getExcelExportConfig(), excelMultiSheetConfig.getSheetName(), hssfWorkbook);
+                    xssfWorkbook = ExcelExportSupport.createXSSFSheetAttachToXSSFWorkbook(excelMultiSheetConfig.getBaseData(), excelMultiSheetConfig.getExcelExportConfig(), excelMultiSheetConfig.getSheetName(), xssfWorkbook);
                 }
             }
-            if (hssfWorkbook != null) {
+            if (xssfWorkbook != null) {
                 response.reset();
                 response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xls");
                 response.setContentType("application/json;charset=utf-8");
                 OutputStream stream = response.getOutputStream();
-                hssfWorkbook.write(stream);
+                xssfWorkbook.write(stream);
                 stream.flush();
                 stream.close();
                 serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -84,14 +84,14 @@ public class ExcelExportServiceImpl<T> implements ExcelExportService<T> {
     }
 
     @Override
-    public ServiceResult<String, HSSFWorkbook> getHSSFWorkbook(ServiceResult<String, Page<T>> result, ExcelExportConfig config,String sheetName) {
-        ServiceResult<String, HSSFWorkbook> serviceResult = new ServiceResult<>();
+    public ServiceResult<String,XSSFWorkbook> getXSSFWorkbook(ServiceResult<String, Page<T>> result, ExcelExportConfig config,String sheetName) {
+        ServiceResult<String, XSSFWorkbook> serviceResult = new ServiceResult<>();
         try {
             if (ErrorCode.SUCCESS.equals(result.getErrorCode())) {
                 //导出设计表格
-                HSSFWorkbook hssfWorkbook = ExcelExportSupport.getXSSFWorkbook(result.getResult(), config,sheetName);
+                XSSFWorkbook xssfWorkbook = ExcelExportSupport.getXSSFWorkbook(result.getResult(), config,sheetName);
                 serviceResult.setErrorCode(ErrorCode.SUCCESS);
-                serviceResult.setResult(hssfWorkbook);
+                serviceResult.setResult(xssfWorkbook);
             }
         } catch (Exception e) {
             e.printStackTrace();

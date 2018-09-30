@@ -27,6 +27,7 @@ import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
 import com.lxzl.se.common.domain.Result;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,9 +95,9 @@ public class DisposeExportDataServiceImpl implements DisposeExportDataService {
             result.setErrorCode(serviceResult.getErrorCode());
             return result;
         }
-        ServiceResult<String, HSSFWorkbook> hSSFWorkbookResult = excelExportService.getHSSFWorkbook(serviceResult, ExcelExportConfigGroup.statementOrderConfig, "sheet1");
+        ServiceResult<String, XSSFWorkbook> xSSFWorkbookResult = excelExportService.getXSSFWorkbook(serviceResult, ExcelExportConfigGroup.statementOrderConfig, "sheet1");
         List<StatementOrderDetail> statementOrderDetailList = serviceResult.getResult() == null ? null : serviceResult.getResult().getStatementOrderDetailList();
-        ServiceResult<String, String> serviceResult1 = excelExportService.export(statementOrderDetailList, ExcelExportConfigGroup.statementOrderDetailConfig, response, hSSFWorkbookResult.getResult(), "结算单详情", "sheet1", 2);
+        ServiceResult<String, String> serviceResult1 = excelExportService.export(statementOrderDetailList, ExcelExportConfigGroup.statementOrderDetailConfig, response, xSSFWorkbookResult.getResult(), "结算单详情", "sheet1", 2);
 
         return serviceResult1;
     }

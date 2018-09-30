@@ -48,20 +48,20 @@ public class ExcelExportSupport<T> {
      */
     public static <T> ServiceResult<String, String> export(List<T> list, ExcelExportConfig config, String fileName, String sheetName, HttpServletResponse response) throws Exception {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
-        HSSFSheet hssSheet = hssfWorkbook.createSheet(sheetName);
-        hssSheet.setActive(false);//取消受保护的视图
-        HSSFRow hssfRow = hssSheet.createRow(0);
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
+        XSSFSheet xssSheet = xssfWorkbook.createSheet(sheetName);
+//        xssSheet.setActive(false);//取消受保护的视图
+        XSSFRow xssfRow = xssSheet.createRow(0);
         int count = 0;
         List<ColConfig> colConfigList = config.getConfigList();
         for (int i = 0; i < colConfigList.size(); i++) {
             ColConfig colConfig = colConfigList.get(i);
-            hssfRow.createCell(count++).setCellValue(colConfig.getColName());
-            hssSheet.setColumnWidth(i, colConfig.getWidth());
+            xssfRow.createCell(count++).setCellValue(colConfig.getColName());
+            xssSheet.setColumnWidth(i, colConfig.getWidth());
         }
         if(CollectionUtil.isNotEmpty(list)){
             for (int i = 0; i < list.size(); i++) {
-                HSSFRow newXssfRow = hssSheet.createRow(i + 1);
+                XSSFRow newXssfRow = xssSheet.createRow(i + 1);
                 Object o = list.get(i);
                 for (int j = 0; j < colConfigList.size(); j++) {
                     ColConfig colConfig = colConfigList.get(j);
@@ -69,7 +69,7 @@ public class ExcelExportSupport<T> {
                     String methodName = "get" + StringUtil.toUpperCaseFirstChar(colConfig.getFieldName());
                     Method method = o.getClass().getMethod(methodName);
                     Object value = method.invoke(o);
-                    hssSheet.setColumnWidth(j, colConfig.getWidth());
+                    xssSheet.setColumnWidth(j, colConfig.getWidth());
                     Cell cell = newXssfRow.createCell(j);
                     cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
                 }
@@ -77,10 +77,10 @@ public class ExcelExportSupport<T> {
         }
 
         response.reset();
-        response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xls");
+        response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xlsx");
         response.setContentType("application/json;charset=utf-8");
         OutputStream stream = response.getOutputStream();
-        hssfWorkbook.write(stream);
+        xssfWorkbook.write(stream);
         stream.flush();
         stream.close();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -96,59 +96,59 @@ public class ExcelExportSupport<T> {
      * @Date : Created in 2018/4/14 17:55
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>
      */
-    public static <T> HSSFWorkbook getXSSFWorkbook(T t, ExcelExportConfig config, String sheetName) throws Exception {
-        HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
-        HSSFSheet hssSheet = hssfWorkbook.createSheet(sheetName);
-        HSSFRow hssfRow = hssSheet.createRow(0);
+    public static <T> XSSFWorkbook getXSSFWorkbook(T t, ExcelExportConfig config, String sheetName) throws Exception {
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
+        XSSFSheet xssSheet = xssfWorkbook.createSheet(sheetName);
+        XSSFRow xssfRow = xssSheet.createRow(0);
         int count = 0;
         List<ColConfig> colConfigList = config.getConfigList();
         for (int i = 0; i < colConfigList.size(); i++) {
             ColConfig colConfig = colConfigList.get(i);
-            hssfRow.createCell(count++).setCellValue(colConfig.getColName());
-            hssSheet.setColumnWidth(i, colConfig.getWidth());
+            xssfRow.createCell(count++).setCellValue(colConfig.getColName());
+            xssSheet.setColumnWidth(i, colConfig.getWidth());
         }
         if(t != null){
-            HSSFRow newXssfRow = hssSheet.createRow(1);
+            XSSFRow newXssfRow = xssSheet.createRow(1);
             for (int j = 0; j < colConfigList.size(); j++) {
                 ColConfig colConfig = colConfigList.get(j);
                 //开始set值到表里面
                 String methodName = "get" + StringUtil.toUpperCaseFirstChar(colConfig.getFieldName());
                 Method method = t.getClass().getMethod(methodName);
                 Object value = method.invoke(t);
-                hssSheet.setColumnWidth(j, colConfig.getWidth());
+                xssSheet.setColumnWidth(j, colConfig.getWidth());
                 Cell cell = newXssfRow.createCell(j);
                 cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
             }
         }
 
-        return hssfWorkbook;
+        return xssfWorkbook;
     }
 
-    public static <T> HSSFWorkbook createHSSFSheetAttachToHSSFWorkbook(List<T> list, ExcelExportConfig config, String sheetName,HSSFWorkbook targetHssfWorkbook) throws Exception {
+    public static <T> XSSFWorkbook createXSSFSheetAttachToXSSFWorkbook(List<T> list, ExcelExportConfig config, String sheetName,XSSFWorkbook targetHssfWorkbook) throws Exception {
         if (targetHssfWorkbook == null) {
-            targetHssfWorkbook = new HSSFWorkbook();
+            targetHssfWorkbook = new XSSFWorkbook();
         }
-        HSSFSheet hssSheet = targetHssfWorkbook.createSheet(sheetName);
-        HSSFRow hssfRow = hssSheet.createRow(0);
+        XSSFSheet xssSheet = targetHssfWorkbook.createSheet(sheetName);
+        XSSFRow xssfRow = xssSheet.createRow(0);
         int count = 0;
         List<ColConfig> colConfigList = config.getConfigList();
         for (int i = 0; i < colConfigList.size(); i++) {
             ColConfig colConfig = colConfigList.get(i);
-            hssfRow.createCell(count++).setCellValue(colConfig.getColName());
-            hssSheet.setColumnWidth(i, colConfig.getWidth());
+            xssfRow.createCell(count++).setCellValue(colConfig.getColName());
+            xssSheet.setColumnWidth(i, colConfig.getWidth());
         }
         if(CollectionUtil.isNotEmpty(list)) {
             int row =1;
             for(T t: list) {
                 if(t != null){
-                    HSSFRow newXssfRow = hssSheet.createRow(row);
+                    XSSFRow newXssfRow = xssSheet.createRow(row);
                     for (int j = 0; j < colConfigList.size(); j++) {
                         ColConfig colConfig = colConfigList.get(j);
                         //开始set值到表里面
                         String methodName = "get" + StringUtil.toUpperCaseFirstChar(colConfig.getFieldName());
                         Method method = t.getClass().getMethod(methodName);
                         Object value = method.invoke(t);
-                        hssSheet.setColumnWidth(j, colConfig.getWidth());
+                        xssSheet.setColumnWidth(j, colConfig.getWidth());
                         Cell cell = newXssfRow.createCell(j);
                         cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));
                     }
@@ -167,18 +167,18 @@ public class ExcelExportSupport<T> {
      * @Date : Created in 2018/4/14 17:55
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>
      */
-    public static <T> ServiceResult<String, String> export(List<T> list, ExcelExportConfig config, HttpServletResponse response, HSSFWorkbook hssfWorkbook, String fileName, String sheetName, Integer row) throws Exception {
+    public static <T> ServiceResult<String, String> export(List<T> list, ExcelExportConfig config, HttpServletResponse response, XSSFWorkbook xssfWorkbook, String fileName, String sheetName, Integer row) throws Exception {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        HSSFSheet hssSheet = hssfWorkbook.getSheet(sheetName);
-        HSSFRow hssfRow = hssSheet.createRow(row);
+        XSSFSheet xssSheet = xssfWorkbook.getSheet(sheetName);
+        XSSFRow xssfRow = xssSheet.createRow(row);
         int count = 0;
         List<ColConfig> colConfigList = config.getConfigList();
         for (ColConfig colConfig : colConfigList) {
-            hssfRow.createCell(count++).setCellValue(colConfig.getColName());
+            xssfRow.createCell(count++).setCellValue(colConfig.getColName());
         }
         if (CollectionUtil.isNotEmpty(list)) {
             for (int i = 0; i < list.size(); i++) {
-                HSSFRow newHssfRow = hssSheet.createRow(i + row + 1);
+                XSSFRow newHssfRow = xssSheet.createRow(i + row + 1);
                 Object o = list.get(i);
                 for (int j = 0; j < colConfigList.size(); j++) {
                     ColConfig colConfig = colConfigList.get(j);
@@ -187,7 +187,7 @@ public class ExcelExportSupport<T> {
                     Method method = o.getClass().getMethod(methodName);
                     Object value = method.invoke(o);
                     if (j == 0) {
-                        hssSheet.setColumnWidth(j, colConfig.getWidth());
+                        xssSheet.setColumnWidth(j, colConfig.getWidth());
                     }
                     Cell cell = newHssfRow.createCell(j);
                     cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
@@ -196,10 +196,10 @@ public class ExcelExportSupport<T> {
         }
 
         response.reset();
-        response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xls");
+        response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xlsx");
         response.setContentType("application/json;charset=utf-8");
         OutputStream stream = response.getOutputStream();
-        hssfWorkbook.write(stream);
+        xssfWorkbook.write(stream);
         stream.flush();
         stream.close();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -276,21 +276,21 @@ public class ExcelExportSupport<T> {
      * @Date : Created in 2018/4/14 17:55
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>
      */
-    public static <T> XSSFWorkbook getXSSFWorkbook(XSSFWorkbook hssfWorkbook, XSSFSheet hssSheet, List<T> list, ExcelExportConfig config, String sheetName, Integer rowNo, Integer headlineHeight, Integer rowHeight) throws Exception {
-        XSSFRow hssfRow = hssSheet.createRow(rowNo);
-        hssfRow.setHeightInPoints(headlineHeight);
+    public static <T> XSSFWorkbook getXSSFWorkbook(XSSFWorkbook xssfWorkbook, XSSFSheet xssSheet, List<T> list, ExcelExportConfig config, String sheetName, Integer rowNo, Integer headlineHeight, Integer rowHeight) throws Exception {
+        XSSFRow xssfRow = xssSheet.createRow(rowNo);
+        xssfRow.setHeightInPoints(headlineHeight);
         int count = 0;
         List<ColConfig> colConfigList = config.getConfigList();
         for (int i = 0; i < colConfigList.size(); i++) {
             ColConfig colConfig = colConfigList.get(i);
-            XSSFCell hssfCell = hssfRow.createCell(count++);
+            XSSFCell hssfCell = xssfRow.createCell(count++);
             hssfCell.setCellValue(colConfig.getColName());
-            hssSheet.setColumnWidth(i, colConfig.getWidth());
-            setCellStyle(hssfWorkbook, hssfCell, colConfig.getHeadlineFontColor(), colConfig.getHeadlineBackGroupColor());
+            xssSheet.setColumnWidth(i, colConfig.getWidth());
+            setCellStyle(xssfWorkbook, hssfCell, colConfig.getHeadlineFontColor(), colConfig.getHeadlineBackGroupColor());
         }
 
         for (int i = 0; i < list.size(); i++) {
-            XSSFRow newXssfRow = hssSheet.createRow(rowNo + i + 1);
+            XSSFRow newXssfRow = xssSheet.createRow(rowNo + i + 1);
             newXssfRow.setHeightInPoints(rowHeight);
             T t = list.get(i);
             for (int j = 0; j < colConfigList.size(); j++) {
@@ -299,7 +299,7 @@ public class ExcelExportSupport<T> {
                 String methodName = "get" + StringUtil.toUpperCaseFirstChar(colConfig.getFieldName());
                 Method method = t.getClass().getMethod(methodName);
                 Object value = method.invoke(t);
-                hssSheet.setColumnWidth(j, colConfig.getWidth());
+                xssSheet.setColumnWidth(j, colConfig.getWidth());
                 Cell cell = newXssfRow.createCell(j);
                 if (isNumeric(String.valueOf(colConfig.getExcelExportView().view(value)))) {
                     cell.setCellValue(Double.parseDouble(String.valueOf(colConfig.getExcelExportView().view(value))));
@@ -307,10 +307,10 @@ public class ExcelExportSupport<T> {
                     cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
                 }
 
-                setCellStyle(hssfWorkbook, cell, colConfig.getFontColor(), colConfig.getBackGroupColor());
+                setCellStyle(xssfWorkbook, cell, colConfig.getFontColor(), colConfig.getBackGroupColor());
             }
         }
-        return hssfWorkbook;
+        return xssfWorkbook;
     }
 
     //方法四：
@@ -324,8 +324,8 @@ public class ExcelExportSupport<T> {
         }
     }
 
-    public static void setCellStyle(Workbook hssfWorkbook, Cell cell, short fontColor, short backGroupColor) {
-        CellStyle style = hssfWorkbook.createCellStyle();
+    public static void setCellStyle(Workbook xssfWorkbook, Cell cell, short fontColor, short backGroupColor) {
+        CellStyle style = xssfWorkbook.createCellStyle();
         style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 居中
         style.setWrapText(true);// 自动换行
         style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);//垂直居中
@@ -343,7 +343,7 @@ public class ExcelExportSupport<T> {
         style.setLeftBorderColor(HSSFColor.BLACK.index);
         style.setRightBorderColor(HSSFColor.BLACK.index);
 
-        Font font = hssfWorkbook.createFont();
+        Font font = xssfWorkbook.createFont();
         font.setColor(fontColor); //字体颜色
         font.setFontHeightInPoints((short) 9);
         style.setFont(font);
