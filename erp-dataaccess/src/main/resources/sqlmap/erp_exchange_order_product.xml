@@ -118,4 +118,31 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.order.ExchangeOrderProductDO">
 		UPDATE erp_exchange_order_product <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<update id="updateList">
+		UPDATE erp_exchange_order_product eeop
+		SET
+		<trim>
+			eeop.deposit_cycle =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.depositCycle}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			eeop.payment_cycle =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.paymentCycle,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			eeop.pay_mode =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.payMode,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		WHERE eeop.id IN
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
 </mapper>
