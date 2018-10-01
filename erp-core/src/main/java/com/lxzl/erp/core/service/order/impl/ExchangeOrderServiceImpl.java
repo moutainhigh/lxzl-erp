@@ -106,13 +106,9 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             //获取下个月第一天
             newRentStartTime=DateUtil.getStartMonthDate(exchangeOrder.getRentStartTime());
         }else{
+            //如果是20号，或者是自然日
 
         }
-
-
-
-
-
 
 
         ExchangeOrderDO exchangeOrderDO = new ExchangeOrderDO();
@@ -493,10 +489,6 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
-        OrderDO orderDO = orderMapper.findByOrderNo(businessNo);
-        if (orderDO == null || !OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())) {
-            return ErrorCode.BUSINESS_EXCEPTION;
-        }
         ExchangeOrderDO exchangeOrderDO = exchangeOrderMapper.findByExchangeOrderNo(businessNo);
         if (CommonConstant.DATA_STATUS_ENABLE.equals(exchangeOrderDO.getDataStatus()) && ExchangeOrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(exchangeOrderDO.getStatus())) {
             return ErrorCode.EXCHANGE_ORDER_STATUS_ERROR;
