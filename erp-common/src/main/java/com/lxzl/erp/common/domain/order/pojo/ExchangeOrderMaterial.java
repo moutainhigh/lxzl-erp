@@ -21,6 +21,16 @@ public class ExchangeOrderMaterial extends BasePO {
 	private Integer paymentCycle;
 	private Integer payMode;
 
+	private OrderMaterial orderMaterial;//订单配件项
+
+	public OrderMaterial getOrderMaterial() {
+		return orderMaterial;
+	}
+
+	public void setOrderMaterial(OrderMaterial orderMaterial) {
+		this.orderMaterial = orderMaterial;
+	}
+
 	public Integer getDepositCycle() {
 		return depositCycle;
 	}

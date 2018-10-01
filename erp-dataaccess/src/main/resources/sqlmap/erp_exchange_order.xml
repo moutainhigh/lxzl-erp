@@ -37,7 +37,7 @@
 
 	<select id="findByOrderNo" resultMap="ExchangeOrderDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> FROM erp_exchange_order eeo
-		WHERE eeo.order_no = #{orderNo, jdbcType=INTEGER} AND eeo.data_status = 1
+		WHERE eeo.order_no = #{orderNo, jdbcType=INTEGER} AND eeo.data_status = 1 AND eeo.status in(0,2,4)
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">

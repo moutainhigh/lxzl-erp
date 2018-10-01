@@ -29,6 +29,7 @@ public class ExchangeOrder extends BasePO {
 	private Integer businessType;   //业务编码
 	private Integer status;   //变更单转换
 	private String remark;   //备注
+	private Order order;
 
 	/**
 	 * 变更单商品明细
@@ -39,6 +40,14 @@ public class ExchangeOrder extends BasePO {
 	 * 变更单配件明细
 	 */
 	private List<ExchangeOrderMaterial> exchangeOrderMaterialList;
+
+	public Order getOrder() {
+		return order;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
+	}
 
 	public List<ExchangeOrderProduct> getExchangeOrderProductList() {
 		return exchangeOrderProductList;

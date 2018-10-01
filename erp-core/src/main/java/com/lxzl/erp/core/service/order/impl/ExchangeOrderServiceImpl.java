@@ -4,10 +4,7 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.order.ExchangeOrderCommitParam;
-import com.lxzl.erp.common.domain.order.pojo.ExchangeOrder;
-import com.lxzl.erp.common.domain.order.pojo.ExchangeOrderMaterial;
-import com.lxzl.erp.common.domain.order.pojo.ExchangeOrderProduct;
-import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.order.pojo.*;
 import com.lxzl.erp.common.domain.statement.AmountNeedReturn;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
@@ -57,19 +54,19 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             return result;
         }
         //只能按月租
-        if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
+        if (OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
             result.setErrorCode(ErrorCode.ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER);
             return result;
         }
 
-        if(exchangeOrder.getRentStartTime().compareTo(orderDO.getRentStartTime())<0){
+        if (exchangeOrder.getRentStartTime().compareTo(orderDO.getRentStartTime()) < 0) {
             //不能小于起租日
             result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_SATRT_TIME);
             return result;
         }
         //不能超过最后一期时间
         Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
-        if(exchangeOrder.getRentStartTime().compareTo(expectReturnTime)>0){
+        if (exchangeOrder.getRentStartTime().compareTo(expectReturnTime) > 0) {
             //不能大于最后一期
             result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_EXPECT_RETURN_TIME);
             return result;
@@ -101,20 +98,20 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         //获取当前月的结算日、如果是31号就是当前月的最后一天。如果是其他就跟着你月份走就可以了。
         Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), exchangeOrder.getRentStartTime());
 
-        Date newRentStartTime=new Date();
+        Date newRentStartTime = new Date();
 
-        if(statementDays==31) {//如果是月末。就获取一个月的第一天
+        if (statementDays == 31) {//如果是月末。就获取一个月的第一天
             //获取第一个月的第一天
-            newRentStartTime=DateUtil.getStart8MonthDate(exchangeOrder.getRentStartTime());
-        }else{
+            newRentStartTime = DateUtil.getStart8MonthDate(exchangeOrder.getRentStartTime());
+        } else {
             //如果是20号，或者是自然日 TODO 2月份特殊处理
-            DateUtil.getMonthAndDay(exchangeOrder.getRentStartTime(),statementDays+1);
+            newRentStartTime = DateUtil.getMonthAndDay(exchangeOrder.getRentStartTime(), statementDays + 1);
         }
         //起租日，当月第一天
-        Date rentStartTime=DateUtil.getStartMonthDate(orderDO.getRentStartTime());
+        Date rentStartTime = DateUtil.getStartMonthDate(orderDO.getRentStartTime());
         //起租日，当月最后一天
-        Date rentEndTime=DateUtil.getEndMonthDate(orderDO.getRentStartTime());
-        if(rentEndTime.compareTo(newRentStartTime) > 0) {
+        Date rentEndTime = DateUtil.getEndMonthDate(orderDO.getRentStartTime());
+        if (rentEndTime.compareTo(newRentStartTime) > 0) {
             if (rentStartTime.compareTo(newRentStartTime) < 0) {
                 //下单首月不能更改
                 result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_FIRST_MONTH);
@@ -122,7 +119,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             }
         }
         //生效时间不能超过最后一期的时间
-        if(newRentStartTime.compareTo(expectReturnTime)>0){
+        if (newRentStartTime.compareTo(expectReturnTime) > 0) {
             result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_EXPECT_RETURN_TIME);
             return result;
         }
@@ -146,10 +143,10 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         exchangeOrderMapper.save(exchangeOrderDO);
         if (!CollectionUtil.isEmpty(exchangeOrder.getExchangeOrderProductList())) {
             List<ExchangeOrderProductDO> exchangeOrderProductDOList = new ArrayList<>();
-            Map<Integer,OrderProductDO> orderProductDOMap=ListUtil.listToMap(orderDO.getOrderProductDOList(),"id");
+            Map<Integer, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(), "id");
             //保存商品信息
             for (ExchangeOrderProduct exchangeOrderProduct : exchangeOrder.getExchangeOrderProductList()) {
-                OrderProductDO orderProductDO=orderProductDOMap.get(exchangeOrderProduct.getOrderProductId());
+                OrderProductDO orderProductDO = orderProductDOMap.get(exchangeOrderProduct.getOrderProductId());
                 //补全信息
                 ExchangeOrderProductDO exchangeOrderProductDO = new ExchangeOrderProductDO();
                 BeanUtils.copyProperties(exchangeOrderProduct, exchangeOrderProductDO);
@@ -166,10 +163,10 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         }
         if (!CollectionUtil.isEmpty(exchangeOrder.getExchangeOrderMaterialList())) {
             List<ExchangeOrderMaterialDO> exchangeOrderMaterialDOList = new ArrayList<>();
-            Map<Integer,OrderMaterialDO> orderMaterialDOMap=ListUtil.listToMap(orderDO.getOrderMaterialDOList(),"id");
+            Map<Integer, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "id");
             //保存配件信息
             for (ExchangeOrderMaterial exchangeOrderMaterial : exchangeOrder.getExchangeOrderMaterialList()) {
-                OrderMaterialDO orderMaterialDO=orderMaterialDOMap.get(exchangeOrderMaterial.getOrderProductId());
+                OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(exchangeOrderMaterial.getOrderProductId());
                 //补全信息
                 ExchangeOrderMaterialDO exchangeOrderMaterialDO = new ExchangeOrderMaterialDO();
                 BeanUtils.copyProperties(exchangeOrderMaterial, exchangeOrderMaterialDO);
@@ -238,6 +235,33 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         exchangeOrderDO.setExchangeOrderMaterialDOList(exchangeOrderMaterialDO);
         exchangeOrderDO.setExchangeOrderProductDOList(exchangeOrderProductDOLiost);
         ExchangeOrder exchangeOrder = ConverterUtil.convert(exchangeOrderDO, ExchangeOrder.class);
+        OrderDO orderDO = orderMapper.findByOrderNo(exchangeOrder.getOrderNo());
+        Order order = ConverterUtil.convert(orderDO, Order.class);
+        exchangeOrder.setOrder(order);
+        if (CollectionUtil.isNotEmpty(exchangeOrder.getExchangeOrderProductList())) {
+            for (ExchangeOrderProduct exchangeOrderProduct : exchangeOrder.getExchangeOrderProductList()) {
+                if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
+                    for (OrderProduct orderProduct : order.getOrderProductList()) {
+                        if (orderProduct.getOrderProductId().equals(exchangeOrderProduct.getOrderProductId())) {
+                            exchangeOrderProduct.setOrderProduct(orderProduct);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if (CollectionUtil.isNotEmpty(exchangeOrder.getExchangeOrderMaterialList())) {
+            for (ExchangeOrderMaterial exchangeOrderMaterial : exchangeOrder.getExchangeOrderMaterialList()) {
+                if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
+                    for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
+                        if (orderMaterial.getMaterialId().equals(exchangeOrderMaterial.getOrderProductId())) {
+                            exchangeOrderMaterial.setOrderMaterial(orderMaterial);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(exchangeOrder);
         return result;
@@ -350,8 +374,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         newOrderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
         newOrderDO.setRentStartTime(exchangeOrderDO.getRentStartTime());
         //2.4.1重新计算价格
-        int[] diff = com.lxzl.erp.common.util.DateUtil.getDiff(newOrderDO.getRentStartTime(),expectReturnTime);
-        if (diff[1]>0) {
+        int[] diff = com.lxzl.erp.common.util.DateUtil.getDiff(newOrderDO.getRentStartTime(), expectReturnTime);
+        if (diff[1] > 0) {
             diff[0] += 1;
         }
         if (diff[0] == 0) {
@@ -362,7 +386,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         if (CollectionUtil.isNotEmpty(newOrderDO.getOrderProductDOList())) {
             for (OrderProductDO orderProductDO : newOrderDO.getOrderProductDOList()) {
                 //处理商品
-                if(CollectionUtil.isNotEmpty(exchangeOrderDO.getExchangeOrderProductDOList())) {
+                if (CollectionUtil.isNotEmpty(exchangeOrderDO.getExchangeOrderProductDOList())) {
                     for (ExchangeOrderProductDO exchangeOrderProductDO : exchangeOrderDO.getExchangeOrderProductDOList()) {
                         if (exchangeOrderProductDO.getOrderProductId().equals(orderProductDO.getId())) {
                             orderProductDO.setProductUnitAmount(exchangeOrderProductDO.getProductUnitAmount());
@@ -373,14 +397,14 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
                             break;
                         }
                     }
-                }else{
+                } else {
                     break;
                 }
             }
         }
         if (CollectionUtil.isNotEmpty(newOrderDO.getOrderMaterialDOList())) {
             for (OrderMaterialDO orderMaterialDO : newOrderDO.getOrderMaterialDOList()) {
-                if(CollectionUtil.isNotEmpty(exchangeOrderDO.getExchangeOrderMaterialDOList())) {
+                if (CollectionUtil.isNotEmpty(exchangeOrderDO.getExchangeOrderMaterialDOList())) {
                     for (ExchangeOrderMaterialDO exchangeOrderMaterialDO : exchangeOrderDO.getExchangeOrderMaterialDOList()) {
                         if (exchangeOrderMaterialDO.getOrderProductId().equals(orderMaterialDO.getId())) {
                             orderMaterialDO.setMaterialUnitAmount(exchangeOrderMaterialDO.getMaterialUnitAmount());
@@ -391,13 +415,13 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
                             break;
                         }
                     }
-                }else{
+                } else {
                     break;
                 }
             }
         }
-        orderService.calculateOrderProductInfo(newOrderDO.getOrderProductDOList(),newOrderDO);
-        orderService.calculateOrderMaterialInfo(newOrderDO.getOrderMaterialDOList(),newOrderDO);
+        orderService.calculateOrderProductInfo(newOrderDO.getOrderProductDOList(), newOrderDO);
+        orderService.calculateOrderMaterialInfo(newOrderDO.getOrderMaterialDOList(), newOrderDO);
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderMapper.save(newOrderDO);
         orderService.updateOrderConsignInfo(orderConsignInfoDO.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
