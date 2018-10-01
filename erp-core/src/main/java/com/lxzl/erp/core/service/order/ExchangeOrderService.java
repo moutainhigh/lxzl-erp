@@ -56,4 +56,11 @@ public interface ExchangeOrderService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String,String> generatedOrder(String exchangerOrderNo);
+
+    /**
+     * 更新变更单
+     * @param exchangeOrder
+     * @return
+     */
+    ServiceResult<String, String> updateExchangeOrder(ExchangeOrder exchangeOrder);
 }

@@ -50,6 +50,12 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         OrderDO orderDO = orderMapper.findByOrderNo(exchangeOrder.getOrderNo());
         //校验信息
         ServiceResult<String, String> result=this.verifyOrderInfo(orderDO,exchangeOrder);
+        //如果有变更单就不允许更换
+        List<ExchangeOrderDO> exchangeOrderDOList = exchangeOrderMapper.findByOrderNo(exchangeOrder.getOrderNo());
+        if (CollectionUtil.isNotEmpty(exchangeOrderDOList)) {
+            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_EXISTS);
+            return result;
+        }
         if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
             return result;
         }
@@ -126,7 +132,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         return result;
     }
 
-
+    @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateExchangeOrder(ExchangeOrder exchangeOrder) {
         ServiceResult<String, String> result=new ServiceResult<>();
@@ -138,7 +144,12 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
-        OrderDO orderDO = orderMapper.findByOrderNo(exchangeOrder.getOrderNo());
+        //只有待提交的变更单才可以进行操作
+        if (!(CommonConstant.DATA_STATUS_ENABLE.equals(exchangeOrderDO.getDataStatus()) && ExchangeOrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(exchangeOrderDO.getStatus()))) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        OrderDO orderDO = orderMapper.findByOrderNo(exchangeOrderDO.getOrderNo());
         result=this.verifyOrderInfo(orderDO,exchangeOrder);
         if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
             return result;
@@ -169,6 +180,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
                         exchangeOrderProductDO.getPayMode().equals(orderProductDO.getPayMode()))){
                     isUpd=true;
                 }
+                exchangeOrderProductDOList.add(exchangeOrderProductDO);
             }
             exchangeOrderProductMapper.updateList(exchangeOrderProductDOList);
         }
@@ -189,6 +201,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
                         exchangeOrderMaterialDO.getPayMode().equals(orderMaterialDO.getPayMode()))){
                     isUpd=true;
                 }
+                exchangeOrderMaterialDOList.add(exchangeOrderMaterialDO);
             }
             exchangeOrderMaterialMapper.updateList(exchangeOrderMaterialDOList);
         }
@@ -629,13 +642,6 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         }
 
         //查询是否存在换货单
-        //如果有变更单就不允许更换
-        List<ExchangeOrderDO> exchangeOrderDOList = exchangeOrderMapper.findByOrderNo(exchangeOrder.getOrderNo());
-        if (CollectionUtil.isNotEmpty(exchangeOrderDOList)) {
-            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_EXISTS);
-            return result;
-        }
-
         //查询是否还有未完成的
         List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(exchangeOrder.getOrderNo());
         if (CollectionUtil.isNotEmpty(replaceOrderDOList)) {

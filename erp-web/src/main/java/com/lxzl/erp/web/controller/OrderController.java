@@ -301,6 +301,19 @@ public class OrderController extends BaseController {
         ServiceResult<String, String> serviceResult = exchangeOrderService.generatedOrder(exchangeOrderParam.getExchangeOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+    /**
+     * 修改变更单
+     *
+     * @param exchangeOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "updateExchangeOrder", method = RequestMethod.POST)
+    public Result updateExchangeOrder(@RequestBody ExchangeOrder exchangeOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = exchangeOrderService.updateExchangeOrder(exchangeOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 
     @Autowired
     private ResultGenerator resultGenerator;
