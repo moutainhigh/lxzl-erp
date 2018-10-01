@@ -47,14 +47,17 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal dl-horizontal-rental">
+                                        {{#originalOrder}}
                                         <dt><label>原订单号</label><span class="mr5">：</span></dt>
                                         <dd class="mb5"><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></dd>
                                         <dt><label>发货公司</label><span class="mr5">：</span></dt>
                                         <dd class="mb5">{{deliverySubCompanyName}}</dd>
+                                        {{/originalOrder}}
                                         <dt><label>变更备注</label><span class="mr5">：</span></dt>
                                         <dd class="mb5">{{remark}}&nbsp;</dd>
                                     </dl>
                                 </div>
+                                {{#originalOrder}}
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal dl-horizontal-rental">
                                         <dt><label>客户编号</label><span class="mr5">：</span></dt>
@@ -65,14 +68,18 @@
 
                                     </dl>
                                 </div>
+                                {{/originalOrder}}
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal dl-horizontal-rental">
+                                        {{#originalOrder}}
                                         <dt><label>创建时间</label><span class="mr5">：</span></dt>
                                         <dd class="mb5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}&nbsp;</dd>
+                                        {{/originalOrder}}
                                         <dt><label>变更生效时间</label><span class="mr5">：</span></dt>
-                                        <dd class="mb5">{{#shortTime}}{{rentStartTime}}{{/shortTime}}&nbsp;</dd>
+                                        <dd class="mb5">{{#clockMonthTime}}{{rentStartTime}}{{/clockMonthTime}}&nbsp;</dd>
                                     </dl>
                                 </div>
+
                             </div>
                             {{/order}}
                         </script>
@@ -120,8 +127,8 @@
                                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                                             <td>#*{{propertiesToStr}}*# {{productSkuName}}</td>
                                             <td>￥{{currentSkuPrice}}</td>
-                                            <td class="text-center">{{productCount}}</td>
-                                            <td>{{rentingProductCount}}</td>
+                                            <td class="text-center">{{#orderProduct}}{{productCount}}{{/orderProduct}}</td>
+                                            <td>{{#orderProduct}}{{rentingProductCount}}{{/orderProduct}}</td>
                                             <td>
                                                 ￥{{#price}}{{oldProductUnitAmount}}{{/price}}
                                             </td>
@@ -129,8 +136,10 @@
                                                 ￥{{#price}}{{productUnitAmount}}{{/price}}
                                             </td>
                                             <td>
-                                               #* <p>押{{depositCycle}}付{{paymentCycle}}</p>
-                                                <p>{{payModeValue}}</p>*#
+                                                {{#orderProduct}}
+                                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                                <p>{{payModeValue}}</p>
+                                                {{/orderProduct}}
                                             </td>
                                             <td>
                                                 <p>押{{depositCycle}}付{{paymentCycle}}</p>

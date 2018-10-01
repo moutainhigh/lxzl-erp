@@ -17,7 +17,7 @@
             {{#listData}}
             <tr>
                 <td class="nowrap"><a href="{{changeRentDetailUrl}}" target="_blank">{{exchangeOrderNo}}</a></td>
-                <td class="nowrap">{{#clockShorTime}}{{rentStartTime}}{{/clockShorTime}}</td>
+                <td class="nowrap">{{#clockMonthTime}}{{rentStartTime}}{{/clockMonthTime}}</td>
                 <td class="nowrap">
                     <span class="mr5">{{createUserRealName}}</span>
                     <span>{{#clockTime}}{{createTime}}{{/clockTime}}</span>
