@@ -12,6 +12,8 @@ import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.CheckStatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
+import com.lxzl.erp.common.domain.statement.pojo.dto.BaseCheckStatementDetailDTO;
+import com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementSummaryDTO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
@@ -282,5 +284,43 @@ public interface StatementService extends BaseService {
     public ServiceResult<String, BigDecimal> fixReletOrderItemCount(K3ReturnOrderDO k3ReturnOrderDO);
     void saveStatementOrder(List<StatementOrderDetailDO> addStatementOrderDetailDOList, Date currentTime, Integer loginUserId);
     List<StatementOrderDetailDO> generateOrderProductStatement(Integer rentTimeLength, Integer statementMode, Date currentTime, Integer statementDays, Integer loginUserId, Date rentStartTime, Integer buyerCustomerId, Integer orderId, OrderProductDO orderProductDO, BigDecimal itemAllAmount);
+
+    /**
+     * <p>
+     * 根据查询获取导出结算单详情列表数据
+     * </p>
+     * <pre>
+     *     所需参数示例及其说明
+     *     参数名称 : 示例值 : 说明 : 是否必须
+     *     customerId : 231323 ： 客户id ： 必须
+     *     statementOrderStartTime : 2018-01 ： 查询的开始时间(Date类型) ： 必须
+     *     statementOrderEndTime : 2018-06 ： 查询的结束时间(Date类型) ： 必须
+     *     orderIds :  ： 订单id列表 ： 必须
+     *
+     * </pre>
+     *
+     * @param statementOrderMonthQueryParam
+     * @return com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.util.List<com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementDetailDTO>>
+     * @author daiqi
+     * @date 2018/7/4 11:04
+     */
+    ServiceResult<String, List<BaseCheckStatementDetailDTO>> listCheckStatementDetailDTOByQuery(StatementOrderMonthQueryParam statementOrderMonthQueryParam);
+
+
+    /**
+     * <p>
+     * 汇总指定客户的结算单金额
+     * </p>
+     * <pre>
+     *     所需参数示例及其说明
+     *     参数名称 : 示例值 : 说明 : 是否必须
+     * </pre>
+     *
+     * @param statementOrderMonthQueryParam
+     * @return com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementSummaryDTO
+     * @author daiqi
+     * @date 2018/7/5 13:35
+     */
+    CheckStatementSummaryDTO sumStatementDetailAmountByCustomerNo(StatementOrderMonthQueryParam statementOrderMonthQueryParam);
 
 }

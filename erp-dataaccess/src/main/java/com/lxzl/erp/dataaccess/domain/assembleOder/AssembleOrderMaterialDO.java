@@ -1,9 +1,7 @@
 package com.lxzl.erp.dataaccess.domain.assembleOder;
 
-import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import java.util.Date;
 
 
 public class AssembleOrderMaterialDO  extends BaseDO {

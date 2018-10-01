@@ -552,4 +552,40 @@
 		LEFT JOIN erp_replace_order_material erom ON ero.id = erom.replace_order_id and erom.data_status = 1
 		where ero.customer_no = #{customerNo, jdbcType=VARCHAR} and ero.data_status = 1 and ero.replace_order_status in (0,4,8,12,16,28)
 	</select>
+
+	<select id="listByOrderIds" resultMap="ReplaceOrderDO" parameterType="java.util.Set">
+		SELECT
+		<include refid="column_List"/>
+		FROM erp_replace_order ero
+		WHERE ero.data_status = 1 AND ero.replace_order_status = 20
+		AND ero.order_id in
+		<foreach collection="ids" item="item" index="index" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="listByMonthQuery" parameterType="com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam" resultMap="ReplaceOrderDO">
+		SELECT
+		<include refid="column_List"/>
+		FROM erp_replace_order ero
+		WHERE ero.customer_no = #{queryParam.statementOrderCustomerNo}
+		AND ero.data_status = 1 AND ero.replace_order_status = 20
+		AND
+		(
+		ero.confirm_replace_time BETWEEN #{queryParam.statementOrderStartTime} AND #{queryParam.statementOrderEndTimeAddOne}
+		)
+	</select>
+
+	<select id="findByNewOrderProductIdList" resultMap="ReplaceOrderDO">
+		SELECT
+		<include refid="column_List"/>,<include refid="product_column_List"/>
+		FROM erp_replace_order ero
+		LEFT JOIN erp_replace_order_product erop ON ero.id = erop.replace_order_id and erop.data_status = 1
+		WHERE erop.new_order_product_id IN
+		<foreach collection="orderProductIdList" item="item" index="index" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+		AND ero.data_status = 1 AND ero.replace_order_status = 20
+	</select>
+
 </mapper>

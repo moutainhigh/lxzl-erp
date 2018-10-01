@@ -328,6 +328,7 @@
         and ekro.data_status = 1
         AND ekro.return_order_status = 20
     </select>
+
     <select id="findReturnOrderByOrderNoAndDate" resultMap="K3ReturnOrderDO" parameterType="map">
         SELECT m_order.*
         <trim prefix=",">
@@ -354,5 +355,29 @@
         LEFT JOIN erp_k3_return_order_detail ekrod ON m_order.id = ekrod.return_order_id and ekrod.data_status = 1
         LEFT JOIN erp_sub_company esc on  m_order.delivery_sub_company_id=esc.id AND esc.data_status = 1
         ORDER BY m_order.create_time DESC
+    </select>
+
+    <select id="listByIds" resultMap="K3ReturnOrderDO" parameterType="java.util.Set">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_k3_return_order ekro
+        WHERE ekro.data_status = 1
+        <if test="ids != null and ids.size() > 0">
+            AND ekro.id in
+            <foreach collection="ids" item="item" index="index" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    <select id="listByMonthQuery" parameterType="com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam" resultMap="K3ReturnOrderDO">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_k3_return_order ekro
+        WHERE ekro.k3_customer_no = #{queryParam.statementOrderCustomerNo}
+        AND ekro.data_status = 1 AND ekro.return_order_status = 20
+        AND
+        (
+        ekro.return_time BETWEEN #{queryParam.statementOrderStartTime} AND #{queryParam.statementOrderEndTimeAddOne}
+        )
     </select>
 </mapper>

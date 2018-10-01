@@ -29,6 +29,7 @@ import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
+import com.lxzl.se.common.util.secret.MD5Util;
 import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,18 +55,32 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
+        //只能按月租
+        if(OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())){
+            result.setErrorCode(ErrorCode.ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER);
+            return result;
+        }
+        //获取当前月的结算日、如果是31号就是当前月的最后一天。如果是其他就跟着你月份走就可以了。
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), exchangeOrder.getRentStartTime());
 
-        //TODO 只能按月租
+        Date newRentStartTime=new Date();
+        //获取日期下一天
+        DateUtil.getDayByOffset(exchangeOrder.getRentStartTime(),1);
 
-        //获取当前月的结算日
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), orderDO.getRentStartTime());
+        //获取月末0.0.0
+        DateUtil.getEndMonthDate(exchangeOrder.getRentStartTime());
 
-        //更改时间不能在最后一期
-        //归还时间
+        //不能超过最后一期时间
         Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
 
-        //开始时间都是一个月的开始时间,
-        //判断是否有操作这个订单的权限
+        if(newRentStartTime.compareTo(orderDO.getRentStartTime())<1){
+            //TODO 不能小于起租日
+        }
+
+        if(newRentStartTime.compareTo(expectReturnTime)<0){
+            //TODO 不能大于最后一期
+        }
+
         //只有租赁中的订单才可以进行
         if (!(OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus()) || OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus()))) {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
@@ -163,8 +178,9 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             result.setErrorCode(ErrorCode.EXCHANGE_ORDER_STATUS_ERROR);
             return result;
         }
-        String verifyMatters = "例行审核";
+        String verifyMatters = "订单变更审核，审核变更单的生效时间，订单项的单价、租赁方案、支付方式";
         exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_CONFIRM);
+        exchangeOrderMapper.update(exchangeOrderDO);
         ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_EXCHANGE_ORDER, orderNo, verifyUser, verifyMatters, commitRemark, exchangeOrderCommitParam.getImgIdList(), null);
         if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -395,13 +411,9 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         orderTimeAxisSupport.addOrderTimeAxis(newOrderDO.getId(), newOrderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_SUCCESS);
 
         //3、变更单给K3传数据
-//        Order order = ConverterUtil.convert(newOrderDO, Order.class);
-//        order.setTestMachineOrderNo(nodeOrderNo);
-//        ServiceResult<String, String> serviceResult = k3Service.testMachineOrderTurnRentOrder(order);
-//        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
-//            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
-//            return result;
-//        }
+        Order order = ConverterUtil.convert(newOrderDO, Order.class);
+        order.setTestMachineOrderNo(nodeOrderNo);
+        k3Service.testMachineOrderTurnRentOrder(order);
 
         //4、转移退货
         Map<String, Object> maps = new HashMap<>();
@@ -558,5 +570,4 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
 
     @Autowired
     private OrderTimeAxisSupport orderTimeAxisSupport;
-
 }

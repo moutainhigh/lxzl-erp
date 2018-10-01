@@ -5,6 +5,7 @@ import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;impor
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public interface K3ReturnOrderDetailMapper extends BaseMysqlDAO<K3ReturnOrderDetailDO> {
@@ -22,4 +23,9 @@ public interface K3ReturnOrderDetailMapper extends BaseMysqlDAO<K3ReturnOrderDet
     void saveList(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList);
 
     void batchUpdateRealProductCount(@Param("list") List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList);
+
+    /**
+     * 根据退货单id列表获取退货单详情列表信息
+     */
+    List<K3ReturnOrderDetailDO> listByReturnOrderIds(@Param(value = "returnOrderIds") Set<Integer> returnOrderIds);
 }

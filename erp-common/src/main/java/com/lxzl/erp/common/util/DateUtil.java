@@ -4,6 +4,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.se.common.exception.BusinessException;
 
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -374,6 +375,25 @@ public class DateUtil {
     }
 
     /**
+     * 获取当前月最后一天,开始时间
+     *
+     *
+     * @param date
+     * @return
+     */
+    public static  Date getEndByMonth(Date date) {
+        //获取当前月最后一天
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.set(Calendar.DAY_OF_MONTH, ca.getActualMaximum(Calendar.DAY_OF_MONTH));
+        ca.set(Calendar.HOUR_OF_DAY, 00);
+        ca.set(Calendar.MINUTE, 00);
+        ca.set(Calendar.SECOND, 00);
+        ca.set(Calendar.MILLISECOND, 00);
+        return ca.getTime();
+    }
+
+    /**
      * 获取月份
      *
      * @param date  时间
@@ -501,7 +521,6 @@ public class DateUtil {
         diff[1] = dayDiff;
         return diff;
     }
-
     /**
      * 判断当前日期是星期几
      */
@@ -537,7 +556,82 @@ public class DateUtil {
 //            System.out.println(simpleDateFormat.format(date));
 //        }
 //        System.out.println(simpleDateFormat.format(getDayByOffset(1)));
-        int d = DateUtil.dayForWeek(new Date());
+
+        Date d = DateUtil.getEndByMonth(new Date());
         System.out.println(d);
     }
+    /**
+     * 获取指定日期所在月份开始的时间戳
+     *
+     * @param date 指定日期
+     * @return
+     */
+    public static Long getMonthBegin(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+
+        //设置为1号,当前日期既为本月第一天
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        //将小时至0
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        //将分钟至0
+        c.set(Calendar.MINUTE, 0);
+        //将秒至0
+        c.set(Calendar.SECOND, 0);
+        //将毫秒至0
+        c.set(Calendar.MILLISECOND, 0);
+        // 获取本月第一天的时间戳
+        return c.getTimeInMillis();
+    }
+
+    /**
+     * 获取指定日期所在月份结束的时间戳
+     *
+     * @param date 指定日期
+     * @return
+     */
+    public static Long getMonthEnd(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+
+        //设置为当月最后一天
+        c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+        //将小时至23
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        //将分钟至59
+        c.set(Calendar.MINUTE, 59);
+        //将秒至59
+        c.set(Calendar.SECOND, 59);
+        //将毫秒至999
+        c.set(Calendar.MILLISECOND, 999);
+        // 获取本月最后一天的时间戳
+        return c.getTimeInMillis();
+    }
+
+    /**
+     * 获取两个时间之间的所有月份
+     */
+    public static List<Date> getMonthBetween(Date minDate, Date maxDate) {
+        ArrayList<Date> result = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");//格式化为年月
+
+        Calendar min = Calendar.getInstance();
+        Calendar max = Calendar.getInstance();
+
+        min.setTime(minDate);
+        min.set(min.get(Calendar.YEAR), min.get(Calendar.MONTH), 1);
+
+        max.setTime(maxDate);
+        max.set(max.get(Calendar.YEAR), max.get(Calendar.MONTH), 2);
+
+        Calendar curr = min;
+        while (curr.before(max)) {
+            String formatDate = sdf.format(curr.getTime());
+            ParsePosition pos = new ParsePosition(0);
+            result.add(sdf.parse(formatDate, pos));
+            curr.add(Calendar.MONTH, 1);
+        }
+        return result;
+    }
+
 }

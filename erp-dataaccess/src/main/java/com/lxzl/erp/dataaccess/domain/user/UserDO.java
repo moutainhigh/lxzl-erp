@@ -1,8 +1,6 @@
 package com.lxzl.erp.dataaccess.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.lxzl.erp.common.domain.company.pojo.Department;
-import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.se.common.util.poi.ExcelField;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 
