@@ -1313,6 +1313,11 @@ public class PageController extends BaseController {
     public String changeRentCreateModal() {
         return "/component/order/changeRentCreateModal";
     }
+    //创建变更单
+    @RequestMapping("/order-manage/change-rent-edit")
+    public String changeRentEditModal() {
+        return "/component/order/changeRentEditModal";
+    }
 
     //确认换货
     @RequestMapping("/order-manage/confirm-exchange")
