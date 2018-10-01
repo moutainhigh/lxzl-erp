@@ -40,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service("exchangeOrderService")
@@ -95,22 +96,43 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             return result;
         }
 
-
-
+        //下单首月不能更改
+        //月末结算，变更当月1号，如果是20号结算，就变更21号
         //获取当前月的结算日、如果是31号就是当前月的最后一天。如果是其他就跟着你月份走就可以了。
         Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), exchangeOrder.getRentStartTime());
 
         Date newRentStartTime=new Date();
 
         if(statementDays==31) {//如果是月末。就获取一个月的第一天
-            //获取下个月第一天
-            newRentStartTime=DateUtil.getStartMonthDate(exchangeOrder.getRentStartTime());
+            //获取第一个月的第一天
+            newRentStartTime=DateUtil.getStart8MonthDate(exchangeOrder.getRentStartTime());
         }else{
-            //如果是20号，或者是自然日
-
+            //如果是20号，或者是自然日 TODO 2月份特殊处理
+            DateUtil.getMonthAndDay(exchangeOrder.getRentStartTime(),statementDays+1);
         }
-
-
+        //起租日，当月第一天
+        Date rentStartTime=DateUtil.getStartMonthDate(orderDO.getRentStartTime());
+        //起租日，当月最后一天
+        Date rentEndTime=DateUtil.getEndMonthDate(orderDO.getRentStartTime());
+        if(rentEndTime.compareTo(newRentStartTime) > 0) {
+            if (rentStartTime.compareTo(newRentStartTime) < 0) {
+                //下单首月不能更改
+                result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_FIRST_MONTH);
+                return result;
+            }
+        }
+        //生效时间不能超过最后一期的时间
+        if(newRentStartTime.compareTo(expectReturnTime)>0){
+            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_EXPECT_RETURN_TIME);
+            return result;
+        }
+//        if(newRentStartTime !=null ){
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            System.err.println(sdf.format(newRentStartTime));
+//            result.setErrorCode(ErrorCode.SUCCESS);
+//            result.setResult(sdf.format(newRentStartTime));
+//            return result;
+//        }
         ExchangeOrderDO exchangeOrderDO = new ExchangeOrderDO();
         BeanUtils.copyProperties(exchangeOrder, exchangeOrderDO);
         exchangeOrderDO.setExchangeOrderNo(generateNoSupport.generateExchangeOrderNo(now, orderDO.getOrderSubCompanyId().toString()));
@@ -279,6 +301,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             result.setErrorCode(ErrorCode.EXCHANGE_ORDER_STATUS_ERROR);
             return result;
         }
+        exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_OK);
+        exchangeOrderMapper.update(exchangeOrderDO);
         exchangeOrderDO.setExchangeOrderMaterialDOList(exchangeOrderMaterialMapper.findByExchangeOrderId(exchangeOrderDO.getId()));
         exchangeOrderDO.setExchangeOrderProductDOList(exchangeOrderProductMapper.findByExchangeOrderId(exchangeOrderDO.getId()));
         //1、查询原订单信息
@@ -424,7 +448,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         //3、变更单给K3传数据
         Order order = ConverterUtil.convert(newOrderDO, Order.class);
         order.setTestMachineOrderNo(nodeOrderNo);
-        k3Service.testMachineOrderTurnRentOrder(order);
+        //TODO 开启K3
+        //k3Service.testMachineOrderTurnRentOrder(order);
 
         //4、转移退货
         Map<String, Object> maps = new HashMap<>();

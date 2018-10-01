@@ -1171,6 +1171,8 @@ public class ErrorCode {
     public static final String EXCHANGE_ORDER_NO_SATRT_TIME= "J330000005";
     public static final String EXCHANGE_ORDER_NO_EXPECT_RETURN_TIME= "J330000006";
 
+    public static final String EXCHANGE_ORDER_NO_FIRST_MONTH= "J330000007";
+
     public static final String ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER = "J340000001";
     public static final String EXIT_CORRECT_ORDER_NOT_ALLOW_CHANGE_ORDER = "J340000002";    static {
         MAP.put(SUCCESS, "成功");
@@ -2326,6 +2328,7 @@ public class ErrorCode {
         MAP.put(EXIT_CORRECT_ORDER_NOT_ALLOW_CHANGE_ORDER, "当前结算单已进行过冲正，请取消冲正后重试");
         MAP.put(EXCHANGE_ORDER_NO_SATRT_TIME, "生效时间不能小于起租时间");
         MAP.put(EXCHANGE_ORDER_NO_EXPECT_RETURN_TIME, "生效时间不能大于预计归还时间");
+        MAP.put(EXCHANGE_ORDER_NO_FIRST_MONTH, "首月不能变更");
     }
 
 
