@@ -56,8 +56,8 @@
                                                 <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                                                 <td>{{propertiesToStr}}</td>
                                                 <td>￥{{currentSkuPrice}}</td>
-                                                <td class="text-center">{{productCount}}</td>
-                                                <td>{{rentingProductCount}}</td>
+                                                <td class="text-center">{{#orderProduct}}{{productCount}}{{/orderProduct}}</td>
+                                                <td>{{#orderProduct}}{{rentingProductCount}}{{/orderProduct}}</td>
                                                 <td>
                                                     <label class="field prepend-icon rentCountIpt mw200">
                                                         <input type="text" name="productUnitAmount" value="{{productUnitAmount}}" class="productUnitAmount form-control gui-input required pl10" placeholder="{{productUnitAmount}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{productUnitAmount}}";};'/>
@@ -128,8 +128,8 @@
                                                 <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
                                                 <td>{{materialTypeStr}}</td>
                                                 <td>￥{{currentMaterialPrice}}</td>
-                                                <td class="text-center">{{materialCount}}</td>
-                                                <td>{{rentingMaterialCount}}</td>
+                                                <td class="text-center">{{#orderMaterial}}{{materialCount}}{{/orderMaterial}}</td>
+                                                <td>{{#orderMaterial}}{{rentingMaterialCount}}{{/orderMaterial}}</td>
                                                 <td>
                                                     <label class="field prepend-icon rentCountIpt mw200">
                                                         <input type="text" name="materialUnitAmount" value="{{materialUnitAmount}}" class="materialUnitAmount form-control gui-input required pl10" placeholder="{{materialUnitAmount}}" onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{materialUnitAmount}}";};'/>
