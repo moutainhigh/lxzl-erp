@@ -375,6 +375,25 @@ public class DateUtil {
     }
 
     /**
+     * 获取当前月最后一天,开始时间
+     *
+     *
+     * @param date
+     * @return
+     */
+    public static  Date getEndByMonth(Date date) {
+        //获取当前月最后一天
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.set(Calendar.DAY_OF_MONTH, ca.getActualMaximum(Calendar.DAY_OF_MONTH));
+        ca.set(Calendar.HOUR_OF_DAY, 00);
+        ca.set(Calendar.MINUTE, 00);
+        ca.set(Calendar.SECOND, 00);
+        ca.set(Calendar.MILLISECOND, 00);
+        return ca.getTime();
+    }
+
+    /**
      * 获取月份
      *
      * @param date  时间
@@ -537,7 +556,8 @@ public class DateUtil {
 //            System.out.println(simpleDateFormat.format(date));
 //        }
 //        System.out.println(simpleDateFormat.format(getDayByOffset(1)));
-        int d = DateUtil.dayForWeek(new Date());
+
+        Date d = DateUtil.getEndByMonth(new Date());
         System.out.println(d);
     }
     /**
