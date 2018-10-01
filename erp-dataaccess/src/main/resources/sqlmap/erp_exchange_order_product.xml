@@ -140,6 +140,12 @@
 				when #{item.id,jdbcType=INTEGER} then #{item.payMode,jdbcType=VARCHAR}
 			</foreach>
 		</trim>
+        <trim prefix=",">
+            eeop.product_unit_amount =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.productUnitAmount}
+            </foreach>
+        </trim>
 		WHERE eeop.id IN
 		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
 			#{item.id,jdbcType=INTEGER}

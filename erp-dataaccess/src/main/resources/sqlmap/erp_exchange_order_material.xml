@@ -127,15 +127,21 @@
 		<trim prefix=",">
 			eeom.payment_cycle =
 			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
-				when #{item.id,jdbcType=INTEGER} then #{item.paymentCycle,jdbcType=INTEGER}
+				when #{item.id,jdbcType=INTEGER} then #{item.paymentCycle}
 			</foreach>
 		</trim>
 		<trim prefix=",">
 			eeom.pay_mode =
 			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
-				when #{item.id,jdbcType=INTEGER} then #{item.payMode,jdbcType=VARCHAR}
+				when #{item.id,jdbcType=INTEGER} then #{item.payMode}
 			</foreach>
 		</trim>
+        <trim prefix=",">
+            eeom.material_unit_amount =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.materialUnitAmount}
+            </foreach>
+        </trim>
 		WHERE eeom.id IN
 		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
 			#{item.id,jdbcType=INTEGER}

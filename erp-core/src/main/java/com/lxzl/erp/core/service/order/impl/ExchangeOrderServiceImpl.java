@@ -162,14 +162,14 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         exchangeOrderDO.setUpdateUser(loginUser.getUserId().toString());
         exchangeOrderMapper.update(exchangeOrderDO);
         Boolean isUpd=false;
-
         if (!CollectionUtil.isEmpty(exchangeOrder.getExchangeOrderProductList())) {
             List<ExchangeOrderProductDO> exchangeOrderProductDOList = new ArrayList<>();
             Map<Integer, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(), "id");
             //保存商品信息
             for (ExchangeOrderProduct exchangeOrderProduct : exchangeOrder.getExchangeOrderProductList()) {
                 ExchangeOrderProductDO exchangeOrderProductDO=new ExchangeOrderProductDO();
-                exchangeOrderProductDO.setId(exchangeOrderProduct.getExchangeOrderId());
+                exchangeOrderProductDO.setId(exchangeOrderProduct.getExchangeOrderProductId());
+                exchangeOrderProductDO.setProductUnitAmount(exchangeOrderProduct.getProductUnitAmount());
                 exchangeOrderProductDO.setDepositCycle(exchangeOrderProduct.getDepositCycle());
                 exchangeOrderProductDO.setPaymentCycle(exchangeOrderProduct.getPaymentCycle());
                 exchangeOrderProductDO.setPayMode(exchangeOrderProduct.getPayMode());
@@ -177,7 +177,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
                 //判断是否发生变更
                 if(!(exchangeOrderProductDO.getDepositCycle().equals(orderProductDO.getDepositCycle())&&
                         exchangeOrderProductDO.getPaymentCycle().equals(orderProductDO.getPaymentCycle())&&
-                        exchangeOrderProductDO.getPayMode().equals(orderProductDO.getPayMode()))){
+                        exchangeOrderProductDO.getPayMode().equals(orderProductDO.getPayMode())&&
+                        exchangeOrderProductDO.getProductUnitAmount().equals(orderProductDO.getProductUnitAmount()))){
                     isUpd=true;
                 }
                 exchangeOrderProductDOList.add(exchangeOrderProductDO);
@@ -190,7 +191,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             //保存配件信息
             for (ExchangeOrderMaterial exchangeOrderMaterial : exchangeOrder.getExchangeOrderMaterialList()) {
                 ExchangeOrderMaterialDO exchangeOrderMaterialDO=new ExchangeOrderMaterialDO();
-                exchangeOrderMaterialDO.setId(exchangeOrderMaterial.getMaterialId());
+                exchangeOrderMaterialDO.setId(exchangeOrderMaterial.getExchangeOrderMaterialId());
+                exchangeOrderMaterialDO.setMaterialUnitAmount(exchangeOrderMaterial.getMaterialUnitAmount());
                 exchangeOrderMaterialDO.setDepositCycle(exchangeOrderMaterial.getDepositCycle());
                 exchangeOrderMaterialDO.setPaymentCycle(exchangeOrderMaterial.getPaymentCycle());
                 exchangeOrderMaterialDO.setPayMode(exchangeOrderMaterial.getPayMode());
@@ -198,7 +200,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
                 //判断是否发生变更
                 if(!(exchangeOrderMaterialDO.getDepositCycle().equals(orderMaterialDO.getDepositCycle())&&
                         exchangeOrderMaterialDO.getPaymentCycle().equals(orderMaterialDO.getPaymentCycle())&&
-                        exchangeOrderMaterialDO.getPayMode().equals(orderMaterialDO.getPayMode()))){
+                        exchangeOrderMaterialDO.getPayMode().equals(orderMaterialDO.getPayMode())&&
+                        exchangeOrderMaterialDO.getMaterialUnitAmount().equals(orderMaterialDO.getMaterialUnitAmount()))){
                     isUpd=true;
                 }
                 exchangeOrderMaterialDOList.add(exchangeOrderMaterialDO);
