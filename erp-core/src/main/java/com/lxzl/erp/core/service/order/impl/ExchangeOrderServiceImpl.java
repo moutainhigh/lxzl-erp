@@ -56,29 +56,22 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             return result;
         }
         //只能按月租
-        if(OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())){
+        if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
             result.setErrorCode(ErrorCode.ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER);
             return result;
         }
-        //获取当前月的结算日、如果是31号就是当前月的最后一天。如果是其他就跟着你月份走就可以了。
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), exchangeOrder.getRentStartTime());
 
-        Date newRentStartTime=new Date();
-        //获取日期下一天
-        DateUtil.getDayByOffset(exchangeOrder.getRentStartTime(),1);
-
-        //获取月末0.0.0
-        DateUtil.getEndMonthDate(exchangeOrder.getRentStartTime());
-
+        if(exchangeOrder.getRentStartTime().compareTo(orderDO.getRentStartTime())<0){
+            //不能小于起租日
+            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_SATRT_TIME);
+            return result;
+        }
         //不能超过最后一期时间
         Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
-
-        if(newRentStartTime.compareTo(orderDO.getRentStartTime())<1){
-            //TODO 不能小于起租日
-        }
-
-        if(newRentStartTime.compareTo(expectReturnTime)<0){
-            //TODO 不能大于最后一期
+        if(exchangeOrder.getRentStartTime().compareTo(expectReturnTime)>0){
+            //不能大于最后一期
+            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_EXPECT_RETURN_TIME);
+            return result;
         }
 
         //只有租赁中的订单才可以进行
@@ -86,6 +79,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
+
         //查询是否存在换货单
         //如果有变更单就不允许更换
         List<ExchangeOrderDO> exchangeOrderDOList = exchangeOrderMapper.findByOrderNo(exchangeOrder.getOrderNo());
@@ -94,12 +88,29 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             return result;
         }
 
-        //查询为完成的换货单
+        //查询是否还有未完成的
         List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(exchangeOrder.getOrderNo());
         if (CollectionUtil.isNotEmpty(replaceOrderDOList)) {
-            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_EXISTS);
             return result;
         }
+
+
+
+        //获取当前月的结算日、如果是31号就是当前月的最后一天。如果是其他就跟着你月份走就可以了。
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), exchangeOrder.getRentStartTime());
+
+        Date newRentStartTime=new Date();
+
+        if(statementDays==31) {//如果是月末。就获取一个月的第一天
+            //获取下个月第一天
+            newRentStartTime=DateUtil.getStartMonthDate(exchangeOrder.getRentStartTime());
+        }else{
+            //如果是20号，或者是自然日
+
+        }
+
+
         ExchangeOrderDO exchangeOrderDO = new ExchangeOrderDO();
         BeanUtils.copyProperties(exchangeOrder, exchangeOrderDO);
         exchangeOrderDO.setExchangeOrderNo(generateNoSupport.generateExchangeOrderNo(now, orderDO.getOrderSubCompanyId().toString()));
@@ -264,7 +275,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
-        if (!CommonConstant.DATA_STATUS_ENABLE.equals(exchangeOrderDO.getDataStatus()) && ExchangeOrderStatus.ORDER_STATUS_CONFIRM.equals(exchangeOrderDO.getStatus())) {
+        if (!(CommonConstant.DATA_STATUS_ENABLE.equals(exchangeOrderDO.getDataStatus()) && ExchangeOrderStatus.ORDER_STATUS_CONFIRM.equals(exchangeOrderDO.getStatus()))) {
             result.setErrorCode(ErrorCode.EXCHANGE_ORDER_STATUS_ERROR);
             return result;
         }
@@ -478,10 +489,6 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
-        OrderDO orderDO = orderMapper.findByOrderNo(businessNo);
-        if (orderDO == null || !OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())) {
-            return ErrorCode.BUSINESS_EXCEPTION;
-        }
         ExchangeOrderDO exchangeOrderDO = exchangeOrderMapper.findByExchangeOrderNo(businessNo);
         if (CommonConstant.DATA_STATUS_ENABLE.equals(exchangeOrderDO.getDataStatus()) && ExchangeOrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(exchangeOrderDO.getStatus())) {
             return ErrorCode.EXCHANGE_ORDER_STATUS_ERROR;
