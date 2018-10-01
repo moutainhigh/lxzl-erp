@@ -60,26 +60,33 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             result.setErrorCode(ErrorCode.ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER);
             return result;
         }
+
+        if(exchangeOrder.getRentStartTime().compareTo(orderDO.getRentStartTime())<0){
+            //不能小于起租日
+            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_SATRT_TIME);
+            return result;
+        }
+        //不能超过最后一期时间
+        Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
+        if(exchangeOrder.getRentStartTime().compareTo(expectReturnTime)>0){
+            //不能大于最后一期
+            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_EXPECT_RETURN_TIME);
+            return result;
+        }
+
         //获取当前月的结算日、如果是31号就是当前月的最后一天。如果是其他就跟着你月份走就可以了。
         Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), exchangeOrder.getRentStartTime());
 
         Date newRentStartTime=new Date();
-        //获取日期下一天
-        DateUtil.getDayByOffset(exchangeOrder.getRentStartTime(),1);
 
-        //获取月末0.0.0
-        DateUtil.getEndMonthDate(exchangeOrder.getRentStartTime());
+        if(statementDays==31) {//如果是月末。就获取一个月的第一天
+            //获取下个月第一天
+            newRentStartTime=DateUtil.getStartMonthDate(exchangeOrder.getRentStartTime());
+        }else{
 
-        //不能超过最后一期时间
-        Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
-
-        if(newRentStartTime.compareTo(orderDO.getRentStartTime())<1){
-            //TODO 不能小于起租日
         }
 
-        if(newRentStartTime.compareTo(expectReturnTime)<0){
-            //TODO 不能大于最后一期
-        }
+
 
         //只有租赁中的订单才可以进行
         if (!(OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus()) || OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus()))) {
