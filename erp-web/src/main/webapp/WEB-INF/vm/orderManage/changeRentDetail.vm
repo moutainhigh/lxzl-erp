@@ -187,8 +187,8 @@
                                             <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
                                             <td>{{materialTypeStr}}</td>
                                             <td>￥{{currentMaterialPrice}}</td>
-                                            <td class="text-center">{{materialCount}}</td>
-                                            <td>{{rentingMaterialCount}}</td>
+                                            <td class="text-center">{{#orderMaterial}}{{materialCount}}{{/orderMaterial}}</td>
+                                            <td>{{#orderMaterial}}{{rentingMaterialCount}}{{/orderMaterial}}</td>
                                             <td>
                                                 ￥{{#price}}{{oldMaterialUnitAmount}}{{/price}}
                                             </td>
@@ -196,8 +196,10 @@
                                                 ￥{{#price}}{{materialUnitAmount}}{{/price}}
                                             </td>
                                             <td>
-                                            #* <p>押{{depositCycle}}付{{paymentCycle}}</p>
-                                                <p>{{payModeValue}}</p>*#
+                                                {{#orderMaterial}}
+                                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                                <p>{{payModeValue}}</p>
+                                                {{/orderMaterial}}
                                             </td>
                                             <td>
                                                 <p>押{{depositCycle}}付{{paymentCycle}}</p>
