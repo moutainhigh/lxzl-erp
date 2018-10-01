@@ -611,14 +611,35 @@ public class DateUtil {
         return result;
     }
 
-    public static  Date getMonthAndDay(Date date,Integer month,Integer day){
+    /**
+     * 更改日期，时间为08:00:00 CST 2018
+     * @param date
+     * @param day
+     * @return
+     */
+    public static  Date getMonthAndDay(Date date,Integer day){
         Calendar ca = Calendar.getInstance();
-        ca.setTime(new Date());
-        ca.set(Calendar.DAY_OF_YEAR,month);
+        ca.setTime(date);
         ca.set(Calendar.DAY_OF_MONTH, day);
-        ca.set(Calendar.HOUR_OF_DAY ,00);
-        ca.set(Calendar.MINUTE, 00);
-        ca.set(Calendar.SECOND, 00);
+        ca.set(Calendar.HOUR_OF_DAY ,8);
+        ca.set(Calendar.MINUTE, 0);
+        ca.set(Calendar.SECOND, 0);
+        return ca.getTime();
+    }
+
+    /**
+     * 获取给定日期月份第一天凌晨 Tue May 01 08:00:00 CST 2018
+     * @param date
+     * @return
+     */
+    public static Date getStart8MonthDate(Date date) {
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.set(Calendar.DAY_OF_MONTH, 1);
+        ca.set(Calendar.HOUR_OF_DAY ,8);
+        ca.set(Calendar.MINUTE, 0);
+        ca.set(Calendar.SECOND, 0);
+        ca.set(Calendar.MILLISECOND, 0);
         return ca.getTime();
     }
 
