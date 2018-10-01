@@ -53,4 +53,6 @@ public interface ReletOrderMapper extends BaseMysqlDAO<ReletOrderDO> {
 	 * @return
 	 */
     List<ReletOrderDO> findByCustomerId(@Param("customerId") Integer customerId);
+
+	List<ReletOrderDO> listByOrderIds(@Param(value = "orderIds") Set<Integer> orderIds);
 }

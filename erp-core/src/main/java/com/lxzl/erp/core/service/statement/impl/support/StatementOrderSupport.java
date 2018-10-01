@@ -971,6 +971,49 @@ public class StatementOrderSupport {
             statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
         }
     }
+      /**
+     * 结算日偏移到最近结算日(近供月租使用)
+     * @param statementOrderDetailDO
+     * @param rentType
+     * @param statementDays
+     * @param payMode
+     */
+    public void updateRealPayTimeIfNeed(StatementOrderDetailDO statementOrderDetailDO,int rentType,int statementDays,int payMode){
+        if(statementOrderDetailDO==null)return;
+        //统一修改结算日到具体结算日
+        if(OrderRentType.RENT_TYPE_MONTH.equals(rentType)){
+            Date realExpectPayDate=getRealExpectPayTime(statementOrderDetailDO.getStatementStartTime(),statementOrderDetailDO.getStatementEndTime(),statementDays,payMode);
+            if(realExpectPayDate!=null)statementOrderDetailDO.setStatementExpectPayTime(realExpectPayDate);
+        }
+    }
+
+    private Date getRealExpectPayTime(Date startTime, Date endTime, int statementDays, int payMode) {
+        Date lastEndTime=null;
+        if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
+            lastEndTime= DateUtil.getDayByOffset(startTime,-1);
+        } else if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
+            lastEndTime=endTime;
+        }
+        if(lastEndTime==null)return null;
+        return DateUtil.getDayByOffset(getNextStatementDay(lastEndTime, statementDays),1);
+    }
+
+    private Date getNextStatementDay(Date startTime, int statementDays) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startTime);
+        int nowDays = calendar.get(Calendar.DAY_OF_MONTH);
+        if (statementDays == nowDays || (StatementMode.STATEMENT_MONTH_END.equals(statementDays) && nowDays == calendar.getActualMaximum(Calendar.DAY_OF_MONTH))) {
+            return startTime;
+        }
+        calendar.set(Calendar.DAY_OF_MONTH, StatementMode.STATEMENT_MONTH_END.equals(statementDays)?calendar.getActualMaximum(Calendar.DAY_OF_MONTH):statementDays);
+        if (DateUtil.daysBetween(calendar.getTime(), startTime) > 0) {
+            calendar.add(Calendar.MONTH, 1);
+            if(StatementMode.STATEMENT_MONTH_END.equals(statementDays)){
+                calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+            }
+        }
+        return calendar.getTime();
+    }
 
     @Autowired
     private UserSupport userSupport;

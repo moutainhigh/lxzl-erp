@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.k3;
 
+import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
@@ -32,4 +33,7 @@ public interface K3ReturnOrderMapper extends BaseMysqlDAO<K3ReturnOrderDO> {
     List<K3ReturnOrderDO> findByIdSet(@Param("k3ReturnIdSet") Set<Integer> k3ReturnIdSet);
 
     List<K3ReturnOrderDO> findReturnOrderByOrderNoAndDate(@Param("maps") Map<String, Object> maps);
+    List<K3ReturnOrderDO> listByIds(@Param(value = "ids") Set<Integer> ids);
+
+    List<K3ReturnOrderDO> listByMonthQuery(@Param(value = "queryParam") StatementOrderMonthQueryParam queryParam);
 }

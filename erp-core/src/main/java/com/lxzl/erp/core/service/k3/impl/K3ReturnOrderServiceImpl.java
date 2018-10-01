@@ -232,6 +232,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
             return result;
         }
+
         K3ReturnOrderDO addK3ReturnOrderDO = ConverterUtil.convert(k3ReturnOrder, K3ReturnOrderDO.class);
         Map<Integer, Integer> rentingProductCountMap = new HashMap<>();
         Map<Integer, Integer> rentingMaterialCountMap = new HashMap<>();
@@ -291,9 +292,19 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             }
             k3ReturnOrderDetailMapper.save(k3ReturnOrderDetailDO);
         }
+
+
         K3ReturnOrderDO newK3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
         K3ReturnOrder newK3ReturnOrder = ConverterUtil.convert(newK3ReturnOrderDO, K3ReturnOrder.class);
         List<K3ReturnOrderDetailDO> newK3ReturnOrderDetailDOList = newK3ReturnOrderDO.getK3ReturnOrderDetailDOList();
+
+        //校验在换货之前时间退货
+        ServiceResult<String, String> checkReplaceTimeForReturn = checkReplaceTimeForReturn(newK3ReturnOrderDetailDOList,k3ReturnOrder);
+        if(!ErrorCode.SUCCESS.equals(checkReplaceTimeForReturn.getErrorCode())){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return checkReplaceTimeForReturn;
+        }
+
         //退货日期校验(退货时间不能大于起租时间)
         Map<String, OrderDO> orderCatch = new HashMap<String, OrderDO>();
         //记录erp订单个数
@@ -1266,6 +1277,14 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             }
         }
 
+        K3ReturnOrderDO newK3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrderDO.getReturnOrderNo());
+        List<K3ReturnOrderDetailDO> newK3ReturnOrderDetailDOList = newK3ReturnOrderDO.getK3ReturnOrderDetailDOList();
+        //校验在换货之前时间退货
+        ServiceResult<String, String> checkReplaceTimeForReturn = checkReplaceTimeForReturn(newK3ReturnOrderDetailDOList,k3ReturnOrder);
+        if(!ErrorCode.SUCCESS.equals(checkReplaceTimeForReturn.getErrorCode())){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return checkReplaceTimeForReturn;
+        }
 
         //不全部是K3老订单才校验退货日期不能小于三月五号，如果全部是老订单则不进行校验
         if (verifyReturnTime(k3ReturnOrder, result, erpOrderCount)) return result;
@@ -1460,6 +1479,14 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         int erpOrderCount = 0;
         List<K3ReturnOrderDetailDO> orderDetailList = k3ReturnOrderDetailMapper.findListByReturnOrderId(dbK3ReturnOrderDO.getId());
         if (CollectionUtil.isNotEmpty(orderDetailList)) {
+
+            //校验在换货之前时间退货
+            ServiceResult<String, String> checkReplaceTimeForReturn = checkReplaceTimeForReturn(orderDetailList,k3ReturnOrder);
+            if(!ErrorCode.SUCCESS.equals(checkReplaceTimeForReturn.getErrorCode())){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return checkReplaceTimeForReturn;
+            }
+
             for (K3ReturnOrderDetailDO k3ReturnOrderDetail : orderDetailList) {
                 if (!orderCatch.containsKey(k3ReturnOrderDetail.getOrderNo())) {
                     //改成从erp里查询订单
@@ -2206,6 +2233,44 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 }
             }
         }
+    }
+
+    private ServiceResult<String, String> checkReplaceTimeForReturn(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList , K3ReturnOrder k3ReturnOrder){
+        ServiceResult<String, String> result = new ServiceResult<>();
+        //校验在换货之前时间退货
+        List<Integer> orderProductIdList = new ArrayList<>();
+        for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDetailDOList){
+            if (CommonConstant.COMMON_ONE.equals(k3ReturnOrderDetailDO.getOrderItemType())) {
+                orderProductIdList.add(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
+            }
+        }
+        if (CollectionUtil.isNotEmpty(orderProductIdList)) {
+            List<ReplaceOrderDO> exReplaceOrderDOList = replaceOrderMapper.findByNewOrderProductIdList(orderProductIdList);
+            if (CollectionUtil.isNotEmpty(exReplaceOrderDOList)) {
+                Date returnTime = k3ReturnOrder.getReturnTime();
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String returnTimeString = simpleDateFormat.format(returnTime);
+                for (ReplaceOrderDO replaceOrderDO:exReplaceOrderDOList) {
+                    Date realReplaceTime = replaceOrderDO.getRealReplaceTime();
+                    String realReplaceTimeString = simpleDateFormat.format(realReplaceTime);
+                    try {
+                        Date returnTimeDate = simpleDateFormat.parse(returnTimeString);
+                        Date realReplaceTimeDate = simpleDateFormat.parse(realReplaceTimeString);
+                        if (realReplaceTimeDate.after(returnTimeDate)) {
+                            result.setErrorCode(ErrorCode.RETURN_TIME_NOT_BEFORE_REPLACE_TIME, returnTimeString,replaceOrderDO.getOrderNo(), replaceOrderDO.getReplaceOrderNo(), realReplaceTimeString);
+                            return result;
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        logger.error("【创建退货单,退货时间或换货时间parse出错】", e);
+                        result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+                        return result;
+                    }
+                }
+            }
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
 
