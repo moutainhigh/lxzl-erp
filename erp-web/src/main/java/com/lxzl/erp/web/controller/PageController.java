@@ -312,7 +312,7 @@ public class PageController extends BaseController {
     //变更单详情
     @RequestMapping("/order-manage/change-rent-detail")
     public String changeRentDetail() {
-        return "/component/order/changeRentDetail";
+        return "/orderManage/changeRentDetail";
     }
 
     //退货单
