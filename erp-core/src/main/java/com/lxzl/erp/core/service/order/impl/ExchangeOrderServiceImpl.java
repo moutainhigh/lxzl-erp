@@ -45,91 +45,14 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> createExchangeOrder(ExchangeOrder exchangeOrder) {
-        ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date now = new Date();
         OrderDO orderDO = orderMapper.findByOrderNo(exchangeOrder.getOrderNo());
-        if (null == orderDO) {
-            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+        //校验信息
+        ServiceResult<String, String> result=this.verifyOrderInfo(orderDO,exchangeOrder);
+        if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
             return result;
         }
-        //只能按月租
-        if (OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
-            result.setErrorCode(ErrorCode.ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER);
-            return result;
-        }
-
-        if (exchangeOrder.getRentStartTime().compareTo(orderDO.getRentStartTime()) < 0) {
-            //不能小于起租日
-            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_SATRT_TIME);
-            return result;
-        }
-        //不能超过最后一期时间
-        Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
-        if (exchangeOrder.getRentStartTime().compareTo(expectReturnTime) > 0) {
-            //不能大于最后一期
-            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_EXPECT_RETURN_TIME);
-            return result;
-        }
-
-        //只有租赁中的订单才可以进行
-        if (!(OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus()) || OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus()))) {
-            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-            return result;
-        }
-
-        //查询是否存在换货单
-        //如果有变更单就不允许更换
-        List<ExchangeOrderDO> exchangeOrderDOList = exchangeOrderMapper.findByOrderNo(exchangeOrder.getOrderNo());
-        if (CollectionUtil.isNotEmpty(exchangeOrderDOList)) {
-            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_EXISTS);
-            return result;
-        }
-
-        //查询是否还有未完成的
-        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(exchangeOrder.getOrderNo());
-        if (CollectionUtil.isNotEmpty(replaceOrderDOList)) {
-            result.setErrorCode(ErrorCode.REPLACE_ORDER_EXISTS);
-            return result;
-        }
-
-        //下单首月不能更改
-        //月末结算，变更当月1号，如果是20号结算，就变更21号
-        //获取当前月的结算日、如果是31号就是当前月的最后一天。如果是其他就跟着你月份走就可以了。
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), exchangeOrder.getRentStartTime());
-
-        Date newRentStartTime = new Date();
-
-        if (statementDays == 31) {//如果是月末。就获取一个月的第一天
-            //获取第一个月的第一天
-            newRentStartTime = DateUtil.getStart8MonthDate(exchangeOrder.getRentStartTime());
-        } else {
-            //如果是20号，或者是自然日 TODO 2月份特殊处理
-            newRentStartTime = DateUtil.getMonthAndDay(exchangeOrder.getRentStartTime(), statementDays + 1);
-        }
-        //起租日，当月第一天
-        Date rentStartTime = DateUtil.getStartMonthDate(orderDO.getRentStartTime());
-        //起租日，当月最后一天
-        Date rentEndTime = DateUtil.getEndMonthDate(orderDO.getRentStartTime());
-        if (rentEndTime.compareTo(newRentStartTime) > 0) {
-            if (rentStartTime.compareTo(newRentStartTime) < 0) {
-                //下单首月不能更改
-                result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_FIRST_MONTH);
-                return result;
-            }
-        }
-        //生效时间不能超过最后一期的时间
-        if (newRentStartTime.compareTo(expectReturnTime) > 0) {
-            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_EXPECT_RETURN_TIME);
-            return result;
-        }
-//        if(newRentStartTime !=null ){
-//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//            System.err.println(sdf.format(newRentStartTime));
-//            result.setErrorCode(ErrorCode.SUCCESS);
-//            result.setResult(sdf.format(newRentStartTime));
-//            return result;
-//        }
         ExchangeOrderDO exchangeOrderDO = new ExchangeOrderDO();
         BeanUtils.copyProperties(exchangeOrder, exchangeOrderDO);
         exchangeOrderDO.setExchangeOrderNo(generateNoSupport.generateExchangeOrderNo(now, orderDO.getOrderSubCompanyId().toString()));
@@ -141,6 +64,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         exchangeOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_WAIT_COMMIT);
         exchangeOrderMapper.save(exchangeOrderDO);
+        Boolean isUpd=false;
         if (!CollectionUtil.isEmpty(exchangeOrder.getExchangeOrderProductList())) {
             List<ExchangeOrderProductDO> exchangeOrderProductDOList = new ArrayList<>();
             Map<Integer, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(), "id");
@@ -157,6 +81,12 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
                 exchangeOrderProductDO.setProductName(orderProductDO.getProductName());
                 exchangeOrderProductDO.setProductSkuId(orderProductDO.getProductSkuId());
                 exchangeOrderProductDO.setProductSkuName(orderProductDO.getProductSkuName());
+                //判断是否发生变更
+                if(!(exchangeOrderProductDO.getDepositCycle().equals(orderProductDO.getDepositCycle())&&
+                        exchangeOrderProductDO.getPaymentCycle().equals(orderProductDO.getPaymentCycle())&&
+                        exchangeOrderProductDO.getPayMode().equals(orderProductDO.getPayMode()))){
+                    isUpd=true;
+                }
                 exchangeOrderProductDOList.add(exchangeOrderProductDO);
             }
             exchangeOrderProductMapper.saveList(exchangeOrderProductDOList);
@@ -177,13 +107,101 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
                 exchangeOrderMaterialDO.setMaterialName(orderMaterialDO.getMaterialName());
                 exchangeOrderMaterialDO.setOldMaterialUnitAmount(orderMaterialDO.getMaterialUnitAmount());
                 exchangeOrderMaterialDOList.add(exchangeOrderMaterialDO);
+                //判断是否发生变更
+                if(!(exchangeOrderMaterialDO.getDepositCycle().equals(orderMaterialDO.getDepositCycle())&&
+                        exchangeOrderMaterialDO.getPaymentCycle().equals(orderMaterialDO.getPaymentCycle())&&
+                        exchangeOrderMaterialDO.getPayMode().equals(orderMaterialDO.getPayMode()))){
+                    isUpd=true;
+                }
             }
             exchangeOrderMaterialMapper.saveList(exchangeOrderMaterialDOList);
+        }
+        if(!isUpd){//如果没发生变更，回滚数据
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result.setErrorCode(ErrorCode.NOT_EXCHANGE_ORDER);
+            return result;
         }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(exchangeOrderDO.getExchangeOrderNo());
         return result;
     }
+
+
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> updateExchangeOrder(ExchangeOrder exchangeOrder) {
+        ServiceResult<String, String> result=new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date now = new Date();
+        //校验信息
+        ExchangeOrderDO exchangeOrderDO = exchangeOrderMapper.findByExchangeOrderNo(exchangeOrder.getExchangeOrderNo());
+        if (null == exchangeOrderDO) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        OrderDO orderDO = orderMapper.findByOrderNo(exchangeOrder.getOrderNo());
+        result=this.verifyOrderInfo(orderDO,exchangeOrder);
+        if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
+            return result;
+        }
+        //更新日期
+        exchangeOrderDO.setRentStartTime(exchangeOrder.getRentStartTime());
+        //更新备注
+        exchangeOrderDO.setRemark(exchangeOrder.getRemark());
+        exchangeOrderDO.setUpdateTime(now);
+        exchangeOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        exchangeOrderMapper.update(exchangeOrderDO);
+        Boolean isUpd=false;
+
+        if (!CollectionUtil.isEmpty(exchangeOrder.getExchangeOrderProductList())) {
+            List<ExchangeOrderProductDO> exchangeOrderProductDOList = new ArrayList<>();
+            Map<Integer, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(), "id");
+            //保存商品信息
+            for (ExchangeOrderProduct exchangeOrderProduct : exchangeOrder.getExchangeOrderProductList()) {
+                ExchangeOrderProductDO exchangeOrderProductDO=new ExchangeOrderProductDO();
+                exchangeOrderProductDO.setId(exchangeOrderProduct.getExchangeOrderId());
+                exchangeOrderProductDO.setDepositCycle(exchangeOrderProduct.getDepositCycle());
+                exchangeOrderProductDO.setPaymentCycle(exchangeOrderProduct.getPaymentCycle());
+                exchangeOrderProductDO.setPayMode(exchangeOrderProduct.getPayMode());
+                OrderProductDO orderProductDO = orderProductDOMap.get(exchangeOrderProduct.getOrderProductId());
+                //判断是否发生变更
+                if(!(exchangeOrderProductDO.getDepositCycle().equals(orderProductDO.getDepositCycle())&&
+                        exchangeOrderProductDO.getPaymentCycle().equals(orderProductDO.getPaymentCycle())&&
+                        exchangeOrderProductDO.getPayMode().equals(orderProductDO.getPayMode()))){
+                    isUpd=true;
+                }
+            }
+            exchangeOrderProductMapper.updateList(exchangeOrderProductDOList);
+        }
+        if (!CollectionUtil.isEmpty(exchangeOrder.getExchangeOrderMaterialList())) {
+            List<ExchangeOrderMaterialDO> exchangeOrderMaterialDOList = new ArrayList<>();
+            Map<Integer, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "id");
+            //保存配件信息
+            for (ExchangeOrderMaterial exchangeOrderMaterial : exchangeOrder.getExchangeOrderMaterialList()) {
+                ExchangeOrderMaterialDO exchangeOrderMaterialDO=new ExchangeOrderMaterialDO();
+                exchangeOrderMaterialDO.setId(exchangeOrderMaterial.getMaterialId());
+                exchangeOrderMaterialDO.setDepositCycle(exchangeOrderMaterial.getDepositCycle());
+                exchangeOrderMaterialDO.setPaymentCycle(exchangeOrderMaterial.getPaymentCycle());
+                exchangeOrderMaterialDO.setPayMode(exchangeOrderMaterial.getPayMode());
+                OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(exchangeOrderMaterial.getOrderProductId());
+                //判断是否发生变更
+                if(!(exchangeOrderMaterialDO.getDepositCycle().equals(orderMaterialDO.getDepositCycle())&&
+                        exchangeOrderMaterialDO.getPaymentCycle().equals(orderMaterialDO.getPaymentCycle())&&
+                        exchangeOrderMaterialDO.getPayMode().equals(orderMaterialDO.getPayMode()))){
+                    isUpd=true;
+                }
+            }
+            exchangeOrderMaterialMapper.updateList(exchangeOrderMaterialDOList);
+        }
+        if(!isUpd){//如果没发生变更，回滚数据
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result.setErrorCode(ErrorCode.NOT_EXCHANGE_ORDER);
+            return result;
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(exchangeOrderDO.getExchangeOrderNo());
+        return result;
+    }
+
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -254,7 +272,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             for (ExchangeOrderMaterial exchangeOrderMaterial : exchangeOrder.getExchangeOrderMaterialList()) {
                 if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
                     for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
-                        if (orderMaterial.getMaterialId().equals(exchangeOrderMaterial.getOrderProductId())) {
+                        if (orderMaterial.getOrderMaterialId().equals(exchangeOrderMaterial.getOrderProductId())) {
                             exchangeOrderMaterial.setOrderMaterial(orderMaterial);
                             break;
                         }
@@ -570,6 +588,93 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         orderFlowDO.setUpdateUser(userId);
         orderFlowDO.setUpdateTime(now);
         return orderFlowDO;
+    }
+
+    /**
+     * 校验信息
+     *
+     * @param orderDO
+     * @param exchangeOrder
+     * @return
+     */
+    private ServiceResult<String, String> verifyOrderInfo(OrderDO orderDO,ExchangeOrder exchangeOrder){
+        ServiceResult<String, String> result = new ServiceResult<>();
+        if (null == orderDO) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        //只能按月租
+        if (OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
+            result.setErrorCode(ErrorCode.ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER);
+            return result;
+        }
+
+        if (exchangeOrder.getRentStartTime().compareTo(orderDO.getRentStartTime()) < 0) {
+            //不能小于起租日
+            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_SATRT_TIME);
+            return result;
+        }
+        //不能超过最后一期时间
+        Date expectReturnTime = orderSupport.generateExpectReturnTime(orderDO);
+        if (exchangeOrder.getRentStartTime().compareTo(expectReturnTime) > 0) {
+            //不能大于最后一期
+            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_EXPECT_RETURN_TIME);
+            return result;
+        }
+
+        //只有租赁中的订单才可以进行
+        if (!(OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus()) || OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus()))) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+
+        //查询是否存在换货单
+        //如果有变更单就不允许更换
+        List<ExchangeOrderDO> exchangeOrderDOList = exchangeOrderMapper.findByOrderNo(exchangeOrder.getOrderNo());
+        if (CollectionUtil.isNotEmpty(exchangeOrderDOList)) {
+            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_EXISTS);
+            return result;
+        }
+
+        //查询是否还有未完成的
+        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(exchangeOrder.getOrderNo());
+        if (CollectionUtil.isNotEmpty(replaceOrderDOList)) {
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_EXISTS);
+            return result;
+        }
+
+        //下单首月不能更改
+        //月末结算，变更当月1号，如果是20号结算，就变更21号
+        //获取当前月的结算日、如果是31号就是当前月的最后一天。如果是其他就跟着你月份走就可以了。
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), exchangeOrder.getRentStartTime());
+
+        Date newRentStartTime = new Date();
+
+        if (statementDays == 31) {//如果是月末。就获取一个月的第一天
+            //获取第一个月的第一天
+            newRentStartTime = DateUtil.getStart8MonthDate(exchangeOrder.getRentStartTime());
+        } else {
+            //如果是20号，或者是自然日 TODO 2月份特殊处理
+            newRentStartTime = DateUtil.getMonthAndDay(exchangeOrder.getRentStartTime(), statementDays + 1);
+        }
+        //起租日，当月第一天
+        Date rentStartTime = DateUtil.getStartMonthDate(orderDO.getRentStartTime());
+        //起租日，当月最后一天
+        Date rentEndTime = DateUtil.getEndMonthDate(orderDO.getRentStartTime());
+        if (rentEndTime.compareTo(newRentStartTime) > 0) {
+            if (rentStartTime.compareTo(newRentStartTime) < 0) {
+                //下单首月不能更改
+                result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_FIRST_MONTH);
+                return result;
+            }
+        }
+        //生效时间不能超过最后一期的时间
+        if (newRentStartTime.compareTo(expectReturnTime) > 0) {
+            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_EXPECT_RETURN_TIME);
+            return result;
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
 
