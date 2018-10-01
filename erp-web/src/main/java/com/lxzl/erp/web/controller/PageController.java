@@ -309,6 +309,12 @@ public class PageController extends BaseController {
         return "/orderManage/orderTestReletAdd";
     }
 
+    //变更单详情
+    @RequestMapping("/order-manage/change-rent-detail")
+    public String changeRentDetail() {
+        return "/component/order/changeRentDetail";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
