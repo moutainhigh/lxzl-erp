@@ -55,12 +55,15 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
-        //TODO 只能按月租
+        //只能按月租
+        if(OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())){
+            result.setErrorCode(ErrorCode.ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER);
+            return result;
+        }
         //获取当前月的结算日、如果是31号就是当前月的最后一天。如果是其他就跟着你月份走就可以了。
         Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), exchangeOrder.getRentStartTime());
 
         Date newRentStartTime=new Date();
-
         //获取日期下一天
         DateUtil.getDayByOffset(exchangeOrder.getRentStartTime(),1);
 
@@ -175,8 +178,9 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             result.setErrorCode(ErrorCode.EXCHANGE_ORDER_STATUS_ERROR);
             return result;
         }
-        String verifyMatters = "例行审核";
+        String verifyMatters = "订单变更审核，审核变更单的生效时间，订单项的单价、租赁方案、支付方式";
         exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_CONFIRM);
+        exchangeOrderMapper.update(exchangeOrderDO);
         ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_EXCHANGE_ORDER, orderNo, verifyUser, verifyMatters, commitRemark, exchangeOrderCommitParam.getImgIdList(), null);
         if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -407,13 +411,9 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         orderTimeAxisSupport.addOrderTimeAxis(newOrderDO.getId(), newOrderDO.getOrderStatus(), null, currentTime, loginUser.getUserId(), OperationType.VERIFY_ORDER_SUCCESS);
 
         //3、变更单给K3传数据
-//        Order order = ConverterUtil.convert(newOrderDO, Order.class);
-//        order.setTestMachineOrderNo(nodeOrderNo);
-//        ServiceResult<String, String> serviceResult = k3Service.testMachineOrderTurnRentOrder(order);
-//        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
-//            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
-//            return result;
-//        }
+        Order order = ConverterUtil.convert(newOrderDO, Order.class);
+        order.setTestMachineOrderNo(nodeOrderNo);
+        k3Service.testMachineOrderTurnRentOrder(order);
 
         //4、转移退货
         Map<String, Object> maps = new HashMap<>();
