@@ -8,7 +8,7 @@
                 <div class="section row">
                     <label class="field-label">生效时间</label>
                     <div for="rentStartTime" id="rentStartTimePicker" class="field prepend-icon" style="width: 50%;">
-                        <input type="text" id="rentStartTime" name="rentStartTime" class="gui-input hasDatepicker required" placeholder="" data-type="date">
+                        <input type="text" id="rentStartTime" name="rentStartTime" class="gui-input hasDatepicker required" placeholder="" data-type="date" autocomplete="off">
                         <label class="field-icon"><i class="fa fa-calendar-o"></i>
                         </label>
                     </div>
