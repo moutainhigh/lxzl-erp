@@ -56,7 +56,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             return result;
         }
         //只能按月租
-        if(OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())){
+        if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
             result.setErrorCode(ErrorCode.ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER);
             return result;
         }
