@@ -127,6 +127,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
         //校验订单编号
         OrderDO orderDO = orderMapper.findByOrderNo(replaceOrderDO.getOrderNo());
+        //TODO 补充订单编号
+        replaceOrderDO.setOriginalOrderNo(orderDO.getOriginalOrderNo());
         if (orderDO == null) {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
@@ -477,6 +479,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
         //校验订单编号
         OrderDO orderDO = orderMapper.findByOrderNo(replaceOrderDO.getOrderNo());
+        //TODO 补充订单编号
+        replaceOrderDO.setOriginalOrderNo(orderDO.getOriginalOrderNo());
         if (orderDO == null) {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
@@ -791,6 +795,9 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     public ServiceResult<String, Page<ReplaceOrder>> queryAllReplaceOrder(ReplaceOrderQueryParam param) {
         ServiceResult<String, Page<ReplaceOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(param.getPageNo(), param.getPageSize());
+        //TODO 临时处理，前端没时间开发
+        param.setOriginalOrderNo(param.getOrderNo());
+        param.setOrderNo(null);
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -1410,6 +1417,9 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     public ServiceResult<String,  Page<ReplaceOrder>> queryReplaceOrderListForOrderNo(ReplaceOrderQueryParam param) {
         ServiceResult<String, Page<ReplaceOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(param.getPageNo(), param.getPageSize());
+        //TODO 后端转换原订单号。
+        param.setOriginalOrderNo(param.getOrderNo());
+        param.setOrderNo(null);
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
