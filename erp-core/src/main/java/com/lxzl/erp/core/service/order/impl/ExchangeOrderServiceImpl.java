@@ -74,6 +74,29 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             return result;
         }
 
+        //只有租赁中的订单才可以进行
+        if (!(OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus()) || OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus()))) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+
+        //查询是否存在换货单
+        //如果有变更单就不允许更换
+        List<ExchangeOrderDO> exchangeOrderDOList = exchangeOrderMapper.findByOrderNo(exchangeOrder.getOrderNo());
+        if (CollectionUtil.isNotEmpty(exchangeOrderDOList)) {
+            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_EXISTS);
+            return result;
+        }
+
+        //查询是否还有未完成的
+        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(exchangeOrder.getOrderNo());
+        if (CollectionUtil.isNotEmpty(replaceOrderDOList)) {
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_EXISTS);
+            return result;
+        }
+
+
+
         //获取当前月的结算日、如果是31号就是当前月的最后一天。如果是其他就跟着你月份走就可以了。
         Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), exchangeOrder.getRentStartTime());
 
@@ -88,25 +111,10 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
 
 
 
-        //只有租赁中的订单才可以进行
-        if (!(OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus()) || OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus()))) {
-            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-            return result;
-        }
-        //查询是否存在换货单
-        //如果有变更单就不允许更换
-        List<ExchangeOrderDO> exchangeOrderDOList = exchangeOrderMapper.findByOrderNo(exchangeOrder.getOrderNo());
-        if (CollectionUtil.isNotEmpty(exchangeOrderDOList)) {
-            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_EXISTS);
-            return result;
-        }
 
-        //查询为完成的换货单
-        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(exchangeOrder.getOrderNo());
-        if (CollectionUtil.isNotEmpty(replaceOrderDOList)) {
-            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-            return result;
-        }
+
+
+
         ExchangeOrderDO exchangeOrderDO = new ExchangeOrderDO();
         BeanUtils.copyProperties(exchangeOrder, exchangeOrderDO);
         exchangeOrderDO.setExchangeOrderNo(generateNoSupport.generateExchangeOrderNo(now, orderDO.getOrderSubCompanyId().toString()));
