@@ -74,6 +74,7 @@
 				<![CDATA[ AND eeo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
 			</if>
 		</where>
+		ORDER BY id DESC
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 
