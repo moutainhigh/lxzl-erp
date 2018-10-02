@@ -9,6 +9,8 @@ import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
+import com.lxzl.erp.common.domain.order.pojo.ExchangeOrder;
+import com.lxzl.erp.common.domain.order.pojo.ExchangeOrderMaterial;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.product.ProductQueryParam;
@@ -34,6 +36,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.deploymentOrder.DeploymentOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.ExchangeOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.peer.PeerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.peerDeploymentOrder.PeerDeploymentOrderMapper;
@@ -924,6 +927,32 @@ public class GenerateNoSupport {
             return builder.toString();
         }
     }
+
+    /**
+     * 生成订单编号
+     */
+    public String generateExchangeOrderNo(Date currentTime, String subCustomerCode) {
+        if (StringUtil.isBlank(subCustomerCode)) {
+            subCustomerCode = "1000";
+        }
+        synchronized (this) {
+            Map<String, Object> maps = new HashMap<>();
+            OrderQueryParam orderQueryParam = new OrderQueryParam();
+            orderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            orderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
+            maps.put("orderQueryParam", orderQueryParam);
+            Integer orderCount = exchangeOrderMapper.listCount(maps);
+            StringBuilder builder = new StringBuilder();
+            builder.append("LXEO-");
+            builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
+            builder.append(subCustomerCode);
+            builder.append("-");
+            builder.append(String.format("%05d", orderCount + 1));
+            return builder.toString();
+        }
+    }
+
     /**
      * 生成优惠卷编号:规则LX+8位大写字母数字组合(不要O和0)
      */
@@ -942,6 +971,9 @@ public class GenerateNoSupport {
             return stringBuffer.toString();
         }
     }
+
+    @Autowired
+    private ExchangeOrderMapper exchangeOrderMapper;
 
     @Autowired
     private SupplierMapper supplierMapper;

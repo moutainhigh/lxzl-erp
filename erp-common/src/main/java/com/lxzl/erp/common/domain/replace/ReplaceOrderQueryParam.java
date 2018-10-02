@@ -20,7 +20,7 @@ import java.util.Date;
 public class ReplaceOrderQueryParam extends BasePageParam {
     private Integer replaceOrderId;   //唯一标识
     private String replaceOrderNo;   //换货编号
-    private String orderNo;   //原订单编号
+    private String orderNo;   //订单编号
     private String customerNo;   //客户编号
     private String customerName; //客户名称
     private Integer replaceReasonType;   //换货原因类型,0-升级 ，1-损坏，2-其他
@@ -42,6 +42,7 @@ public class ReplaceOrderQueryParam extends BasePageParam {
     private Integer deliverySubCompanyId;  //发货分公司
     private Date realReplaceStartTime;   //实际换货开始时间
     private Date realReplaceEndTime;   //实际换货结束时间
+    private String originalOrderNo;  //原订单单号
 
     public Date getRealReplaceEndTime() {
         return realReplaceEndTime;
@@ -235,5 +236,13 @@ public class ReplaceOrderQueryParam extends BasePageParam {
 
     public void setDeliverySubCompanyId(Integer deliverySubCompanyId) {
         this.deliverySubCompanyId = deliverySubCompanyId;
+    }
+
+    public String getOriginalOrderNo() {
+        return originalOrderNo;
+    }
+
+    public void setOriginalOrderNo(String originalOrderNo) {
+        this.originalOrderNo = originalOrderNo;
     }
 }

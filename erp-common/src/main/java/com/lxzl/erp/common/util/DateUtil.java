@@ -3,6 +3,7 @@ package com.lxzl.erp.common.util;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.se.common.exception.BusinessException;
 
+
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -375,6 +376,25 @@ public class DateUtil {
     }
 
     /**
+     * 获取当前月最后一天,开始时间
+     *
+     *
+     * @param date
+     * @return
+     */
+    public static  Date getEndByMonth(Date date) {
+        //获取当前月最后一天
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.set(Calendar.DAY_OF_MONTH, ca.getActualMaximum(Calendar.DAY_OF_MONTH));
+        ca.set(Calendar.HOUR_OF_DAY, 00);
+        ca.set(Calendar.MINUTE, 00);
+        ca.set(Calendar.SECOND, 00);
+        ca.set(Calendar.MILLISECOND, 00);
+        return ca.getTime();
+    }
+
+    /**
      * 获取月份
      *
      * @param date  时间
@@ -517,29 +537,6 @@ public class DateUtil {
         return dayForWeek;
     }
 
-    public static void main(String[] args) {
-//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        List<Date> dateList = getCurrentYearPassedMonth();
-//        for(Date date : dateList){
-//            System.out.println(simpleDateFormat.format(date));
-//        }
-
-//        List<Date> dateList2 = getCurrentMonthPassedDay();
-//        for(Date date : dateList2){
-//            System.out.println(simpleDateFormat.format(date));
-//        }
-//        List<Date> dateList3 = getCurrentYearNoPassedMonth();
-//        for(Date date : dateList3){
-//            System.out.println(simpleDateFormat.format(date));
-//        }
-//        List<Date> dateList4 = getCurrentMonthNoPassedDay();
-//        for(Date date : dateList4){
-//            System.out.println(simpleDateFormat.format(date));
-//        }
-//        System.out.println(simpleDateFormat.format(getDayByOffset(1)));
-        int d = DateUtil.dayForWeek(new Date());
-        System.out.println(d);
-    }
     /**
      * 获取指定日期所在月份开始的时间戳
      *
@@ -612,6 +609,41 @@ public class DateUtil {
             curr.add(Calendar.MONTH, 1);
         }
         return result;
+    }
+
+    /**
+     * 更改日期，时间为08:00:00 CST 2018
+     * @param date
+     * @param day
+     * @return
+     */
+    public static  Date getMonthAndDay(Date date,Integer day){
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.set(Calendar.DAY_OF_MONTH, day);
+        ca.set(Calendar.HOUR_OF_DAY ,8);
+        ca.set(Calendar.MINUTE, 0);
+        ca.set(Calendar.SECOND, 0);
+        return ca.getTime();
+    }
+
+    /**
+     * 获取给定日期月份第一天凌晨 Tue May 01 08:00:00 CST 2018
+     * @param date
+     * @return
+     */
+    public static Date getStart8MonthDate(Date date) {
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.set(Calendar.DAY_OF_MONTH, 1);
+        ca.set(Calendar.HOUR_OF_DAY ,8);
+        ca.set(Calendar.MINUTE, 0);
+        ca.set(Calendar.SECOND, 0);
+        ca.set(Calendar.MILLISECOND, 0);
+        return ca.getTime();
+    }
+
+    public static void main(String[] args) {
     }
 
 }

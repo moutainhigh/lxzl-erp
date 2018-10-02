@@ -1,6 +1,7 @@
 package com.lxzl.erp.dataaccess.dao.mysql.statement;
 
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
+import com.lxzl.erp.dataaccess.domain.order.OrderFlowDO;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementSummaryDTO;
 import com.lxzl.erp.dataaccess.domain.statement.CheckStatementOrderDetailDO;
@@ -31,6 +32,8 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
     List<StatementOrderDetailDO> findByOrderItemTypeAndIdIngnoreOrderType(@Param("orderItemType") Integer orderItemType, @Param("orderItemId") Integer orderItemId);
 
     List<StatementOrderDetailDO> findByOrderTypeAndId(@Param("orderType") Integer orderType, @Param("orderId") Integer orderId);
+
+    List<StatementOrderDetailDO> findByOrderTypeAndOrderNoList(@Param("orderType") Integer orderType, @Param("list") List<OrderFlowDO> list);
 
     List<StatementOrderDetailDO> findByStatementOrderId(@Param("statementOrderId") Integer statementOrderId);
 

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.order.ExchangeOrderMaterialMapper">
+
+	<resultMap id="ExchangeOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.order.ExchangeOrderMaterialDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="exchange_order_id" jdbcType="INTEGER" property="exchangeOrderId" />
+		<result column="order_product_id" jdbcType="INTEGER" property="orderProductId" />
+		<result column="material_id" jdbcType="INTEGER" property="materialId" />
+		<result column="material_name" jdbcType="VARCHAR" property="materialName" />
+		<result column="material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount" />
+		<result column="old_material_unit_amount" jdbcType="DECIMAL" property="oldMaterialUnitAmount" />
+		<result column="is_new_material" jdbcType="INTEGER" property="isNewMaterial" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
+		<result column="payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="pay_mode" jdbcType="INTEGER" property="payMode" />
+	</resultMap>
+
+	<sql id="column_List">
+		eeom.id,eeom.exchange_order_id,eeom.order_product_id,eeom.material_id,eeom.material_name,eeom.material_unit_amount,eeom.old_material_unit_amount,eeom.is_new_material,eeom.data_status,eeom.deposit_cycle,eeom.payment_cycle,eeom.pay_mode
+	</sql>
+
+	<select id="findById" resultMap="ExchangeOrderMaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_exchange_order_material eeom 
+		WHERE eeom.id = #{id, jdbcType=INTEGER} AND eeom.data_status = 1
+	</select>
+
+	<select id="findByExchangeOrderId" resultMap="ExchangeOrderMaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_exchange_order_material eeom
+		WHERE eeom.exchange_order_id = #{exchangeOrderId, jdbcType=INTEGER} AND eeom.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eeom.id) FROM erp_exchange_order_material eeom 
+		<where>
+			<if test="true">
+				AND eeom.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="ExchangeOrderMaterialDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_exchange_order_material eeom 
+		<where>
+			<if test="true">
+				AND eeom.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="exchangeOrderId != null">
+				exchange_order_id = #{exchangeOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="orderProductId != null">
+				order_product_id = #{orderProductId,jdbcType=INTEGER},
+			</if>
+			<if test="materialId != null">
+				material_id = #{materialId,jdbcType=INTEGER},
+			</if>
+			<if test="materialName != null">
+				material_name = #{materialName,jdbcType=VARCHAR},
+			</if>
+			<if test="materialUnitAmount != null">
+				material_unit_amount = #{materialUnitAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="oldMaterialUnitAmount != null">
+				old_material_unit_amount = #{oldMaterialUnitAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="isNewMaterial != null">
+				is_new_material = #{isNewMaterial,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="depositCycle != null">
+				deposit_cycle = #{depositCycle,jdbcType=INTEGER},
+			</if>
+			<if test="paymentCycle != null">
+				payment_cycle = #{paymentCycle,jdbcType=INTEGER},
+			</if>
+			<if test="payMode != null">
+				pay_mode = #{payMode,jdbcType=INTEGER},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.order.ExchangeOrderMaterialDO">
+		INSERT INTO erp_exchange_order_material <include refid="set_column_sql"/>
+	</insert>
+
+	<insert id="saveList" parameterType="java.util.List">
+		INSERT INTO erp_exchange_order_material (exchange_order_id,order_product_id,material_id,material_name,material_unit_amount,old_material_unit_amount,is_new_material,data_status,deposit_cycle,payment_cycle,pay_mode)
+		values
+		<foreach collection="list" item="item" separator=",">
+			(#{item.exchangeOrderId},
+			#{item.orderProductId},
+			#{item.materialId},
+			#{item.materialName},
+			#{item.materialUnitAmount},
+			#{item.oldMaterialUnitAmount},
+			#{item.isNewMaterial},
+			#{item.dataStatus},
+			#{item.depositCycle},
+			#{item.paymentCycle},
+			#{item.payMode}
+			)
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.order.ExchangeOrderMaterialDO">
+		UPDATE erp_exchange_order_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<update id="updateList">
+		UPDATE erp_exchange_order_material eeom
+		SET
+		<trim>
+			eeom.deposit_cycle =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.depositCycle}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			eeom.payment_cycle =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.paymentCycle}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			eeom.pay_mode =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.payMode}
+			</foreach>
+		</trim>
+        <trim prefix=",">
+            eeom.material_unit_amount =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.materialUnitAmount}
+            </foreach>
+        </trim>
+		WHERE eeom.id IN
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+
+</mapper>

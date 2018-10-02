@@ -41,6 +41,8 @@ public class K3ReturnOrderDetail extends BasePO {
 
     private Date returnTime;  //退货时间
     private Integer orderItemType;//商品类型,1-商品,2-配件
+    //TODO 移除原订单号，后端查询回来
+    private String originalOrderNo;  //原订单单号
 
     public Integer getK3ReturnOrderDetailId() {
         return k3ReturnOrderDetailId;
@@ -200,5 +202,13 @@ public class K3ReturnOrderDetail extends BasePO {
 
     public void setOrderItemType(Integer orderItemType) {
         this.orderItemType = orderItemType;
+    }
+
+    public String getOriginalOrderNo() {
+        return originalOrderNo;
+    }
+
+    public void setOriginalOrderNo(String originalOrderNo) {
+        this.originalOrderNo = originalOrderNo;
     }
 }

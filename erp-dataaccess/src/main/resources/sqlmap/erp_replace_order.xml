@@ -50,6 +50,7 @@
 		<result column="order_seller_phone" jdbcType="VARCHAR" property="orderSellerPhone" />
 		<result column="order_rent_start_time" jdbcType="TIMESTAMP" property="orderRentStartTime" />
 		<result column="order_expect_return_time" jdbcType="TIMESTAMP" property="orderExpectReturnTime" />
+		<result column="original_order_no" jdbcType="VARCHAR" property="originalOrderNo"/>
 		<collection property="replaceOrderProductDOList" resultMap="ReplaceOrderProductDO"/>
 		<collection property="replaceOrderMaterialDOList" resultMap="ReplaceOrderMaterialDO"/>
 	</resultMap>
@@ -135,7 +136,7 @@
 	<sql id="column_List">
 		ero.id,ero.replace_order_no,ero.order_id,ero.order_no,ero.customer_id,ero.customer_no,ero.replace_time,ero.total_replace_product_count,ero.total_replace_material_count,ero.real_total_replace_product_count,ero.real_total_replace_material_count,ero.service_cost,ero.logistics_cost,ero.repair_cost,ero.replace_reason_type,ero.replace_reason,ero.replace_mode,ero.replace_order_status,ero.data_status,ero.remark,ero.create_time,ero.create_user,ero.update_time,ero.update_user,ero.confirm_replace_time,ero.confirm_replace_user,
 		ero.address,ero.consignee_name,ero.consignee_phone,ero.is_relet_order_replace,ero.relet_order_no,ero.customer_name,ero.delivery_sub_company_name,ero.delivery_sub_company_id,ero.replace_delivery_time,ero.real_replace_time,ero.update_total_credit_deposit_amount,ero.old_total_credit_deposit_amount,ero.new_total_credit_deposit_amount,
-		ero.order_seller_id,ero.order_seller_name,ero.order_seller_phone,ero.order_rent_start_time,ero.order_expect_return_time
+		ero.order_seller_id,ero.order_seller_name,ero.order_seller_phone,ero.order_rent_start_time,ero.order_expect_return_time,ero.original_order_no
 	</sql>
 
 	<sql id="product_column_List">
@@ -319,6 +320,9 @@
 			<if test="orderExpectReturnTime != null">
 				order_expect_return_time = #{orderExpectReturnTime,jdbcType=TIMESTAMP},
 			</if>
+			<if test="originalOrderNo != null">
+				original_order_no = #{originalOrderNo,jdbcType=VARCHAR},
+			</if>
 		</set>
 	</sql>
 
@@ -429,6 +433,9 @@
 			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.realReplaceEndTime != null ">
 				<![CDATA[ AND ero.real_replace_time <= #{maps.replaceOrderQueryParam.realReplaceEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.originalOrderNo != null &amp;&amp; maps.replaceOrderQueryParam.originalOrderNo != ''">
+				and ero.original_order_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.originalOrderNo}','%' )
+			</if>
 			<if test="true">
 				AND ero.data_status = 1
 			</if>
@@ -515,6 +522,9 @@
 			</if>
 			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.realReplaceEndTime != null ">
 				<![CDATA[ AND ero.real_replace_time <= #{maps.replaceOrderQueryParam.realReplaceEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.replaceOrderQueryParam != null &amp;&amp; maps.replaceOrderQueryParam.originalOrderNo != null &amp;&amp; maps.replaceOrderQueryParam.originalOrderNo != ''">
+				and ero.original_order_no  LIKE CONCAT('%','${maps.replaceOrderQueryParam.originalOrderNo}','%' )
 			</if>
 			<if test="true">
 				AND ero.data_status = 1

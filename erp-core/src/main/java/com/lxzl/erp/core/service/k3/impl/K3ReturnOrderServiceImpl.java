@@ -197,7 +197,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addReturnOrder(K3ReturnOrder k3ReturnOrder) {
-
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
@@ -207,6 +206,11 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             return result;
         }
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = k3ReturnOrder.getK3ReturnOrderDetailList();
+        //TODO 临时拼接原订单号
+        for (K3ReturnOrderDetail k3ReturnOrderDetail:k3ReturnOrderDetailList) {
+            OrderDO orderDO=orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
+            k3ReturnOrderDetail.setOriginalOrderNo(orderDO.getOriginalOrderNo());
+        }
         if (CollectionUtil.isEmpty(k3ReturnOrderDetailList)) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
             return result;
@@ -545,12 +549,13 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             throw new BusinessException(response.getResult());
         }
     }
-
     @Override
     public ServiceResult<String, Page<K3ReturnOrder>> queryReturnOrder(K3ReturnOrderQueryParam k3ReturnOrderQueryParam) {
         ServiceResult<String, Page<K3ReturnOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(k3ReturnOrderQueryParam.getPageNo(), k3ReturnOrderQueryParam.getPageSize());
-
+        //TODO 临时将订单号，更改为原订单号
+        k3ReturnOrderQueryParam.setOriginalOrderNo(k3ReturnOrderQueryParam.getOrderNo());
+        k3ReturnOrderQueryParam.setOrderNo(null);
         //判断是否是仓库工作台
         if(CommonConstant.COMMON_CONSTANT_YES.equals(k3ReturnOrderQueryParam.getIsWarehouseWorkbench())){
             k3ReturnOrderQueryParam.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
@@ -1107,7 +1112,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     public ServiceResult<String, Page<Order>> queryOrderForReturn(OrderForReturnQueryParam param) {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(param.getPageNo(), param.getPageSize());
-
+        param.setOriginalOrderNo(param.getOrderNo());
+        param.setOrderNo(null);
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -1173,6 +1179,11 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         Set<String> orderNoSet = new HashSet<>();
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = k3ReturnOrder.getK3ReturnOrderDetailList();
+        //TODO 临时拼接原订单号
+        for (K3ReturnOrderDetail k3ReturnOrderDetail:k3ReturnOrderDetailList) {
+            OrderDO orderDO=orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
+            k3ReturnOrderDetail.setOriginalOrderNo(orderDO.getOriginalOrderNo());
+        }
         //校验所退退货单是否是该客户的订单
         if (verifyOrderAndCustomer(result, customerDO, orderNoSet, k3ReturnOrderDetailList)){
             return result;

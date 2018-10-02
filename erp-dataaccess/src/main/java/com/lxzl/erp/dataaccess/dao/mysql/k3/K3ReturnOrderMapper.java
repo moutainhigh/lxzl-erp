@@ -32,6 +32,7 @@ public interface K3ReturnOrderMapper extends BaseMysqlDAO<K3ReturnOrderDO> {
 
     List<K3ReturnOrderDO> findByIdSet(@Param("k3ReturnIdSet") Set<Integer> k3ReturnIdSet);
 
+    List<K3ReturnOrderDO> findReturnOrderByOrderNoAndDate(@Param("maps") Map<String, Object> maps);
     List<K3ReturnOrderDO> listByIds(@Param(value = "ids") Set<Integer> ids);
 
     List<K3ReturnOrderDO> listByMonthQuery(@Param(value = "queryParam") StatementOrderMonthQueryParam queryParam);

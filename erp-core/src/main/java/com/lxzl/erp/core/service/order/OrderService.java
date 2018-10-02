@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryByCustomerNoParam;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.order.*;
+import com.lxzl.erp.common.domain.order.pojo.ExchangeOrder;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -269,5 +270,7 @@ public interface OrderService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String,String> testMachineOrderConvertOrder(Order order);
+
+    void updateOrderConsignInfo(Integer userConsignId, Integer orderId, User loginUser, Date currentTime);
 
 }

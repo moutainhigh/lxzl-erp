@@ -26,9 +26,9 @@ public class ReplaceOrder extends BasePO {
 	private Integer replaceOrderId;   //唯一标识
 	@NotBlank(message = ErrorCode.ORDER_NO_NOT_NULL,groups = {CancelGroup.class})
 	private String replaceOrderNo;   //换货编号
-	private Integer orderId;   //原订单ID
+	private Integer orderId;   //订单ID
 	@NotBlank(message = ErrorCode.ORDER_NO_NOT_NULL,groups = {AddGroup.class})
-	private String orderNo;   //原订单编号
+	private String orderNo;   //订单编号
 	private Integer customerId;   //客户ID
 	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups = {AddGroup.class})
 	private String customerNo;   //客户编号
@@ -86,6 +86,7 @@ public class ReplaceOrder extends BasePO {
 	private String orderSellerPhone;//订单业务员手机号
 	private Date orderRentStartTime;   //订单起租时间
 	private Date orderExpectReturnTime;   //订单预计归还时间
+	private String originalOrderNo;  //原订单单号
 
 
 	public Integer getReplaceOrderId(){
@@ -478,5 +479,13 @@ public class ReplaceOrder extends BasePO {
 
 	public void setOrderExpectReturnTime(Date orderExpectReturnTime) {
 		this.orderExpectReturnTime = orderExpectReturnTime;
+	}
+
+	public String getOriginalOrderNo() {
+		return originalOrderNo;
+	}
+
+	public void setOriginalOrderNo(String originalOrderNo) {
+		this.originalOrderNo = originalOrderNo;
 	}
 }

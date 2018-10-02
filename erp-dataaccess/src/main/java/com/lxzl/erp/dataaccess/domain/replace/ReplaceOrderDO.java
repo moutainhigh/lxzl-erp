@@ -59,6 +59,7 @@ public class ReplaceOrderDO  extends BaseDO {
 	private String orderSellerPhone;//订单业务员手机号
 	private Date orderRentStartTime;   //订单起租时间
 	private Date orderExpectReturnTime;   //订单预计归还时间
+	private String originalOrderNo;  //原订单单号
 
 	public Integer getId(){
 		return id;
@@ -418,5 +419,13 @@ public class ReplaceOrderDO  extends BaseDO {
 
 	public void setOrderExpectReturnTime(Date orderExpectReturnTime) {
 		this.orderExpectReturnTime = orderExpectReturnTime;
+	}
+
+	public String getOriginalOrderNo() {
+		return originalOrderNo;
+	}
+
+	public void setOriginalOrderNo(String originalOrderNo) {
+		this.originalOrderNo = originalOrderNo;
 	}
 }

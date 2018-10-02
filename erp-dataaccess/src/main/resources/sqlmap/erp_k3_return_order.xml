@@ -45,6 +45,7 @@
         <result column="detail_update_user" jdbcType="VARCHAR" property="updateUser"/>
         <result column="detail_real_product_count" jdbcType="INTEGER" property="realProductCount"/>
         <result column="detail_order_item_type" jdbcType="INTEGER" property="orderItemType"/>
+        <result column="detail_original_order_no" jdbcType="VARCHAR" property="originalOrderNo"/>
     </resultMap>
 
     <sql id="column_List">
@@ -53,7 +54,7 @@
 
     <sql id="detail_column_List">
         ekrod.id as detail_id,ekrod.return_order_id as detail_return_order_id,ekrod.order_no as detail_order_no,ekrod.order_item_id as detail_order_item_id,ekrod.order_entry as detail_order_entry,ekrod.product_no as detail_product_no,ekrod.product_name as detail_product_name,ekrod.product_count as detail_product_count,ekrod.data_status as detail_data_status,ekrod.remark as detail_remark,ekrod.create_time as detail_create_time,ekrod.create_user as detail_create_user,ekrod.update_time as detail_update_time,ekrod.update_user as detail_update_user,ekrod.real_product_count as detail_real_product_count
-        ,ekrod.order_item_type as detail_order_item_type
+        ,ekrod.order_item_type as detail_order_item_type,ekrod.original_order_no as detail_original_order_no
     </sql>
 
     <select id="findById" resultMap="K3ReturnOrderDO" parameterType="java.lang.Integer">
@@ -123,6 +124,9 @@
             <if test="maps.k3ReturnOrderQueryParam.returnEndTime != null ">
                 <![CDATA[ AND ekro.return_time <= #{maps.k3ReturnOrderQueryParam.returnEndTime} ]]>
             </if>
+            <if test="maps.k3ReturnOrderQueryParam.originalOrderNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.originalOrderNo != ''">
+                and ekrod.original_order_no = #{maps.k3ReturnOrderQueryParam.originalOrderNo}
+            </if>
             <if test="true">
                 AND ekro.data_status = 1
             </if>
@@ -173,6 +177,9 @@
             </if>
             <if test="maps.k3ReturnOrderQueryParam.returnEndTime != null ">
                 <![CDATA[ AND ekro.return_time <= #{maps.k3ReturnOrderQueryParam.returnEndTime} ]]>
+            </if>
+            <if test="maps.k3ReturnOrderQueryParam.originalOrderNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.originalOrderNo != ''">
+                and ekrod.original_order_no = #{maps.k3ReturnOrderQueryParam.originalOrderNo}
             </if>
             <if test="true">
                 AND ekro.data_status = 1
@@ -321,6 +328,35 @@
         and ekro.data_status = 1
         AND ekro.return_order_status = 20
     </select>
+
+    <select id="findReturnOrderByOrderNoAndDate" resultMap="K3ReturnOrderDO" parameterType="map">
+        SELECT m_order.*
+        <trim prefix=",">
+            <include refid="detail_column_List"/>
+        </trim>,esc.sub_company_name
+        FROM (
+        SELECT
+        DISTINCT ekro.id,ekro.return_order_no,ekro.k3_customer_no,ekro.k3_customer_name,ekro.return_time,ekro.return_address,ekro.return_contacts,ekro.return_phone,ekro.return_mode,ekro.return_order_status,ekro.logistics_amount,ekro.service_amount,ekro.return_reason_type,ekro.data_status,ekro.remark,ekro.create_time,ekro.create_user,ekro.update_time,ekro.update_user,ekro.delivery_sub_company_id,success_status
+        FROM erp_k3_return_order ekro
+        INNER JOIN erp_k3_return_order_detail ekrod ON ekrod.return_order_id = ekro.id and ekrod.data_status = 1
+        <where>
+            <if test="maps.orderNo != null &amp;&amp; maps.orderNo != ''">
+                and ekrod.order_no = #{maps.orderNo}
+            </if>
+            <if test="maps.nowDate != null">
+                <![CDATA[ AND TO_DAYS(ekro.return_time) >= TO_DAYS(#{maps.nowDate}) ]]>
+            </if>
+            <if test="true">
+                AND ekro.data_status = 1
+            </if>
+        </where>
+        ORDER BY ekro.create_time DESC
+        ) m_order
+        LEFT JOIN erp_k3_return_order_detail ekrod ON m_order.id = ekrod.return_order_id and ekrod.data_status = 1
+        LEFT JOIN erp_sub_company esc on  m_order.delivery_sub_company_id=esc.id AND esc.data_status = 1
+        ORDER BY m_order.create_time DESC
+    </select>
+
     <select id="listByIds" resultMap="K3ReturnOrderDO" parameterType="java.util.Set">
         SELECT
         <include refid="column_List"/>

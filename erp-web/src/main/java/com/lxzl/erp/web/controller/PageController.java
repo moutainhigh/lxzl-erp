@@ -309,6 +309,12 @@ public class PageController extends BaseController {
         return "/orderManage/orderTestReletAdd";
     }
 
+    //变更单详情
+    @RequestMapping("/order-manage/change-rent-detail")
+    public String changeRentDetail() {
+        return "/orderManage/changeRentDetail";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
@@ -1300,6 +1306,17 @@ public class PageController extends BaseController {
     @RequestMapping("/order-manage/change-price")
     public String changePriceModal() {
         return "/component/order/changePriceModal";
+    }
+
+    //创建变更单
+    @RequestMapping("/order-manage/change-rent-create")
+    public String changeRentCreateModal() {
+        return "/component/order/changeRentCreateModal";
+    }
+    //创建变更单
+    @RequestMapping("/order-manage/change-rent-edit")
+    public String changeRentEditModal() {
+        return "/component/order/changeRentEditModal";
     }
 
     //确认换货

@@ -72,7 +72,7 @@
                             </label>
                         </td>
                         {{/hasCommonActionButtons}}
-                        <td>{{orderNo}}</td>
+                        <td>#*{{orderNo}}*#{{originalOrderNo}}</td>
                         <td>{{deliverySubCompanyName}}</td>
                         <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
                         <td>{{buyerCustomerName}}</td>

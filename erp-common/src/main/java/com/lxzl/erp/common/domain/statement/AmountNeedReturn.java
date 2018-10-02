@@ -1,9 +1,6 @@
 package com.lxzl.erp.common.domain.statement;
 
-import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIGlobalBinding;
-
-import java.math.BigDecimal;
+import com.lxzl.erp.common.util.BigDecimalUtil;import java.math.BigDecimal;
 
 /**
  * @author: huanglong
@@ -42,8 +39,9 @@ public class AmountNeedReturn {
         this.rentPaidAmount = rentPaidAmount;
         this.rentDepositPaidAmount = rentDepositPaidAmount;
     }
-
-    public BigDecimal getDepositPaidAmount() {
+    public BigDecimal getTotalAmount(){
+        return BigDecimalUtil.add(depositPaidAmount,otherPaidAmount,rentPaidAmount,overduePaidAmount,penaltyPaidAmount,rentDepositPaidAmount);
+    }    public BigDecimal getDepositPaidAmount() {
         return depositPaidAmount;
     }
 

@@ -160,7 +160,7 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                            <td>{{orderNo}}</td>
+                            <td>#*{{orderNo}}*#{{originalOrderNo}}</td>
                             <td>
                                 <p class="mn mb5">{{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}{{productName}}</p>  
                                 <p class="mn mw300">{{productSkuName}}</p> 
