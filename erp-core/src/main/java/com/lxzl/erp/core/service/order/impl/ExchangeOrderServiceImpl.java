@@ -552,13 +552,16 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
     //task自动任务生成订单
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void taskGeneratedOrder(){
+    public ServiceResult<String, String> taskGeneratedOrder(){
+        ServiceResult<String, String> result=new ServiceResult<>();
         //获取当前时间之前
         Date currentTime = new Date();
         List<ExchangeOrderDO> exchangeOrderDOList=exchangeOrderMapper.findByRentStartTime(currentTime);
         for (ExchangeOrderDO exchangeOrderDO:exchangeOrderDOList){
             generatedOrder(exchangeOrderDO.getExchangeOrderNo());
         }
+        result.setErrorCode(ErrorCode.SUCCESS);
+       return result;
     }
 
     /**

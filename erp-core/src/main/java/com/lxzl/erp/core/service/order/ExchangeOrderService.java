@@ -67,5 +67,5 @@ public interface ExchangeOrderService extends VerifyReceiver {
     /**
      * 定时任务处理变更单
      */
-    public void taskGeneratedOrder();
+    ServiceResult<String, String> taskGeneratedOrder();
 }
