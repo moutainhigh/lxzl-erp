@@ -630,6 +630,7 @@ public class StatementOrderSupport {
             statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(), subRentDepositAmount));
 
             statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositAmount(), subRentDepositAmount));
+            statementOrderDO.setStatementAmount(BigDecimalUtil.sub(statementOrderDO.getStatementAmount(), subRentDepositAmount));
         }
 
         if (isDepositNeedModify) {
@@ -648,6 +649,7 @@ public class StatementOrderSupport {
 
             statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(), subDepositAmount));
             statementOrderDO.setStatementDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementDepositAmount(), subDepositAmount));
+            statementOrderDO.setStatementAmount(BigDecimalUtil.sub(statementOrderDO.getStatementAmount(), subDepositAmount));
         }
 
         if(isRentDepositNeedModify||isDepositNeedModify){
