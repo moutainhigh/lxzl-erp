@@ -560,6 +560,11 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
+        //TODO 如果已转单，并且是原单。不允许重算
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsOriginalOrder())&&CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsExchangeOrder())){
+            result.setErrorCode(ErrorCode.HAS_EXCHANGE_ORDER);
+            return result;
+        }
         return reCreateOrderStatement(orderDO,statementDate,clearStatementDateSplitCfg,allowConfirmCustomer);
     }
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
