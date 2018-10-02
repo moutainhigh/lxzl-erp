@@ -731,6 +731,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             return result;
         }
         exchangeOrder.setRentStartTime(newRentStartTime);
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 
