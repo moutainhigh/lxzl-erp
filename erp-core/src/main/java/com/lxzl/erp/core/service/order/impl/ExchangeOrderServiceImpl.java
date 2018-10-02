@@ -3,29 +3,41 @@ package com.lxzl.erp.core.service.order.impl;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.ExchangeOrderCommitParam;
 import com.lxzl.erp.common.domain.order.pojo.*;
+import com.lxzl.erp.common.domain.product.pojo.Product;
+import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.statement.AmountNeedReturn;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.k3.K3Service;
+import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.order.ExchangeOrderService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderSupport;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
+import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
+import com.lxzl.se.common.exception.BusinessException;
+import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.secret.MD5Util;
 import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.BeanUtils;
@@ -463,8 +475,11 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
                 }
             }
         }
-        orderService.calculateOrderProductInfo(newOrderDO.getOrderProductDOList(), newOrderDO);
-        orderService.calculateOrderMaterialInfo(newOrderDO.getOrderMaterialDOList(), newOrderDO);
+        //计算价格，需要减去，多余的天数
+
+
+        this.calculateOrderProductInfo(newOrderDO.getOrderProductDOList(), newOrderDO);
+        this.calculateOrderMaterialInfo(newOrderDO.getOrderMaterialDOList(), newOrderDO);
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderMapper.save(newOrderDO);
         orderService.updateOrderConsignInfo(orderConsignInfoDO.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
@@ -638,6 +653,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         }
     }
 
+
     /**
      * 校验信息
      *
@@ -714,12 +730,214 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             result.setErrorCode(ErrorCode.EXCHANGE_ORDER_NO_EXPECT_RETURN_TIME);
             return result;
         }
-        result.setErrorCode(ErrorCode.SUCCESS);
+        exchangeOrder.setRentStartTime(newRentStartTime);
         return result;
     }
 
+
+    //TODO 重构
+    public void calculateOrderProductInfo(List<OrderProductDO> orderProductDOList, OrderDO orderDO) {
+        CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(orderDO.getBuyerCustomerId());
+        if (orderProductDOList != null && !orderProductDOList.isEmpty()) {
+            int productCount = 0;
+            // 商品租赁总额
+            BigDecimal productAmountTotal = new BigDecimal(0.0);
+            // 保险总额
+            BigDecimal totalInsuranceAmount = new BigDecimal(0.0);
+            // 设备该交押金总额
+            BigDecimal totalDepositAmount = new BigDecimal(0.0);
+            // 设备信用押金总额
+            BigDecimal totalCreditDepositAmount = new BigDecimal(0.0);
+            // 租赁押金总额
+            BigDecimal totalRentDepositAmount = new BigDecimal(0.0);
+            for (OrderProductDO orderProductDO : orderProductDOList) {
+                String skuName = "";
+                BigDecimal depositAmount = BigDecimal.ZERO;
+                BigDecimal creditDepositAmount = BigDecimal.ZERO;
+                BigDecimal rentDepositAmount = BigDecimal.ZERO;
+                BigDecimal skuPrice = BigDecimal.ZERO;
+                Product product = new Product();
+                if (!CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
+
+                    ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
+                    if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
+                        throw new BusinessException(productServiceResult.getErrorCode());
+                    }
+                    product = productServiceResult.getResult();
+                    orderProductDO.setProductName(product.getProductName());
+                    ProductSku productSku = CollectionUtil.isNotEmpty(product.getProductSkuList()) ? product.getProductSkuList().get(0) : null;
+                    if (productSku == null) {
+                        throw new BusinessException(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                    }
+                    skuPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? productSku.getNewSkuPrice() : productSku.getSkuPrice();
+                    skuName = productSku.getSkuName();
+                }
+
+                // 小于等于90天的,不走风控，大于90天的，走风控授信
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
+                    if (orderProductDO.getProductCount() > 0) {
+                        BigDecimal remainder = orderProductDO.getDepositAmount().divideAndRemainder(new BigDecimal(orderProductDO.getProductCount()))[1];
+                        if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
+                            throw new BusinessException(ErrorCode.ORDER_PRODUCT_DEPOSIT_ERROR);
+                        }
+                    }
+                    depositAmount = orderProductDO.getDepositAmount();
+                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
+                } else if (customerRiskManagementDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
+                    depositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(orderProductDO.getProductCount()));
+                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
+                } else {
+                    rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount()), 2), new BigDecimal(orderProductDO.getDepositCycle()));
+                    totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
+                    creditDepositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(orderProductDO.getProductCount()));
+                    totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
+                }
+                orderProductDO.setRentDepositAmount(rentDepositAmount);
+                orderProductDO.setDepositAmount(depositAmount);
+                orderProductDO.setCreditDepositAmount(creditDepositAmount);
+                orderProductDO.setProductSkuName(skuName);
+                //更改计算方式
+                BigDecimal productAmount = amountSupport.calculateRentAmount(orderDO.getRentStartTime(),orderDO.getExpectReturnTime(),orderProductDO.getProductUnitAmount(),orderProductDO.getProductCount());
+                orderProductDO.setProductAmount(productAmount);
+                orderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(product));
+                BigDecimal thisOrderProductInsuranceAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getInsuranceAmount(), new BigDecimal(orderProductDO.getRentTimeLength()), 2), new BigDecimal(orderProductDO.getProductCount()));
+                productCount += orderProductDO.getProductCount();
+                productAmountTotal = BigDecimalUtil.add(productAmountTotal, orderProductDO.getProductAmount());
+                totalInsuranceAmount = BigDecimalUtil.add(totalInsuranceAmount, thisOrderProductInsuranceAmount);
+            }
+            orderDO.setTotalRentDepositAmount(BigDecimalUtil.add(orderDO.getTotalRentDepositAmount(), totalRentDepositAmount));
+            orderDO.setTotalCreditDepositAmount(BigDecimalUtil.add(orderDO.getTotalCreditDepositAmount(), totalCreditDepositAmount));
+            orderDO.setTotalInsuranceAmount(BigDecimalUtil.add(orderDO.getTotalInsuranceAmount(), totalInsuranceAmount));
+            orderDO.setTotalDepositAmount(BigDecimalUtil.add(orderDO.getTotalDepositAmount(), totalDepositAmount));
+            orderDO.setTotalMustDepositAmount(BigDecimalUtil.add(orderDO.getTotalMustDepositAmount(), totalDepositAmount));
+            orderDO.setTotalProductDepositAmount(totalDepositAmount);
+            orderDO.setTotalProductCreditDepositAmount(totalCreditDepositAmount);
+            orderDO.setTotalProductRentDepositAmount(totalRentDepositAmount);
+            orderDO.setTotalProductCount(productCount);
+            orderDO.setTotalProductAmount(productAmountTotal);
+        } else {
+            orderDO.setTotalProductDepositAmount(BigDecimal.ZERO);
+            orderDO.setTotalProductCreditDepositAmount(BigDecimal.ZERO);
+            orderDO.setTotalProductRentDepositAmount(BigDecimal.ZERO);
+            orderDO.setTotalProductCount(CommonConstant.COMMON_ZERO);
+            orderDO.setTotalProductAmount(BigDecimal.ZERO);
+        }
+    }
+
+    public void calculateOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, OrderDO orderDO) {
+        CustomerRiskManagementDO customerRiskManagementDO = customerSupport.getCustomerRiskManagementDO(orderDO.getBuyerCustomerId());
+        if (orderMaterialDOList != null && !orderMaterialDOList.isEmpty()) {
+            int materialCount = 0;
+            // 商品租赁总额
+            BigDecimal materialAmountTotal = BigDecimal.ZERO;
+            // 保险总额
+            BigDecimal totalInsuranceAmount = BigDecimal.ZERO;
+            // 设备该交押金总额
+            BigDecimal totalDepositAmount = BigDecimal.ZERO;
+            // 设备信用押金总额
+            BigDecimal totalCreditDepositAmount = BigDecimal.ZERO;
+            // 租赁押金总额
+            BigDecimal totalRentDepositAmount = BigDecimal.ZERO;
+            BigDecimal materialPrice = BigDecimal.ZERO;
+            BigDecimal depositAmount = BigDecimal.ZERO;
+            BigDecimal creditDepositAmount = BigDecimal.ZERO;
+            BigDecimal rentDepositAmount = BigDecimal.ZERO;
+            String materialName = "";
+            Material material = new Material();
+            for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+                if (!CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
+                    ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
+                    if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
+                        throw new BusinessException(materialServiceResult.getErrorCode());
+                    }
+                    material = materialServiceResult.getResult();
+                    if (material == null) {
+                        throw new BusinessException(ErrorCode.MATERIAL_NOT_EXISTS);
+                    }
+                    orderMaterialDO.setMaterialName(material.getMaterialName());
+                    materialName = material.getMaterialName();
+                    materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ? material.getNewMaterialPrice() : material.getMaterialPrice();
+                }
+
+                // 小于等于90天的,不走风控，大于90天的，走风控授信
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
+                    if (orderMaterialDO.getMaterialCount() > 0) {
+                        BigDecimal remainder = orderMaterialDO.getDepositAmount().divideAndRemainder(new BigDecimal(orderMaterialDO.getMaterialCount()))[1];
+                        if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
+                            throw new BusinessException(ErrorCode.ORDER_MATERIAL_DEPOSIT_ERROR);
+                        }
+                    }
+
+                    depositAmount = orderMaterialDO.getDepositAmount();
+                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
+                } else if (customerRiskManagementDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
+                    depositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(orderMaterialDO.getMaterialCount()));
+                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
+                } else {
+                    if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), 2), new BigDecimal(orderMaterialDO.getDepositCycle()));
+                        totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
+                    } else {
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), 2), new BigDecimal(orderMaterialDO.getDepositCycle()));
+                        totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
+                    }
+
+                    MaterialTypeDO materialTypeDO = materialTypeMapper.findById(material.getMaterialType());
+                    if (materialTypeDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsMainMaterial())) {
+                        creditDepositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(orderMaterialDO.getMaterialCount()));
+                        totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
+                    }
+                }
+
+                orderMaterialDO.setRentDepositAmount(rentDepositAmount);
+                orderMaterialDO.setDepositAmount(depositAmount);
+                orderMaterialDO.setCreditDepositAmount(creditDepositAmount);
+                orderMaterialDO.setMaterialName(StringUtil.isBlank(materialName) ? orderMaterialDO.getMaterialName() : materialName);
+                //TODO 修改价格
+                BigDecimal materialAmount = amountSupport.calculateRentAmount(orderDO.getRentStartTime(),orderDO.getExpectReturnTime(),orderMaterialDO.getMaterialUnitAmount(),orderMaterialDO.getMaterialCount());
+                orderMaterialDO.setMaterialAmount(materialAmount);
+                orderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(material));
+                BigDecimal thisOrderMaterialInsuranceAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getInsuranceAmount(), new BigDecimal(orderMaterialDO.getRentTimeLength()), 2), new BigDecimal(orderMaterialDO.getMaterialCount()));
+                materialCount += orderMaterialDO.getMaterialCount();
+                materialAmountTotal = BigDecimalUtil.add(materialAmountTotal, orderMaterialDO.getMaterialAmount());
+                totalInsuranceAmount = BigDecimalUtil.add(totalInsuranceAmount, thisOrderMaterialInsuranceAmount);
+            }
+            orderDO.setTotalRentDepositAmount(BigDecimalUtil.add(orderDO.getTotalRentDepositAmount(), totalRentDepositAmount));
+            orderDO.setTotalCreditDepositAmount(BigDecimalUtil.add(orderDO.getTotalCreditDepositAmount(), totalCreditDepositAmount));
+            orderDO.setTotalInsuranceAmount(BigDecimalUtil.add(orderDO.getTotalInsuranceAmount(), totalInsuranceAmount));
+            orderDO.setTotalDepositAmount(BigDecimalUtil.add(orderDO.getTotalDepositAmount(), totalDepositAmount));
+            orderDO.setTotalMustDepositAmount(BigDecimalUtil.add(orderDO.getTotalMustDepositAmount(), totalDepositAmount));
+            orderDO.setTotalMaterialDepositAmount(totalDepositAmount);
+            orderDO.setTotalMaterialCreditDepositAmount(totalCreditDepositAmount);
+            orderDO.setTotalMaterialRentDepositAmount(totalRentDepositAmount);
+            orderDO.setTotalMaterialCount(materialCount);
+            orderDO.setTotalMaterialAmount(materialAmountTotal);
+        } else {
+            orderDO.setTotalMaterialDepositAmount(BigDecimal.ZERO);
+            orderDO.setTotalMaterialCreditDepositAmount(BigDecimal.ZERO);
+            orderDO.setTotalMaterialRentDepositAmount(BigDecimal.ZERO);
+            orderDO.setTotalMaterialCount(CommonConstant.COMMON_ZERO);
+            orderDO.setTotalMaterialAmount(BigDecimal.ZERO);
+        }
+    }
+
+    @Autowired
+    private AmountSupport amountSupport;
+
+    @Autowired
+    private CustomerSupport customerSupport;
+
+    @Autowired
+    private MaterialTypeMapper materialTypeMapper;
+
     @Autowired
     private StatementService statementService;
+
+    @Autowired
+    private MaterialService materialService;
+
+    @Autowired
+    private ProductService productService;
 
 
     @Autowired
