@@ -55,7 +55,7 @@ public interface ExchangeOrderService extends VerifyReceiver {
      * @param exchangerOrderNo
      * @return
      */
-    ServiceResult<String,String> generatedOrder(String exchangerOrderNo);
+    ServiceResult<String,String> generatedOrder(String exchangerOrderNo,Boolean isVerify);
 
     /**
      * 更新变更单

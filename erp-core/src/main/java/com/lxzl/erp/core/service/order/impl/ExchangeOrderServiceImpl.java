@@ -367,18 +367,21 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public synchronized ServiceResult<String, String> generatedOrder(String exchangerOrderNo) {
+    public synchronized ServiceResult<String, String> generatedOrder(String exchangerOrderNo,Boolean isVerify) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         ExchangeOrderDO exchangeOrderDO = exchangeOrderMapper.findByExchangeOrderNo(exchangerOrderNo);
-        if (null == exchangeOrderDO) {
-            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-            return result;
-        }
-        if (!(CommonConstant.DATA_STATUS_ENABLE.equals(exchangeOrderDO.getDataStatus()) && ExchangeOrderStatus.ORDER_STATUS_CONFIRM.equals(exchangeOrderDO.getStatus()))) {
-            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_STATUS_ERROR);
-            return result;
+        if(isVerify) {
+            if (null == exchangeOrderDO) {
+                result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                return result;
+            }
+
+            if (!(CommonConstant.DATA_STATUS_ENABLE.equals(exchangeOrderDO.getDataStatus()) && ExchangeOrderStatus.ORDER_STATUS_CONFIRM.equals(exchangeOrderDO.getStatus()))) {
+                result.setErrorCode(ErrorCode.EXCHANGE_ORDER_STATUS_ERROR);
+                return result;
+            }
         }
         exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_OK);
         exchangeOrderMapper.update(exchangeOrderDO);
@@ -579,7 +582,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         Date currentTime = new Date();
         List<ExchangeOrderDO> exchangeOrderDOList=exchangeOrderMapper.findByRentStartTime(currentTime);
         for (ExchangeOrderDO exchangeOrderDO:exchangeOrderDOList){
-            generatedOrder(exchangeOrderDO.getExchangeOrderNo());
+            generatedOrder(exchangeOrderDO.getExchangeOrderNo(),true);
         }
         result.setErrorCode(ErrorCode.SUCCESS);
        return result;
@@ -607,7 +610,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             if(exchangeOrderDO.getRentStartTime().compareTo(currentTime)<=0){
                 //比当前时间早，就自动触发生成订单
                 exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_OK);
-                this.generatedOrder(exchangeOrderDO.getExchangeOrderNo());
+                this.generatedOrder(exchangeOrderDO.getExchangeOrderNo(),false);
             }
         } else {
             exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_WAIT_COMMIT);
