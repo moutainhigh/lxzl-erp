@@ -53,7 +53,7 @@
 				AND eeo.data_status = 1
 			</if>
 			<if test="maps.orderNo != null">
-				AND eo.original_order_no= = #{maps.orderNo,jdbcType=VARCHAR}
+				AND eo.original_order_no = #{maps.orderNo,jdbcType=VARCHAR}
 			</if>
 			<if test="maps.orderQueryParam.createStartTime != null">
 				<![CDATA[ AND eeo.create_time >= #{maps.orderQueryParam.createStartTime} ]]>
@@ -72,7 +72,7 @@
 				AND eeo.data_status = 1
 			</if>
 			<if test="maps.orderNo != null">
-				AND eo.original_order_no= = #{maps.orderNo,jdbcType=VARCHAR}
+				AND eo.original_order_no = #{maps.orderNo,jdbcType=VARCHAR}
 			</if>
 			<if test="maps.orderQueryParam.createStartTime != null">
 				<![CDATA[ AND eeo.create_time >= #{maps.orderQueryParam.createStartTime} ]]>

@@ -315,7 +315,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", 0);
         maps.put("pageSize", 100);
-        maps.put("orderNo", orderNo);
+        maps.put("orderNo", originalOrderNo);
         maps.put("orderQueryParam", new HashMap<>());
         Integer count = exchangeOrderMapper.listCount(maps);
         List<ExchangeOrderDO> exchangeOrderDOList = exchangeOrderMapper.listPage(maps);
