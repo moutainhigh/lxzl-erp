@@ -530,6 +530,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
 
         //5、原订单结算单处理
         Map<String, AmountNeedReturn> oldAmountMap = statementOrderSupport.stopOldMonthRentOrder(nodeOrderNo, exchangeOrderDO.getRentStartTime());
+        //修正当前客户下所有结算单的开始结束时间
+        statementService.fixCustomerStatementOrderStatementTime(newOrderDO.getBuyerCustomerId());
         //6、新订单结算单处理
         String statementResult = statementOrderSupport.fillOldOrderAmountToNew(newOrderDO.getOrderNo(), oldAmountMap, orderItemUnionKeyMapping);
         if (!ErrorCode.SUCCESS.equals(statementResult)) {
@@ -686,6 +688,9 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         return result;
     }
 
+    @Autowired
+    private StatementService statementService;
+
 
     @Autowired
     private ReplaceOrderMapper replaceOrderMapper;
@@ -705,8 +710,6 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
     @Autowired
     private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
 
-    @Autowired
-    private StatementService statementService;
 
     @Autowired
     private OrderFlowMapper orderFlowMapper;
