@@ -589,7 +589,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         //审核通过
         if (verifyResult) {
             exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_CONFIRM);
-            if(exchangeOrderDO.getRentStartTime().compareTo(new Date())<=0){
+            if(exchangeOrderDO.getRentStartTime().compareTo(currentTime)<=0){
                 //比当前时间早，就自动触发生成订单
                 this.generatedOrder(exchangeOrderDO.getExchangeOrderNo());
                 exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_OK);
