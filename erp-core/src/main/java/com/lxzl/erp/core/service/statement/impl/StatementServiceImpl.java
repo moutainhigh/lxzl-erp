@@ -674,7 +674,8 @@ public class StatementServiceImpl implements StatementService {
      *
      * @param customerId
      */
-    private void fixCustomerStatementOrderStatementTime(Integer customerId) {
+    @Override
+    public void fixCustomerStatementOrderStatementTime(Integer customerId) {
         if (customerId == null) return;
         List<StatementOrderDO> customerStatementOrderList = statementOrderMapper.findByCustomerId(customerId);
         if (CollectionUtil.isEmpty(customerStatementOrderList)) return;

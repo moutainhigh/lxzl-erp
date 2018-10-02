@@ -323,4 +323,6 @@ public interface StatementService extends BaseService {
      */
     CheckStatementSummaryDTO sumStatementDetailAmountByCustomerNo(StatementOrderMonthQueryParam statementOrderMonthQueryParam);
 
+    void fixCustomerStatementOrderStatementTime(Integer customerId);
+
 }
