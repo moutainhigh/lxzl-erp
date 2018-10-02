@@ -360,14 +360,14 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         ExchangeOrderDO exchangeOrderDO = exchangeOrderMapper.findByExchangeOrderNo(exchangerOrderNo);
-//        if (null == exchangeOrderDO) {
-//            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-//            return result;
-//        }
-//        if (!(CommonConstant.DATA_STATUS_ENABLE.equals(exchangeOrderDO.getDataStatus()) && ExchangeOrderStatus.ORDER_STATUS_CONFIRM.equals(exchangeOrderDO.getStatus()))) {
-//            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_STATUS_ERROR);
-//            return result;
-//        }
+        if (null == exchangeOrderDO) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        if (!(CommonConstant.DATA_STATUS_ENABLE.equals(exchangeOrderDO.getDataStatus()) && ExchangeOrderStatus.ORDER_STATUS_CONFIRM.equals(exchangeOrderDO.getStatus()))) {
+            result.setErrorCode(ErrorCode.EXCHANGE_ORDER_STATUS_ERROR);
+            return result;
+        }
         exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_OK);
         exchangeOrderMapper.update(exchangeOrderDO);
         exchangeOrderDO.setExchangeOrderMaterialDOList(exchangeOrderMaterialMapper.findByExchangeOrderId(exchangeOrderDO.getId()));
