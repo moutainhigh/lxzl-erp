@@ -257,7 +257,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             return result;
         }
         String verifyMatters = "订单变更审核，审核变更单的生效时间，订单项的单价、租赁方案、支付方式";
-        exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_CONFIRM);
+        exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_VERIFYING);
         exchangeOrderMapper.update(exchangeOrderDO);
         ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_EXCHANGE_ORDER, orderNo, verifyUser, verifyMatters, commitRemark, exchangeOrderCommitParam.getImgIdList(), null);
         if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
