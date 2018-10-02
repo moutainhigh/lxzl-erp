@@ -606,8 +606,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
             exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_CONFIRM);
             if(exchangeOrderDO.getRentStartTime().compareTo(currentTime)<=0){
                 //比当前时间早，就自动触发生成订单
-                this.generatedOrder(exchangeOrderDO.getExchangeOrderNo());
                 exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_OK);
+                this.generatedOrder(exchangeOrderDO.getExchangeOrderNo());
             }
         } else {
             exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_WAIT_COMMIT);
@@ -733,6 +733,26 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         exchangeOrder.setRentStartTime(newRentStartTime);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    /**
+     * 更新原订单数据
+     */
+    private void originalOrder(OrderDO orderDO,BigDecimal newAmount,Date expectReturnTime){
+        BigDecimal productAmountTotal=BigDecimal.ZERO;
+        BigDecimal materialAmountTotal=BigDecimal.ZERO;
+        for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+            BigDecimal productAmount = amountSupport.calculateRentAmount(orderDO.getRentStartTime(),orderDO.getExpectReturnTime(),orderProductDO.getProductUnitAmount(),orderProductDO.getProductCount());
+            productAmountTotal=BigDecimalUtil.add(productAmountTotal,productAmount);
+        }
+        for (OrderMaterialDO orderMaterialDO:orderDO.getOrderMaterialDOList()) {
+            BigDecimal materialAmount = amountSupport.calculateRentAmount(orderDO.getRentStartTime(),orderDO.getExpectReturnTime(),orderMaterialDO.getMaterialUnitAmount(),orderMaterialDO.getMaterialCount());
+            materialAmountTotal=BigDecimalUtil.add(materialAmountTotal,materialAmount);
+        }
+        orderDO.setTotalProductAmount(productAmountTotal);
+        orderDO.setTotalMaterialAmount(materialAmountTotal);
+        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
+
     }
 
 
