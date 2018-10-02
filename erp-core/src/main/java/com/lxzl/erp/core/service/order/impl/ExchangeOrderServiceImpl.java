@@ -90,7 +90,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
                 //判断是否发生变更
                 if(!(exchangeOrderProductDO.getDepositCycle().equals(orderProductDO.getDepositCycle())&&
                         exchangeOrderProductDO.getPaymentCycle().equals(orderProductDO.getPaymentCycle())&&
-                        exchangeOrderProductDO.getPayMode().equals(orderProductDO.getPayMode()))){
+                        exchangeOrderProductDO.getPayMode().equals(orderProductDO.getPayMode())&&
+                        exchangeOrderProductDO.getProductUnitAmount().equals(orderProductDO.getProductUnitAmount()))){
                     isUpd=true;
                 }
                 exchangeOrderProductDOList.add(exchangeOrderProductDO);
@@ -116,7 +117,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
                 //判断是否发生变更
                 if(!(exchangeOrderMaterialDO.getDepositCycle().equals(orderMaterialDO.getDepositCycle())&&
                         exchangeOrderMaterialDO.getPaymentCycle().equals(orderMaterialDO.getPaymentCycle())&&
-                        exchangeOrderMaterialDO.getPayMode().equals(orderMaterialDO.getPayMode()))){
+                        exchangeOrderMaterialDO.getPayMode().equals(orderMaterialDO.getPayMode())&&
+                        exchangeOrderMaterialDO.getMaterialUnitAmount().equals(orderMaterialDO.getMaterialUnitAmount()))){
                     isUpd=true;
                 }
             }
@@ -319,6 +321,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> cancelExchangeOrder(String exchangerOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -546,20 +549,15 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         return result;
     }
 
-    private void updk3ReturnOrderProduct(List<K3ReturnOrderDO> k3ReturnOrderDOList, OrderProductDO orderProductDO, OrderMaterialDO orderMaterialDO, String orderNo) {
-        Integer orderItemId = null == orderProductDO ? orderMaterialDO.getTestMachineOrderMaterialId() : orderProductDO.getTestMachineOrderProductId();
-        for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOList) {
-            List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
-            for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList) {
-                if (k3ReturnOrderDetailDO.getOrderItemId().equals(orderItemId.toString())) {
-                    Date date = new Date();
-                    k3ReturnOrderDetailDO.setOrderNo(orderNo);
-                    k3ReturnOrderDetailDO.setOrderItemId(orderItemId.toString());
-                    k3ReturnOrderDetailDO.setUpdateTime(date);
-                    k3ReturnOrderDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                    k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
-                }
-            }
+    //task自动任务生成订单
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void taskGeneratedOrder(){
+        //获取当前时间之前
+        Date currentTime = new Date();
+        List<ExchangeOrderDO> exchangeOrderDOList=exchangeOrderMapper.findByRentStartTime(currentTime);
+        for (ExchangeOrderDO exchangeOrderDO:exchangeOrderDOList){
+            generatedOrder(exchangeOrderDO.getExchangeOrderNo());
         }
     }
 
@@ -571,6 +569,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
      * @return
      */
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
@@ -581,6 +580,11 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         //审核通过
         if (verifyResult) {
             exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_CONFIRM);
+            if(exchangeOrderDO.getRentStartTime().compareTo(new Date())<=0){
+                //比当前时间早，就自动触发生成订单
+                this.generatedOrder(exchangeOrderDO.getExchangeOrderNo());
+                exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_OK);
+            }
         } else {
             exchangeOrderDO.setStatus(ExchangeOrderStatus.ORDER_STATUS_WAIT_COMMIT);
         }
@@ -606,6 +610,23 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         orderFlowDO.setUpdateUser(userId);
         orderFlowDO.setUpdateTime(now);
         return orderFlowDO;
+    }
+
+    private void updk3ReturnOrderProduct(List<K3ReturnOrderDO> k3ReturnOrderDOList, OrderProductDO orderProductDO, OrderMaterialDO orderMaterialDO, String orderNo) {
+        Integer orderItemId = null == orderProductDO ? orderMaterialDO.getTestMachineOrderMaterialId() : orderProductDO.getTestMachineOrderProductId();
+        for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOList) {
+            List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
+            for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList) {
+                if (k3ReturnOrderDetailDO.getOrderItemId().equals(orderItemId.toString())) {
+                    Date date = new Date();
+                    k3ReturnOrderDetailDO.setOrderNo(orderNo);
+                    k3ReturnOrderDetailDO.setOrderItemId(orderItemId.toString());
+                    k3ReturnOrderDetailDO.setUpdateTime(date);
+                    k3ReturnOrderDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
+                }
+            }
+        }
     }
 
     /**
