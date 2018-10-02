@@ -367,7 +367,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> generatedOrder(String exchangerOrderNo) {
+    public synchronized ServiceResult<String, String> generatedOrder(String exchangerOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
