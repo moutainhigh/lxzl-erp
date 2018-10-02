@@ -531,7 +531,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         Order order = ConverterUtil.convert(newOrderDO, Order.class);
         order.setTestMachineOrderNo(nodeOrderNo);
         //TODO 开启K3
-        //k3Service.testMachineOrderTurnRentOrder(order);
+        k3Service.testMachineOrderTurnRentOrder(order);
 
         //4、转移退货
         Map<String, Object> maps = new HashMap<>();
