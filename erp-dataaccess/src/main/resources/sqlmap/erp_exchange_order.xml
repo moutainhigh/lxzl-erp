@@ -46,13 +46,14 @@
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(eeo.id) FROM erp_exchange_order eeo 
+		SELECT count(eeo.id) FROM erp_exchange_order eeo
+		INNER JOIN erp_order AS eo ON eo.order_no=eeo.order_no
 		<where>
 			<if test="true">
 				AND eeo.data_status = 1
 			</if>
 			<if test="maps.orderNo != null">
-				AND order_no = #{maps.orderNo,jdbcType=VARCHAR}
+				AND eo.original_order_no= = #{maps.orderNo,jdbcType=VARCHAR}
 			</if>
 			<if test="maps.orderQueryParam.createStartTime != null">
 				<![CDATA[ AND eeo.create_time >= #{maps.orderQueryParam.createStartTime} ]]>
@@ -64,13 +65,14 @@
 	</select>
 
 	<select id="listPage" resultMap="ExchangeOrderDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_exchange_order eeo 
+		SELECT <include refid="column_List"/> FROM erp_exchange_order eeo
+		INNER JOIN erp_order AS eo ON eo.order_no=eeo.order_no
 		<where>
 			<if test="true">
 				AND eeo.data_status = 1
 			</if>
 			<if test="maps.orderNo != null">
-				AND order_no = #{maps.orderNo,jdbcType=VARCHAR}
+				AND eo.original_order_no= = #{maps.orderNo,jdbcType=VARCHAR}
 			</if>
 			<if test="maps.orderQueryParam.createStartTime != null">
 				<![CDATA[ AND eeo.create_time >= #{maps.orderQueryParam.createStartTime} ]]>
