@@ -1,13 +1,13 @@
 package com.lxzl.erp.common.domain.order.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.domain.base.BasePO;
 import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderFlow extends BasePO {
-
 	private Integer orderFlowId;   //
 	private String originalOrderNo;   //原订单号
 	private String nodeOrderNo;   //节点订单

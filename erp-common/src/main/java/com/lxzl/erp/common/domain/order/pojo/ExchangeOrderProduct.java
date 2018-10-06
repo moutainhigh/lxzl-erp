@@ -23,6 +23,16 @@ public class ExchangeOrderProduct extends BasePO {
 	private Integer paymentCycle;
 	private Integer payMode;
 
+	private OrderProduct orderProduct;//商品项
+
+	public OrderProduct getOrderProduct() {
+		return orderProduct;
+	}
+
+	public void setOrderProduct(OrderProduct orderProduct) {
+		this.orderProduct = orderProduct;
+	}
+
 	public Integer getDepositCycle() {
 		return depositCycle;
 	}

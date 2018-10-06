@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-订单管理-订单列表-变更详细</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/viewer/viewer.min.css">
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+            #parse("component/loading.vm")
+            <form class="" id="orderDetailForm">
+                <div class="panel panel-primary panel-border top mb15">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>变更单编号：
+                                    <span id="spanIsK3Order" class="label label-dark hide" title="K3订单">K3</span>
+                                    <small id="orderNo"></small>
+                                </h5>
+                            </div>
+                            <div class="col-md-8 text-right">
+                                <script type="text/html" id="actionButtonsTpl">
+                                    {{#acitonButtons}}
+                                    <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" class="btn btn-primary btn-sm ml5 bradius {{class}}"
+                                    title="{{menuName}}" data-orderno="{{orderNo}}" data-canrelet="{{canReletOrder}}" data-istest="{{isTestMachineOrder}}">
+                                    <i class="{{iClass}}"></i> {{text}}
+                                    </a>
+                                    {{/acitonButtons}}
+                                </script>
+                                <div class="btn-group" id="actionButtons"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div id="orderBaseInfo"></div>
+                        <script type="text/html" id="orderBaseInfoTpl">
+                            {{#order}}
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal dl-horizontal-rental">
+                                        {{#originalOrder}}
+                                        <dt><label>原订单号</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5"><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></dd>
+                                        <dt><label>发货公司</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5">{{deliverySubCompanyName}}</dd>
+                                        {{/originalOrder}}
+                                        <dt><label>变更备注</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5">{{remark}}&nbsp;</dd>
+                                    </dl>
+                                </div>
+                                {{#originalOrder}}
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal dl-horizontal-rental">
+                                        <dt><label>客户编号</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5"><a href="{{customerUrl}}" target="_blank">{{buyerCustomerNo}}</a>&nbsp;</dd>
+
+                                        <dt><label>客户名称</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5"><a href="{{customerUrl}}" target="_blank">{{buyerCustomerName}}</a>&nbsp;</dd>
+
+                                    </dl>
+                                </div>
+                                {{/originalOrder}}
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal dl-horizontal-rental">
+                                        {{#originalOrder}}
+                                        <dt><label>创建时间</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}&nbsp;</dd>
+                                        {{/originalOrder}}
+                                        <dt><label>变更生效时间</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5">{{#clockMonthTime}}{{rentStartTime}}{{/clockMonthTime}}&nbsp;</dd>
+                                    </dl>
+                                </div>
+
+                            </div>
+                            {{/order}}
+                        </script>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs" id="modalList">
+                                <li class="active">
+                                    <a href="#orderProductList" data-toggle="tab">商品项（共<span id="orderProductListCount">0</span>件）</a>
+                                </li>
+                                <li>
+                                    <a href="#orderMaterialList" data-toggle="tab">配件项（共<span id="orderMaterialListCount">0</span>件）</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="panel-body light pn">
+                        <div class="tab-content pn br-n">
+                            <div id="orderProductList" class="tab-pane tab-pane-order active">
+                                <div class="table-responsive">
+                                    <script type="text/html" id="orderProductListTpl">
+                                        <thead>
+                                        <tr class="bg-light">
+                                            <th>商品名称</th>
+                                            <th>类别</th>
+                                            <th>品牌</th>
+                                            <th>商品参数（SKU）</th>
+                                            <th>商品保值价</th>
+                                            <th class="nowrap text-center">商品数量</th>
+                                            <th>在租数量</th>
+                                            <th class="nowrap">原单价</th>
+                                            <th class="nowrap">变更后单价</th>
+                                            <th class="nowrap">原支付方式</th>
+                                            <th class="nowrap">变更后支付方式</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr class="productRow" data-amount="{{productUnitAmount}}" data-id="{{orderProductId}}">
+                                            <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
+                                            <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+                                            <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                                            <td>#*{{propertiesToStr}}*# {{productSkuName}}</td>
+                                            <td>￥{{currentSkuPrice}}</td>
+                                            <td class="text-center">{{#orderProduct}}{{productCount}}{{/orderProduct}}</td>
+                                            <td>{{#orderProduct}}{{rentingProductCount}}{{/orderProduct}}</td>
+                                            <td>
+                                                ￥{{#price}}{{oldProductUnitAmount}}{{/price}}
+                                            </td>
+                                            <td>
+                                                ￥{{#price}}{{productUnitAmount}}{{/price}}
+                                            </td>
+                                            <td>
+                                                {{#orderProduct}}
+                                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                                <p>{{payModeValue}}</p>
+                                                {{/orderProduct}}
+                                            </td>
+                                            <td>
+                                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                                <p>{{payModeValue}}</p>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="10" class="text-center">无商品项</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="orderProductListTable"></table>
+                                </div>
+                            </div>
+
+                            <div id="orderMaterialList" class="tab-pane tab-pane-order">
+                                <div class="table-responsive">
+                                    <script type="text/html" id="orderMaterialListTpl">
+                                        <thead>
+                                        <tr>
+                                            <th>配件名称</th>
+                                            <th>品牌</th>
+                                            <th>类型</th>
+                                            <th>配件保值价</th>
+                                            <th class="text-center">配件数量</th>
+                                            <th>在租数量</th>
+                                            <th class="nowrap">原单价</th>
+                                            <th class="nowrap">变更后单价</th>
+                                            <th class="nowrap">原支付方式</th>
+                                            <th class="nowrap">变更后支付方式</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr class="materialRow" data-amount="{{materialUnitAmount}}" data-id="{{orderMaterialId}}">
+                                            <td>
+                                                {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
+                                                {{materialName}}
+                                            </td>
+                                            <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
+                                            <td>{{materialTypeStr}}</td>
+                                            <td>￥{{currentMaterialPrice}}</td>
+                                            <td class="text-center">{{#orderMaterial}}{{materialCount}}{{/orderMaterial}}</td>
+                                            <td>{{#orderMaterial}}{{rentingMaterialCount}}{{/orderMaterial}}</td>
+                                            <td>
+                                                ￥{{#price}}{{oldMaterialUnitAmount}}{{/price}}
+                                            </td>
+                                            <td>
+                                                ￥{{#price}}{{materialUnitAmount}}{{/price}}
+                                            </td>
+                                            <td>
+                                                {{#orderMaterial}}
+                                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                                <p>{{payModeValue}}</p>
+                                                {{/orderMaterial}}
+                                            </td>
+                                            <td>
+                                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                                <p>{{payModeValue}}</p>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="9" class="text-center">无配件项</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="orderMaterialListTable"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer clearfix">
+                        <button class="btn btn-default pull-right ml15 goBack">返回</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </section>
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+
+<script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.jq.js"></script>
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js',
+            'api.data.js',
+            'manage.order.mixin.js',
+            'manage.order.handle.mixin.js',
+            'manage.order.detail.js',
+            'manage.order.item.render.js',
+            'manage.order.util.js',
+            'modal.input.js',
+            'manage.order.change.rent.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+
+    ChangeRent.detail.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+</script>
+</body>
+</html>

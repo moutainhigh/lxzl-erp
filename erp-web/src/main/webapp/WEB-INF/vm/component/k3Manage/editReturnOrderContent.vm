@@ -175,7 +175,7 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                            <td>{{orderNo}}</td>
+                            <td>#*{{orderNo}}*#{{originalOrderNo}}</td>
                             <td>{{deliverySubCompanyName}}</td>
                             <td>{{productNo}}</td>
                             <td>{{productName}}</td>

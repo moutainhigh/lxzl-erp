@@ -127,6 +127,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
         //校验订单编号
         OrderDO orderDO = orderMapper.findByOrderNo(replaceOrderDO.getOrderNo());
+        //TODO 补充订单编号
+        replaceOrderDO.setOriginalOrderNo(orderDO.getOriginalOrderNo());
         if (orderDO == null) {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
@@ -477,6 +479,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
         //校验订单编号
         OrderDO orderDO = orderMapper.findByOrderNo(replaceOrderDO.getOrderNo());
+        //TODO 补充订单编号
+        replaceOrderDO.setOriginalOrderNo(orderDO.getOriginalOrderNo());
         if (orderDO == null) {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
@@ -791,6 +795,9 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     public ServiceResult<String, Page<ReplaceOrder>> queryAllReplaceOrder(ReplaceOrderQueryParam param) {
         ServiceResult<String, Page<ReplaceOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(param.getPageNo(), param.getPageSize());
+        //TODO 临时处理，前端没时间开发
+        param.setOriginalOrderNo(param.getOrderNo());
+        param.setOrderNo(null);
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -1102,11 +1109,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             result.setResult(replaceOrderDO.getReletOrderNo());
         }
         // TODO: 2018\9\19 0019 发送换货单信息到K3
-//        ServiceResult<String, String> k3ServiceResult = sendReplaceOrderInfoToK3(replaceOrderDO.getReplaceOrderNo());
-//        if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
-//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//            result.setErrorCode(k3ServiceResult.getErrorCode(), k3ServiceResult.getFormatArgs());
-//        }
+        ServiceResult<String, String> k3ServiceResult = sendReplaceOrderInfoToK3(replaceOrderDO.getReplaceOrderNo());
+        if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            result.setErrorCode(k3ServiceResult.getErrorCode(), k3ServiceResult.getFormatArgs());
+        }
 
         return result;
     }
@@ -1295,11 +1302,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             replaceOrderDO.setUpdateTime(now);
             replaceOrderMapper.update(replaceOrderDO);
             // TODO: 2018\9\15 0015 发送数据到K3
-//            result = sendReplaceOrderInfoToK3(replaceOrderDO.getReplaceOrderNo());
-//            if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
-//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//                result.setErrorCode(result.getErrorCode(), result.getFormatArgs());
-//            }
+            result = sendReplaceOrderInfoToK3(replaceOrderDO.getReplaceOrderNo());
+            if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                result.setErrorCode(result.getErrorCode(), result.getFormatArgs());
+            }
             return result;
         }
     }
@@ -1410,6 +1417,9 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     public ServiceResult<String,  Page<ReplaceOrder>> queryReplaceOrderListForOrderNo(ReplaceOrderQueryParam param) {
         ServiceResult<String, Page<ReplaceOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(param.getPageNo(), param.getPageSize());
+        //TODO 后端转换原订单号。
+        param.setOriginalOrderNo(param.getOrderNo());
+        param.setOrderNo(null);
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -1438,11 +1448,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
                 if (verifyResult) {
                     replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_PROCESSING);
                     replaceOrderMapper.update(replaceOrderDO);
-//                    ServiceResult result = sendReplaceOrderInfoToK3(replaceOrderDO.getReplaceOrderNo());
-//                    if (!ErrorCode.SUCCESS.equals(result.getErrorCode().toString())) {
-//                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//                        return result.getErrorCode().toString();
-//                    }
+                    ServiceResult result = sendReplaceOrderInfoToK3(replaceOrderDO.getReplaceOrderNo());
+                    if (!ErrorCode.SUCCESS.equals(result.getErrorCode().toString())) {
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        return result.getErrorCode().toString();
+                    }
 
                 } else {
                     replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_BACKED);

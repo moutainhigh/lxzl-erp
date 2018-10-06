@@ -100,7 +100,7 @@ public class WorkflowSupport {
                 }
             }
         } else if (WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)||WorkflowType.WORKFLOW_TYPE_EXCHANGE_ORDER.equals(workflowType)) {
-            if (CommonConstant.WORKFLOW_STEP_TWO.equals(workflowNodeDO.getWorkflowStep())) {
+            if (CommonConstant.WORKFLOW_STEP_TWO.equals(workflowNodeDO.getWorkflowStep())&&WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)) {
                 OrderDO orderDO = orderMapper.findByOrderNo(workflowReferNo);
                 if (orderDO != null) {
                     subCompanyId = orderDO.getDeliverySubCompanyId();

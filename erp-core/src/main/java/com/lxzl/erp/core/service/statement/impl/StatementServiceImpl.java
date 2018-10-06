@@ -560,6 +560,11 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
+        //TODO 如果已转单，并且是原单。不允许重算
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsOriginalOrder())&&CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsExchangeOrder())){
+            result.setErrorCode(ErrorCode.HAS_EXCHANGE_ORDER);
+            return result;
+        }
         return reCreateOrderStatement(orderDO,statementDate,clearStatementDateSplitCfg,allowConfirmCustomer);
     }
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -674,7 +679,8 @@ public class StatementServiceImpl implements StatementService {
      *
      * @param customerId
      */
-    private void fixCustomerStatementOrderStatementTime(Integer customerId) {
+    @Override
+    public void fixCustomerStatementOrderStatementTime(Integer customerId) {
         if (customerId == null) return;
         List<StatementOrderDO> customerStatementOrderList = statementOrderMapper.findByCustomerId(customerId);
         if (CollectionUtil.isEmpty(customerStatementOrderList)) return;
@@ -1588,6 +1594,22 @@ public class StatementServiceImpl implements StatementService {
             for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
                 statementOrderIdList.add(statementOrderDetailDO.getStatementOrderId());
             }
+
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsOriginalOrder()) &&
+                    CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsExchangeOrder())){
+                //获取转单列表
+                List<OrderFlowDO> orderFlowDOList = orderFlowMapper.findByOriginalOrderNo(orderDO.getOrderNo());
+                if (CollectionUtil.isNotEmpty(orderFlowDOList)){
+                    //查询原单转单过的所有订单的结算单
+                    List<StatementOrderDetailDO> statementExchangeOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndOrderNoList(OrderType.ORDER_TYPE_ORDER, orderFlowDOList);
+                    if (CollectionUtil.isNotEmpty(statementExchangeOrderDetailDOList)){
+
+                        for (StatementOrderDetailDO statementExchangeOrderDetailDO : statementExchangeOrderDetailDOList) {
+                            statementOrderIdList.add(statementExchangeOrderDetailDO.getStatementOrderId());
+                        }
+                    }
+                }
+            }
             maps.put("statementOrderIdList", statementOrderIdList);
         }
 
@@ -1835,24 +1857,21 @@ public class StatementServiceImpl implements StatementService {
         //存放退货结算单商品、配件项
         Map<Integer, List<StatementOrderDetail>> returnOrderProudctAndMaterialMap = new HashMap<>();
         for (StatementOrderDetail statementOrderDetail : statementOrderDetailList) {
-            if(OrderType.ORDER_TYPE_REPLACE.equals(statementOrderDetail.getOrderType())){
-                allList.add(statementOrderDetail);
-                continue;
-            }
-            if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
+            //是否订单或换货单商品项结算
+            boolean isOrderItem=OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())||(OrderType.ORDER_TYPE_REPLACE.equals(statementOrderDetail.getOrderType())&&statementOrderDetail.getReturnReferId()==null);
+            boolean isReturnItem=!isOrderItem&&statementOrderDetail.getReturnReferId()!=null;
+            if(isOrderItem){
                 notReturnOrderMap.put(statementOrderDetail.getStatementOrderDetailId(), statementOrderDetail);
-            } else {
-                if (null == statementOrderDetail.getReturnReferId()) {
-                    returnOrderOtherList.add(statementOrderDetail);
+            }else if(isReturnItem){
+                if (returnOrderProudctAndMaterialMap.containsKey(statementOrderDetail.getReturnReferId())) {
+                    returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId()).add(statementOrderDetail);
                 } else {
-                    if (null != returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId())) {
-                        returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId()).add(statementOrderDetail);
-                    } else {
-                        List<StatementOrderDetail> returnOrderProudctAndMaterialList = new ArrayList<>();
-                        returnOrderProudctAndMaterialList.add(statementOrderDetail);
-                        returnOrderProudctAndMaterialMap.put(statementOrderDetail.getReturnReferId(), returnOrderProudctAndMaterialList);
-                    }
+                    List<StatementOrderDetail> returnOrderProudctAndMaterialList = new ArrayList<>();
+                    returnOrderProudctAndMaterialList.add(statementOrderDetail);
+                    returnOrderProudctAndMaterialMap.put(statementOrderDetail.getReturnReferId(), returnOrderProudctAndMaterialList);
                 }
+            }else{
+                returnOrderOtherList.add(statementOrderDetail);
             }
         }
         if (CollectionUtil.isNotEmpty(returnOrderOtherList)) {
@@ -8377,4 +8396,8 @@ public class StatementServiceImpl implements StatementService {
     private ReplaceOrderMaterialMapper replaceOrderMaterialMapper;
     @Autowired
     private ReplaceOrderProductMapper replaceOrderProductMapper;
+
+    @Autowired
+    private OrderFlowMapper orderFlowMapper;
+
 }

@@ -650,6 +650,7 @@
             </if>
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
+                AND eo.is_exchange_order = 0
             </if>
             <include refid="permission_sql.order_control"/>
         </where>
@@ -808,6 +809,7 @@
             </if>
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
+                AND eo.is_exchange_order = 0
             </if>
             <include refid="permission_sql.order_control"/>
         </where>
@@ -1076,6 +1078,11 @@
 
         UPDATE erp_order SET  first_need_pay_amount = 0
         where order_no = #{orderNo, jdbcType=VARCHAR};
+    </update>
+
+    <update id="updateIsExchangeOrder" parameterType="java.lang.Integer">
+        UPDATE erp_order SET  is_exchange_order = 1
+        where id = #{id, jdbcType=INTEGER};
     </update>
 
     <update id="updateOrderMaterialPriceList" parameterType="java.util.ArrayList">

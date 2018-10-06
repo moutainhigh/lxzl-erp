@@ -97,7 +97,7 @@
 	</insert>
 
 	<insert id="saveList" parameterType="java.util.List">
-		INSERT INTO erp_exchange_order_product (exchange_order_id,order_product_id,product_name,product_sku_id,product_sku_name,product_unit_amount,old_product_unit_amount,is_new_product,data_status)
+		INSERT INTO erp_exchange_order_product (exchange_order_id,order_product_id,product_name,product_sku_id,product_sku_name,product_unit_amount,old_product_unit_amount,is_new_product,data_status,deposit_cycle,payment_cycle,pay_mode)
 		values
 		<foreach collection="list" item="item" separator=",">
 			(#{item.exchangeOrderId},
@@ -117,5 +117,38 @@
 	</insert>
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.order.ExchangeOrderProductDO">
 		UPDATE erp_exchange_order_product <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<update id="updateList">
+		UPDATE erp_exchange_order_product eeop
+		SET
+		<trim>
+			eeop.deposit_cycle =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.depositCycle}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			eeop.payment_cycle =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.paymentCycle,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			eeop.pay_mode =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.payMode,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+        <trim prefix=",">
+            eeop.product_unit_amount =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.productUnitAmount}
+            </foreach>
+        </trim>
+		WHERE eeop.id IN
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.id,jdbcType=INTEGER}
+		</foreach>
 	</update>
 </mapper>

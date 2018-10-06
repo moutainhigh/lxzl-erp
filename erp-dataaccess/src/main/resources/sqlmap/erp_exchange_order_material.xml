@@ -93,7 +93,7 @@
 	</insert>
 
 	<insert id="saveList" parameterType="java.util.List">
-		INSERT INTO erp_exchange_order_material (exchange_order_id,order_product_id,material_id,material_name,material_unit_amount,old_material_unit_amount,is_new_material,data_status)
+		INSERT INTO erp_exchange_order_material (exchange_order_id,order_product_id,material_id,material_name,material_unit_amount,old_material_unit_amount,is_new_material,data_status,deposit_cycle,payment_cycle,pay_mode)
 		values
 		<foreach collection="list" item="item" separator=",">
 			(#{item.exchangeOrderId},
@@ -114,4 +114,38 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.order.ExchangeOrderMaterialDO">
 		UPDATE erp_exchange_order_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<update id="updateList">
+		UPDATE erp_exchange_order_material eeom
+		SET
+		<trim>
+			eeom.deposit_cycle =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.depositCycle}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			eeom.payment_cycle =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.paymentCycle}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			eeom.pay_mode =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.payMode}
+			</foreach>
+		</trim>
+        <trim prefix=",">
+            eeom.material_unit_amount =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.materialUnitAmount}
+            </foreach>
+        </trim>
+		WHERE eeom.id IN
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+
 </mapper>

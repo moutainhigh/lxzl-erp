@@ -1,7 +1,9 @@
 package com.lxzl.erp.dataaccess.dao.mysql.order;
 
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
-import com.lxzl.erp.dataaccess.domain.order.ExchangeOrderProductDO;import org.apache.ibatis.annotations.Param;
+import com.lxzl.erp.dataaccess.domain.order.ExchangeOrderProductDO;
+import com.lxzl.se.dataaccess.mysql.config.FilterRule;
+import org.apache.ibatis.annotations.Param;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
@@ -26,4 +28,11 @@ public interface ExchangeOrderProductMapper extends BaseMysqlDAO<ExchangeOrderPr
 	 * @return
 	 */
 	List<ExchangeOrderProductDO> findByExchangeOrderId(@Param("exchangeOrderId") Integer exchangeOrderId );
+
+	/**
+	 * 批量更新
+	 * @param list
+	 * @return
+	 */
+	Integer updateList(@Param("list")List<ExchangeOrderProductDO> list);
 }

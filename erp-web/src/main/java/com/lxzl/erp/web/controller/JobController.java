@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.job.AutomaticUnknownBankSlipDetailRequestParam
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.bank.BankSlipService;
+import com.lxzl.erp.core.service.order.ExchangeOrderService;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.Job.JobService;
@@ -73,6 +74,20 @@ public class JobController {
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 
+    /**
+     * 生成结算单
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "automaticExchangeOrder",method = RequestMethod.POST)
+    public Result automaticExchangeOrder( HttpServletRequest request){
+        ServiceResult<String,String> serviceResult =  exchangeOrderService.taskGeneratedOrder();
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+
+    @Autowired
+    private ExchangeOrderService exchangeOrderService;
     @Autowired
     private JobService jobService;
     @Autowired

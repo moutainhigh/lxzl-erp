@@ -151,7 +151,7 @@
 ##                                                    <span class="checkbox mn"></span>
 ##                                                </label>
 ##                                            </td>
-                                            <td><a href="{{orderDetailUrl}}" target="_blank">{{orderNo}}</a></td>
+                                            <td><a href="{{orderDetailUrl}}" target="_blank">#*{{orderNo}}*#{{originalOrderNo}}</a></td>
                                             <td>{{productNo}}</td>
                                             <td>{{productName}}</td>
                                             <td>{{propertiesToStr}}</td>

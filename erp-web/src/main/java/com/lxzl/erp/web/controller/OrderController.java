@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.lxzl.se.common.domain.Result;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
@@ -289,7 +290,7 @@ public class OrderController extends BaseController {
     }
 
     /**
-     * 取消变更单
+     * 手动触发变更单单
      *
      * @param exchangeOrderParam
      * @param validResult
@@ -297,9 +298,22 @@ public class OrderController extends BaseController {
      */
     @RequestMapping(value = "generatedOrder", method = RequestMethod.POST)
     public Result generatedOrder(@RequestBody ExchangeOrderParam exchangeOrderParam, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = exchangeOrderService.generatedOrder(exchangeOrderParam.getExchangeOrderNo());
+        ServiceResult<String, String> serviceResult = exchangeOrderService.generatedOrder(exchangeOrderParam.getExchangeOrderNo(),true);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+    /**
+     * 修改变更单
+     *
+     * @param exchangeOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "updateExchangeOrder", method = RequestMethod.POST)
+    public Result updateExchangeOrder(@RequestBody ExchangeOrder exchangeOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = exchangeOrderService.updateExchangeOrder(exchangeOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 
     @Autowired
     private ResultGenerator resultGenerator;
