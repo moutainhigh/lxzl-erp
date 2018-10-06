@@ -783,7 +783,11 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
     }
 
     private void setStatementOrderData(BaseCheckStatementDetailDTO checkStatementDetailDTO, Order order, boolean isInitStatementData) {
-        checkStatementDetailDTO.setOrderNo(order.getOrderNo());
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(order.getIsOriginalOrder())){
+            checkStatementDetailDTO.setOrderNo(order.getOrderNo());
+        }else {
+            checkStatementDetailDTO.setOrderNo(order.getOriginalOrderNo());
+        }
         checkStatementDetailDTO.setOrderOriginalId(order.getOrderId());
         checkStatementDetailDTO.setOrderRentStartTime(order.getRentStartTime());
         checkStatementDetailDTO.setOrderExpectReturnTime(order.getExpectReturnTime());
