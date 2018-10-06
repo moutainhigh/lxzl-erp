@@ -1784,6 +1784,7 @@
             AND esod.statement_detail_status = #{queryParam.statementDetailStatus}
         </if>
         AND esod.statement_start_time <![CDATA[ < ]]> #{queryParam.statementOrderStartTime}
+        AND esod.data_status = 1
     </select>
 
     <select id="findByOrderTypeAndSourceId" resultMap="StatementOrderDetailDO">

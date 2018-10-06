@@ -7475,7 +7475,7 @@ public class StatementServiceImpl implements StatementService {
 
     @Override
     public CheckStatementSummaryDTO sumStatementDetailAmountByCustomerNo(StatementOrderMonthQueryParam statementOrderMonthQueryParam) {
-        CheckStatementSummaryDTO statementSummaryDTO = statementOrderDetailMapper.sumStatementDetailAmountByCustomerNo(statementOrderMonthQueryParam);
+        CheckStatementSummaryDTO statementSummaryDTO = statementOrderMapper.sumStatementDetailAmountByCustomerNo(statementOrderMonthQueryParam);
         if (statementSummaryDTO == null) {
             return new CheckStatementSummaryDTO();
         }

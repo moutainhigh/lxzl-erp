@@ -1,5 +1,7 @@
 package com.lxzl.erp.dataaccess.dao.mysql.statement;
 
+import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
+import com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementSummaryDTO;
 import com.lxzl.erp.dataaccess.domain.statement.CheckStatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
@@ -37,4 +39,6 @@ public interface StatementOrderMapper extends BaseMysqlDAO<StatementOrderDO> {
     void realDeleteStatementOrderList(List<StatementOrderDO> statementOrderDOList);
 
     List<CheckStatementOrderDO> exportListMonthPage(@Param("maps") Map<String, Object> paramMap);
+
+    CheckStatementSummaryDTO sumStatementDetailAmountByCustomerNo(@Param(value = "queryParam") StatementOrderMonthQueryParam queryParam);
 }

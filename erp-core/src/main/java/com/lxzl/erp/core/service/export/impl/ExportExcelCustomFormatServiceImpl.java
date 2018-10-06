@@ -14,6 +14,7 @@ import com.lxzl.erp.common.domain.replace.pojo.*;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.dto.*;
 import com.lxzl.erp.common.domain.statement.pojo.dto.rent.CheckStatementDetailRentProductDTO;
+import com.lxzl.erp.common.domain.statement.pojo.dto.replaceRent.CheckStatementDetailReplaceOtherDTO;
 import com.lxzl.erp.common.domain.statement.pojo.dto.replaceRent.CheckStatementDetailUnReplaceProductDTO;
 import com.lxzl.erp.common.domain.statement.pojo.dto.unrent.*;
 import com.lxzl.erp.common.util.*;
@@ -1110,7 +1111,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         List<BaseCheckStatementDetailDTO> notOtherUnRentDetailDTO = new ArrayList<>();
         List<BaseCheckStatementDetailDTO> otherUnRentDetailDTO = new ArrayList<>();
         for (BaseCheckStatementDetailDTO detailDTO : checkStatementStatisticsDTOS) {
-            if (detailDTO instanceof CheckStatementDetailUnRentOtherDTO) {
+            if (detailDTO instanceof CheckStatementDetailUnRentOtherDTO || detailDTO instanceof CheckStatementDetailReplaceOtherDTO) {
                 otherUnRentDetailDTO.add(detailDTO);
             } else {
                 notOtherUnRentDetailDTO.add(detailDTO);
@@ -1132,8 +1133,11 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 int i = o1.getOrderOriginalId() - o2.getOrderOriginalId();
                 if (i == 0) {
                     // 按照原始订单项id排序
-                    return o1.getSortItemType() - o2.getSortItemType();
-//
+                    int j = o1.getOrderItemActualId() - o2.getOrderItemActualId();
+                    if(j == 0){
+                        return o1.getSortItemType() - o2.getSortItemType();
+                    }
+                    return o1.getOrderItemActualId() - o2.getOrderItemActualId();
                 }
                 return 0;
             }
@@ -1148,7 +1152,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
      */
     private void buildSummaryData(Map<Date, CheckStatementStatisticsDTO> statementStatisticsDTOMap, StatementOrderMonthQueryParam queryParam) {
         // 构建期数未付金额数据
-        queryParam.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
+//        queryParam.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
         CheckStatementSummaryDTO statementSummaryDTOFromData = statementService.sumStatementDetailAmountByCustomerNo(queryParam);
         BigDecimal previousPeriodEndUnpaidAmount = statementSummaryDTOFromData.getPreviousPeriodEndUnpaidAmount();
         for (CheckStatementStatisticsDTO checkStatementStatisticsDTO : statementStatisticsDTOMap.values()) {
