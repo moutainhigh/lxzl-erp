@@ -369,7 +369,6 @@
             </foreach>
         </if>
     </select>
-
     <select id="listByMonthQuery" parameterType="com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam" resultMap="K3ReturnOrderDO">
         SELECT
         <include refid="column_List"/>

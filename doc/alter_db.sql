@@ -1107,6 +1107,3 @@ ALTER table erp_order_material ADD test_machine_order_material_id int(20) DEFAUL
 ALTER TABLE erp_order ADD `is_turn_rent_order` int(10) NOT NULL DEFAULT '0' COMMENT '是否已经转为租赁单,1-是;0-否。(测试机专用字段)';
 ALTER TABLE erp_order_product add `is_item_delivered` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否已发货，0否1是';
 ALTER TABLE erp_order_material add `is_item_delivered` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否已发货，0否1是';
-
-
-
