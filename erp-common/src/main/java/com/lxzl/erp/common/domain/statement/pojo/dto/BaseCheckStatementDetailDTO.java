@@ -499,7 +499,7 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
             this.monthPayableAmount = statementDetailAmountTemp;
             if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(this.statementDetailStatus)
                     || StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART.equals(this.statementDetailStatus)) {
-                this.monthPaidAmount = BigDecimalUtil.add(BigDecimalUtil.add(this.statementDetailOtherPaidAmount, this.statementDetailRentDepositPaidAmount),this.statementDetailRentPaidAmount);
+                this.monthPaidAmount = BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(this.statementDetailOtherPaidAmount, this.statementDetailRentDepositPaidAmount),this.statementDetailRentPaidAmount),this.statementDetailDepositPaidAmount);
 //                this.monthPaidAmount = statementDetailAmountTemp;
             }
 //            else {
