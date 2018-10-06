@@ -497,7 +497,8 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
         String statementExpectPayTimeMonth = DateFormatUtils.format(statementExpectPayTime, "yyyy-MM");
         if (StringUtils.equals(thisMonthStr, statementExpectPayTimeMonth)) {
             this.monthPayableAmount = statementDetailAmountTemp;
-            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(this.statementDetailStatus)) {
+            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(this.statementDetailStatus)
+                    || StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART.equals(this.statementDetailStatus)) {
                 this.monthPaidAmount = BigDecimalUtil.add(BigDecimalUtil.add(this.statementDetailOtherPaidAmount, this.statementDetailRentDepositPaidAmount),this.statementDetailRentPaidAmount);
 //                this.monthPaidAmount = statementDetailAmountTemp;
             }
