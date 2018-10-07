@@ -112,6 +112,10 @@ public class BaseCheckStatementDetailUnRentDTO extends BaseCheckStatementDetailD
     public boolean isShowTheMonth(CheckStatementStatisticsDTO statementStatisticsDTO) {
         String returnTimeStr = DateFormatUtils.format(super.getReturnTime(), "yyyy-MM");
         if (!statementStatisticsDTO.getMonth().equals(returnTimeStr)) {
+            //构建当月退货单详情展示新数据的跳出判断
+            if(super.getStatementExpectPayTime() == null){
+                return true;
+            }
             String payTimeStr = DateFormatUtils.format(super.getStatementExpectPayTime(), "yyyy-MM");
             if(payTimeStr.equals(statementStatisticsDTO.getMonth()) && OrderPayMode.PAY_MODE_PAY_BEFORE.equals(super.getPayMode())){
                 return true;
