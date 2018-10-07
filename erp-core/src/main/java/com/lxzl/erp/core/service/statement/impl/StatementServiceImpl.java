@@ -7305,17 +7305,22 @@ public class StatementServiceImpl implements StatementService {
         ServiceResult<String, List<BaseCheckStatementDetailDTO>> returnServiceResult = new ServiceResult<>();
         returnServiceResult.setErrorCode(ErrorCode.SUCCESS);
         returnServiceResult.setResult(new ArrayList<BaseCheckStatementDetailDTO>());
-        // 获取订单类型为租赁类型的结算数据列表
-        statementOrderMonthQueryParam.setQueryOrderType(OrderType.ORDER_TYPE_ORDER);
+
+        //原来方式--先保留
+//        // 获取订单类型为租赁类型的结算数据列表
+//        statementOrderMonthQueryParam.setQueryOrderType(OrderType.ORDER_TYPE_ORDER);
+//        addServiceResult(returnServiceResult,listRentByCustomerId(statementOrderMonthQueryParam));
+//
+//        // 获取订单类型为换货类型的结算数据列表  类型抽出来set
+//        statementOrderMonthQueryParam.setQueryOrderType(OrderType.ORDER_TYPE_REPLACE);
+//        addServiceResult(returnServiceResult,listUnRentByOrderIds(statementOrderMonthQueryParam));
+//
+//        // 获取订单类型为退货类型的结算数据列表
+//        statementOrderMonthQueryParam.setQueryOrderType(OrderType.ORDER_TYPE_RETURN);
+//        addServiceResult(returnServiceResult,listUnRentByOrderIds(statementOrderMonthQueryParam));
+
+        // 获取该客户结算的结算数据列表---修改sql---日后无需修改代码---只需要查找一次---少查4次sql
         addServiceResult(returnServiceResult,listRentByCustomerId(statementOrderMonthQueryParam));
-
-        // todo 获取订单类型为换货类型的结算数据列表  类型抽出来set
-        statementOrderMonthQueryParam.setQueryOrderType(OrderType.ORDER_TYPE_REPLACE);
-        addServiceResult(returnServiceResult,listUnRentByOrderIds(statementOrderMonthQueryParam));
-
-        // 获取订单类型为退货类型的结算数据列表
-        statementOrderMonthQueryParam.setQueryOrderType(OrderType.ORDER_TYPE_RETURN);
-        addServiceResult(returnServiceResult,listUnRentByOrderIds(statementOrderMonthQueryParam));
 
         // 数据为空 数据不存在异常
         if (CollectionUtil.isEmpty(returnServiceResult.getResult())) {

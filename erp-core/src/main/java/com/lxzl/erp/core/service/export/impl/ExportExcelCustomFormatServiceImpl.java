@@ -184,22 +184,23 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
      */
     private ServiceResult<String, List<BaseCheckStatementDetailDTO>> getCheckStatementDetailDatas(StatementOrderMonthQueryParam statementOrderMonthQueryParam) {
         ServiceResult<String, List<BaseCheckStatementDetailDTO>> serviceResult = new ServiceResult<>();
-        // 查询该用户退还时间在指定时间段内退货单列表数据
-        List<K3ReturnOrderDO> k3ReturnOrderDOS = k3ReturnOrderMapper.listByMonthQuery(statementOrderMonthQueryParam);
-        Set<Integer> returnOrderIds = new LinkedHashSet<>();
-        for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOS) {
-            returnOrderIds.add(k3ReturnOrderDO.getId());
-        }
-        // 查询该用户确认换货时间在指定时间段内换货单列表数据
-        List<ReplaceOrderDO> replaceOrderDOS = replaceOrderMapper.listByMonthQuery(statementOrderMonthQueryParam);
-        Set<Integer> replaceOrderIds = new LinkedHashSet<>();
-        for (ReplaceOrderDO replaceOrderDO : replaceOrderDOS) {
-            replaceOrderIds.add(replaceOrderDO.getId());
-        }
-        //orderIds IS 退货单id
-        statementOrderMonthQueryParam.setOrderIds(returnOrderIds);
-        //replaceOrderIds is 换货单id
-        statementOrderMonthQueryParam.setReplaceOrderIds(replaceOrderIds);
+        //原来方式--先保留
+//        // 查询该用户退还时间在指定时间段内退货单列表数据
+//        List<K3ReturnOrderDO> k3ReturnOrderDOS = k3ReturnOrderMapper.listByMonthQuery(statementOrderMonthQueryParam);
+//        Set<Integer> returnOrderIds = new LinkedHashSet<>();
+//        for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOS) {
+//            returnOrderIds.add(k3ReturnOrderDO.getId());
+//        }
+//        // 查询该用户确认换货时间在指定时间段内换货单列表数据
+//        List<ReplaceOrderDO> replaceOrderDOS = replaceOrderMapper.listByMonthQuery(statementOrderMonthQueryParam);
+//        Set<Integer> replaceOrderIds = new LinkedHashSet<>();
+//        for (ReplaceOrderDO replaceOrderDO : replaceOrderDOS) {
+//            replaceOrderIds.add(replaceOrderDO.getId());
+//        }
+//        //orderIds IS 退货单id
+//        statementOrderMonthQueryParam.setOrderIds(returnOrderIds);
+//        //replaceOrderIds is 换货单id
+//        statementOrderMonthQueryParam.setReplaceOrderIds(replaceOrderIds);
         // 根据查询条件获取结算单列表数据
         ServiceResult<String, List<BaseCheckStatementDetailDTO>> serviceResultOfCheckStatementDetail = statementService.listCheckStatementDetailDTOByQuery(statementOrderMonthQueryParam);
         if (!Objects.equals(serviceResultOfCheckStatementDetail.getErrorCode(), ErrorCode.SUCCESS)) {
