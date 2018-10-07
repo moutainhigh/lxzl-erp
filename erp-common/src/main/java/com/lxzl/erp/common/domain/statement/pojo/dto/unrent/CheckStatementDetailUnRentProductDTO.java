@@ -4,6 +4,7 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.constant.SortOrderItemType;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
+import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.statement.pojo.dto.BaseCheckStatementDetailDTO;
 import com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementStatisticsDTO;
@@ -28,7 +29,12 @@ public class CheckStatementDetailUnRentProductDTO extends CheckStatementDetailUn
             }
         }
         setOrderItemActualId(Integer.valueOf(orderProduct.getOrderProductId()));
-        setOrderNo(k3ReturnOrderDetail.getOrderNo());
+        Order order = getOrderByNo(k3ReturnOrderDetail.getOrderNo());
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(order.getIsOriginalOrder())){
+            super.setOrderNo(order.getOrderNo());
+        }else {
+            super.setOrderNo(order.getOriginalOrderNo());
+        }
         setItemName(orderProduct.getProductName());
         setItemSkuName(orderProduct.getProductSkuName());
         setIsNew(orderProduct.getIsNewProduct());

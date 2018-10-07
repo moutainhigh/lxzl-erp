@@ -1738,9 +1738,10 @@
         FROM erp_statement_order_detail esod
         WHERE esod.customer_id = #{queryParam.customerId}
         AND esod.data_status = 1
-        <if test="queryParam.queryOrderType != null">
-            AND esod.order_type = #{queryParam.queryOrderType}
-        </if>
+        <!-- 原来方式-日后还要改代码 -->
+        <!--<if test="queryParam.queryOrderType != null">-->
+            <!--AND esod.order_type = #{queryParam.queryOrderType}-->
+        <!--</if>-->
         AND(
         NOT(
         esod.statement_start_time <![CDATA[ > ]]> #{queryParam.statementOrderEndTimeAddOne}
@@ -1784,6 +1785,7 @@
             AND esod.statement_detail_status = #{queryParam.statementDetailStatus}
         </if>
         AND esod.statement_start_time <![CDATA[ < ]]> #{queryParam.statementOrderStartTime}
+        AND esod.data_status = 1
     </select>
 
     <select id="findByOrderTypeAndSourceId" resultMap="StatementOrderDetailDO">

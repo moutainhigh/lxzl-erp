@@ -14,6 +14,7 @@ import com.lxzl.erp.common.domain.replace.pojo.*;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.dto.*;
 import com.lxzl.erp.common.domain.statement.pojo.dto.rent.CheckStatementDetailRentProductDTO;
+import com.lxzl.erp.common.domain.statement.pojo.dto.replaceRent.CheckStatementDetailReplaceOtherDTO;
 import com.lxzl.erp.common.domain.statement.pojo.dto.replaceRent.CheckStatementDetailUnReplaceProductDTO;
 import com.lxzl.erp.common.domain.statement.pojo.dto.unrent.*;
 import com.lxzl.erp.common.util.*;
@@ -183,22 +184,23 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
      */
     private ServiceResult<String, List<BaseCheckStatementDetailDTO>> getCheckStatementDetailDatas(StatementOrderMonthQueryParam statementOrderMonthQueryParam) {
         ServiceResult<String, List<BaseCheckStatementDetailDTO>> serviceResult = new ServiceResult<>();
-        // 查询该用户退还时间在指定时间段内退货单列表数据
-        List<K3ReturnOrderDO> k3ReturnOrderDOS = k3ReturnOrderMapper.listByMonthQuery(statementOrderMonthQueryParam);
-        Set<Integer> returnOrderIds = new LinkedHashSet<>();
-        for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOS) {
-            returnOrderIds.add(k3ReturnOrderDO.getId());
-        }
-        // 查询该用户确认换货时间在指定时间段内换货单列表数据
-        List<ReplaceOrderDO> replaceOrderDOS = replaceOrderMapper.listByMonthQuery(statementOrderMonthQueryParam);
-        Set<Integer> replaceOrderIds = new LinkedHashSet<>();
-        for (ReplaceOrderDO replaceOrderDO : replaceOrderDOS) {
-            replaceOrderIds.add(replaceOrderDO.getId());
-        }
-        //orderIds IS 退货单id
-        statementOrderMonthQueryParam.setOrderIds(returnOrderIds);
-        //replaceOrderIds is 换货单id
-        statementOrderMonthQueryParam.setReplaceOrderIds(replaceOrderIds);
+        // 保留
+//        // 查询该用户退还时间在指定时间段内退货单列表数据
+//        List<K3ReturnOrderDO> k3ReturnOrderDOS = k3ReturnOrderMapper.listByMonthQuery(statementOrderMonthQueryParam);
+//        Set<Integer> returnOrderIds = new LinkedHashSet<>();
+//        for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOS) {
+//            returnOrderIds.add(k3ReturnOrderDO.getId());
+//        }
+//        // 查询该用户确认换货时间在指定时间段内换货单列表数据
+//        List<ReplaceOrderDO> replaceOrderDOS = replaceOrderMapper.listByMonthQuery(statementOrderMonthQueryParam);
+//        Set<Integer> replaceOrderIds = new LinkedHashSet<>();
+//        for (ReplaceOrderDO replaceOrderDO : replaceOrderDOS) {
+//            replaceOrderIds.add(replaceOrderDO.getId());
+//        }
+//        //orderIds IS 退货单id
+//        statementOrderMonthQueryParam.setOrderIds(returnOrderIds);
+//        //replaceOrderIds is 换货单id
+//        statementOrderMonthQueryParam.setReplaceOrderIds(replaceOrderIds);
         // 根据查询条件获取结算单列表数据
         ServiceResult<String, List<BaseCheckStatementDetailDTO>> serviceResultOfCheckStatementDetail = statementService.listCheckStatementDetailDTOByQuery(statementOrderMonthQueryParam);
         if (!Objects.equals(serviceResultOfCheckStatementDetail.getErrorCode(), ErrorCode.SUCCESS)) {
@@ -225,6 +227,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         // 构建续租订单相关数据
         buildReletOrder(orderIds, mapContainer);
         // 构建换货单相关数据
+//        Set<Integer> replaceOrderIds = orderIdsUseOrderTypeGroup.get(OrderType.ORDER_TYPE_REPLACE);
         buildReplaceOrder(orderIds, mapContainer, checkStatementDetailDTOS);
 
         for (BaseCheckStatementDetailDTO checkStatementDetailDTO : checkStatementDetailDTOS) {
@@ -372,8 +375,12 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         orderIdsUserOrderTypeGroup.put(OrderType.ORDER_TYPE_RETURN, new HashSet<Integer>());
         for (BaseCheckStatementDetailDTO checkStatementDetailDTO : checkStatementDetailDTOS) {
             Integer orderType = checkStatementDetailDTO.getOrderType();
-            if (orderIdsUserOrderTypeGroup.containsKey(orderType)) {
-                orderIdsUserOrderTypeGroup.get(orderType).add(checkStatementDetailDTO.getOrderId());
+            if (OrderType.ORDER_TYPE_ORDER.equals(orderType) || OrderType.ORDER_TYPE_REPLACE.equals(orderType)) {
+                orderIdsUserOrderTypeGroup.get(OrderType.ORDER_TYPE_ORDER).add(checkStatementDetailDTO.getOrderId());
+            } else {
+                if (orderIdsUserOrderTypeGroup.containsKey(orderType)) {
+                    orderIdsUserOrderTypeGroup.get(orderType).add(checkStatementDetailDTO.getOrderId());
+                }
             }
         }
         return orderIdsUserOrderTypeGroup;
@@ -478,7 +485,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             if (productSupport.isProduct(k3ReturnOrderDetail.getProductNo())) {
                 OrderProduct orderProduct = orderProductMap.get(Integer.valueOf(k3ReturnOrderDetail.getOrderItemId()));
                 //如果订单配件不存在则跳出
-                if(orderProduct == null){
+                if (orderProduct == null) {
                     continue;
                 }
                 BigDecimal unitAmount = orderProduct.getProductUnitAmount();
@@ -501,7 +508,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             } else if (productSupport.isMaterial(k3ReturnOrderDetail.getProductNo())) {
                 OrderMaterial orderMaterial = orderMaterialMap.get(Integer.valueOf(k3ReturnOrderDetail.getOrderItemId()));
                 //如果订单配件不存在则跳出
-                if(orderMaterial == null){
+                if (orderMaterial == null) {
                     continue;
                 }
                 BigDecimal unitAmount = orderMaterial.getMaterialUnitAmount();
@@ -782,7 +789,11 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
     }
 
     private void setStatementOrderData(BaseCheckStatementDetailDTO checkStatementDetailDTO, Order order, boolean isInitStatementData) {
-        checkStatementDetailDTO.setOrderNo(order.getOrderNo());
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(order.getIsOriginalOrder())) {
+            checkStatementDetailDTO.setOrderNo(order.getOrderNo());
+        } else {
+            checkStatementDetailDTO.setOrderNo(order.getOriginalOrderNo());
+        }
         checkStatementDetailDTO.setOrderOriginalId(order.getOrderId());
         checkStatementDetailDTO.setOrderRentStartTime(order.getRentStartTime());
         checkStatementDetailDTO.setOrderExpectReturnTime(order.getExpectReturnTime());
@@ -809,7 +820,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 //                    String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
 //                    orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
 //                }
-                if(statementStatisticsDTO.getMonthStartTime() < detailDTO.getReturnTime().getTime()){
+                if (statementStatisticsDTO.getMonthStartTime() < detailDTO.getReturnTime().getTime()) {
                     String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
                     orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
                 }
@@ -831,9 +842,9 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             // 加入 换货单需支付的
             if (detailDTO.getSourceId() != null && detailDTO.getReturnTime() == null) {
                 String cloneKey = detailDTO.getCacheKey(statementStatisticsDTO);
-                if(orderIdAndOrderItemIdMap.get(cloneKey) != null){
+                if (orderIdAndOrderItemIdMap.get(cloneKey) != null) {
                     detailDTO.mergeToTarget(orderIdAndOrderItemIdMap.get(cloneKey), statementStatisticsDTO);
-                }else {
+                } else {
                     orderIdAndOrderItemIdMap.put(cloneKey, detailDTO);
                 }
             }
@@ -884,7 +895,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                             detailDTO.setStatementDetailOverdueAmount(BigDecimalUtil.add(detailDTO.getStatementDetailOverdueAmount(), targetDetail.getStatementDetailOverdueAmount()));
                             detailDTO.setStatementDetailOverduePaidAmount(BigDecimalUtil.add(detailDTO.getStatementDetailOverduePaidAmount(), targetDetail.getStatementDetailOverduePaidAmount()));
                             detailDTO.setStatementDetailCorrectAmount(BigDecimalUtil.add(detailDTO.getStatementDetailCorrectAmount(), targetDetail.getStatementDetailCorrectAmount()));
-                        }else {
+                        } else {
                             baseCheckStatementDetailDTOS.add(targetDetail);
                         }
                     }
@@ -892,8 +903,8 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             }
         }
         // 合并结算统计详情
-        if(CollectionUtil.isNotEmpty(baseCheckStatementDetailDTOS)){
-            for(BaseCheckStatementDetailDTO targetDetail : baseCheckStatementDetailDTOS){
+        if (CollectionUtil.isNotEmpty(baseCheckStatementDetailDTOS)) {
+            for (BaseCheckStatementDetailDTO targetDetail : baseCheckStatementDetailDTOS) {
                 String cloneKey = targetDetail.getCacheKey(statementStatisticsDTO);
                 orderIdAndOrderItemIdMap.put(cloneKey, targetDetail);
             }
@@ -1110,7 +1121,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         List<BaseCheckStatementDetailDTO> notOtherUnRentDetailDTO = new ArrayList<>();
         List<BaseCheckStatementDetailDTO> otherUnRentDetailDTO = new ArrayList<>();
         for (BaseCheckStatementDetailDTO detailDTO : checkStatementStatisticsDTOS) {
-            if (detailDTO instanceof CheckStatementDetailUnRentOtherDTO) {
+            if (detailDTO instanceof CheckStatementDetailUnRentOtherDTO || detailDTO instanceof CheckStatementDetailReplaceOtherDTO) {
                 otherUnRentDetailDTO.add(detailDTO);
             } else {
                 notOtherUnRentDetailDTO.add(detailDTO);
@@ -1132,8 +1143,11 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                 int i = o1.getOrderOriginalId() - o2.getOrderOriginalId();
                 if (i == 0) {
                     // 按照原始订单项id排序
-                    return o1.getSortItemType() - o2.getSortItemType();
-//
+                    int j = o1.getOrderItemActualId() - o2.getOrderItemActualId();
+                    if (j == 0) {
+                        return o1.getSortItemType() - o2.getSortItemType();
+                    }
+                    return o1.getOrderItemActualId() - o2.getOrderItemActualId();
                 }
                 return 0;
             }
@@ -1148,7 +1162,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
      */
     private void buildSummaryData(Map<Date, CheckStatementStatisticsDTO> statementStatisticsDTOMap, StatementOrderMonthQueryParam queryParam) {
         // 构建期数未付金额数据
-        queryParam.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
+//        queryParam.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
         CheckStatementSummaryDTO statementSummaryDTOFromData = statementService.sumStatementDetailAmountByCustomerNo(queryParam);
         BigDecimal previousPeriodEndUnpaidAmount = statementSummaryDTOFromData.getPreviousPeriodEndUnpaidAmount();
         for (CheckStatementStatisticsDTO checkStatementStatisticsDTO : statementStatisticsDTOMap.values()) {

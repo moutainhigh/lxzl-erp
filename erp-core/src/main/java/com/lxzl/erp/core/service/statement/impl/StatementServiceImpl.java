@@ -55,6 +55,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
@@ -78,6 +79,7 @@ import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderProductDO;
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
 import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderProductDO;
 import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderDO;
@@ -570,10 +572,19 @@ public class StatementServiceImpl implements StatementService {
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, BigDecimal> reCreateOrderStatement(OrderDO orderDO, Integer statementDate, boolean clearStatementDateSplitCfg,boolean allowConfirmCustomer) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
+
         if(orderDO==null){
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
+
+        // todo 暂时做限制 有换货单不支持重算
+        List<ReplaceOrderDO> replaceOrderDOList = replaceOrderMapper.findByOrderNoForCheck(orderDO.getOrderNo());
+        if(CollectionUtil.isNotEmpty(replaceOrderDOList)){
+            result.setErrorCode(ErrorCode.HAS_REPLACE_ORDER_IS_NOT_RECALCULATION);
+            return result;
+        }
+
         if (!Arrays.asList(OrderStatus.ORDER_STATUS_WAIT_DELIVERY, OrderStatus.ORDER_STATUS_PROCESSING, OrderStatus.ORDER_STATUS_DELIVERED, OrderStatus.ORDER_STATUS_CONFIRM, OrderStatus.ORDER_STATUS_PART_RETURN, OrderStatus.ORDER_STATUS_RETURN_BACK).contains(orderDO.getOrderStatus())) {
             result.setErrorCode(ErrorCode.ORDER_STATUS_NOT_ALLOW_RE_STATEMEMT);
             return result;
@@ -7305,17 +7316,21 @@ public class StatementServiceImpl implements StatementService {
         ServiceResult<String, List<BaseCheckStatementDetailDTO>> returnServiceResult = new ServiceResult<>();
         returnServiceResult.setErrorCode(ErrorCode.SUCCESS);
         returnServiceResult.setResult(new ArrayList<BaseCheckStatementDetailDTO>());
-        // 获取订单类型为租赁类型的结算数据列表
-        statementOrderMonthQueryParam.setQueryOrderType(OrderType.ORDER_TYPE_ORDER);
+        // 保留
+//        // 获取订单类型为租赁类型的结算数据列表
+//        statementOrderMonthQueryParam.setQueryOrderType(OrderType.ORDER_TYPE_ORDER);
+//        addServiceResult(returnServiceResult,listRentByCustomerId(statementOrderMonthQueryParam));
+//
+//        // 获取订单类型为换货类型的结算数据列表  类型抽出来set
+//        statementOrderMonthQueryParam.setQueryOrderType(OrderType.ORDER_TYPE_REPLACE);
+//        addServiceResult(returnServiceResult,listUnRentByOrderIds(statementOrderMonthQueryParam));
+//
+//        // 获取订单类型为退货类型的结算数据列表
+//        statementOrderMonthQueryParam.setQueryOrderType(OrderType.ORDER_TYPE_RETURN);
+//        addServiceResult(returnServiceResult,listUnRentByOrderIds(statementOrderMonthQueryParam));
+
+        // 获取该客户结算的结算数据列表---修改sql---日后无需修改代码---只需要查找一次---少查4次sql
         addServiceResult(returnServiceResult,listRentByCustomerId(statementOrderMonthQueryParam));
-
-        // todo 获取订单类型为换货类型的结算数据列表  类型抽出来set
-        statementOrderMonthQueryParam.setQueryOrderType(OrderType.ORDER_TYPE_REPLACE);
-        addServiceResult(returnServiceResult,listUnRentByOrderIds(statementOrderMonthQueryParam));
-
-        // 获取订单类型为退货类型的结算数据列表
-        statementOrderMonthQueryParam.setQueryOrderType(OrderType.ORDER_TYPE_RETURN);
-        addServiceResult(returnServiceResult,listUnRentByOrderIds(statementOrderMonthQueryParam));
 
         // 数据为空 数据不存在异常
         if (CollectionUtil.isEmpty(returnServiceResult.getResult())) {
@@ -7475,7 +7490,7 @@ public class StatementServiceImpl implements StatementService {
 
     @Override
     public CheckStatementSummaryDTO sumStatementDetailAmountByCustomerNo(StatementOrderMonthQueryParam statementOrderMonthQueryParam) {
-        CheckStatementSummaryDTO statementSummaryDTO = statementOrderDetailMapper.sumStatementDetailAmountByCustomerNo(statementOrderMonthQueryParam);
+        CheckStatementSummaryDTO statementSummaryDTO = statementOrderMapper.sumStatementDetailAmountByCustomerNo(statementOrderMonthQueryParam);
         if (statementSummaryDTO == null) {
             return new CheckStatementSummaryDTO();
         }
@@ -8399,5 +8414,8 @@ public class StatementServiceImpl implements StatementService {
 
     @Autowired
     private OrderFlowMapper orderFlowMapper;
+
+    @Autowired
+    private ReplaceOrderMapper replaceOrderMapper;
 
 }

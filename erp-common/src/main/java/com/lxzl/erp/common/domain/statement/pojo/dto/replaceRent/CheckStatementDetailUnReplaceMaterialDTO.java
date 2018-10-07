@@ -3,6 +3,7 @@ package com.lxzl.erp.common.domain.statement.pojo.dto.replaceRent;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.constant.SortOrderItemType;
+import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderMaterial;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderMaterial;
@@ -18,7 +19,12 @@ public class CheckStatementDetailUnReplaceMaterialDTO extends CheckStatementDeta
         ReplaceOrder replaceOrder = super.getReplaceOrderId(super.getSourceId());
         ReplaceOrderMaterial replaceOrderMaterial = super.getReplaceOrderMaterialById(super.getReplaceItemId());
         setOrderItemActualId(replaceOrderMaterial.getOldOrderMaterialId());
-        setOrderNo(replaceOrder.getOrderNo());
+        Order order = getOrderById(replaceOrder.getOrderId());
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(order.getIsOriginalOrder())){
+            super.setOrderNo(order.getOrderNo());
+        }else {
+            super.setOrderNo(order.getOriginalOrderNo());
+        }
         //todo 没旧物料名称字段
         setItemName(replaceOrderMaterial.getMaterialName());
         setIsNew(replaceOrderMaterial.getIsNewMaterial());

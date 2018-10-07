@@ -1,8 +1,10 @@
 package com.lxzl.erp.common.domain.statement.pojo.dto.replaceRent;
 
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.OrderItemType;
 import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.constant.OrderType;
+import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.common.domain.statement.pojo.dto.BaseCheckStatementDetailDTO;
 import com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementStatisticsDTO;
@@ -19,7 +21,12 @@ public class BaseCheckStatementDetailReplaceDTO extends BaseCheckStatementDetail
         super.loadData();
         ReplaceOrder replaceOrder = getReplaceOrderId(getSourceId());
         super.setOrderOriginalId(super.getOrderId());
-        super.setOrderNo(replaceOrder.getOrderNo());
+        Order order = getOrderById(replaceOrder.getOrderId());
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(order.getIsOriginalOrder())){
+            super.setOrderNo(order.getOrderNo());
+        }else {
+            super.setOrderNo(order.getOriginalOrderNo());
+        }
         super.setOrderRentStartTime(replaceOrder.getOrderRentStartTime());
         super.setOrderExpectReturnTime(replaceOrder.getOrderExpectReturnTime());
         super.setOrderItemActualId(super.getOrderItemReferId());
