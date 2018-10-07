@@ -802,11 +802,11 @@
 
 	<select id="sumStatementDetailAmountByCustomerNo" parameterType="com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam" resultType="com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementSummaryDTO">
 		SELECT
-		(sum(eso.statement_amount) - sum(eso.statement_other_paid_amount) - sum(eso.statement_rent_deposit_paid_amount) - sum(eso.statement_deposit_amount) - sum(eso.statement_rent_paid_amount)) as previousPeriodEndUnpaidAmount
+		(sum(eso.statement_amount) - sum(eso.statement_other_paid_amount) - sum(eso.statement_rent_deposit_paid_amount) - sum(eso.statement_deposit_paid_amount) - sum(eso.statement_rent_paid_amount)) as previousPeriodEndUnpaidAmount
 		FROM erp_statement_order eso
 		WHERE
 		eso.customer_id = #{queryParam.customerId}
-		AND eso.statement_start_time <![CDATA[ < ]]> #{queryParam.statementOrderStartTime}
+		AND eso.statement_expect_pay_time <![CDATA[ < ]]> #{queryParam.statementOrderStartTime}
 		AND eso.statement_status IN (0,4)
 		AND eso.data_status = 1
 	</select>
