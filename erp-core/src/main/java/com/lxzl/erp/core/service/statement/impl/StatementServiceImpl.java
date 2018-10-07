@@ -7305,8 +7305,7 @@ public class StatementServiceImpl implements StatementService {
         ServiceResult<String, List<BaseCheckStatementDetailDTO>> returnServiceResult = new ServiceResult<>();
         returnServiceResult.setErrorCode(ErrorCode.SUCCESS);
         returnServiceResult.setResult(new ArrayList<BaseCheckStatementDetailDTO>());
-
-        //原来方式--先保留
+        // 保留
 //        // 获取订单类型为租赁类型的结算数据列表
 //        statementOrderMonthQueryParam.setQueryOrderType(OrderType.ORDER_TYPE_ORDER);
 //        addServiceResult(returnServiceResult,listRentByCustomerId(statementOrderMonthQueryParam));
