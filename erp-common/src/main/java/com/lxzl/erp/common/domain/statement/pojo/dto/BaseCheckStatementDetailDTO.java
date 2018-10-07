@@ -17,6 +17,7 @@ import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderProduct;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderMaterial;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderProduct;
+import com.lxzl.erp.common.domain.statementOrderCorrect.pojo.StatementOrderCorrect;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CheckStatementUtil;
 import com.lxzl.erp.common.util.DateUtil;
@@ -318,6 +319,10 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
      */
     private Integer replaceItemId;
 
+    private String statementCorrectNo;
+
+    private String statementCorrectReason;
+
     public Integer getSortItemType() {
         return 0;
     }
@@ -424,6 +429,11 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
         return this;
     }
 
+    public StatementOrderCorrect getStatementOrderCorrectByStatementDetailId(Integer id) {
+        Map<Integer, StatementOrderCorrect> statementOrderCorrectMap = this.mapContainer.getIdCorrectOrderMap();
+        return statementOrderCorrectMap.get(id);
+    }
+
     public Order getOrderById(Integer id) {
         Map<Integer, Order> orderMap = this.mapContainer.getIdOrderMap();
         return orderMap.get(id);
@@ -488,7 +498,8 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
         BigDecimal detailAmount = BigDecimalUtil.add(this.statementDetailRentAmount, this.statementDetailDepositAmount);
         BigDecimal otherAmount = BigDecimalUtil.add(this.statementDetailOverdueAmount, this.statementDetailOtherAmount);
         BigDecimal statementDetailAmountTemp = BigDecimalUtil.add(detailAmount, otherAmount);
-        statementDetailAmountTemp = BigDecimalUtil.add(this.statementDetailCorrectAmount, statementDetailAmountTemp);
+        // 冲正减去应付款
+        statementDetailAmountTemp = BigDecimalUtil.sub(statementDetailAmountTemp,this.statementDetailCorrectAmount);
         statementDetailAmountTemp = BigDecimalUtil.add(this.statementDetailRentDepositAmount, statementDetailAmountTemp);
 
         if (this.statementExpectPayTime == null) {
@@ -876,12 +887,12 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
 
     @Override
     public final String getStatementCorrectNoStr() {
-        return null;
+        return this.statementCorrectNo;
     }
 
     @Override
     public final String getStatementCorrectReasonStr() {
-        return null;
+        return this.statementCorrectReason;
     }
 
     public Integer getOrderOriginalId() {
@@ -1436,5 +1447,31 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
             return false;
         }
         return true;
+    }
+
+    public String getStatementCorrectNo() {
+        return statementCorrectNo;
+    }
+
+    public void setStatementCorrectNo(String statementCorrectNo) {
+        this.statementCorrectNo = statementCorrectNo;
+    }
+
+    public String getStatementCorrectReason() {
+        return statementCorrectReason;
+    }
+
+    public void setStatementCorrectReason(String statementCorrectReason) {
+        this.statementCorrectReason = statementCorrectReason;
+    }
+
+    public void checkStatementDetailCorrect(){
+        if(BigDecimalUtil.compare(this.getStatementDetailCorrectAmount(), BigDecimal.ZERO) > 0){
+            StatementOrderCorrect statementOrderCorrect = getStatementOrderCorrectByStatementDetailId(getStatementOrderId());
+            if(statementOrderCorrect != null){
+                this.setStatementCorrectNo(statementOrderCorrect.getStatementCorrectNo());
+                this.setStatementCorrectReason(statementOrderCorrect.getStatementCorrectReason());
+            }
+        }
     }
 }

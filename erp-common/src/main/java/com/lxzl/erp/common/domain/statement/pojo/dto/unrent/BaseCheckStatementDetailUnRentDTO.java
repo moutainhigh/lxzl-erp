@@ -7,7 +7,11 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.statement.pojo.dto.BaseCheckStatementDetailDTO;
 import com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementStatisticsDTO;
+import com.lxzl.erp.common.domain.statementOrderCorrect.pojo.StatementOrderCorrect;
+import com.lxzl.erp.common.util.BigDecimalUtil;
 import org.apache.commons.lang.time.DateFormatUtils;
+
+import java.math.BigDecimal;
 
 /**
  * @author daiqi
@@ -29,6 +33,9 @@ public class BaseCheckStatementDetailUnRentDTO extends BaseCheckStatementDetailD
         super.setReturnTime(k3ReturnOrder.getReturnTime());
         super.setReturnOrderNo(k3ReturnOrder.getReturnOrderNo());
         super.setReturnReasonType(k3ReturnOrder.getReturnReasonType());
+
+        //检查是否有冲正单构建编号与原因
+        checkStatementDetailCorrect();
         return this;
     }
 
