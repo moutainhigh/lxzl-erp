@@ -123,11 +123,18 @@ public class BaseCheckStatementDetailReplaceDTO extends BaseCheckStatementDetail
         if (super.getReturnTime() != null) {
             String replaceTimeStr = DateFormatUtils.format(super.getReturnTime(), "yyyy-MM");
             if (!statementStatisticsDTO.getMonth().equals(replaceTimeStr)) {
-//                String payTimeStr = DateFormatUtils.format(super.getStatementExpectPayTime(), "yyyy-MM");
-//                if(payTimeStr.equals(statementStatisticsDTO.getMonth()) && OrderPayMode.PAY_MODE_PAY_BEFORE.equals(super.getPayMode())){
+                //构建当月退货单详情展示新数据的跳出判断
+                if(super.getStatementExpectPayTime() == null){
                     return true;
-//                }
-//                return false;
+                }
+                String payTimeStr = DateFormatUtils.format(super.getStatementExpectPayTime(), "yyyy-MM");
+                if(payTimeStr.equals(statementStatisticsDTO.getMonth()) && OrderPayMode.PAY_MODE_PAY_BEFORE.equals(super.getPayMode())){
+                    if(super.getStatementExpectPayTime().getTime() < statementStatisticsDTO.getMonthStartTime()){
+                        return false;
+                    }
+                    return true;
+                }
+                return false;
             }
         }
         return super.isShowTheMonth(statementStatisticsDTO);
