@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public interface StatementOrderCorrectMapper extends BaseMysqlDAO<StatementOrderCorrectDO> {
@@ -26,5 +27,7 @@ public interface StatementOrderCorrectMapper extends BaseMysqlDAO<StatementOrder
 	List<StatementOrderCorrectDO> findStatementOrderIdAndReferId(@Param("statementOrderId")Integer statementOrderId,@Param("referId")Integer referId);
 
 	int deleteByIds(@Param("list")List<Integer>ids);
+
+	List<StatementOrderCorrectDO> findStatementOrderIds(@Param("ids") Set<Integer> statementOrderIds);
 
 }

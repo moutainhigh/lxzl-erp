@@ -17,6 +17,7 @@ import com.lxzl.erp.common.domain.statement.pojo.dto.rent.CheckStatementDetailRe
 import com.lxzl.erp.common.domain.statement.pojo.dto.replaceRent.CheckStatementDetailReplaceOtherDTO;
 import com.lxzl.erp.common.domain.statement.pojo.dto.replaceRent.CheckStatementDetailUnReplaceProductDTO;
 import com.lxzl.erp.common.domain.statement.pojo.dto.unrent.*;
+import com.lxzl.erp.common.domain.statementOrderCorrect.pojo.StatementOrderCorrect;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.core.service.export.ExcelExportConfig;
@@ -31,10 +32,12 @@ import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.*;
 import com.lxzl.erp.dataaccess.dao.mysql.replace.*;
+import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3OrderStatementConfigDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
+import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDO;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -108,6 +111,9 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
     @Autowired
     private ReplaceOrderMaterialMapper replaceOrderMaterialMapper;
+
+    @Autowired
+    private StatementOrderCorrectMapper statementOrderCorrectMapper;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -229,10 +235,29 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
         // 构建换货单相关数据
 //        Set<Integer> replaceOrderIds = orderIdsUseOrderTypeGroup.get(OrderType.ORDER_TYPE_REPLACE);
         buildReplaceOrder(orderIds, mapContainer, checkStatementDetailDTOS);
-
+        //构建是否有冲正相关数据
+        buildCorrectOrder(checkStatementDetailDTOS, mapContainer);
         for (BaseCheckStatementDetailDTO checkStatementDetailDTO : checkStatementDetailDTOS) {
             checkStatementDetailDTO.mapContainer(mapContainer).build();
         }
+    }
+
+    /**
+     * 构建冲正单数据
+     */
+    private void buildCorrectOrder(List<BaseCheckStatementDetailDTO> checkStatementDetailDTOS, CheckStatementMapContainer checkStatementMapContainer) {
+        Set<Integer> statementDetailIds = new LinkedHashSet<>();
+
+        for (BaseCheckStatementDetailDTO detailRentDTO : checkStatementDetailDTOS) {
+            statementDetailIds.add(detailRentDTO.getStatementOrderId());
+        }
+        if(CollectionUtil.isNotEmpty(statementDetailIds)){
+            List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderIds(statementDetailIds);
+            if(CollectionUtil.isNotEmpty(statementOrderCorrectDOList)){
+                checkStatementMapContainer.idCorrectOrderMap(ConverterUtil.convertList(statementOrderCorrectDOList, StatementOrderCorrect.class));
+            }
+        }
+
     }
 
     /**
