@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderProduct;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderMaterial;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrderProduct;
+import com.lxzl.erp.common.domain.statementOrderCorrect.pojo.StatementOrderCorrect;
 import com.lxzl.erp.common.util.ListUtil;
 
 import java.util.HashMap;
@@ -34,6 +35,7 @@ public class CheckStatementMapContainer {
     private Map<Integer, ReplaceOrderProduct> idReplaceOrderProductMap;
     private Map<Integer, ReplaceOrderMaterial> idReplaceOrderMaterialMap;
     private Map<String, Order> noOrderMap;
+    private Map<Integer, StatementOrderCorrect> idCorrectOrderMap;
 
     public Map<Integer, Order> getIdOrderMap() {
         return idOrderMap;
@@ -69,6 +71,14 @@ public class CheckStatementMapContainer {
 
     public Map<Integer, ReplaceOrderProduct> getIdReplaceOrderProductMap() {
         return idReplaceOrderProductMap;
+    }
+
+    public Map<Integer, StatementOrderCorrect> getIdCorrectOrderMap() {
+        return idCorrectOrderMap;
+    }
+
+    public void setIdCorrectOrderMap(Map<Integer, StatementOrderCorrect> idCorrectOrderMap) {
+        this.idCorrectOrderMap = idCorrectOrderMap;
     }
 
     public void setIdReplaceOrderProductMap(Map<Integer, ReplaceOrderProduct> idReplaceOrderProductMap) {
@@ -244,6 +254,11 @@ public class CheckStatementMapContainer {
         return this;
     }
 
+    public CheckStatementMapContainer idCorrectOrderMap(List<StatementOrderCorrect> statementOrderCorrects) {
+        this.idCorrectOrderMap = ListUtil.listToMap(statementOrderCorrects, "statementOrderId");
+        return this;
+    }
+
     public CheckStatementMapContainer addIdOrderMap(List<Order> orders) {
         Map<Integer, Order> orderMap = ListUtil.listToMap(orders, "orderId");
         if (idOrderMap == null) {
@@ -261,4 +276,6 @@ public class CheckStatementMapContainer {
         this.idOrderProductMap.putAll(orderProductId);
         return this;
     }
+
+
 }

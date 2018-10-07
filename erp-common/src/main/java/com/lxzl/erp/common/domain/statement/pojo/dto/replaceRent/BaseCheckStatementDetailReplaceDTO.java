@@ -8,7 +8,11 @@ import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.common.domain.statement.pojo.dto.BaseCheckStatementDetailDTO;
 import com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementStatisticsDTO;
+import com.lxzl.erp.common.domain.statementOrderCorrect.pojo.StatementOrderCorrect;
+import com.lxzl.erp.common.util.BigDecimalUtil;
 import org.apache.commons.lang.time.DateFormatUtils;
+
+import java.math.BigDecimal;
 
 /**
  * @author kai
@@ -33,6 +37,9 @@ public class BaseCheckStatementDetailReplaceDTO extends BaseCheckStatementDetail
         super.setReturnOrderNo(replaceOrder.getReplaceOrderNo());
         super.setReplaceTime(replaceOrder.getRealReplaceTime());
         super.setReturnReasonType(replaceOrder.getReplaceReasonType());
+
+        //检查是否有冲正单构建编号与原因
+        checkStatementDetailCorrect();
         return this;
     }
 
