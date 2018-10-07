@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.statement.pojo.dto.replaceRent;
 
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderProduct;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
@@ -18,7 +19,12 @@ public class CheckStatementDetailUnReplaceProductDTO extends CheckStatementDetai
         ReplaceOrder replaceOrder = super.getReplaceOrderId(super.getSourceId());
         ReplaceOrderProduct replaceOrderProduct = super.getReplaceOrderProductById(super.getReplaceItemId());
         setOrderItemActualId(replaceOrderProduct.getOldOrderProductId());
-        setOrderNo(replaceOrder.getOrderNo());
+        Order order = getOrderById(replaceOrder.getOrderId());
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(order.getIsOriginalOrder())){
+            super.setOrderNo(order.getOrderNo());
+        }else {
+            super.setOrderNo(order.getOriginalOrderNo());
+        }
         setItemName(replaceOrderProduct.getOldProductName());
         setItemSkuName(replaceOrderProduct.getProductSkuName());
         setIsNew(replaceOrderProduct.getIsNewProduct());

@@ -570,10 +570,10 @@
 		FROM erp_replace_order ero
 		WHERE ero.customer_no = #{queryParam.statementOrderCustomerNo}
 		AND ero.data_status = 1 AND ero.replace_order_status = 20
-		AND
+		<!--AND
 		(
 		ero.confirm_replace_time BETWEEN #{queryParam.statementOrderStartTime} AND #{queryParam.statementOrderEndTimeAddOne}
-		)
+		)-->
 	</select>
 
 	<select id="findByNewOrderProductIdList" resultMap="ReplaceOrderDO">

@@ -375,9 +375,9 @@
         FROM erp_k3_return_order ekro
         WHERE ekro.k3_customer_no = #{queryParam.statementOrderCustomerNo}
         AND ekro.data_status = 1 AND ekro.return_order_status = 20
-        AND
+        <!--AND
         (
         ekro.return_time BETWEEN #{queryParam.statementOrderStartTime} AND #{queryParam.statementOrderEndTimeAddOne}
-        )
+        )-->
     </select>
 </mapper>
