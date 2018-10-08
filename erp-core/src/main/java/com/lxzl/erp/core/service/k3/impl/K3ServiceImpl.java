@@ -1095,20 +1095,18 @@ public class K3ServiceImpl implements K3Service {
             if ("true".equals(responseMap.get("IsSuccess").toString())){
                 serviceResult.setErrorCode(ErrorCode.SUCCESS);
                 serviceResult.setResult(responseMap.get("Message").toString());
-                return serviceResult;
             }else{
                 serviceResult.setErrorCode(ErrorCode.K3_TEST_MACHINE_ORDER_TURN_RENT_ORDER_ERROR);
                 serviceResult.setResult(responseMap.get("Message").toString());
                 dingDingSupport.dingDingSendMessage(getErrorMessageForTestMachineOrder(response,order.getOrderNo()));
-                return serviceResult;
             }
         }catch (Exception e){
             StringWriter errorInfo = new StringWriter();
             e.printStackTrace(new PrintWriter(errorInfo, true));
             dingDingSupport.dingDingSendMessage(errorInfo.toString());
             serviceResult.setErrorCode(ErrorCode.K3_SERVER_ERROR);
-            return serviceResult;
         }
+        return serviceResult;
     }
 
     private String getErrorMessageForTestMachineOrder(String response, String orderNo) {

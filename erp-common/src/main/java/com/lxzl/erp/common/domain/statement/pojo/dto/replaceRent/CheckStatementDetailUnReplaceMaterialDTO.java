@@ -63,7 +63,7 @@ public class CheckStatementDetailUnReplaceMaterialDTO extends CheckStatementDeta
             ReletOrderMaterial reletOrderMaterial = super.getReletOrderMaterialById(super.getReletOrderItemReferId());
             cacheKey = reletOrderMaterial.getReletOrderId() + "_" + this.getReletOrderItemReferId() + "_" + this.getOrderOriginalItemType(statementStatisticsDTO);
         }
-        if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(super.getPayMode())) {
+        if (super.getStatementExpectPayTime() != null && OrderPayMode.PAY_MODE_PAY_AFTER.equals(super.getPayMode())) {
             cacheKey = cacheKey + "_" + DateFormatUtils.format(super.getStatementExpectPayTime(), "yyyyMMdd");
         }
         return cacheKey;

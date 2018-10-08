@@ -83,7 +83,7 @@ public class BaseCheckStatementDetailUnRentDTO extends BaseCheckStatementDetailD
 
     protected String doGetNoThisMonthCacheKey(CheckStatementStatisticsDTO statementStatisticsDTO) {
         String cacheKey = this.getOrderOriginalId() + "_" + this.getOrderItemActualId() + "_" + this.getOrderItemType();
-        if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(super.getPayMode())) {
+        if (super.getStatementExpectPayTime() != null && OrderPayMode.PAY_MODE_PAY_AFTER.equals(super.getPayMode())) {
             cacheKey = cacheKey + "_" + DateFormatUtils.format(super.getStatementExpectPayTime(), "yyyyMMdd");
         }
         return cacheKey;

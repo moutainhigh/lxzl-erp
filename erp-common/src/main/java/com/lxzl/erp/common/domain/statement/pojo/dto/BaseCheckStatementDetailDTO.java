@@ -491,6 +491,11 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
     }
 
     public BaseCheckStatementDetailDTO buildMonthAmount(Date statementExpectPayTime, CheckStatementStatisticsDTO statementStatisticsDTO) {
+
+        if (this.statementExpectPayTime == null) {
+            return this;
+        }
+
         String thisMonthStr = statementStatisticsDTO.getMonth();
         this.monthPayableAmount = BigDecimal.ZERO;
         this.monthPaidAmount = BigDecimal.ZERO;
@@ -502,9 +507,6 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
         statementDetailAmountTemp = BigDecimalUtil.sub(statementDetailAmountTemp,this.statementDetailCorrectAmount);
         statementDetailAmountTemp = BigDecimalUtil.add(this.statementDetailRentDepositAmount, statementDetailAmountTemp);
 
-        if (this.statementExpectPayTime == null) {
-            return this;
-        }
         String statementExpectPayTimeMonth = DateFormatUtils.format(statementExpectPayTime, "yyyy-MM");
         if (StringUtils.equals(thisMonthStr, statementExpectPayTimeMonth)) {
             this.monthPayableAmount = statementDetailAmountTemp;
@@ -679,6 +681,9 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
 
     @Override
     public final String getExpectReturnTimeStr() {
+        if (this.orderExpectReturnTime == null) {
+            return CheckStatementUtil.PLACEHOLDER_DEFAULT;
+        }
         return DateFormatUtils.format(this.orderExpectReturnTime, "yyyy/MM/dd");
     }
 
@@ -1441,7 +1446,7 @@ public abstract class BaseCheckStatementDetailDTO implements CheckStatementDetai
             if (this.getStatementExpectPayTime() == null) {
                 return true;
             }
-            if(DateFormatUtils.format(statementStartTime, "yyyy-MM").equals(returnTimeStr)){
+            if(statementStartTime != null && DateFormatUtils.format(statementStartTime, "yyyy-MM").equals(returnTimeStr)){
                 return true;
             }
             return false;

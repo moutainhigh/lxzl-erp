@@ -653,7 +653,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                     if (BigDecimal.ZERO.compareTo(orderProduct.getProductUnitAmount()) != 0) {
                         continue;
                     }
-                    String itemIdAndItemTypeKey = orderProduct.getProductId() + "_" + OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT;
+                    String itemIdAndItemTypeKey = orderProduct.getOrderProductId() + "_" + orderProduct.getProductId() + "_" + OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT;
                     if (itemIdAndItemType.containsKey(itemIdAndItemTypeKey)) {
                         continue;
                     }
@@ -678,7 +678,7 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
                     if (BigDecimal.ZERO.compareTo(orderProduct.getProductUnitAmount()) != 0) {
                         continue;
                     }
-                    String itemIdAndItemTypeKey = orderProduct.getProductId() + "_" + OrderItemType.ORDER_ITEM_TYPE_PRODUCT;
+                    String itemIdAndItemTypeKey = orderProduct.getOrderProductId() + "_" +orderProduct.getProductId() + "_" + OrderItemType.ORDER_ITEM_TYPE_PRODUCT;
                     if (itemIdAndItemTypeMap.containsKey(itemIdAndItemTypeKey)) {
                         continue;
                     }
