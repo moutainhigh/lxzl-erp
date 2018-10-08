@@ -118,7 +118,7 @@ public class BaseCheckStatementDetailUnRentDTO extends BaseCheckStatementDetailD
             }
             String payTimeStr = DateFormatUtils.format(super.getStatementExpectPayTime(), "yyyy-MM");
             if(payTimeStr.equals(statementStatisticsDTO.getMonth()) && OrderPayMode.PAY_MODE_PAY_BEFORE.equals(super.getPayMode())){
-                if(super.getStatementExpectPayTime().getTime() < statementStatisticsDTO.getMonthStartTime()){
+                if(super.getStatementExpectPayTime().getTime() <= statementStatisticsDTO.getMonthEndTime()){
                     return false;
                 }
                 return true;
