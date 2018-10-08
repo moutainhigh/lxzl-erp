@@ -894,10 +894,16 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
             if (detailDTO.getReturnReferId() != null) {
                 continue;
             }
+            if(detailDTO.getStatementExpectPayTime() == null){
+                continue;
+            }
             if (margeOrderListMap.get(detailDTO.getStatementOrderDetailId()) != null) {
                 for (BaseCheckStatementDetailDTO targetDetail : margeOrderListMap.get(detailDTO.getStatementOrderDetailId())) {
                     String targetMonth = DateFormatUtils.format(targetDetail.getReturnTime(), "yyyy-MM");
                     if (targetMonth.equals(statementStatisticsDTO.getMonth())) {
+                        continue;
+                    }
+                    if(targetDetail.getStatementExpectPayTime() == null){
                         continue;
                     }
                     String detailPayMonth = DateFormatUtils.format(detailDTO.getStatementExpectPayTime(), "yyyy-MM-dd");
@@ -1129,7 +1135,8 @@ public class ExportExcelCustomFormatServiceImpl implements ExportExcelCustomForm
 
             if (map.size() > CommonConstant.COMMON_ZERO) {
                 if (CollectionUtil.isNotEmpty(map.get(detailDTO.getOrderItemReferId()))) {
-                    if (map.get(detailDTO.getOrderItemReferId()).size() > 1 && BigDecimalUtil.compare(detailDTO.getStatementDetailAmount(), BigDecimal.ZERO) == 0) {
+//                    if (map.get(detailDTO.getOrderItemReferId()).size() > 1 && BigDecimalUtil.compare(detailDTO.getStatementDetailAmount(), BigDecimal.ZERO) == 0) {
+                    if (map.get(detailDTO.getOrderItemReferId()).size() > 1 && detailDTO.getStatementExpectPayTime() == null) {
                         continue;
                     }
                 }
