@@ -2294,19 +2294,7 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         //如果订单是由测试机订单转为租赁的就要取消掉关联，同时原测试机订单的是否转为租赁订单的标记也要取消
-        OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(orderDO.getOrderNo());
-        if (orderFromTestMachineDO != null){
-            OrderDO testMachineOrderDO = orderMapper.findByNo(orderFromTestMachineDO.getTestMachineOrderNo());
-            testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_ZERO);
-            testMachineOrderDO.setUpdateTime(currentTime);
-            testMachineOrderDO.setUpdateUser(loginUser.getUserId().toString());
-            orderMapper.update(testMachineOrderDO);
-
-            orderFromTestMachineDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-            orderFromTestMachineDO.setUpdateTime(currentTime);
-            orderFromTestMachineDO.setUpdateUser(loginUser.getUserId().toString());
-            orderFromTestMachineMapper.update(orderFromTestMachineDO);
-        }
+        cancelTestMachineOrder(orderDO.getOrderNo(),currentTime,loginUser.getUserId().toString());
 
         orderDO.setCancelOrderReasonType(cancelOrderReasonType);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
@@ -2368,15 +2356,23 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
         }
-        //测试机订单转租赁审核通过后 新订单不允许取消
+
+        //如果订单是由测试机订单生产的
         OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(orderDO.getOrderNo());
         if (orderFromTestMachineDO != null){
+            if (orderFromTestMachineDO.getTestMachineOrderNo() != null &&
+                    (OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus()) || OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()))){
+                //如果订单是由测试机订单转为租赁的就要取消掉关联，同时原测试机订单的是否转为租赁订单的标记也要取消
+                cancelTestMachineOrder(orderDO.getOrderNo(),currentTime,loginUser.getUserId().toString());
+            }
+            //测试机订单转租赁审核通过后 新订单不允许取消
             if (orderFromTestMachineDO.getTestMachineOrderNo() != null &&
                     (OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus()) || OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus()))){
                 result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_VERIFIED);
                 return result;
             }
         }
+
         IERPService service = null;
         try {
             K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(orderDO.getId(), PostK3Type.POST_K3_TYPE_CANCEL_ORDER);
@@ -4862,6 +4858,22 @@ public class OrderServiceImpl implements OrderService {
         result.setResult(verifyMatters);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    private void cancelTestMachineOrder(String orderNo, Date currentTime, String currentUserId) {
+        OrderFromTestMachineDO orderFromTestMachineDO = orderFromTestMachineMapper.findByOrderNo(orderNo);
+        if (orderFromTestMachineDO != null){
+            OrderDO testMachineOrderDO = orderMapper.findByNo(orderFromTestMachineDO.getTestMachineOrderNo());
+            testMachineOrderDO.setIsTurnRentOrder(CommonConstant.COMMON_ZERO);
+            testMachineOrderDO.setUpdateTime(currentTime);
+            testMachineOrderDO.setUpdateUser(currentUserId);
+            orderMapper.update(testMachineOrderDO);
+
+            orderFromTestMachineDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            orderFromTestMachineDO.setUpdateTime(currentTime);
+            orderFromTestMachineDO.setUpdateUser(currentUserId);
+            orderFromTestMachineMapper.update(orderFromTestMachineDO);
+        }
     }
 
     private Order orderFirstNeedPayAmount(Order order, OrderDO orderDO) {
