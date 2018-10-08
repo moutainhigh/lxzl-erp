@@ -1095,7 +1095,6 @@ public class K3ServiceImpl implements K3Service {
             if ("true".equals(responseMap.get("IsSuccess").toString())){
                 serviceResult.setErrorCode(ErrorCode.SUCCESS);
                 serviceResult.setResult(responseMap.get("Message").toString());
-
             }else{
                 serviceResult.setErrorCode(ErrorCode.K3_TEST_MACHINE_ORDER_TURN_RENT_ORDER_ERROR);
                 serviceResult.setResult(responseMap.get("Message").toString());
