@@ -990,14 +990,15 @@ public class StatementOrderSupport {
     }
 
     private Date getRealExpectPayTime(Date startTime, Date endTime, int statementDays, int payMode) {
-        Date lastEndTime=null;
-        if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
-            lastEndTime= DateUtil.getDayByOffset(startTime,-1);
-        } else if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
-            lastEndTime=endTime;
-        }
-        if(lastEndTime==null)return null;
-        return DateUtil.getDayByOffset(getNextStatementDay(lastEndTime, statementDays),1);
+//        Date lastEndTime=null;
+//        if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
+//            lastEndTime= DateUtil.getDayByOffset(startTime,-1);
+//        } else if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
+//            lastEndTime=endTime;
+//        }
+//        if(lastEndTime==null)return null;
+//        return DateUtil.getDayByOffset(getNextStatementDay(lastEndTime, statementDays),1);
+        return null;
     }
 
     private Date getNextStatementDay(Date startTime, int statementDays) {
