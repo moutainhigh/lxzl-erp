@@ -14,12 +14,21 @@ public class DingdingPropertiesUtil {
 
     static {
         try {
-            Configuration configuration = new PropertiesConfiguration("dingding.properties");
+            Configuration configuration = new PropertiesConfiguration("develop-dingding.properties");
             DINGDING_USER_GROUP_DEPARTMENT_DEVELOPER = configuration.getString("DINGDING_USER_GROUP_DEPARTMENT_DEVELOPER");
+        } catch (ConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    static {
+        try {
+            Configuration configuration = new PropertiesConfiguration("test-dingding.properties");
+            DINGDING_USER_GROUP_DEPARTMENT_TEST = configuration.getString("DINGDING_USER_GROUP_DEPARTMENT_TEST");
         } catch (ConfigurationException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static String DINGDING_USER_GROUP_DEPARTMENT_DEVELOPER;
+    public static String DINGDING_USER_GROUP_DEPARTMENT_TEST;
 }

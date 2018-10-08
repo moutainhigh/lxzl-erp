@@ -51,5 +51,7 @@
         <property name="taskSchedulerSystemAppId" value="${TASK_SCHEDULER_APP_ID}"/>
         <property name="taskSchedulerAppSecret" value="${TASK_SCHEDULER_APP_SECRET}"/>
     </bean>
-
+    <bean id="dingDingMsgConfig" class="com.lxzl.erp.common.domain.DingDingMsgConfig">
+        <property name="exceptionMsgUrl" value="${DINGDING_USER_GROUP_DEPARTMENT_DEVELOPER}"/>
+    </bean>
 </beans>

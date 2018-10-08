@@ -336,4 +336,13 @@
         FROM erp_user u WHERE u.real_name = #{realName,jdbcType=VARCHAR}
     </select>
 
+    <select id="hasePrevilegOfCurrUser" resultType="Integer" parameterType="Integer">
+        SELECT count(1)
+        FROM erp_sys_menu a
+        LEFT JOIN erp_role_menu b on a.id = b.menu_id
+        WHERE a.menu_name = "查看手机号码"
+        AND b.role_id = #{roleId}
+        AND b.data_status = 1
+    </select>
+
 </mapper>

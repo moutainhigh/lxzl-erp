@@ -10,6 +10,7 @@ import com.lxzl.erp.core.service.order.ExchangeOrderService;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.Job.JobService;
+import com.lxzl.erp.web.dingdingTask.DingdingTimerSendMessage;
 import com.lxzl.se.common.domain.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -88,6 +90,19 @@ public class JobController {
 
     @Autowired
     private ExchangeOrderService exchangeOrderService;
+    /**
+     *  异常数据发送
+     * @param
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "dingdingTimerSendMessage",method = RequestMethod.POST)
+    public Result sendRobotDingdingMessage(){
+        ServiceResult<String, List<String>> stringListServiceResult = dingdingTimerSendMessage.sendRobotDingdingMessage();
+        return resultGenerator.generate(stringListServiceResult);
+    }
+    @Autowired
+    private DingdingTimerSendMessage dingdingTimerSendMessage;
     @Autowired
     private JobService jobService;
     @Autowired

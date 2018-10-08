@@ -33,6 +33,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserPrevMapper;
 import com.lxzl.erp.dataaccess.domain.area.AreaProvinceDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
@@ -52,6 +53,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -59,6 +61,8 @@ import java.util.*;
 @Service
 public class CustomerServiceImpl implements CustomerService {
     private static final Logger logger = LoggerFactory.getLogger(ConverterUtil.class);
+
+
 
 
     @Override
@@ -930,6 +934,7 @@ public class CustomerServiceImpl implements CustomerService {
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
         Integer totalCount = customerMapper.findCustomerCompanyCountByParams(maps);
         List<CustomerDO> customerDOList = customerMapper.findCustomerCompanyByParams(maps);
+
         if (CollectionUtil.isNotEmpty(customerDOList)) {
             for (CustomerDO customerDO : customerDOList) {
                 //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
@@ -991,9 +996,8 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
-
-        //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
         processCustomerPhone(customerDO);
+
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         customerResult.setCustomerAccount(customerAccount);
@@ -1242,12 +1246,14 @@ public class CustomerServiceImpl implements CustomerService {
 
     private void processCustomerPhone(CustomerDO customerDO) {
         if (!userSupport.getCurrentUserId().equals(customerDO.getOwner()) &&
-                !userSupport.getCurrentUserId().equals(customerDO.getUnionUser()) &&
-                !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser())) &&
-                !userSupport.isSuperUser()) {
+                        !userSupport.getCurrentUserId().equals(customerDO.getUnionUser()) &&
+                        !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser())) &&
+                        !userSupport.isSuperUser()&&currUserHashPrev() ) {
             CustomerCompanyDO customerCompanyDO = customerDO.getCustomerCompanyDO();
             if (customerCompanyDO != null) {
-                customerCompanyDO.setConnectPhone(hidePhone(customerCompanyDO.getConnectPhone()));
+                //是否开启查看手机号码权限
+                    customerCompanyDO.setConnectPhone(hidePhone(customerCompanyDO.getConnectPhone()));
+
                 customerCompanyDO.setAgentPersonPhone(hidePhone(customerCompanyDO.getAgentPersonPhone()));
                 customerCompanyDO.setLegalPersonPhone(hidePhone(customerCompanyDO.getLegalPersonPhone()));
                 customerCompanyDO.setLandline(hidePhone(customerCompanyDO.getLandline()));
@@ -1259,7 +1265,9 @@ public class CustomerServiceImpl implements CustomerService {
             CustomerPersonDO customerPersonDO = customerDO.getCustomerPersonDO();
             if (customerPersonDO != null) {
                 customerPersonDO.setPhone(hidePhone(customerPersonDO.getPhone()));
-                customerPersonDO.setConnectPhone(hidePhone(customerPersonDO.getConnectPhone()));
+                //是否开启查看手机号码权限
+                    customerPersonDO.setConnectPhone(hidePhone(customerPersonDO.getConnectPhone()));
+
 //                customerPersonDO.setPhone(null);
 //                customerPersonDO.setConnectPhone(null);
             }
@@ -1293,8 +1301,6 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
-
-        //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
         processCustomerPhone(customerDO);
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         //显示联合开发原的省，市，区
@@ -1660,8 +1666,6 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
-
-        //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
         processCustomerPhone(customerDO);
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
@@ -1745,9 +1749,9 @@ public class CustomerServiceImpl implements CustomerService {
             customerRiskManagementDOForUpdate.setId(customerDO.getCustomerRiskManagementDO().getId());
             customerRiskManagementDOForUpdate.setRemark(customerRiskManagement.getRemark());
             customerRiskManagementDOForUpdate.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            //customerRiskManagementDOForUpdate.setCreateTime(now);
+            customerRiskManagementDOForUpdate.setCreateTime(now);
             customerRiskManagementDOForUpdate.setUpdateTime(now);
-            //customerRiskManagementDOForUpdate.setCreateUser(userSupport.getCurrentUserId().toString());
+            customerRiskManagementDOForUpdate.setCreateUser(userSupport.getCurrentUserId().toString());
             customerRiskManagementDOForUpdate.setUpdateUser(userSupport.getCurrentUserId().toString());
             customerSupport.saveCustomerRiskLog(customerDO.getId(), null, customerRiskManagement.getCreditAmount(), CustomerRiskBusinessType.CUSTOMER_RISK_TYPE, null, null);
             customerRiskManagementMapper.update(customerRiskManagementDOForUpdate);
@@ -3707,6 +3711,21 @@ public class CustomerServiceImpl implements CustomerService {
         return result;
     }
 
+    /**
+     * 分配判断当前角色用户是否分配权限查看手机号码
+     * @return
+     */
+    public boolean currUserHashPrev(){
+        Integer RolehasPrev= userPrevMapper.hasPrevilegeOfCurrRole(userSupport.getCurrentUser().getRoleId());
+        Integer UserhasPrev = userPrevMapper.hasPrevilegeOfCurrUser(userSupport.getCurrentUserId());
+        if(RolehasPrev > 0){
+           return  true;
+        }else if (UserhasPrev>0) {
+                return  true;
+        }
+        return false;
+    }
+
     /*
     将customer中的确认结算单用户id和确认坏账用户id转换为名字
      */
@@ -3750,6 +3769,8 @@ public class CustomerServiceImpl implements CustomerService {
         customerStatementDateChangeLogDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerStatementDateChangeLogMapper.save(customerStatementDateChangeLogDO);
     }
+    @Autowired
+    UserPrevMapper userPrevMapper;
 
     @Autowired
     private UserMapper userMapper;
@@ -3769,8 +3790,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private CustomerCompanyMapper customerCompanyMapper;
 
-    @Autowired
-    private UserSupport userSupport;
 
     @Autowired
     private CustomerRiskManagementMapper customerRiskManagementMapper;
@@ -3822,4 +3841,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerSupport customerSupport;
+
+    @Autowired
+    private UserSupport userSupport;
+
+
+
 }

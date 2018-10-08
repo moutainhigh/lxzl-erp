@@ -27,6 +27,14 @@ public class DingDingConfig {
      * @return
      */
     public static String applyApprovingWorkflowCallBackUrl;
+//    /**
+//     * 获取发送钉钉机器人消息的url
+//     */
+//    public static String getSendRobotMessageUrl() {
+//       // return dingDingGatewayUrl + "/robot/sendRobotMsg?accessToken=b20074e334cddd5f41728a7283969e0528259c5f2929e05811b63a09af78eddf";
+//        return dingDingGatewayUrl +DingDingMsgConfig.exceptionMsgUrl;
+//
+//    }
 
 
     /**

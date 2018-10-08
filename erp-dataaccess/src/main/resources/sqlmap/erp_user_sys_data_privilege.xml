@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.user.UserPrevMapper">
+
+    <sql id="set_column_sql">
+        <set>
+            <if test="userId != null">
+                user_id = #{userId, jdbcType=INTEGER},
+            </if>
+            <if test="prevType != null">
+                prev_type = #{prevType, jdbcType=INTEGER},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus, jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+    </sql>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.user.UserPrevDO">
+		insert into erp_user_sys_data_privilege(user_id,prev_type,data_status)VALUES (#{userId},#{prevType},1)
+	</insert>
+
+    <select id="hasPrevilegeOfCurrRole" resultType="Integer" parameterType="Integer">
+	  SELECT COUNT(1)
+	  FROM erp_user_sys_data_privilege
+      WHERE role_id = #{roleId}
+            AND prev_type = 1
+    </select>
+    <select id="hasPrevilegeOfCurrUser" resultType="Integer" parameterType="Integer">
+        SELECT COUNT(1)
+        FROM erp_user_sys_data_privilege
+        WHERE user_id = #{userId}
+        AND prev_type = 1
+    </select>
+
+    <select id="queryAllUsers" resultType="com.lxzl.erp.dataaccess.domain.user.UserPrevDO">
+        select id as userId, real_name as userName
+        from erp_user
+        where user_type != 1
+    </select>
+
+    <update id="deleteUserPrev" parameterType="Integer">
+        update erp_user_sys_data_privilege
+        set data_status = 2
+        where id = #{Id}
+    </update>
+    <!--单个插入-->
+    <insert id="AddPrev" parameterType="com.lxzl.erp.dataaccess.domain.user.UserPrevDO">
+    INSERT INTO erp_user_sys_data_privilege(user_id,role_id,privilege_type,data_status)VALUES (#{userId},#{roleId},#{prevType},1)
+</insert>
+
+    <!--批量插入-->
+    <insert id="BatchPrev" parameterType="com.lxzl.erp.dataaccess.domain.user.UserPrevDO">
+        INSERT INTO erp_user_sys_data_privilege
+        (user_id,role_id, privilege_type, data_status)
+        VALUES
+        <foreach collection="list" item="prev" separator=",">
+            (#{prev.user_id},#{prev.role_id}, #{prev.privilege_type}, #{prev.data_status})
+        </foreach>
+    </insert>
+</mapper>
