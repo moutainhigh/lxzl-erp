@@ -35,7 +35,9 @@ public class CheckStatementDetailReletMaterialDTO extends CheckStatementDetailRe
     public String getCacheKey(CheckStatementStatisticsDTO statementStatisticsDTO) {
         ReletOrderMaterial reletOrderMaterial = super.getReletOrderMaterialById(super.getReletOrderItemReferId());
         String cacheKey = reletOrderMaterial.getReletOrderId() + "_" + this.getReletOrderItemReferId() + "_" + this.getOrderItemType() ;
-        cacheKey = cacheKey + "_" + DateFormatUtils.format(getStatementExpectPayTime(), "yyyyMMdd");
+        if(getStatementExpectPayTime() != null){
+            cacheKey = cacheKey + "_" + DateFormatUtils.format(getStatementExpectPayTime(), "yyyyMMdd");
+        }
         return cacheKey;
     }
 

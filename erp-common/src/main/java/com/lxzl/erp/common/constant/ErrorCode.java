@@ -1164,6 +1164,7 @@ public class ErrorCode {
     public static final String APPLE_NOT_REPLACE_OTHER= "J310000038";//苹果商品只能更换苹果商品
     public static final String OTHER_NOT_REPLACE_APPLE= "J310000039";//非苹果商品不能更换苹果商品
     public static final String RETURN_TIME_NOT_BEFORE_REPLACE_TIME= "J3100000340";
+    public static final String K3_ORDER_CAN_NOT_REPLACE= "J3100000341";//K3订单不允许换货
 
     //变更单
     public static final String EXCHANGE_ORDER_STATUS_ERROR = "J330000001";
@@ -2320,6 +2321,7 @@ public class ErrorCode {
         MAP.put(APPLE_NOT_REPLACE_OTHER, "苹果商品只能更换苹果商品");
         MAP.put(OTHER_NOT_REPLACE_APPLE, "非苹果商品不能更换苹果商品");
         MAP.put(RETURN_TIME_NOT_BEFORE_REPLACE_TIME, "所选退货时间为【%s 】，订单【%s 】的换货单【%s 】的换货时间为【%s 】，所退的商品中有换货的商品，退货时间不能选在换货之前");
+        MAP.put(K3_ORDER_CAN_NOT_REPLACE, "K3订单不允许换货");
 
 
         MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");

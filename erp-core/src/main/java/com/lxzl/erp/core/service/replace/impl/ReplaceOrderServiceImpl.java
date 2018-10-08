@@ -64,6 +64,7 @@ import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO;
+import com.lxzl.erp.dataaccess.domain.order.ExchangeOrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
@@ -127,12 +128,25 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
 
         //校验订单编号
         OrderDO orderDO = orderMapper.findByOrderNo(replaceOrderDO.getOrderNo());
-        //TODO 补充订单编号
-        replaceOrderDO.setOriginalOrderNo(orderDO.getOriginalOrderNo());
         if (orderDO == null) {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
+        //K3老订单不能换货
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
+            serviceResult.setErrorCode(ErrorCode.K3_ORDER_CAN_NOT_REPLACE);
+            return serviceResult;
+        }
+        //校验有未完成的变更单不能换货
+        List<ExchangeOrderDO> exchangeOrderDOList = exchangeOrderMapper.findByOrderNo(orderDO.getOrderNo());
+        if (CollectionUtil.isNotEmpty(exchangeOrderDOList)) {
+            serviceResult.setErrorCode(ErrorCode.EXCHANGE_ORDER_EXISTS);
+            return serviceResult;
+        }
+
+        //TODO 补充订单编号
+        replaceOrderDO.setOriginalOrderNo(orderDO.getOriginalOrderNo());
+
         //只有确认收货和部分归还状态的才可以换货
         if (!OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus()) &&
                 !OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus())) {
@@ -479,12 +493,24 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         }
         //校验订单编号
         OrderDO orderDO = orderMapper.findByOrderNo(replaceOrderDO.getOrderNo());
-        //TODO 补充订单编号
-        replaceOrderDO.setOriginalOrderNo(orderDO.getOriginalOrderNo());
         if (orderDO == null) {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
+        //K3老订单不能换货
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
+            serviceResult.setErrorCode(ErrorCode.K3_ORDER_CAN_NOT_REPLACE);
+            return serviceResult;
+        }
+        //校验有未完成的变更单不能换货
+        List<ExchangeOrderDO> exchangeOrderDOList = exchangeOrderMapper.findByOrderNo(orderDO.getOrderNo());
+        if (CollectionUtil.isNotEmpty(exchangeOrderDOList)) {
+            serviceResult.setErrorCode(ErrorCode.EXCHANGE_ORDER_EXISTS);
+            return serviceResult;
+        }
+        //TODO 补充订单编号
+        replaceOrderDO.setOriginalOrderNo(orderDO.getOriginalOrderNo());
+
 
         //只有确认收货和部分归还状态的才可以换货
         if (!OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus()) &&
@@ -2179,6 +2205,8 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
     private AmountSupport amountSupport;
     @Autowired
     private HttpSession httpSession;
+    @Autowired
+    private ExchangeOrderMapper exchangeOrderMapper;
 
 
 }

@@ -1261,6 +1261,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     if (null != orderDO.getIsTurnRentOrder() && !CommonConstant.COMMON_ZERO.equals(orderDO.getIsTurnRentOrder())){
                         //转租赁的原测试机订单不能操作
                         result.setErrorCode(ErrorCode.TEST_MACHINE_ORDER_NOT_ALLOWED_OPERATE_AFTER_RENT);
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                         return  result;
                     }
                     //不是K3老订单进行自加操作
