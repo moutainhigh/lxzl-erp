@@ -1416,7 +1416,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_MONTH);
             statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             statisticsOperateDataDO.setCreateTime(nowDate);
-            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            statisticsOperateDataDO.setCreateUser(null);
         }
         // TODO: 2018\8\29 0029 生成业务员数据
         List<StatisticsOperateDataDO> statisticsSalesmanOperateDataDOList = statisticsOperateDataMapper.findDataListForSalesmanWeekAndMonth(maps);
@@ -1427,7 +1427,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_MONTH);
             statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             statisticsOperateDataDO.setCreateTime(nowDate);
-            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            statisticsOperateDataDO.setCreateUser(null);
         }
         statisticsOperateDataDOList.addAll(statisticsSalesmanOperateDataDOList);
         //批量保存
@@ -1470,7 +1470,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_WEEK);
             statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             statisticsOperateDataDO.setCreateTime(nowDate);
-            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            statisticsOperateDataDO.setCreateUser(null);
         }
         statisticsOperateDataDOList.addAll(statisticsSalesmanOperateDataDOList);
         //批量保存
@@ -1580,7 +1580,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_WEEK);
             statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             statisticsOperateDataDO.setCreateTime(nowDate);
-            statisticsOperateDataDO.setCreateUser(null);
+            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
         }
         // TODO: 2018\8\29 0029 生成业务员数据
         List<StatisticsOperateDataDO> statisticsSalesmanOperateDataDOList = statisticsOperateDataMapper.findDataListForSalesmanWeekAndMonth(maps);
@@ -1591,7 +1591,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             statisticsOperateDataDO.setStatisticalStatus(StatisticsOperateDataStatisticalStatus.STATISTICAL_WEEK);
             statisticsOperateDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             statisticsOperateDataDO.setCreateTime(nowDate);
-            statisticsOperateDataDO.setCreateUser(null);
+            statisticsOperateDataDO.setCreateUser(userSupport.getCurrentUserId().toString());
         }
         statisticsOperateDataDOList.addAll(statisticsSalesmanOperateDataDOList);
         //批量保存
