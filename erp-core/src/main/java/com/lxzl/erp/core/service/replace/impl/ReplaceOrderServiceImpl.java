@@ -132,6 +132,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
+        //K3老订单不能换货
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
+            serviceResult.setErrorCode(ErrorCode.K3_ORDER_CAN_NOT_REPLACE);
+            return serviceResult;
+        }
         //校验有未完成的变更单不能换货
         List<ExchangeOrderDO> exchangeOrderDOList = exchangeOrderMapper.findByOrderNo(orderDO.getOrderNo());
         if (CollectionUtil.isNotEmpty(exchangeOrderDOList)) {
@@ -490,6 +495,11 @@ public class ReplaceOrderServiceImpl implements ReplaceOrderService{
         OrderDO orderDO = orderMapper.findByOrderNo(replaceOrderDO.getOrderNo());
         if (orderDO == null) {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return serviceResult;
+        }
+        //K3老订单不能换货
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
+            serviceResult.setErrorCode(ErrorCode.K3_ORDER_CAN_NOT_REPLACE);
             return serviceResult;
         }
         //校验有未完成的变更单不能换货
