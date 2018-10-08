@@ -18,6 +18,7 @@ public class StatementOrderReturnDetailDO  extends BaseDO {
 	private String remark;
 	private Integer returnOrderId;
 	private Integer returnOrderDetailId;
+	private Integer orderType;
 
 	public Integer getId(){
 		return id;
@@ -113,5 +114,13 @@ public class StatementOrderReturnDetailDO  extends BaseDO {
 
 	public void setReturnOrderDetailId(Integer returnOrderDetailId) {
 		this.returnOrderDetailId = returnOrderDetailId;
+	}
+
+	public Integer getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(Integer orderType) {
+		this.orderType = orderType;
 	}
 }

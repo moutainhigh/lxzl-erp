@@ -23,6 +23,7 @@ public class ExcelExportConfigGroup {
     public static ExcelExportConfig statisticsFinanceWeeklyConfig = new ExcelExportConfig();
     public static ExcelExportConfig statisticsRentProductDetailConfig = new ExcelExportConfig();
     public static ExcelExportConfig statisticsReturnProductDetailConfig = new ExcelExportConfig();
+    public static ExcelExportConfig statementOrderCheckConfigNew = new ExcelExportConfig();
 
     static {
         initBankSlipDetailConfig();
@@ -34,6 +35,7 @@ public class ExcelExportConfigGroup {
         initStatisticsFinanceWeeklyConfig();
         initStatisticsRentProductDetailConfig();
         initStatisticsReturnProductDetailConfig();
+        initStatementOrderCheckConfigNew();
     }
     private static ExcelExportView createRentTypeExcelExportView() {
         ExcelExportView rentTypeExcelExportView = new ExcelExportView() {
@@ -108,12 +110,134 @@ public class ExcelExportConfigGroup {
         };
         return subCompanyExcelExportView;
     }
+    private static ExcelExportView createCustomerOriginExcelExportView() {
+        ExcelExportView customerOriginExcelExportView = new ExcelExportView() {
+            @Override
+            public Object view(Object o) {
+                if (o != null) {
+                    Integer customerOrigin = (Integer) o;
+                    if (1 == customerOrigin) {
+                        return "地推活动";
+                    } else if (2 == customerOrigin) {
+                        return "展会了解";
+                    } else if (3 == customerOrigin) {
+                        return "业务联系";
+                    } else if (4 == customerOrigin) {
+                        return "百度推广";
+                    } else if (5 == customerOrigin) {
+                        return "朋友推荐";
+                    } else if (6 == customerOrigin) {
+                        return "其他广告";
+                    }
+                }
+                return "";
+            }
+        };
+        return customerOriginExcelExportView;
+    }
+
+    private static ExcelExportView createCustomerIndustryExcelExportView() {
+        ExcelExportView customerIndustryExcelExportView = new ExcelExportView() {
+            @Override
+            public Object view(Object o) {
+                if (o != null) {
+                    String customerIndustry = (String) o;
+                    if ("1".equals(customerIndustry)) {
+                        return "计算机软硬件(互联网推广_APP开发等)";
+                    } else if ("2".equals(customerIndustry)) {
+                        return "互联网电子商务";
+                    } else if ("3".equals(customerIndustry)) {
+                        return "网络游戏_视频直播_微信营销";
+                    } else if ("4".equals(customerIndustry))  {
+                        return "通信_电信_电子产品";
+                    } else if ("5".equals(customerIndustry)) {
+                        return "互联网金融_贷款_期货现货贵金属_分期支付_担保拍卖";
+                    } else if ("6".equals(customerIndustry)) {
+                        return "实业投资_保险_证券_银行";
+                    } else if ("7".equals(customerIndustry)) {
+                        return "教育_培训";
+                    } else if ("8".equals(customerIndustry)) {
+                        return "政府_公共事业_非盈利性机构";
+                    } else if ("9".equals(customerIndustry)) {
+                        return "媒体_出版_影视_文化传播";
+                    } else if ("10".equals(customerIndustry)) {
+                        return "婚纱摄影_旅游度假_酒店餐饮";
+                    } else if ("11".equals(customerIndustry)) {
+                        return "服务娱乐_医疗美容";
+                    } else if ("12".equals(customerIndustry)) {
+                        return "专业服务(租赁服务_企业注册_人力资源_贸易报关_中介咨询_实体广告等)";
+                    } else if ("13".equals(customerIndustry)) {
+                        return "展览会议_公关活动";
+                    } else if ("14".equals(customerIndustry)) {
+                        return "房地产_建筑建设_开发";
+                    } else if ("15".equals(customerIndustry)) {
+                        return "家居建材_装饰设计";
+                    } else if ("16".equals(customerIndustry)) {
+                        return "交通运输_物流仓储_供应链";
+                    } else if ("17".equals(customerIndustry)) {
+                        return "维修安装_家政_叫车服务";
+                    } else if ("18".equals(customerIndustry)) {
+                        return "加工制造_工业自动化_汽车摩托车销售";
+                    } else if ("19".equals(customerIndustry)) {
+                        return "快速消费品(服饰日化_食品烟酒等)";
+                    } else if ("99".equals(customerIndustry)) {
+                        return "其他";
+                    } else {
+                        return "其他";
+                    }
+                }
+                return "";
+            }
+        };
+        return customerIndustryExcelExportView;
+    }
+    private static ExcelExportView createReturnReasonExcelExportView() {
+        ExcelExportView returnReasonExcelExportView = new ExcelExportView() {
+            @Override
+            public Object view(Object o) {
+                if (o != null) {
+                    Integer returnReasonType = (Integer) o;
+                    if (1 == returnReasonType) {
+                        return "客户方设备不愿或无法退还";
+                    } else if (2 == returnReasonType) {
+                        return "期满正常收回";
+                    } else if (3 == returnReasonType) {
+                        return "提前退租";
+                    } else if (4 == returnReasonType) {
+                        return "未按时付款或风险等原因上门收回";
+                    } else if (5 == returnReasonType) {
+                        return "设备故障等我方原因导致退货";
+                    } else if (6 == returnReasonType) {
+                        return "主观因素等客户方原因导致退货";
+                    } else if (7 == returnReasonType) {
+                        return "更换设备";
+                    } else if (8 == returnReasonType) {
+                        return "公司倒闭";
+                    } else if (9 == returnReasonType) {
+                        return "设备闲置";
+                    } else if (10 == returnReasonType) {
+                        return "满三个月或六个月随租随还";
+                    } else if (11 == returnReasonType) {
+                        return "其它";
+                    } else {
+                        return "其它";
+                    }
+                }
+                return null;
+            }
+        };
+        return returnReasonExcelExportView;
+    }
+
 
     private static void initStatisticsRentProductDetailConfig() {
         statisticsRentProductDetailConfig.addConfig(new ColConfig("orderNo", "订单编号"))
                 .addConfig(new ColConfig("orderSubCompanyId", "订单分公司", createSubCompanyExcelExportView()))
                 .addConfig(new ColConfig("deliverySubCompanyId", "发货分公司", createSubCompanyExcelExportView()))
                 .addConfig(new ColConfig("customerName","客户名称"))
+                .addConfig(new ColConfig("customerOrigin","客户来源", createCustomerOriginExcelExportView()))
+                .addConfig(new ColConfig("industry","客户行业", createCustomerIndustryExcelExportView()))
+                .addConfig(new ColConfig("k3CustomerCode","K3客户编码"))
                 .addConfig(new ColConfig("rentType","租赁类型", createRentTypeExcelExportView()))
                 .addConfig(new ColConfig("rentTimeLength","租赁时长"))
                 .addConfig(new ColConfig("rentLengthType","租赁长短类型", createRentLengthTypeExcelExportView()))
@@ -152,13 +276,18 @@ public class ExcelExportConfigGroup {
                 .addConfig(new ColConfig("deliverySubCompanyId", "发货分公司", createSubCompanyExcelExportView()))
                 .addConfig(new ColConfig("customerNo", "客户编号"))
                 .addConfig(new ColConfig("customerName", "客户名称"))
+                .addConfig(new ColConfig("customerOrigin","客户来源", createCustomerOriginExcelExportView()))
+                .addConfig(new ColConfig("industry","客户行业", createCustomerIndustryExcelExportView()))
+                .addConfig(new ColConfig("k3CustomerCode","K3客户编码"))
                 .addConfig(new ColConfig("rentType","租赁类型", createRentTypeExcelExportView()))
                 .addConfig(new ColConfig("rentTimeLength","租赁时长"))
                 .addConfig(new ColConfig("rentLengthType","租赁长短类型", createRentLengthTypeExcelExportView()))
                 .addConfig(new ColConfig("returnTime","退货时间", DateExcelExportView.getInstance()))
                 .addConfig(new ColConfig("rentStartTime","订单起租时间",DateExcelExportView.getInstance()))
-                .addConfig(new ColConfig("expectReturnTime","订单截止时间", DateExcelExportView.getInstance()));
+                .addConfig(new ColConfig("expectReturnTime","订单截止时间", DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("returnReasonType","退货原因", createReturnReasonExcelExportView()));
     }
+
 
     private static void initStatisticsFinanceWeeklyConfig() {
         statisticsFinanceWeeklyConfig.addConfig(new ColConfig("orderOrigin", "订单来源", new ExcelExportView() {
@@ -586,8 +715,56 @@ public class ExcelExportConfigGroup {
 
                         return "";
                     }
-                })).addConfig(new ColConfig("k3ReturnOrderDONo", " 退租订单号", 9))
-                .addConfig(new ColConfig("returnReasonType", " 退货原因", 9))
+                })).addConfig(new ColConfig("k3ReturnOrderDONo", " 退换订单号", 9))
+                .addConfig(new ColConfig("returnReasonType", " 退换货原因", 9))
+                .addConfig(new ColConfig("statementCorrectNo", " 冲正订单号", 9))
+                .addConfig(new ColConfig("statementCorrectReason", " 冲正原因", 9));
+    }
+
+
+    public static void initStatementOrderCheckConfigNew() {
+        statementOrderCheckConfigNew
+                .addConfig(new ColConfig("orderNo", "租赁订单号", 10, HSSFColor.WHITE.index))
+                .addConfig(new ColConfig("businessType", "业务类型", 6, HSSFColor.WHITE.index))
+                .addConfig(new ColConfig("orderItemType", " 订单项类型", 6, HSSFColor.WHITE.index))
+                .addConfig(new ColConfig("itemName", "商品名", 16, HSSFColor.WHITE.index))
+                .addConfig(new ColConfig("itemSkuName", "配置", 23, HSSFColor.WHITE.index))
+                .addConfig(new ColConfig("isNew", "新旧程度", 6, HSSFColor.WHITE.index))
+                //-------------------以下是全部结算单-----------------------------
+                .addConfig(new ColConfig("rentStartTime", "租赁开始日期", 10, DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("expectReturnTime", "租赁结束日期", 10, DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("month", "月", 3))
+                .addConfig(new ColConfig("day", "日", 3))
+                .addConfig(new ColConfig("allRentTimeLength", "租赁总期限", 8))
+                .addConfig(new ColConfig("allPeriodStartAndEnd", "租赁期限", 15, HSSFColor.WHITE.index))
+                //-------------------以上是全部结算单-----------------------------
+
+                //-------------------以下是本期结算单-----------------------------
+                .addConfig(new ColConfig("statementStartTime", "本期开始日期", 10, DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementEndTime", "本期结束日期", 10, DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementMonth", "月", 3))
+                .addConfig(new ColConfig("statementDay", "日", 3))
+                .addConfig(new ColConfig("rentTimeLength", "租赁期限", 6))
+                .addConfig(new ColConfig("currentPeriodStartAndEnd", "本期费用起止", 12,HSSFColor.LEMON_CHIFFON.index))
+
+                .addConfig(new ColConfig("payMode", "支付方式", 7, HSSFColor.LEMON_CHIFFON.index))
+                //-------------------以下是全部结算单-----------------------------
+                .addConfig(new ColConfig("rentProgramme", "租赁方案", 7, HSSFColor.LEMON_CHIFFON.index))
+                .addConfig(new ColConfig("itemCount", "租赁数量", 4, HSSFColor.LEMON_CHIFFON.index))
+                .addConfig(new ColConfig("unitAmountInfo", "单价\n（元/台）", 10, HSSFColor.LEMON_CHIFFON.index))
+                .addConfig(new ColConfig("statementDetailRentAmount", "本期租金", 6, HSSFColor.TAN.index, AmountExcelExportView.getInstance()))
+//                .addConfig(new ColConfig("statementRentDepositAmount", " 租金押金", 6, HSSFColor.WHITE.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDepositAmount", " 押金", 6, HSSFColor.LEMON_CHIFFON.index,  AmountExcelExportView.getInstance()))
+//                .addConfig(new ColConfig("statementDepositPaidAmount", " 支付押金", 8, HSSFColor.WHITE.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementOverdueAmount", " 逾期金额", 6, HSSFColor.LEMON_CHIFFON.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementOtherAmount", " 其它费用", 6, HSSFColor.LEMON_CHIFFON.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementCorrectAmount", " 调整金额", 6, HSSFColor.LEMON_CHIFFON.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailAmount", " 本期应付金额", 10, HSSFColor.TAN.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementExpectPayTime", " 本期应付日期", 8, HSSFColor.TAN.index,  DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("monthPayableAmount", " 本月应付金额", 10, HSSFColor.GOLD.index,  AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("statementDetailStatus", " 状态", 6))
+                .addConfig(new ColConfig("k3ReturnOrderDONo", " 退换订单号", 9))
+                .addConfig(new ColConfig("returnReasonType", " 退换货原因", 9))
                 .addConfig(new ColConfig("statementCorrectNo", " 冲正订单号", 9))
                 .addConfig(new ColConfig("statementCorrectReason", " 冲正原因", 9));
     }

@@ -653,6 +653,8 @@ public class ErrorCode {
     public static final String CUSTOMER_STATUS_IS_NOT_PASS = "J500187";
     public static final String CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH = "J500188";
 
+    public static final String DEPOSIT_NOT_PAID_BEFORE_REPLACE_ORDER = "J500189";
+
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
     public static final String MESSAGE_RECEIVER_NOT_NULL = "J600003";
@@ -830,6 +832,7 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_DETAIL_NOT_IN_SAME_ORDER = "J16000024";
     public static final String STATEMENT_ORDER_ITEM_NO_NEED_PAY = "J16000025";
     public static final String CORRECT_AMOUNT_ERROR = "J16000026";
+    public static final String CHECK_SHEET_CHOICE_MONTH_NOT_STATEMENT_ORDER_INFORMATION = "J16000027";
 
     public static final String K3_RETURN_ORDER_IS_NOT_NULL = "J17000001";
     public static final String K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE = "J17000002";
@@ -1117,6 +1120,65 @@ public class ErrorCode {
     public static final String STATISTICAL_STATUS_MONTH_ERROR = "J310000004";
     public static final String STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR = "J310000005";
     public static final String STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR = "J310000006";
+
+
+
+    //换货
+    public static final String REPLACE_TIME_NOT_NULL = "J310000001";//换货时间不能为空
+    public static final String REPLACE_REASON_TYPE_ERROR = "J310000002";//换货原因类型错误
+    public static final String REPLACE_ORDER_DETAIL_LIST_NOT_NULL = "J310000003";//换货详情列表不能为空
+    public static final String ORDER_ITEM_TYPE_NOT_NULL = "J310000004";//换货商品类型不能为空
+    public static final String ORDER_ITEM_ENTRY_NOT_NULL = "J310000005";//换货项行号不能为空
+    public static final String REPLACE_ORDER_STATUS_ERROR = "J310000006";//只有订单状态为租赁中和部分退货的订单才能进行换货操作
+    public static final String REPLACE_TIME_PARSE_ERROR = "J310000007";//校验换货时间parse出错
+    public static final String REPLACE_TIME_MUST_AFTER_RENT_START_TIME = "J310000008";//换货时间必须大于订单起租时间
+    public static final String REPLACE_TIME_MUST_BEFORE_EXPECT_RETURN_TIME = "J310000009";//换货时间不能大于订单预计归还时间
+    public static final String REPLACE_PRODUCT_COUNT_MORE_THAN_CANREPLACE_COUNT = "J310000010";//换货商品超过可换数量
+    public static final String REPLACE_MATERIAL_COUNT_MORE_THAN_CANREPLACE_COUNT = "J310000011";//换货配件超过可换数量
+    public static final String REPLACE_ADDRESS_IS_NULL = "J310000012";//换货地址不能为空
+    public static final String REPLACE_CONSIGNEE_NAME_IS_NULL = "J310000013";//换货收件人姓名不能为空
+    public static final String REPLACE_CONSIGNEE_PHONE_IS_NULL = "J310000014";//换货收件人电话不能为空
+    public static final String REPLACE_TIME_BEFORE_RELET_TIME = "J310000015";//该订单的换货时间必须大于该订单的续租时间
+    public static final String REPLACE_ORDER_NO_NOT_NULL = "J310000016";//换货单号不能为空
+    public static final String REPLACE_ORDER_ERROR = "J310000017";//换货单不存在
+    public static final String CANCEL_REPLACE_ORDER_BY_CREATE_USER = "J310000018";//换货单只能创建人取消
+    public static final String CANCEL_REPLACE_ORDER_STATUS_ERROR = "J310000019";//换货单只有在提交前才能取消
+    public static final String UPDATE_REPLACE_ORDER_BY_CREATE_USER = "J310000020";//修改换货单只能创建人修改
+    public static final String UPDATE_REPLACE_ORDER_STATUS_ERROR = "J310000021";//换货单只有在提交前才能修改
+    public static final String REPLACE_ORDER_NO_ERROR = "J310000022";//换货单不存在
+    public static final String CONFIRM_REPLACE_ORDER_NOT_NULL = "J310000023";//确认换货传入的换货单对象不能为空
+    public static final String CONFIRM_REPLACE_ORDER_REPLACE_ORDER_STATUS_ERROR = "J310000024";//只有已发货状态的换货单才能进行确认换货
+    public static final String REAL_REPLACE_PRODUCT_COUNT_MORE_THAN_REPLACE_PRODUCT_COUNT = "J310000025";//确认换货数量大于换货单下单数量
+    public static final String REAL_REPLACE_PRODUCT_COUNT_NOT_NEGATIVE= "J310000026";//确认换货数量不能为负
+    public static final String REPLACE_TIME_COUNT_NOT_BEFORE_MONTH_TIME= "J310000027";//换货时间不能再当月时间之前
+    public static final String REPLACE_TIME_MORE_THAN_NOW_TIME_FIFTEEN= "J310000028";//换货时间不能超过当前时间15天以上
+    public static final String REPLACE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN= "J310000029";//只有待提交和已驳回状态的换货单可以提交
+    public static final String REPLACE_ORDER_DETAIL_COMMITTED_NOT_NULL= "J310000030";//换货单商品不能空，需有商品才能提交
+    public static final String REAL_REPLACE_TIME_NOT_NULL= "J310000031";//实际换货时间不能为空
+    public static final String REAL_REPLACE_TIME_MUST_AFTER_REPLACE_TIME= "J310000032";//实际换货时间不能小于预计换货时间
+    public static final String REAL_REPLACE_TIME_MUST_BEFORE_CONFIRM_TIME= "J310000033";//实际换货时间不能大于当前时间
+    public static final String SEND_REPLACE_ORDER_TO_K3_STATUS_ERROR= "J310000034";//换货单状态错误
+    public static final String K3_REPLACE_ORDER_ERROR= "J310000035";//K3换货单推送信息失败,【%s 】
+    public static final String REPLACE_ORDER_IS_NEW_PRODUCT_NOT_NULL= "J310000036";//换货商品或被换商品新旧属性不能为空
+    public static final String REPLACE_ORDER_PRODUCT_NOT_NEW= "J310000037";//新商不能换货或被换，只能选择次新商品进行更换
+    public static final String APPLE_NOT_REPLACE_OTHER= "J310000038";//苹果商品只能更换苹果商品
+    public static final String OTHER_NOT_REPLACE_APPLE= "J310000039";//非苹果商品不能更换苹果商品
+    public static final String RETURN_TIME_NOT_BEFORE_REPLACE_TIME= "J3100000340";
+
+    //变更单
+    public static final String EXCHANGE_ORDER_STATUS_ERROR = "J330000001";
+    public static final String ORIGINAL_ORDER_NO_NOT_NULL = "J330000002";
+    public static final String REPLACE_ORDER_EXISTS = "J330000003";
+    public static final String EXCHANGE_ORDER_EXISTS="J330000004";
+    public static final String EXCHANGE_ORDER_NO_SATRT_TIME= "J330000005";
+    public static final String EXCHANGE_ORDER_NO_EXPECT_RETURN_TIME= "J330000006";
+    public static final String EXCHANGE_ORDER_NO_FIRST_MONTH= "J330000007";
+    public static final String NOT_EXCHANGE_ORDER= "J330000008";
+    public static final String HAS_EXCHANGE_ORDER= "J330000009";
+    public static final String HAS_REPLACE_ORDER_IS_NOT_RECALCULATION = "J330000010";
+
+    public static final String ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER = "J340000001";
+    public static final String EXIT_CORRECT_ORDER_NOT_ALLOW_CHANGE_ORDER = "J340000002";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1912,6 +1974,7 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_DETAIL_NOT_IN_SAME_ORDER, "结算单项不属于同一结算单");
         MAP.put(STATEMENT_ORDER_ITEM_NO_NEED_PAY, "结算单项无需支付");
         MAP.put(CORRECT_AMOUNT_ERROR, "冲正金额有误，%s ");
+        MAP.put(CHECK_SHEET_CHOICE_MONTH_NOT_STATEMENT_ORDER_INFORMATION, "选择月份未有对帐单信息");
 
         MAP.put(K3_RETURN_ORDER_IS_NOT_NULL, "K3退货单不存在");
         MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE, "K3退货单状态为审核中或者已推送到K3，不能修改");
@@ -2216,8 +2279,65 @@ public class ErrorCode {
         MAP.put(STATISTICAL_STATUS_WEEK_QUERY_START_TIME_ERROR, "查询周经营数据传入的查询开始时间必须是星期一");
         MAP.put(STATISTICAL_STATUS_MONTH_QUERY_START_TIME_ERROR, "查询月经营数据传入的查询开始时间必须是月初一号");
 
-        MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
 
+        MAP.put(REPLACE_TIME_NOT_NULL, "换货时间不能为空");
+        MAP.put(REPLACE_REASON_TYPE_ERROR, "换货原因类型错误");
+        MAP.put(REPLACE_ORDER_DETAIL_LIST_NOT_NULL, "换货详情不能为空");
+        MAP.put(ORDER_ITEM_TYPE_NOT_NULL, "换货商品类型不能为空");
+        MAP.put(ORDER_ITEM_ENTRY_NOT_NULL, "换货项行号不能为空");
+        MAP.put(REPLACE_ORDER_STATUS_ERROR, "只有订单状态为租赁中和部分退货的订单才能进行换货操作");
+        MAP.put(REPLACE_TIME_PARSE_ERROR, "校验换货时间parse出错");
+        MAP.put(REPLACE_TIME_MUST_AFTER_RENT_START_TIME, "换货时间必须大于订单起租时间");
+        MAP.put(REPLACE_TIME_MUST_BEFORE_EXPECT_RETURN_TIME, "换货时间必须小于订单预计归还时间");
+        MAP.put(REPLACE_PRODUCT_COUNT_MORE_THAN_CANREPLACE_COUNT, "换货商品超过可换数量");
+        MAP.put(REPLACE_MATERIAL_COUNT_MORE_THAN_CANREPLACE_COUNT, "换货配件超过可换数量");
+        MAP.put(REPLACE_ADDRESS_IS_NULL, "换货地址不能为空");
+        MAP.put(REPLACE_CONSIGNEE_NAME_IS_NULL, "换货收件人姓名不能为空");
+        MAP.put(REPLACE_CONSIGNEE_PHONE_IS_NULL, "换货收件人电话不能为空");
+        MAP.put(REPLACE_TIME_BEFORE_RELET_TIME, "该订单的换货时间必须大于该订单的续租时间");
+        MAP.put(REPLACE_ORDER_NO_NOT_NULL, "换货单号不能为空");
+        MAP.put(REPLACE_ORDER_ERROR, "换货单不存在");
+        MAP.put(CANCEL_REPLACE_ORDER_BY_CREATE_USER, "换货单只能创建人取消");
+        MAP.put(CANCEL_REPLACE_ORDER_STATUS_ERROR, "换货单只有在提交前才能取消");
+        MAP.put(UPDATE_REPLACE_ORDER_BY_CREATE_USER, "修改换货单只能创建人修改");
+        MAP.put(UPDATE_REPLACE_ORDER_STATUS_ERROR, "换货单只有在提交前才能修改");
+        MAP.put(REPLACE_ORDER_NO_ERROR, "换货单不存在");
+        MAP.put(CONFIRM_REPLACE_ORDER_NOT_NULL, "确认换货传入的换货单对象不能为空");
+        MAP.put(CONFIRM_REPLACE_ORDER_REPLACE_ORDER_STATUS_ERROR, "只有已发货状态的换货单才能进行确认换货");
+        MAP.put(REAL_REPLACE_PRODUCT_COUNT_MORE_THAN_REPLACE_PRODUCT_COUNT, "确认换货数量大于换货单下单数量");
+        MAP.put(REAL_REPLACE_PRODUCT_COUNT_NOT_NEGATIVE, "确认换货数量不能为负");
+        MAP.put(REPLACE_TIME_COUNT_NOT_BEFORE_MONTH_TIME, "换货时间不能再当月时间之前");
+        MAP.put(REPLACE_TIME_MORE_THAN_NOW_TIME_FIFTEEN, "换货时间不能超过当前时间15天以上");
+        MAP.put(REPLACE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交和已驳回状态的换货单可以提交");
+        MAP.put(REPLACE_ORDER_DETAIL_COMMITTED_NOT_NULL, "换货单商品不能空，需有商品才能提交");
+        MAP.put(REAL_REPLACE_TIME_NOT_NULL, "实际换货时间不能为空");
+        MAP.put(REAL_REPLACE_TIME_MUST_AFTER_REPLACE_TIME, "实际换货时间不能小于预计换货时间");
+        MAP.put(REAL_REPLACE_TIME_MUST_BEFORE_CONFIRM_TIME, "实际换货时间不能大于当前时间");
+        MAP.put(SEND_REPLACE_ORDER_TO_K3_STATUS_ERROR, "换货单状态错误");
+        MAP.put(K3_REPLACE_ORDER_ERROR, "K3换货单推送信息失败,【%s 】");
+        MAP.put(REPLACE_ORDER_IS_NEW_PRODUCT_NOT_NULL, "换货商品或被换商品新旧属性不能为空");
+        MAP.put(REPLACE_ORDER_PRODUCT_NOT_NEW, "全新商不能换货或被换，只能选择次新商品进行换货操作");
+        MAP.put(APPLE_NOT_REPLACE_OTHER, "苹果商品只能更换苹果商品");
+        MAP.put(OTHER_NOT_REPLACE_APPLE, "非苹果商品不能更换苹果商品");
+        MAP.put(RETURN_TIME_NOT_BEFORE_REPLACE_TIME, "所选退货时间为【%s 】，订单【%s 】的换货单【%s 】的换货时间为【%s 】，所退的商品中有换货的商品，退货时间不能选在换货之前");
+
+
+        MAP.put(CUSTOMER_PERSON_INTERNAL_NAME_IS_LENGTH, "个人客户内部名称长度不能超过20个中文字符");
+        MAP.put(DEPOSIT_NOT_PAID_BEFORE_REPLACE_ORDER, "换货之前需先支付原订单押金");
+
+        MAP.put(EXCHANGE_ORDER_STATUS_ERROR, "变更单状态有误，请仔细检查该订单");
+        MAP.put(ORIGINAL_ORDER_NO_NOT_NULL, "原订单编号不能为空");
+        MAP.put(REPLACE_ORDER_EXISTS, "该订单有未完成的换货单");
+        MAP.put(EXCHANGE_ORDER_EXISTS, "该订单还有变更单");
+
+        MAP.put(ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER, "仅月租允许换单");
+        MAP.put(EXIT_CORRECT_ORDER_NOT_ALLOW_CHANGE_ORDER, "当前结算单已进行过冲正，请取消冲正后重试");
+        MAP.put(EXCHANGE_ORDER_NO_SATRT_TIME, "生效时间不能小于起租时间");
+        MAP.put(EXCHANGE_ORDER_NO_EXPECT_RETURN_TIME, "生效时间不能大于预计归还时间");
+        MAP.put(EXCHANGE_ORDER_NO_FIRST_MONTH, "首月不能变更");
+        MAP.put(NOT_EXCHANGE_ORDER, "订单项没有变更数据");
+        MAP.put(HAS_EXCHANGE_ORDER, "原订单变更后不允许重算");
+        MAP.put(HAS_REPLACE_ORDER_IS_NOT_RECALCULATION, "该订单有换货单不允许重算");
     }
 
 

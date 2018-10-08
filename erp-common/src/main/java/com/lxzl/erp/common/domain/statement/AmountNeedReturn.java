@@ -1,6 +1,6 @@
 package com.lxzl.erp.common.domain.statement;
 
-import java.math.BigDecimal;
+import com.lxzl.erp.common.util.BigDecimalUtil;import java.math.BigDecimal;
 
 /**
  * @author: huanglong
@@ -22,7 +22,26 @@ public class AmountNeedReturn {
     //已付租金押金
     BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
 
-    public BigDecimal getDepositPaidAmount() {
+    public AmountNeedReturn add(AmountNeedReturn amountNeedReturn){
+        this.depositPaidAmount= BigDecimalUtil.add(this.depositPaidAmount,amountNeedReturn.getDepositPaidAmount());
+        this.otherPaidAmount=BigDecimalUtil.add(this.otherPaidAmount,amountNeedReturn.getOtherPaidAmount());
+        this.rentPaidAmount=BigDecimalUtil.add(this.rentPaidAmount,amountNeedReturn.getRentPaidAmount());
+        this.overduePaidAmount=BigDecimalUtil.add(this.overduePaidAmount,amountNeedReturn.getOverduePaidAmount());
+        this.penaltyPaidAmount= BigDecimalUtil.add(this.penaltyPaidAmount,amountNeedReturn.getPenaltyPaidAmount());
+        this.rentDepositPaidAmount=BigDecimalUtil.add(this.rentDepositPaidAmount,amountNeedReturn.getRentDepositPaidAmount());
+        return this;
+    }
+    public AmountNeedReturn() {
+    }
+
+    public AmountNeedReturn(BigDecimal depositPaidAmount, BigDecimal rentPaidAmount, BigDecimal rentDepositPaidAmount) {
+        this.depositPaidAmount = depositPaidAmount;
+        this.rentPaidAmount = rentPaidAmount;
+        this.rentDepositPaidAmount = rentDepositPaidAmount;
+    }
+    public BigDecimal getTotalAmount(){
+        return BigDecimalUtil.add(depositPaidAmount,otherPaidAmount,rentPaidAmount,overduePaidAmount,penaltyPaidAmount,rentDepositPaidAmount);
+    }    public BigDecimal getDepositPaidAmount() {
         return depositPaidAmount;
     }
 

@@ -3,7 +3,9 @@ package com.lxzl.erp.common.util;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.se.common.exception.BusinessException;
 
+
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -374,6 +376,25 @@ public class DateUtil {
     }
 
     /**
+     * 获取当前月最后一天,开始时间
+     *
+     *
+     * @param date
+     * @return
+     */
+    public static  Date getEndByMonth(Date date) {
+        //获取当前月最后一天
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.set(Calendar.DAY_OF_MONTH, ca.getActualMaximum(Calendar.DAY_OF_MONTH));
+        ca.set(Calendar.HOUR_OF_DAY, 00);
+        ca.set(Calendar.MINUTE, 00);
+        ca.set(Calendar.SECOND, 00);
+        ca.set(Calendar.MILLISECOND, 00);
+        return ca.getTime();
+    }
+
+    /**
      * 获取月份
      *
      * @param date  时间
@@ -446,15 +467,22 @@ public class DateUtil {
     }
 
     /**
-     * 通过两个日期获取时间间隔数组（0索引位置为月，1索引位置为日）
+     * <p>
+     * 计算两个日期之间相隔的月天
+     * </p>
+     * <pre>
+     *     所需参数示例及其说明
+     *     参数名称 : 示例值 : 说明 : 是否必须
+     * </pre>
+     * @author daiqi
+     * @date 2018/7/6 11:16
      * @param start
      * @param end
-     * @return
+     * @return int[]  下标为0的为月数 下标为1的为天数
      */
     public static int[] getDiff(Date start, Date end) {
         Calendar startCalendar = Calendar.getInstance();
         startCalendar.setTime(start);
-
         int startYear = startCalendar.get(Calendar.YEAR);
         int startMonth = startCalendar.get(Calendar.MONTH);
         int startDay = startCalendar.get(Calendar.DAY_OF_MONTH);
@@ -474,6 +502,7 @@ public class DateUtil {
         if (dayDiff < 0) {
             Calendar endMinusOneCalendar = Calendar.getInstance();   // end 的上一个月
             endMinusOneCalendar.setTime(endCalendar.getTime());
+            endMinusOneCalendar.add(Calendar.MONTH, -1);
             int monthDays = endMinusOneCalendar.getActualMaximum(Calendar.DATE);  // 该月的天数
 
             dayDiff += monthDays;  // 用上一个月的天数补上这个月差掉的日子
@@ -493,7 +522,6 @@ public class DateUtil {
         diff[1] = dayDiff;
         return diff;
     }
-
     /**
      * 判断当前日期是星期几
      */
@@ -509,27 +537,113 @@ public class DateUtil {
         return dayForWeek;
     }
 
-    public static void main(String[] args) {
-//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        List<Date> dateList = getCurrentYearPassedMonth();
-//        for(Date date : dateList){
-//            System.out.println(simpleDateFormat.format(date));
-//        }
+    /**
+     * 获取指定日期所在月份开始的时间戳
+     *
+     * @param date 指定日期
+     * @return
+     */
+    public static Long getMonthBegin(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
 
-//        List<Date> dateList2 = getCurrentMonthPassedDay();
-//        for(Date date : dateList2){
-//            System.out.println(simpleDateFormat.format(date));
-//        }
-//        List<Date> dateList3 = getCurrentYearNoPassedMonth();
-//        for(Date date : dateList3){
-//            System.out.println(simpleDateFormat.format(date));
-//        }
-//        List<Date> dateList4 = getCurrentMonthNoPassedDay();
-//        for(Date date : dateList4){
-//            System.out.println(simpleDateFormat.format(date));
-//        }
-//        System.out.println(simpleDateFormat.format(getDayByOffset(1)));
-        int d = DateUtil.dayForWeek(new Date());
-        System.out.println(d);
+        //设置为1号,当前日期既为本月第一天
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        //将小时至0
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        //将分钟至0
+        c.set(Calendar.MINUTE, 0);
+        //将秒至0
+        c.set(Calendar.SECOND, 0);
+        //将毫秒至0
+        c.set(Calendar.MILLISECOND, 0);
+        // 获取本月第一天的时间戳
+        return c.getTimeInMillis();
     }
+
+    /**
+     * 获取指定日期所在月份结束的时间戳
+     *
+     * @param date 指定日期
+     * @return
+     */
+    public static Long getMonthEnd(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+
+        //设置为当月最后一天
+        c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+        //将小时至23
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        //将分钟至59
+        c.set(Calendar.MINUTE, 59);
+        //将秒至59
+        c.set(Calendar.SECOND, 59);
+        //将毫秒至999
+        c.set(Calendar.MILLISECOND, 999);
+        // 获取本月最后一天的时间戳
+        return c.getTimeInMillis();
+    }
+
+    /**
+     * 获取两个时间之间的所有月份
+     */
+    public static List<Date> getMonthBetween(Date minDate, Date maxDate) {
+        ArrayList<Date> result = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");//格式化为年月
+
+        Calendar min = Calendar.getInstance();
+        Calendar max = Calendar.getInstance();
+
+        min.setTime(minDate);
+        min.set(min.get(Calendar.YEAR), min.get(Calendar.MONTH), 1);
+
+        max.setTime(maxDate);
+        max.set(max.get(Calendar.YEAR), max.get(Calendar.MONTH), 2);
+
+        Calendar curr = min;
+        while (curr.before(max)) {
+            String formatDate = sdf.format(curr.getTime());
+            ParsePosition pos = new ParsePosition(0);
+            result.add(sdf.parse(formatDate, pos));
+            curr.add(Calendar.MONTH, 1);
+        }
+        return result;
+    }
+
+    /**
+     * 更改日期，时间为08:00:00 CST 2018
+     * @param date
+     * @param day
+     * @return
+     */
+    public static  Date getMonthAndDay(Date date,Integer day){
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.set(Calendar.DAY_OF_MONTH, day);
+        ca.set(Calendar.HOUR_OF_DAY ,8);
+        ca.set(Calendar.MINUTE, 0);
+        ca.set(Calendar.SECOND, 0);
+        return ca.getTime();
+    }
+
+    /**
+     * 获取给定日期月份第一天凌晨 Tue May 01 08:00:00 CST 2018
+     * @param date
+     * @return
+     */
+    public static Date getStart8MonthDate(Date date) {
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.set(Calendar.DAY_OF_MONTH, 1);
+        ca.set(Calendar.HOUR_OF_DAY ,8);
+        ca.set(Calendar.MINUTE, 0);
+        ca.set(Calendar.SECOND, 0);
+        ca.set(Calendar.MILLISECOND, 0);
+        return ca.getTime();
+    }
+
+    public static void main(String[] args) {
+    }
+
 }

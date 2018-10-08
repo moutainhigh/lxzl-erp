@@ -87,6 +87,7 @@
 		<result column="statement_detail_penalty_amount" jdbcType="DECIMAL" property="statementDetailPenaltyAmount" />
 		<result column="statement_detail_penalty_paid_amount" jdbcType="DECIMAL" property="statementDetailPenaltyPaidAmount" />
 		<result column="relet_order_item_refer_id" jdbcType="INTEGER" property="reletOrderItemReferId"/>
+		<result column="source_id" jdbcType="INTEGER" property="sourceId"/>
 	</resultMap>
 
 
@@ -141,7 +142,7 @@
 		esod.statement_detail_amount as detail_statement_detail_amount,esod.statement_detail_other_amount as detail_statement_detail_other_amount,esod.statement_detail_other_paid_amount as detail_statement_detail_other_paid_amount,esod.statement_detail_rent_deposit_amount as detail_statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount as detail_statement_detail_rent_deposit_paid_amount,
 		esod.statement_detail_rent_deposit_return_amount as detail_statement_detail_rent_deposit_return_amount,esod.statement_detail_rent_deposit_return_time as detail_statement_detail_rent_deposit_return_time,esod.statement_detail_deposit_amount as detail_statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount as detail_statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount as detail_statement_detail_deposit_return_amount,esod.statement_detail_deposit_return_time as detail_statement_detail_deposit_return_time,
 		esod.statement_detail_rent_amount as detail_statement_detail_rent_amount,esod.statement_detail_rent_paid_amount as detail_statement_detail_rent_paid_amount, esod.statement_detail_paid_time as detail_statement_detail_paid_time, esod.statement_detail_overdue_amount as detail_statement_detail_overdue_amount,esod.statement_detail_overdue_paid_amount as detail_statement_detail_overdue_paid_amount,esod.statement_detail_overdue_days as detail_statement_detail_overdue_days,esod.statement_detail_overdue_phase_count as detail_statement_detail_overdue_phase_count,esod.statement_detail_status as detail_statement_detail_status,esod.statement_start_time as detail_statement_start_time,esod.statement_end_time as detail_statement_end_time,esod.statement_detail_correct_amount as detail_statement_detail_correct_amount,esod.data_status as detail_data_status,esod.remark as detail_remark,esod.create_time as detail_create_time,esod.create_user as detail_create_user,esod.update_time as detail_update_time,
-		esod.update_user as detail_update_user,esod.statement_coupon_amount as detail_statement_coupon_amount,esod.statement_detail_penalty_amount as statement_detail_penalty_amount,esod.statement_detail_penalty_paid_amount as statement_detail_penalty_paid_amount,esod.relet_order_item_refer_id as relet_order_item_refer_id
+		esod.update_user as detail_update_user,esod.statement_coupon_amount as detail_statement_coupon_amount,esod.statement_detail_penalty_amount as statement_detail_penalty_amount,esod.statement_detail_penalty_paid_amount as statement_detail_penalty_paid_amount,esod.relet_order_item_refer_id as relet_order_item_refer_id,esod.source_id as source_id
 	</sql>
 
 	<select id="findById" resultMap="StatementOrderDO" parameterType="java.lang.Integer">
@@ -797,5 +798,16 @@
 			and t1.buyer_customer_id = #{maps.statementOrderMonthQueryParam.statementOrderCustomerId, jdbcType=INTEGER}
 		</if>
 		and t1.id is not null order by monthTime desc
+	</select>
+
+	<select id="sumStatementDetailAmountByCustomerNo" parameterType="com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam" resultType="com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementSummaryDTO">
+		SELECT
+		(sum(eso.statement_amount) - sum(eso.statement_other_paid_amount) - sum(eso.statement_rent_deposit_paid_amount) - sum(eso.statement_deposit_paid_amount) - sum(eso.statement_rent_paid_amount)) as previousPeriodEndUnpaidAmount
+		FROM erp_statement_order eso
+		WHERE
+		eso.customer_id = #{queryParam.customerId}
+		AND eso.statement_expect_pay_time <![CDATA[ < ]]> #{queryParam.statementOrderStartTime}
+		AND eso.statement_status IN (0,4)
+		AND eso.data_status = 1
 	</select>
 </mapper>

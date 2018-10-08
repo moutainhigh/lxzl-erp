@@ -206,6 +206,19 @@
 
         <mapper resource="sqlmap/erp_statistics_operate_data.xml" />
 
+        <mapper resource="sqlmap/erp_exchange_order.xml" />
+
+        <mapper resource="sqlmap/erp_exchange_order_material.xml" />
+
+        <mapper resource="sqlmap/erp_exchange_order_product.xml" />
+
+        <mapper resource="sqlmap/erp_order_flow.xml" />
+
+        <mapper resource="sqlmap/erp_replace_order.xml" />
+
+        <mapper resource="sqlmap/erp_replace_order_material.xml" />
+
+        <mapper resource="sqlmap/erp_replace_order_product.xml" />
     </mappers>
 
 </configuration>

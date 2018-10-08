@@ -26,7 +26,7 @@
                                 <div class="col-md-8 text-right">
                                     <script type="text/html" id="actionButtonsTpl">
                                         {{#acitonButtons}}
-                                        <a href="${ctx}{{menuUrl}}?no={{no}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">
+                                        <a href="${ctx}{{menuUrl}}?no={{no}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}" data-deliver="{{replaceTime}}">
                                             <i class="{{iClass}}"></i> {{text}}
                                         </a>
                                         {{/acitonButtons}}
@@ -43,22 +43,23 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <dl class="dl-horizontal">
-                                            <dt class="mb10">客户</dt><dd>{{customerName}}</dd>
-                                            <dt class="mb10">客户编号</dt><dd>{{customerNo}}</dd>
-                                            <dt class="mb10">联系人</dt><dd>{{changeModeValue}}</dd>
-                                            <dt class="mb10">联系电话</dt><dd>{{changeModeValue}}</dd>
-                                            <dt class="mb10">收货地址</dt><dd>{{consigneeName}}</dd>
-                                            <dt class="mb10">发货公司</dt><dd>{{changeReasonTypeValue}}</dd>
+                                            <dt class="mb10">客户</dt><dd><a href="{{customerUrl}}" target="_blank">{{customerName}}</a></dd>
+                                            <dt class="mb10">客户编号</dt><dd><a href="{{customerUrl}}" target="_blank">{{customerNo}}</a></dd>
+                                            <dt class="mb10">联系人</dt><dd>{{consigneeName}}</dd>
+                                            <dt class="mb10">联系电话</dt><dd>{{consigneePhone}}</dd>
+                                            <dt class="mb10">收货地址</dt><dd>{{address}}</dd>
+                                            <dt class="mb10">发货公司</dt><dd>{{deliverySubCompanyName}}</dd>
+                                            <dt class="mb10">发货日期</dt><dd>{{#clockShorTime}}{{replaceDeliveryTime}}{{/clockShorTime}}</dd>
                                         </dl>
                                     </div>
                                     <div class="col-md-4">
                                         <dl class="dl-horizontal">
-                                            <dt class="mb10">换货日期</dt><dd></dd>
-                                            <dt class="mb10">换货方式</dt><dd></dd>
-                                            <dt class="mb10">换货原因</dt><dd>{{isDamageValue}}</dd>
-                                            <dt class="mb10">运费</dt><dd class="text-danger">￥{{#price}}{{serviceCost}}{{/price}}</dd>
-                                            <dt class="mb10">服务费</dt><dd class="text-danger">￥{{#price}}{{damageCost}}{{/price}}</dd>
-                                            <dt class="mb10">维修费</dt><dd class="text-danger">￥{{#price}}{{totalPriceDiff}}{{/price}}</dd>
+                                            <dt class="mb10">预计换货日期</dt><dd>{{#clockShorTime}}{{replaceTime}}{{/clockShorTime}}&nbsp;</dd>
+                                            <dt class="mb10">实际换货日期</dt><dd>{{#clockShorTime}}{{realReplaceTime}}{{/clockShorTime}}&nbsp;</dd>
+                                            <dt class="mb10">换货原因</dt><dd>{{changeReasonTypeValue}}</dd>
+                                            <dt class="mb10">运费</dt><dd class="text-danger">￥{{#price}}{{logisticsCost}}{{/price}}</dd>
+                                            <dt class="mb10">服务费</dt><dd class="text-danger">￥{{#price}}{{serviceCost}}{{/price}}</dd>
+                                            <dt class="mb10">维修费</dt><dd class="text-danger">￥{{#price}}{{repairCost}}{{/price}}</dd>
                                         </dl>
                                     </div>
                                     <div class="col-md-4">
@@ -66,7 +67,7 @@
                                             <dt class="mb10">换货单状态</dt><dd class="{{changeOrderStatusClass}}">{{changeOrderStatusValue}}&nbsp;</dd>
                                             <dt class="mb10">创建人</dt><dd>{{createUserRealName}}&nbsp;</dd>
                                             <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
-                                            <dt class="mb10">换货类型</dt><dd>{{createUserRealName}}&nbsp;</dd>
+                                            <dt class="mb10">换货类型</dt><dd>{{changeModeValue}}&nbsp;</dd>
                                             <dt class="mb10">备注</dt><dd>{{remark}}</dd>
                                         </dl>
                                     </div>
@@ -74,58 +75,23 @@
                             </div>
                             {{/data}}
                         </script>
-
-                        <div id="orderBaseInfo">
-                                <div class="form-horizontal panel-body bg-light dark br-t-n">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <dl class="dl-horizontal">
-                                                    <dt class="mb10">客户</dt><dd>{{customerName}}</dd>
-                                                    <dt class="mb10">客户编号</dt><dd>{{customerNo}}</dd>
-                                                    <dt class="mb10">联系人</dt><dd>{{changeModeValue}}</dd>
-                                                    <dt class="mb10">联系电话</dt><dd>{{changeModeValue}}</dd>
-                                                    <dt class="mb10">收货地址</dt><dd>{{consigneeName}}</dd>
-                                                    <dt class="mb10">发货公司</dt><dd>{{changeReasonTypeValue}}</dd>
-                                                </dl>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <dl class="dl-horizontal">
-                                                    <dt class="mb10">换货日期</dt><dd></dd>
-                                                    <dt class="mb10">换货方式</dt><dd></dd>
-                                                    <dt class="mb10">换货原因</dt><dd>{{isDamageValue}}</dd>
-                                                    <dt class="mb10">运费</dt><dd class="text-danger">￥{{#price}}{{serviceCost}}{{/price}}</dd>
-                                                    <dt class="mb10">服务费</dt><dd class="text-danger">￥{{#price}}{{damageCost}}{{/price}}</dd>
-                                                    <dt class="mb10">维修费</dt><dd class="text-danger">￥{{#price}}{{totalPriceDiff}}{{/price}}</dd>
-                                                </dl>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <dl class="dl-horizontal">
-                                                    <dt class="mb10">换货单状态</dt><dd class="{{changeOrderStatusClass}}">{{changeOrderStatusValue}}&nbsp;</dd>
-                                                    <dt class="mb10">创建人</dt><dd>{{createUserRealName}}&nbsp;</dd>
-                                                    <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
-                                                    <dt class="mb10">换货类型</dt><dd>{{createUserRealName}}&nbsp;</dd>
-                                                    <dt class="mb10">备注</dt><dd>{{remark}}</dd>
-                                                </dl>
-                                            </div>
-                                        </div>
-                                    </div>
-                        </div>
+                        <div id="orderBaseInfo"></div>
 
                         <div class="panel-heading">
                             <div class="row">
                                 <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
                                     <li class="active">
-                                        <a href="#purchaseOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
+                                        <a href="#replaceOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
                                     </li>
                                     <li>
-                                        <a href="#printRecordItems" data-toggle="tab">打印记录（共<span id="printRecordCount">0</span>次）</a>
+                                        <a href="#orderPrintList" data-toggle="tab">打印记录（共<span id="printRecordCount">0</span>次）</a>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                         <div class="panel-body dark pn">
                             <div class="tab-content pn br-n">
-                                <div id="purchaseOrderProductItems" class="tab-pane active">
+                                <div id="replaceOrderProductItems" class="tab-pane active">
                                     <div class="table-responsive">
                                         <script type="text/html" id="dataListTpl">
                                             <thead>
@@ -138,21 +104,26 @@
                                                 <th>更换数量</th>
                                                 <th>更换商品单价</th>
                                                 <th>备注</th>
-                                                <th class="text-right">操作</th>
                                             </tr>
                                             </thead>
                                             <tbody>
+                                            {{#dataSource}}
                                             {{#listData}}
                                             <tr class="productRow skuRow" productRowKey="{{productId}}">
-                                                <td>{{productName}}</td>
-                                                <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
-                                                <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
-                                                <td>{{propertiesToStr}}</td>
-                                                <td></td>
-                                                <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
-                                                <td>{{propertiesToStr}}</td>
-                                                <td></td>
-                                                <tdclass="text-right"></td>
+                                                <td><a href="{{orderDetailUrl}}" target="_blank">#*{{orderNo}}*#{{originalOrderNo}}</a></td>
+                                                <td>
+                                                    <p class="mn mb5">{{#isNewValueBadge}}{{oldIsNewProduct}}{{/isNewValueBadge}}{{oldProductName}}</p>  
+                                                    <p class="mn mw300">{{oldProductSkuName}}</p> 
+                                                </td>
+                                                <td>￥{{#price}}{{oldProductUnitAmount}}{{/price}}</td>
+                                                <td>{{oldRentingProductCount}}</td>
+                                                <td>
+                                                    <p class="mn mb5">{{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}{{productName}}</p>  
+                                                    <p class="mn mw300">{{productSkuName}}</p> 
+                                                </td>
+                                                <td>{{replaceProductCount}}</td>
+                                                <td>￥{{#price}}{{productUnitAmount}}{{/price}}</td>
+                                                <td>{{remark}}</td>
                                             </tr>
                                             {{/listData}}
                                             {{^listData}}
@@ -160,37 +131,45 @@
                                                 <td valign="top" colspan="9" class="text-center">没有选择商品</td>
                                             </tr>
                                             {{/listData}}
+                                            {{/dataSource}}
                                             </tbody>
                                         </script>
                                         <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                                     </div>
                                 </div>
-                                <div id="printRecordItems" class="tab-pane">
+                                <div id="orderPrintList" class="tab-pane">
                                     <div class="table-responsive">
-                                        <script type="text/html" id="printRecordListTpl">
+                                        <script type="text/html" id="printRecordTpl">
                                             <thead>
-                                            <tr>
-                                                <th>打印人</th>
-                                                <th>打印时间</th>
-                                                <th>打印类型</th>
+                                            <tr class="bg-light">
+                                                <th class="">打印人</th>
+                                                <th class="">打印时间</th>
+                                                <th class="">打印单据类型</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             {{#dataSource}}
                                             {{#listData}}
-                                            <tr class="materialRow">
-                                                <td>{{materialName}}</td>
-                                                <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
-                                                <td>{{materialTypeStr}}</td>
-                                            </tr>
                                             <tr>
-                                                <td valign="top" colspan="3" class="text-center">没有选择配件</td>
+                                                <td>{{createUserRealName}}</td>
+                                                <td>{{#clockTime}}{{createTime}}{{/clockTime}}</td>
+                                                <td>{{referTypeVal}}</td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{^listData}}
+                                            <tr>
+                                                <td valign="top" colspan="3" class="text-center">没有查询到打印记录</td>
                                             </tr>
                                             {{/listData}}
                                             {{/dataSource}}
                                             </tbody>
                                         </script>
                                         <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="printRecordTable"></table>
+                                    </div>
+                                    <div class="row br-t" style="margin:0;">
+                                        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                                            #parse("component/pager.vm")
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -210,23 +189,17 @@
     #parse("layout/footer.vm")
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
-                'manage.change.order.mixin.js',
                 'manage.change.order.handle.mixin.js',
                 'manage.change.order.detail.js',
-                'manage.change.order.equiment.list.js',
-                'manage.change.order.material.list.js',
-                'manage.change.order.update.equiment.diff.price.js',
-                'manage.change.order.update.material.diff.price.js',
-                'manage.order.item.render.js',
-                'manage.order.util.js',
-                'manage.order.picking.js',
+                'manage.confirm.exchange.js',
+                'manage.order.print.record.js',
                 'modal.input.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
         Rental.init();
         Layout.init();
-        // ChangeOrderDetail.init();
+        ChangeOrderDetail.init();
 
         //UI效果初始化
         Core.init();

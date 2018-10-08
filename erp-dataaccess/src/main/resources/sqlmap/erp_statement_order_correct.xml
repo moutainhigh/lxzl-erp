@@ -29,10 +29,11 @@
 		<result column="subCompanyName" jdbcType="VARCHAR" property="subCompanyName" />
 		<result column="statementOrderNo" jdbcType="VARCHAR" property="statementOrderNo" />
 		<result column="customerNo" jdbcType="VARCHAR" property="customerNo" />
+		<result column="relet_order_item_refer_id" jdbcType="INTEGER" property="reletOrderItemReferId"/>
 	</resultMap>
 
 	<sql id="column_List">
-		esoc.id,esoc.statement_correct_no,esoc.statement_order_id,esoc.statement_correct_amount,esoc.statement_correct_rent_amount,esoc.statement_correct_rent_deposit_amount,esoc.statement_correct_deposit_amount,esoc.statement_correct_other_amount,esoc.statement_correct_overdue_amount,esoc.statement_correct_reason,esoc.statement_order_correct_status,esoc.data_status,esoc.remark,esoc.create_time,esoc.create_user,esoc.update_time,esoc.update_user,esoc.statement_correct_success_time,esoc.statement_correct_fail_reason,esoc.statement_order_item_id,esoc.statement_order_refer_id
+		esoc.id,esoc.statement_correct_no,esoc.statement_order_id,esoc.statement_correct_amount,esoc.statement_correct_rent_amount,esoc.statement_correct_rent_deposit_amount,esoc.statement_correct_deposit_amount,esoc.statement_correct_other_amount,esoc.statement_correct_overdue_amount,esoc.statement_correct_reason,esoc.statement_order_correct_status,esoc.data_status,esoc.remark,esoc.create_time,esoc.create_user,esoc.update_time,esoc.update_user,esoc.statement_correct_success_time,esoc.statement_correct_fail_reason,esoc.statement_order_item_id,esoc.statement_order_refer_id,esoc.relet_order_item_refer_id
 	</sql>
 
 	<select id="findById" resultMap="StatementOrderCorrectDO" parameterType="java.lang.Integer">
@@ -48,6 +49,31 @@
 	<select id="findStatementOrderIdAndItemId" resultMap="StatementOrderCorrectDO" parameterType="java.util.Map">
 		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc
 		WHERE esoc.statement_order_id = #{statementOrderId, jdbcType=INTEGER} AND esoc.statement_order_item_id = #{orderItemId, jdbcType=INTEGER} AND esoc.statement_order_refer_id = #{orderReferId, jdbcType=INTEGER} AND esoc.data_status = 1 and esoc.statement_order_correct_status = 2
+	</select>
+
+	<select id="findStatementOrderIds" resultMap="StatementOrderCorrectDO">
+		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc
+		WHERE esoc.data_status = 1 and esoc.statement_order_correct_status = 2
+		<if test="ids != null">
+			AND esoc.statement_order_id IN
+			<foreach collection="ids" item="item" index="index" separator="," open="(" close=")">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="findStatementOrderIdAndItemIdAndReletReferId" resultMap="StatementOrderCorrectDO" parameterType="java.util.Map">
+		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc
+		WHERE esoc.statement_order_id = #{statementOrderId, jdbcType=INTEGER} AND esoc.statement_order_item_id = #{orderItemId, jdbcType=INTEGER} AND esoc.statement_order_refer_id = #{orderReferId, jdbcType=INTEGER}
+		<choose>
+			<when test="reletItemReferId == null">
+				AND esoc.relet_order_item_refer_id is NULL
+			</when>
+			<otherwise>
+				AND esoc.relet_order_item_refer_id = #{reletItemReferId, jdbcType = INTEGER}
+			</otherwise>
+		</choose>
+		AND esoc.data_status = 1 and esoc.statement_order_correct_status = 2
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -182,6 +208,9 @@
 			</if>
 			<if test="statementCorrectFailReason != null">
 				statement_correct_fail_reason = #{statementCorrectFailReason,jdbcType=VARCHAR},
+			</if>
+			<if test="reletOrderItemReferId != null">
+				relet_order_item_refer_id = #{reletOrderItemReferId,jdbcType=INTEGER},
 			</if>
 		</set>
 	</sql>

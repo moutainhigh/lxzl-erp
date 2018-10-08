@@ -5,6 +5,7 @@ import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderMaterialDO;import org
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public interface ReletOrderMaterialMapper extends BaseMysqlDAO<ReletOrderMaterialDO> {
@@ -16,4 +17,5 @@ public interface ReletOrderMaterialMapper extends BaseMysqlDAO<ReletOrderMateria
 	List<ReletOrderMaterialDO> findByReletOrderId(@Param("reletOrderId") Integer reletOrderId);
 
 	void batchUpdate(@Param("list") List<ReletOrderMaterialDO> list);
+	List<ReletOrderMaterialDO> listByOrderIds(@Param(value = "orderIds") Set<Integer> orderIds);
 }

@@ -4,6 +4,9 @@
     <div class="row">
         <div class="col-md-4">
             <dl class="dl-horizontal dl-horizontal-rental">
+                <dt><label>原订单编号</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{originalOrderNo}}</dd>
+
                 <dt><label style="letter-spacing: 0.25em">所属公司</label><span class="mr5">：</span></dt>
                 <dd class="mb5">{{orderSubCompanyName}}</dd>
 

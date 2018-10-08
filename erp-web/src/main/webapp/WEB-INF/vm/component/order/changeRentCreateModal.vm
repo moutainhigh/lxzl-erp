@@ -1,0 +1,192 @@
+<div id="changePriceModal" class="popup-basic popup-xl admin-form mfp-with-anim ">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i>创建变更单</span>
+        </div>
+        <form method="post" id="changePriceForm" description="修改单价">
+            <div class="panel-body p25">
+                <div class="section row">
+                    <label class="field-label">生效时间</label>
+                    <div for="rentStartTime" id="rentStartTimePicker" class="field prepend-icon" style="width: 50%;">
+                        <input type="text" id="rentStartTime" name="rentStartTime" class="gui-input hasDatepicker required" placeholder="" data-type="date" autocomplete="off">
+                        <label class="field-icon"><i class="fa fa-calendar-o"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs" id="modalList">
+                                    <li class="active">
+                                        <a href="#orderProductList" data-toggle="tab">商品项</a>
+                                    </li>
+                                    <li>
+                                        <a href="#orderMaterialList" data-toggle="tab">配件项</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="panel-body light pn">
+                            <div class="tab-content pn br-n">
+                                <div id="orderProductList" class="tab-pane tab-pane-order active">
+                                    <div class="table-responsive">
+                                        <script type="text/html" id="orderProductListTpl">
+                                            <thead>
+                                            <tr class="bg-light">
+                                                <th>商品名称</th>
+                                                <th>类别</th>
+                                                <th>品牌</th>
+                                                <th>商品参数（SKU）</th>
+                                                <th>商品保值价</th>
+                                                <th class="nowrap text-center">商品数量</th>
+                                                <th>在租数量</th>
+                                                <th class="nowrap">单价</th>
+                                                <th class="nowrap">押金期数</th>
+                                                <th class="nowrap">租金期数</th>
+                                                <th class="nowrap">支付方式</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{#dataSource}}
+                                            {{#listData}}
+                                            <tr class="productRow" data-amount="{{productUnitAmount}}" data-id="{{orderProductId}}">
+                                                <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
+                                                <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+                                                <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                                                <td>{{propertiesToStr}}</td>
+                                                <td>￥{{currentSkuPrice}}</td>
+                                                <td class="text-center">{{productCount}}</td>
+                                                <td>{{rentingProductCount}}</td>
+                                                <td>
+                                                    <label class="field prepend-icon rentCountIpt mw200">
+                                                        <input type="text" name="productUnitAmount" value="{{productUnitAmount}}" class="productUnitAmount form-control gui-input required pl10" placeholder="{{productUnitAmount}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{productUnitAmount}}";};'/>
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="field prepend-icon rentCountIpt mw200">
+                                                        <input type="text" name="depositCycle" value="{{depositCycle}}" class="depositCycle form-control gui-input required pl10" placeholder="{{depositCycle}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{depositCycle}}";};'/>
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="field prepend-icon rentCountIpt mw200">
+                                                        <input type="text" name="paymentCycle" value="{{paymentCycle}}" class="paymentCycle form-control gui-input required pl10" placeholder="{{paymentCycle}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{paymentCycle}}";};'/>
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="field prepend-icon rentCountIpt mw200">
+                                                        <label class="field select">
+                                                            <select name="payMode-{{skuId}}-{{rowKey}}" class="payMode required" style="min-width: 130px;">
+                                                                <option value="">选择支付方式</option>
+                                                                {{#payModeList}}
+                                                                <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                                                {{/payModeList}}
+                                                            </select>
+                                                            <i class="arrow"></i>
+                                                        </label>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{^listData}}
+                                            <tr>
+                                                <td valign="top" colspan="10" class="text-center">无商品项</td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{/dataSource}}
+                                            </tbody>
+                                        </script>
+                                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="orderProductListTable"></table>
+                                    </div>
+                                </div>
+
+                                <div id="orderMaterialList" class="tab-pane">
+                                    <div class="table-responsive">
+                                        <script type="text/html" id="orderMaterialListTpl">
+                                            <thead>
+                                            <tr>
+                                                <th>配件名称</th>
+                                                <th>品牌</th>
+                                                <th>类型</th>
+                                                <th>配件保值价</th>
+                                                <th class="text-center">配件数量</th>
+                                                <th>在租数量</th>
+                                                <th class="rentalPriceTh nowrap"><span class="text">单价</span></th>
+                                                <th class="nowrap">押金期数</th>
+                                                <th class="nowrap">租金期数</th>
+                                                <th class="nowrap">支付方式</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{#dataSource}}
+                                            {{#listData}}
+                                            <tr class="materialRow" data-amount="{{materialUnitAmount}}" data-id="{{orderMaterialId}}">
+                                                <td>
+                                                    {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
+                                                    {{materialName}}
+                                                </td>
+                                                <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
+                                                <td>{{materialTypeStr}}</td>
+                                                <td>￥{{currentMaterialPrice}}</td>
+                                                <td class="text-center">{{materialCount}}</td>
+                                                <td>{{rentingMaterialCount}}</td>
+                                                <td>
+                                                    <label class="field prepend-icon rentCountIpt mw200">
+                                                        <input type="text" name="materialUnitAmount" value="{{materialUnitAmount}}" class="materialUnitAmount form-control gui-input required pl10" placeholder="{{materialUnitAmount}}" onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{materialUnitAmount}}";};'/>
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="field prepend-icon rentCountIpt mw200">
+                                                        <input type="text" name="depositCycle" value="{{depositCycle}}" class="depositCycle form-control gui-input required pl10" placeholder="{{depositCycle}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{depositCycle}}";};'/>
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="field prepend-icon rentCountIpt mw200">
+                                                        <input type="text" name="paymentCycle" value="{{paymentCycle}}" class="paymentCycle form-control gui-input required pl10" placeholder="{{paymentCycle}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{paymentCycle}}";};'/>
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="field prepend-icon rentCountIpt mw200">
+                                                        <label class="field select">
+                                                            <select name="payMode-{{skuId}}-{{rowKey}}" class="payMode required" style="min-width: 130px;">
+                                                                <option value="">选择支付方式</option>
+                                                                {{#payModeList}}
+                                                                <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                                                {{/payModeList}}
+                                                            </select>
+                                                            <i class="arrow"></i>
+                                                        </label>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{^listData}}
+                                            <tr>
+                                                <td valign="top" colspan="9" class="text-center">无配件项</td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{/dataSource}}
+                                            </tbody>
+                                        </script>
+                                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="orderMaterialListTable"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section row">
+                    <label for="remark" class="field prepend-icon">
+                        <textarea class="gui-textarea remark" id="remark" name="remark" placeholder="备注..."></textarea>
+                        <label for="remark" class="field-icon"><i class="fa fa-comments"></i>
+                        </label>
+                    </label>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <button type="submit" class="button btn-primary submit-btn">确定</button>
+                <button type="button" class="button btn-default cancelButton">取消</button>
+            </div>
+        </form>
+    </div>
+</div>

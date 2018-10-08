@@ -1,6 +1,9 @@
 package com.lxzl.erp.dataaccess.dao.mysql.statement;
 
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
+import com.lxzl.erp.dataaccess.domain.order.OrderFlowDO;
+import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
+import com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementSummaryDTO;
 import com.lxzl.erp.dataaccess.domain.statement.CheckStatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
@@ -26,8 +29,11 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
     List<StatementOrderDetailDO> findByReturnOrderId(@Param("orderId") Integer orderId);
 
     List<StatementOrderDetailDO> findByOrderItemTypeAndId(@Param("orderItemType") Integer orderItemType, @Param("orderItemId") Integer orderItemId);
+    List<StatementOrderDetailDO> findByOrderItemTypeAndIdIngnoreOrderType(@Param("orderItemType") Integer orderItemType, @Param("orderItemId") Integer orderItemId);
 
     List<StatementOrderDetailDO> findByOrderTypeAndId(@Param("orderType") Integer orderType, @Param("orderId") Integer orderId);
+
+    List<StatementOrderDetailDO> findByOrderTypeAndOrderNoList(@Param("orderType") Integer orderType, @Param("list") List<OrderFlowDO> list);
 
     List<StatementOrderDetailDO> findByStatementOrderId(@Param("statementOrderId") Integer statementOrderId);
 
@@ -43,7 +49,7 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
 
     BigDecimal queryAllRentIncomeForHome(@Param("maps") Map<String, Object> paramMap);
 
-    List<StatementOrderDetailDO> findByStatementOrderIdAndItemReferId(@Param("itemReferId") Integer itemReferId, @Param("statementOrderId") Integer statementOrderId);
+    List<StatementOrderDetailDO> findByStatementOrderIdAndItemReferId(@Param("itemReferId") Integer itemReferId, @Param("statementOrderId") Integer statementOrderId, @Param("reletItemReferId") Integer reletItemReferId);
 
     Integer batchUpdate(@Param("list") List<StatementOrderDetailDO> list);
 
@@ -118,4 +124,13 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
     List<StatementOrderDetailDO> findOrderItemStatementByType(@Param("orderItemType")Integer orderItemType,@Param("orderItemReferId")Integer orderItemReferId,@Param("statementDetailType")Integer statementDetailType);
 
     List<StatementOrderDetailDO> findByOrderIdAndStatementDetailType(@Param("orderId") Integer orderId, @Param("orderType") Integer orderType,@Param("statementDetailType") Integer statementDetailType);
+
+    List<StatementOrderDetailDO> listByCustomerId(@Param(value = "queryParam") StatementOrderMonthQueryParam queryParam);
+
+    List<StatementOrderDetailDO> listUnRentByOrderIds(@Param(value = "queryParam") StatementOrderMonthQueryParam queryParam);
+
+    CheckStatementSummaryDTO sumStatementDetailAmountByCustomerNo(@Param(value = "queryParam") StatementOrderMonthQueryParam queryParam);
+
+    List<StatementOrderDetailDO> findByOrderTypeAndSourceId(@Param("orderType") Integer orderType, @Param("sourceId") Integer sourceId);
+
 }

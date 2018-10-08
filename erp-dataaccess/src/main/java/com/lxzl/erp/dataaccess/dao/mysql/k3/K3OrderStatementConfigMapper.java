@@ -6,6 +6,7 @@ import com.lxzl.erp.dataaccess.domain.k3.K3OrderStatementConfigDO;import org.apa
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public interface K3OrderStatementConfigMapper extends BaseMysqlDAO<K3OrderStatementConfigDO> {
@@ -17,4 +18,6 @@ public interface K3OrderStatementConfigMapper extends BaseMysqlDAO<K3OrderStatem
 	K3OrderStatementConfigDO findByOrderId(@Param("orderId") Integer orderId);
 
     List<K3OrderStatementConfigDO> findByCustomerId(@Param("customerId") Integer customerId);
+
+	List<K3OrderStatementConfigDO> listByOrderIds(@Param("orderIds") Set<Integer> orderIds);
 }

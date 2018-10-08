@@ -309,6 +309,12 @@ public class PageController extends BaseController {
         return "/orderManage/orderTestReletAdd";
     }
 
+    //变更单详情
+    @RequestMapping("/order-manage/change-rent-detail")
+    public String changeRentDetail() {
+        return "/orderManage/changeRentDetail";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
@@ -937,6 +943,11 @@ public class PageController extends BaseController {
         return "/changeOrderManage/changeOrderEdit";
     }
 
+    @RequestMapping("/change-order/print")
+    public String changeOrderManagePrint() {
+        return "/changeOrderManage/changeOrderPrint";
+    }
+
     @RequestMapping("/change-order/equiment-list")
     public String changeOrderManageEquimentList() {
         return "/component/changeOrder/equimentList";
@@ -1295,6 +1306,23 @@ public class PageController extends BaseController {
     @RequestMapping("/order-manage/change-price")
     public String changePriceModal() {
         return "/component/order/changePriceModal";
+    }
+
+    //创建变更单
+    @RequestMapping("/order-manage/change-rent-create")
+    public String changeRentCreateModal() {
+        return "/component/order/changeRentCreateModal";
+    }
+    //创建变更单
+    @RequestMapping("/order-manage/change-rent-edit")
+    public String changeRentEditModal() {
+        return "/component/order/changeRentEditModal";
+    }
+
+    //确认换货
+    @RequestMapping("/order-manage/confirm-exchange")
+    public String confirmExchangeProductModal() {
+        return "/component/order/confirmExchangeModal";
     }
 
     //提交审核选择审核人及填写审核备注

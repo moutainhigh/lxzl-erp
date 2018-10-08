@@ -1,6 +1,5 @@
 package com.lxzl.erp.dataaccess.domain.bank;
 
-import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 
 import java.math.BigDecimal;

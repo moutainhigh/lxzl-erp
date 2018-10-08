@@ -291,4 +291,15 @@
 		</foreach>
 
 	</update>
+
+	<select id="listByOrderIds" resultMap="ReletOrderProductDO" parameterType="java.util.Set">
+		SELECT
+		<include refid="column_List"/>
+		FROM erp_relet_order_product erop
+		WHERE erop.data_status = 1
+		AND erop.order_id in
+		<foreach collection="orderIds" item="item" index="index" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+	</select>
 </mapper>

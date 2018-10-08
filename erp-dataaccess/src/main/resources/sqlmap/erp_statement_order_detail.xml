@@ -67,6 +67,7 @@
         <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
 
         <result column="statement_order_no" jdbcType="VARCHAR" property="statementOrderNo"/>
+        <result column="source_id" jdbcType="INTEGER" property="sourceId"/>
     </resultMap>
 
     <resultMap id="FinanceStatementOrderPayDetail" type="com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail">
@@ -135,7 +136,7 @@
 
 
     <sql id="column_List">
-		esod.id,esod.statement_order_id,esod.customer_id,esod.order_type,esod.order_id,esod.order_item_type,esod.order_item_refer_id,esod.return_refer_id,esod.statement_detail_type,esod.statement_detail_phase,esod.statement_detail_amount,esod.statement_detail_other_amount,esod.statement_detail_other_paid_amount ,esod.statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount,esod.statement_detail_rent_deposit_return_amount,esod.statement_detail_rent_deposit_return_time,esod.statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount,esod.statement_detail_deposit_return_time,esod.statement_detail_rent_amount,esod.statement_detail_rent_paid_amount,esod.statement_detail_paid_time,esod.statement_detail_overdue_amount,esod.statement_detail_overdue_paid_amount,esod.statement_detail_overdue_days,esod.statement_detail_overdue_phase_count,esod.statement_detail_status,esod.statement_expect_pay_time,esod.statement_start_time,esod.statement_end_time,esod.data_status,esod.remark,esod.create_time,esod.create_user,esod.update_time,esod.update_user,esod.statement_detail_correct_amount,esod.statement_coupon_amount,esod.statement_detail_penalty_amount as statement_detail_penalty_amount,esod.statement_detail_penalty_paid_amount as statement_detail_penalty_paid_amount,esod.relet_order_item_refer_id
+		esod.id,esod.statement_order_id,esod.customer_id,esod.order_type,esod.order_id,esod.order_item_type,esod.order_item_refer_id,esod.return_refer_id,esod.statement_detail_type,esod.statement_detail_phase,esod.statement_detail_amount,esod.statement_detail_other_amount,esod.statement_detail_other_paid_amount ,esod.statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount,esod.statement_detail_rent_deposit_return_amount,esod.statement_detail_rent_deposit_return_time,esod.statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount,esod.statement_detail_deposit_return_time,esod.statement_detail_rent_amount,esod.statement_detail_rent_paid_amount,esod.statement_detail_paid_time,esod.statement_detail_overdue_amount,esod.statement_detail_overdue_paid_amount,esod.statement_detail_overdue_days,esod.statement_detail_overdue_phase_count,esod.statement_detail_status,esod.statement_expect_pay_time,esod.statement_start_time,esod.statement_end_time,esod.data_status,esod.remark,esod.create_time,esod.create_user,esod.update_time,esod.update_user,esod.statement_detail_correct_amount,esod.statement_coupon_amount,esod.statement_detail_penalty_amount as statement_detail_penalty_amount,esod.statement_detail_penalty_paid_amount as statement_detail_penalty_paid_amount,esod.relet_order_item_refer_id,esod.source_id
 	</sql>
 
     <select id="findById" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
@@ -209,12 +210,37 @@
         ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC,esod.statement_order_id ASC
     </select>
 
+    <select id="findByOrderItemTypeAndIdIngnoreOrderType" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_statement_order_detail esod
+        WHERE esod.order_item_type = #{orderItemType, jdbcType=INTEGER} AND esod.order_item_refer_id =
+        #{orderItemId, jdbcType=INTEGER} AND esod.data_status = 1
+        ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC,esod.statement_order_id ASC
+    </select>
+
     <select id="findByOrderTypeAndId" resultMap="StatementOrderDetailDO">
         SELECT
         <include refid="column_List"/>
         FROM erp_statement_order_detail esod
         WHERE esod.order_type = #{orderType, jdbcType=INTEGER} AND esod.order_id = #{orderId, jdbcType=INTEGER} AND
         esod.data_status = 1
+        ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC,esod.statement_order_id ASC
+    </select>
+
+    <select id="findByOrderTypeAndOrderNoList" resultMap="StatementOrderDetailDO" parameterType="java.util.ArrayList">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_statement_order_detail esod
+        LEFT JOIN erp_order eo on eo.id = esod.order_id AND eo.data_status = 1
+        WHERE esod.order_type = #{orderType, jdbcType=INTEGER}
+        AND eo.order_no in
+        <foreach collection="list" item="list" index="index" separator =",">
+            (
+            #{list.orderNo}
+            )
+        </foreach>
+        AND esod.data_status = 1
         ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC,esod.statement_order_id ASC
     </select>
 
@@ -544,6 +570,9 @@
             <if test="reletOrderItemReferId != null">
                 relet_order_item_refer_id = #{reletOrderItemReferId,jdbcType=INTEGER},
             </if>
+            <if test="sourceId != null">
+                source_id = #{sourceId,jdbcType=INTEGER},
+            </if>
         </set>
     </sql>
 
@@ -561,10 +590,10 @@
 
     <insert id="saveList" parameterType="java.util.ArrayList">
         INSERT INTO erp_statement_order_detail
-        (statement_order_id,customer_id,order_type,order_id,order_item_type,order_item_refer_id,return_refer_id,statement_detail_type,statement_detail_phase,statement_expect_pay_time,statement_detail_amount,statement_detail_other_amount,statement_detail_other_paid_amount,statement_detail_rent_deposit_amount,statement_detail_rent_deposit_paid_amount,statement_detail_rent_deposit_return_amount,statement_detail_deposit_amount,statement_detail_deposit_paid_amount,statement_detail_deposit_return_amount,statement_detail_rent_amount,statement_detail_rent_paid_amount,statement_detail_paid_time,statement_detail_overdue_amount,statement_detail_overdue_paid_amount,statement_detail_overdue_days,statement_detail_overdue_phase_count,statement_detail_status,statement_start_time,statement_end_time,data_status,remark,create_time,create_user,update_time,update_user,statement_coupon_amount,relet_order_item_refer_id)
+        (statement_order_id,customer_id,order_type,order_id,order_item_type,order_item_refer_id,return_refer_id,statement_detail_type,statement_detail_phase,statement_expect_pay_time,statement_detail_amount,statement_detail_other_amount,statement_detail_other_paid_amount,statement_detail_rent_deposit_amount,statement_detail_rent_deposit_paid_amount,statement_detail_rent_deposit_return_amount,statement_detail_deposit_amount,statement_detail_deposit_paid_amount,statement_detail_deposit_return_amount,statement_detail_rent_amount,statement_detail_rent_paid_amount,statement_detail_paid_time,statement_detail_overdue_amount,statement_detail_overdue_paid_amount,statement_detail_overdue_days,statement_detail_overdue_phase_count,statement_detail_status,statement_start_time,statement_end_time,data_status,remark,create_time,create_user,update_time,update_user,statement_coupon_amount,relet_order_item_refer_id,source_id)
         VALUES
         <foreach item="statementOrderDetailDO" index="index" collection="statementOrderDetailDOList" separator=",">
-            (#{statementOrderDetailDO.statementOrderId},#{statementOrderDetailDO.customerId},#{statementOrderDetailDO.orderType},#{statementOrderDetailDO.orderId},#{statementOrderDetailDO.orderItemType},#{statementOrderDetailDO.orderItemReferId},#{statementOrderDetailDO.returnReferId},#{statementOrderDetailDO.statementDetailType},#{statementOrderDetailDO.statementDetailPhase},#{statementOrderDetailDO.statementExpectPayTime},#{statementOrderDetailDO.statementDetailAmount},#{statementOrderDetailDO.statementDetailOtherAmount},#{statementOrderDetailDO.statementDetailOtherPaidAmount},#{statementOrderDetailDO.statementDetailRentDepositAmount},#{statementOrderDetailDO.statementDetailRentDepositPaidAmount},#{statementOrderDetailDO.statementDetailRentDepositReturnAmount},#{statementOrderDetailDO.statementDetailDepositAmount},#{statementOrderDetailDO.statementDetailDepositPaidAmount},#{statementOrderDetailDO.statementDetailDepositReturnAmount},#{statementOrderDetailDO.statementDetailRentAmount},#{statementOrderDetailDO.statementDetailRentPaidAmount},#{statementOrderDetailDO.statementDetailPaidTime},#{statementOrderDetailDO.statementDetailOverdueAmount},#{statementOrderDetailDO.statementDetailOverduePaidAmount},#{statementOrderDetailDO.statementDetailOverdueDays},#{statementOrderDetailDO.statementDetailOverduePhaseCount},#{statementOrderDetailDO.statementDetailStatus},#{statementOrderDetailDO.statementStartTime},#{statementOrderDetailDO.statementEndTime},#{statementOrderDetailDO.dataStatus},#{statementOrderDetailDO.remark},#{statementOrderDetailDO.createTime},#{statementOrderDetailDO.createUser},#{statementOrderDetailDO.updateTime},#{statementOrderDetailDO.updateUser},#{statementOrderDetailDO.statementCouponAmount},#{statementOrderDetailDO.reletOrderItemReferId})
+            (#{statementOrderDetailDO.statementOrderId},#{statementOrderDetailDO.customerId},#{statementOrderDetailDO.orderType},#{statementOrderDetailDO.orderId},#{statementOrderDetailDO.orderItemType},#{statementOrderDetailDO.orderItemReferId},#{statementOrderDetailDO.returnReferId},#{statementOrderDetailDO.statementDetailType},#{statementOrderDetailDO.statementDetailPhase},#{statementOrderDetailDO.statementExpectPayTime},#{statementOrderDetailDO.statementDetailAmount},#{statementOrderDetailDO.statementDetailOtherAmount},#{statementOrderDetailDO.statementDetailOtherPaidAmount},#{statementOrderDetailDO.statementDetailRentDepositAmount},#{statementOrderDetailDO.statementDetailRentDepositPaidAmount},#{statementOrderDetailDO.statementDetailRentDepositReturnAmount},#{statementOrderDetailDO.statementDetailDepositAmount},#{statementOrderDetailDO.statementDetailDepositPaidAmount},#{statementOrderDetailDO.statementDetailDepositReturnAmount},#{statementOrderDetailDO.statementDetailRentAmount},#{statementOrderDetailDO.statementDetailRentPaidAmount},#{statementOrderDetailDO.statementDetailPaidTime},#{statementOrderDetailDO.statementDetailOverdueAmount},#{statementOrderDetailDO.statementDetailOverduePaidAmount},#{statementOrderDetailDO.statementDetailOverdueDays},#{statementOrderDetailDO.statementDetailOverduePhaseCount},#{statementOrderDetailDO.statementDetailStatus},#{statementOrderDetailDO.statementStartTime},#{statementOrderDetailDO.statementEndTime},#{statementOrderDetailDO.dataStatus},#{statementOrderDetailDO.remark},#{statementOrderDetailDO.createTime},#{statementOrderDetailDO.createUser},#{statementOrderDetailDO.updateTime},#{statementOrderDetailDO.updateUser},#{statementOrderDetailDO.statementCouponAmount},#{statementOrderDetailDO.reletOrderItemReferId},#{statementOrderDetailDO.sourceId})
         </foreach>
     </insert>
 
@@ -575,6 +604,14 @@
         FROM erp_statement_order_detail esod
         WHERE esod.order_item_refer_id = #{itemReferId, jdbcType=INTEGER} AND esod.statement_order_id =
         #{statementOrderId, jdbcType=INTEGER} AND esod.data_status = 1
+        <choose>
+            <when test="reletItemReferId == null">
+                AND esod.relet_order_item_refer_id is NULL
+            </when>
+            <otherwise>
+                AND esod.relet_order_item_refer_id = #{reletItemReferId, jdbcType = INTEGER}
+            </otherwise>
+        </choose>
         ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC
     </select>
 
@@ -1676,7 +1713,7 @@
         <include refid="column_List"/>
         FROM erp_statement_order_detail esod
         WHERE esod.id IN <foreach collection="ids" item="item" index="index" separator="," open="(" close=")">#{item}</foreach>
-         AND esod.data_status = 1
+        AND esod.data_status = 1
     </select>
 
     <select id="findOrderItemStatementByType" resultMap="StatementOrderDetailDO">
@@ -1693,5 +1730,68 @@
         FROM erp_statement_order_detail esod
         WHERE esod.order_type = #{orderType, jdbcType=INTEGER} AND esod.order_id = #{orderId, jdbcType=INTEGER} AND esod.statement_detail_type= #{statementDetailType, jdbcType=INTEGER} AND
         esod.data_status = 1
+    </select>
+
+    <select id="listByCustomerId"  parameterType="com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam" resultMap="StatementOrderDetailDO">
+        SELECT
+        DISTINCT <include refid="column_List"/>
+        FROM erp_statement_order_detail esod
+        WHERE esod.customer_id = #{queryParam.customerId}
+        AND esod.data_status = 1
+        <!-- 原来方式-日后还要改代码 -->
+        <!--<if test="queryParam.queryOrderType != null">-->
+            <!--AND esod.order_type = #{queryParam.queryOrderType}-->
+        <!--</if>-->
+        AND(
+        NOT(
+        esod.statement_start_time <![CDATA[ > ]]> #{queryParam.statementOrderEndTimeAddOne}
+        OR esod.statement_end_time <![CDATA[ < ]]> #{queryParam.statementOrderStartTime}
+        )
+        OR esod.statement_expect_pay_time BETWEEN #{queryParam.statementOrderStartTime} AND #{queryParam.statementOrderEndTimeAddOne}
+        )
+    </select>
+
+    <select id="listUnRentByOrderIds"  parameterType="com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam" resultMap="StatementOrderDetailDO">
+        SELECT
+        DISTINCT <include refid="column_List"/>
+        FROM erp_statement_order_detail esod
+        WHERE esod.customer_id = #{queryParam.customerId}
+        AND esod.data_status = 1
+        <if test="queryParam.queryOrderType != null">
+            AND esod.order_type = #{queryParam.queryOrderType, jdbcType=INTEGER}
+        </if>
+        <if test="queryParam.queryOrderType == 4 and queryParam.orderIds != null and queryParam.orderIds.size() > 0">
+            AND esod.order_id in
+            <foreach collection="queryParam.orderIds" item="item" index="index" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="queryParam.queryOrderType == 6 and queryParam.replaceOrderIds != null and queryParam.replaceOrderIds.size() > 0">
+            AND esod.source_id in
+            <foreach collection="queryParam.replaceOrderIds" item="item" index="index" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY esod.order_id ASC, esod.statement_expect_pay_time ASC
+    </select>
+
+    <select id="sumStatementDetailAmountByCustomerNo" parameterType="com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam" resultType="com.lxzl.erp.common.domain.statement.pojo.dto.CheckStatementSummaryDTO">
+        SELECT
+        sum(esod.statement_detail_amount) previousPeriodEndUnpaidAmount
+        FROM erp_statement_order_detail esod
+        WHERE
+        esod.customer_id = #{queryParam.customerId}
+        <if test="queryParam.statementDetailStatus != null">
+            AND esod.statement_detail_status = #{queryParam.statementDetailStatus}
+        </if>
+        AND esod.statement_start_time <![CDATA[ < ]]> #{queryParam.statementOrderStartTime}
+        AND esod.data_status = 1
+    </select>
+
+    <select id="findByOrderTypeAndSourceId" resultMap="StatementOrderDetailDO">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_statement_order_detail esod
+        WHERE esod.data_status = 1 AND esod.source_id = #{sourceId, jdbcType=INTEGER} AND esod.order_type= #{orderType, jdbcType=INTEGER}
     </select>
 </mapper>

@@ -3,11 +3,13 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.order.*;
+import com.lxzl.erp.common.domain.order.pojo.ExchangeOrder;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
+import com.lxzl.erp.core.service.order.ExchangeOrderService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.lxzl.se.common.domain.Result;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
@@ -221,9 +224,103 @@ public class OrderController extends BaseController {
     }
 
 
+    /**
+     * 创建中途修改单价、支付方式、租赁方式。等变更订单
+     *
+     * @param exchangeOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "exchangeOrder", method = RequestMethod.POST)
+    public Result exchangeOrder(@RequestBody ExchangeOrder exchangeOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = exchangeOrderService.createExchangeOrder(exchangeOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 提交变更单
+     *
+     * @param exchangeOrderCommitParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "commitExchangeOrder", method = RequestMethod.POST)
+    public Result commitExchangeOrder(@RequestBody ExchangeOrderCommitParam exchangeOrderCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = exchangeOrderService.commitExchangeOrder(exchangeOrderCommitParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 查询变更单
+     *
+     * @param exchangeOrderParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "queryExchangeOrderByNo", method = RequestMethod.POST)
+    public Result queryExchangeOrderByNo(@RequestBody ExchangeOrderParam exchangeOrderParam, BindingResult validResult) {
+        ServiceResult<String, ExchangeOrder> serviceResult = exchangeOrderService.queryExchangeOrderByNo(exchangeOrderParam.getExchangeOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 根据订单号查询变更单列表
+     *
+     * @param exchangeOrderParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "queryByOrderNo", method = RequestMethod.POST)
+    public Result queryByOrderNo(@RequestBody ExchangeOrderParam exchangeOrderParam, BindingResult validResult) {
+        ServiceResult<String, Page<ExchangeOrder>> serviceResult = exchangeOrderService.queryByOrderNo(exchangeOrderParam.getOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 取消变更单
+     *
+     * @param exchangeOrderParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "cancelExchangeOrder", method = RequestMethod.POST)
+    public Result cancelExchangeOrder(@RequestBody ExchangeOrderParam exchangeOrderParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = exchangeOrderService.cancelExchangeOrder(exchangeOrderParam.getExchangeOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 手动触发变更单单
+     *
+     * @param exchangeOrderParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "generatedOrder", method = RequestMethod.POST)
+    public Result generatedOrder(@RequestBody ExchangeOrderParam exchangeOrderParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = exchangeOrderService.generatedOrder(exchangeOrderParam.getExchangeOrderNo(),true);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+    /**
+     * 修改变更单
+     *
+     * @param exchangeOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "updateExchangeOrder", method = RequestMethod.POST)
+    public Result updateExchangeOrder(@RequestBody ExchangeOrder exchangeOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = exchangeOrderService.updateExchangeOrder(exchangeOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+
     @Autowired
     private ResultGenerator resultGenerator;
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private ExchangeOrderService exchangeOrderService;
 }

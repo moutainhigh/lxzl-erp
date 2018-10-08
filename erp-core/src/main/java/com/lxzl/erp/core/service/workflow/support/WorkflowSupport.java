@@ -18,6 +18,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ChangeOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkDetailMapper;
@@ -30,6 +31,7 @@ import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.erp.dataaccess.domain.workflow.*;
@@ -97,11 +99,21 @@ public class WorkflowSupport {
                     }
                 }
             }
-        } else if (WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)) {
-            if (CommonConstant.WORKFLOW_STEP_TWO.equals(workflowNodeDO.getWorkflowStep())) {
+        } else if (WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)||WorkflowType.WORKFLOW_TYPE_EXCHANGE_ORDER.equals(workflowType)) {
+            if (CommonConstant.WORKFLOW_STEP_TWO.equals(workflowNodeDO.getWorkflowStep())&&WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)) {
                 OrderDO orderDO = orderMapper.findByOrderNo(workflowReferNo);
                 if (orderDO != null) {
                     subCompanyId = orderDO.getDeliverySubCompanyId();
+                }
+            } else {
+                subCompanyId = userSupport.getCurrentUserCompanyId();
+            }
+
+        } else if (WorkflowType.WORKFLOW_TYPE_CHANGE.equals(workflowType)) {
+            if (CommonConstant.WORKFLOW_STEP_TWO.equals(workflowNodeDO.getWorkflowStep())) {
+                ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(workflowReferNo);
+                if (replaceOrderDO != null) {
+                    subCompanyId = replaceOrderDO.getDeliverySubCompanyId();
                 }
             } else {
                 subCompanyId = userSupport.getCurrentUserCompanyId();
@@ -496,4 +508,7 @@ public class WorkflowSupport {
 
     @Autowired
     private CustomerCompanyMapper customerCompanyMapper;
+
+    @Autowired
+    private ReplaceOrderMapper replaceOrderMapper;
 }

@@ -63,7 +63,7 @@
                     <div class="col-md-12">
                         <label for="statementCorrectReason" class="field-label">冲正原因</label>
                         <label for="statementCorrectReason" class="field prepend-icon">
-                            <textarea class="gui-textarea" id="statementCorrectReason" name="statementCorrectReason" placeholder="请输入备注"></textarea>
+                            <textarea class="gui-textarea" id="statementCorrectReason" name="statementCorrectReason" placeholder="请输入冲正原因"></textarea>
                             <label for="statementCorrectReason" class="field-icon"><i class="fa fa-comments"></i>
                             </label>
                         </label>

@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrder;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrderMaterial;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrderProduct;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
+import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
@@ -33,6 +34,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
@@ -46,6 +48,7 @@ import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
+import com.lxzl.erp.dataaccess.domain.replace.ReplaceOrderDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
 import org.slf4j.Logger;
@@ -227,19 +230,19 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             userId = userDO.getId().toString();
 
         }
-        BigDecimal b = k3ReturnOrder.getEqAmount();
-        if (BigDecimalUtil.compare(b, BigDecimal.ZERO) != 0) {
-            K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
-            CustomerDO customerDO = null;
-            if (k3MappingCustomerDO == null) {
-                customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
-            } else {
-                customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
-            }
-            if (customerDO != null) {
-                customerSupport.subCreditAmountUsed(customerDO.getId(), b,CustomerRiskBusinessType.RETURN_ORDER_TYPE,k3ReturnOrder.getReturnOrderNo(),"");
-            }
-        }
+//        BigDecimal b = k3ReturnOrder.getEqAmount();
+//        if (BigDecimalUtil.compare(b, BigDecimal.ZERO) != 0) {
+//            K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
+//            CustomerDO customerDO = null;
+//            if (k3MappingCustomerDO == null) {
+//                customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
+//            } else {
+//                customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
+//            }
+//            if (customerDO != null) {
+//                customerSupport.subCreditAmountUsed(customerDO.getId(), b,CustomerRiskBusinessType.RETURN_ORDER_TYPE,k3ReturnOrder.getReturnOrderNo(),"");
+//            }
+//        }
 
         Date now = new Date();
         Integer returnOrderStatus = k3ReturnOrder.getReturnOrderStatus() == null ? ReturnOrderStatus.RETURN_ORDER_STATUS_END : k3ReturnOrder.getReturnOrderStatus();
@@ -258,18 +261,29 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             getReturnItemMap(k3ReturnOrderDetailDOList, oldOrderProductDOMap, oldOrderMaterialDOMap, erpOrderProductDOMap, erpOrderMaterialDOMap);
             Set<Integer> set = new HashSet();
             //是否生成退货结算单
-            Boolean isCreateReturnStatement = true;
+            // Boolean isCreateReturnStatement = true;
             if (isHandleRent) {
+                //退授信额度
+                BigDecimal totalCreditDepositAmount=BigDecimal.ZERO;
                 for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList) {
+                    BigDecimal creditDepositAmount=BigDecimal.ZERO;
                     if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())) {
                         //兼容erp订单和k3订单商品项
                         OrderProductDO orderProductDO = productSupport.getOrderProductDO(oldOrderProductDOMap, erpOrderProductDOMap, k3ReturnOrderDetailDO.getOrderNo(), k3ReturnOrderDetailDO.getOrderItemId(), k3ReturnOrderDetailDO.getOrderEntry());
                         if (orderProductDO != null) {
+                            Integer rentingProductCount=orderProductDO.getRentingProductCount();//实际在租数
                             Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
                             if (productCount < 0) {
                                 dingDingSupport.dingDingSendMessage(getItemLowZero(orderProductDO.getOrderId(), orderProductDO.getId(), productCount));
+                            }else{
+                                if(null!=orderProductDO.getCreditDepositAmount()&&orderProductDO.getCreditDepositAmount().compareTo(BigDecimal.ZERO)==1){
+                                    creditDepositAmount=orderProductDO.getCreditDepositAmount().divide(BigDecimal.valueOf(rentingProductCount),2,BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(k3ReturnOrderDetailDO.getProductCount())).setScale(2,BigDecimal.ROUND_HALF_UP);
+                                    totalCreditDepositAmount=totalCreditDepositAmount.add(creditDepositAmount);
+                                }
                             }
                             productCount = productCount < 0 ? 0 : productCount;
+                            BigDecimal orderProductCreditDepositAmount=orderProductDO.getCreditDepositAmount().subtract(creditDepositAmount);
+                            orderProductDO.setCreditDepositAmount(orderProductCreditDepositAmount.compareTo(BigDecimal.ZERO)==1?orderProductCreditDepositAmount:BigDecimal.ZERO);
                             orderProductDO.setRentingProductCount(productCount);
                             orderProductDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                             orderProductDO.setUpdateTime(now);
@@ -307,6 +321,21 @@ public class K3CallbackServiceImpl implements K3CallbackService {
 
                     }
                 }
+
+                //TODO 更新授信额度
+                if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+                    K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
+                    CustomerDO customerDO = null;
+                    if (k3MappingCustomerDO == null) {
+                        customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
+                    } else {
+                        customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
+                    }
+                    if (customerDO != null) {
+                        customerSupport.subCreditAmountUsed(customerDO.getId(), totalCreditDepositAmount,CustomerRiskBusinessType.RETURN_ORDER_TYPE,k3ReturnOrder.getReturnOrderNo(),"");
+                    }
+                }
+
                 for (Integer orderId : set) {
 
                     Integer totalRentingProductCount = orderProductMapper.findTotalRentingProductCountByOrderId(orderId);
@@ -338,11 +367,19 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
                         orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                         orderDO.setUpdateTime(now);
+                        BigDecimal orderCreditDepositAmount=orderDO.getTotalCreditDepositAmount().subtract(totalCreditDepositAmount);
+                        BigDecimal orderProductCreditDepositAmount=orderDO.getTotalProductCreditDepositAmount().subtract(totalCreditDepositAmount);
+                        orderDO.setTotalCreditDepositAmount(orderCreditDepositAmount.compareTo(BigDecimal.ZERO)==1?orderCreditDepositAmount:BigDecimal.ZERO);
+                        orderDO.setTotalProductCreditDepositAmount(orderProductCreditDepositAmount.compareTo(BigDecimal.ZERO)==1?orderProductCreditDepositAmount:BigDecimal.ZERO);
                         orderMapper.update(orderDO);
                     } else if (orderDO.getTotalProductCount() > totalRentingProductCount || orderDO.getTotalMaterialCount() > totalRentingMaterialCount) {//部分退货
                         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_PART_RETURN);
                         orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                         orderDO.setUpdateTime(now);
+                        BigDecimal orderCreditDepositAmount=orderDO.getTotalCreditDepositAmount().subtract(totalCreditDepositAmount);
+                        BigDecimal orderProductCreditDepositAmount=orderDO.getTotalProductCreditDepositAmount().subtract(totalCreditDepositAmount);
+                        orderDO.setTotalCreditDepositAmount(orderCreditDepositAmount.compareTo(BigDecimal.ZERO)==1?orderCreditDepositAmount:BigDecimal.ZERO);
+                        orderDO.setTotalProductCreditDepositAmount(orderProductCreditDepositAmount.compareTo(BigDecimal.ZERO)==1?orderProductCreditDepositAmount:BigDecimal.ZERO);
                         orderMapper.update(orderDO);
                     }
                     // 记录订单时间轴
@@ -351,6 +388,12 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             }
         }
 //        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        //修正续租单，如果有（退货单之后的续租单）
+        ServiceResult<String, BigDecimal> fixResult= statementService.fixReletOrderItemCount(k3ReturnOrderDO);
+        if (!ErrorCode.SUCCESS.equals(fixResult.getErrorCode())) {
+            serviceResult.setErrorCode(fixResult.getErrorCode());
+            return serviceResult;
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -389,6 +432,33 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, String> replaceOrderDeliveryCallBack(ReplaceOrder replaceOrder) {
+        // 回调时不需要登陆，这里设置user为super user
+        if (userSupport.getCurrentUser() == null) {
+            User superUser = new User();
+            superUser.setUserId(CommonConstant.SUPER_USER_ID);
+            httpSession.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, superUser);
+        }
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date date = new Date();
+        if (StringUtil.isEmpty(replaceOrder.getReplaceOrderNo())) {
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_NO_NOT_NULL);
+            return result;
+        }
+        ReplaceOrderDO replaceOrderDO = replaceOrderMapper.findByReplaceOrderNo(replaceOrder.getReplaceOrderNo());
+        if (replaceOrderDO == null) {
+            result.setErrorCode(ErrorCode.REPLACE_ORDER_NO_ERROR);
+            return result;
+        }
+
+        replaceOrderDO.setReplaceOrderStatus(ReplaceOrderStatus.REPLACE_ORDER_STATUS_DELIVERED);
+        replaceOrderDO.setReplaceDeliveryTime(date);
+        replaceOrderMapper.update(replaceOrderDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
     private void getReturnItemMap(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList, Map<String, OrderProductDO> oldOrderProductDOMap, Map<String, OrderMaterialDO> oldOrderMaterialDOMap, Map<String, OrderProductDO> erpOrderProductDOMap, Map<String, OrderMaterialDO> erpOrderMaterialDOMap) {
@@ -530,4 +600,6 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     private HttpSession httpSession;
     @Autowired
     private UserSupport userSupport;
+    @Autowired
+    private ReplaceOrderMapper replaceOrderMapper;
 }
