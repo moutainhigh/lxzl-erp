@@ -706,7 +706,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         //下单首月不能更改
         //月末结算，变更当月1号，如果是20号结算，就变更21号
         //获取当前月的结算日、如果是31号就是当前月的最后一天。如果是其他就跟着你月份走就可以了。
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), exchangeOrder.getRentStartTime());
+        //Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), exchangeOrder.getRentStartTime());
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), orderDO.getRentStartTime());
 
         Date newRentStartTime = new Date();
 
