@@ -230,15 +230,14 @@
 
     <select id="findByOrderTypeAndOrderNoList" resultMap="StatementOrderDetailDO" parameterType="java.util.ArrayList">
         SELECT
-        <include refid="column_List"/>
+        <include refid="column_List"/>,eso.statement_order_no
         FROM erp_statement_order_detail esod
+        LEFT JOIN erp_statement_order eso ON esod.statement_order_id = eso.id AND eso.data_status = 1
         LEFT JOIN erp_order eo on eo.id = esod.order_id AND eo.data_status = 1
         WHERE esod.order_type = #{orderType, jdbcType=INTEGER}
         AND eo.order_no in
-        <foreach collection="list" item="list" index="index" separator =",">
-            (
+        <foreach collection="list" item="list" index="index" separator ="," open="(" close=")">
             #{list.orderNo}
-            )
         </foreach>
         AND esod.data_status = 1
         ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC,esod.statement_order_id ASC
