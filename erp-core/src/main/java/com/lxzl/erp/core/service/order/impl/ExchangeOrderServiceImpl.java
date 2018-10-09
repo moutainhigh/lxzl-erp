@@ -25,11 +25,13 @@ import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
@@ -485,39 +487,47 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         this.calculateOrderMaterialInfo(newOrderDO.getOrderMaterialDOList(), newOrderDO);
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderMapper.save(newOrderDO);
-        if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
+        CustomerConsignInfoDO userConsignInfoDO = customerConsignInfoMapper.findById(oldOrderConsignInfoDO.getCustomerConsignId());
+        if (userConsignInfoDO != null) {
             orderService.updateOrderConsignInfo(oldOrderConsignInfoDO.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
         }else {
+            OrderConsignInfoDO dbOrderConsignInfoDO = orderConsignInfoMapper.findByOrderId(orderDO.getId());
             OrderConsignInfoDO orderConsignInfoDO = new OrderConsignInfoDO();
-            orderConsignInfoDO.setOrderId(newOrderDO.getId());
+            orderConsignInfoDO.setOrderId(orderDO.getId());
             orderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-
-            if (oldOrderConsignInfoDO == null) {
+            orderConsignInfoDO.setCustomerConsignId(oldOrderConsignInfoDO.getCustomerConsignId());
+            orderConsignInfoDO.setConsigneeName(oldOrderConsignInfoDO.getConsigneeName());
+            orderConsignInfoDO.setConsigneePhone(oldOrderConsignInfoDO.getConsigneePhone());
+            orderConsignInfoDO.setProvince(oldOrderConsignInfoDO.getProvince());
+            orderConsignInfoDO.setCity(oldOrderConsignInfoDO.getCity());
+            orderConsignInfoDO.setDistrict(oldOrderConsignInfoDO.getDistrict());
+            orderConsignInfoDO.setAddress(oldOrderConsignInfoDO.getAddress());
+            if (dbOrderConsignInfoDO == null) {
                 orderConsignInfoDO.setCreateUser(loginUser.getUserId().toString());
                 orderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
                 orderConsignInfoDO.setCreateTime(currentTime);
                 orderConsignInfoDO.setUpdateTime(currentTime);
                 orderConsignInfoMapper.save(orderConsignInfoDO);
             } else {
-                oldOrderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                oldOrderConsignInfoDO.setId(oldOrderConsignInfoDO.getId());
-                oldOrderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
-                oldOrderConsignInfoDO.setUpdateTime(currentTime);
-                orderConsignInfoMapper.update(oldOrderConsignInfoDO);
+                if (!dbOrderConsignInfoDO.getCustomerConsignId().equals(oldOrderConsignInfoDO.getCustomerConsignId())) {
+                    dbOrderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                    dbOrderConsignInfoDO.setId(dbOrderConsignInfoDO.getId());
+                    dbOrderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+                    dbOrderConsignInfoDO.setUpdateTime(currentTime);
+                    orderConsignInfoMapper.update(dbOrderConsignInfoDO);
 
-                orderConsignInfoDO.setCustomerConsignId(oldOrderConsignInfoDO.getCustomerConsignId());
-                orderConsignInfoDO.setConsigneeName(oldOrderConsignInfoDO.getConsigneeName());
-                orderConsignInfoDO.setConsigneePhone(oldOrderConsignInfoDO.getConsigneePhone());
-                orderConsignInfoDO.setProvince(oldOrderConsignInfoDO.getProvince());
-                orderConsignInfoDO.setCity(oldOrderConsignInfoDO.getCity());
-                orderConsignInfoDO.setDistrict(oldOrderConsignInfoDO.getDistrict());
-                orderConsignInfoDO.setAddress(oldOrderConsignInfoDO.getAddress());
-                orderConsignInfoDO.setCreateUser(loginUser.getUserId().toString());
-                orderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
-                orderConsignInfoDO.setCreateTime(currentTime);
-                orderConsignInfoDO.setUpdateTime(currentTime);
-                orderConsignInfoMapper.save(orderConsignInfoDO);
-
+                    orderConsignInfoDO.setCreateUser(loginUser.getUserId().toString());
+                    orderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+                    orderConsignInfoDO.setCreateTime(currentTime);
+                    orderConsignInfoDO.setUpdateTime(currentTime);
+                    orderConsignInfoMapper.save(orderConsignInfoDO);
+                }else {
+                    orderConsignInfoDO.setCreateUser(loginUser.getUserId().toString());
+                    orderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+                    orderConsignInfoDO.setCreateTime(currentTime);
+                    orderConsignInfoDO.setUpdateTime(currentTime);
+                    orderConsignInfoMapper.save(orderConsignInfoDO);
+                }
             }
         }
 
@@ -1050,4 +1060,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
 
     @Autowired
     private OrderTimeAxisSupport orderTimeAxisSupport;
+
+    @Autowired
+    private CustomerConsignInfoMapper customerConsignInfoMapper;
 }
