@@ -267,19 +267,26 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_sub_company_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
-		inner join erp_order t3 on t2.order_no = t3.order_no
-		<where>
-			<if test="true">
-				AND t1.data_status = 1 and t1.return_order_status = 20 and t3.data_status = 1 AND t3.rent_type=2 AND <![CDATA[ t3.rent_time_length >= 6 ]]>
-			</if>
-			<if test="maps.startTime != null">
-				<![CDATA[ AND TO_DAYS(t1.return_time)  >= TO_DAYS(#{maps.startTime}) ]]>
-				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
-			</if>
-		</where>
-		group by t1.k3_customer_name
-		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		select t0.customer_name,COALESCE(sum(t2.real_product_count),0) as rec from erp_customer t0
+		left join erp_k3_return_order t1 on t1.k3_customer_no = t0.customer_no
+		<if test="maps.startTime != null">
+			<![CDATA[ AND TO_DAYS(t1.return_time) > TO_DAYS(#{maps.startTime}) ]]>
+		</if>
+		and t1.return_order_status = 20 and  t1.data_status = 1
+		left join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		left join erp_order t3 on t2.order_no = t3.order_no
+		<if test="maps.startTime != null">
+			<![CDATA[ AND to_days(t3.rent_start_time) <= TO_DAYS(#{maps.startTime}) ]]>
+		</if>
+		<if test="true">
+			and t3.data_status = 1 and t3.rent_type = 2 AND <![CDATA[ t3.rent_time_length >= 6 ]]>
+		</if>
+		LEFT JOIN erp_order_product eop ON eop.id = t2.order_item_id AND eop.data_status = 1
+		LEFT JOIN erp_product ep ON eop.product_id = ep.id AND ep.data_status = 1
+		LEFT JOIN erp_product_category epc ON epc.id = ep.category_id AND epc.data_status = 1
+		AND ((epc.id = 800006 AND eop.product_unit_amount != 0)OR (epc.id != 800006))
+		group by t0.customer_name
+		) m2 on m1.buyer_customer_name = m2.customer_name
 		<where>
 			<if test="true">
 				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
@@ -431,19 +438,26 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_sub_company_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
-		inner join erp_order t3 on t2.order_no = t3.order_no
-		<where>
-			<if test="true">
-				and t1.return_order_status = 20 and ((t3.rent_type=2 AND <![CDATA[ t3.rent_time_length < 6 ]]>) OR (t3.rent_type=1 AND <![CDATA[ t3.rent_time_length >= 30 ]]>)) AND t1.data_status = 1 and t3.data_status = 1
-			</if>
-			<if test="maps.startTime != null">
-				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
-				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
-			</if>
-		</where>
-		group by t1.k3_customer_name
-		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		select t0.customer_name,COALESCE(sum(t2.real_product_count),0) as rec from erp_customer t0
+		left join erp_k3_return_order t1 on t1.k3_customer_no = t0.customer_no
+		<if test="maps.startTime != null">
+			<![CDATA[ AND TO_DAYS(t1.return_time) > TO_DAYS(#{maps.startTime}) ]]>
+		</if>
+		and t1.return_order_status = 20 and  t1.data_status = 1
+		left join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		left join erp_order t3 on t2.order_no = t3.order_no
+		<if test="maps.startTime != null">
+			<![CDATA[ AND to_days(t3.rent_start_time) <= TO_DAYS(#{maps.startTime}) ]]>
+		</if>
+		<if test="true">
+			and ((t3.rent_type=2 AND <![CDATA[ t3.rent_time_length < 6 ]]>) OR (t3.rent_type=1 AND <![CDATA[ t3.rent_time_length >= 30 ]]>))
+		</if>
+		LEFT JOIN erp_order_product eop ON eop.id = t2.order_item_id AND eop.data_status = 1
+		LEFT JOIN erp_product ep ON eop.product_id = ep.id AND ep.data_status = 1
+		LEFT JOIN erp_product_category epc ON epc.id = ep.category_id AND epc.data_status = 1
+		AND ((epc.id = 800006 AND eop.product_unit_amount != 0)OR (epc.id != 800006))
+		group by t0.customer_name
+		) m2 on m1.buyer_customer_name = m2.customer_name
 		<where>
 			<if test="true">
 				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
@@ -595,19 +609,26 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_sub_company_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
-		inner join erp_order t3 on t2.order_no = t3.order_no
-		<where>
-			<if test="true">
-				and t3.data_status = 1  and t3.rent_type = 1  AND <![CDATA[ t3.rent_time_length < 30 ]]> AND t1.data_status = 1 and t1.return_order_status = 20
-			</if>
-			<if test="maps.startTime != null">
-				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
-				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
-			</if>
-		</where>
-		group by t1.k3_customer_name
-		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		select t0.customer_name,COALESCE(sum(t2.real_product_count),0) as rec from erp_customer t0
+		left join erp_k3_return_order t1 on t1.k3_customer_no = t0.customer_no
+		<if test="maps.startTime != null">
+			<![CDATA[ AND TO_DAYS(t1.return_time) > TO_DAYS(#{maps.startTime}) ]]>
+		</if>
+		and t1.return_order_status = 20 and  t1.data_status = 1
+		left join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		left join erp_order t3 on t2.order_no = t3.order_no
+		<if test="maps.startTime != null">
+			<![CDATA[ AND to_days(t3.rent_start_time) <= TO_DAYS(#{maps.startTime}) ]]>
+		</if>
+		<if test="true">
+			and t3.rent_type = 1  AND <![CDATA[ t3.rent_time_length < 30 ]]>
+		</if>
+		LEFT JOIN erp_order_product eop ON eop.id = t2.order_item_id AND eop.data_status = 1
+		LEFT JOIN erp_product ep ON eop.product_id = ep.id AND ep.data_status = 1
+		LEFT JOIN erp_product_category epc ON epc.id = ep.category_id AND epc.data_status = 1
+		AND ((epc.id = 800006 AND eop.product_unit_amount != 0)OR (epc.id != 800006))
+		group by t0.customer_name
+		) m2 on m1.buyer_customer_name = m2.customer_name
 		<where>
 			<if test="true">
 				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
@@ -1035,19 +1056,26 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_seller_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
-		inner join erp_order t3 on t2.order_no = t3.order_no
-		<where>
-			<if test="true">
-				AND t1.data_status = 1 and t1.return_order_status = 20 and t3.data_status = 1 AND t3.rent_type=2 AND <![CDATA[ t3.rent_time_length >= 6 ]]>
-			</if>
-			<if test="maps.startTime != null">
-				<![CDATA[ AND TO_DAYS(t1.return_time)  >= TO_DAYS(#{maps.startTime}) ]]>
-				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
-			</if>
-		</where>
-		group by t1.k3_customer_name
-		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		select t0.customer_name,COALESCE(sum(t2.real_product_count),0) as rec from erp_customer t0
+		left join erp_k3_return_order t1 on t1.k3_customer_no = t0.customer_no
+		<if test="maps.startTime != null">
+			<![CDATA[ AND TO_DAYS(t1.return_time) > TO_DAYS(#{maps.startTime}) ]]>
+		</if>
+		and t1.return_order_status = 20 and  t1.data_status = 1
+		left join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		left join erp_order t3 on t2.order_no = t3.order_no
+		<if test="maps.startTime != null">
+			<![CDATA[ AND to_days(t3.rent_start_time) <= TO_DAYS(#{maps.startTime}) ]]>
+		</if>
+		<if test="true">
+			and t3.data_status = 1 and t3.rent_type = 2 AND <![CDATA[ t3.rent_time_length >= 6 ]]>
+		</if>
+		LEFT JOIN erp_order_product eop ON eop.id = t2.order_item_id AND eop.data_status = 1
+		LEFT JOIN erp_product ep ON eop.product_id = ep.id AND ep.data_status = 1
+		LEFT JOIN erp_product_category epc ON epc.id = ep.category_id AND epc.data_status = 1
+		AND ((epc.id = 800006 AND eop.product_unit_amount != 0)OR (epc.id != 800006))
+		group by t0.customer_name
+		) m2 on m1.buyer_customer_name = m2.customer_name
 		<where>
 			<if test="true">
 				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
@@ -1199,19 +1227,26 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_seller_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
-		inner join erp_order t3 on t2.order_no = t3.order_no
-		<where>
-			<if test="true">
-				and t1.return_order_status = 20 and ((t3.rent_type=2 AND <![CDATA[ t3.rent_time_length < 6 ]]>) OR (t3.rent_type=1 AND <![CDATA[ t3.rent_time_length >= 30 ]]>)) AND t1.data_status = 1 and t3.data_status = 1
-			</if>
-			<if test="maps.startTime != null">
-				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
-				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
-			</if>
-		</where>
-		group by t1.k3_customer_name
-		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		select t0.customer_name,COALESCE(sum(t2.real_product_count),0) as rec from erp_customer t0
+		left join erp_k3_return_order t1 on t1.k3_customer_no = t0.customer_no
+		<if test="maps.startTime != null">
+			<![CDATA[ AND TO_DAYS(t1.return_time) > TO_DAYS(#{maps.startTime}) ]]>
+		</if>
+		and t1.return_order_status = 20 and  t1.data_status = 1
+		left join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		left join erp_order t3 on t2.order_no = t3.order_no
+		<if test="maps.startTime != null">
+			<![CDATA[ AND to_days(t3.rent_start_time) <= TO_DAYS(#{maps.startTime}) ]]>
+		</if>
+		<if test="true">
+			and ((t3.rent_type=2 AND <![CDATA[ t3.rent_time_length < 6 ]]>) OR (t3.rent_type=1 AND <![CDATA[ t3.rent_time_length >= 30 ]]>))
+		</if>
+		LEFT JOIN erp_order_product eop ON eop.id = t2.order_item_id AND eop.data_status = 1
+		LEFT JOIN erp_product ep ON eop.product_id = ep.id AND ep.data_status = 1
+		LEFT JOIN erp_product_category epc ON epc.id = ep.category_id AND epc.data_status = 1
+		AND ((epc.id = 800006 AND eop.product_unit_amount != 0)OR (epc.id != 800006))
+		group by t0.customer_name
+		) m2 on m1.buyer_customer_name = m2.customer_name
 		<where>
 			<if test="true">
 				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
@@ -1363,19 +1398,26 @@
 		</where>
 		group by t1.buyer_customer_name,t1.order_seller_id
 		) m1 left join (
-		select t1.k3_customer_name,COALESCE(sum(t2.real_product_count)) as rec from erp_k3_return_order t1 inner join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
-		inner join erp_order t3 on t2.order_no = t3.order_no
-		<where>
-			<if test="true">
-				and t3.data_status = 1  and t3.rent_type = 1  AND <![CDATA[ t3.rent_time_length < 30 ]]> AND t1.data_status = 1 and t1.return_order_status = 20
-			</if>
-			<if test="maps.startTime != null">
-				<![CDATA[ AND TO_DAYS(t1.return_time) >= TO_DAYS(#{maps.startTime}) ]]>
-				<![CDATA[ AND to_days(t3.rent_start_time) < TO_DAYS(#{maps.startTime}) ]]>
-			</if>
-		</where>
-		group by t1.k3_customer_name
-		) m2 on m1.buyer_customer_name = m2.k3_customer_name
+		select t0.customer_name,COALESCE(sum(t2.real_product_count),0) as rec from erp_customer t0
+		left join erp_k3_return_order t1 on t1.k3_customer_no = t0.customer_no
+		<if test="maps.startTime != null">
+			<![CDATA[ AND TO_DAYS(t1.return_time) > TO_DAYS(#{maps.startTime}) ]]>
+		</if>
+		and t1.return_order_status = 20 and  t1.data_status = 1
+		left join erp_k3_return_order_detail t2 on t2.return_order_id= t1.id and t2.data_status = 1 and t2.order_item_type = 1
+		left join erp_order t3 on t2.order_no = t3.order_no
+		<if test="maps.startTime != null">
+			<![CDATA[ AND to_days(t3.rent_start_time) <= TO_DAYS(#{maps.startTime}) ]]>
+		</if>
+		<if test="true">
+			and t3.rent_type = 1  AND <![CDATA[ t3.rent_time_length < 30 ]]>
+		</if>
+		LEFT JOIN erp_order_product eop ON eop.id = t2.order_item_id AND eop.data_status = 1
+		LEFT JOIN erp_product ep ON eop.product_id = ep.id AND ep.data_status = 1
+		LEFT JOIN erp_product_category epc ON epc.id = ep.category_id AND epc.data_status = 1
+		AND ((epc.id = 800006 AND eop.product_unit_amount != 0)OR (epc.id != 800006))
+		group by t0.customer_name
+		) m2 on m1.buyer_customer_name = m2.customer_name
 		<where>
 			<if test="true">
 				<![CDATA[ (m1.rc + m2.rec) <> 0 ]]>
