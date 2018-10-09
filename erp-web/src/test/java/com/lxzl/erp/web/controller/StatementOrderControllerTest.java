@@ -158,7 +158,7 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void reCreateOrderStatement() throws Exception {
         Order param = new Order();
-        param.setOrderNo("LXO-20180712-1000-00005");
+        param.setOrderNo("LXO-20181008-027-00068-1");
         TestResult testResult = getJsonTestResult("/statementOrder/reCreateOrderStatement", param);
     }
 
