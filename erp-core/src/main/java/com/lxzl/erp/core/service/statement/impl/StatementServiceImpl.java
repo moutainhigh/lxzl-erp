@@ -879,6 +879,17 @@ public class StatementServiceImpl implements StatementService {
                 addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
             }
         }
+        //兼容换单导致的新单周期不完整（导致最后一期时间溢出）
+        OrderFlowDO orderFlowDO=orderFlowMapper.findByOrderNo(orderDO.getOrderNo());
+        if(orderFlowDO!=null&&CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)){
+            Date endTime=orderFlowDO.getExpectReturnTime();
+            for(StatementOrderDetailDO statementOrderDetailDO:addStatementOrderDetailDOList){
+                if(DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(),endTime)<0){
+                    statementOrderDetailDO.setStatementEndTime(endTime);
+                }
+            }
+        }
+
         return addStatementOrderDetailDOList;
     }
 
