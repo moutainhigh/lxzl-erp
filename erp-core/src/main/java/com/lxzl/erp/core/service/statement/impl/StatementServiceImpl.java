@@ -879,6 +879,17 @@ public class StatementServiceImpl implements StatementService {
                 addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
             }
         }
+        //兼容换单导致的新单周期不完整（导致最后一期时间溢出）
+        OrderFlowDO orderFlowDO=orderFlowMapper.findByOrderNo(orderDO.getOrderNo());
+        if(orderFlowDO!=null&&CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)){
+            Date endTime=orderFlowDO.getExpectReturnTime();
+            for(StatementOrderDetailDO statementOrderDetailDO:addStatementOrderDetailDOList){
+                if(DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(),endTime)<0){
+                    statementOrderDetailDO.setStatementEndTime(endTime);
+                }
+            }
+        }
+
         return addStatementOrderDetailDOList;
     }
 
@@ -1909,7 +1920,29 @@ public class StatementServiceImpl implements StatementService {
         }
 
         StatementOrder statementOrder = new StatementOrder();
-        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderIdForOrderDetail(orderDO.getId());
+//        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderIdForOrderDetail(orderDO.getId());
+        List<StatementOrderDetailDO> statementOrderDetailDOList = new ArrayList<>();
+        if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsOriginalOrder()) &&
+                CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsExchangeOrder()) &&
+                orderDO.getOriginalOrderNo() != null){
+            //若此订单为转单过的最新订单，则获取历史结算单列表
+            List<OrderFlowDO> orderFlowDOList = orderFlowMapper.findByOriginalOrderNo(orderDO.getOriginalOrderNo());
+            //附加原订单编号
+            OrderFlowDO orderOriginalNo = new OrderFlowDO();
+            orderOriginalNo.setOrderNo(orderDO.getOriginalOrderNo());
+            orderFlowDOList.add(orderOriginalNo);
+            if (CollectionUtil.isNotEmpty(orderFlowDOList)){
+                //查询原单转单过的所有订单的结算单
+                statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndOrderNoList(OrderType.ORDER_TYPE_ORDER, orderFlowDOList);
+            }
+        }
+        else {
+            statementOrderDetailDOList = statementOrderDetailMapper.findByOrderIdForOrderDetail(orderDO.getId());
+        }
+
+        if (!CollectionUtil.isNotEmpty(statementOrderDetailDOList)){
+            return result;
+        }
         List<StatementOrderDetail> statementOrderDetailList = ConverterUtil.convertList(statementOrderDetailDOList, StatementOrderDetail.class);
 
         Integer customerId = null;
@@ -1923,7 +1956,7 @@ public class StatementServiceImpl implements StatementService {
                 if (statementOrderDetail.getReturnReferId() != null) {
                     returnReferStatementOrderDetail = statementOrderDetailMap.get(statementOrderDetail.getReturnReferId());
                 }
-                convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail, orderDO);
+                convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail, null);
 
                 statementOrder.setStatementAmount(BigDecimalUtil.add(statementOrder.getStatementAmount(), statementOrderDetail.getStatementDetailAmount()));
                 statementOrder.setStatementPaidAmount(BigDecimalUtil.add(statementOrder.getStatementPaidAmount(), statementOrderDetail.getStatementDetailPaidAmount()));

@@ -20,4 +20,6 @@ public interface OrderFlowMapper extends BaseMysqlDAO<OrderFlowDO> {
 	 * @return
 	 */
 	List<OrderFlowDO> findByOriginalOrderNo(@Param("originalOrderNo") String originalOrderNo);
+
+	OrderFlowDO findByOrderNo(@Param("orderNo") String orderNo);
 }

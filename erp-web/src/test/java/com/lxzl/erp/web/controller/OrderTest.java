@@ -1050,4 +1050,13 @@ public class OrderTest extends ERPUnTransactionalTest {
 //
 //        String ssss = "haha ";
 //    }
+@Test
+public void testexchangeOrderJSON() throws Exception {
+    String str = "{\"rentStartTime\":1522540800000,\"businessType\":3,\"orderNo\":\"LXSE2018012800\",\"exchangeOrderProductList\":[{\"orderProductId\":3264,\"productUnitAmount\":\"40\",\"depositCycle\":\"0\",\"paymentCycle\":\"1\",\"payMode\":\"1\"},{\"orderProductId\":3265,\"productUnitAmount\":\"40\",\"depositCycle\":\"0\",\"paymentCycle\":\"1\",\"payMode\":\"1\"}],\"exchangeOrderMaterialList\":[{\"orderProductId\":5549,\"materialUnitAmount\":\"0\",\"depositCycle\":\"0\",\"paymentCycle\":\"1\",\"payMode\":\"1\"},{\"orderProductId\":5550,\"materialUnitAmount\":\"\",\"depositCycle\":\"0\",\"paymentCycle\":\"1\",\"payMode\":\"1\"},{\"orderProductId\":5551,\"materialUnitAmount\":\"0\",\"depositCycle\":\"0\",\"paymentCycle\":\"1\",\"payMode\":\"1\"},{\"orderProductId\":5552,\"materialUnitAmount\":\"0\",\"depositCycle\":\"0\",\"paymentCycle\":\"1\",\"payMode\":\"1\"}],\"remark\":\"尾巴\"}";
+
+    ExchangeOrder replaceOrder = FastJsonUtil.toBean(str, ExchangeOrder.class);
+    TestResult testResult = getJsonTestResult("/order/exchangeOrder", replaceOrder);
+    System.out.println(JSON.toJSONString(testResult));
+
+}
 }

@@ -25,11 +25,13 @@ import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.replace.ReplaceOrderMapper;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
@@ -398,7 +400,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         orderDO.setIsExchangeOrder(CommonConstant.COMMON_CONSTANT_YES);
         orderMapper.update(orderDO);
         //1.2更新地址信息
-        OrderConsignInfoDO orderConsignInfoDO = orderConsignInfoMapper.findByOrderId(orderDO.getId());
+        OrderConsignInfoDO oldOrderConsignInfoDO = orderConsignInfoMapper.findByOrderId(orderDO.getId());
         //1.3获取原订单信息，生成新订单
         Date originalExpectReturnTime = orderDO.getExpectReturnTime();
         Date originalRentStartTime = orderDO.getRentStartTime();
@@ -485,7 +487,50 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         this.calculateOrderMaterialInfo(newOrderDO.getOrderMaterialDOList(), newOrderDO);
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderMapper.save(newOrderDO);
-        orderService.updateOrderConsignInfo(orderConsignInfoDO.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
+        CustomerConsignInfoDO userConsignInfoDO = customerConsignInfoMapper.findById(oldOrderConsignInfoDO.getCustomerConsignId());
+        if (userConsignInfoDO != null) {
+            orderService.updateOrderConsignInfo(oldOrderConsignInfoDO.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
+        }else {
+            OrderConsignInfoDO dbOrderConsignInfoDO = orderConsignInfoMapper.findByOrderId(orderDO.getId());
+            OrderConsignInfoDO orderConsignInfoDO = new OrderConsignInfoDO();
+            orderConsignInfoDO.setOrderId(orderDO.getId());
+            orderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            orderConsignInfoDO.setCustomerConsignId(oldOrderConsignInfoDO.getCustomerConsignId());
+            orderConsignInfoDO.setConsigneeName(oldOrderConsignInfoDO.getConsigneeName());
+            orderConsignInfoDO.setConsigneePhone(oldOrderConsignInfoDO.getConsigneePhone());
+            orderConsignInfoDO.setProvince(oldOrderConsignInfoDO.getProvince());
+            orderConsignInfoDO.setCity(oldOrderConsignInfoDO.getCity());
+            orderConsignInfoDO.setDistrict(oldOrderConsignInfoDO.getDistrict());
+            orderConsignInfoDO.setAddress(oldOrderConsignInfoDO.getAddress());
+            if (dbOrderConsignInfoDO == null) {
+                orderConsignInfoDO.setCreateUser(loginUser.getUserId().toString());
+                orderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+                orderConsignInfoDO.setCreateTime(currentTime);
+                orderConsignInfoDO.setUpdateTime(currentTime);
+                orderConsignInfoMapper.save(orderConsignInfoDO);
+            } else {
+                if (!dbOrderConsignInfoDO.getCustomerConsignId().equals(oldOrderConsignInfoDO.getCustomerConsignId())) {
+                    dbOrderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                    dbOrderConsignInfoDO.setId(dbOrderConsignInfoDO.getId());
+                    dbOrderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+                    dbOrderConsignInfoDO.setUpdateTime(currentTime);
+                    orderConsignInfoMapper.update(dbOrderConsignInfoDO);
+
+                    orderConsignInfoDO.setCreateUser(loginUser.getUserId().toString());
+                    orderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+                    orderConsignInfoDO.setCreateTime(currentTime);
+                    orderConsignInfoDO.setUpdateTime(currentTime);
+                    orderConsignInfoMapper.save(orderConsignInfoDO);
+                }else {
+                    orderConsignInfoDO.setCreateUser(loginUser.getUserId().toString());
+                    orderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+                    orderConsignInfoDO.setCreateTime(currentTime);
+                    orderConsignInfoDO.setUpdateTime(currentTime);
+                    orderConsignInfoMapper.save(orderConsignInfoDO);
+                }
+            }
+        }
+
         //2.4.2 订单商品项生成
         // 结算单用到的订单数据关系
         Map<String, String> orderItemUnionKeyMapping = new HashMap<>();
@@ -706,7 +751,8 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
         //下单首月不能更改
         //月末结算，变更当月1号，如果是20号结算，就变更21号
         //获取当前月的结算日、如果是31号就是当前月的最后一天。如果是其他就跟着你月份走就可以了。
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), exchangeOrder.getRentStartTime());
+        //Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), exchangeOrder.getRentStartTime());
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), orderDO.getRentStartTime());
 
         Date newRentStartTime = new Date();
 
@@ -1015,4 +1061,7 @@ public class ExchangeOrderServiceImpl implements ExchangeOrderService {
 
     @Autowired
     private OrderTimeAxisSupport orderTimeAxisSupport;
+
+    @Autowired
+    private CustomerConsignInfoMapper customerConsignInfoMapper;
 }
