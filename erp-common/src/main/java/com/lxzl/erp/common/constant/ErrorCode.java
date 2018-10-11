@@ -1180,8 +1180,31 @@ public class ErrorCode {
 
     public static final String ONLY_MONTH_RENT_ALLOW_CHANGE_ORDER = "J340000001";
     public static final String EXIT_CORRECT_ORDER_NOT_ALLOW_CHANGE_ORDER = "J340000002";
+    //异常数据
+
+    public static final String EXCEPTION_DATA_SETTLEMENT_MISFIT = "J340000003";
+
+    public static final String EXCEPTION_DATA_SETTLEMENT_NORECORD = "J340000004";
+
+    public static final String EXCEPTION_DATA_SETTLEMENT_NOITEMRECORD = "J340000005";
+
+    public static final String EXCEPTION_DATA_LEASE_SETTLEMENT_MISFIT = "J340000006";
+
+    public static final String EXCEPTION_DATA_SETTLEMENT_LESSTHANZERO = "J340000007";
+
+    public static final String EXCEPTION_DATA_ONEDAY_TWOSETTLEMENT = "J340000008";
+
+    public static final String EXCEPTION_DATA_PUNCTUALAMOUNT_MISFIT = "J340000009";
+
+    public static final String EXCEPTION_DATA_SETTLEMENT_TWOSETTLEMENT = "J340000010";
+    public static final String USER_SYS_DATA_PRIVILEGE_USER_ID_NOT_NULL = "J340000011";
+    public static final String USER_SYS_DATA_PRIVILEGE_role_ID_NOT_NULL = "J340000012";
+    public static final String USER_SYS_DATA_PRIVILEGE_PRIVILEGE_TYPE_NOT_NULL = "J340000013";
+    public static final String USER_SYS_DATA_PRIVILEGE_NOT_EXISTS = "J340000013";
+
 
     static {
+
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
         MAP.put(BUSINESS_EXCEPTION, "业务异常");
@@ -2340,6 +2363,21 @@ public class ErrorCode {
         MAP.put(NOT_EXCHANGE_ORDER, "订单项没有变更数据");
         MAP.put(HAS_EXCHANGE_ORDER, "原订单变更后不允许重算");
         MAP.put(HAS_REPLACE_ORDER_IS_NOT_RECALCULATION, "该订单有换货单不允许重算");
+
+        MAP.put(EXCEPTION_DATA_SETTLEMENT_MISFIT," 结算单金额和结算单明细金额不等的数据");
+        MAP.put(EXCEPTION_DATA_SETTLEMENT_NORECORD," 查询有结算单项没有结算单的记录");
+        MAP.put(EXCEPTION_DATA_SETTLEMENT_NOITEMRECORD,"  查询有结算单没有结算单项目的记录");
+        MAP.put(EXCEPTION_DATA_LEASE_SETTLEMENT_MISFIT,"  租赁明细和结算单租金对不上");
+        MAP.put(EXCEPTION_DATA_SETTLEMENT_LESSTHANZERO,"  结算单金额小于0的订单");
+        MAP.put(EXCEPTION_DATA_ONEDAY_TWOSETTLEMENT,"   同一个客户在同一天有两个结算单");
+        MAP.put(EXCEPTION_DATA_PUNCTUALAMOUNT_MISFIT,"   冲正单金额和冲正单明细不等的情况");
+        MAP.put(EXCEPTION_DATA_SETTLEMENT_TWOSETTLEMENT,"   同一个订单同一个订单项在同一个结算单出现多次");
+        MAP.put(USER_SYS_DATA_PRIVILEGE_USER_ID_NOT_NULL,"   权限不能为空");
+        MAP.put(USER_SYS_DATA_PRIVILEGE_role_ID_NOT_NULL,"   用户id不能为空");
+        MAP.put(USER_SYS_DATA_PRIVILEGE_PRIVILEGE_TYPE_NOT_NULL,"   用户id不能为空");
+        MAP.put(USER_SYS_DATA_PRIVILEGE_NOT_EXISTS,"   权限不能为空");
+
+
     }
 
 

@@ -1,13 +1,19 @@
 package com.lxzl.erp.core.service.user.impl;
 
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.user.pojo.UserSysDataPrivilege;
 import com.lxzl.erp.core.service.user.UserPrevService;
-import com.lxzl.erp.dataaccess.dao.mysql.user.UserPrevMapper;
-import com.lxzl.erp.dataaccess.domain.user.UserPrevDO;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserSysDataPrivilegeMapper;
+import com.lxzl.erp.dataaccess.domain.user.UserSysDataPrivilegeDO;
+import org.apache.hadoop.mapred.IFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,54 +26,91 @@ import java.util.List;
 public class UserPrevServiceImpl implements UserPrevService {
 
     @Autowired
-    private UserPrevMapper userPrevMapper;
+    private UserSysDataPrivilegeMapper userSysDataPrivilegeMapper;
+    @Autowired
+    private UserSupport userSupport;
 
     /**
-     * @param userPrevDO
+     * 取消授权
+     * @param
      * @return
      */
     @Override
-    public ServiceResult<String, Integer> insetUserPrev(UserPrevDO userPrevDO) {
-
+    public ServiceResult<String, Integer> deleteUserPrev(UserSysDataPrivilege userSysDataPrivilege) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        Integer res = userPrevMapper.save(userPrevDO);
-        if (res <= 0) {
-            result.setErrorCode(ErrorCode.USER_NAME_NOT_FOUND);
-        } else {
-            result.setErrorCode(ErrorCode.SUCCESS);
-            result.setResult(res);
+        Date now = new Date();
+        String currentUserId = userSupport.getCurrentUserId().toString();
+
+        UserSysDataPrivilegeDO userSysDataPrivilegeDO = userSysDataPrivilegeMapper.findByUserId(userSysDataPrivilege.getUserId());
+        if (userSysDataPrivilegeDO == null){
+            result.setErrorCode(ErrorCode.USER_SYS_DATA_PRIVILEGE_NOT_EXISTS);
+            return result;
         }
+
+        userSysDataPrivilegeDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        userSysDataPrivilegeDO.setUpdateTime(now);
+        userSysDataPrivilegeDO.setUpdateUser(currentUserId);
+        userSysDataPrivilegeMapper.delete(userSysDataPrivilegeDO.getId());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 
     /**
      * 单对象添加权限
      *
-     * @param userPrevDO
+     * @param userSysDataPrivilege
      * @return
      */
     @Override
-    public ServiceResult<String, Integer> AddPrev(UserPrevDO userPrevDO) {
+    public ServiceResult<String, Integer> AddPrev(UserSysDataPrivilege userSysDataPrivilege) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        Integer res = userPrevMapper.AddPrev(userPrevDO);
+        Date now = new Date();
+        String currentUserId = userSupport.getCurrentUserId().toString();
 
-        result.setResult(res);
+        UserSysDataPrivilegeDO userSysDataPrivilegeDO = new UserSysDataPrivilegeDO();
+        userSysDataPrivilegeDO.setUserId(userSysDataPrivilege.getUserId());
+        userSysDataPrivilegeDO.setRoleId(userSysDataPrivilege.getRoleId());
+        userSysDataPrivilegeDO.setPrivilegeType(userSysDataPrivilege.getPrivilegeType());
+        userSysDataPrivilegeDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        userSysDataPrivilegeDO.setCreateTime(now);
+        userSysDataPrivilegeDO.setCreateUser(currentUserId);
+        userSysDataPrivilegeDO.setUpdateTime(now);
+        userSysDataPrivilegeDO.setUpdateUser(currentUserId);
+        Integer res = userSysDataPrivilegeMapper.save(userSysDataPrivilegeDO);
 
-        return null;
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
     /**
      * 批量添加权限
      *
-     * @param userPrevDOs
+     * @param userSysDataPrivilegeList
      * @return
      */
     @Override
-    public ServiceResult<String, Integer> BatchPrev(List<UserPrevDO> userPrevDOs) {
+    public ServiceResult<String, Integer> BatchPrev(List<UserSysDataPrivilege> userSysDataPrivilegeList) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        Integer res = userPrevMapper.BatchPrev(userPrevDOs);
+        Date now = new Date();
+        String currentUserId = userSupport.getCurrentUserId().toString();
 
-        result.setResult(res);
+        List<UserSysDataPrivilegeDO> userSysDataPrivilegeDOList = new ArrayList<>();
+        for (UserSysDataPrivilege userSysDataPrivilege : userSysDataPrivilegeList){
+            UserSysDataPrivilegeDO userSysDataPrivilegeDO = new UserSysDataPrivilegeDO();
+            userSysDataPrivilegeDO.setUserId(userSysDataPrivilege.getUserId());
+            userSysDataPrivilegeDO.setRoleId(userSysDataPrivilege.getRoleId());
+            userSysDataPrivilegeDO.setPrivilegeType(userSysDataPrivilege.getPrivilegeType());
+            userSysDataPrivilegeDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            userSysDataPrivilegeDO.setCreateTime(now);
+            userSysDataPrivilegeDO.setCreateUser(currentUserId);
+            userSysDataPrivilegeDO.setUpdateTime(now);
+            userSysDataPrivilegeDO.setUpdateUser(currentUserId);
+            userSysDataPrivilegeDOList.add(userSysDataPrivilegeDO);
+        }
+        userSysDataPrivilegeMapper.saveList(userSysDataPrivilegeDOList);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 

@@ -2,20 +2,36 @@ package com.lxzl.erp.core.service.user;
 
 
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.dataaccess.domain.user.UserPrevDO;
+import com.lxzl.erp.common.domain.user.pojo.UserSysDataPrivilege;
 import com.lxzl.se.core.service.BaseService;
 
 import java.util.List;
 
 public interface UserPrevService extends BaseService {
 
-    ServiceResult<String, Integer> insetUserPrev(UserPrevDO userPrevDO);
 
 
-    ServiceResult<String, Integer> AddPrev(UserPrevDO userPrevDO);
+    /**
+     * 取消授权
+     * @param userSysDataPrivilege
+     * @return
+     */
+    ServiceResult<String, Integer> deleteUserPrev(UserSysDataPrivilege userSysDataPrivilege);
 
+    /**
+     * 单个授权
+     * @param userSysDataPrivilege
+     * @return
+     */
+    ServiceResult<String, Integer> AddPrev(UserSysDataPrivilege userSysDataPrivilege);
 
-    ServiceResult<String, Integer> BatchPrev(List<UserPrevDO> userPrevDOs);
+    /**
+     * 批量授权
+     * @param userSysDataPrivilegeList
+     * @return
+     */
+
+    ServiceResult<String, Integer> BatchPrev(List<UserSysDataPrivilege> userSysDataPrivilegeList);
 
 
 }

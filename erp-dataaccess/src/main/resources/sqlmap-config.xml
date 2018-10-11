@@ -219,6 +219,8 @@
         <mapper resource="sqlmap/erp_replace_order_material.xml" />
 
         <mapper resource="sqlmap/erp_replace_order_product.xml" />
+
+        <mapper resource="sqlmap/erp_user_sys_data_privilege.xml" />
     </mappers>
 
 </configuration>

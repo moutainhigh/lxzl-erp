@@ -30,6 +30,4 @@ public interface UserMapper extends BaseMysqlDAO<UserDO> {
 
     List<UserDO> listAllUser();
 
-    Integer hasPrevilegeOfCurrUser(Integer roleId);
-
 }

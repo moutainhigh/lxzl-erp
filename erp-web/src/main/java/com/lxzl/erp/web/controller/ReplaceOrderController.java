@@ -8,7 +8,6 @@ import com.lxzl.erp.common.domain.replace.ReplaceOrderQueryParam;
 import com.lxzl.erp.common.domain.replace.pojo.ReplaceOrder;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.CancelGroup;
-import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.replace.ReplaceOrderService;
@@ -21,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.List;
-
 /**
  * @Author: Sunzhipeng
  * @Description:
@@ -34,6 +31,7 @@ import java.util.List;
 public class ReplaceOrderController {
     @Autowired
     private ResultGenerator resultGenerator;
+
     @Autowired
     private ReplaceOrderService replaceOrderService;
 

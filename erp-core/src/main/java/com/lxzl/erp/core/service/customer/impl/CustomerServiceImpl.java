@@ -33,7 +33,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.user.UserPrevMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserSysDataPrivilegeMapper;
 import com.lxzl.erp.dataaccess.domain.area.AreaProvinceDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
@@ -53,7 +53,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -3716,12 +3715,13 @@ public class CustomerServiceImpl implements CustomerService {
      * @return
      */
     public boolean currUserHashPrev(){
-        Integer RolehasPrev= userPrevMapper.hasPrevilegeOfCurrRole(userSupport.getCurrentUser().getRoleId());
-        Integer UserhasPrev = userPrevMapper.hasPrevilegeOfCurrUser(userSupport.getCurrentUserId());
-        if(RolehasPrev > 0){
-           return  true;
-        }else if (UserhasPrev>0) {
-                return  true;
+        Integer rolehasPrev= userSysDataPrivilegeMapper.hasPrevilegeOfCurrRole(userSupport.getCurrentUser().getRoleId());
+        if(rolehasPrev > 0){
+            return  true;
+        }
+        Integer userhasPrev = userSysDataPrivilegeMapper.hasPrevilegeOfCurrUser(userSupport.getCurrentUserId());
+        if (userhasPrev>0) {
+            return  true;
         }
         return false;
     }
@@ -3769,8 +3769,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerStatementDateChangeLogDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerStatementDateChangeLogMapper.save(customerStatementDateChangeLogDO);
     }
-    @Autowired
-    UserPrevMapper userPrevMapper;
+
 
     @Autowired
     private UserMapper userMapper;
@@ -3844,6 +3843,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private UserSupport userSupport;
+
+    @Autowired
+    private UserSysDataPrivilegeMapper userSysDataPrivilegeMapper;
 
 
 
